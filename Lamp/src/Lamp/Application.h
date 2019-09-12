@@ -1,4 +1,5 @@
 #pragma once
+#include "Lamp/Layer/LayerStack.h"
 
 namespace Lamp
 {
@@ -9,6 +10,12 @@ namespace Lamp
 		~Application();
 
 		void Run();
+		void PushLayer(Layer* pLayer);
+		void PushOverlay(Layer* pOverlay);
+
+	private:
+		LayerStack m_LayerStack;
+		bool m_Running = true;
 
 	private:
 		static Application* s_pInstance;
