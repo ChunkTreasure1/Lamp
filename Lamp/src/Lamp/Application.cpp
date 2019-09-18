@@ -1,12 +1,17 @@
 #include "lppch.h"
 #include "Application.h"
 
+#include "Lamp/Core.h"
+#include "GL/glew.h"
+
 namespace Lamp 
 {
+	//Application* Application::s_pInstance = nullptr;
+
 	Application::Application()
 	{
+		m_pWindow = new Window();
 	}
-
 
 	Application::~Application()
 	{
@@ -17,22 +22,19 @@ namespace Lamp
 	{
 		while (m_Running)
 		{
-			//Updates all the layers
-			for (Layer* pLayer : m_LayerStack)
+			if (glfwWindowShouldClose(m_pWindow->GetNativeWindow()))
 			{
-				pLayer->Update();
+				m_Running = false;
 			}
-		}
-	}
 
-	void Application::PushLayer(Layer* pLayer)
-	{
-		m_LayerStack.PushLayer(pLayer);
-		pLayer->OnAttach();
-	}
-	void Application::PushOverlay(Layer* pOverlay)
-	{
-		m_LayerStack.PushOverlay(pOverlay);
-		pOverlay->OnAttach();
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			glfwSwapBuffers(m_pWindow->GetNativeWindow());
+			glfwPollEvents();
+
+			//Updates all the layers
+		}
+
+		glfwTerminate();
 	}
 }

@@ -4,33 +4,34 @@
     <Filter Include="Lamp">
       <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lamp\Layer">
-      <UniqueIdentifier>{7BFBB244-67B3-F491-D0BA-CDEDBC918F82}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
     <ClInclude Include="src\Lamp\Application.h">
       <Filter>Lamp</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\EntryPoint.h">
       <Filter>Lamp</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Layer\Layer.h">
-      <Filter>Lamp\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Layer\LayerStack.h">
-      <Filter>Lamp\Layer</Filter>
+    <ClInclude Include="src\Lamp\Log.h">
+      <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="src\Lamp\Rendering\OpenGLContext.h" />
+    <ClInclude Include="src\Lamp\Rendering\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
-      <Filter>Lamp\Layer</Filter>
+    <ClCompile Include="src\Lamp\Log.cpp">
+      <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\OpenGLContext.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Window.cpp" />
   </ItemGroup>
 </Project>

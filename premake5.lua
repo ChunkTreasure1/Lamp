@@ -7,17 +7,15 @@ workspace "Lamp"
 		"Release",
 		"Dist"
 	}
-
+	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Lamp/vendor/GLFW/include"
-IncludeDir["Glad"] = "Lamp/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Lamp/vendor/imgui/"
 
 include "Lamp/vendor/GLFW"
-include "Lamp/vendor/Glad"
 include "Lamp/vendor/imgui"
 
 project "Lamp"
@@ -48,17 +46,23 @@ project "Lamp"
 	{
 		"%{prj.name}/src",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{prj.name}/vendor/glm"
+		"%{prj.name}/vendor/glm",
+		"%{prj.name}/vendor/spdlog/include",
+		"%{prj.name}/vendor/glew/include"
 	}
 
+	libdirs 
+	{
+		"%{prj.name}/vendor/glew/lib/Release/x64"
+	}
+	
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",
-		"opengl32.lib"
+		"opengl32.lib",
+		"glew32s.lib"
 	}
 
 	filter "system:windows"
@@ -67,6 +71,8 @@ project "Lamp"
 		defines 
 		{
 			"LP_PLATFORM_WINDOWS",
+			"GLFW_INCLUDE_NONE",
+			"GLEW_STATIC"
 		}
 
 		filter "configurations:Debug"
@@ -102,9 +108,11 @@ project "Sandbox"
 
 	includedirs
 	{
+		"Lamp/vendor/spdlog/include",
 		"Lamp/src",
 		"Lamp/vendor/glm",
-		"Lamp/vendor"
+		"Lamp/vendor",
+		"Lamp/vendor/GLFW/include"
 	}
 
 	links
