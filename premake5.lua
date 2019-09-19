@@ -10,14 +10,6 @@ workspace "Lamp"
 	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
--- Include directories relative to root folder (solution directory)
-IncludeDir = {}
-IncludeDir["GLFW"] = "Lamp/vendor/GLFW/include"
-IncludeDir["ImGui"] = "Lamp/vendor/imgui/"
-
-include "Lamp/vendor/GLFW"
-include "Lamp/vendor/imgui"
-
 project "Lamp"
 	location "Lamp"
 	kind "StaticLib"
@@ -27,9 +19,6 @@ project "Lamp"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
-	
-	pchheader "lppch.h"
-	pchsource "Lamp/src/lppch.cpp"
 
 	files
 	{
@@ -45,24 +34,22 @@ project "Lamp"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.ImGui}",
-		"%{prj.name}/vendor/glm",
-		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/glew/include"
+		"%{prj.name}/vendor/include",
 	}
 
 	libdirs 
 	{
-		"%{prj.name}/vendor/glew/lib/Release/x64"
+		"%{prj.name}/vendor/glew",
+		"%{prj.name}/vendor/SDL"
 	}
 	
 	links 
 	{
-		"GLFW",
-		"ImGui",
 		"opengl32.lib",
-		"glew32s.lib"
+		"glew32s.lib",
+		"SDL2test.lib",
+		"SDL2main.lib",
+		"SDL2.lib"
 	}
 
 	filter "system:windows"
@@ -108,12 +95,8 @@ project "Sandbox"
 
 	includedirs
 	{
-		"Lamp/vendor/spdlog/include",
 		"Lamp/src",
-		"Lamp/vendor/glm",
-		"Lamp/vendor",
-		"Lamp/vendor/GLFW/include",
-		"Lamp/vendor/glew/include"
+		"Lamp/vendor/include",
 	}
 
 	links

@@ -1,0 +1,30 @@
+﻿  InputManager.cpp
+c:\programing\cactus-engine\cactusengine\main\inputmanager.h(4): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
+  Timing.cpp
+c:\programing\cactus-engine\cactusengine\main\timing.cpp(3): fatal error C1083: Cannot open include file: 'SDL/SDL.h': No such file or directory
+  Camera2D.cpp
+c:\programing\cactus-engine\cactusengine\rendering\systems\camera2d.h(3): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
+  CactusEngine.cpp
+c:\programing\cactus-engine\cactusengine\main\cactusengine.h(2): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
+  Errors.cpp
+c:\programing\cactus-engine\cactusengine\main\errors.cpp(5): fatal error C1083: Cannot open include file: 'SDL/SDL.h': No such file or directory
+  IOManager.cpp
+c:\programing\cactus-engine\cactusengine\main\iomanager.cpp(21): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+c:\programing\cactus-engine\cactusengine\main\iomanager.cpp(25): warning C4244: '-=': conversion from 'std::streamoff' to 'int', possible loss of data
+  GLSLProgram.cpp
+c:\programing\cactus-engine\cactusengine\rendering\systems\glslprogram.h(4): error C2006: '#include': expected a filename, found 'newline'
+c:\programing\cactus-engine\cactusengine\rendering\systems\glslprogram.h(4): fatal error C1083: Cannot open include file: '': No such file or directory
+  ImageLoader.cpp
+c:\programing\cactus-engine\cactusengine\rendering\textures\gltexture.h(2): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  ResourceManager.cpp
+c:\programing\cactus-engine\cactusengine\rendering\textures\gltexture.h(2): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  TextureCache.cpp
+c:\programing\cactus-engine\cactusengine\rendering\textures\gltexture.h(2): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  picoPNG.cpp
+  Sprite.cpp
+c:\programing\cactus-engine\cactusengine\rendering\textures\sprite.cpp(1): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  Window.cpp
+c:\programing\cactus-engine\cactusengine\main\window.h(3): fatal error C1083: Cannot open include file: 'SDL/SDL.h': No such file or directory
+  SpriteBatch.cpp
+c:\programing\cactus-engine\cactusengine\rendering\textures\spritebatch.h(3): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  Generating Code...

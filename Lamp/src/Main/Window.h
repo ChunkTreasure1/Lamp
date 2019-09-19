@@ -1,0 +1,39 @@
+#pragma once
+
+#include <SDL/SDL.h>
+#include <GL/glew.h>
+#include <string>
+
+namespace CactusEngine
+{
+	enum WindowFlags
+	{
+		WINDOW_INVISIBLE = 0x1,
+		WINDOW_FULLSCREEN = 0x2,
+		WINDOW_BORDERLESS = 0x4
+	};
+
+	class Window
+	{
+	public:
+		Window();
+		~Window();
+
+		//Functions
+		int Initialize(std::string windowName, int windowWidth, int windowHeight, unsigned int currentFlags);
+		void SwapBuffer();
+
+		//Getting
+		int GetWindowWidth() { return m_WindowWidth; }
+		int GetWindowHeight() { return m_WindowHeight; }
+
+	private:
+		//Member vars
+		SDL_Window* m_pWindow;
+		int m_WindowWidth;
+		int m_WindowHeight;
+
+	};
+}
+
+

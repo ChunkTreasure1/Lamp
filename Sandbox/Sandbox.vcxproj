@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\vendor\spdlog\include;..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\vendor\spdlog\include;..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\vendor\spdlog\include;..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -131,7 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\SandboxApp.cpp" />
+    <ClInclude Include="src\Gameplay\Bullet.h" />
+    <ClInclude Include="src\Main\MainGame.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Gameplay\Bullet.cpp" />
+    <ClCompile Include="src\Main\MainGame.cpp" />
+    <ClCompile Include="src\Main\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

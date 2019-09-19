@@ -1,52 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Lamp">
-      <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4AF3887C-362A-8A0D-DF16-7010CB2C060F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lamp\Rendering">
-      <UniqueIdentifier>{7C879B2E-6855-8F34-51E9-FF5A3D566B99}</UniqueIdentifier>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{E3AE1F7C-4F19-D4F2-9857-85980401B247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Systems">
+      <UniqueIdentifier>{EA372082-564E-1E18-9FC5-A9390B1BEF9F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Textures">
+      <UniqueIdentifier>{16F08EBA-02D4-4F10-6B34-4A6357373A92}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Lamp.h" />
-    <ClInclude Include="src\Lamp\Application.h">
-      <Filter>Lamp</Filter>
+    <ClInclude Include="src\Main\CactusEngine.h">
+      <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Core.h">
-      <Filter>Lamp</Filter>
+    <ClInclude Include="src\Main\Errors.h">
+      <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\EntryPoint.h">
-      <Filter>Lamp</Filter>
+    <ClInclude Include="src\Main\IOManager.h">
+      <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Log.h">
-      <Filter>Lamp</Filter>
+    <ClInclude Include="src\Main\InputManager.h">
+      <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Shader.h">
-      <Filter>Lamp\Rendering</Filter>
+    <ClInclude Include="src\Main\Timing.h">
+      <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Window.h">
-      <Filter>Lamp\Rendering</Filter>
+    <ClInclude Include="src\Main\Window.h">
+      <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\lppch.h" />
-    <ClInclude Include="src\Lamp\Rendering\Camera2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\OpenGLContext.h" />
+    <ClInclude Include="src\Rendering\Systems\Camera2D.h">
+      <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Systems\GLSLProgram.h">
+      <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Systems\ImageLoader.h">
+      <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Systems\ResourceManager.h">
+      <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Systems\TextureCache.h">
+      <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Textures\GLTexture.h">
+      <Filter>Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Textures\Sprite.h">
+      <Filter>Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Textures\SpriteBatch.h">
+      <Filter>Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Textures\Vertex.h">
+      <Filter>Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\Textures\picoPNG.h">
+      <Filter>Rendering\Textures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Lamp\Application.cpp">
-      <Filter>Lamp</Filter>
+    <ClCompile Include="src\Main\CactusEngine.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Log.cpp">
-      <Filter>Lamp</Filter>
+    <ClCompile Include="src\Main\Errors.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Shader.cpp">
-      <Filter>Lamp\Rendering</Filter>
+    <ClCompile Include="src\Main\IOManager.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Window.cpp">
-      <Filter>Lamp\Rendering</Filter>
+    <ClCompile Include="src\Main\InputManager.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="src\lppch.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Camera2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\OpenGLContext.cpp" />
+    <ClCompile Include="src\Main\Timing.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main\Window.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Systems\Camera2D.cpp">
+      <Filter>Rendering\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Systems\GLSLProgram.cpp">
+      <Filter>Rendering\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Systems\ImageLoader.cpp">
+      <Filter>Rendering\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Systems\ResourceManager.cpp">
+      <Filter>Rendering\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Systems\TextureCache.cpp">
+      <Filter>Rendering\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Textures\Sprite.cpp">
+      <Filter>Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Textures\SpriteBatch.cpp">
+      <Filter>Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Textures\picoPNG.cpp">
+      <Filter>Rendering\Textures</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

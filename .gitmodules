@@ -1,9 +1,0 @@
-[submodule "Lamp/vendor/GLFW"]
-	path = Lamp/vendor/GLFW
-	url = https://github.com/TheCherno/glfw
-[submodule "Lamp/vendor/imgui"]
-	path = Lamp/vendor/imgui
-	url = https://github.com/TheCherno/imgui
-[submodule "Lamp/vendor/glm"]
-	path = Lamp/vendor/glm
-	url = https://github.com/g-truc/glm
