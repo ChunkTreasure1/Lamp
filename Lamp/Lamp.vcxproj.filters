@@ -22,14 +22,15 @@
     <ClInclude Include="src\Lamp\Log.h">
       <Filter>Lamp</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\OpenGLContext.h">
+    <ClInclude Include="src\Lamp\Rendering\Shader.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Window.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shader.h" />
+    <ClInclude Include="src\Lamp\Rendering\Camera2D.h" />
+    <ClInclude Include="src\Lamp\Rendering\OpenGLContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
@@ -38,13 +39,14 @@
     <ClCompile Include="src\Lamp\Log.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\OpenGLContext.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Shader.cpp">
       <Filter>Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Window.cpp">
       <Filter>Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Shader.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Camera2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\OpenGLContext.cpp" />
   </ItemGroup>
 </Project>

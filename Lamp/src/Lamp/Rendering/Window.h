@@ -32,6 +32,9 @@ namespace Lamp
 		//Getting
 		inline const bool IsVSync() const;
 		inline GLFWwindow* GetNativeWindow() { return m_pWindow; }
+		
+		inline const uint32_t GetWidth() const { return m_Data.Width; }
+		inline const uint32_t GetHeight() const { return m_Data.Height; }
 
 		//Public methods
 		bool Create();

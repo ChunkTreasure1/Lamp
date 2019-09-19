@@ -17,6 +17,7 @@ namespace Lamp
 
 	Window::~Window()
 	{
+		delete m_pContext;
 		glfwTerminate();
 	}
 
