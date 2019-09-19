@@ -1,5 +1,6 @@
 #pragma once
 #include "Lamp/Rendering/Window.h"
+#include "Lamp/Rendering/Shader.h"
 
 namespace Lamp
 {
@@ -16,7 +17,10 @@ namespace Lamp
 
 	private:
 		static Application* s_pInstance;
+		Shader* m_pShader;
 		Window* m_pWindow;
+
+		GLuint m_VertexBuffer;
 	};
 
 	Application* CreateApplication();

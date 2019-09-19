@@ -112,7 +112,8 @@ project "Sandbox"
 		"Lamp/src",
 		"Lamp/vendor/glm",
 		"Lamp/vendor",
-		"Lamp/vendor/GLFW/include"
+		"Lamp/vendor/GLFW/include",
+		"Lamp/vendor/glew/include"
 	}
 
 	links

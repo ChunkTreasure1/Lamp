@@ -1,6 +1,7 @@
 #pragma once
+#include "GL/glew.h"
 #include "GLFW/glfw3.h"
-#include "Lamp/Rendering/OpenGLContext.h"
+#include "OpenGLContext.h"
 
 #include <string>
 
@@ -38,6 +39,7 @@ namespace Lamp
 	private:
 		GLFWwindow* m_pWindow;
 		OpenGLContext* m_pContext;
+
 		WindowProps m_Data;
 	};
 }

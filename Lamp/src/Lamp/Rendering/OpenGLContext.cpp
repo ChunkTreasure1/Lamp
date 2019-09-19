@@ -21,5 +21,6 @@ namespace Lamp
 
 	OpenGLContext::~OpenGLContext()
 	{
+		glfwTerminate();
 	}
 }

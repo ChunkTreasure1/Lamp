@@ -4,6 +4,9 @@
     <Filter Include="Lamp">
       <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\Rendering">
+      <UniqueIdentifier>{7C879B2E-6855-8F34-51E9-FF5A3D566B99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
@@ -19,9 +22,14 @@
     <ClInclude Include="src\Lamp\Log.h">
       <Filter>Lamp</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\OpenGLContext.h">
+      <Filter>Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Window.h">
+      <Filter>Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\lppch.h" />
-    <ClInclude Include="src\Lamp\Rendering\OpenGLContext.h" />
-    <ClInclude Include="src\Lamp\Rendering\Window.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
@@ -30,8 +38,13 @@
     <ClCompile Include="src\Lamp\Log.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\OpenGLContext.cpp">
+      <Filter>Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Window.cpp">
+      <Filter>Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\OpenGLContext.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Window.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shader.cpp" />
   </ItemGroup>
 </Project>
