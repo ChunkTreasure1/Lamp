@@ -20,7 +20,7 @@ namespace CactusEngine
 		~Window();
 
 		//Functions
-		int Initialize(std::string windowName, int windowWidth, int windowHeight, unsigned int currentFlags);
+		int Initialize(std::string windowName, uint32_t windowWidth, uint32_t windowHeight, uint32_t currentFlags);
 		void SwapBuffer();
 
 		//Getting
@@ -30,8 +30,8 @@ namespace CactusEngine
 	private:
 		//Member vars
 		SDL_Window* m_pWindow;
-		int m_WindowWidth;
-		int m_WindowHeight;
+		uint32_t m_WindowWidth;
+		uint32_t m_WindowHeight;
 
 	};
 }

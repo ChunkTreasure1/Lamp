@@ -10,7 +10,7 @@ namespace CactusEngine
 	{}
 
 	//Initializes a window
-	int Window::Initialize(std::string windowName, int windowWidth, int windowHeight, unsigned int currentFlags)
+	int Window::Initialize(std::string windowName, uint32_t windowWidth, uint32_t windowHeight, uint32_t currentFlags)
 	{
 		//Get the window flags
 		Uint32 flags = SDL_WINDOW_OPENGL;

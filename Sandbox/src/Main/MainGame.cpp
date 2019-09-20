@@ -7,8 +7,8 @@
 
 MainGame::MainGame() 
 	: m_Time(0), 
-	m_WindowWidth(1024), 
-	m_WindowHeight(768), 
+	m_WindowWidth(1280), 
+	m_WindowHeight(720), 
 	m_GameState(GameState::eGS_Play),
 	m_MaxFPS(60.0f)
 {
@@ -34,7 +34,7 @@ void MainGame::InitSystems()
 	CactusEngine::Initialize();
 
 	//Creates a window
-	m_Window.Initialize("Cactus Engine", m_WindowWidth, m_WindowHeight, 0);
+	m_Window.Initialize("Lamp", m_WindowWidth, m_WindowHeight, 0);
 	InitShaders();
 	m_SpriteBatch.Initialize();
 
@@ -163,6 +163,7 @@ void MainGame::DrawGame()
 {
 	//Clear the screen
 	glClearDepth(1.0);
+	glClearColor(0.1, 0.1, 0.1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_ColorProgram.Use();
