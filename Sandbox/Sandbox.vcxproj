@@ -131,12 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Gameplay\Bullet.h" />
-    <ClInclude Include="src\Main\MainGame.h" />
+    <ClInclude Include="src\Main\SandboxApp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Gameplay\Bullet.cpp" />
-    <ClCompile Include="src\Main\MainGame.cpp" />
+    <ClCompile Include="src\Main\SandboxApp.cpp" />
     <ClCompile Include="src\Main\main.cpp" />
   </ItemGroup>
   <ItemGroup>

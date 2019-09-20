@@ -1,9 +1,9 @@
-#include "MainGame.h"
+#include "SandboxApp.h"
 
-#include <Main/CactusEngine.h>
+#include <Lamp/Main/CactusEngine.h>
 #include <iostream>
-#include <Main/Errors.h>
-#include <Rendering/Systems/ResourceManager.h>
+#include <Lamp/Main/Errors.h>
+#include <Lamp/Rendering/Systems/ResourceManager.h>
 
 MainGame::MainGame() 
 	: m_Time(0), 
@@ -51,19 +51,7 @@ void MainGame::GameLoop()
 		ProcessInput();
 		m_Time += 0.01;
 		m_Camera.Update();
-		
-		for (int i = 0; i < m_Bullets.size();)
-		{
-			if (m_Bullets[i].Update())
-			{
-				m_Bullets[i] = m_Bullets.back();
-				m_Bullets.pop_back();
-			}
-			else
-			{
-				i++;
-			}
-		}
+	
 		DrawGame();
 
 		m_FPS = m_FPSLimiter.End();
@@ -152,7 +140,6 @@ void MainGame::ProcessInput()
 		glm::vec2 dir = mouseCoords - playerPos;
 
 		dir = glm::normalize(dir);
-		m_Bullets.emplace_back(playerPos, dir, 1.f, 1000);
 
 		std::cout << mouseCoords.x << ", " << mouseCoords.y << std::endl;
 	}
@@ -194,18 +181,12 @@ void MainGame::DrawGame()
 
 	m_SpriteBatch.Draw(pos + glm::vec4(50, 50, 0, 0), uv, texture.Id, 0.f, color);
 
-	for (int i = 0; i < m_Bullets.size(); i++)
-	{
-		m_Bullets[i].Draw(m_SpriteBatch);
-	}
-
 	//End drawing
 	m_SpriteBatch.End();
 	m_SpriteBatch.RenderBatches();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	m_ColorProgram.Unuse();
-
 	m_Window.SwapBuffer();
 }
 

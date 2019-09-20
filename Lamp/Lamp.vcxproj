@@ -140,38 +140,38 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Main\CactusEngine.h" />
-    <ClInclude Include="src\Main\Errors.h" />
-    <ClInclude Include="src\Main\IOManager.h" />
-    <ClInclude Include="src\Main\InputManager.h" />
-    <ClInclude Include="src\Main\Timing.h" />
-    <ClInclude Include="src\Main\Window.h" />
-    <ClInclude Include="src\Rendering\Systems\Camera2D.h" />
-    <ClInclude Include="src\Rendering\Systems\GLSLProgram.h" />
-    <ClInclude Include="src\Rendering\Systems\ImageLoader.h" />
-    <ClInclude Include="src\Rendering\Systems\ResourceManager.h" />
-    <ClInclude Include="src\Rendering\Systems\TextureCache.h" />
-    <ClInclude Include="src\Rendering\Textures\GLTexture.h" />
-    <ClInclude Include="src\Rendering\Textures\Sprite.h" />
-    <ClInclude Include="src\Rendering\Textures\SpriteBatch.h" />
-    <ClInclude Include="src\Rendering\Textures\Vertex.h" />
-    <ClInclude Include="src\Rendering\Textures\picoPNG.h" />
+    <ClInclude Include="src\Lamp\Main\CactusEngine.h" />
+    <ClInclude Include="src\Lamp\Main\Errors.h" />
+    <ClInclude Include="src\Lamp\Main\IOManager.h" />
+    <ClInclude Include="src\Lamp\Main\InputManager.h" />
+    <ClInclude Include="src\Lamp\Main\Timing.h" />
+    <ClInclude Include="src\Lamp\Main\Window.h" />
+    <ClInclude Include="src\Lamp\Rendering\Systems\Camera2D.h" />
+    <ClInclude Include="src\Lamp\Rendering\Systems\GLSLProgram.h" />
+    <ClInclude Include="src\Lamp\Rendering\Systems\ImageLoader.h" />
+    <ClInclude Include="src\Lamp\Rendering\Systems\ResourceManager.h" />
+    <ClInclude Include="src\Lamp\Rendering\Systems\TextureCache.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\GLTexture.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\Sprite.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\SpriteBatch.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\Vertex.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\picoPNG.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Main\CactusEngine.cpp" />
-    <ClCompile Include="src\Main\Errors.cpp" />
-    <ClCompile Include="src\Main\IOManager.cpp" />
-    <ClCompile Include="src\Main\InputManager.cpp" />
-    <ClCompile Include="src\Main\Timing.cpp" />
-    <ClCompile Include="src\Main\Window.cpp" />
-    <ClCompile Include="src\Rendering\Systems\Camera2D.cpp" />
-    <ClCompile Include="src\Rendering\Systems\GLSLProgram.cpp" />
-    <ClCompile Include="src\Rendering\Systems\ImageLoader.cpp" />
-    <ClCompile Include="src\Rendering\Systems\ResourceManager.cpp" />
-    <ClCompile Include="src\Rendering\Systems\TextureCache.cpp" />
-    <ClCompile Include="src\Rendering\Textures\Sprite.cpp" />
-    <ClCompile Include="src\Rendering\Textures\SpriteBatch.cpp" />
-    <ClCompile Include="src\Rendering\Textures\picoPNG.cpp" />
+    <ClCompile Include="src\Lamp\Main\CactusEngine.cpp" />
+    <ClCompile Include="src\Lamp\Main\Errors.cpp" />
+    <ClCompile Include="src\Lamp\Main\IOManager.cpp" />
+    <ClCompile Include="src\Lamp\Main\InputManager.cpp" />
+    <ClCompile Include="src\Lamp\Main\Timing.cpp" />
+    <ClCompile Include="src\Lamp\Main\Window.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Systems\Camera2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Systems\GLSLProgram.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Systems\ImageLoader.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Systems\ResourceManager.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Systems\TextureCache.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\Sprite.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\SpriteBatch.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\picoPNG.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

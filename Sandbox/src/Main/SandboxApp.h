@@ -4,17 +4,16 @@
 #include <GL/glew.h>
 #include <vector>
 
-#include <Rendering/Systems/GLSLProgram.h>
-#include <Rendering/Textures/Sprite.h>
-#include <Rendering/Textures/GLTexture.h>
+#include <Lamp/Rendering/Systems/GLSLProgram.h>
+#include <Lamp/Rendering/Textures/Sprite.h>
+#include <Lamp/Rendering/Textures/GLTexture.h>
 
-#include <Main/Window.h>
-#include <Rendering/Systems/Camera2D.h>
-#include <Rendering/Textures/SpriteBatch.h>
+#include <Lamp/Main/Window.h>
+#include <Lamp/Rendering/Systems/Camera2D.h>
+#include <Lamp/Rendering/Textures/SpriteBatch.h>
 
-#include <Main/InputManager.h>
-#include <Main/Timing.h>
-#include "../Gameplay/Bullet.h"
+#include <Lamp/Main/InputManager.h>
+#include <Lamp/Main/Timing.h>
 
 enum class GameState
 {
@@ -54,8 +53,6 @@ private:
 	CactusEngine::Camera2D m_Camera;
 	CactusEngine::SpriteBatch m_SpriteBatch;
 	CactusEngine::InputManager m_InputManager;
-
-	std::vector<Bullet> m_Bullets;
 
 	float m_Time;
 	float m_FPS;

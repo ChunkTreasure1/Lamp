@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <Rendering/Textures/SpriteBatch.h>
+#include <Lamp/Rendering/Textures/SpriteBatch.h>
 #include <glm/glm.hpp>
 
 class Bullet
