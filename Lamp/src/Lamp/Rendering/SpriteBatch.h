@@ -50,7 +50,6 @@ namespace Lamp
 		~SpriteBatch();
 
 		//Functions
-		void Initialize();
 		void Begin(GlyphSortType sortType = GlyphSortType::TEXTURE);
 		void End();
 

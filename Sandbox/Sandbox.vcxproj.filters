@@ -6,15 +6,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Main\SandboxApp.h">
-      <Filter>Main</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\Main\SandboxApp.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Main\main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,17 +5,13 @@
 namespace Lamp
 {
 	SpriteBatch::SpriteBatch() : m_VBO(0), m_VAO(0)
-	{}
+	{
+		//Creates the vertex array
+		CreateVertexArray();
+	}
 
 	SpriteBatch::~SpriteBatch()
 	{}
-
-	//Initialized the sprite batch
-	void SpriteBatch::Initialize()
-	{
-		//reates the vertex array
-		CreateVertexArray();
-	}
 
 	//Begins the sprite batch
 	void SpriteBatch::Begin(GlyphSortType sortType)

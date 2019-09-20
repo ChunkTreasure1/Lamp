@@ -1,5 +1,5 @@
-#include "GLSLProgram.h"
-#include "../../Main/Errors.h"
+#include "Shader.h"
+#include "Lamp/Errors.h"
 
 #include <fstream>
 #include <vector>
@@ -7,16 +7,8 @@
 
 namespace Lamp
 {
-	GLSLProgram::GLSLProgram()
+	Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 		: m_ProgramID(0), m_VertShaderID(0), m_FragShaderID(0), m_NumAttributes(0)
-	{}
-
-
-	GLSLProgram::~GLSLProgram()
-	{}
-
-	//Compile the shaders
-	void GLSLProgram::CompileShaders(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 	{
 		m_ProgramID = glCreateProgram();
 
@@ -37,8 +29,10 @@ namespace Lamp
 		CompileShader(fragmentShaderPath, m_FragShaderID);
 	}
 
+	Shader::~Shader()
+	{}
 	//Link the shaders
-	void GLSLProgram::LinkShaders()
+	void Shader::LinkShaders()
 	{
 		// Attach our shaders to our program
 		glAttachShader(m_ProgramID, m_VertShaderID);
@@ -80,12 +74,12 @@ namespace Lamp
 	}
 
 	//Adds an attribute from the shader
-	void GLSLProgram::AddAttribute(const std::string& attributeName)
+	void Shader::AddAttribute(const std::string& attributeName)
 	{
 		glBindAttribLocation(m_ProgramID, m_NumAttributes++, attributeName.c_str());
 	}
 
-	GLint GLSLProgram::GetUniformLocation(const std::string& uniformName)
+	GLint Shader::GetUniformLocation(const std::string& uniformName)
 	{
 		GLint location = glGetUniformLocation(m_ProgramID, uniformName.c_str());
 		if (location == GL_INVALID_INDEX)
@@ -96,7 +90,7 @@ namespace Lamp
 	}
 
 	//Set to use this GLSL program
-	void GLSLProgram::Use()
+	void Shader::Bind()
 	{
 		glUseProgram(m_ProgramID);
 
@@ -107,7 +101,7 @@ namespace Lamp
 	}
 
 	//Remove the usage of this GLSL program
-	void GLSLProgram::Unuse()
+	void Shader::Unbind()
 	{
 		glUseProgram(0);
 
@@ -118,7 +112,7 @@ namespace Lamp
 	}
 
 	//Compile a single shader
-	void GLSLProgram::CompileShader(const std::string & filePath, GLuint & id)
+	void Shader::CompileShader(const std::string & filePath, GLuint & id)
 	{
 		//Read the vertex shader
 		std::ifstream vertexFile(filePath);

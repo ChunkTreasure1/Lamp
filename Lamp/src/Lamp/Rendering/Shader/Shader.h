@@ -5,20 +5,19 @@
 
 namespace Lamp
 {
-	class GLSLProgram
+	class Shader
 	{
 	public:
-		GLSLProgram();
-		~GLSLProgram();
+		Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+		~Shader();
 
 		//Functions
-		void CompileShaders(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 		void LinkShaders();
 		void AddAttribute(const std::string& attributeName);
 		GLint GetUniformLocation(const std::string& uniformName);
 
-		void Use();
-		void Unuse();
+		void Bind();
+		void Unbind();
 
 	private:
 

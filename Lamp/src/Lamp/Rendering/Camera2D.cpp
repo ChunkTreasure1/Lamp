@@ -2,15 +2,20 @@
 
 namespace Lamp
 {
-	Camera2D::Camera2D()
+	Camera2D::Camera2D(WindowProps& props)
 		: m_Position(0.f, 0.f),
 		m_CameraMatrix(1.0f),
 		m_OrthoMatrix(1.0f),
 		m_Scale(1.0f),
-		m_MatrixChanged(true),
-		m_WindowWidth(500),
-		m_WindowHeight(500)
-	{}
+		m_MatrixChanged(true)
+	{
+		//Set the window size
+		m_WindowWidth = props.Width;
+		m_WindowHeight = props.Height;
+
+		//Set the orthographic matrix
+		m_OrthoMatrix = glm::ortho(0.0f, (float)m_WindowWidth, 0.0f, (float)m_WindowHeight);
+	}
 
 	Camera2D::~Camera2D()
 	{}
@@ -31,17 +36,6 @@ namespace Lamp
 
 			m_MatrixChanged = false;
 		}
-	}
-
-	//Initializes the camera
-	void Camera2D::Initialize(int windowWidth, int windowHeight)
-	{
-		//Set the window size
-		m_WindowWidth = windowWidth;
-		m_WindowHeight = windowHeight;
-
-		//Set the orthographic matrix
-		m_OrthoMatrix = glm::ortho(0.0f, (float)m_WindowWidth, 0.0f, (float)m_WindowHeight);
 	}
 
 	//Converts screen coords to world coords

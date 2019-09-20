@@ -3,14 +3,7 @@
 
 namespace Lamp
 {
-	Window::Window()
-	{}
-
-	Window::~Window()
-	{}
-
-	//Initializes a window
-	int Window::Initialize(std::string windowName, uint32_t windowWidth, uint32_t windowHeight, uint32_t currentFlags)
+	Window::Window(WindowProps& props, uint32_t currentFlags)
 	{
 		//Get the window flags
 		Uint32 flags = SDL_WINDOW_OPENGL;
@@ -28,13 +21,12 @@ namespace Lamp
 		}
 
 		//Create a window and check it for errors
-		m_pWindow = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			windowWidth, windowHeight, SDL_WINDOW_OPENGL);
+		m_pWindow = SDL_CreateWindow(props.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+			props.Width, props.Height, SDL_WINDOW_OPENGL);
 
 		if (m_pWindow == nullptr)
 		{
 			FatalError("SDL Window could not be created!");
-			return -1;
 		}
 
 		//Create a OpenGL context and error check it
@@ -42,7 +34,6 @@ namespace Lamp
 		if (glContext == nullptr)
 		{
 			FatalError("SDL_GL context could not be created!");
-			return -1;
 		}
 
 		//Initialize GLEW and error check it
@@ -50,20 +41,25 @@ namespace Lamp
 		if (error != GLEW_OK)
 		{
 			FatalError("Could not initialize GLEW!");
-			return -1;
+
 		}
 		printf("***	OpenGL Version: %s ***", glGetString(GL_VERSION));
 
-		glClearColor(0.0f, 0.0f, 1.0f, 1.f);
-
-		//Turn on V-Sync
-		SDL_GL_SetSwapInterval(1);
+		SetIsVSync(props.IsVSync);
 
 		//Enable alpha blending
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		return 0;
+		m_Data.Title = props.Title;
+		m_Data.Width = props.Width;
+		m_Data.Height = props.Height;
+		m_Data.IsVSync = props.IsVSync;
+	}
+
+	Window::~Window()
+	{
+		delete m_pWindow;
 	}
 
 	//Swaps the rendering buffer
@@ -71,5 +67,19 @@ namespace Lamp
 	{
 		//Swap the windows
 		SDL_GL_SwapWindow(m_pWindow);
+	}
+
+	inline void Window::SetIsVSync(bool state)
+	{
+		if (state)
+		{
+			SDL_GL_SetSwapInterval(1);
+		}
+		else
+		{
+			SDL_GL_SetSwapInterval(0);
+		}
+
+		m_Data.IsVSync = state;
 	}
 }
