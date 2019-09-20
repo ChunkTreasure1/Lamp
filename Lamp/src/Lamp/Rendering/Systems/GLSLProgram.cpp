@@ -5,7 +5,7 @@
 #include <vector>
 #include <filesystem>
 
-namespace CactusEngine
+namespace Lamp
 {
 	GLSLProgram::GLSLProgram()
 		: m_ProgramID(0), m_VertShaderID(0), m_FragShaderID(0), m_NumAttributes(0)

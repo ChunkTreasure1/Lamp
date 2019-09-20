@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace CactusEngine
+namespace Lamp
 {
 	TextureCache::TextureCache()
 	{}

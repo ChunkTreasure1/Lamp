@@ -5,7 +5,7 @@
 #include "Vertex.h"
 #include "../Systems/ResourceManager.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	Sprite::Sprite()
 	{

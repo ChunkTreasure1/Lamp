@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-namespace CactusEngine
+namespace Lamp
 {
 	class IOManager
 	{

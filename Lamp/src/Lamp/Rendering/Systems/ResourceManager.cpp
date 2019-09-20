@@ -1,6 +1,6 @@
 #include "ResourceManager.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	TextureCache ResourceManager::m_TextureCache;
 

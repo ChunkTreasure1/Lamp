@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace CactusEngine
+namespace Lamp
 {
 	class Sprite
 	{

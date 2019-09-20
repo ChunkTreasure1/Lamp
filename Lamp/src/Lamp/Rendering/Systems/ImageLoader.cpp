@@ -3,7 +3,7 @@
 #include "../../Main/IOManager.h"
 #include "../../Main/Errors.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	GLTexture ImageLoader::LoadPNG(std::string filePath)
 	{

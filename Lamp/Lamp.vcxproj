@@ -140,7 +140,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Lamp\Main\CactusEngine.h" />
+    <ClInclude Include="src\Lamp\Application.h" />
+    <ClInclude Include="src\Lamp\EntryPoint.h" />
+    <ClInclude Include="src\Lamp\Main\Lamp.h" />
     <ClInclude Include="src\Lamp\Main\Errors.h" />
     <ClInclude Include="src\Lamp\Main\IOManager.h" />
     <ClInclude Include="src\Lamp\Main\InputManager.h" />
@@ -158,7 +160,8 @@
     <ClInclude Include="src\Lamp\Rendering\Textures\picoPNG.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Lamp\Main\CactusEngine.cpp" />
+    <ClCompile Include="src\Lamp\Application.cpp" />
+    <ClCompile Include="src\Lamp\Main\Lamp.cpp" />
     <ClCompile Include="src\Lamp\Main\Errors.cpp" />
     <ClCompile Include="src\Lamp\Main\IOManager.cpp" />
     <ClCompile Include="src\Lamp\Main\InputManager.cpp" />

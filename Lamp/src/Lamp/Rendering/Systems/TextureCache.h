@@ -5,7 +5,7 @@
 
 #include "../Textures/GLTexture.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	class TextureCache
 	{

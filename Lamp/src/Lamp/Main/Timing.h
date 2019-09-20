@@ -1,6 +1,6 @@
 #pragma once
 
-namespace CactusEngine
+namespace Lamp
 {
 	class FPSLimiter
 	{

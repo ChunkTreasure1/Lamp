@@ -1,6 +1,6 @@
 #include "SandboxApp.h"
 
-#include <Lamp/Main/CactusEngine.h>
+#include <Lamp/Main/Lamp.h>
 #include <iostream>
 #include <Lamp/Main/Errors.h>
 #include <Lamp/Rendering/Systems/ResourceManager.h>
@@ -31,7 +31,7 @@ void MainGame::Run()
 //Initializes all the necessary systems
 void MainGame::InitSystems()
 {
-	CactusEngine::Initialize();
+	Lamp::Initialize();
 
 	//Creates a window
 	m_Window.Initialize("Lamp", m_WindowWidth, m_WindowHeight, 0);
@@ -171,9 +171,9 @@ void MainGame::DrawGame()
 
 	glm::vec4 pos(0.f, 0.f, 50.f, 50.f);
 	glm::vec4 uv(0.f, 0.f, 1.f, 1.f);
-	static CactusEngine::GLTexture texture = CactusEngine::ResourceManager::GetTexture("Textures/ff.png");
+	static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/ff.png");
 	
-	CactusEngine::Color color;
+	Lamp::Color color;
 	color.R = 255;
 	color.G = 255;
 	color.B = 255;

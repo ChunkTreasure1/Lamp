@@ -1,6 +1,6 @@
 #include "InputManager.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	InputManager::InputManager() :
 		m_MouseCoords(0.f)

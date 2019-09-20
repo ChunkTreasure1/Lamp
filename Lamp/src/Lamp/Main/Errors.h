@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace CactusEngine
+namespace Lamp
 {
 	extern void FatalError(std::string errorString);
 }

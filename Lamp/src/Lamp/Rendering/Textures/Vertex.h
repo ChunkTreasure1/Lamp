@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-namespace CactusEngine
+namespace Lamp
 {
 	struct UV
 	{

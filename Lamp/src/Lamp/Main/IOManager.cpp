@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-namespace CactusEngine
+namespace Lamp
 {
 	bool IOManager::ReadFileToBuffer(std::string filePath, std::vector<unsigned char>& buffer)
 	{

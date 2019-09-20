@@ -4,7 +4,7 @@
 #include <iostream>
 #include <SDL/SDL.h>
 
-void CactusEngine::FatalError(std::string errorString)
+void Lamp::FatalError(std::string errorString)
 {
 	std::cout << errorString << std::endl;
 	std::cout << "Enter any key to quit...";

@@ -1,6 +1,6 @@
 #include "Camera2D.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	Camera2D::Camera2D()
 		: m_Position(0.f, 0.f),

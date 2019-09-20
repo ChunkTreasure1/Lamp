@@ -14,6 +14,7 @@
 
 #include <Lamp/Main/InputManager.h>
 #include <Lamp/Main/Timing.h>
+#include <Lamp/Application.h>
 
 enum class GameState
 {
@@ -21,11 +22,11 @@ enum class GameState
 	eGS_Exit
 };
 
-class MainGame
+class SandboxApp : Lamp::Application
 {
 public:
-	MainGame();
-	~MainGame();
+	SandboxApp();
+	~SandboxApp();
 
 	//Functions
 	void Run();
@@ -42,17 +43,17 @@ private:
 	void InitShaders();
 
 	//Member vars
-	CactusEngine::Window m_Window;
+	Lamp::Window m_Window;
 	int m_WindowHeight;
 	int m_WindowWidth;
 
 	GameState m_GameState;
-	CactusEngine::GLSLProgram m_ColorProgram;
-	CactusEngine::FPSLimiter m_FPSLimiter;
+	Lamp::GLSLProgram m_ColorProgram;
+	Lamp::FPSLimiter m_FPSLimiter;
 
-	CactusEngine::Camera2D m_Camera;
-	CactusEngine::SpriteBatch m_SpriteBatch;
-	CactusEngine::InputManager m_InputManager;
+	Lamp::Camera2D m_Camera;
+	Lamp::SpriteBatch m_SpriteBatch;
+	Lamp::InputManager m_InputManager;
 
 	float m_Time;
 	float m_FPS;

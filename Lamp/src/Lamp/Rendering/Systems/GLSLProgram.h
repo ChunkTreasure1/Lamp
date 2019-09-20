@@ -3,7 +3,7 @@
 #include <string>
 #include <GL/glew.h>
 
-namespace CactusEngine
+namespace Lamp
 {
 	class GLSLProgram
 	{

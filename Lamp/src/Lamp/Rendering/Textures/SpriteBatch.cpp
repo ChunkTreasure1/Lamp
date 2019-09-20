@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace CactusEngine
+namespace Lamp
 {
 	SpriteBatch::SpriteBatch() : m_VBO(0), m_VAO(0)
 	{}
@@ -178,13 +178,13 @@ namespace CactusEngine
 	{
 		switch (m_SortType)
 		{
-		case CactusEngine::GlyphSortType::FRONT_TO_BACK:
+		case Lamp::GlyphSortType::FRONT_TO_BACK:
 			std::stable_sort(m_Glyphs.begin(), m_Glyphs.end(), FrontToBackSort);
 			break;
-		case CactusEngine::GlyphSortType::BACK_TO_FRONT:
+		case Lamp::GlyphSortType::BACK_TO_FRONT:
 			std::stable_sort(m_Glyphs.begin(), m_Glyphs.end(), BackToFrontSort);
 			break;
-		case CactusEngine::GlyphSortType::TEXTURE:
+		case Lamp::GlyphSortType::TEXTURE:
 			std::stable_sort(m_Glyphs.begin(), m_Glyphs.end(), TextureSort);
 			break;
 		}

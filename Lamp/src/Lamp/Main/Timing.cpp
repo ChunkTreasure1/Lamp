@@ -2,7 +2,7 @@
 
 #include <SDL/SDL.h>
 
-namespace CactusEngine
+namespace Lamp
 {
 	FPSLimiter::FPSLimiter()
 	{

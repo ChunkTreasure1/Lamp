@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Lamp\Main\CactusEngine.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Main\Errors.h">
       <Filter>Main</Filter>
     </ClInclude>
@@ -63,11 +60,13 @@
     <ClInclude Include="src\Lamp\Rendering\Textures\picoPNG.h">
       <Filter>Rendering\Textures</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Application.h" />
+    <ClInclude Include="src\Lamp\EntryPoint.h" />
+    <ClInclude Include="src\Lamp\Main\Lamp.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Lamp\Main\CactusEngine.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Main\Errors.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -106,6 +105,10 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Textures\picoPNG.cpp">
       <Filter>Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Application.cpp" />
+    <ClCompile Include="src\Lamp\Main\Lamp.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

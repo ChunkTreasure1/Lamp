@@ -2,7 +2,7 @@
 
 #include "TextureCache.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	class ResourceManager
 	{

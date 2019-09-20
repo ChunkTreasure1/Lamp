@@ -6,7 +6,7 @@
 
 #include "Vertex.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	enum class GlyphSortType
 	{

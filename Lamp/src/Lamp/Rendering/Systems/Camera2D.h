@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace CactusEngine
+namespace Lamp
 {
 	class Camera2D
 	{

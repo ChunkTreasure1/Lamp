@@ -1,7 +1,7 @@
 #include "Window.h"
 #include "Errors.h"
 
-namespace CactusEngine
+namespace Lamp
 {
 	Window::Window()
 	{}
