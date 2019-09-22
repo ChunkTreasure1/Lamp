@@ -30,12 +30,6 @@
     <ClInclude Include="src\Lamp\Rendering\Camera2D.h">
       <Filter>Rendering\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\ResourceManager.h">
-      <Filter>Rendering\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Sprite.h">
-      <Filter>Rendering\Textures</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h">
       <Filter>Rendering\Textures</Filter>
     </ClInclude>
@@ -63,6 +57,11 @@
     <ClInclude Include="src\Lamp\Rendering\Texture\GLTexture.h">
       <Filter>Rendering\Textures</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Input\ResourceManager.h">
+      <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp" />
@@ -77,12 +76,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Camera2D.cpp">
       <Filter>Rendering\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\ResourceManager.cpp">
-      <Filter>Rendering\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Sprite.cpp">
-      <Filter>Rendering\Textures</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\SpriteBatch.cpp">
       <Filter>Rendering\Textures</Filter>
@@ -105,5 +98,10 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
       <Filter>Rendering\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Input\ResourceManager.cpp">
+      <Filter>Rendering\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Sprite.cpp" />
   </ItemGroup>
 </Project>

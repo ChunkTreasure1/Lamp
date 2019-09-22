@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Vertex.h"
+#include "Lamp/Rendering/Sprite.h"
 
 namespace Lamp
 {
@@ -53,7 +54,7 @@ namespace Lamp
 		void Begin(GlyphSortType sortType = GlyphSortType::TEXTURE);
 		void End();
 
-		void Draw(const glm::vec4& destRect, const glm::vec4& uvRect, GLuint texture, float depth, const Color& color);
+		void Draw(Sprite& sprite);
 		void RenderBatches();
 
 	private:
