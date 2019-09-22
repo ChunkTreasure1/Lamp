@@ -43,7 +43,7 @@ namespace Lamp
 			FatalError("Could not initialize GLEW!");
 
 		}
-		printf("***	OpenGL Version: %s ***", glGetString(GL_VERSION));
+		printf("***	OpenGL Version: %s ***\n", glGetString(GL_VERSION));
 
 		SetIsVSync(props.IsVSync);
 

@@ -34,27 +34,27 @@ namespace Lamp
 	}
 
 	//Draws the a sprite
-	void SpriteBatch::Draw(const glm::vec4& destRect, const glm::vec4& uvRect, GLuint texture, float depth, const Color & color)
+	void SpriteBatch::Draw(Sprite& sprite)
 	{
 		Glyph *newGlyph = new Glyph;
-		newGlyph->Texture = texture;
-		newGlyph->Depth = depth;
+		newGlyph->Texture = sprite.GetTexuture();
+		newGlyph->Depth = sprite.GetDepth();
 
-		newGlyph->TopLeft.Color = color;
-		newGlyph->TopLeft.SetPos(destRect.x, destRect.y + destRect.w);
-		newGlyph->TopLeft.SetUV(uvRect.x, uvRect.y + uvRect.w);
+		newGlyph->TopLeft.Color = sprite.GetColor();
+		newGlyph->TopLeft.SetPos(sprite.GetDestRect().x, sprite.GetDestRect().y + sprite.GetDestRect().w);
+		newGlyph->TopLeft.SetUV(sprite.GetUVRect().x, sprite.GetUVRect().y + sprite.GetUVRect().w);
 
-		newGlyph->BottomLeft.Color = color;
-		newGlyph->BottomLeft.SetPos(destRect.x, destRect.y);
-		newGlyph->BottomLeft.SetUV(uvRect.x, uvRect.y);
+		newGlyph->BottomLeft.Color = sprite.GetColor();
+		newGlyph->BottomLeft.SetPos(sprite.GetDestRect().x, sprite.GetDestRect().y);
+		newGlyph->BottomLeft.SetUV(sprite.GetUVRect().x, sprite.GetUVRect().y);
 
-		newGlyph->BottomRight.Color = color;
-		newGlyph->BottomRight.SetPos(destRect.x + destRect.z, destRect.y);
-		newGlyph->BottomRight.SetUV(uvRect.x + uvRect.z, uvRect.y);
+		newGlyph->BottomRight.Color = sprite.GetColor();
+		newGlyph->BottomRight.SetPos(sprite.GetDestRect().x + sprite.GetDestRect().z, sprite.GetDestRect().y);
+		newGlyph->BottomRight.SetUV(sprite.GetUVRect().x + sprite.GetUVRect().z, sprite.GetUVRect().y);
 
-		newGlyph->TopRight.Color = color;
-		newGlyph->TopRight.SetPos(destRect.x + destRect.z, destRect.y + destRect.w);
-		newGlyph->TopRight.SetUV(uvRect.x + uvRect.w, uvRect.y + uvRect.w);
+		newGlyph->TopRight.Color = sprite.GetColor();
+		newGlyph->TopRight.SetPos(sprite.GetDestRect().x + sprite.GetDestRect().z, sprite.GetDestRect().y + sprite.GetDestRect().w);
+		newGlyph->TopRight.SetUV(sprite.GetUVRect().x + sprite.GetUVRect().w, sprite.GetUVRect().y + sprite.GetUVRect().w);
 
 		m_Glyphs.push_back(newGlyph);
 	}

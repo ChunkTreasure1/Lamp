@@ -1,9 +1,6 @@
 #pragma once
 #include "Window.h"
-#include "Lamp/Rendering/Camera2D.h"
-#include "Lamp/Rendering/SpriteBatch.h"
-#include "Lamp/Rendering/Shader/Shader.h"
-#include "Lamp/Timing.h"
+#include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
 {
@@ -14,21 +11,20 @@ namespace Lamp
 		virtual ~Application();
 
 		void Run();
-		void Initialize();
-		void DrawGame();
+
+	public:
+		static Renderer* s_pRenderer;
 
 	private:
-		static const bool m_Running = true;
-		
+		static const bool m_sRunning = true;
+
+	private:
 		Window* m_pWindow;
-		Camera2D* m_pCamera;
-		SpriteBatch* m_pSpritebatch;
-		Shader* m_pShader;
-		FPSLimiter* m_pFPSLimiter;
 
 		float m_Time = 0;
 		float m_FPS = 0;
 	};
 	
 	static Application* CreateApplication();
+	static void AddSprite(Sprite& sprite);
 }
