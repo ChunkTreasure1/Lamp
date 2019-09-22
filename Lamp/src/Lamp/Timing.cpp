@@ -1,6 +1,5 @@
 #include "Timing.h"
-
-#include <SDL/SDL.h>
+#include "GLFW/glfw3.h"
 
 namespace Lamp
 {
@@ -12,21 +11,13 @@ namespace Lamp
 	//Called on the beginning of a frame
 	void FPSLimiter::Begin()
 	{
-		m_StartTicks = SDL_GetTicks();
+		m_StartTicks = glfwGetTime();
 	}
 
 	//Called on the end of a frame
 	float FPSLimiter::End()
 	{
 		CalculateFPS();
-
-		//Used to limit fps
-		float endTicks = (float)SDL_GetTicks() - m_StartTicks;
-		//Delay the fps if it's over 60
-		if (1000.0f / m_MaxFPS > endTicks)
-		{
-			SDL_Delay(uint32_t(1000.0f / m_MaxFPS - endTicks));
-		}
 
 		return m_FPS;
 	}
@@ -38,10 +29,10 @@ namespace Lamp
 		static float frameTimes[NUM_SAMPLES];
 		static int currentFrame = 0;
 
-		static uint32_t prevTicks = SDL_GetTicks();
+		static uint32_t prevTicks = glfwGetTime();
 
 		uint32_t currentTicks;
-		currentTicks = SDL_GetTicks();
+		currentTicks = glfwGetTime();
 
 		m_FrameTime = currentTicks - prevTicks;
 		frameTimes[currentFrame % NUM_SAMPLES] = m_FrameTime;

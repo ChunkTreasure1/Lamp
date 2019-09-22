@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SDL/SDL.h>
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <string>
 
 namespace Lamp
@@ -18,21 +18,13 @@ namespace Lamp
 		bool IsVSync;
 	};
 
-	enum WindowFlags
-	{
-		WINDOW_INVISIBLE = 0x1,
-		WINDOW_FULLSCREEN = 0x2,
-		WINDOW_BORDERLESS = 0x4
-	};
-
 	class Window
 	{
 	public:
-		Window(WindowProps& props = WindowProps(), uint32_t currentFlags = 0);
+		Window(WindowProps& props = WindowProps());
 		~Window();
 
 		//Functions
-		int Initialize(std::string windowName, uint32_t windowWidth, uint32_t windowHeight, uint32_t currentFlags);
 		void SwapBuffer();
 
 		//Getting
@@ -45,7 +37,7 @@ namespace Lamp
 
 	private:
 		//Member vars
-		SDL_Window* m_pWindow;
+		GLFWwindow* m_pWindow;
 		WindowProps m_Data;
 	};
 }

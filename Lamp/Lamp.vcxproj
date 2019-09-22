@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lamp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -87,8 +87,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;SDL2test.lib;SDL2main.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\glew;vendor\SDL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\glew;vendor\glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -111,8 +111,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;SDL2test.lib;SDL2main.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\glew;vendor\SDL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\glew;vendor\glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -135,8 +135,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32s.lib;SDL2test.lib;SDL2main.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\glew;vendor\SDL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\glew;vendor\glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -146,36 +146,36 @@
     <ClInclude Include="src\Lamp\Errors.h" />
     <ClInclude Include="src\Lamp\Input\IOManager.h" />
     <ClInclude Include="src\Lamp\Input\InputManager.h" />
+    <ClInclude Include="src\Lamp\Input\ResourceManager.h" />
+    <ClInclude Include="src\Lamp\Rendering\Camera2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Sprite.h" />
+    <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture\GLTexture.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture\ImageLoader.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture\TextureCache.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture\picoPNG.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertex.h" />
     <ClInclude Include="src\Lamp\Timing.h" />
     <ClInclude Include="src\Lamp\Window.h" />
-    <ClInclude Include="src\Lamp\Rendering\Camera2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture\ImageLoader.h" />
-    <ClInclude Include="src\Lamp\Input\ResourceManager.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture\TextureCache.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture\GLTexture.h" />
-    <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertex.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture\picoPNG.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp" />
     <ClCompile Include="src\Lamp\Errors.cpp" />
     <ClCompile Include="src\Lamp\Input\IOManager.cpp" />
     <ClCompile Include="src\Lamp\Input\InputManager.cpp" />
+    <ClCompile Include="src\Lamp\Input\ResourceManager.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Camera2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Sprite.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\SpriteBatch.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture\ImageLoader.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture\TextureCache.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp" />
     <ClCompile Include="src\Lamp\Timing.cpp" />
     <ClCompile Include="src\Lamp\Window.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Camera2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture\ImageLoader.cpp" />
-    <ClCompile Include="src\Lamp\Input\ResourceManager.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture\TextureCache.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\SpriteBatch.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

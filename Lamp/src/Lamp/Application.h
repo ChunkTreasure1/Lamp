@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "GLFW/glfw3.h"
 #include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
@@ -26,5 +27,4 @@ namespace Lamp
 	};
 	
 	static Application* CreateApplication();
-	static void AddSprite(Sprite& sprite);
 }

@@ -40,16 +40,14 @@ project "Lamp"
 	libdirs 
 	{
 		"%{prj.name}/vendor/glew",
-		"%{prj.name}/vendor/SDL"
+		"%{prj.name}/vendor/glfw"
 	}
 	
 	links 
 	{
-		"opengl32.lib",
 		"glew32s.lib",
-		"SDL2test.lib",
-		"SDL2main.lib",
-		"SDL2.lib"
+		"glfw3.lib",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"

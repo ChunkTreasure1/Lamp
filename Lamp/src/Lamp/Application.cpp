@@ -1,5 +1,4 @@
 #include "Application.h"
-#include <SDL/SDL.h>
 #include <iostream>
 
 #include "Lamp/Rendering/Texture/GLTexture.h"
@@ -11,9 +10,10 @@ namespace Lamp
 
 	Application::Application()
 	{
-		//Initialize SDL
-		SDL_Init(SDL_INIT_EVERYTHING);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		if (!glfwInit())
+		{
+			//LOG
+		}
 
 		//Create the window
 		m_pWindow = new Window();
