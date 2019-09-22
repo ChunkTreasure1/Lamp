@@ -47,7 +47,7 @@ namespace Lamp
 		{
 			m_pFPSLimiter->Begin();
 
-			m_Time += 0.01;
+			m_Time += 0.01f;
 			m_pCamera->Update();
 			DrawGame();
 
@@ -72,7 +72,7 @@ namespace Lamp
 	{
 		//Clear the screen
 		glClearDepth(1.0);
-		glClearColor(0.1, 0.1, 0.1, 1);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Bind the shader

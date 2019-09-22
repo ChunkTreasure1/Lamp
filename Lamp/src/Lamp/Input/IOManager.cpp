@@ -18,11 +18,11 @@ namespace Lamp
 
 		//Seek to end of file and get the file size
 		file.seekg(0, std::ios::end);
-		int fileSize = file.tellg();
+		int fileSize = (int)file.tellg();
 		file.seekg(0, std::ios::beg);
 
 		//Remove file header bytes
-		fileSize -= file.tellg();
+		fileSize -= (int)file.tellg();
 
 		//Resize the buffer
 		buffer.resize(fileSize);

@@ -38,9 +38,9 @@ namespace Lamp
 		static float frameTimes[NUM_SAMPLES];
 		static int currentFrame = 0;
 
-		static float prevTicks = SDL_GetTicks();
+		static uint32_t prevTicks = SDL_GetTicks();
 
-		float currentTicks;
+		uint32_t currentTicks;
 		currentTicks = SDL_GetTicks();
 
 		m_FrameTime = currentTicks - prevTicks;
