@@ -3,6 +3,7 @@
 #include "Lamp/Rendering/Camera2D.h"
 #include "Lamp/Rendering/SpriteBatch.h"
 #include "Lamp/Rendering/Shader/Shader.h"
+#include "Lamp/Timing.h"
 
 namespace Lamp
 {
@@ -14,6 +15,7 @@ namespace Lamp
 
 		void Run();
 		void Initialize();
+		void DrawGame();
 
 	private:
 		static const bool m_Running = true;
@@ -22,6 +24,10 @@ namespace Lamp
 		Camera2D* m_pCamera;
 		SpriteBatch* m_pSpritebatch;
 		Shader* m_pShader;
+		FPSLimiter* m_pFPSLimiter;
+
+		float m_Time = 0;
+		float m_FPS = 0;
 	};
 	
 	static Application* CreateApplication();

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Textures/GLTexture.h"
+#include "Lamp/Rendering/Texture/GLTexture.h"
 
 #include <string>
 

@@ -1,5 +1,5 @@
 #include "IOManager.h"
-#include "Errors.h"
+#include "Lamp/Errors.h"
 
 #include <fstream>
 
@@ -11,7 +11,7 @@ namespace Lamp
 		std::ifstream file(filePath, std::ios::binary);
 		if (file.fail())
 		{
-			perror(filePath.c_str());
+			//perror(filePath.c_str());
 			FatalError("Could not open " + filePath + "!");
 			return false;
 		}

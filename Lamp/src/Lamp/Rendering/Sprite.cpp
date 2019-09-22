@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 #include "Vertex.h"
-#include "../Systems/ResourceManager.h"
+#include "Lamp/Rendering/ResourceManager.h"
 
 namespace Lamp
 {

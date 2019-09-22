@@ -4,12 +4,7 @@
 
 namespace Lamp
 {
-	FPSLimiter::FPSLimiter()
-	{
-	}
-
-	//Initialized the FPS limiter
-	void FPSLimiter::Initialize(float maxFPS)
+	FPSLimiter::FPSLimiter(float maxFPS)
 	{
 		SetMaxFPS(maxFPS);
 	}
@@ -26,11 +21,11 @@ namespace Lamp
 		CalculateFPS();
 
 		//Used to limit fps
-		float endTicks = SDL_GetTicks() - m_StartTicks;
+		float endTicks = (float)SDL_GetTicks() - m_StartTicks;
 		//Delay the fps if it's over 60
 		if (1000.0f / m_MaxFPS > endTicks)
 		{
-			SDL_Delay(1000.0f / m_MaxFPS - endTicks);
+			SDL_Delay(uint32_t(1000.0f / m_MaxFPS - endTicks));
 		}
 
 		return m_FPS;

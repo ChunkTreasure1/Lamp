@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lamp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -153,7 +153,7 @@
     <ClInclude Include="src\Lamp\Rendering\Texture\ImageLoader.h" />
     <ClInclude Include="src\Lamp\Rendering\ResourceManager.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture\TextureCache.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shader\GLTexture.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture\GLTexture.h" />
     <ClInclude Include="src\Lamp\Rendering\Sprite.h" />
     <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertex.h" />

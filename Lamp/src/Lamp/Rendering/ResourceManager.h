@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TextureCache.h"
+#include "Lamp/Rendering/Texture/TextureCache.h"
 
 namespace Lamp
 {

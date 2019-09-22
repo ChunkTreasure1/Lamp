@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
-#include "GLTexture.h"
+#include "Lamp/Rendering/Texture/GLTexture.h"
 
 #include <string>
 

@@ -42,9 +42,6 @@
     <ClInclude Include="src\Lamp\Rendering\Vertex.h">
       <Filter>Rendering\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Shader\GLTexture.h">
-      <Filter>Rendering\Textures</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture\TextureCache.h">
       <Filter>Rendering\Systems</Filter>
     </ClInclude>
@@ -62,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
       <Filter>Rendering\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Texture\GLTexture.h">
+      <Filter>Rendering\Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

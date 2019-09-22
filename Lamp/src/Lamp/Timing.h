@@ -5,10 +5,9 @@ namespace Lamp
 	class FPSLimiter
 	{
 	public:
-		FPSLimiter();
+		FPSLimiter(float maxFPS);
 
 		//Funcitons
-		void Initialize(float maxFPS);
 		void Begin();
 		float End();
 

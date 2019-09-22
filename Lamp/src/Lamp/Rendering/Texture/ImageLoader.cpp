@@ -1,7 +1,7 @@
 #include "ImageLoader.h"
-#include "../Textures/picoPNG.h"
-#include "../../Main/IOManager.h"
-#include "../../Main/Errors.h"
+#include "Lamp/Rendering/Texture/picoPNG.h"
+#include "Lamp/Input/IOManager.h"
+#include "Lamp/Errors.h"
 
 namespace Lamp
 {

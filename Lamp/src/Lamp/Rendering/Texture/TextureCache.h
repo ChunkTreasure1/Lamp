@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include "../Textures/GLTexture.h"
+#include "Lamp/Rendering/Texture/GLTexture.h"
 
 namespace Lamp
 {
