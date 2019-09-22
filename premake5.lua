@@ -46,8 +46,8 @@ project "Lamp"
 	links 
 	{
 		"glew32s.lib",
-		"glfw3.lib",
-		"opengl32.lib"
+		"opengl32.lib",
+		"glfw3.lib"
 	}
 
 	filter "system:windows"
