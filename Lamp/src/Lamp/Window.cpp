@@ -3,38 +3,18 @@
 
 namespace Lamp
 {
-	Window::Window(WindowProps& props, uint32_t currentFlags)
+	Window::Window(WindowProps& props)
 	{
-		//Get the window flags
-		Uint32 flags = SDL_WINDOW_OPENGL;
-		if (currentFlags & WINDOW_INVISIBLE)
+		//Create the window
+		m_pWindow = glfwCreateWindow(props.Width, props.Height, props.Title.c_str(), NULL, NULL);
+		if (!m_pWindow)
 		{
-			flags |= SDL_WINDOW_HIDDEN;
-		}
-		if (currentFlags & WINDOW_FULLSCREEN)
-		{
-			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-		}
-		if (currentFlags & WINDOW_BORDERLESS)
-		{
-			flags |= SDL_WINDOW_BORDERLESS;
+			glfwTerminate();
+			//LOG
 		}
 
-		//Create a window and check it for errors
-		m_pWindow = SDL_CreateWindow(props.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			props.Width, props.Height, SDL_WINDOW_OPENGL);
-
-		if (m_pWindow == nullptr)
-		{
-			FatalError("SDL Window could not be created!");
-		}
-
-		//Create a OpenGL context and error check it
-		SDL_GLContext glContext = SDL_GL_CreateContext(m_pWindow);
-		if (glContext == nullptr)
-		{
-			FatalError("SDL_GL context could not be created!");
-		}
+		//Set the current context
+		glfwMakeContextCurrent(m_pWindow);
 
 		//Initialize GLEW and error check it
 		GLenum error = glewInit();
@@ -60,24 +40,25 @@ namespace Lamp
 	Window::~Window()
 	{
 		delete m_pWindow;
+		glfwTerminate();
 	}
 
 	//Swaps the rendering buffer
 	void Window::SwapBuffer()
 	{
 		//Swap the windows
-		SDL_GL_SwapWindow(m_pWindow);
+		glfwSwapBuffers(m_pWindow);
 	}
 
 	inline void Window::SetIsVSync(bool state)
 	{
 		if (state)
 		{
-			SDL_GL_SetSwapInterval(1);
+			glfwSwapInterval(1);
 		}
 		else
 		{
-			SDL_GL_SetSwapInterval(0);
+			glfwSwapInterval(0);
 		}
 
 		m_Data.IsVSync = state;

@@ -26,5 +26,4 @@ namespace Lamp
 	};
 	
 	static Application* CreateApplication();
-	static void AddSprite(Sprite& sprite);
 }
