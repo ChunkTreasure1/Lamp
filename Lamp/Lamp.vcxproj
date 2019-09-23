@@ -142,8 +142,11 @@
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
     <ClInclude Include="src\Lamp\Application.h" />
+    <ClInclude Include="src\Lamp\Core.h" />
     <ClInclude Include="src\Lamp\EntryPoint.h" />
     <ClInclude Include="src\Lamp\Errors.h" />
+    <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
+    <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Input\IOManager.h" />
     <ClInclude Include="src\Lamp\Input\InputManager.h" />
     <ClInclude Include="src\Lamp\Input\ResourceManager.h" />

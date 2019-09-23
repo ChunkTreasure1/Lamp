@@ -76,6 +76,9 @@
     <ClInclude Include="src\Lamp\Window.h">
       <Filter>Lamp</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Event\Event.h" />
+    <ClInclude Include="src\Lamp\Core.h" />
+    <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
