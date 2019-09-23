@@ -1,6 +1,6 @@
+#include "lppch.h"
 #include "Application.h"
 
-#include "Lamp/Log.h"
 #include "Lamp/Event/ApplicationEvent.h"
 
 namespace Lamp

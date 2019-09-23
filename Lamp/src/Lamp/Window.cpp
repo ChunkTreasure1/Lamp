@@ -1,5 +1,5 @@
+#include "lppch.h"
 #include "Window.h"
-#include "Lamp/Log.h"
 
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Event/KeyEvent.h"
@@ -105,13 +105,13 @@ namespace Lamp
 				case GLFW_PRESS:
 				{
 					MouseButtonPressedEvent event(button);
-					data.EventCallback(button);
+					data.EventCallback(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
 					MouseButtonReleasedEvent event(button);
-					data.EventCallback(button);
+					data.EventCallback(event);
 					break;
 				}
 			}

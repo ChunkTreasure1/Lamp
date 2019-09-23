@@ -1,9 +1,5 @@
+#include "lppch.h"
 #include "Shader.h"
-#include "Lamp/Log.h"
-
-#include <fstream>
-#include <vector>
-#include <filesystem>
 
 namespace Lamp
 {

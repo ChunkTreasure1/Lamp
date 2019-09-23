@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "Timing.h"
 #include "GLFW/glfw3.h"
 

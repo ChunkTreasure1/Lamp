@@ -1,7 +1,7 @@
+#include "lppch.h"
 #include "ImageLoader.h"
 #include "Lamp/Rendering/Texture/picoPNG.h"
 #include "Lamp/Input/IOManager.h"
-#include "Lamp/Errors.h"
 
 namespace Lamp
 {
@@ -16,12 +16,12 @@ namespace Lamp
 
 		if (!IOManager::ReadFileToBuffer(filePath, in))
 		{
-			FatalError("Failed to load PNG file to buffer");
+			LP_CORE_ERROR("Failed to load PNG file to buffer!");
 		}
 		int errorCode = decodePNG(out, width, height, &(in[0]), in.size());
 		if (errorCode != 0)
 		{
-			FatalError("decodePNG failed with error: " + std::to_string(errorCode));
+			LP_CORE_ERROR("decodePNG failed with error: " + std::to_string(errorCode));
 		}
 
 		glGenTextures(1, &(texture.Id));

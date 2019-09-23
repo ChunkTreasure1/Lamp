@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "Camera2D.h"
 
 namespace Lamp

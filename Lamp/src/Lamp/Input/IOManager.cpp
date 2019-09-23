@@ -1,7 +1,5 @@
+#include "lppch.h"
 #include "IOManager.h"
-#include "Lamp/Errors.h"
-
-#include <fstream>
 
 namespace Lamp
 {
@@ -11,8 +9,7 @@ namespace Lamp
 		std::ifstream file(filePath, std::ios::binary);
 		if (file.fail())
 		{
-			//perror(filePath.c_str());
-			FatalError("Could not open " + filePath + "!");
+			LP_CORE_ERROR("Could not open " + filePath + "!");
 			return false;
 		}
 

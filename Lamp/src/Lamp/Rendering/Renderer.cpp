@@ -1,7 +1,6 @@
+#include "lppch.h"
 #include "Renderer.h"
 #include "Lamp/Input/ResourceManager.h"
-
-#include <iostream>
 
 namespace Lamp
 {
