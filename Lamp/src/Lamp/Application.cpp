@@ -1,8 +1,6 @@
 #include "lppch.h"
 #include "Application.h"
 
-#include "Lamp/Event/ApplicationEvent.h"
-
 namespace Lamp
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -44,7 +42,7 @@ namespace Lamp
 		//Handle rest of events
 	}
 
-	bool Application::OnWindowClose()
+	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
 		return true;

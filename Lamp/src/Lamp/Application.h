@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Event/Event.h"
+#include "Lamp/Event/ApplicationEvent.h"
 
 namespace Lamp
 {
@@ -14,7 +15,7 @@ namespace Lamp
 		void Run();
 		void OnEvent(Event& e);
 
-		bool OnWindowClose();
+		bool OnWindowClose(WindowCloseEvent& e);
 
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }
