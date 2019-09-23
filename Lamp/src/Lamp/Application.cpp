@@ -1,5 +1,4 @@
 #include "Application.h"
-#include <iostream>
 
 #include "GLFW/glfw3.h"
 #include "Lamp/Rendering/Texture/GLTexture.h"
