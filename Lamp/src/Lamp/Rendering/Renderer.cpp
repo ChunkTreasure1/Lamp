@@ -1,7 +1,6 @@
+#include "lppch.h"
 #include "Renderer.h"
 #include "Lamp/Input/ResourceManager.h"
-
-#include <iostream>
 
 namespace Lamp
 {
@@ -70,7 +69,7 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_2D, 0);
 		m_pShader->Unbind();
 
-		m_pWindow->SwapBuffer();
+		m_pWindow->Update();
 
 		/////End drawing/////
 

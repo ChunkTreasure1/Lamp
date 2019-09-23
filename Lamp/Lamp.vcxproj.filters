@@ -4,6 +4,9 @@
     <Filter Include="Lamp">
       <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\Event">
+      <UniqueIdentifier>{00803F44-EC37-8191-553F-5AED41161C82}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Lamp\Input">
       <UniqueIdentifier>{AEAE8344-9A66-C591-036E-9EEDEF446082}</UniqueIdentifier>
     </Filter>
@@ -22,16 +25,25 @@
     <ClInclude Include="src\Lamp\Application.h">
       <Filter>Lamp</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\EntryPoint.h">
       <Filter>Lamp</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Errors.h">
-      <Filter>Lamp</Filter>
+    <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
+      <Filter>Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Event\Event.h">
+      <Filter>Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Event\KeyEvent.h">
+      <Filter>Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Event\MouseEvent.h">
+      <Filter>Lamp\Event</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Input\IOManager.h">
-      <Filter>Lamp\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Input\InputManager.h">
       <Filter>Lamp\Input</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Input\ResourceManager.h">
@@ -76,18 +88,13 @@
     <ClInclude Include="src\Lamp\Window.h">
       <Filter>Lamp</Filter>
     </ClInclude>
+    <ClInclude Include="src\lppch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Errors.cpp">
-      <Filter>Lamp</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Input\IOManager.cpp">
-      <Filter>Lamp\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Input\InputManager.cpp">
       <Filter>Lamp\Input</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Input\ResourceManager.cpp">
@@ -126,5 +133,6 @@
     <ClCompile Include="src\Lamp\Window.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
+    <ClCompile Include="src\lppch.cpp" />
   </ItemGroup>
 </Project>

@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "Sprite.h"
 
 namespace Lamp

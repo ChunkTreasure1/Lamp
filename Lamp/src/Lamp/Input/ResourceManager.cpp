@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "ResourceManager.h"
 
 namespace Lamp

@@ -1,7 +1,6 @@
+#include "lppch.h"
 #include "TextureCache.h"
 #include "ImageLoader.h"
-
-#include <iostream>
 
 namespace Lamp
 {

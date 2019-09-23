@@ -1,23 +1,21 @@
+#include "lppch.h"
 #include "Application.h"
-
-#include "GLFW/glfw3.h"
-#include "Lamp/Rendering/Texture/GLTexture.h"
-#include "Lamp/Input/ResourceManager.h"
-#include "Lamp/Log.h"
 
 namespace Lamp
 {
+#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+
+	Application* Application::s_pInstance = nullptr;
 	Renderer* Application::s_pRenderer = nullptr;
 
 	Application::Application()
 	{
-		if (!glfwInit())
-		{
-			LP_CORE_ERROR("Could not initialize GLFW");
-		}
+		s_pInstance = this;
 
 		//Create the window
 		m_pWindow = new Window();
+		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
 		s_pRenderer = new Renderer(m_pWindow);
 	}
 
@@ -28,9 +26,25 @@ namespace Lamp
 
 	void Application::Run()
 	{
-		while (m_sRunning)
+		while (m_Running)
 		{
 			s_pRenderer->Draw();
 		}
+	}
+
+	void Application::OnEvent(Event & e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+
+		LP_CORE_TRACE("{0}", e);
+
+		//Handle rest of events
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 }

@@ -22,6 +22,9 @@ project "Lamp"
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 
+	pchheader "lppch.h"
+	pchsource "Lamp/lppch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",

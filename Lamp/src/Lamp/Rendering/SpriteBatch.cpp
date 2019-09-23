@@ -1,6 +1,5 @@
+#include "lppch.h"
 #include "SpriteBatch.h"
-
-#include <algorithm>
 
 namespace Lamp
 {

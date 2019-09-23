@@ -1,4 +1,4 @@
-#include "Log.h"
+#include "lppch.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Lamp
