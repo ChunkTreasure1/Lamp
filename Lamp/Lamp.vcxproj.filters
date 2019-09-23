@@ -52,9 +52,6 @@
     <ClInclude Include="src\Lamp\Log.h">
       <Filter>Lamp</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Camera2D.h">
-      <Filter>Lamp\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Renderer.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
@@ -82,13 +79,21 @@
     <ClInclude Include="src\Lamp\Rendering\Vertex.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Timing.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Window.h">
       <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="src\Lamp\Layer\Layer.h" />
+    <ClInclude Include="src\Lamp\Core\Timestep.h" />
+    <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
+    <ClInclude Include="src\Lamp\Input\Input.h" />
+    <ClInclude Include="src\Lamp\Input\WindowsInput.h" />
+    <ClInclude Include="src\Lamp\Input\KeyCodes.h" />
+    <ClInclude Include="src\Lamp\Input\MouseButtonCodes.h" />
+    <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h">
+      <Filter>Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\OrthographicCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
@@ -102,9 +107,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Log.cpp">
       <Filter>Lamp</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Camera2D.cpp">
-      <Filter>Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp">
       <Filter>Lamp\Rendering</Filter>
@@ -127,12 +129,16 @@
     <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp">
       <Filter>Lamp\Rendering\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Timing.cpp">
-      <Filter>Lamp</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Window.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
+    <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
+    <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp">
+      <Filter>Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\OrthographicCameraController.cpp" />
   </ItemGroup>
 </Project>

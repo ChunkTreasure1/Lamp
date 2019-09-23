@@ -7,6 +7,11 @@
 
 namespace Lamp
 {
+	static void GLFWErrorCallback(int error, const char* description)
+	{
+		LP_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+	}
+
 	Window::Window(WindowProps& props)
 	{
 		Init(props);
@@ -24,6 +29,8 @@ namespace Lamp
 		{
 			LP_CORE_ERROR("Could not initialize GLFW");
 		}
+
+		glfwSetErrorCallback(GLFWErrorCallback);
 
 		//Create the window
 		m_pWindow = glfwCreateWindow(props.Width, props.Height, props.Title.c_str(), NULL, NULL);
@@ -121,7 +128,7 @@ namespace Lamp
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer;
 			
-			MouseScrolledEvent event(xOffset, yOffset);
+			MouseScrolledEvent event((float)xOffset, (float)yOffset);
 			data.EventCallback(event);
 		});
 
@@ -141,7 +148,7 @@ namespace Lamp
 		glfwSwapBuffers(m_pWindow);
 	}
 
-	void Window::Update()
+	void Window::Update(Timestep ts)
 	{
 		glfwPollEvents();
 		SwapBuffer();

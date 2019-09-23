@@ -4,13 +4,10 @@
 
 namespace Lamp
 {
-	Renderer::Renderer(Window* pWindow)
+	Renderer::Renderer()
+		: m_CameraController(1280.f / 720.f)
 	{
-		m_pWindow = pWindow;
 
-		//Create the camera
-		m_pCamera.reset(new Camera2D);
-		
 		//Setup shader
 		m_pShader.reset(new Shader("Shaders/colorShading.vert", "Shaders/colorShading.frag"));
 
@@ -21,15 +18,14 @@ namespace Lamp
 		m_pShader->LinkShaders();
 
 		m_pSpriteBatch.reset(new SpriteBatch());
-		m_pFPSLimiter.reset(new FPSLimiter(75.f));
 	}
 
 	Renderer::~Renderer()
 	{}
 
-	void Renderer::Draw()
+	void Renderer::Draw(Timestep ts)
 	{
-		m_pCamera->Update();
+		m_CameraController.Update(ts);
 
 		/////Draw Game /////
 
@@ -49,7 +45,7 @@ namespace Lamp
 
 		//Set the camera matrix
 		GLuint location = m_pShader->GetUniformLocation("P");
-		glm::mat4 cameraMatrix = m_pCamera->GetMatrix();
+		glm::mat4 cameraMatrix = m_CameraController.GetCamera().GetViewProjectionMatrix();
 		glUniformMatrix4fv(location, 1, GL_FALSE, &(cameraMatrix[0][0]));
 
 		//Start drawing
@@ -67,8 +63,11 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_2D, 0);
 		m_pShader->Unbind();
 
-		m_pWindow->Update();
-
 		/////End drawing/////
+	}
+
+	void Renderer::OnEvent(Event & e)
+	{
+		m_CameraController.OnEvent(e);
 	}
 }

@@ -2,7 +2,10 @@
 #include "Window.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Event/Event.h"
+
 #include "Lamp/Event/ApplicationEvent.h"
+#include "Lamp/Layer/Layer.h"
+#include "Lamp/Layer/LayerStack.h"
 
 namespace Lamp
 {
@@ -14,6 +17,9 @@ namespace Lamp
 
 		void Run();
 		void OnEvent(Event& e);
+
+		void PushLayer(Layer* pLayer);
+		void PushOverlay(Layer* pLayer);
 
 		bool OnWindowClose(WindowCloseEvent& e);
 
@@ -28,10 +34,10 @@ namespace Lamp
 
 	private:
 		Window* m_pWindow;
+		LayerStack m_LayerStack;
 
 		bool m_Running = true;
-		float m_Time = 0;
-		float m_FPS = 0;
+		float m_LastFrameTime = 0.f;
 	};
 	
 	static Application* CreateApplication();

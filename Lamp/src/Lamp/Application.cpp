@@ -16,7 +16,7 @@ namespace Lamp
 		m_pWindow = new Window();
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		s_pRenderer = new Renderer(m_pWindow);
+		s_pRenderer = new Renderer();
 	}
 
 	Application::~Application()
@@ -28,7 +28,18 @@ namespace Lamp
 	{
 		while (m_Running)
 		{
-			s_pRenderer->Draw();
+			float time = (float)glfwGetTime();
+			Timestep timestep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
+
+			LP_CORE_INFO("Test");
+
+			for (Layer* layer : m_LayerStack)
+			{
+				layer->Update(timestep);
+			}
+			s_pRenderer->Draw(timestep);	
+			m_pWindow->Update(timestep);
 		}
 	}
 
@@ -40,6 +51,26 @@ namespace Lamp
 		LP_CORE_TRACE("{0}", e);
 
 		//Handle rest of events
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+			{
+				break;
+			}
+		}
+	
+		s_pRenderer->OnEvent(e);
+	}
+
+	void Application::PushLayer(Layer * pLayer)
+	{
+		m_LayerStack.PushLayer(pLayer);
+	}
+
+	void Application::PushOverlay(Layer * pLayer)
+	{
+		m_LayerStack.PushOverlay(pLayer);
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
