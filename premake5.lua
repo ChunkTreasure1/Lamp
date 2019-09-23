@@ -37,7 +37,8 @@ project "Lamp"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/include",
-		"%{prj.name}/vendor/GLFW/include"
+		"%{prj.name}/vendor/GLFW/include",
+		"%{prj.name}/vendor/spdlog/include"
 	}
 
 	libdirs 
@@ -97,7 +98,8 @@ project "Sandbox"
 	{
 		"Lamp/src",
 		"Lamp/vendor/include",
-		"Lamp/vendor/GLFW/include"
+		"Lamp/vendor/GLFW/include",
+		"Lamp/vendor/spdlog/include"
 	}
 
 	links

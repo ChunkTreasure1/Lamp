@@ -3,6 +3,7 @@
 #include "GLFW/glfw3.h"
 #include "Lamp/Rendering/Texture/GLTexture.h"
 #include "Lamp/Input/ResourceManager.h"
+#include "Lamp/Log.h"
 
 namespace Lamp
 {
@@ -12,7 +13,7 @@ namespace Lamp
 	{
 		if (!glfwInit())
 		{
-			//LOG
+			LP_CORE_ERROR("Could not initialize GLFW");
 		}
 
 		//Create the window

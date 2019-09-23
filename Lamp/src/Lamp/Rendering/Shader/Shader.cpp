@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "Lamp/Errors.h"
+#include "Lamp/Log.h"
 
 #include <fstream>
 #include <vector>
@@ -16,13 +16,13 @@ namespace Lamp
 		m_VertShaderID = glCreateShader(GL_VERTEX_SHADER);
 		if (m_VertShaderID == 0)
 		{
-			FatalError("Vertex shader failed to be created!");
+			LP_CORE_ERROR("Vertex shader failed to be created!");
 		}
 
 		m_FragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 		if (m_FragShaderID == 0)
 		{
-			FatalError("Fragment shader failed to be created!");
+			LP_CORE_ERROR("Fragment shader failed to be created!");
 		}
 
 		CompileShader(vertexShaderPath, m_VertShaderID);
@@ -61,8 +61,8 @@ namespace Lamp
 
 			// Use the infoLog as you see fit.
 
-			std::printf("%s\n", &(infoLog[0]));
-			FatalError("Shaders failed to link!");
+			LP_CORE_ERROR(&(infoLog[0]));
+			LP_CORE_ERROR("Shader failed to link!");
 		}
 
 		// Always detach shaders after a successful link.
@@ -84,7 +84,7 @@ namespace Lamp
 		GLint location = glGetUniformLocation(m_ProgramID, uniformName.c_str());
 		if (location == GL_INVALID_INDEX)
 		{
-			FatalError("Uniform" + uniformName + " not found in shader!");
+			LP_CORE_ERROR("Uniform " + uniformName + " not found in shader!");
 		}
 		return location;
 	}
@@ -119,7 +119,7 @@ namespace Lamp
 		if (vertexFile.fail())
 		{
 			perror(filePath.c_str());
-			FatalError("Failed to open " + filePath + "!");
+			LP_CORE_ERROR("Failed to open" + filePath + "!");
 		}
 
 		std::string fileContents = "";
@@ -153,7 +153,7 @@ namespace Lamp
 			glDeleteShader(id);
 
 			std::printf("%s\n", &(errorLog[0]));
-			FatalError("Shader " + filePath + " failed to compile!");
+			LP_CORE_ERROR("Shader" + filePath + "failed to compile!");
 		}
 	}
 }

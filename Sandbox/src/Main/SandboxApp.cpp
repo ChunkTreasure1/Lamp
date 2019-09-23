@@ -5,7 +5,7 @@ class Sandbox : public Lamp::Application
 public:
 	Sandbox()
 	{
-		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/ff.png");
+		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/ff.PNG");
 
 		glm::vec4 pos(0, 0, 50, 50);
 
