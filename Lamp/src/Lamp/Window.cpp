@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "Errors.h"
+#include "Lamp/Log.h"
 
 namespace Lamp
 {
@@ -10,7 +10,7 @@ namespace Lamp
 		if (!m_pWindow)
 		{
 			glfwTerminate();
-			//LOG
+			LP_CORE_ERROR("Could not create window!");
 		}
 
 		//Set the current context
@@ -20,10 +20,8 @@ namespace Lamp
 		GLenum error = glewInit();
 		if (error != GLEW_OK)
 		{
-			FatalError("Could not initialize GLEW!");
-
+			LP_CORE_ERROR("Could not initialize GLEW!");
 		}
-		printf("***	OpenGL Version: %s ***\n", glGetString(GL_VERSION));
 
 		SetIsVSync(props.IsVSync);
 

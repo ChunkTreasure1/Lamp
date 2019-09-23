@@ -14,7 +14,6 @@ namespace Lamp
 
 		//Functions
 		void Update();
-		void Initialize(int windowWidth, int windowHeight);
 		glm::vec2 ScreenToWorldCoords(glm::vec2 screenCoords);
 
 		//Setting
