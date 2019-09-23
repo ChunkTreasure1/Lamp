@@ -10,6 +10,8 @@ workspace "Lamp"
 	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+include "Lamp/vendor/GLFW"
+
 project "Lamp"
 	location "Lamp"
 	kind "StaticLib"
@@ -35,19 +37,19 @@ project "Lamp"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/include",
+		"%{prj.name}/vendor/GLFW/include"
 	}
 
 	libdirs 
 	{
 		"%{prj.name}/vendor/glew",
-		"%{prj.name}/vendor/glfw"
 	}
 	
 	links 
 	{
+		"GLFW",
 		"glew32s.lib",
-		"opengl32.lib",
-		"glfw3.lib"
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -95,6 +97,7 @@ project "Sandbox"
 	{
 		"Lamp/src",
 		"Lamp/vendor/include",
+		"Lamp/vendor/GLFW/include"
 	}
 
 	links

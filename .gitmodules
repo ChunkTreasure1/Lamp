@@ -1,0 +1,3 @@
+[submodule "Lamp/vendor/GLFW"]
+	path = Lamp/vendor/GLFW
+	url = https://github.com/TheCherno/glfw
