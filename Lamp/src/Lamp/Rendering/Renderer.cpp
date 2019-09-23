@@ -29,8 +29,6 @@ namespace Lamp
 
 	void Renderer::Draw()
 	{
-		m_pFPSLimiter->Begin();
-		m_Time += 0.01f;
 		m_pCamera->Update();
 
 		/////Draw Game /////
@@ -72,17 +70,5 @@ namespace Lamp
 		m_pWindow->Update();
 
 		/////End drawing/////
-
-		m_FPS = m_pFPSLimiter->End();
-
-		//Print the FPS every 10 frames
-		static uint32_t frameCount = 0;
-		frameCount++;
-
-		if (frameCount == 10)
-		{
-			std::cout << m_FPS << std::endl;
-			frameCount = 0;
-		}
 	}
 }

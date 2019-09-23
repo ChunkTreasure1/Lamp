@@ -25,12 +25,8 @@ namespace Lamp
 		std::unique_ptr<Camera2D> m_pCamera;
 		std::unique_ptr<SpriteBatch> m_pSpriteBatch;
 		std::unique_ptr<Shader> m_pShader;
-		std::unique_ptr<FPSLimiter> m_pFPSLimiter;
 
 		Window* m_pWindow;
 		std::vector<Sprite> m_RenderSprites;
-
-		float m_Time;
-		float m_FPS;
 	};
 }
