@@ -12,15 +12,17 @@ namespace Lamp
 		s_pInstance = this;
 
 		//Create the window
-		m_pWindow = new Window();
+		m_pWindow = std::unique_ptr<Window>(new Window());
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+		//m_pImGuiLayer = new ImGuiLayer();
+		//PushOverlay(m_pImGuiLayer);
 
 		Renderer::Initialize();
 	}
 
 	Application::~Application()
 	{
-		delete m_pWindow;
 	}
 
 	void Application::Run()
@@ -35,6 +37,16 @@ namespace Lamp
 			{
 				layer->Update(timestep);
 			}	
+
+			//m_pImGuiLayer->Begin();
+
+			//for (Layer* pLayer : m_LayerStack)
+			//{
+			//	pLayer->OnImGuiRender();
+			//}
+
+			//m_pImGuiLayer->End();
+
 			m_pWindow->Update(timestep);
 		}
 	}

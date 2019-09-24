@@ -7,6 +7,8 @@
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
 
+//#include "ImGui/ImGuiLayer.h"
+
 namespace Lamp
 {
 	class Application
@@ -30,7 +32,8 @@ namespace Lamp
 		static Application* s_pInstance;
 
 	private:
-		Window* m_pWindow;
+		std::unique_ptr<Window> m_pWindow;
+		//ImGuiLayer* m_pImGuiLayer;
 		LayerStack m_LayerStack;
 
 		bool m_Running = true;

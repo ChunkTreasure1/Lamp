@@ -15,10 +15,8 @@ public:
 		m_pShader->LinkShaders();
 
 		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/vlad.PNG");
-		glm::vec4 pos(0, 0, 50, 50);
+		glm::vec4 pos(10, 10, 50, 50);
 		sprite = new Lamp::Sprite(pos, texture.Id, 0.f);
-
-		//Lamp::Renderer::AddSprite(sprite);
 	}
 
 	void Update(Lamp::Timestep ts) override

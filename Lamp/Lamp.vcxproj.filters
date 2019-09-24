@@ -116,6 +116,7 @@
       <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
@@ -170,5 +171,7 @@
       <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
   </ItemGroup>
 </Project>
