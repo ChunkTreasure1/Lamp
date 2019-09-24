@@ -4,11 +4,17 @@
     <Filter Include="Lamp">
       <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\Core">
+      <UniqueIdentifier>{278946DB-93F3-FA51-DC31-ACF748DBD8A6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Lamp\Event">
       <UniqueIdentifier>{00803F44-EC37-8191-553F-5AED41161C82}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lamp\Input">
       <UniqueIdentifier>{AEAE8344-9A66-C591-036E-9EEDEF446082}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\Layer">
+      <UniqueIdentifier>{7BFBB244-67B3-F491-D0BA-CDEDBC918F82}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lamp\Rendering">
       <UniqueIdentifier>{7C879B2E-6855-8F34-51E9-FF5A3D566B99}</UniqueIdentifier>
@@ -28,6 +34,9 @@
     <ClInclude Include="src\Lamp\Core.h">
       <Filter>Lamp</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Timestep.h">
+      <Filter>Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\EntryPoint.h">
       <Filter>Lamp</Filter>
     </ClInclude>
@@ -46,11 +55,35 @@
     <ClInclude Include="src\Lamp\Input\IOManager.h">
       <Filter>Lamp\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Input\Input.h">
+      <Filter>Lamp\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Input\KeyCodes.h">
+      <Filter>Lamp\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Input\MouseButtonCodes.h">
+      <Filter>Lamp\Input</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Input\ResourceManager.h">
       <Filter>Lamp\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Input\WindowsInput.h">
+      <Filter>Lamp\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Layer\Layer.h">
+      <Filter>Lamp\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Layer\LayerStack.h">
+      <Filter>Lamp\Layer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Log.h">
       <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h">
+      <Filter>Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\OrthographicCameraController.h">
+      <Filter>Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Renderer.h">
       <Filter>Lamp\Rendering</Filter>
@@ -83,17 +116,6 @@
       <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
-    <ClInclude Include="src\Lamp\Layer\Layer.h" />
-    <ClInclude Include="src\Lamp\Core\Timestep.h" />
-    <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
-    <ClInclude Include="src\Lamp\Input\Input.h" />
-    <ClInclude Include="src\Lamp\Input\WindowsInput.h" />
-    <ClInclude Include="src\Lamp\Input\KeyCodes.h" />
-    <ClInclude Include="src\Lamp\Input\MouseButtonCodes.h" />
-    <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h">
-      <Filter>Lamp\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\OrthographicCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
@@ -105,8 +127,23 @@
     <ClCompile Include="src\Lamp\Input\ResourceManager.cpp">
       <Filter>Lamp\Input</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Input\WindowsInput.cpp">
+      <Filter>Lamp\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Layer\Layer.cpp">
+      <Filter>Lamp\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
+      <Filter>Lamp\Layer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Log.cpp">
       <Filter>Lamp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp">
+      <Filter>Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\OrthographicCameraController.cpp">
+      <Filter>Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp">
       <Filter>Lamp\Rendering</Filter>
@@ -133,12 +170,5 @@
       <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
-    <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
-    <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
-    <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp">
-      <Filter>Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\OrthographicCameraController.cpp" />
   </ItemGroup>
 </Project>

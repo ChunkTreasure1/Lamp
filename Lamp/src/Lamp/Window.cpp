@@ -126,7 +126,7 @@ namespace Lamp
 
 		glfwSetScrollCallback(m_pWindow, [](GLFWwindow* pWindow, double xOffset, double yOffset)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer;
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWindow);
 			
 			MouseScrolledEvent event((float)xOffset, (float)yOffset);
 			data.EventCallback(event);

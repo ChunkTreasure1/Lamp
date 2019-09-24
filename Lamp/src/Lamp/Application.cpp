@@ -32,8 +32,6 @@ namespace Lamp
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			LP_CORE_INFO("Test");
-
 			for (Layer* layer : m_LayerStack)
 			{
 				layer->Update(timestep);

@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lamp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -152,8 +152,8 @@
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />
     <ClInclude Include="src\Lamp\Event\MouseEvent.h" />
-    <ClInclude Include="src\Lamp\Input\Input.h" />
     <ClInclude Include="src\Lamp\Input\IOManager.h" />
+    <ClInclude Include="src\Lamp\Input\Input.h" />
     <ClInclude Include="src\Lamp\Input\KeyCodes.h" />
     <ClInclude Include="src\Lamp\Input\MouseButtonCodes.h" />
     <ClInclude Include="src\Lamp\Input\ResourceManager.h" />
