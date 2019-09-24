@@ -26,9 +26,6 @@ namespace Lamp
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }
 
-	public:
-		static Renderer* s_pRenderer;
-
 	private:
 		static Application* s_pInstance;
 

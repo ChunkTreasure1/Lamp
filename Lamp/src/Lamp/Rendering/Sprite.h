@@ -22,6 +22,8 @@ namespace Lamp
 
 		//Setting
 		inline void SetPosition(uint32_t pos) { m_Position = pos; }
+		inline void SetDestRect(const glm::vec4& destRect) { m_DestinationRectangle = destRect; }
+		inline void SetTexture(GLuint texture) { m_Texture = texture; }
 
 	private:
 		Color m_Color;
@@ -29,7 +31,7 @@ namespace Lamp
 		glm::vec4 m_UVRect;
 
 		GLuint m_Texture;
-		float m_Depth;
+		float m_Depth = 0.f;
 		uint32_t m_Position;
 	};
 }

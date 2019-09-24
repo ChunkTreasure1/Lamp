@@ -6,7 +6,6 @@ namespace Lamp
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application* Application::s_pInstance = nullptr;
-	Renderer* Application::s_pRenderer = nullptr;
 
 	Application::Application()
 	{
@@ -16,7 +15,7 @@ namespace Lamp
 		m_pWindow = new Window();
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		s_pRenderer = new Renderer();
+		Renderer::Initialize();
 	}
 
 	Application::~Application()
@@ -35,8 +34,7 @@ namespace Lamp
 			for (Layer* layer : m_LayerStack)
 			{
 				layer->Update(timestep);
-			}
-			s_pRenderer->Draw(timestep);	
+			}	
 			m_pWindow->Update(timestep);
 		}
 	}
@@ -57,8 +55,6 @@ namespace Lamp
 				break;
 			}
 		}
-	
-		s_pRenderer->OnEvent(e);
 	}
 
 	void Application::PushLayer(Layer * pLayer)
