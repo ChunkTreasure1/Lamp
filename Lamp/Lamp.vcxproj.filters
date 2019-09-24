@@ -10,6 +10,9 @@
     <Filter Include="Lamp\Event">
       <UniqueIdentifier>{00803F44-EC37-8191-553F-5AED41161C82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\ImGui">
+      <UniqueIdentifier>{D9738244-C52B-C491-2E33-9DED1A0A5F82}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Lamp\Input">
       <UniqueIdentifier>{AEAE8344-9A66-C591-036E-9EEDEF446082}</UniqueIdentifier>
     </Filter>
@@ -51,6 +54,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\MouseEvent.h">
       <Filter>Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h">
+      <Filter>Lamp\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Input\IOManager.h">
       <Filter>Lamp\Input</Filter>
@@ -116,11 +122,16 @@
       <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
-    <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
       <Filter>Lamp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp">
+      <Filter>Lamp\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp">
+      <Filter>Lamp\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Input\IOManager.cpp">
       <Filter>Lamp\Input</Filter>
@@ -171,7 +182,5 @@
       <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
-    <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
   </ItemGroup>
 </Project>

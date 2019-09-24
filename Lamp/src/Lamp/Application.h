@@ -7,7 +7,7 @@
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
 
-//#include "ImGui/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 
 namespace Lamp
 {
@@ -33,7 +33,7 @@ namespace Lamp
 
 	private:
 		std::unique_ptr<Window> m_pWindow;
-		//ImGuiLayer* m_pImGuiLayer;
+		ImGuiLayer* m_pImGuiLayer;
 		LayerStack m_LayerStack;
 
 		bool m_Running = true;

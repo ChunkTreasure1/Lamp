@@ -15,8 +15,8 @@ namespace Lamp
 		m_pWindow = std::unique_ptr<Window>(new Window());
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		//m_pImGuiLayer = new ImGuiLayer();
-		//PushOverlay(m_pImGuiLayer);
+		m_pImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_pImGuiLayer);
 
 		Renderer::Initialize();
 	}
@@ -38,14 +38,14 @@ namespace Lamp
 				layer->Update(timestep);
 			}	
 
-			//m_pImGuiLayer->Begin();
+			m_pImGuiLayer->Begin();
 
-			//for (Layer* pLayer : m_LayerStack)
-			//{
-			//	pLayer->OnImGuiRender();
-			//}
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnImGuiRender();
+			}
 
-			//m_pImGuiLayer->End();
+			m_pImGuiLayer->End();
 
 			m_pWindow->Update(timestep);
 		}

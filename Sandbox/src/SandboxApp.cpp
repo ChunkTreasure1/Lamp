@@ -33,6 +33,11 @@ public:
 		Lamp::Renderer::End();
 	}
 
+	virtual void OnImGuiRender() override
+	{
+
+	}
+
 	void OnEvent(Lamp::Event& e) override
 	{
 		m_CameraController.OnEvent(e);

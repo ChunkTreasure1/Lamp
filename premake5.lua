@@ -54,6 +54,7 @@ project "Lamp"
 	links 
 	{
 		"GLFW",
+		"ImGui",
 		"glew32s.lib",
 		"opengl32.lib"
 	}
