@@ -13,20 +13,27 @@ namespace Lamp
 	class Renderer
 	{
 	public:
-		Renderer();
-		~Renderer();
+		static void Initialize();
 
-		void Draw(Timestep ts);
-		void OnEvent(Event& e);
+		static void Begin(OrthographicCamera& camera);
+		static void End();
 
-		inline void AddSprite(Sprite& sprite) { m_RenderSprites.push_back(sprite); sprite.SetPosition(m_RenderSprites.size() - 1); }
-		inline void RemoveSprite(Sprite& sprite) { m_RenderSprites.erase(m_RenderSprites.begin() + sprite.GetPosition()); }
+		static void AddSprite(Sprite& sprite) { m_RenderSprites.push_back(sprite); sprite.SetPosition(m_RenderSprites.size() - 1); }
+		static void RemoveSprite(Sprite& sprite) { m_RenderSprites.erase(m_RenderSprites.begin() + sprite.GetPosition()); }
 
-	private:
-		OrthographicCameraController m_CameraController;
-		std::unique_ptr<SpriteBatch> m_pSpriteBatch;
-		std::unique_ptr<Shader> m_pShader;
+		static void Draw(const std::shared_ptr<Shader>& shader, const Sprite& sprite);
+		static void SetClearColor(const glm::vec4& color) { glClearColor(color.r, color.g, color.g, color.a); glClearDepth(1.f); }
+		static void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
-		std::vector<Sprite> m_RenderSprites;
+	private: 
+		struct SceneData
+		{
+			glm::mat4 ViewProjectionMatrix;
+		};
+
+		static SceneData* s_pSceneData;
+
+		static SpriteBatch* m_pSpriteBatch;
+		static std::vector<Sprite> m_RenderSprites;
 	};
 }

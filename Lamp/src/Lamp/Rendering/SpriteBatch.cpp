@@ -5,12 +5,16 @@ namespace Lamp
 {
 	SpriteBatch::SpriteBatch() : m_VBO(0), m_VAO(0)
 	{
-		//Creates the vertex array
-		CreateVertexArray();
 	}
 
 	SpriteBatch::~SpriteBatch()
 	{}
+
+	void SpriteBatch::Initialize()
+	{
+		//Creates the vertex array
+		CreateVertexArray();
+	}
 
 	//Begins the sprite batch
 	void SpriteBatch::Begin(GlyphSortType sortType)
@@ -33,7 +37,7 @@ namespace Lamp
 	}
 
 	//Draws the a sprite
-	void SpriteBatch::Draw(Sprite& sprite)
+	void SpriteBatch::Draw(const Sprite& sprite)
 	{
 		Glyph *newGlyph = new Glyph;
 		newGlyph->Texture = sprite.GetTexuture();

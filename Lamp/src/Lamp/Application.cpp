@@ -6,22 +6,23 @@ namespace Lamp
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application* Application::s_pInstance = nullptr;
-	Renderer* Application::s_pRenderer = nullptr;
 
 	Application::Application()
 	{
 		s_pInstance = this;
 
 		//Create the window
-		m_pWindow = new Window();
+		m_pWindow = std::unique_ptr<Window>(new Window());
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		s_pRenderer = new Renderer();
+		m_pImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_pImGuiLayer);
+
+		Renderer::Initialize();
 	}
 
 	Application::~Application()
 	{
-		delete m_pWindow;
 	}
 
 	void Application::Run()
@@ -35,8 +36,17 @@ namespace Lamp
 			for (Layer* layer : m_LayerStack)
 			{
 				layer->Update(timestep);
+			}	
+
+			m_pImGuiLayer->Begin();
+
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnImGuiRender();
 			}
-			s_pRenderer->Draw(timestep);	
+
+			m_pImGuiLayer->End();
+
 			m_pWindow->Update(timestep);
 		}
 	}
@@ -57,8 +67,6 @@ namespace Lamp
 				break;
 			}
 		}
-	
-		s_pRenderer->OnEvent(e);
 	}
 
 	void Application::PushLayer(Layer * pLayer)

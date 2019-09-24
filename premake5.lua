@@ -11,6 +11,7 @@ workspace "Lamp"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "Lamp/vendor/GLFW"
+include "Lamp/vendor/imgui"
 
 project "Lamp"
 	location "Lamp"
@@ -41,7 +42,8 @@ project "Lamp"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/include",
 		"%{prj.name}/vendor/GLFW/include",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{prj.name}/vendor/imgui/"
 	}
 
 	libdirs 
@@ -52,6 +54,7 @@ project "Lamp"
 	links 
 	{
 		"GLFW",
+		"ImGui",
 		"glew32s.lib",
 		"opengl32.lib"
 	}
@@ -102,7 +105,8 @@ project "Sandbox"
 		"Lamp/src",
 		"Lamp/vendor/include",
 		"Lamp/vendor/GLFW/include",
-		"Lamp/vendor/spdlog/include"
+		"Lamp/vendor/spdlog/include",
+		"Lamp/vendor"
 	}
 
 	links

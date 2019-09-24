@@ -51,10 +51,11 @@ namespace Lamp
 		~SpriteBatch();
 
 		//Functions
+		void Initialize();
 		void Begin(GlyphSortType sortType = GlyphSortType::TEXTURE);
 		void End();
 
-		void Draw(Sprite& sprite);
+		void Draw(const Sprite& sprite);
 		void RenderBatches();
 
 	private:
@@ -69,8 +70,8 @@ namespace Lamp
 		static bool TextureSort(Glyph *a, Glyph *b);
 
 		//Member vars
-		GLuint m_VBO;
-		GLuint m_VAO;
+		uint32_t m_VBO;
+		uint32_t m_VAO;
 		GlyphSortType m_SortType;
 
 		std::vector<Glyph*> m_Glyphs;
