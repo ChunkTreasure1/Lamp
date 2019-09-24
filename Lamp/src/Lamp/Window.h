@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include "Lamp/Event/Event.h"
+#include "Lamp/Core/Timestep.h"
 
 namespace Lamp
 {
@@ -31,7 +32,7 @@ namespace Lamp
 		//Functions
 		void Init(const WindowProps& props);
 		void SwapBuffer();
-		void Update();
+		void Update(Timestep ts);
 
 		//Getting
 		inline const uint32_t GetWidth() const { return m_Data.Width; }
