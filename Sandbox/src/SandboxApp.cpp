@@ -20,6 +20,9 @@ public:
 		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/ff.PNG");
 		glm::vec4 pos(10, 10, 50, 50);
 		sprite = new Lamp::Sprite(pos, texture.Id, 0.f);
+
+		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
+		Lamp::Renderer::CreateTexture(m_FBOTexture);
 	}
 
 	void Update(Lamp::Timestep ts) override
@@ -29,11 +32,17 @@ public:
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
+		Lamp::Renderer::BindFBO(m_FBO);
+		Lamp::Renderer::Clear();
+
 		Lamp::Renderer::Begin(m_CameraController.GetCamera());
 
 		Lamp::Renderer::Draw(m_pShader, *sprite);
 
 		Lamp::Renderer::End();
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_FBOTexture, 0);
+		Lamp::Renderer::UnbindFBO();
 	}
 
 	virtual void OnImGuiRender() override
@@ -53,9 +62,17 @@ public:
 		ImGui::End();
 
 		ImGui::Begin("Scene");
+		{
+			ImVec2 pos = ImGui::GetCursorScreenPos();
 
-		ImGui::Image((void*)(intptr_t)sprite->GetTexuture(), ImVec2(100, 100));
+			ImGui::GetWindowDrawList()->AddImage((void*)m_FBOTexture,
+				ImVec2(ImGui::GetItemRectMin().x + pos.x,
+					ImGui::GetItemRectMin().y + pos.y),
+				ImVec2(pos.x + 720 / 2, pos.y + 1280 / 2),
+				ImVec2(0, 1),
+				ImVec2(1, 0));
 
+		}
 		ImGui::End();
 
 		ImGui::Begin("Test");
@@ -164,6 +181,9 @@ private:
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 	std::string title;
 	ImGuiID m_DockspaceID;
+	
+	uint32_t m_FBO;
+	uint32_t m_FBOTexture;
 };
 
 class Sandbox : public Lamp::Application
