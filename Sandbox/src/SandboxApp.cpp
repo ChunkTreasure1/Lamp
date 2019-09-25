@@ -66,22 +66,17 @@ public:
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 
 			ImGui::GetWindowDrawList()->AddImage((void*)m_FBOTexture,
-				ImVec2(ImGui::GetItemRectMin().x + pos.x,
-					ImGui::GetItemRectMin().y + pos.y),
-				ImVec2(pos.x + 720 / 2, pos.y + 1280 / 2),
+				pos,
+				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
 
 		}
 		ImGui::End();
 
-		ImGui::Begin("Test");
-		ImGui::Text("Hello");
-		ImGui::End();
-
 		if (ImGui::DockBuilderGetNode(m_DockspaceID) == NULL)
 		{
-			SetEditorLayout();
+			//SetEditorLayout();
 		}
 	}
 
