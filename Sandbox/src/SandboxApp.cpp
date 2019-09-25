@@ -17,7 +17,7 @@ public:
 
 		m_pShader->LinkShaders();
 
-		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/vlad.PNG");
+		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/ff.PNG");
 		glm::vec4 pos(10, 10, 50, 50);
 		sprite = new Lamp::Sprite(pos, texture.Id, 0.f);
 	}
@@ -38,6 +38,8 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
+		CreateDockspace();
+
 		ImGui::Begin("Color");
 
 		if (ImGui::ColorEdit3("Background color", m_FColor))
@@ -56,7 +58,6 @@ public:
 
 		if (ImGui::DockBuilderGetNode(m_DockspaceID) == NULL)
 		{
-			CreateDockspace();
 			SetEditorLayout();
 		}
 	}
@@ -83,45 +84,17 @@ public:
 
 	void CreateDockspace()
 	{
-		static bool fullscreenPersistant = true;
-		bool fullscreen = fullscreenPersistant;
 		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		if (fullscreen)
-		{
-			ImGuiViewport* pViewport = ImGui::GetMainViewport();
-			ImGui::SetNextWindowPos(pViewport->Pos);
-			ImGui::SetNextWindowSize(pViewport->Size);
-			ImGui::SetNextWindowViewport(pViewport->ID);
-
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
-			windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-			windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		}
-
-		if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
-		{
-			windowFlags |= ImGuiWindowFlags_NoBackground;
-		}
-
-		bool t = true;
-		bool* pOpen = &t;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
-		ImGui::Begin("Dockspace", pOpen, windowFlags);
+		ImGui::Begin("Dockspace");
 		ImGui::PopStyleVar();
-
-		if (fullscreen)
-		{
-			ImGui::PopStyleVar(2);
-		}
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspaceID = ImGui::GetID("MyDockspace");
 			ImGui::DockSpace(dockspaceID, ImVec2(0.f, 0.f), dockspaceFlags);
+			LP_CORE_INFO("Hit");
 
 			m_DockspaceID = dockspaceID;
 		}
