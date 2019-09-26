@@ -7,7 +7,7 @@ class RenderLayer : public Lamp::Layer
 {
 public:
 	RenderLayer()
-		: Layer("Render Layer"), m_CameraController(1280 / 720)
+		: Layer("Render Layer"), m_CameraController(m_AspectRatio)
 	{ 
 		m_pShader.reset(new Lamp::Shader("Shaders/colorShading.vert", "Shaders/colorShading.frag"));
 
@@ -63,12 +63,25 @@ public:
 
 		ImGui::Begin("Scene");
 		{
-			m_CameraController.SetAspectRatio(ImGui::GetWindowSize().x / ImGui::GetWindowSize().y);
+			if (ImGui::BeginMenuBar())
+			{
+				if (ImGui::BeginMenu("Aspect ratio"))
+				{
+
+				}
+				ImGui::EndMenuBar();
+			}
+
+			m_CameraController.SetAspectRatio(m_AspectRatio);
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 
+			float height = ImGui::GetWindowSize().x / m_AspectRatio;
+
+			float offset = (ImGui::GetWindowSize().y - height) / 2;
+
 			ImGui::GetWindowDrawList()->AddImage((void*)m_FBOTexture,
-				pos,
-				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
+				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + offset),
+				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y - offset),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
 		}
@@ -176,6 +189,8 @@ private:
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 	std::string title;
 	ImGuiID m_DockspaceID;
+
+	const float m_AspectRatio = 1.7f;
 	
 	uint32_t m_FBO;
 	uint32_t m_FBOTexture;
