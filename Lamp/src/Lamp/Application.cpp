@@ -33,20 +33,22 @@ namespace Lamp
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
+			if (!m_Minimized)
 			{
-				layer->Update(timestep);
-			}	
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->Update(timestep);
+				}
+			}
 
 			m_pImGuiLayer->Begin();
 
 			for (Layer* pLayer : m_LayerStack)
 			{
-				pLayer->OnImGuiRender();
+				pLayer->OnImGuiRender(timestep);
 			}
 
 			m_pImGuiLayer->End();
-
 			m_pWindow->Update(timestep);
 		}
 	}
@@ -55,6 +57,7 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
 		LP_CORE_TRACE("{0}", e);
 
@@ -82,6 +85,18 @@ namespace Lamp
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
+		return true;
+	}
+	bool Application::OnWindowResize(WindowResizeEvent & e)
+	{
+		if (e.GetWidth() == 0 && e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+		}
+		else
+		{
+			m_Minimized = false;
+		}
 		return true;
 	}
 }

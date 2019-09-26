@@ -14,7 +14,7 @@ namespace Lamp
 		virtual void OnDetach() {}
 		virtual void Update(Timestep ts) {}
 
-		virtual void OnImGuiRender() {}
+		virtual void OnImGuiRender(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }
