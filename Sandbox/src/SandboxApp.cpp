@@ -63,6 +63,7 @@ public:
 
 		ImGui::Begin("Scene");
 		{
+			m_CameraController.SetAspectRatio(ImGui::GetWindowSize().x / ImGui::GetWindowSize().y);
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 
 			ImGui::GetWindowDrawList()->AddImage((void*)m_FBOTexture,
@@ -70,7 +71,6 @@ public:
 				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
-
 		}
 		ImGui::End();
 

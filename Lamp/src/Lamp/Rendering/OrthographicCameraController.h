@@ -16,8 +16,12 @@ namespace Lamp
 		void Update(Timestep ts);
 		void OnEvent(Event& e);
 
+		//Getting
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
+
+		//Setting
+		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
 
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
