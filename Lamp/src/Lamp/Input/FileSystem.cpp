@@ -5,6 +5,7 @@
 
 namespace Lamp
 {
+	//Returns the paths to the files within the assets folder
 	std::vector<std::string> FileSystem::GetAssetFolders()
 	{
 		std::vector<std::string> folders;
@@ -20,6 +21,7 @@ namespace Lamp
 		return folders;
 	}
 
+	//Gets the files in a specified folder
 	std::vector<std::string> FileSystem::GetFiles(std::string & path)
 	{
 		std::vector<std::string> files;
@@ -35,6 +37,7 @@ namespace Lamp
 		return files;
 	}
 
+	//Gets the folders in a specified folder
 	std::vector<std::string> FileSystem::GetFolders(std::string & path)
 	{
 		std::vector<std::string> folders;
@@ -50,6 +53,7 @@ namespace Lamp
 		return folders;
 	}
 
+	//Returns whether or not a folder contains folders
 	bool FileSystem::ContainsFolder(std::string & path)
 	{
 		std::vector<std::string> folders;
