@@ -67,7 +67,7 @@ public:
 
 		ImGui::Begin("Scene");
 		{
-			m_CameraController.SetHasControl(ImGui::IsWindowFocused());
+			m_CameraController.SetHasControl(ImGui::IsWindowFocused() && ImGui::IsWindowHovered());
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -101,22 +101,7 @@ public:
 				{
 					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
 
-					for (int i = 0; i < folders.size(); i++)
-					{
-						if (ImGui::TreeNode(folders[i].c_str()))
-						{
-							std::string s = folders[i].c_str();
-							std::string p = "Assets/" + s;
-							std::vector<std::string> files = Lamp::FileSystem::GetFiles(p);
-
-							for (int i = 0; i < files.size(); i++)
-							{
-								ImGui::Text(files[i].c_str());
-							}
-
-							ImGui::TreePop();
-						}
-					}
+					Lamp::FileSystem::PrintFoldersAndFiles(folders);
 				}
 				ImGui::EndChild();
 			}
@@ -209,11 +194,6 @@ public:
 		}
 
 		ImGui::End();
-	}
-
-	bool ShowFiles(std::vector<std::string> paths)
-	{
-		
 	}
 
 private:
