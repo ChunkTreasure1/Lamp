@@ -3,6 +3,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 class RenderLayer : public Lamp::Layer
 {
 public:
@@ -55,11 +57,12 @@ public:
 
 		ImGui::Begin("Color");
 		{
-			if (ImGui::ColorEdit3("Background color", m_FColor))
+			if (ImGui::ColorEdit3("Background color", glm::value_ptr(m_FColor)))
 			{
-				m_ClearColor.r = m_FColor[0];
-				m_ClearColor.g = m_FColor[1];
-				m_ClearColor.b = m_FColor[2];
+				LP_CORE_INFO(m_FColor.r);
+				m_ClearColor.r = m_FColor.r;
+				m_ClearColor.g = m_FColor.g;
+				m_ClearColor.b = m_FColor.b;
 				m_ClearColor.a = 1.f;
 			}
 		}
@@ -201,7 +204,7 @@ private:
 	std::shared_ptr<Lamp::Shader> m_pShader;
 	Lamp::Sprite* sprite;
 
-	float m_FColor[3] = { 0.1f, 0.1f, 0.1f };
+	glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 	std::string title;
 	ImGuiID m_DockspaceID;
