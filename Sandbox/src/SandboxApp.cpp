@@ -9,7 +9,7 @@ class RenderLayer : public Lamp::Layer
 {
 public:
 	RenderLayer()
-		: Layer("Render Layer"), m_CameraController(m_AspectRatio)
+		: Layer("Render Layer"), m_CameraController(m_AspectRatio), m_SelectedFile("")
 	{
 		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
 
@@ -31,7 +31,7 @@ public:
 		Lamp::FileSystem::GetFiles(path);
 	}
 
-	void Update(Lamp::Timestep ts) override
+	virtual void Update(Lamp::Timestep ts) override
 	{
 		m_CameraController.Update(ts);
 
@@ -107,14 +107,29 @@ public:
 					Lamp::FileSystem::PrintFoldersAndFiles(folders);
 				}
 				ImGui::EndChild();
+
+				ImGui::SameLine();
+				ImGui::BeginChild("Viewer", ImVec2(200.f, ImGui::GetWindowSize().y * 0.85f), true);
+				{
+					if (m_SelectedFile.GetFileType() == Lamp::FileType_PNG)
+					{
+						
+					}
+				}
+				ImGui::EndChild();
 			}
 		}
 		ImGui::End();
 	}
 
-	void OnEvent(Lamp::Event& e) override
+	virtual void OnEvent(Lamp::Event& e) override
 	{
 		m_CameraController.OnEvent(e);
+	}
+
+	virtual void OnItemClicked(Lamp::File& file) override 
+	{
+		m_SelectedFile = file;
 	}
 
 	void CreateDockspace()
@@ -196,6 +211,7 @@ private:
 
 	const float m_AspectRatio = 1.7f;
 
+	Lamp::File m_SelectedFile;
 	uint32_t m_FBO;
 	uint32_t m_FBOTexture;
 	int m_CurrSample = -1;

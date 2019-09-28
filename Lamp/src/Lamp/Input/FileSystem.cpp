@@ -2,6 +2,7 @@
 #include "FileSystem.h"
 
 #include "imgui.h"
+#include "Lamp/Application.h"
 
 namespace Lamp
 {
@@ -75,7 +76,6 @@ namespace Lamp
 	//Prints all the availible folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
 	void FileSystem::PrintFoldersAndFiles(std::vector<std::string>& folders, int startId)
 	{
-
 		if (folders.size() == 0)
 		{
 			return;
@@ -91,7 +91,6 @@ namespace Lamp
 				std::string s = folders[i].c_str();
 				std::vector<std::string> files = Lamp::FileSystem::GetFiles(folders[i]);
 
-
 				for (int j = 0; j < files.size(); j++)
 				{
 					startId++;
@@ -104,7 +103,7 @@ namespace Lamp
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, p.c_str());
 					if (ImGui::IsItemClicked())
 					{
-						
+						Application::Get().OnItemClicked(File(files[j]));
 					}
 				}
 
