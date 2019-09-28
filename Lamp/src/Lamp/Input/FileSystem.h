@@ -10,7 +10,7 @@ namespace Lamp
 		static std::vector<std::string> GetFolders(std::string& path);
 
 		static bool ContainsFolder(std::string& path);
-		static void PrintFoldersAndFiles(std::vector<std::string>& files);
+		static void PrintFoldersAndFiles(std::vector<std::string>& files, int startId = -1);
 
 	};
 }

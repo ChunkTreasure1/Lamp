@@ -73,8 +73,9 @@ namespace Lamp
 	}
 
 	//Prints all the availible folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
-	void FileSystem::PrintFoldersAndFiles(std::vector<std::string>& folders)
+	void FileSystem::PrintFoldersAndFiles(std::vector<std::string>& folders, int startId)
 	{
+
 		if (folders.size() == 0)
 		{
 			return;
@@ -90,17 +91,24 @@ namespace Lamp
 				std::string s = folders[i].c_str();
 				std::vector<std::string> files = Lamp::FileSystem::GetFiles(folders[i]);
 
-				PrintFoldersAndFiles(Lamp::FileSystem::GetFolders(folders[i]));
 
-				for (int i = 0; i < files.size(); i++)
+				for (int j = 0; j < files.size(); j++)
 				{
-					std::string p = files[i];
+					startId++;
+					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+					std::string p = files[j];
 					std::size_t posp = p.find_last_of("/\\");
 					p = p.substr(posp + 1);
 
-					ImGui::Text(p.c_str());
+					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, p.c_str());
+					if (ImGui::IsItemClicked())
+					{
+						
+					}
 				}
 
+				PrintFoldersAndFiles(Lamp::FileSystem::GetFolders(folders[i]), startId);
 				ImGui::TreePop();
 			}
 		}

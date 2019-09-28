@@ -117,21 +117,6 @@ public:
 		m_CameraController.OnEvent(e);
 	}
 
-	void SetEditorLayout()
-	{
-		ImGui::DockBuilderRemoveNode(m_DockspaceID);
-		ImGui::DockBuilderAddNode(m_DockspaceID, ImGuiDockNodeFlags_DockSpace);
-		ImGui::DockBuilderSetNodeSize(m_DockspaceID, ImVec2(1280, 720));
-
-		ImGuiID dock_main_id = m_DockspaceID;
-		ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, NULL, &dock_main_id);
-		ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.20f, NULL, &dock_main_id);
-
-		ImGui::DockBuilderDockWindow("Color", dock_id_bottom);
-		ImGui::DockBuilderDockWindow("Test", dock_id_prop);
-		ImGui::DockBuilderFinish(m_DockspaceID);
-	}
-
 	void CreateDockspace()
 	{
 		static bool opt_fullscreen_persistant = true;
