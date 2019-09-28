@@ -24,6 +24,7 @@ namespace Lamp
 		void PushOverlay(Layer* pLayer);
 
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }
@@ -37,6 +38,7 @@ namespace Lamp
 		LayerStack m_LayerStack;
 
 		bool m_Running = true;
+		bool m_Minimized = false;
 		float m_LastFrameTime = 0.f;
 	};
 	

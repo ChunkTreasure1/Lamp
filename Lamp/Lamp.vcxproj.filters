@@ -122,6 +122,7 @@
       <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="src\Lamp\Input\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">
@@ -182,5 +183,6 @@
       <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
   </ItemGroup>
 </Project>

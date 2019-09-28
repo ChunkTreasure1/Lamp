@@ -64,7 +64,7 @@ namespace Lamp
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnImGuiRender()
+	void ImGuiLayer::OnImGuiRender(Timestep ts)
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);

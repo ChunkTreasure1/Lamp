@@ -3,13 +3,15 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 class RenderLayer : public Lamp::Layer
 {
 public:
 	RenderLayer()
 		: Layer("Render Layer"), m_CameraController(m_AspectRatio)
-	{ 
-		m_pShader.reset(new Lamp::Shader("Shaders/colorShading.vert", "Shaders/colorShading.frag"));
+	{
+		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
 
 		m_pShader->AddAttribute("vertexPosition");
 		m_pShader->AddAttribute("vertexColor");
@@ -17,12 +19,16 @@ public:
 
 		m_pShader->LinkShaders();
 
-		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Textures/ff.PNG");
-		glm::vec4 pos(10, 10, 50, 50);
+		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Assets/Textures/ff.PNG");
+		glm::vec4 pos(0, 0, 10, 10);
+		LP_CORE_INFO(pos.x);
 		sprite = new Lamp::Sprite(pos, texture.Id, 0.f);
 
 		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
 		Lamp::Renderer::CreateTexture(m_FBOTexture);
+
+		std::string path = "Assets";
+		Lamp::FileSystem::GetFiles(path);
 	}
 
 	void Update(Lamp::Timestep ts) override
@@ -45,24 +51,27 @@ public:
 		Lamp::Renderer::UnbindFBO();
 	}
 
-	virtual void OnImGuiRender() override
+	virtual void OnImGuiRender(Lamp::Timestep ts) override
 	{
 		CreateDockspace();
 
 		ImGui::Begin("Color");
-
-		if (ImGui::ColorEdit3("Background color", m_FColor))
 		{
-			m_ClearColor.r = m_FColor[0];
-			m_ClearColor.g = m_FColor[1];
-			m_ClearColor.b = m_FColor[2];
-			m_ClearColor.a = 1.f;
+			if (ImGui::ColorEdit3("Background color", glm::value_ptr(m_FColor)))
+			{
+				LP_CORE_INFO(m_FColor.r);
+				m_ClearColor.r = m_FColor.r;
+				m_ClearColor.g = m_FColor.g;
+				m_ClearColor.b = m_FColor.b;
+				m_ClearColor.a = 1.f;
+			}
 		}
-
 		ImGui::End();
 
 		ImGui::Begin("Scene");
 		{
+			m_CameraController.SetHasControl(ImGui::IsWindowFocused() && ImGui::IsWindowHovered());
+
 			if (ImGui::BeginMenuBar())
 			{
 				if (ImGui::BeginMenu("Aspect ratio"))
@@ -87,10 +96,20 @@ public:
 		}
 		ImGui::End();
 
-		if (ImGui::DockBuilderGetNode(m_DockspaceID) == NULL)
+		ImGui::Begin("Asset Browser");
 		{
-			//SetEditorLayout();
+			//Asset browser
+			{
+				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.2, ImGui::GetWindowSize().y * 0.85), true);
+				{
+					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
+
+					Lamp::FileSystem::PrintFoldersAndFiles(folders);
+				}
+				ImGui::EndChild();
+			}
 		}
+		ImGui::End();
 	}
 
 	void OnEvent(Lamp::Event& e) override
@@ -107,7 +126,7 @@ public:
 		ImGuiID dock_main_id = m_DockspaceID;
 		ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, NULL, &dock_main_id);
 		ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.20f, NULL, &dock_main_id);
-	
+
 		ImGui::DockBuilderDockWindow("Color", dock_id_bottom);
 		ImGui::DockBuilderDockWindow("Test", dock_id_prop);
 		ImGui::DockBuilderFinish(m_DockspaceID);
@@ -185,15 +204,16 @@ private:
 	std::shared_ptr<Lamp::Shader> m_pShader;
 	Lamp::Sprite* sprite;
 
-	float m_FColor[3] = { 0.1f, 0.1f, 0.1f };
+	glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 	std::string title;
 	ImGuiID m_DockspaceID;
 
 	const float m_AspectRatio = 1.7f;
-	
+
 	uint32_t m_FBO;
 	uint32_t m_FBOTexture;
+	int m_CurrSample = -1;
 };
 
 class Sandbox : public Lamp::Application

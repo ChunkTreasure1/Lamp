@@ -22,6 +22,7 @@ namespace Lamp
 
 		//Setting
 		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
+		void SetHasControl(bool state) { m_HasControl = state; }
 
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
@@ -33,6 +34,7 @@ namespace Lamp
 		OrthographicCamera m_Camera;
 
 		bool m_Rotation;
+		bool m_HasControl;
 
 		glm::vec3 m_CameraPosition = { 0.f, 0.f, 0.f };
 		float m_CameraRotation = 0.f;
