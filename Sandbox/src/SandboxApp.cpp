@@ -109,11 +109,12 @@ public:
 				ImGui::EndChild();
 
 				ImGui::SameLine();
-				ImGui::BeginChild("Viewer", ImVec2(200.f, ImGui::GetWindowSize().y * 0.85f), true);
+				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
 				{
 					if (m_SelectedFile.GetFileType() == Lamp::FileType_PNG)
 					{
-						
+						Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
+						ImGui::Image((void *)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f));
 					}
 				}
 				ImGui::EndChild();
