@@ -30,6 +30,7 @@ project "LampEntity"
 		
 		includedirs
 		{
+			"%{prj.name}/src",
 			"Lamp/src",
 			"Lamp/vendor/spdlog/include",
 			"Lamp/vendor"
