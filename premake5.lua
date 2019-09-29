@@ -12,6 +12,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
+include "Lamp/extensions/LampEntity"
 
 project "Lamp"
 	location "Lamp"
@@ -24,7 +25,7 @@ project "Lamp"
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 
 	pchheader "lppch.h"
-	pchsource "Lamp/lppch.cpp"
+	pchsource "Lamp/src/lppch.cpp"
 
 	files
 	{
@@ -53,6 +54,7 @@ project "Lamp"
 	
 	links 
 	{
+		"LampEntity",
 		"GLFW",
 		"ImGui",
 		"glew32s.lib",
@@ -83,7 +85,7 @@ project "Lamp"
 			defines "LP_DIST"
 			runtime "Release"
 			optimize "on"
-
+			
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"

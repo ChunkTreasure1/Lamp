@@ -55,22 +55,9 @@ public:
 	{
 		CreateDockspace();
 
-		ImGui::Begin("Color");
-		{
-			if (ImGui::ColorEdit3("Background color", glm::value_ptr(m_FColor)))
-			{
-				LP_CORE_INFO(m_FColor.r);
-				m_ClearColor.r = m_FColor.r;
-				m_ClearColor.g = m_FColor.g;
-				m_ClearColor.b = m_FColor.b;
-				m_ClearColor.a = 1.f;
-			}
-		}
-		ImGui::End();
-
 		ImGui::Begin("Scene");
 		{
-			m_CameraController.SetHasControl(ImGui::IsWindowFocused() && ImGui::IsWindowHovered());
+			m_CameraController.SetHasControl(ImGui::IsWindowHovered());
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -100,7 +87,7 @@ public:
 		{
 			//Asset browser
 			{
-				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.2, ImGui::GetWindowSize().y * 0.85), true);
+				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12, ImGui::GetWindowSize().y * 0.85), true);
 				{
 					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
 
@@ -111,10 +98,10 @@ public:
 				ImGui::SameLine();
 				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
 				{
-					if (m_SelectedFile.GetFileType() == Lamp::FileType_PNG)
+					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
 					{
 						Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
-						ImGui::Image((void *)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f));
+						ImGui::Image((void *)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
 					}
 				}
 				ImGui::EndChild();

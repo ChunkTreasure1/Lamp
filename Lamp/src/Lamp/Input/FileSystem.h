@@ -5,8 +5,8 @@ namespace Lamp
 	enum FileType
 	{
 		FileType_Empty = 0,
-		FileType_PNG,
-		FileType_TXT
+		FileType_Texture,
+		FileType_Text
 	};
 
 	class File
@@ -22,11 +22,11 @@ namespace Lamp
 
 			if (s == "PNG" || s == "png")
 			{
-				m_FileType = FileType_PNG;
+				m_FileType = FileType_Texture;
 			}
 			else if (s == "TXT" || s == "txt")
 			{
-				m_FileType = FileType_TXT;
+				m_FileType = FileType_Text;
 			}
 			else
 			{

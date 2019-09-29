@@ -199,12 +199,13 @@
     <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp" />
     <ClCompile Include="src\Lamp\Window.cpp" />
     <ClCompile Include="src\lppch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="extensions\LampEntity\LampEntity.vcxproj">
+      <Project>{8CE3757A-789B-B7C7-E1A2-9023CD7952B8}</Project>
+    </ProjectReference>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
     </ProjectReference>
