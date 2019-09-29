@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Lamp\vendor\imgui\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lamp", "Lamp\Lamp.vcxproj", "{6F67887C-5B9E-890D-048B-6F10F0A0050F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LampEntity", "Lamp\extensions\LampEntity\LampEntity.vcxproj", "{8CE3757A-789B-B7C7-E1A2-9023CD7952B8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LampEntity", "LampEntity\LampEntity.vcxproj", "{8CE3757A-789B-B7C7-E1A2-9023CD7952B8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}"
 EndProject

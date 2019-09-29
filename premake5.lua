@@ -12,7 +12,40 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
-include "Lamp/extensions/LampEntity"
+
+project "LampEntity"
+	location "LampEntity"
+	kind "StaticLib"
+	language "C++"
+	cppdialect "C++17"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+		
+		files
+		{
+			"%{prj.name}/src/**.h",
+			"%{prj.name}/src/**.cpp"
+		}
+		
+		includedirs
+		{
+			"Lamp/src",
+			"Lamp/vendor/spdlog/include",
+			"Lamp/vendor"
+		}
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "On"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "on"
 
 project "Lamp"
 	location "Lamp"

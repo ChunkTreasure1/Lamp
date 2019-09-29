@@ -203,7 +203,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="extensions\LampEntity\LampEntity.vcxproj">
+    <ProjectReference Include="..\LampEntity\LampEntity.vcxproj">
       <Project>{8CE3757A-789B-B7C7-E1A2-9023CD7952B8}</Project>
     </ProjectReference>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
