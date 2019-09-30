@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include <LampEntity/Entity/Entity.h>
+
 #include "Vertex.h"
 #include "Lamp/Rendering/Sprite.h"
 
@@ -55,7 +57,7 @@ namespace Lamp
 		void Begin(GlyphSortType sortType = GlyphSortType::TEXTURE);
 		void End();
 
-		void Draw(const Sprite& sprite);
+		void Draw(const std::unique_ptr<LampEntity::IEntity>& pEntity);
 		void RenderBatches();
 
 	private:

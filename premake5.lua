@@ -79,7 +79,8 @@ project "Lamp"
 		"%{prj.name}/vendor/include",
 		"%{prj.name}/vendor/GLFW/include",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/imgui/"
+		"%{prj.name}/vendor/imgui/",
+		"LampEntity/src"
 	}
 
 	libdirs 
@@ -143,7 +144,8 @@ project "Sandbox"
 		"Lamp/vendor/include",
 		"Lamp/vendor/GLFW/include",
 		"Lamp/vendor/spdlog/include",
-		"Lamp/vendor"
+		"Lamp/vendor",
+		"LampEntity/src"
 	}
 
 	links

@@ -43,8 +43,6 @@ public:
 
 		Lamp::Renderer::Begin(m_CameraController.GetCamera());
 
-		Lamp::Renderer::Draw(m_pShader, *sprite);
-
 		Lamp::Renderer::End();
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_FBOTexture, 0);

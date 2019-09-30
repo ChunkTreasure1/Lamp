@@ -119,15 +119,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\BaseComponents\SpriteComponent.h" />
-    <ClInclude Include="src\Component\Component.h" />
-    <ClInclude Include="src\Component\EntityComponent.h" />
-    <ClInclude Include="src\Entity\Entity.h" />
+    <ClInclude Include="src\LampEntity\BaseComponents\SpriteComponent.h" />
+    <ClInclude Include="src\LampEntity\BaseComponents\TransformComponent.h" />
+    <ClInclude Include="src\LampEntity\Component\EntityComponent.h" />
+    <ClInclude Include="src\LampEntity\Entity\Entity.h" />
+    <ClInclude Include="src\LampEntity\Entity\EntityManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaseComponents\SpriteComponent.cpp" />
-    <ClCompile Include="src\Component\EntityComponent.cpp" />
-    <ClCompile Include="src\Entity\Entity.cpp" />
+    <ClCompile Include="src\LampEntity\BaseComponents\SpriteComponent.cpp" />
+    <ClCompile Include="src\LampEntity\BaseComponents\TransformComponent.cpp" />
+    <ClCompile Include="src\LampEntity\Component\EntityComponent.cpp" />
+    <ClCompile Include="src\LampEntity\Entity\Entity.cpp" />
+    <ClCompile Include="src\LampEntity\Entity\EntityManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

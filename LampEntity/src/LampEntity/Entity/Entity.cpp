@@ -24,7 +24,7 @@ namespace LampEntity
 	}
 
 	template<typename T, typename... TArgs>
-	T & IEntity::GetOrCreateComponent(TArgs&&... mArgs)
+	T * IEntity::GetOrCreateComponent(TArgs&&... mArgs)
 	{
 		if (!m_ComponentBitSet[GetComponentTypeID()<T>])
 		{
@@ -38,7 +38,7 @@ namespace LampEntity
 
 			c->Initialize();
 
-			return *C;
+			return C;
 		}
 		else
 		{
@@ -67,10 +67,5 @@ namespace LampEntity
 		{
 			return false;
 		}
-	}
-
-	IEntity * IEntity::Create()
-	{
-		return new IEntity();
 	}
 }

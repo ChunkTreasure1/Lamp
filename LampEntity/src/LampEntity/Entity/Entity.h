@@ -4,7 +4,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-#include "Component/EntityComponent.h"
+#include "LampEntity/Component/EntityComponent.h"
 
 namespace LampEntity
 {
@@ -12,9 +12,9 @@ namespace LampEntity
 	{
 	public:
 		IEntity() {}
-		~IEntity();
+		~IEntity() {};
 		void Update();
-		void Draw();
+		void Draw() {};
 
 		//Getting
 		inline const bool GetIsActive() const { return m_IsActive; }
@@ -26,7 +26,7 @@ namespace LampEntity
 		T* GetComponent();
 
 		template<typename T, typename... TArgs>
-		T& GetOrCreateComponent(TArgs&&... mArgs);
+		T* GetOrCreateComponent(TArgs&&... mArgs);
 
 		template<typename T>
 		bool RemoveComponent();
