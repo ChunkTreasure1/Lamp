@@ -3,10 +3,9 @@
 #include <array>
 #include <bitset>
 
-#include <Lamp/Event/Event.h>
-
 namespace LampEntity
 {
+	class IEntity;
 	class IEntityComponent;
 
 	using ComponentID = std::size_t;
@@ -35,18 +34,19 @@ namespace LampEntity
 		virtual ~IEntityComponent() = 0;
 
 		//Setting
-		inline void MakeOwner(Entity* pEntity) { m_pEntity = pEntity; }
+		inline void MakeOwner(IEntity* pEntity) { m_pEntity = pEntity; }
 
 		//Getting
-		inline const Entity* GetEntity() const { return m_pEntity; }
+		inline const IEntity* GetEntity() const { return m_pEntity; }
 
 		virtual void Initialize() = 0;
-		virtual void Update(Lamp::Timestep ts) = 0;
-		virtual void OnEvent(Lamp::Event& event) = 0;
+		virtual void Update() = 0;
+		virtual void OnEvent() = 0;
+		virtual void Draw() = 0;
 
 	protected:
 		IEntityComponent() {};
 
-		Entity* m_pEntity;
+		IEntity* m_pEntity;
 	};
 }

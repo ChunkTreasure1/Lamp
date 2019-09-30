@@ -33,6 +33,7 @@ project "LampEntity"
 			"%{prj.name}/src",
 			"Lamp/src",
 			"Lamp/vendor/spdlog/include",
+			"Lamp/vendor/include",
 			"Lamp/vendor"
 		}
 

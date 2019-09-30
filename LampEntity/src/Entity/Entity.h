@@ -2,29 +2,41 @@
 
 #include <vector>
 #include <memory>
-#include <Lamp/Core/Timestep.h>
+#include <glm/glm.hpp>
 
 #include "Component/EntityComponent.h"
 
 namespace LampEntity
 {
-	class Entity
+	class IEntity
 	{
 	public:
-		void Update(Lamp::Timestep ts);
+		virtual ~IEntity();
+		void Update();
 		void Draw();
 
 		//Getting
 		inline const bool GetIsActive() const { return m_IsActive; }
-		
+	
+		//Setting
+		inline void SetIsActive(bool state) { m_IsActive = state; }
+
 		template<typename T>
 		T* GetComponent();
 
 		template<typename T, typename... TArgs>
-		T& AddComponent(TArgs&&... mArgs);
+		T& GetOrCreateComponent(TArgs&&... mArgs);
 
-		//Setting
-		inline void SetIsActive(bool state) { m_IsActive = state; }
+		template<typename T>
+		bool RemoveComponent();
+
+	protected:
+		IEntity() {}
+
+		//Editor
+		glm::mat2x2 m_TransformMatrix;
+		glm::mat2x2 m_RotationMatrix;
+		glm::mat2x2 m_ScaleMatrix;
 
 	private:
 		bool m_IsActive = true;
@@ -33,6 +45,4 @@ namespace LampEntity
 		ComponentArray m_ComponentArray;
 		ComponentBitSet m_ComponentBitSet;
 	};
-
-	template<typename T>
 }
