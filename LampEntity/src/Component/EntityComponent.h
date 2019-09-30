@@ -3,6 +3,8 @@
 #include <array>
 #include <bitset>
 
+#include <Lamp/Event/Event.h>
+
 namespace LampEntity
 {
 	class IEntity;
@@ -41,7 +43,7 @@ namespace LampEntity
 
 		virtual void Initialize() = 0;
 		virtual void Update() = 0;
-		virtual void OnEvent() = 0;
+		virtual void OnEvent(Lamp::Event& event) = 0;
 		virtual void Draw() = 0;
 
 	protected:

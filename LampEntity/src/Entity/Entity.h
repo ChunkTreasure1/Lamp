@@ -11,7 +11,8 @@ namespace LampEntity
 	class IEntity
 	{
 	public:
-		virtual ~IEntity();
+		IEntity() {}
+		~IEntity();
 		void Update();
 		void Draw();
 
@@ -30,15 +31,14 @@ namespace LampEntity
 		template<typename T>
 		bool RemoveComponent();
 
-	protected:
-		IEntity() {}
+		static IEntity* Create();
 
+	private:
 		//Editor
 		glm::mat2x2 m_TransformMatrix;
 		glm::mat2x2 m_RotationMatrix;
 		glm::mat2x2 m_ScaleMatrix;
 
-	private:
 		bool m_IsActive = true;
 		std::vector<std::unique_ptr<IEntityComponent>> m_pComponents;
 

@@ -119,11 +119,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\BaseComponents\SpriteComponent.h" />
     <ClInclude Include="src\Component\Component.h" />
     <ClInclude Include="src\Component\EntityComponent.h" />
     <ClInclude Include="src\Entity\Entity.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaseComponents\SpriteComponent.cpp" />
     <ClCompile Include="src\Component\EntityComponent.cpp" />
     <ClCompile Include="src\Entity\Entity.cpp" />
   </ItemGroup>

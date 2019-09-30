@@ -68,4 +68,9 @@ namespace LampEntity
 			return false;
 		}
 	}
+
+	IEntity * IEntity::Create()
+	{
+		return new IEntity();
+	}
 }

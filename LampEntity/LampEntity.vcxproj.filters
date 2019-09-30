@@ -18,6 +18,7 @@
     <ClInclude Include="src\Entity\Entity.h">
       <Filter>Entity</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaseComponents\SpriteComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Component\EntityComponent.cpp">
@@ -26,5 +27,6 @@
     <ClCompile Include="src\Entity\Entity.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaseComponents\SpriteComponent.cpp" />
   </ItemGroup>
 </Project>
