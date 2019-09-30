@@ -18,7 +18,7 @@ namespace LampEntity
 		return lastID++;
 	}
 
-	template<typename T> 
+	template<class T> 
 	inline ComponentID GetComponentTypeID() noexcept
 	{
 		static ComponentID typeID = GetComponentTypeID();

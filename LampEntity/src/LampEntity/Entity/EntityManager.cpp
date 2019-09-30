@@ -1,5 +1,7 @@
 #include "EntityManager.h"
 
+#include "Entity.h"
+
 #include "LampEntity/BaseComponents/SpriteComponent.h"
 #include "LampEntity/BaseComponents/TransformComponent.h"
 
@@ -37,7 +39,7 @@ namespace LampEntity
 		auto* pTrans = pEnt->GetOrCreateComponent<TransformComponent>();
 		pTrans->SetPosition(pos);
 
-		auto* pSprite = pEnt->GetOrCreateComponent<SpriteComponent>(path);
+		auto* pSprite = pEnt->GetOrCreateComponent<SpriteComponent>();
 
 		m_pEntities.emplace_back(std::move(pEnt));
 

@@ -134,11 +134,11 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lamp\Lamp.vcxproj">
-      <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\LampEntity\LampEntity.vcxproj">
       <Project>{8CE3757A-789B-B7C7-E1A2-9023CD7952B8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Lamp\Lamp.vcxproj">
+      <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

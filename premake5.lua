@@ -150,6 +150,7 @@ project "Sandbox"
 
 	links
 	{
+		"LampEntity",
 		"Lamp"
 	}
 
