@@ -25,9 +25,9 @@ namespace LampEntity
 		template<typename T>
 		T* GetComponent()
 		{
-			if (m_ComponentBitSet[GetComponentTypeID() < T > ])
+			if (m_ComponentBitSet[GetComponentTypeID<T>()])
 			{
-				return m_ComponentArray[GetComponentTypeID() < T > ];
+				return m_ComponentArray[GetComponentTypeID<T>()];
 			}
 			else
 			{
@@ -35,19 +35,18 @@ namespace LampEntity
 			}
 		}
 
-		template<class T>
+		template<typename T>
 		T* GetOrCreateComponent()
 		{
-			if (m_ComponentBitSet[GetComponentTypeID() < T > ])
+			if (m_ComponentBitSet[GetComponentTypeID<T>()])
 			{
 				T* c(new T());
-
 				c->MakeOwner(this);
-				std::unique_ptr<IEntityComponent> uPtr = std::make_unique(c);
+				std::unique_ptr<IEntityComponent> uPtr { c };
 				m_pComponents.emplace_back(std::move(uPtr));
 
-				m_ComponentArray[GetComponentTypeID() < T > ] = c;
-				m_ComponentBitSet[GetComponentTypeID() < T > ] = true;
+				m_ComponentArray[GetComponentTypeID<T>()] = c;
+				m_ComponentBitSet[GetComponentTypeID<T>()] = true;
 			
 				c->Initialize();
 
@@ -55,9 +54,8 @@ namespace LampEntity
 			}
 			else
 			{
-				return m_ComponentArray[GetComponentTypeID() < T > ];
+				return nullptr;
 			}
-
 		}
 
 		template<typename T>

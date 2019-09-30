@@ -22,7 +22,7 @@ namespace LampEntity
 	inline ComponentID GetComponentTypeID() noexcept
 	{
 		static ComponentID typeID = GetComponentTypeID();
-		return typeID();
+		return typeID;
 	}
 
 	constexpr std::size_t maxComponents = 32;

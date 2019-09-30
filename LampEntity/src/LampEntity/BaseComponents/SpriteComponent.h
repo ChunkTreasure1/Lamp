@@ -11,8 +11,8 @@ namespace LampEntity
 	{
 	public:
 		//Base
-		SpriteComponent(const std::string& path)
-			: m_Depth(1.f), m_Path(path), m_UVRect(0, 0, 1, 1)
+		SpriteComponent()
+			: m_Depth(1.f), m_UVRect(0, 0, 1, 1)
 		{}
 
 		virtual ~SpriteComponent() override {};

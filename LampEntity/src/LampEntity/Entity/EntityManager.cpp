@@ -36,10 +36,10 @@ namespace LampEntity
 	{
 		std::unique_ptr<IEntity> pEnt = std::make_unique<IEntity>();
 
-		auto* pTrans = pEnt->GetOrCreateComponent<TransformComponent>();
+		auto pTrans = pEnt->GetOrCreateComponent<TransformComponent>();
 		pTrans->SetPosition(pos);
 
-		auto* pSprite = pEnt->GetOrCreateComponent<SpriteComponent>();
+		auto pSprite = pEnt->GetOrCreateComponent<SpriteComponent>();
 
 		m_pEntities.emplace_back(std::move(pEnt));
 

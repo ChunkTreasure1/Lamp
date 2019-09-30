@@ -6,7 +6,7 @@
 
 namespace LampEntity
 {
-	class TransformComponent final : IEntityComponent
+	class TransformComponent final : public IEntityComponent
 	{
 	public:
 		TransformComponent() = default;
