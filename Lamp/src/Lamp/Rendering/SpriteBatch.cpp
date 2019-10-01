@@ -2,9 +2,6 @@
 #include "SpriteBatch.h"
 
 #include <LampEntity/Entity/Entity.h>
-#include <LampEntity/Component/EntityComponent.h>
-#include <LampEntity/BaseComponents/SpriteComponent.h>
-#include <LampEntity/BaseComponents/TransformComponent.h>
 
 namespace Lamp
 {
@@ -42,10 +39,10 @@ namespace Lamp
 	}
 
 	//Draws the a sprite
-	void SpriteBatch::Draw(const std::unique_ptr<LampEntity::IEntity>& pEntity)
+	void SpriteBatch::Draw(const LampEntity::IEntity* pEntity)
 	{
 		Glyph *newGlyph = new Glyph;
-		pEntity->RemoveComponent<float>();
+		//pEntity->RemoveComponent<float>();
 
 		/*if (auto* pTrans = pEntity->GetComponent<LampEntity::TransformComponent>())
 		{*/

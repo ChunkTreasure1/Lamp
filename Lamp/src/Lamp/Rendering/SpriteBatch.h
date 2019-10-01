@@ -57,7 +57,7 @@ namespace Lamp
 		void Begin(GlyphSortType sortType = GlyphSortType::TEXTURE);
 		void End();
 
-		void Draw(const std::unique_ptr<LampEntity::IEntity>& pEntity);
+		void Draw(const LampEntity::IEntity* pEntity);
 		void RenderBatches();
 
 	private:

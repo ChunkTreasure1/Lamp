@@ -3,14 +3,12 @@
 #include <array>
 #include <bitset>
 
-#include <Lamp/Event/Event.h>
-
 namespace LampEntity
 {
-	class IEntity;
 	class IEntityComponent;
+	class IEntity;
 
-	using ComponentID = std::size_t;
+	using ComponentID = std::uint32_t;
 
 	inline ComponentID GetComponentTypeID()
 	{
@@ -18,37 +16,33 @@ namespace LampEntity
 		return lastID++;
 	}
 
-	template<class T> 
+	template<typename T>
 	inline ComponentID GetComponentTypeID() noexcept
 	{
 		static ComponentID typeID = GetComponentTypeID();
 		return typeID;
 	}
 
-	constexpr std::size_t maxComponents = 32;
-
-	using ComponentBitSet = std::bitset<maxComponents>;
-	using ComponentArray = std::array<IEntityComponent*, maxComponents>;
+	using ComponentBitSet = std::bitset<32>;
+	using ComponentArray = std::array<IEntityComponent*, 32>;
 
 	class IEntityComponent
 	{
 	public:
-		//virtual ~IEntityComponent() = 0;
 
 		//Setting
 		inline void MakeOwner(IEntity* pEntity) { m_pEntity = pEntity; }
 
 		//Getting
-		inline const IEntity* GetEntity() const { return m_pEntity; }
+		inline const IEntity* GetOwner() const { return m_pEntity; }
 
+		//Base
 		virtual void Initialize() = 0;
 		virtual void Update() = 0;
-		virtual void OnEvent(Lamp::Event& event) = 0;
 		virtual void Draw() = 0;
 
 	protected:
-		IEntityComponent() {};
-
+		IEntityComponent() {}
 		IEntity* m_pEntity;
 	};
 }

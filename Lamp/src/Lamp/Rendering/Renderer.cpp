@@ -28,7 +28,7 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::unique_ptr<LampEntity::IEntity>& pEntity)
+	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const LampEntity::IEntity* pEntity)
 	{
 		shader->Bind();
 		shader->UploadUniformInt("textureSampler", 0);

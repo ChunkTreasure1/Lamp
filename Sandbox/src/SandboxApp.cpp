@@ -3,7 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-#include <LampEntity/Entity/EntityManager.h>
+#include <LampEntity/BaseComponents/TransformComponent.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -13,7 +13,8 @@ public:
 	RenderLayer()
 		: Layer("Render Layer"), m_CameraController(m_AspectRatio), m_SelectedFile("")
 	{
-		m_pEntityManager.reset(new LampEntity::EntityManager());
+		m_pEntity = new LampEntity::IEntity();
+		m_pEntity->GetOrCreateComponent<LampEntity::TransformComponent>();
 
 		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
 
@@ -22,8 +23,6 @@ public:
 		m_pShader->AddAttribute("vertexUV");
 
 		m_pShader->LinkShaders();
-		
-		m_pEntity = std::move(m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG"));
 
 		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
 		Lamp::Renderer::CreateTexture(m_FBOTexture);
@@ -32,10 +31,6 @@ public:
 	virtual void Update(Lamp::Timestep ts) override
 	{
 		m_CameraController.Update(ts);
-		for (size_t i = 0; i < m_pEntityManager->GetEntities().size(); i++)
-		{
-			m_pEntityManager->GetEntities()[i]->Update();
-		}
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
@@ -193,8 +188,7 @@ private:
 	Lamp::OrthographicCameraController m_CameraController;
 	std::shared_ptr<Lamp::Shader> m_pShader;
 
-	std::unique_ptr<LampEntity::EntityManager> m_pEntityManager;
-	std::unique_ptr<LampEntity::IEntity> m_pEntity;
+	LampEntity::IEntity* m_pEntity;
 
 	glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);

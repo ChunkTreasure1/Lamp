@@ -12,37 +12,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\LampEntity\BaseComponents\SpriteComponent.h">
-      <Filter>BaseComponents</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LampEntity\BaseComponents\TransformComponent.h">
-      <Filter>BaseComponents</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LampEntity\Component\EntityComponent.h">
-      <Filter>Component</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LampEntity\Entity\Entity.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LampEntity\Entity\EntityManager.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
+    <ClCompile Include="src\LampEntity\EntityComponent\EntityComponent.cpp" />
+    <ClCompile Include="src\LampEntity\Entity\Entity.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\LampEntity\BaseComponents\SpriteComponent.cpp">
-      <Filter>BaseComponents</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LampEntity\BaseComponents\TransformComponent.cpp">
-      <Filter>BaseComponents</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LampEntity\Component\EntityComponent.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LampEntity\Entity\Entity.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LampEntity\Entity\EntityManager.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
+    <ClInclude Include="src\LampEntity\EntityComponent\EntityComponent.h" />
+    <ClInclude Include="src\LampEntity\Entity\Entity.h" />
+    <ClInclude Include="src\LampEntity\BaseComponents\TransformComponent.h" />
   </ItemGroup>
 </Project>

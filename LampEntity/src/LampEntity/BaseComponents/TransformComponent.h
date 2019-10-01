@@ -2,20 +2,18 @@
 
 #include <glm/glm.hpp>
 
-#include "LampEntity/Component/EntityComponent.h"
+#include "LampEntity/EntityComponent/EntityComponent.h"
 
 namespace LampEntity
 {
-	class TransformComponent final : public IEntityComponent
+	class TransformComponent : public IEntityComponent
 	{
 	public:
-		TransformComponent() = default;
-		~TransformComponent() {}
+		TransformComponent() {}
 
-		virtual void Initialize() override;
-		virtual void Update() override {};
-		virtual void OnEvent(Lamp::Event& event) {};
-		virtual void Draw() override {};
+		virtual void Initialize() override {}
+		virtual void Update() override {}
+		virtual void Draw() override {}
 
 		//Getting
 		inline const glm::vec2& GetPosition() const { return m_Position; }
