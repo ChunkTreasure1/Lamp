@@ -33,7 +33,7 @@ namespace LampEntity
 	class IEntityComponent
 	{
 	public:
-		virtual ~IEntityComponent() = 0;
+		//virtual ~IEntityComponent() = 0;
 
 		//Setting
 		inline void MakeOwner(IEntity* pEntity) { m_pEntity = pEntity; }

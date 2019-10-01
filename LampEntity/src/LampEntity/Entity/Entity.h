@@ -35,12 +35,12 @@ namespace LampEntity
 			}
 		}
 
-		template<typename T>
-		T* GetOrCreateComponent()
+		template<typename T, typename... TArgs>
+		T* GetOrCreateComponent(TArgs&&... mArgs)
 		{
 			if (m_ComponentBitSet[GetComponentTypeID<T>()])
 			{
-				T* c(new T());
+				T* c(new T(std::forward<TArgs>(mArgs)...));
 				c->MakeOwner(this);
 				std::unique_ptr<IEntityComponent> uPtr { c };
 				m_pComponents.emplace_back(std::move(uPtr));
@@ -54,28 +54,26 @@ namespace LampEntity
 			}
 			else
 			{
-				return nullptr;
+				return (T*)m_ComponentArray[GetComponentTypeID<T>()];
 			}
 		}
 
 		template<typename T>
 		bool RemoveComponent()
 		{
-			//auto p = T;
-
-			//if (m_ComponentBitSet[GetComponentTypeID() < p > ])
+			//if (m_ComponentBitSet[GetComponentTypeID< T >()])
 			//{
 			//	for (size_t i = 0; i < m_pComponents.size(); i++)
 			//	{
-			//		if (m_pComponents[i] == m_ComponentArray[GetComponentTypeID() < p > ])
+			//		if (m_pComponents[i] == m_ComponentArray[GetComponentTypeID< T >()])
 			//		{
 			//			m_pComponents.erase(m_pComponents.begin() + i);
 			//			break;
 			//		}
 			//	}
 
-			//	m_ComponentArray[GetComponentTypeID() < p > ] = nullptr;
-			//	m_ComponentBitSet[GetComponentTypeID() < p > ] = false;
+			//	m_ComponentArray[GetComponentTypeID< T >()] = nullptr;
+			//	m_ComponentBitSet[GetComponentTypeID< T >()] = false;
 			//}
 			//else
 			//{
@@ -92,7 +90,7 @@ namespace LampEntity
 		glm::mat2x2 m_ScaleMatrix;
 
 		bool m_IsActive = true;
-		std::vector<std::unique_ptr<IEntityComponent>> m_pComponents;
+		std::vector<IEntityComponent*> m_pComponents;
 
 		ComponentArray m_ComponentArray;
 		ComponentBitSet m_ComponentBitSet;

@@ -32,17 +32,18 @@ namespace LampEntity
 		std::end(m_pEntities));
 	}
 
-	IEntity& EntityManager::CreateEntity(glm::vec2& pos, const std::string& path)
+	std::unique_ptr<IEntity>& EntityManager::CreateEntity(glm::vec2& pos, const std::string& path)
 	{
-		std::unique_ptr<IEntity> pEnt = std::make_unique<IEntity>();
+		IEntity* pEnt = new IEntity();
+		std::unique_ptr<IEntity> pPtr{ pEnt };
 
 		auto pTrans = pEnt->GetOrCreateComponent<TransformComponent>();
 		pTrans->SetPosition(pos);
 
-		auto pSprite = pEnt->GetOrCreateComponent<SpriteComponent>();
+		auto pSprite = pEnt->GetOrCreateComponent<SpriteComponent>(path);
 
 		m_pEntities.emplace_back(std::move(pEnt));
 
-		return *pEnt.get();
+		return pPtr;
 	}
 }

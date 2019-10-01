@@ -15,7 +15,10 @@ namespace LampEntity
 		void Draw();
 		void Refresh();
 
-		IEntity& CreateEntity(glm::vec2& pos, const std::string& path);
+		std::unique_ptr<IEntity>& CreateEntity(glm::vec2& pos, const std::string& path);
+
+		//Getting
+		inline const std::vector<std::unique_ptr<IEntity>>& GetEntities() const { return m_pEntities; }
 
 	private:
 		std::vector<std::unique_ptr<IEntity>> m_pEntities;  

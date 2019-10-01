@@ -10,7 +10,7 @@ namespace LampEntity
 	{
 	public:
 		TransformComponent() = default;
-		virtual ~TransformComponent() {};
+		~TransformComponent() {}
 
 		virtual void Initialize() override;
 		virtual void Update() override {};
