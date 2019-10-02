@@ -40,12 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
-    <ClInclude Include="src\Lamp\Application.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Core.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Timestep.h">
       <Filter>Lamp\Core</Filter>
     </ClInclude>
@@ -60,9 +54,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\BaseComponents\TransformComponent.h">
       <Filter>Lamp\Entity\BaseComponents</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\EntryPoint.h">
-      <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
       <Filter>Lamp\Event</Filter>
@@ -106,9 +97,6 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>Lamp\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Log.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
@@ -142,16 +130,25 @@
     <ClInclude Include="src\Lamp\Rendering\Vertex.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Window.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
     <ClInclude Include="src\lppch.h" />
     <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />
+    <ClInclude Include="src\Lamp\Core\Application.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Core.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\EntryPoint.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Log.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Window.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Lamp\Application.cpp">
-      <Filter>Lamp</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp">
       <Filter>Lamp\ImGui</Filter>
     </ClCompile>
@@ -175,9 +172,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
       <Filter>Lamp\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Log.cpp">
-      <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp">
       <Filter>Lamp\Rendering</Filter>
@@ -206,9 +200,15 @@
     <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp">
       <Filter>Lamp\Rendering\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Window.cpp">
+    <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\Core\Application.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
-    <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\Core\Log.cpp">
+      <Filter>Lamp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Core\Window.cpp">
+      <Filter>Lamp</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

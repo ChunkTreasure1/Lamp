@@ -5,7 +5,7 @@
 
 #include "Lamp/Rendering/Sprite.h"
 #include "Lamp/Event/Event.h"
-#include "Lamp/Application.h"
+#include "Lamp/Core/Application.h"
 #include <algorithm>
 
 #include "Lamp/Entity/Base/Entity.h"

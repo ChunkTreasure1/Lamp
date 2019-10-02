@@ -7,7 +7,7 @@
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
 
-#include "ImGui/ImGuiLayer.h"
+#include "Lamp/ImGui/ImGuiLayer.h"
 #include "Lamp/Input/FileSystem.h"
 
 namespace Lamp

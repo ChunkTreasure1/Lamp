@@ -1,6 +1,6 @@
 #pragma once
-#include "Lamp/Application.h"
-#include "Lamp/Log.h"
+#include "Lamp/Core/Application.h"
+#include "Lamp/Core/Log.h"
 
 extern Lamp::Application* Lamp::CreateApplication();
 

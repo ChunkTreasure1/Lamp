@@ -2,7 +2,7 @@
 #include "FileSystem.h"
 
 #include "imgui.h"
-#include "Lamp/Application.h"
+#include "Lamp/Core/Application.h"
 
 namespace Lamp
 {
