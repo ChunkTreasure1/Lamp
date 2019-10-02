@@ -6,13 +6,15 @@
 #include "Lamp/Entity/BaseComponents/TransformComponent.h"
 #include "Lamp/Entity/Base/EntityManager.h"
 
+#include "Lamp/Event/Event.h"
+
 #include <glm/gtc/type_ptr.hpp>
 
 class RenderLayer : public Lamp::Layer
 {
 public:
 	RenderLayer()
-		: Layer("Render Layer"), m_CameraController(m_AspectRatio), m_SelectedFile("")
+		: Layer("Render Layer"), m_CameraController(m_AspectRatio)
 	{
 		m_pEntityManager = new Lamp::EntityManager();
 		m_pEntity = m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG");
@@ -28,6 +30,11 @@ public:
 
 		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
 		Lamp::Renderer::CreateTexture(m_FBOTexture);
+	}
+	~RenderLayer()
+	{
+		m_pEntityManager->Shutdown();
+		delete m_pEntityManager;
 	}
 
 	virtual void Update(Lamp::Timestep ts) override
@@ -55,9 +62,10 @@ public:
 	{
 		CreateDockspace();
 
-		ImGui::Begin("Scene");
+		ImGui::Begin("Perspective");
 		{
-			m_CameraController.SetHasControl(ImGui::IsWindowHovered());
+			m_PerspectiveHover = ImGui::IsWindowHovered();
+			m_CameraController.SetHasControl(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -83,28 +91,14 @@ public:
 		}
 		ImGui::End();
 
-		ImGui::Begin("Asset Browser");
+		ImGui::Begin("Properties");
 		{
-			//Asset browser
+			if (m_MousePressed && m_PerspectiveHover)
 			{
-				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12, ImGui::GetWindowSize().y * 0.85), true);
+				if (auto pEnt = GetEntityFromPoint(m_MouseHoverPos))
 				{
-					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
-
-					Lamp::FileSystem::PrintFoldersAndFiles(folders);
+					LP_CORE_INFO("HIT");
 				}
-				ImGui::EndChild();
-
-				ImGui::SameLine();
-				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
-					{
-						Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
-						ImGui::Image((void *)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
-					}
-				}
-				ImGui::EndChild();
 			}
 		}
 		ImGui::End();
@@ -113,11 +107,18 @@ public:
 	virtual void OnEvent(Lamp::Event& e) override
 	{
 		m_CameraController.OnEvent(e);
-	}
+		
+		Lamp::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(RenderLayer::OnMouseMoved));
 
-	virtual void OnItemClicked(Lamp::File& file) override 
-	{
-		m_SelectedFile = file;
+		if (e.GetEventType() == Lamp::EventType::MouseButtonPressed)
+		{
+			m_MousePressed = true;
+		}
+		else if (e.GetEventType() == Lamp::EventType::MouseButtonReleased)
+		{
+			m_MousePressed = false;
+		}
 	}
 
 	void CreateDockspace()
@@ -187,6 +188,33 @@ public:
 		ImGui::End();
 	}
 
+	bool OnMouseMoved(Lamp::MouseMovedEvent& e)
+	{
+		m_MouseHoverPos = glm::vec2(e.GetX(), e.GetY());
+		return true;
+	}
+
+	Lamp::IEntity* GetEntityFromPoint(const glm::vec2& pos)
+	{
+		for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
+		{
+			if (auto pTrans = pEnt->GetComponent<Lamp::TransformComponent>())
+			{
+				glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
+
+				if (pos.x > rect.x &&
+					pos.x < rect.x + rect.z &&
+					pos.y > rect.y &&
+					pos.y < rect.y + rect.w);
+				{
+					return pEnt;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
 private:
 	Lamp::OrthographicCameraController m_CameraController;
 	std::shared_ptr<Lamp::Shader> m_pShader;
@@ -195,17 +223,67 @@ private:
 	Lamp::IEntity* m_pEntity2;
 	Lamp::EntityManager* m_pEntityManager;
 
+	Lamp::IEntity* m_pSelectedEntity = nullptr;
+
 	glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 	std::string title;
 	ImGuiID m_DockspaceID;
 
 	const float m_AspectRatio = 1.7f;
+	bool m_MousePressed = false;
+	bool m_PerspectiveHover = false;
 
-	Lamp::File m_SelectedFile;
+	glm::vec2 m_MouseHoverPos = glm::vec2();
+
 	uint32_t m_FBO;
 	uint32_t m_FBOTexture;
 	int m_CurrSample = -1;
+};
+
+class UILayer : public Lamp::Layer
+{
+public:
+	UILayer()
+		: Lamp::Layer("UI Layer"), m_SelectedFile("")
+	{}
+
+	virtual void OnImGuiRender(Lamp::Timestep ts) override
+	{
+		ImGui::Begin("Asset Browser");
+		{
+			//Asset browser
+			{
+				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12, ImGui::GetWindowSize().y * 0.85), true);
+				{
+					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
+
+					Lamp::FileSystem::PrintFoldersAndFiles(folders);
+				}
+				ImGui::EndChild();
+
+				ImGui::SameLine();
+				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
+				{
+					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
+					{
+						Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
+						ImGui::Image((void *)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
+					}
+				}
+				ImGui::EndChild();
+			}
+		}
+		ImGui::End();
+	}
+
+	virtual void OnItemClicked(Lamp::File& file) override
+	{
+		m_SelectedFile = file;
+	}
+
+private:
+	Lamp::File m_SelectedFile;
 };
 
 class Sandbox : public Lamp::Application
@@ -214,6 +292,7 @@ public:
 	Sandbox()
 	{
 		PushLayer(new RenderLayer());
+		PushLayer(new UILayer());
 	};
 	~Sandbox() {};
 };

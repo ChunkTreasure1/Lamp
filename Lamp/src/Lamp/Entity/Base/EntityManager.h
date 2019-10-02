@@ -55,6 +55,9 @@ namespace Lamp
 			return true;
 		}
 
+		//Getting
+		inline const std::vector<IEntity*> GetEntities() const { return m_pEntites; }
+
 	private:
 		std::vector<IEntity*> m_pEntites;
 	};

@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		TransformComponent(const glm::vec2& pos)
-			: m_Scale(1.f)
+			: m_Scale(1.f), m_Rotation(glm::vec3(0, 0, 0))
 		{
 			m_Position = pos;
 		}

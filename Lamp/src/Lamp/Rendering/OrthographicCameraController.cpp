@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "OrthographicCameraController.h"
 
+#include "Lamp/Core/Application.h"
+
 #include "Lamp/Input/Input.h"
 #include "Lamp/Input/KeyCodes.h"
 
@@ -66,5 +68,24 @@ namespace Lamp
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return true;
+	}
+
+	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords)
+	{
+		//Invery Y coords
+		uint32_t width = Application::Get().GetWindow().GetWidth();
+		uint32_t height = Application::Get().GetWindow().GetHeight();
+
+		coords.y = Application::Get().GetWindow().GetHeight() - coords.y;
+		glm::vec2 size(*(float*)&width, *(float*)&height);
+
+		//Change the position of origo and fix scaling
+		coords -= glm::vec2(size.x / 2, size.y / 2);
+		coords /= m_ZoomLevel;
+
+		//Translate with camera;
+		coords +=glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
+
+		return coords;
 	}
 }
