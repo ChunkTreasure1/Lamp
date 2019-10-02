@@ -28,12 +28,12 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const Sprite& sprite)
+	void Renderer::Draw(const std::shared_ptr<Shader>& shader, IEntity* pEntity)
 	{
 		shader->Bind();
 		shader->UploadUniformInt("textureSampler", 0);
 		shader->UploadUniformMat4("P", s_pSceneData->ViewProjectionMatrix);
 
-		m_pSpriteBatch->Draw(sprite);
+		m_pSpriteBatch->Draw(pEntity);
 	}
 }

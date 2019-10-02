@@ -1,6 +1,6 @@
 #include "lppch.h"
 #include "WindowsInput.h"
-#include "Lamp/Application.h"
+#include "Lamp/Core/Application.h"
 
 #include <GLFW/glfw3.h>
 

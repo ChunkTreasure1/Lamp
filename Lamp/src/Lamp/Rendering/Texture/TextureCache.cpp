@@ -25,11 +25,10 @@ namespace Lamp
 			std::pair<std::string, GLTexture> newPair(texturePath, newTexture);
 			m_TextureMap.insert(newPair);
 
-			std::cout << "Used cached Texture!\n";
+			LP_CORE_INFO("Loaded texture!");
 			return newTexture;
 		}
-
-		std::cout << "Loaded Texture!\n";
+		LP_CORE_INFO("Used chached texture!");
 		return mit->second;
 	}
 }

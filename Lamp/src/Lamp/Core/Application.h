@@ -7,7 +7,8 @@
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
 
-#include "ImGui/ImGuiLayer.h"
+#include "Lamp/ImGui/ImGuiLayer.h"
+#include "Lamp/Input/FileSystem.h"
 
 namespace Lamp
 {
@@ -25,6 +26,8 @@ namespace Lamp
 
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
+
+		void OnItemClicked(File& file);
 
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }

@@ -13,9 +13,10 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
 #include <filesystem>
 
-#include "Lamp/Log.h"
+#include "Lamp/Core/Log.h"
 
 #ifdef LP_PLATFORM_WINDOWS
 #include <Windows.h>

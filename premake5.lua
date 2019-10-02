@@ -24,7 +24,7 @@ project "Lamp"
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 
 	pchheader "lppch.h"
-	pchsource "Lamp/lppch.cpp"
+	pchsource "Lamp/src/lppch.cpp"
 
 	files
 	{
@@ -43,7 +43,7 @@ project "Lamp"
 		"%{prj.name}/vendor/include",
 		"%{prj.name}/vendor/GLFW/include",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/imgui/"
+		"%{prj.name}/vendor/imgui/",
 	}
 
 	libdirs 
@@ -83,7 +83,7 @@ project "Lamp"
 			defines "LP_DIST"
 			runtime "Release"
 			optimize "on"
-
+			
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
@@ -106,7 +106,7 @@ project "Sandbox"
 		"Lamp/vendor/include",
 		"Lamp/vendor/GLFW/include",
 		"Lamp/vendor/spdlog/include",
-		"Lamp/vendor"
+		"Lamp/vendor",
 	}
 
 	links

@@ -7,6 +7,15 @@
     <Filter Include="Lamp\Core">
       <UniqueIdentifier>{278946DB-93F3-FA51-DC31-ACF748DBD8A6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\Entity">
+      <UniqueIdentifier>{DBE0A6CB-4796-1FC1-D08A-19983C3F16C5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\Entity\Base">
+      <UniqueIdentifier>{45FE4489-31F7-63DB-5A29-4960468143E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\Entity\BaseComponents">
+      <UniqueIdentifier>{ABF63EBD-9706-EB8D-00C0-4FACECEED926}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Lamp\Event">
       <UniqueIdentifier>{00803F44-EC37-8191-553F-5AED41161C82}</UniqueIdentifier>
     </Filter>
@@ -31,17 +40,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
-    <ClInclude Include="src\Lamp\Application.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Core.h">
-      <Filter>Lamp</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Timestep.h">
       <Filter>Lamp\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\EntryPoint.h">
-      <Filter>Lamp</Filter>
+    <ClInclude Include="src\Lamp\Entity\Base\Component.h">
+      <Filter>Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\Entity.h">
+      <Filter>Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\EntityManager.h">
+      <Filter>Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\BaseComponents\TransformComponent.h">
+      <Filter>Lamp\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
       <Filter>Lamp\Event</Filter>
@@ -57,6 +69,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h">
       <Filter>Lamp\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Input\FileSystem.h">
+      <Filter>Lamp\Input</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Input\IOManager.h">
       <Filter>Lamp\Input</Filter>
@@ -81,9 +96,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>Lamp\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Log.h">
-      <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h">
       <Filter>Lamp\Rendering</Filter>
@@ -118,21 +130,33 @@
     <ClInclude Include="src\Lamp\Rendering\Vertex.h">
       <Filter>Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Window.h">
+    <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />
+    <ClInclude Include="src\Lamp\Core\Application.h">
       <Filter>Lamp</Filter>
     </ClInclude>
-    <ClInclude Include="src\lppch.h" />
-    <ClInclude Include="src\Lamp\Input\FileSystem.h" />
+    <ClInclude Include="src\Lamp\Core\Core.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\EntryPoint.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Log.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Window.h">
+      <Filter>Lamp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Lamp\Application.cpp">
-      <Filter>Lamp</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp">
       <Filter>Lamp\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp">
       <Filter>Lamp\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Input\FileSystem.cpp">
+      <Filter>Lamp\Input</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Input\IOManager.cpp">
       <Filter>Lamp\Input</Filter>
@@ -148,9 +172,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
       <Filter>Lamp\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Log.cpp">
-      <Filter>Lamp</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp">
       <Filter>Lamp\Rendering</Filter>
@@ -179,10 +200,15 @@
     <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp">
       <Filter>Lamp\Rendering\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Window.cpp">
+    <ClCompile Include="src\lppch.cpp" />
+    <ClCompile Include="src\Lamp\Core\Application.cpp">
       <Filter>Lamp</Filter>
     </ClCompile>
-    <ClCompile Include="src\lppch.cpp" />
-    <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
+    <ClCompile Include="src\Lamp\Core\Log.cpp">
+      <Filter>Lamp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Core\Window.cpp">
+      <Filter>Lamp</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,14 +3,21 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
+#include "Lamp/Entity/BaseComponents/TransformComponent.h"
+#include "Lamp/Entity/Base/EntityManager.h"
+
 #include <glm/gtc/type_ptr.hpp>
 
 class RenderLayer : public Lamp::Layer
 {
 public:
 	RenderLayer()
-		: Layer("Render Layer"), m_CameraController(m_AspectRatio)
+		: Layer("Render Layer"), m_CameraController(m_AspectRatio), m_SelectedFile("")
 	{
+		m_pEntityManager = new Lamp::EntityManager();
+		m_pEntity = m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG");
+		m_pEntity2 = m_pEntityManager->CreateEntity(glm::vec2(1, 0), "Assets/Textures/ff.PNG");
+
 		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
 
 		m_pShader->AddAttribute("vertexPosition");
@@ -19,19 +26,11 @@ public:
 
 		m_pShader->LinkShaders();
 
-		static Lamp::GLTexture texture = Lamp::ResourceManager::GetTexture("Assets/Textures/ff.PNG");
-		glm::vec4 pos(0, 0, 10, 10);
-		LP_CORE_INFO(pos.x);
-		sprite = new Lamp::Sprite(pos, texture.Id, 0.f);
-
 		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
 		Lamp::Renderer::CreateTexture(m_FBOTexture);
-
-		std::string path = "Assets";
-		Lamp::FileSystem::GetFiles(path);
 	}
 
-	void Update(Lamp::Timestep ts) override
+	virtual void Update(Lamp::Timestep ts) override
 	{
 		m_CameraController.Update(ts);
 
@@ -43,7 +42,8 @@ public:
 
 		Lamp::Renderer::Begin(m_CameraController.GetCamera());
 
-		Lamp::Renderer::Draw(m_pShader, *sprite);
+		Lamp::Renderer::Draw(m_pShader, m_pEntity);
+		Lamp::Renderer::Draw(m_pShader, m_pEntity2);
 
 		Lamp::Renderer::End();
 
@@ -55,22 +55,9 @@ public:
 	{
 		CreateDockspace();
 
-		ImGui::Begin("Color");
-		{
-			if (ImGui::ColorEdit3("Background color", glm::value_ptr(m_FColor)))
-			{
-				LP_CORE_INFO(m_FColor.r);
-				m_ClearColor.r = m_FColor.r;
-				m_ClearColor.g = m_FColor.g;
-				m_ClearColor.b = m_FColor.b;
-				m_ClearColor.a = 1.f;
-			}
-		}
-		ImGui::End();
-
 		ImGui::Begin("Scene");
 		{
-			m_CameraController.SetHasControl(ImGui::IsWindowFocused() && ImGui::IsWindowHovered());
+			m_CameraController.SetHasControl(ImGui::IsWindowHovered());
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -100,11 +87,22 @@ public:
 		{
 			//Asset browser
 			{
-				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.2, ImGui::GetWindowSize().y * 0.85), true);
+				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12, ImGui::GetWindowSize().y * 0.85), true);
 				{
 					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
 
 					Lamp::FileSystem::PrintFoldersAndFiles(folders);
+				}
+				ImGui::EndChild();
+
+				ImGui::SameLine();
+				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
+				{
+					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
+					{
+						Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
+						ImGui::Image((void *)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
+					}
 				}
 				ImGui::EndChild();
 			}
@@ -112,24 +110,14 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(Lamp::Event& e) override
+	virtual void OnEvent(Lamp::Event& e) override
 	{
 		m_CameraController.OnEvent(e);
 	}
 
-	void SetEditorLayout()
+	virtual void OnItemClicked(Lamp::File& file) override 
 	{
-		ImGui::DockBuilderRemoveNode(m_DockspaceID);
-		ImGui::DockBuilderAddNode(m_DockspaceID, ImGuiDockNodeFlags_DockSpace);
-		ImGui::DockBuilderSetNodeSize(m_DockspaceID, ImVec2(1280, 720));
-
-		ImGuiID dock_main_id = m_DockspaceID;
-		ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, NULL, &dock_main_id);
-		ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.20f, NULL, &dock_main_id);
-
-		ImGui::DockBuilderDockWindow("Color", dock_id_bottom);
-		ImGui::DockBuilderDockWindow("Test", dock_id_prop);
-		ImGui::DockBuilderFinish(m_DockspaceID);
+		m_SelectedFile = file;
 	}
 
 	void CreateDockspace()
@@ -202,7 +190,10 @@ public:
 private:
 	Lamp::OrthographicCameraController m_CameraController;
 	std::shared_ptr<Lamp::Shader> m_pShader;
-	Lamp::Sprite* sprite;
+
+	Lamp::IEntity* m_pEntity;
+	Lamp::IEntity* m_pEntity2;
+	Lamp::EntityManager* m_pEntityManager;
 
 	glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -211,6 +202,7 @@ private:
 
 	const float m_AspectRatio = 1.7f;
 
+	Lamp::File m_SelectedFile;
 	uint32_t m_FBO;
 	uint32_t m_FBOTexture;
 	int m_CurrSample = -1;

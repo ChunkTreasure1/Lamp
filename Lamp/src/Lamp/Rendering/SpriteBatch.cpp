@@ -1,6 +1,11 @@
 #include "lppch.h"
 #include "SpriteBatch.h"
 
+#include "Lamp/Entity/Base/Entity.h"
+
+#include "Lamp/Entity/BaseComponents/SpriteComponent.h"
+#include "Lamp/Entity/BaseComponents/TransformComponent.h"
+
 namespace Lamp
 {
 	SpriteBatch::SpriteBatch() : m_VBO(0), m_VAO(0)
@@ -37,29 +42,38 @@ namespace Lamp
 	}
 
 	//Draws the a sprite
-	void SpriteBatch::Draw(const Sprite& sprite)
+	void SpriteBatch::Draw(IEntity* pEntity)
 	{
 		Glyph *newGlyph = new Glyph;
-		newGlyph->Texture = sprite.GetTexuture();
-		newGlyph->Depth = sprite.GetDepth();
 
-		newGlyph->TopLeft.Color = sprite.GetColor();
-		newGlyph->TopLeft.SetPos(sprite.GetDestRect().x, sprite.GetDestRect().y + sprite.GetDestRect().w);
-		newGlyph->TopLeft.SetUV(sprite.GetUVRect().x, sprite.GetUVRect().y + sprite.GetUVRect().w);
+		if (auto pTrans = pEntity->GetComponent<TransformComponent>())
+		{
+			if (auto pSprite = pEntity->GetComponent<SpriteComponent>())
+			{
+				newGlyph->Texture = pSprite->GetTexture().Id;
+				newGlyph->Depth = pSprite->GetDepth();
+				newGlyph->TopLeft.Color = pSprite->GetColor();
 
-		newGlyph->BottomLeft.Color = sprite.GetColor();
-		newGlyph->BottomLeft.SetPos(sprite.GetDestRect().x, sprite.GetDestRect().y);
-		newGlyph->BottomLeft.SetUV(sprite.GetUVRect().x, sprite.GetUVRect().y);
+				glm::vec4 pos(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
 
-		newGlyph->BottomRight.Color = sprite.GetColor();
-		newGlyph->BottomRight.SetPos(sprite.GetDestRect().x + sprite.GetDestRect().z, sprite.GetDestRect().y);
-		newGlyph->BottomRight.SetUV(sprite.GetUVRect().x + sprite.GetUVRect().z, sprite.GetUVRect().y);
+				newGlyph->TopLeft.SetPos(pos.x, pos.y + pos.w);
+				newGlyph->TopLeft.SetUV(pSprite->GetUVRect().x, pSprite->GetUVRect().y + pSprite->GetUVRect().w);
 
-		newGlyph->TopRight.Color = sprite.GetColor();
-		newGlyph->TopRight.SetPos(sprite.GetDestRect().x + sprite.GetDestRect().z, sprite.GetDestRect().y + sprite.GetDestRect().w);
-		newGlyph->TopRight.SetUV(sprite.GetUVRect().x + sprite.GetUVRect().w, sprite.GetUVRect().y + sprite.GetUVRect().w);
+				newGlyph->BottomLeft.Color = pSprite->GetColor();
+				newGlyph->BottomLeft.SetPos(pos.x, pos.y);
+				newGlyph->BottomLeft.SetUV(pSprite->GetUVRect().x, pSprite->GetUVRect().y);
 
-		m_Glyphs.push_back(newGlyph);
+				newGlyph->BottomRight.Color = pSprite->GetColor();
+				newGlyph->BottomRight.SetPos(pos.x + pos.z, pos.y);
+				newGlyph->BottomRight.SetUV(pSprite->GetUVRect().x + pSprite->GetUVRect().z, pSprite->GetUVRect().y);
+
+				newGlyph->TopRight.Color = pSprite->GetColor();
+				newGlyph->TopRight.SetPos(pos.x + pos.z, pos.y + pos.w);
+				newGlyph->TopRight.SetUV(pSprite->GetUVRect().x + pSprite->GetUVRect().w, pSprite->GetUVRect().y + pSprite->GetUVRect().w);
+
+				m_Glyphs.push_back(newGlyph);
+			}
+		}
 	}
 
 	//Renders the sprites

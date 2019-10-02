@@ -5,9 +5,10 @@
 
 #include "Lamp/Rendering/Sprite.h"
 #include "Lamp/Event/Event.h"
-#include "Lamp/Application.h"
+#include "Lamp/Core/Application.h"
 #include <algorithm>
 
+#include "Lamp/Entity/Base/Entity.h"
 
 namespace Lamp
 {
@@ -22,7 +23,7 @@ namespace Lamp
 		static void AddSprite(Sprite& sprite) { m_RenderSprites.push_back(sprite); sprite.SetPosition((uint32_t)m_RenderSprites.size() - 1); }
 		static void RemoveSprite(Sprite& sprite) { m_RenderSprites.erase(m_RenderSprites.begin() + sprite.GetPosition()); }
 
-		static void Draw(const std::shared_ptr<Shader>& shader, const Sprite& sprite);
+		static void Draw(const std::shared_ptr<Shader>& shader, IEntity* pEntity);
 		static void SetClearColor(const glm::vec4& color) { glClearColor(color.r, color.g, color.g, color.a); glClearDepth(1.f); }
 		static void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 

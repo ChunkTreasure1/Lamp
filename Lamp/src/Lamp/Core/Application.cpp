@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "Application.h"
 
+#include "imgui.h"
+
 namespace Lamp
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -87,6 +89,7 @@ namespace Lamp
 		m_Running = false;
 		return true;
 	}
+
 	bool Application::OnWindowResize(WindowResizeEvent & e)
 	{
 		if (e.GetWidth() == 0 && e.GetHeight() == 0)
@@ -98,5 +101,13 @@ namespace Lamp
 			m_Minimized = false;
 		}
 		return true;
+	}
+	
+	void Application::OnItemClicked(File & file)
+	{
+		for (Layer* pLayer : m_LayerStack)
+		{
+			pLayer->OnItemClicked(file);
+		}
 	}
 }

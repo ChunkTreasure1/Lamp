@@ -1,6 +1,6 @@
 #pragma once
 #include "lppch.h"
-#include "Lamp/Core.h"
+#include "Lamp/Core/Core.h"
 
 namespace Lamp
 {
