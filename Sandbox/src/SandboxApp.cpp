@@ -3,7 +3,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-#include <LampEntity/BaseComponents/TransformComponent.h>
+#include "Lamp/Entity/BaseComponents/TransformComponent.h"
+#include "Lamp/Entity/Base/EntityManager.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -13,8 +14,9 @@ public:
 	RenderLayer()
 		: Layer("Render Layer"), m_CameraController(m_AspectRatio), m_SelectedFile("")
 	{
-		m_pEntity = new LampEntity::IEntity();
-		m_pEntity->GetOrCreateComponent<LampEntity::TransformComponent>();
+		m_pEntityManager = new Lamp::EntityManager();
+		m_pEntity = m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG");
+		m_pEntity2 = m_pEntityManager->CreateEntity(glm::vec2(1, 0), "Assets/Textures/ff.PNG");
 
 		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
 
@@ -35,12 +37,13 @@ public:
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
-		Lamp::Renderer::Draw(m_pShader, m_pEntity);
-
 		Lamp::Renderer::BindFBO(m_FBO);
 		Lamp::Renderer::Clear();
 
 		Lamp::Renderer::Begin(m_CameraController.GetCamera());
+
+		Lamp::Renderer::Draw(m_pShader, m_pEntity);
+		Lamp::Renderer::Draw(m_pShader, m_pEntity2);
 
 		Lamp::Renderer::End();
 
@@ -188,7 +191,9 @@ private:
 	Lamp::OrthographicCameraController m_CameraController;
 	std::shared_ptr<Lamp::Shader> m_pShader;
 
-	LampEntity::IEntity* m_pEntity;
+	Lamp::IEntity* m_pEntity;
+	Lamp::IEntity* m_pEntity2;
+	Lamp::EntityManager* m_pEntityManager;
 
 	glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 	glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);

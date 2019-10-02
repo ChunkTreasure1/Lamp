@@ -2,14 +2,18 @@
 
 #include <glm/glm.hpp>
 
-#include "LampEntity/EntityComponent/EntityComponent.h"
+#include "Lamp/Entity/Base/Component.h"
 
-namespace LampEntity
+namespace Lamp
 {
 	class TransformComponent : public IEntityComponent
 	{
 	public:
-		TransformComponent() {}
+		TransformComponent(const glm::vec2& pos)
+			: m_Scale(1.f)
+		{
+			m_Position = pos;
+		}
 
 		virtual void Initialize() override {}
 		virtual void Update() override {}

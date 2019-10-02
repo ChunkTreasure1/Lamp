@@ -7,6 +7,15 @@
     <Filter Include="Lamp\Core">
       <UniqueIdentifier>{278946DB-93F3-FA51-DC31-ACF748DBD8A6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\Entity">
+      <UniqueIdentifier>{DBE0A6CB-4796-1FC1-D08A-19983C3F16C5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\Entity\Base">
+      <UniqueIdentifier>{45FE4489-31F7-63DB-5A29-4960468143E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\Entity\BaseComponents">
+      <UniqueIdentifier>{ABF63EBD-9706-EB8D-00C0-4FACECEED926}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Lamp\Event">
       <UniqueIdentifier>{00803F44-EC37-8191-553F-5AED41161C82}</UniqueIdentifier>
     </Filter>
@@ -39,6 +48,18 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Timestep.h">
       <Filter>Lamp\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\Component.h">
+      <Filter>Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\Entity.h">
+      <Filter>Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\EntityManager.h">
+      <Filter>Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\BaseComponents\TransformComponent.h">
+      <Filter>Lamp\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\EntryPoint.h">
       <Filter>Lamp</Filter>
@@ -125,6 +146,7 @@
       <Filter>Lamp</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Application.cpp">

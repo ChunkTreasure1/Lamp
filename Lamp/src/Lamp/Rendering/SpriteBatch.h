@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include <LampEntity/Entity/Entity.h>
+#include "Lamp/Entity/Base/Entity.h"
 
 #include "Vertex.h"
 #include "Lamp/Rendering/Sprite.h"
@@ -57,7 +57,7 @@ namespace Lamp
 		void Begin(GlyphSortType sortType = GlyphSortType::TEXTURE);
 		void End();
 
-		void Draw(const LampEntity::IEntity* pEntity);
+		void Draw(IEntity* pEntity);
 		void RenderBatches();
 
 	private:

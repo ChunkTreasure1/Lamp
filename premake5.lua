@@ -13,42 +13,6 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 
-project "LampEntity"
-	location "LampEntity"
-	kind "StaticLib"
-	language "C++"
-	cppdialect "C++17"
-
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-		
-		files
-		{
-			"%{prj.name}/src/**.h",
-			"%{prj.name}/src/**.cpp"
-		}
-		
-		includedirs
-		{
-			"%{prj.name}/src",
-			"Lamp/src",
-			"Lamp/vendor/spdlog/include",
-			"Lamp/vendor/include",
-			"Lamp/vendor"
-		}
-
-	filter "system:windows"
-		systemversion "latest"
-		staticruntime "On"
-
-	filter "configurations:Debug"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		runtime "Release"
-		optimize "on"
-
 project "Lamp"
 	location "Lamp"
 	kind "StaticLib"
@@ -80,7 +44,6 @@ project "Lamp"
 		"%{prj.name}/vendor/GLFW/include",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/vendor/imgui/",
-		"LampEntity/src"
 	}
 
 	libdirs 
@@ -90,7 +53,6 @@ project "Lamp"
 	
 	links 
 	{
-		"LampEntity",
 		"GLFW",
 		"ImGui",
 		"glew32s.lib",
@@ -145,12 +107,10 @@ project "Sandbox"
 		"Lamp/vendor/GLFW/include",
 		"Lamp/vendor/spdlog/include",
 		"Lamp/vendor",
-		"LampEntity/src"
 	}
 
 	links
 	{
-		"LampEntity",
 		"Lamp"
 	}
 

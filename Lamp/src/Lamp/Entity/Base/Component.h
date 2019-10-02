@@ -3,7 +3,7 @@
 #include <array>
 #include <bitset>
 
-namespace LampEntity
+namespace Lamp
 {
 	class IEntityComponent;
 	class IEntity;
