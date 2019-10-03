@@ -19,11 +19,12 @@ namespace Lamp
 		//Getting
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
-		glm::vec2 ScreenToWorldCoords(glm::vec2 coords);
 
 		//Setting
 		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
 		void SetHasControl(bool state) { m_HasControl = state; }
+
+		glm::vec2 ScreenToWorldCoords(glm::vec2 coords);
 
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
