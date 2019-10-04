@@ -52,17 +52,7 @@ namespace Lamp
 
 	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords)
 	{
-		//invert Y coords
-		coords.y = Application::Get().GetWindow().GetHeight() - coords.y;
-
-		//Change origo pos and fix scaling
-		coords -= glm::vec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2);
-		coords /= m_ZoomLevel;
-
-		//Translate with camera
-		coords += glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
-
-		return coords;
+		return glm::vec2();
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent & e)

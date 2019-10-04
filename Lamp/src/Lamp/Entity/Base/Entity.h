@@ -30,6 +30,7 @@ namespace Lamp
 
 		//Getting
 		inline const uint32_t GetPosition() { return m_Pos; }
+		inline const std::vector<IEntityComponent*> GetComponents() const { return m_pComponents; }
 
 		template<typename T>
 		const T* GetComponent()

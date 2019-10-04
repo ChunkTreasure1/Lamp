@@ -14,8 +14,9 @@ namespace Lamp
 		SpriteComponent(const std::string& path)
 			: m_Depth(1.f), m_UVRect(0, 0, 1, 1), m_Path(path)
 		{
+			m_SpriteValues.Depth = m_Depth;
+			m_SpriteValues.Path = m_Path;
 		}
-
 		~SpriteComponent() {}
 
 		virtual void Initialize() override 
@@ -49,6 +50,7 @@ namespace Lamp
 		inline const Color GetColor() const { return m_Color; }
 
 		inline const glm::vec4 GetUVRect() const { return m_UVRect; }
+		virtual const EditorValues GetEditorValues() const { return m_SpriteValues; }
 
 	private:
 		std::string m_Path;
@@ -57,5 +59,17 @@ namespace Lamp
 		float m_Depth;
 		GLTexture m_Texture;
 		Color m_Color;
+
+		struct SpriteValues : EditorValues
+		{
+			SpriteValues()
+				: EditorValues("Sprite component")
+			{}
+
+			std::string Path;
+			float Depth;
+		};
+
+		SpriteValues m_SpriteValues = SpriteValues();
 	};
 }

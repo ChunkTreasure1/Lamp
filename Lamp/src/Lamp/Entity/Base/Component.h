@@ -26,6 +26,15 @@ namespace Lamp
 	using ComponentBitSet = std::bitset<32>;
 	using ComponentArray = std::array<IEntityComponent*, 32>;
 
+	struct EditorValues
+	{
+		EditorValues(const std::string& name)
+			: Name(name)
+		{ }
+
+		std::string Name;
+	};
+
 	class IEntityComponent
 	{
 	public:
@@ -35,6 +44,7 @@ namespace Lamp
 
 		//Getting
 		inline const IEntity* GetOwner() const { return m_pEntity; }
+		virtual const EditorValues GetEditorValues() const = 0;
 
 		//Base
 		virtual void Initialize() = 0;
@@ -42,7 +52,8 @@ namespace Lamp
 		virtual void Draw() = 0;
 
 	protected:
-		IEntityComponent() {}
+		IEntityComponent() 
+		{}
 		IEntity* m_pEntity;
 	};
 }

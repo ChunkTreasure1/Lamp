@@ -16,7 +16,7 @@ public:
 	{
 		m_pEntityManager = new Lamp::EntityManager();
 		m_pEntity = m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG");
-		m_pEntity2 = m_pEntityManager->CreateEntity(glm::vec2(1, 0), "Assets/Textures/ff.PNG");
+		m_pEntity2 = m_pEntityManager->CreateEntity(glm::vec2(25, 0), "Assets/Textures/ff.PNG");
 
 		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
 
@@ -121,6 +121,10 @@ public:
 
 					if (auto pEnt = GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(m_MouseHoverPos)))
 					{
+						for (auto pComp : pEnt->GetComponents())
+						{
+							pComp->GetEditorValues();
+						}
 					}
 				}
 			}
@@ -224,7 +228,7 @@ public:
 		return true;
 	}
 
-	Lamp::IEntity* GetEntityFromPoint(const glm::vec2& pos)
+	Lamp::IEntity* GetEntityFromPoint(glm::vec2& pos)
 	{
 		for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
 		{
@@ -232,7 +236,7 @@ public:
 			{
 				glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
 
-				//LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
+				LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
 
 
 				if (pos.x > rect.x &&
