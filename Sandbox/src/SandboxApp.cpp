@@ -81,6 +81,8 @@ public:
 				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y - offset),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
+
+			LP_CORE_INFO(std::to_string(ImGui::GetCursorPos().x) + ", " + std::to_string(ImGui::GetCursorPos().y));
 		}
 		ImGui::End();
 
@@ -112,21 +114,20 @@ public:
 
 		ImGui::Begin("Properties");
 		{
-			if (m_MousePressed && m_PerspectiveHover)
+			if (m_MousePressed)
 			{
-				for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
-				{
-					glm::vec2 pos = m_CameraController.ScreenToWorldCoords(m_MouseHoverPos);
-					//LP_CORE_INFO(std::to_string(pos.x) + ", " + std::to_string(pos.y));
+				//for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
+				//{
+				//	//glm::vec2 pos = m_CameraController.ScreenToWorldCoords(m_MouseHoverPos);
 
-					if (auto pEnt = GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(m_MouseHoverPos)))
-					{
-						for (auto pComp : pEnt->GetComponents())
-						{
-							pComp->GetEditorValues();
-						}
-					}
-				}
+				//	if (auto pEnt = GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(m_MouseHoverPos)))
+				//	{
+				//		for (auto pComp : pEnt->GetComponents())
+				//		{
+				//			pComp->GetEditorValues();
+				//		}
+				//	}
+				//}
 			}
 		}
 		ImGui::End();
@@ -236,7 +237,7 @@ public:
 			{
 				glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
 
-				LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
+				//LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
 
 
 				if (pos.x > rect.x &&
