@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -19,26 +19,26 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lamp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -146,13 +146,15 @@
     <ClInclude Include="src\Lamp.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
+    <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
+    <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Core\Timestep.h" />
-    <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />
+    <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\Lamp\Entity\Base\Component.h" />
     <ClInclude Include="src\Lamp\Entity\Base\Entity.h" />
     <ClInclude Include="src\Lamp\Entity\Base\EntityManager.h" />
+    <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />
     <ClInclude Include="src\Lamp\Entity\BaseComponents\TransformComponent.h" />
-    <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />
@@ -167,7 +169,6 @@
     <ClInclude Include="src\Lamp\Input\WindowsInput.h" />
     <ClInclude Include="src\Lamp\Layer\Layer.h" />
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
-    <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
@@ -179,11 +180,12 @@
     <ClInclude Include="src\Lamp\Rendering\Texture\TextureCache.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture\picoPNG.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertex.h" />
-    <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\lppch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
+    <ClCompile Include="src\Lamp\Core\Log.cpp" />
+    <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
@@ -192,7 +194,6 @@
     <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
-    <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
@@ -202,7 +203,6 @@
     <ClCompile Include="src\Lamp\Rendering\Texture\ImageLoader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp" />
-    <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\lppch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
