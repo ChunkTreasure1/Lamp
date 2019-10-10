@@ -1,5 +1,5 @@
 .vs/
-bin/
+/bin/
 bin-int/
 Lamp/extensions/LampEntity/bin/
 Lamp/extensions/LampEntity/bin-int/
