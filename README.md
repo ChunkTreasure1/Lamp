@@ -1,8 +1,9 @@
 # Lamp
 
-## Generating
-To build you will need to download Premake5 and put into [ProjectMap]/vendor/bin.
-After you have done that you can run GenerateProject.bat to generate project files.
+## Getting Started
+### Cloning
+To clone use: `git clone --recursive https://github.com/SGS-Ivar/Lamp`.
 
-## Running
-To be able to run you will have to the Assets folder into the folder that contains the .exe
+### Generating
+To generate the project use `scripts/Win-GenProjects.bat`. 
+To change the VS version simply edit the last number on the second line in the .bat file.
