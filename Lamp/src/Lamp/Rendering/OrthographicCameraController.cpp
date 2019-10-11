@@ -50,9 +50,13 @@ namespace Lamp
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 	}
 
-	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords)
+	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords, glm::vec2 windowSize)
 	{
-		return glm::vec2();
+
+		coords -= glm::vec2(windowSize.x / 2, windowSize.y / 2);
+		glm::vec2 worldPos = (coords * m_ZoomLevel) + glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
+
+		return worldPos;
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent & e)

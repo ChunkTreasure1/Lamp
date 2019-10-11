@@ -63,7 +63,7 @@ namespace Lamp
 		struct SpriteValues : EditorValues
 		{
 			SpriteValues()
-				: EditorValues("Sprite component")
+				: EditorValues("Sprite component"), Depth(1.f)
 			{}
 
 			std::string Path;

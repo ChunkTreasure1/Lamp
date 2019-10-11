@@ -52,7 +52,8 @@ namespace Lamp
 		virtual void Draw() = 0;
 
 	protected:
-		IEntityComponent() 
+		IEntityComponent()
+			: m_pEntity(nullptr)
 		{}
 		IEntity* m_pEntity;
 	};

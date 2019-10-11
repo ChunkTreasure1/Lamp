@@ -7,7 +7,3 @@
 
 #include "Lamp/Rendering/Texture/GLTexture.h"
 #include "Lamp/Input/FileSystem.h"
-
-//---------------Entry point---------------
-#include "Lamp/Core/EntryPoint.h"
-//-----------------------------------------
