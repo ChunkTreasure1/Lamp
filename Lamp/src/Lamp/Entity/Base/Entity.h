@@ -25,11 +25,8 @@ namespace Lamp
 			m_pComponents.clear();
 		}
 
-		//Setting
-		inline void SetPosition(uint32_t pos) { m_Pos = pos; }
-
 		//Getting
-		inline const uint32_t GetPosition() { return m_Pos; }
+		inline const std::vector<IEntityComponent*> GetComponents() const { return m_pComponents; }
 
 		template<typename T>
 		const T* GetComponent()
@@ -69,7 +66,6 @@ namespace Lamp
 
 	private:
 		bool m_IsActive = true;
-		uint32_t m_Pos; //CHANGE
 
 		std::vector<IEntityComponent*> m_pComponents;
 		ComponentArray m_pComponentArray;

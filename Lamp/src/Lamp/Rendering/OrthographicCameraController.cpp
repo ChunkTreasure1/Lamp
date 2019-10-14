@@ -4,6 +4,8 @@
 #include "Lamp/Input/Input.h"
 #include "Lamp/Input/KeyCodes.h"
 
+#include "Lamp/Core/Application.h"
+
 namespace Lamp
 {
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
@@ -46,6 +48,15 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
+	}
+
+	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords, glm::vec2 windowSize)
+	{
+
+		coords -= glm::vec2(windowSize.x / 2, windowSize.y / 2);
+		glm::vec2 worldPos = (coords * m_ZoomLevel) + glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
+
+		return worldPos;
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent & e)

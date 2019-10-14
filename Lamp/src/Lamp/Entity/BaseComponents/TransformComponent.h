@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		TransformComponent(const glm::vec2& pos)
-			: m_Scale(1.f)
+			: m_Scale(1.f), m_Rotation(glm::vec3(0, 0, 0))
 		{
 			m_Position = pos;
 		}
@@ -23,6 +23,7 @@ namespace Lamp
 		inline const glm::vec2& GetPosition() const { return m_Position; }
 		inline const glm::vec2& GetRotation() const { return m_Rotation; }
 		inline const float GetScale() const { return m_Scale; }
+		virtual const EditorValues GetEditorValues() const { return m_TransformValues; }
 
 		//Setting
 		inline void SetPosition(glm::vec2& pos) { m_Position = pos; }
@@ -33,5 +34,14 @@ namespace Lamp
 		glm::vec2 m_Position;
 		glm::vec2 m_Rotation;
 		float m_Scale;
+
+		struct TransformValues : EditorValues
+		{
+			TransformValues()
+				: EditorValues("Transform Component")
+			{}
+		};
+
+		TransformValues m_TransformValues = TransformValues();
 	};
 }

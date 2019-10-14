@@ -38,7 +38,6 @@ namespace Lamp
 		IEntity* CreateEntity(const glm::vec2& pos, const std::string& path)
 		{
 			IEntity* pEnt = new IEntity();
-			pEnt->SetPosition((uint32_t)m_pEntites.size()); //CHANGE
 			pEnt->GetOrCreateComponent<TransformComponent>(pos);
 			pEnt->GetOrCreateComponent<SpriteComponent>(path);
 
@@ -49,11 +48,18 @@ namespace Lamp
 		bool RemoveEntity(IEntity* pEnt)
 		{
 			pEnt->Destroy();
-			m_pEntites.erase(m_pEntites.begin() + pEnt->GetPosition());
+			auto it = std::find(m_pEntites.begin(), m_pEntites.end(), pEnt);
+			if (it != m_pEntites.end())
+			{
+				m_pEntites.erase(it);
+			}
 			delete pEnt;
 
 			return true;
 		}
+
+		//Getting
+		inline const std::vector<IEntity*> GetEntities() const { return m_pEntites; }
 
 	private:
 		std::vector<IEntity*> m_pEntites;
