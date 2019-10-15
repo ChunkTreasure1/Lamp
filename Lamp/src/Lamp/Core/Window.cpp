@@ -30,6 +30,10 @@ namespace Lamp
 			LP_CORE_ERROR("Could not initialize GLFW");
 		}
 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		glfwSetErrorCallback(GLFWErrorCallback);
 
 		//Create the window
@@ -43,11 +47,10 @@ namespace Lamp
 		//Set the current context
 		glfwMakeContextCurrent(m_pWindow);
 
-		//Initialize GLEW and error check it
-		GLenum error = glewInit();
-		if (error != GLEW_OK)
+		//Load all OpenGL function pointes
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			LP_CORE_ERROR("Could not initialize GLEW!");
+			LP_CORE_ERROR("Failed to load OpenGL!");
 		}
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);

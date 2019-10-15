@@ -1,6 +1,7 @@
 #include "lppch.h"
 #include "Renderer.h"
-#include "Lamp/Input/ResourceManager.h"
+
+#include "Lamp/Entity/BaseComponents/SpriteComponent.h"
 
 namespace Lamp
 {
@@ -30,6 +31,11 @@ namespace Lamp
 
 	void Renderer::Draw(const std::shared_ptr<Shader>& shader, IEntity* pEntity)
 	{
+		if (auto pComp = pEntity->GetComponent<SpriteComponent>())
+		{
+			pComp->GetTexture()->Bind();
+		}
+
 		shader->Bind();
 		shader->UploadUniformInt("textureSampler", 0);
 		shader->UploadUniformMat4("P", s_pSceneData->ViewProjectionMatrix);

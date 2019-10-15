@@ -50,7 +50,7 @@ namespace Lamp
 		{
 			if (auto pSprite = pEntity->GetComponent<SpriteComponent>())
 			{
-				newGlyph->Texture = pSprite->GetTexture().Id;
+				newGlyph->Texture = pSprite->GetTexture()->GetID();
 				newGlyph->Depth = pSprite->GetDepth();
 				newGlyph->TopLeft.Color = pSprite->GetColor();
 

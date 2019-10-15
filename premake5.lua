@@ -12,6 +12,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
+include "Lamp/vendor/glad"
 
 project "Lamp"
 	location "Lamp"
@@ -29,7 +30,11 @@ project "Lamp"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/stb/**.h",
+		"%{prj.name}/vendor/stb_image/stb/**.cpp"
 	}
 
 	defines 
@@ -44,18 +49,16 @@ project "Lamp"
 		"%{prj.name}/vendor/GLFW/include",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/vendor/imgui/",
-	}
-
-	libdirs 
-	{
-		"%{prj.name}/vendor/glew",
+		"%{prj.name}/vendor/glad/include",
+		"%{prj.name}/vendor/glm",
+		"%{prj.name}/vendor/stb_image"
 	}
 	
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"glew32s.lib",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -65,8 +68,7 @@ project "Lamp"
 		defines 
 		{
 			"LP_PLATFORM_WINDOWS",
-			"GLFW_INCLUDE_NONE",
-			"GLEW_STATIC"
+			"GLFW_INCLUDE_NONE"
 		}
 
 		filter "configurations:Debug"
@@ -103,10 +105,11 @@ project "Sandbox"
 	includedirs
 	{
 		"Lamp/src",
-		"Lamp/vendor/include",
-		"Lamp/vendor/GLFW/include",
+		"Lamp/vendor/glm",
 		"Lamp/vendor/spdlog/include",
 		"Lamp/vendor",
+		"Lamp/vendor/glad/include",
+		"Lamp/vendor/GLFW/include"
 	}
 
 	links

@@ -9,7 +9,7 @@
 #include "Lamp/Core/Application.h"
 //TEMPORARY
 #include <GLFW/glfw3.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 namespace Lamp
 {

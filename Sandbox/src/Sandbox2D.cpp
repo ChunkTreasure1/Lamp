@@ -93,8 +93,8 @@ namespace Sandbox2D
 				{
 					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
 					{
-						Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
-						ImGui::Image((void*)(uint64_t)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
+						//Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
+						//ImGui::Image((void*)(uint64_t)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
 					}
 				}
 				ImGui::EndChild();

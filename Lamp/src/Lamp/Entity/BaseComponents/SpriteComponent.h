@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Lamp/Rendering/Sprite.h"
-#include "Lamp/Rendering/Texture/GLTexture.h"
+#include "Lamp/Rendering/Texture2D/Texture2D.h"
 #include "Lamp/Entity/Base/Component.h"
-#include "Lamp/Input/ResourceManager.h"
+
+#include "Lamp/Core/Core.h"
 
 namespace Lamp
 {
@@ -23,7 +24,7 @@ namespace Lamp
 		{
 			if (m_Path.length() > 0)
 			{
-				m_Texture = ResourceManager::GetTexture(m_Path);
+				m_Texture.reset(Texture2D::Create(m_Path));
 			}
 			else
 			{
@@ -34,10 +35,10 @@ namespace Lamp
 		virtual void Draw() override {}
 
 		//Setting
-		inline void SetPath(const std::string& path) 
+		inline void SetTexture(const std::string& path) 
 		{ 
 			m_Path = path; 
-			m_Texture = ResourceManager::GetTexture(m_Path);
+			m_Texture.reset(Texture2D::Create(path));
 		}
 		inline void SetDepth(float val) { m_Depth = val; }
 		inline void SetColor(Color col) { m_Color = col; }
@@ -45,7 +46,7 @@ namespace Lamp
 		inline void SetUVRect(glm::vec4 uvRect) { m_UVRect = uvRect; }
 
 		//Getting
-		inline const GLTexture& GetTexture() const { return m_Texture; }
+		inline const Ref<Texture2D> GetTexture() const { return m_Texture; }
 		inline const float GetDepth() const { return m_Depth; }
 		inline const Color GetColor() const { return m_Color; }
 
@@ -57,7 +58,7 @@ namespace Lamp
 		glm::vec4 m_UVRect;
 
 		float m_Depth;
-		GLTexture m_Texture;
+		std::shared_ptr<Texture2D> m_Texture;
 		Color m_Color;
 
 		struct SpriteValues : EditorValues
