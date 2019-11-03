@@ -7,24 +7,23 @@ namespace Lamp
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(float* vertices, uint32_t size);
+		VertexBuffer(float* pVertices, uint32_t size);
 		~VertexBuffer();
 
 		void Bind() const;
 		void Unbind() const;
 
 	public:
-		static VertexBuffer* Create(float* pVertices, uint32_t size);
+		static std::shared_ptr<VertexBuffer> Create(float* pVertices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;
-
 	};
 
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer(uint32_t* indices, uint32_t count);
+		IndexBuffer(uint32_t* pIndices, uint32_t count);
 		~IndexBuffer();
 
 		void Bind() const;
@@ -33,7 +32,7 @@ namespace Lamp
 		uint32_t GetCount() { return m_Count; }
 
 	public:
-		static IndexBuffer* Create(uint32_t* indices, uint32_t size);
+		static std::shared_ptr<IndexBuffer> Create(uint32_t* pIndices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;

@@ -27,15 +27,16 @@ namespace Lamp
 		};
 
 		Ref<VertexBuffer> pSquareVB;
-		pSquareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		pSquareVB = std::make_shared<VertexBuffer>(squareVertices, sizeof(squareVertices));
 		s_pData->pQuadVertexArray->AddVertexBuffer(pSquareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 		Ref<IndexBuffer> pSquareIB;
-		pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		pSquareIB = std::make_shared<IndexBuffer>(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
 
 		s_pData->pTextureShader = Shader::Create("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag");
+		s_pData->pTextureShader->UploadInt("u_Texture", 0);
 	}
 
 	void Renderer2D::Shutdown()
@@ -69,9 +70,11 @@ namespace Lamp
 	{
 		DrawQuad({ pos.x, pos.y, 0.f }, scale, color);
 	}
+
 	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const Ref<Texture2D>& texture)
 	{
 		s_pData->pTextureShader->Bind();
+		s_pData->pTextureShader->UploadInt("u_Texture", 0);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), pos) * glm::scale(glm::mat4(1.f), { scale.x, scale.y, 1.f });
 		s_pData->pTextureShader->UploadMat4("u_Transform", transform);

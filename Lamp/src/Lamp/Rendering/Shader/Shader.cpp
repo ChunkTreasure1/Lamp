@@ -9,31 +9,37 @@ namespace Lamp
 		std::string vertexCode;
 		std::string fragmentCode;
 
-		std::ifstream vShaderFile;
-		std::ifstream fShaderFile;
-
-		vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-		vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-		try
+		//Read the vertex shader
+		std::ifstream fragmentFile(fragmentPath);
+		if (fragmentFile.fail())
 		{
-			vShaderFile.open(vertexPath);
-			fShaderFile.open(fragmentPath);
-			std::stringstream vShaderStream, fShaderStream;
-
-			vShaderStream << vShaderFile.rdbuf();
-			fShaderStream << fShaderFile.rdbuf();
-
-			vShaderFile.close();
-			fShaderFile.close();
-
-			vertexCode = vShaderStream.str();
-			fragmentCode = fShaderStream.str();
+			perror(fragmentPath.c_str());
+			LP_CORE_ERROR("Failed to open" + fragmentPath + "!");
 		}
-		catch (std::ifstream::failure e)
+
+		std::string line;
+
+		while (std::getline(fragmentFile, line))
 		{
-
-			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << e.what() << std::endl;
+			fragmentCode += line + "\n";
 		}
+
+		fragmentFile.close();
+
+		//Read the vertex shader
+		std::ifstream vertexFile(vertexPath);
+		if (vertexFile.fail())
+		{
+			perror(vertexPath.c_str());
+			LP_CORE_ERROR("Failed to open" + vertexPath + "!");
+		}
+
+		while (std::getline(vertexFile, line))
+		{
+			vertexCode += line + "\n";
+		}
+
+		vertexFile.close();
 
 		const char* vShaderCode = vertexCode.c_str();
 		const char* fShaderCode = fragmentCode.c_str();
