@@ -1,47 +1,36 @@
 #pragma once
 
-#include <string>
 #include <glad/glad.h>
+
+#include <string>
+
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Lamp
 {
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
-		~Shader();
-
-		//Functions
-		void LinkShaders();
-		void AddAttribute(const std::string& attributeName);
-		GLint GetUniformLocation(const std::string& uniformName);
+		Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
 		void Bind();
-		void Unbind();
+		void UploadBool(const std::string& name, bool value) const;
+		void UploadInt(const std::string& name, int value) const;
+		void UploadFloat(const std::string& name, float value) const;
+		void UploadFloat4(const std::string& name, const glm::vec4& value) const;
 
-		//Uploads
-		void UploadUniformInt(const std::string& name, int value);
-		void UploadUniformFloat(const std::string& name, float value);
-		void UploadUniformFloat2(const std::string& name, const glm::vec2& value);
+		void UploadMat4(const std::string& name, const glm::mat4& mat);
 
-		void UploadUniformFloat3(const std::string& name, const glm::vec3& value);
-		void UploadUniformFloat4(const std::string& name, const glm::vec4& value);
-		void UploadUniformMat3(const std::string& name, const glm::mat3& matrix);
-
-		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
+	public:
+		static std::shared_ptr<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
 
 	private:
-
-		//Member functions
-		void CompileShader(const std::string& filePath, GLuint& id);
-
-		//Member vars
-		GLuint m_ProgramID;
-		GLuint m_VertShaderID;
-		GLuint m_FragShaderID;
-
-		int m_NumAttributes;
+		uint32_t m_ID;
 	};
-
 }

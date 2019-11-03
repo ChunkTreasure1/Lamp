@@ -47,7 +47,7 @@ namespace Lamp
 		//Set the current context
 		glfwMakeContextCurrent(m_pWindow);
 
-		//Load all OpenGL function pointes
+		//Load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			LP_CORE_ERROR("Failed to load OpenGL!");

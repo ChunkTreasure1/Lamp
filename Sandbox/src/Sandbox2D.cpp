@@ -1,25 +1,17 @@
 #include "lppch.h"
 #include "Sandbox2D.h"
 
+#include "Lamp/Rendering/Renderer2D.h"
+
 namespace Sandbox2D
 {
 	Sandbox2D::Sandbox2D()
 		: Lamp::Layer("Sandbox2D"), m_CameraController(m_AspectRatio), m_SelectedFile(""), m_DockspaceID(0)
 	{
-		m_pEntityManager = new Lamp::EntityManager();
-		m_pEntity = m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG");
-		m_pEntity2 = m_pEntityManager->CreateEntity(glm::vec2(25, 0), "Assets/Textures/ff.PNG");
-
-		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
-
-		m_pShader->AddAttribute("vertexPosition");
-		m_pShader->AddAttribute("vertexColor");
-		m_pShader->AddAttribute("vertexUV");
-
-		m_pShader->LinkShaders();
-
 		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
 		Lamp::Renderer::CreateTexture(m_FBOTexture);
+
+		m_pTestTexture.reset(Lamp::Texture2D::Create("Assets/Textures/ff.PNG"));
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
@@ -32,12 +24,11 @@ namespace Sandbox2D
 		Lamp::Renderer::BindFBO(m_FBO);
 		Lamp::Renderer::Clear();
 
-		Lamp::Renderer::Begin(m_CameraController.GetCamera());
+		Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
 
-		Lamp::Renderer::Draw(m_pShader, m_pEntity);
-		Lamp::Renderer::Draw(m_pShader, m_pEntity2);
+		Lamp::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_pTestTexture);
 
-		Lamp::Renderer::End();
+		Lamp::Renderer2D::End();
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_FBOTexture, 0);
 		Lamp::Renderer::UnbindFBO();

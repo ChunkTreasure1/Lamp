@@ -156,23 +156,11 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
-      <Filter>src\Lamp\Rendering\Shader</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Sprite.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h">
       <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture\GLTexture.h">
-      <Filter>src\Lamp\Rendering\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture\ImageLoader.h">
-      <Filter>src\Lamp\Rendering\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture\picoPNG.h">
-      <Filter>src\Lamp\Rendering\Texture</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -1284,6 +1272,10 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexArray.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1325,20 +1317,11 @@
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
-      <Filter>src\Lamp\Rendering\Shader</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Sprite.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\SpriteBatch.cpp">
       <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture\ImageLoader.cpp">
-      <Filter>src\Lamp\Rendering\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture\picoPNG.cpp">
-      <Filter>src\Lamp\Rendering\Texture</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -1355,5 +1338,9 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexArray.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
   </ItemGroup>
 </Project>
