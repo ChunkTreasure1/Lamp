@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "Renderer.h"
 
-#include "Vertecies/VertexArray.h"
+#include "Vertices/VertexArray.h"
 #include "Renderer2D.h"
 
 namespace Lamp
@@ -29,6 +29,10 @@ namespace Lamp
 
 		Ref<VertexBuffer> pSquareVB;
 		pSquareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		pSquareVB->SetBufferLayout({
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float2, "a_TexCoord" }
+		});
 		s_pData->pQuadVertexArray->AddVertexBuffer(pSquareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };

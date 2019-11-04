@@ -25,8 +25,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\FlatColor.vert" />
-    <None Include="engine\shaders\FlatColor.frag" />
+    <None Include="engine\shaders\FlatColor.frag">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\FlatColor.vert">
+      <Filter>engine\shaders</Filter>
+    </None>
     <None Include="engine\shaders\Texture.frag">
       <Filter>engine\shaders</Filter>
     </None>

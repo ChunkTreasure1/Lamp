@@ -72,6 +72,7 @@ project "Lamp"
 		}
 
 		filter "configurations:Debug"
+			debugdir ("bin/" .. outputdir .."/%{prj.name}")
 			defines "LP_DEBUG"
 			runtime "Debug"
 			symbols "on"
@@ -128,6 +129,7 @@ project "Sandbox"
 		}
 
 		filter "configurations:Debug"
+			debugdir ("bin/" .. outputdir .."/%{prj.name}")
 			defines "LP_DEBUG"
 			runtime "Debug"
 			symbols "on"

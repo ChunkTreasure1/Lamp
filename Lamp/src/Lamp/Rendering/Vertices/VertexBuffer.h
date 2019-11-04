@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include "BufferLayout.h"
 
 namespace Lamp
 {
@@ -13,11 +14,15 @@ namespace Lamp
 		void Bind() const;
 		void Unbind() const;
 
+		inline void SetBufferLayout(const BufferLayout& buff) { m_BufferLayout = buff; }
+		inline BufferLayout& GetBufferLayout() { return m_BufferLayout; }
+
 	public:
 		static VertexBuffer* Create(float* pVertices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;
+		BufferLayout m_BufferLayout;
 	};
 
 	class IndexBuffer
