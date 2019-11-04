@@ -36,7 +36,7 @@ namespace Lamp
 		pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
 
-		s_pData->pTextureShader = Shader::Create("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag");
+		s_pData->pTextureShader = Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag");
 		s_pData->pTextureShader->UploadInt("u_Texture", 0);
 	}
 

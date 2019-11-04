@@ -9,7 +9,7 @@ namespace Sandbox2D
 		: Lamp::Layer("Sandbox2D"), m_CameraController(m_AspectRatio), m_SelectedFile(""), m_DockspaceID(0)
 	{
 		m_pEntityManager = new Lamp::EntityManager();
-		m_pEntity = m_pEntityManager->CreateEntity(glm::vec3(0.f, 0.f, 0.f), "Assets/Textures/ff.PNG");
+		m_pEntity = m_pEntityManager->CreateEntity(glm::vec3(0.f, 0.f, 0.f), "engine/textures/ff.PNG");
 
 		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}

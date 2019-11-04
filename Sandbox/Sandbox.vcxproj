@@ -138,6 +138,12 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="engine\shaders\FlatColor.frag" />
+    <None Include="engine\shaders\FlatColor.vert" />
+    <None Include="engine\shaders\Texture.frag" />
+    <None Include="engine\shaders\Texture.vert" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">
       <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
     </ProjectReference>

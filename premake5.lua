@@ -99,7 +99,9 @@ project "Sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/engine/**.vert",
+		"%{prj.name}/engine/**.frag"
 	}
 
 	includedirs

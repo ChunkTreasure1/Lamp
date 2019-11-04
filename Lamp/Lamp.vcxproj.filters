@@ -147,6 +147,9 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\FrameBuffer.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -1275,7 +1278,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\FrameBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1307,6 +1309,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
       <Filter>src\Lamp\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\FrameBuffer.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp">
       <Filter>src\Lamp\Rendering</Filter>
@@ -1344,6 +1349,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\FrameBuffer.cpp" />
   </ItemGroup>
 </Project>
