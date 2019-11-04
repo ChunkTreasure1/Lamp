@@ -13,7 +13,13 @@ namespace Lamp
 		IEntity() {}
 		~IEntity() {}
 
-		void Update() {}
+		void Update() 
+		{
+			for (auto& pComp : m_pComponents)
+			{
+				pComp->Update();
+			}
+		}
 		void Draw() 
 		{
 			for (auto& pComp : m_pComponents)

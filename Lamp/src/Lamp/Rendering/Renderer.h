@@ -23,19 +23,6 @@ namespace Lamp
 		static void SetClearColor(const glm::vec4& color) { glClearColor(color.r, color.g, color.g, color.a); glClearDepth(1.f); }
 		static void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
-		static void BindFBO(uint32_t& fbo) { glBindFramebuffer(GL_FRAMEBUFFER, fbo); }
-		static void UnbindFBO() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
-		static void GenerateFrameBuffers(uint32_t& fbo) { glGenFramebuffers(1, &fbo); }
-		static void CreateTexture(uint32_t& texture) 
-		{
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-
 	private: 
 		struct SceneData
 		{
