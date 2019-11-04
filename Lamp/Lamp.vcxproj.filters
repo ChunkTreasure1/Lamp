@@ -37,11 +37,11 @@
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\Texture">
-      <UniqueIdentifier>{13D0C1D2-FFDF-6DA3-6899-D2C154C85C3C}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Rendering\Texture2D">
       <UniqueIdentifier>{8927768A-75E2-6536-1E9A-DE800A34B0C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Rendering\Vertecies">
+      <UniqueIdentifier>{0CF367A4-F8AD-5750-A165-D09A8DFFA1E0}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -156,11 +156,11 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Sprite.h">
+    <ClInclude Include="src\Lamp\Rendering\Renderer2D.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h">
-      <Filter>src\Lamp\Rendering</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
+      <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -171,8 +171,11 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertex.h">
-      <Filter>src\Lamp\Rendering</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexArray.h">
+      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexBuffer.h">
+      <Filter>src\Lamp\Rendering\Vertecies</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h">
       <Filter>src</Filter>
@@ -1272,10 +1275,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexArray.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexBuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1317,11 +1316,11 @@
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Sprite.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\SpriteBatch.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
+    <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
+      <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -1332,15 +1331,17 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexArray.cpp">
+      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    </ClCompile>
     <ClCompile Include="src\lppch.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexArray.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexBuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
   </ItemGroup>
 </Project>

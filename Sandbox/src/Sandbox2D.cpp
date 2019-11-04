@@ -11,7 +11,8 @@ namespace Sandbox2D
 		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
 		Lamp::Renderer::CreateTexture(m_FBOTexture);
 
-		m_pTestTexture.reset(Lamp::Texture2D::Create("Assets/Textures/ff.PNG"));
+		m_pEntityManager = new Lamp::EntityManager();
+		m_pEntity = m_pEntityManager->CreateEntity(glm::vec3(0.f, 0.f, 0.f), "Assets/Textures/ff.PNG");
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
@@ -26,7 +27,9 @@ namespace Sandbox2D
 
 		Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
 
-		Lamp::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_pTestTexture);
+		m_pEntityManager->Draw();
+
+		//Lamp::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_pTestTexture);
 
 		Lamp::Renderer2D::End();
 
@@ -237,18 +240,18 @@ namespace Sandbox2D
 		{
 			if (auto pTrans = pEnt->GetComponent<Lamp::TransformComponent>())
 			{
-				glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
+				//glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
 
 				//LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
 
 
-				if (pos.x > rect.x&&
-					pos.x < rect.x + rect.z &&
-					pos.y > rect.y&&
-					pos.y < rect.y + rect.w)
-				{
-					return pEnt;
-				}
+				//if (pos.x > rect.x&&
+				//	pos.x < rect.x + rect.z &&
+				//	pos.y > rect.y&&
+				//	pos.y < rect.y + rect.w)
+				//{
+				//	return pEnt;
+				//}
 			}
 		}
 

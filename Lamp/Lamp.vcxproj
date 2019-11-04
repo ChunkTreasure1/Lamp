@@ -170,14 +170,11 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
-    <ClInclude Include="src\Lamp\Rendering\Sprite.h" />
-    <ClInclude Include="src\Lamp\Rendering\SpriteBatch.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexBuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertex.h" />
     <ClInclude Include="src\lppch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -561,12 +558,8 @@
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Sprite.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\SpriteBatch.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp">
-      <ObjectFileName>$(IntDir)\TextureCache1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexBuffer.cpp" />

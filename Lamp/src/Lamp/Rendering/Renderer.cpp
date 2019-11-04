@@ -7,7 +7,6 @@
 namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
-	SpriteBatch* Renderer::m_pSpriteBatch = new SpriteBatch();
 
 	void Renderer::Initialize()
 	{
@@ -28,6 +27,8 @@ namespace Lamp
 
 	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
 	{
+		vertexArray->Bind();
+
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 }

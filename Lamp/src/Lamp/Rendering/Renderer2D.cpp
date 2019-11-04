@@ -13,6 +13,7 @@ namespace Lamp
 	};
 
 	static Renderer2DStorage* s_pData;
+	static uint32_t VBO, VAO, EBO;
 
 	void Renderer2D::Initialize()
 	{
@@ -27,12 +28,12 @@ namespace Lamp
 		};
 
 		Ref<VertexBuffer> pSquareVB;
-		pSquareVB = std::make_shared<VertexBuffer>(squareVertices, sizeof(squareVertices));
+		pSquareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		s_pData->pQuadVertexArray->AddVertexBuffer(pSquareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 		Ref<IndexBuffer> pSquareIB;
-		pSquareIB = std::make_shared<IndexBuffer>(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
+		pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
 
 		s_pData->pTextureShader = Shader::Create("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag");
@@ -44,7 +45,7 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer2D::Begin(const OrthographicCamera & camera)
+	void Renderer2D::Begin(const OrthographicCamera& camera)
 	{
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
@@ -54,7 +55,7 @@ namespace Lamp
 	void Renderer2D::End()
 	{}
 
-	void Renderer2D::DrawQuad(const glm::vec3 & pos, const glm::vec2 & scale, const glm::vec4 & color)
+	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const glm::vec4& color)
 	{
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadFloat4("u_Color", color);
@@ -66,7 +67,7 @@ namespace Lamp
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2 & pos, const glm::vec2 & scale, const glm::vec4 & color)
+	void Renderer2D::DrawQuad(const glm::vec2& pos, const glm::vec2& scale, const glm::vec4& color)
 	{
 		DrawQuad({ pos.x, pos.y, 0.f }, scale, color);
 	}
@@ -85,7 +86,7 @@ namespace Lamp
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2 & pos, const glm::vec2 & scale, const Ref<Texture2D> & texture)
+	void Renderer2D::DrawQuad(const glm::vec2& pos, const glm::vec2& scale, const Ref<Texture2D>& texture)
 	{
 		DrawQuad({ pos.x, pos.y, 0.f }, scale, texture);
 	}

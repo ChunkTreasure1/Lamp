@@ -6,7 +6,7 @@ namespace Lamp
 {
 	VertexArray::VertexArray()
 	{
-		//glCreateVertexArrays(1, &m_RendererID);
+		glGenVertexArrays(1, &m_RendererID);
 	}
 
 	VertexArray::~VertexArray()
@@ -29,11 +29,12 @@ namespace Lamp
 		glBindVertexArray(m_RendererID);
 		pVertexBuffer->Bind();
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
 
 		m_VertexBuffers.push_back(pVertexBuffer);
 	}

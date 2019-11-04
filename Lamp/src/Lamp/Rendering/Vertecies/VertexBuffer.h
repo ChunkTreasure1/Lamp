@@ -14,7 +14,7 @@ namespace Lamp
 		void Unbind() const;
 
 	public:
-		static std::shared_ptr<VertexBuffer> Create(float* pVertices, uint32_t size);
+		static VertexBuffer* Create(float* pVertices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;
@@ -32,7 +32,7 @@ namespace Lamp
 		uint32_t GetCount() { return m_Count; }
 
 	public:
-		static std::shared_ptr<IndexBuffer> Create(uint32_t* pIndices, uint32_t size);
+		static IndexBuffer* Create(uint32_t* pIndices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;

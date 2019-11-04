@@ -61,8 +61,6 @@ namespace Lamp
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-		LP_CORE_TRACE("{0}", e);
-
 		//Handle rest of events
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
