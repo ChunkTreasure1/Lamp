@@ -9,10 +9,9 @@
 namespace Lamp
 {
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation),
+		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation),
 		m_HasControl(true)
-	{
-	}
+	{}
 
 	void OrthographicCameraController::Update(Timestep ts)
 	{
@@ -44,7 +43,7 @@ namespace Lamp
 		}
 	}
 
-	void OrthographicCameraController::OnEvent(Event & e)
+	void OrthographicCameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
@@ -52,14 +51,13 @@ namespace Lamp
 
 	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords, glm::vec2 windowSize)
 	{
-
 		coords -= glm::vec2(windowSize.x / 2, windowSize.y / 2);
-		glm::vec2 worldPos = (coords * m_ZoomLevel) + glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
+		glm::vec2 worldPos = (coords) + glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
 
 		return worldPos;
 	}
 
-	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent & e)
+	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		if (m_HasControl)
 		{
@@ -72,7 +70,7 @@ namespace Lamp
 		return false;
 	}
 
-	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent & e)
+	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);

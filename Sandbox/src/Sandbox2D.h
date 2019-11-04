@@ -7,6 +7,7 @@
 
 #include "Lamp/Entity/BaseComponents/TransformComponent.h"
 #include "Lamp/Entity/Base/EntityManager.h"
+#include "Lamp/Rendering/FrameBuffer.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -36,6 +37,8 @@ namespace Sandbox2D
 		Lamp::IEntity* m_pEntity;
 		Lamp::IEntity* m_pEntity2;
 		Lamp::EntityManager* m_pEntityManager;
+
+		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
 		//--------------------------------------
 
 		//---------------Editor-----------------
@@ -45,8 +48,7 @@ namespace Sandbox2D
 
 		//Perspective
 		const float m_AspectRatio = 1.7f;
-		uint32_t m_FBO;
-		uint32_t m_FBOTexture;
+		std::shared_ptr<Lamp::FrameBuffer> m_FrameBuffer;
 		
 		//Asset browser
 		Lamp::File m_SelectedFile;

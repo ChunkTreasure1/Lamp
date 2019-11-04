@@ -2,44 +2,31 @@
 #include "Renderer.h"
 
 #include "Lamp/Entity/BaseComponents/SpriteComponent.h"
+#include "Renderer2D.h"
 
 namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
-	SpriteBatch* Renderer::m_pSpriteBatch = new SpriteBatch();
 
 	void Renderer::Initialize()
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Renderer2D::Initialize();
 
-		m_pSpriteBatch->Initialize();
 	}
 	void Renderer::Begin(OrthographicCamera & camera)
 	{
 		s_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
-		m_pSpriteBatch->Begin();
 	}
 
 	void Renderer::End()
 	{
-		m_pSpriteBatch->End();
-		m_pSpriteBatch->RenderBatches();
-
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Renderer::Draw(const std::shared_ptr<Shader>& shader, IEntity* pEntity)
+	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
 	{
-		if (auto pComp = pEntity->GetComponent<SpriteComponent>())
-		{
-			pComp->GetTexture()->Bind();
-		}
-
-		shader->Bind();
-		shader->UploadUniformInt("textureSampler", 0);
-		shader->UploadUniformMat4("P", s_pSceneData->ViewProjectionMatrix);
-
-		m_pSpriteBatch->Draw(pEntity);
+		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 }

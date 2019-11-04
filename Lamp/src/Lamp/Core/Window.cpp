@@ -30,10 +30,6 @@ namespace Lamp
 			LP_CORE_ERROR("Could not initialize GLFW");
 		}
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 		glfwSetErrorCallback(GLFWErrorCallback);
 
 		//Create the window
@@ -47,11 +43,16 @@ namespace Lamp
 		//Set the current context
 		glfwMakeContextCurrent(m_pWindow);
 
-		//Load all OpenGL function pointes
+		//Load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			LP_CORE_ERROR("Failed to load OpenGL!");
 		}
+
+		LP_CORE_INFO("OpenGL Info:");
+		LP_CORE_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
+		LP_CORE_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
+		LP_CORE_INFO("  Version: {0}", glGetString(GL_VERSION));
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetIsVSync(props.IsVSync);

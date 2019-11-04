@@ -1,22 +1,15 @@
-#version 130
+#version 330 core
 
-in vec2 vertexPosition;
-in vec4 vertexColor;
-in vec2 vertexUV;
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec2 a_TexCoord;
 
-out vec2 fragmentPosition;
-out vec4 fragmentColor;
-out vec2 fragmentUV;
+uniform mat4 u_ViewProjection;
+uniform mat4 u_Transform;
 
-uniform mat4 P;
+out vec2 v_TexCoord;
 
 void main()
 {
-	gl_Position.xy = (P * vec4(vertexPosition, 0.0, 1.0)).xy;
-	gl_Position.z = 0.0;
-	gl_Position.w = 1.0;
-	
-	fragmentPosition = vertexPosition;
-	fragmentColor = vertexColor;
-	fragmentUV = vec2(vertexUV.x, 1.0 - vertexUV.y);
+	v_TexCoord = a_TexCoord;
+	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 }

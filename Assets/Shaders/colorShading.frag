@@ -1,18 +1,12 @@
-#version 130
+#version 330 core
 
-in vec2 fragmentPosition;
-in vec4 fragmentColor;
-in vec2 fragmentUV;
+layout(location = 0) out vec4 color;
 
-out vec4 color;
+in vec2 v_TexCoord;
 
-uniform sampler2D textureSampler;
+uniform sampler2D u_Texture;
 
 void main()
 {
-	vec4 textureColor = texture(textureSampler, fragmentUV);
-
-	color = textureColor * fragmentColor;
-	
-	color = fragmentColor * textureColor;
+	color = texture(u_Texture, v_TexCoord);
 }

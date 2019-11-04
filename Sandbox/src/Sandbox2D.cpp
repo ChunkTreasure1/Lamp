@@ -1,46 +1,38 @@
 #include "lppch.h"
 #include "Sandbox2D.h"
 
+#include "Lamp/Rendering/Renderer2D.h"
+
 namespace Sandbox2D
 {
 	Sandbox2D::Sandbox2D()
 		: Lamp::Layer("Sandbox2D"), m_CameraController(m_AspectRatio), m_SelectedFile(""), m_DockspaceID(0)
 	{
 		m_pEntityManager = new Lamp::EntityManager();
-		m_pEntity = m_pEntityManager->CreateEntity(glm::vec2(0, 0), "Assets/Textures/ff.PNG");
-		m_pEntity2 = m_pEntityManager->CreateEntity(glm::vec2(25, 0), "Assets/Textures/ff.PNG");
+		m_pEntity = m_pEntityManager->CreateEntity(glm::vec3(0.f, 0.f, 0.f), "Assets/Textures/ff.PNG");
 
-		m_pShader.reset(new Lamp::Shader("Assets/Shaders/colorShading.vert", "Assets/Shaders/colorShading.frag"));
-
-		m_pShader->AddAttribute("vertexPosition");
-		m_pShader->AddAttribute("vertexColor");
-		m_pShader->AddAttribute("vertexUV");
-
-		m_pShader->LinkShaders();
-
-		Lamp::Renderer::GenerateFrameBuffers(m_FBO);
-		Lamp::Renderer::CreateTexture(m_FBOTexture);
+		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
 	{
 		m_CameraController.Update(ts);
+		m_pEntityManager->Update();
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
-		Lamp::Renderer::BindFBO(m_FBO);
+		m_FrameBuffer->Bind();
 		Lamp::Renderer::Clear();
 
-		Lamp::Renderer::Begin(m_CameraController.GetCamera());
+		Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
 
-		Lamp::Renderer::Draw(m_pShader, m_pEntity);
-		Lamp::Renderer::Draw(m_pShader, m_pEntity2);
+		m_pEntityManager->Draw();
 
-		Lamp::Renderer::End();
+		//Lamp::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_pTestTexture);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_FBOTexture, 0);
-		Lamp::Renderer::UnbindFBO();
+		Lamp::Renderer2D::End();
+		m_FrameBuffer->Unbind();
 	}
 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)
@@ -68,7 +60,9 @@ namespace Sandbox2D
 
 			float offset = (ImGui::GetWindowSize().y - height) / 2;
 
-			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_FBOTexture,
+			m_FrameBuffer->Update((uint32_t)height, (uint32_t)ImGui::GetWindowSize().y);
+
+			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_FrameBuffer->GetTexture(),
 				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + offset),
 				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y - offset),
 				ImVec2(0, 1),
@@ -246,18 +240,18 @@ namespace Sandbox2D
 		{
 			if (auto pTrans = pEnt->GetComponent<Lamp::TransformComponent>())
 			{
-				glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
+				//glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
 
 				//LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
 
 
-				if (pos.x > rect.x&&
-					pos.x < rect.x + rect.z &&
-					pos.y > rect.y&&
-					pos.y < rect.y + rect.w)
-				{
-					return pEnt;
-				}
+				//if (pos.x > rect.x&&
+				//	pos.x < rect.x + rect.z &&
+				//	pos.y > rect.y&&
+				//	pos.y < rect.y + rect.w)
+				//{
+				//	return pEnt;
+				//}
 			}
 		}
 

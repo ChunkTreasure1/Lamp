@@ -35,7 +35,7 @@ namespace Lamp
 
 			m_pEntites.clear();
 		}
-		IEntity* CreateEntity(const glm::vec2& pos, const std::string& path)
+		IEntity* CreateEntity(const glm::vec3& pos, const std::string& path)
 		{
 			IEntity* pEnt = new IEntity();
 			pEnt->GetOrCreateComponent<TransformComponent>(pos);
