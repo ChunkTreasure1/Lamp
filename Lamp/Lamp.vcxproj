@@ -174,8 +174,9 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexArray.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\lppch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -563,8 +564,8 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexArray.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\lppch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

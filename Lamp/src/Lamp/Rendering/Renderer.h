@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "Lamp/Entity/Base/Entity.h"
-#include "Lamp/Rendering/Vertecies/VertexArray.h"
+#include "Lamp/Rendering/Vertices/VertexArray.h"
 
 namespace Lamp
 {

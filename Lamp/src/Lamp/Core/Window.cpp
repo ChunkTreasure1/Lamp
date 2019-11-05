@@ -19,7 +19,6 @@ namespace Lamp
 
 	Window::~Window()
 	{
-		delete m_pWindow;
 		glfwTerminate();
 	}
 

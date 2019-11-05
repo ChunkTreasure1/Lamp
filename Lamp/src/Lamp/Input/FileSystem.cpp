@@ -10,7 +10,7 @@ namespace Lamp
 	std::vector<std::string> FileSystem::GetAssetFolders()
 	{
 		std::vector<std::string> folders;
-		for (const auto& entry : std::filesystem::directory_iterator("Assets"))
+		for (const auto& entry : std::filesystem::directory_iterator("engine"))
 		{
 			std::string s = entry.path().string();
 			if (s.find(".") == std::string::npos)

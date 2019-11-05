@@ -5,10 +5,6 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-#include "Lamp/Entity/BaseComponents/TransformComponent.h"
-#include "Lamp/Entity/Base/EntityManager.h"
-#include "Lamp/Rendering/FrameBuffer.h"
-
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Sandbox2D

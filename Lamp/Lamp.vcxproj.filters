@@ -40,8 +40,8 @@
     <Filter Include="src\Lamp\Rendering\Texture2D">
       <UniqueIdentifier>{8927768A-75E2-6536-1E9A-DE800A34B0C6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\Vertecies">
-      <UniqueIdentifier>{0CF367A4-F8AD-5750-A165-D09A8DFFA1E0}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Rendering\Vertices">
+      <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -174,11 +174,14 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexArray.h">
-      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertecies\VertexBuffer.h">
-      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h">
       <Filter>src</Filter>
@@ -1337,11 +1340,11 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexArray.cpp">
-      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertecies\VertexBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Vertecies</Filter>
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\lppch.cpp">
       <Filter>src</Filter>
