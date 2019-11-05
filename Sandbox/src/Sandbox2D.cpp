@@ -28,13 +28,12 @@ namespace Sandbox2D
 		Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
 
 		m_pEntityManager->Draw();
-
-		//Lamp::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_pTestTexture);
+		Lamp::Renderer2D::DrawQuad({ 2.0f, 0.0f }, { 1.0f, 1.0f }, { 1.f, 0.8f, 0.5f, 1.f});
 
 		Lamp::Renderer2D::End();
 		m_FrameBuffer->Unbind();
 	}
-
+	 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)
 	{
 		CreateDockspace();

@@ -10,6 +10,7 @@ namespace Lamp
 	{
 		Ref<VertexArray> pQuadVertexArray;
 		Ref<Shader> pTextureShader;
+		Ref<Shader> pFlatColorShader;
 	};
 
 	static Renderer2DStorage* s_pData;
@@ -29,7 +30,8 @@ namespace Lamp
 
 		Ref<VertexBuffer> pSquareVB;
 		pSquareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-		pSquareVB->SetBufferLayout({
+		pSquareVB->SetBufferLayout
+		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float2, "a_TexCoord" }
 		});
@@ -39,6 +41,8 @@ namespace Lamp
 		Ref<IndexBuffer> pSquareIB;
 		pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
+
+		s_pData->pFlatColorShader = Shader::Create("engine/shaders/FlatColor.vert", "engine/shaders/FlatColor.frag");
 
 		s_pData->pTextureShader = Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag");
 		s_pData->pTextureShader->UploadInt("u_Texture", 0);
@@ -51,21 +55,24 @@ namespace Lamp
 
 	void Renderer2D::Begin(const OrthographicCamera& camera)
 	{
+		s_pData->pFlatColorShader->Bind();
+		s_pData->pFlatColorShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		s_pData->pFlatColorShader->UploadMat4("u_Transform", glm::mat4(1.f));
+
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		s_pData->pTextureShader->UploadMat4("u_Transform", glm::mat4(1.f));
 	}
 
-	void Renderer2D::End()
-	{}
+	void Renderer2D::End() {}
 
 	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const glm::vec4& color)
 	{
-		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadFloat4("u_Color", color);
+		s_pData->pFlatColorShader->Bind();
+		s_pData->pFlatColorShader->UploadFloat4("u_Color", color);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), pos) * glm::scale(glm::mat4(1.f), { scale.x, scale.y, 1.f });
-		s_pData->pTextureShader->UploadMat4("u_Transform", transform);
+		s_pData->pFlatColorShader->UploadMat4("u_Transform", transform);
 
 		s_pData->pQuadVertexArray->Bind();
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray);
@@ -80,6 +87,10 @@ namespace Lamp
 	{
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadInt("u_Texture", 0);
+
+		/////TO BE MOVED/////
+		s_pData->pTextureShader->UploadFloat4("u_ColorShade", { 1.f, 1.f, 1.f, 1.0f });
+		/////////////////////
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), pos) * glm::scale(glm::mat4(1.f), { scale.x, scale.y, 1.f });
 		s_pData->pTextureShader->UploadMat4("u_Transform", transform);
