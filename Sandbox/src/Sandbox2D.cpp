@@ -8,7 +8,7 @@ namespace Sandbox2D
 	Sandbox2D::Sandbox2D()
 		: Lamp::Layer("Sandbox2D"), m_CameraController(m_AspectRatio), m_SelectedFile(""), m_DockspaceID(0)
 	{
-		m_pEntityManager = new Lamp::EntityManager();
+		m_pEntityManager.reset(new Lamp::EntityManager());
 		m_pEntity = m_pEntityManager->CreateEntity(glm::vec3(0.f, 0.f, 0.f), "engine/textures/ff.PNG");
 
 		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
@@ -28,13 +28,12 @@ namespace Sandbox2D
 		Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
 
 		m_pEntityManager->Draw();
-
-		//Lamp::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_pTestTexture);
+		Lamp::Renderer2D::DrawQuad({ 2.0f, 0.0f }, { 1.0f, 1.0f }, { 1.f, 0.8f, 0.5f, 1.f});
 
 		Lamp::Renderer2D::End();
 		m_FrameBuffer->Unbind();
 	}
-
+	 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)
 	{
 		CreateDockspace();
@@ -87,8 +86,9 @@ namespace Sandbox2D
 				{
 					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
 					{
-						//Lamp::GLTexture selected = Lamp::ResourceManager::GetTexture(m_SelectedFile.GetPath());
-						//ImGui::Image((void*)(uint64_t)selected.Id, ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
+						std::shared_ptr<Lamp::Texture2D> selected;
+						selected.reset(Lamp::Texture2D::Create(m_SelectedFile.GetPath()));
+						ImGui::Image((void*)(uint64_t)selected->GetID(), ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
 					}
 				}
 				ImGui::EndChild();
@@ -119,19 +119,15 @@ namespace Sandbox2D
 				{
 					mousePos -= windowPos;
 
-					glm::vec2 pos = m_CameraController.ScreenToWorldCoords(mousePos, windowSize);
-					LP_CORE_INFO(std::to_string(pos.x) + ", " + std::to_string(pos.y));
-
-					//for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
-					//{
-					//	if (auto pEnt = GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos)))
-					//	{
-					//		for (auto pComp : pEnt->GetComponents())
-					//		{
-					//			//pComp->GetEditorValues();
-					//		}
-					//	}
-					//}
+					for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
+					{
+						if (auto pEnt = Lamp::EntityManager::GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize), m_pEntityManager))
+						{
+							for (auto pComp : pEnt->GetComponents())
+							{
+							}
+						}
+					}
 				}
 			}
 		}
@@ -232,29 +228,5 @@ namespace Sandbox2D
 		m_MouseHoverPos = glm::vec2(e.GetX(), e.GetY());
 
 		return true;
-	}
-
-	Lamp::IEntity* Sandbox2D::GetEntityFromPoint(glm::vec2& pos)
-	{
-		for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
-		{
-			if (auto pTrans = pEnt->GetComponent<Lamp::TransformComponent>())
-			{
-				//glm::vec4 rect(pTrans->GetPosition(), 1 * pTrans->GetScale(), 1 * pTrans->GetScale());
-
-				//LP_CORE_INFO(std::to_string(rect.x) + ", " + std::to_string(rect.y) + ", " + std::to_string(rect.z) + ", " + std::to_string(rect.w));
-
-
-				//if (pos.x > rect.x&&
-				//	pos.x < rect.x + rect.z &&
-				//	pos.y > rect.y&&
-				//	pos.y < rect.y + rect.w)
-				//{
-				//	return pEnt;
-				//}
-			}
-		}
-
-		return nullptr;
-	}
+	} 
 }

@@ -51,10 +51,14 @@ namespace Lamp
 
 	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(glm::vec2 coords, glm::vec2 windowSize)
 	{
+		coords.y = windowSize.y - coords.y;
+		
 		coords -= glm::vec2(windowSize.x / 2, windowSize.y / 2);
-		glm::vec2 worldPos = (coords) + glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
+		coords *= (m_ZoomLevel / 295);
 
-		return worldPos;
+		coords += glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
+
+		return coords;
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)

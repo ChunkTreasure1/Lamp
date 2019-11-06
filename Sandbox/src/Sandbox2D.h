@@ -23,7 +23,6 @@ namespace Sandbox2D
 	private:
 		void CreateDockspace();
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
-		Lamp::IEntity* GetEntityFromPoint(glm::vec2& pos);
 
 	private:
 		Lamp::OrthographicCameraController m_CameraController;
@@ -32,7 +31,7 @@ namespace Sandbox2D
 		//------------TEST ENTITIES-------------
 		Lamp::IEntity* m_pEntity;
 		Lamp::IEntity* m_pEntity2;
-		Lamp::EntityManager* m_pEntityManager;
+		std::shared_ptr<Lamp::EntityManager> m_pEntityManager;
 
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
 		//--------------------------------------
