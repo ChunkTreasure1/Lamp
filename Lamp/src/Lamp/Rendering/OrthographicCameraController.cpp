@@ -54,7 +54,7 @@ namespace Lamp
 		coords.y = windowSize.y - coords.y;
 		
 		coords -= glm::vec2(windowSize.x / 2, windowSize.y / 2);
-		coords *= (m_ZoomLevel / 200);
+		coords *= (m_ZoomLevel / 295);
 
 		coords += glm::vec2(m_CameraPosition.x, m_CameraPosition.y);
 

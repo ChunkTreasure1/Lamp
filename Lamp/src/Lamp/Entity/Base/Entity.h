@@ -4,6 +4,9 @@
 #include <memory>
 
 #include "Lamp/Entity/Base/Component.h"
+#include <glm/glm.hpp>
+
+class EntityManager;
 
 namespace Lamp
 {
