@@ -5,6 +5,7 @@
 #include <any>
 
 #include <glm/glm.hpp>
+#include <imgui.h>
 
 namespace Lamp
 {
@@ -44,28 +45,13 @@ namespace Lamp
 		{
 			switch (compProperty.PropertyType)
 			{
-				case PropertyType::String: return std::any_cast<std::string>(static_cast<std::string*>(compProperty.Value));
-				case PropertyType::Bool:   return std::any_cast<bool>(static_cast<bool*>(compProperty.Value));
-				case PropertyType::Int:	   return std::any_cast<int>(static_cast<int*>(compProperty.Value));
-				case PropertyType::Float:  return std::any_cast<float>(static_cast<float*>(compProperty.Value));
-				case PropertyType::Float2: return std::any_cast<glm::vec2>(static_cast<glm::vec2*>(compProperty.Value));
-				case PropertyType::Float3: return std::any_cast<glm::vec3>(static_cast<glm::vec3*>(compProperty.Value));
-				case PropertyType::Float4: return std::any_cast<glm::vec4>(static_cast<glm::vec4*>(compProperty.Value));
-			}
-		}
-
-		static void DrawProperty(ComponentProperty& compProperty)
-		{
-			switch (compProperty.PropertyType)
-			{
-				case PropertyType::Float3:
-				{
-					glm::vec3 p = std::any_cast<glm::vec3>(GetValue(compProperty));
-
-					float f[3] = { p.x, p.y, p.z };
-					ImGui::InputFloat3(compProperty.Name.c_str(), f, 3);
-					break;
-				}
+				case PropertyType::String: return std::make_any<std::string*>(static_cast<std::string*>(compProperty.Value));
+				case PropertyType::Bool:   return std::make_any<bool*>(static_cast<bool*>(compProperty.Value));
+				case PropertyType::Int:	   return std::make_any<int*>(static_cast<int*>(compProperty.Value));
+				case PropertyType::Float:  return std::make_any<float*>(static_cast<float*>(compProperty.Value));
+				case PropertyType::Float2: return std::make_any<glm::vec2*>(static_cast<glm::vec2*>(compProperty.Value));
+				case PropertyType::Float3: return std::make_any<glm::vec3*>(static_cast<glm::vec3*>(compProperty.Value));
+				case PropertyType::Float4: return std::make_any<glm::vec4*>(static_cast<glm::vec4*>(compProperty.Value));
 			}
 		}
 

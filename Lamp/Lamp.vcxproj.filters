@@ -96,6 +96,9 @@
     <ClInclude Include="src\Lamp\Entity\Base\Component.h">
       <Filter>src\Lamp\Entity\Base</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\ComponentProperties.h">
+      <Filter>src\Lamp\Entity\Base</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\Entity.h">
       <Filter>src\Lamp\Entity\Base</Filter>
     </ClInclude>
@@ -1280,9 +1283,6 @@
     </ClInclude>
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Entity\Base\ComponentProperties.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

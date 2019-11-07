@@ -17,13 +17,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ImGuiRenderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sandbox2D.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGuiRenderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

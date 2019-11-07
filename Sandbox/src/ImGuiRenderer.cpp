@@ -114,7 +114,18 @@ namespace Sandbox2D
 					{
 						for (auto& pProp : pComp->GetComponentProperties().GetProperties())
 						{
-							ImGui::InputFloat3
+							switch (pProp.PropertyType)
+							{
+								case Lamp::PropertyType::Float3:
+								{
+									glm::vec3* p = std::any_cast<glm::vec3*>(Lamp::ComponentProperties::GetValue(pProp));
+
+									float f[3] = { p->x, p->y, p->z };
+									ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
+
+									
+								}
+							}
 						}
 					}
 				}
