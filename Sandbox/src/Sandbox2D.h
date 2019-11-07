@@ -24,13 +24,16 @@ namespace Sandbox2D
 		void CreateDockspace();
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 
+		//ImGui
+		void UpdatePerspective();
+		void UpdateAssetBrowser();
+		void UpdateProperties();
+
 	private:
 		Lamp::OrthographicCameraController m_CameraController;
-		std::shared_ptr<Lamp::Shader> m_pShader;
 
 		//------------TEST ENTITIES-------------
 		Lamp::IEntity* m_pEntity;
-		Lamp::IEntity* m_pEntity2;
 		std::shared_ptr<Lamp::EntityManager> m_pEntityManager;
 
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;

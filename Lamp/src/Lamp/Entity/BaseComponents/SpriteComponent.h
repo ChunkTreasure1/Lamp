@@ -15,9 +15,12 @@ namespace Lamp
 	public:
 		//Base
 		SpriteComponent(const std::string& path)
-			: m_Path(path)
+			: IEntityComponent("Sprite Component"), m_Path(path)
 		{
-			m_SpriteValues.Path = m_Path;
+			SetComponentProperties
+			({
+				{ PropertyType::String, "Path", static_cast<void*>(&m_Path) }
+			});
 		}
 		~SpriteComponent() {}
 
@@ -55,21 +58,9 @@ namespace Lamp
 
 		//Getting
 		inline const Ref<Texture2D> GetTexture() const { return m_Texture; }
-		virtual const EditorValues GetEditorValues() const { return m_SpriteValues; }
 
 	private:
 		std::string m_Path;
 		std::shared_ptr<Texture2D> m_Texture;
-
-		struct SpriteValues : EditorValues
-		{
-			SpriteValues()
-				: EditorValues("Sprite component")
-			{}
-
-			std::string Path;
-		};
-
-		SpriteValues m_SpriteValues = SpriteValues();
 	};
 }

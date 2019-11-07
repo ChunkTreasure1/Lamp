@@ -72,17 +72,11 @@ namespace Lamp
 				{
 					glm::vec4 rect(pTrans->GetPosition().x, pTrans->GetPosition().y, pTrans->GetScale().x, pTrans->GetScale().y);
 
-					if ((pos.x > (rect.x - (rect.w / 2)) &&
-						pos.y > (rect.y - (rect.z / 2))) ||
-
-						(pos.x < (rect.x + (rect.w / 2)) &&
-						 pos.y < (rect.y + (rect.z / 2))) ||
-
-						(pos.x > (rect.x + (rect.w / 2)) &&
-						 pos.y < (rect.y - (rect.z / 2))) ||
-
-					    (pos.x < (rect.x - (rect.w / 2)) &&
-						 pos.y >(rect.y + (rect.z / 2))))
+					if ((pos.x > (rect.x - (rect.z / 2))) &&
+						 pos.x < (rect.x + (rect.z / 2)) &&
+						 
+						 pos.y > (rect.y - (rect.w / 2)) &&
+						 pos.y < (rect.y + (rect.w / 2)))
 					{
 						return pEnt;
 					}
