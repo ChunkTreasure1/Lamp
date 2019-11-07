@@ -15,11 +15,12 @@ namespace Lamp
 	public:
 		//Base
 		SpriteComponent(const std::string& path)
-			: IEntityComponent("Sprite Component"), m_Path(path)
+			: IEntityComponent("Sprite Component"), m_Path(path), m_TextureTint(glm::vec4(1.f))
 		{
 			SetComponentProperties
 			({
-				{ PropertyType::String, "Path", static_cast<void*>(&m_Path) }
+				{ PropertyType::String, "Path", static_cast<void*>(&m_Path) },
+				{ PropertyType::Color, "Texture Tint", static_cast<void*>(&m_TextureTint) }
 			});
 		}
 		~SpriteComponent() {}
@@ -44,8 +45,22 @@ namespace Lamp
 				TransformComponent* pTrans = dynamic_cast<TransformComponent*>(pC);
 				if (pTrans)
 				{
-					Renderer2D::DrawQuad(pTrans->GetPosition(), glm::vec2(pTrans->GetScale().x, pTrans->GetScale().y), m_Texture);
+					Renderer2D::DrawQuad(pTrans->GetPosition(), glm::vec2(pTrans->GetScale().x, pTrans->GetScale().y), m_Texture, m_TextureTint);
 				}
+			}
+		}
+		virtual void SetProperty(ComponentProperty& prop, void* pData) override 
+		{
+			if (prop.Name == "Path")
+			{
+				//Doesnt work
+				char* p = static_cast<char*>(pData);
+				//SetTexture(*p);
+			}
+			else if (prop.Name == "Texture Tint")
+			{
+				glm::vec4* p = std::any_cast<glm::vec4*>(ComponentProperties::GetValue(prop, pData));
+				SetTextureTint({ p->x, p->y, p->z, p->w });
 			}
 		}
 
@@ -55,6 +70,7 @@ namespace Lamp
 			m_Path = path; 
 			m_Texture = Texture2D::Create(path);
 		}
+		inline void SetTextureTint(const glm::vec4& color) { m_TextureTint = color; }
 
 		//Getting
 		inline const Ref<Texture2D> GetTexture() const { return m_Texture; }
@@ -62,5 +78,6 @@ namespace Lamp
 	private:
 		std::string m_Path;
 		std::shared_ptr<Texture2D> m_Texture;
+		glm::vec4 m_TextureTint;
 	};
 }

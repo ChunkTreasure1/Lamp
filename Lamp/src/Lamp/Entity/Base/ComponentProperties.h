@@ -17,7 +17,8 @@ namespace Lamp
 		Float,
 		Float2,
 		Float3,
-		Float4
+		Float4,
+		Color
 	};
 
 	struct ComponentProperty
@@ -52,6 +53,22 @@ namespace Lamp
 				case PropertyType::Float2: return std::make_any<glm::vec2*>(static_cast<glm::vec2*>(compProperty.Value));
 				case PropertyType::Float3: return std::make_any<glm::vec3*>(static_cast<glm::vec3*>(compProperty.Value));
 				case PropertyType::Float4: return std::make_any<glm::vec4*>(static_cast<glm::vec4*>(compProperty.Value));
+				case PropertyType::Color:  return std::make_any<glm::vec4*>(static_cast<glm::vec4*>(compProperty.Value));
+			}
+		}
+
+		static std::any GetValue(ComponentProperty& compProperty, void* pData)
+		{
+			switch (compProperty.PropertyType)
+			{
+				case PropertyType::String: return std::make_any<std::string*>(static_cast<std::string*>(pData));
+				case PropertyType::Bool:   return std::make_any<bool*>(static_cast<bool*>(pData));
+				case PropertyType::Int:	   return std::make_any<int*>(static_cast<int*>(pData));
+				case PropertyType::Float:  return std::make_any<float*>(static_cast<float*>(pData));
+				case PropertyType::Float2: return std::make_any<glm::vec2*>(static_cast<glm::vec2*>(pData));
+				case PropertyType::Float3: return std::make_any<glm::vec3*>(static_cast<glm::vec3*>(pData));
+				case PropertyType::Float4: return std::make_any<glm::vec4*>(static_cast<glm::vec4*>(pData));
+				case PropertyType::Color:  return std::make_any<glm::vec4*>(static_cast<glm::vec4*>(pData));
 			}
 		}
 

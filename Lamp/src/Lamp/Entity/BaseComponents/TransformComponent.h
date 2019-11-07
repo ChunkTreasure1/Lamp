@@ -25,6 +25,25 @@ namespace Lamp
 		virtual void Update() override {}
 		virtual void Draw() override {}
 
+		virtual void SetProperty(ComponentProperty& prop, void* pData) override
+		{
+			if (prop.Name == "Position")
+			{
+				glm::vec3* p = std::any_cast<glm::vec3*>(ComponentProperties::GetValue(prop, pData));
+				SetPosition({ p->x, p->y, p->z });
+			}
+			else if (prop.Name == "Rotation")
+			{
+				glm::vec3* p = std::any_cast<glm::vec3*>(ComponentProperties::GetValue(prop, pData));
+				SetRotation({ p->x, p->y, p->z });
+			}
+			else if (prop.Name == "Scale")
+			{
+				glm::vec3* p = std::any_cast<glm::vec3*>(ComponentProperties::GetValue(prop, pData));
+				SetScale({ p->x, p->y, p->z });
+			}
+		}
+
 		//Getting
 		inline const glm::vec3& GetPosition() const { return m_Position; }
 		inline const glm::vec3& GetRotation() const { return m_Rotation; }

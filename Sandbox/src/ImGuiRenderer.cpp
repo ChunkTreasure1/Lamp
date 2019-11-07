@@ -57,7 +57,7 @@ namespace Sandbox2D
 					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
 					{
 						std::shared_ptr<Lamp::Texture2D> selected;
-						selected.reset(Lamp::Texture2D::Create(m_SelectedFile.GetPath()));
+						selected = Lamp::Texture2D::Create(m_SelectedFile.GetPath());
 						ImGui::Image((void*)(uint64_t)selected->GetID(), ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
 					}
 				}
@@ -116,14 +116,78 @@ namespace Sandbox2D
 						{
 							switch (pProp.PropertyType)
 							{
+								case Lamp::PropertyType::Int:
+								{
+									int* p = static_cast<int*>(pProp.Value);
+									ImGui::InputInt(pProp.Name.c_str(), p);
+
+									pComp->SetProperty(pProp, &p);
+									break;
+								}
+
+								case Lamp::PropertyType::Bool:
+								{
+									bool* p = static_cast<bool*>(pProp.Value);
+									ImGui::Checkbox(pProp.Name.c_str(), p);
+
+									pComp->SetProperty(pProp, &p);
+									break;
+								}
+
+								case Lamp::PropertyType::Float2:
+								{
+									glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+
+									float f[2] = { p->x, p->y };
+									ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
+
+									pComp->SetProperty(pProp, &f);
+									break;
+								}
+
 								case Lamp::PropertyType::Float3:
 								{
-									glm::vec3* p = std::any_cast<glm::vec3*>(Lamp::ComponentProperties::GetValue(pProp));
+									glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 
 									float f[3] = { p->x, p->y, p->z };
 									ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
 
+									pComp->SetProperty(pProp, &f);
+									break;
+								}
+
+								case Lamp::PropertyType::Float4:
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 									
+									float f[4] = { p->x, p->y, p->z, p->w };
+									ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
+
+									//Change to only send name
+									pComp->SetProperty(pProp, &f);
+									break;
+								}
+
+								case Lamp::PropertyType::String:
+								{
+									std::string* s = static_cast<std::string*>(pProp.Value);
+									char* buf = new char[s->size() + 1];
+									strcpy(buf, s->c_str());
+									ImGui::InputText(pProp.Name.c_str(), buf, s->size());
+
+									pComp->SetProperty(pProp, &buf);
+									break;
+								}
+
+								case Lamp::PropertyType::Color:
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+
+									float f[4] = { p->x, p->y, p->z, p->w };
+									ImGui::ColorEdit4(pProp.Name.c_str(), f);
+
+									pComp->SetProperty(pProp, &f);
+									break;
 								}
 							}
 						}

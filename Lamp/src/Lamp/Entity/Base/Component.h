@@ -44,7 +44,7 @@ namespace Lamp
 		virtual void Initialize() = 0;
 		virtual void Update() = 0;
 		virtual void Draw() = 0;
-
+		virtual void SetProperty(ComponentProperty& prop, void* pData) = 0;
 	protected:
 		IEntityComponent(std::string name)
 			: m_pEntity(nullptr), m_ComponentProperties({}), m_Name(name)
