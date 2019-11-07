@@ -10,7 +10,7 @@ namespace Lamp
 	{
 		Ref<VertexArray> pQuadVertexArray;
 		Ref<Shader> pTextureShader;
-		Ref<Shader> pFlatColorShader;
+		Ref<Texture2D> pWhiteTexture;
 	};
 
 	static Renderer2DStorage* s_pData;
@@ -42,7 +42,9 @@ namespace Lamp
 		pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
 
-		s_pData->pFlatColorShader = Shader::Create("engine/shaders/FlatColor.vert", "engine/shaders/FlatColor.frag");
+		s_pData->pWhiteTexture = Texture2D::Create(1, 1);
+		uint32_t whiteTextureData = 0xffffffff;
+		s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		s_pData->pTextureShader = Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag");
 		s_pData->pTextureShader->UploadInt("u_Texture", 0);
@@ -55,24 +57,19 @@ namespace Lamp
 
 	void Renderer2D::Begin(const OrthographicCamera& camera)
 	{
-		s_pData->pFlatColorShader->Bind();
-		s_pData->pFlatColorShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		s_pData->pFlatColorShader->UploadMat4("u_Transform", glm::mat4(1.f));
-
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		s_pData->pTextureShader->UploadMat4("u_Transform", glm::mat4(1.f));
 	}
 
 	void Renderer2D::End() {}
 
 	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const glm::vec4& color)
 	{
-		s_pData->pFlatColorShader->Bind();
-		s_pData->pFlatColorShader->UploadFloat4("u_Color", color);
+		s_pData->pTextureShader->UploadFloat4("u_Color", color);
+		s_pData->pWhiteTexture->Bind();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), pos) * glm::scale(glm::mat4(1.f), { scale.x, scale.y, 1.f });
-		s_pData->pFlatColorShader->UploadMat4("u_Transform", transform);
+		s_pData->pTextureShader->UploadMat4("u_Transform", transform);
 
 		s_pData->pQuadVertexArray->Bind();
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray);
@@ -83,26 +80,22 @@ namespace Lamp
 		DrawQuad({ pos.x, pos.y, 0.f }, scale, color);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const Ref<Texture2D>& texture)
+	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const Ref<Texture2D>& pTexture, const glm::vec4& color)
 	{
-		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadInt("u_Texture", 0);
+		pTexture->Bind();
 
-		/////TO BE MOVED/////
-		s_pData->pTextureShader->UploadFloat4("u_ColorShade", { 1.f, 1.f, 1.f, 1.0f });
-		/////////////////////
+		s_pData->pTextureShader->UploadInt("u_Texture", 0);
+		s_pData->pTextureShader->UploadFloat4("u_Color", color);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), pos) * glm::scale(glm::mat4(1.f), { scale.x, scale.y, 1.f });
 		s_pData->pTextureShader->UploadMat4("u_Transform", transform);
-
-		texture->Bind();
 
 		s_pData->pQuadVertexArray->Bind();
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& pos, const glm::vec2& scale, const Ref<Texture2D>& texture)
+	void Renderer2D::DrawQuad(const glm::vec2& pos, const glm::vec2& scale, const Ref<Texture2D>& texture, const glm::vec4& color)
 	{
-		DrawQuad({ pos.x, pos.y, 0.f }, scale, texture);
+		DrawQuad({ pos.x, pos.y, 0.f }, scale, texture, color);
 	}
 }

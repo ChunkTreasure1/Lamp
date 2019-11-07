@@ -87,7 +87,7 @@ namespace Sandbox2D
 					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
 					{
 						std::shared_ptr<Lamp::Texture2D> selected;
-						selected.reset(Lamp::Texture2D::Create(m_SelectedFile.GetPath()));
+						selected = Lamp::Texture2D::Create(m_SelectedFile.GetPath());
 						ImGui::Image((void*)(uint64_t)selected->GetID(), ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
 					}
 				}

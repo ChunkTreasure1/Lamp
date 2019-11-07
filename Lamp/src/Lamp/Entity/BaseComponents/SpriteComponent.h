@@ -25,7 +25,7 @@ namespace Lamp
 		{
 			if (m_Path.length() > 0)
 			{
-				m_Texture.reset(Texture2D::Create(m_Path));
+				m_Texture = Texture2D::Create(m_Path);
 			}
 			else
 			{
@@ -50,7 +50,7 @@ namespace Lamp
 		inline void SetTexture(const std::string& path) 
 		{ 
 			m_Path = path; 
-			m_Texture.reset(Texture2D::Create(path));
+			m_Texture = Texture2D::Create(path);
 		}
 
 		//Getting
