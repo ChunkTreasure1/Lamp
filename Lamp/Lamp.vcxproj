@@ -148,6 +148,7 @@
     <ClInclude Include="src\Lamp\Core\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\Lamp\Entity\Base\Component.h" />
+    <ClInclude Include="src\Lamp\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Entity\Base\Entity.h" />
     <ClInclude Include="src\Lamp\Entity\Base\EntityManager.h" />
     <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />

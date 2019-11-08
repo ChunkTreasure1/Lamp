@@ -41,7 +41,7 @@ namespace Lamp
 		}
 
 		//Getting
-		inline const std::vector<IEntityComponent*> GetComponents() const { return m_pComponents; }
+		inline std::vector<IEntityComponent*> GetComponents() const { return m_pComponents; }
 
 		template<typename T>
 		const T* GetComponent()

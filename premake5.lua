@@ -72,7 +72,6 @@ project "Lamp"
 		}
 
 		filter "configurations:Debug"
-			debugdir ("bin/" .. outputdir .."/%{prj.name}")
 			defines "LP_DEBUG"
 			runtime "Debug"
 			symbols "on"
@@ -112,7 +111,8 @@ project "Sandbox"
 		"Lamp/vendor/spdlog/include",
 		"Lamp/vendor",
 		"Lamp/vendor/glad/include",
-		"Lamp/vendor/GLFW/include"
+		"Lamp/vendor/GLFW/include",
+		"Lamp/vendor/imgui/"
 	}
 
 	links

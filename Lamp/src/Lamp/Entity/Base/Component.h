@@ -2,6 +2,7 @@
 
 #include <array>
 #include <bitset>
+#include "ComponentProperties.h"
 
 namespace Lamp
 {
@@ -26,35 +27,30 @@ namespace Lamp
 	using ComponentBitSet = std::bitset<32>;
 	using ComponentArray = std::array<IEntityComponent*, 32>;
 
-	struct EditorValues
-	{
-		EditorValues(const std::string& name)
-			: Name(name)
-		{ }
-
-		std::string Name;
-	};
-
 	class IEntityComponent
 	{
 	public:
 
 		//Setting
 		inline void MakeOwner(IEntity* pEntity) { m_pEntity = pEntity; }
+		inline void SetComponentProperties(const ComponentProperties& properties) { m_ComponentProperties = properties; }
 
 		//Getting
 		inline const IEntity* GetOwner() const { return m_pEntity; }
-		virtual const EditorValues GetEditorValues() const = 0;
+		inline ComponentProperties& GetComponentProperties() { return m_ComponentProperties; }
+		inline const std::string& GetName() { return m_Name; }
 
 		//Base
 		virtual void Initialize() = 0;
 		virtual void Update() = 0;
 		virtual void Draw() = 0;
-
+		virtual void SetProperty(ComponentProperty& prop, void* pData) = 0;
 	protected:
-		IEntityComponent()
-			: m_pEntity(nullptr)
+		IEntityComponent(std::string name)
+			: m_pEntity(nullptr), m_ComponentProperties({}), m_Name(name)
 		{}
 		IEntity* m_pEntity;
+		ComponentProperties m_ComponentProperties;
+		std::string m_Name;
 	};
 }

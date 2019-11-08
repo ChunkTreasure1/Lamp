@@ -15,9 +15,13 @@ namespace Lamp
 	public:
 		//Base
 		SpriteComponent(const std::string& path)
-			: m_Path(path)
+			: IEntityComponent("Sprite Component"), m_Path(path), m_TextureTint(glm::vec4(1.f))
 		{
-			m_SpriteValues.Path = m_Path;
+			SetComponentProperties
+			({
+				{ PropertyType::String, "Path", static_cast<void*>(&m_Path) },
+				{ PropertyType::Color, "Texture Tint", static_cast<void*>(&m_TextureTint) }
+			});
 		}
 		~SpriteComponent() {}
 
@@ -41,8 +45,25 @@ namespace Lamp
 				TransformComponent* pTrans = dynamic_cast<TransformComponent*>(pC);
 				if (pTrans)
 				{
-					Renderer2D::DrawQuad(pTrans->GetPosition(), glm::vec2(pTrans->GetScale().x, pTrans->GetScale().y), m_Texture);
+					Renderer2D::DrawQuad(pTrans->GetPosition(), glm::vec2(pTrans->GetScale().x, pTrans->GetScale().y), m_Texture, m_TextureTint);
 				}
+			}
+		}
+		virtual void SetProperty(ComponentProperty& prop, void* pData) override 
+		{
+			if (prop.Name == "Path")
+			{
+				char* p = static_cast<char*>(pData);
+				SetTexture(p);
+
+				delete p;
+			}
+			else if (prop.Name == "Texture Tint")
+			{
+				glm::vec4* p = std::any_cast<glm::vec4*>(ComponentProperties::GetValue(prop, pData));
+				SetTextureTint({ p->x, p->y, p->z, p->w });
+
+				delete p;
 			}
 		}
 
@@ -52,24 +73,21 @@ namespace Lamp
 			m_Path = path; 
 			m_Texture = Texture2D::Create(path);
 		}
+		inline void SetTexture(const char* path)
+		{
+			//Need to be improved to work in different way
+
+			m_Path = std::string(path);
+			m_Texture = Texture2D::Create(path);
+		}
+		inline void SetTextureTint(const glm::vec4& color) { m_TextureTint = color; }
 
 		//Getting
 		inline const Ref<Texture2D> GetTexture() const { return m_Texture; }
-		virtual const EditorValues GetEditorValues() const { return m_SpriteValues; }
 
 	private:
 		std::string m_Path;
 		std::shared_ptr<Texture2D> m_Texture;
-
-		struct SpriteValues : EditorValues
-		{
-			SpriteValues()
-				: EditorValues("Sprite component")
-			{}
-
-			std::string Path;
-		};
-
-		SpriteValues m_SpriteValues = SpriteValues();
+		glm::vec4 m_TextureTint;
 	};
 }

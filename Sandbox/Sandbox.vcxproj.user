@@ -9,6 +9,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
   </PropertyGroup>
   <PropertyGroup>
-    <ShowAllFiles>false</ShowAllFiles>
+    <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
 </Project>
