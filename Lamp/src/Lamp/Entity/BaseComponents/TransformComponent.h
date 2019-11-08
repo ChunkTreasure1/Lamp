@@ -31,16 +31,22 @@ namespace Lamp
 			{
 				glm::vec3* p = std::any_cast<glm::vec3*>(ComponentProperties::GetValue(prop, pData));
 				SetPosition({ p->x, p->y, p->z });
+
+				delete p;
 			}
 			else if (prop.Name == "Rotation")
 			{
 				glm::vec3* p = std::any_cast<glm::vec3*>(ComponentProperties::GetValue(prop, pData));
 				SetRotation({ p->x, p->y, p->z });
+
+				delete p;
 			}
 			else if (prop.Name == "Scale")
 			{
 				glm::vec3* p = std::any_cast<glm::vec3*>(ComponentProperties::GetValue(prop, pData));
 				SetScale({ p->x, p->y, p->z });
+
+				delete p;
 			}
 		}
 

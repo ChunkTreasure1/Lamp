@@ -53,14 +53,17 @@ namespace Lamp
 		{
 			if (prop.Name == "Path")
 			{
-				//Doesnt work
 				char* p = static_cast<char*>(pData);
-				//SetTexture(*p);
+				SetTexture(p);
+
+				delete p;
 			}
 			else if (prop.Name == "Texture Tint")
 			{
 				glm::vec4* p = std::any_cast<glm::vec4*>(ComponentProperties::GetValue(prop, pData));
 				SetTextureTint({ p->x, p->y, p->z, p->w });
+
+				delete p;
 			}
 		}
 
@@ -68,6 +71,13 @@ namespace Lamp
 		inline void SetTexture(const std::string& path) 
 		{ 
 			m_Path = path; 
+			m_Texture = Texture2D::Create(path);
+		}
+		inline void SetTexture(const char* path)
+		{
+			//Need to be improved to work in different way
+
+			m_Path = std::string(path);
 			m_Texture = Texture2D::Create(path);
 		}
 		inline void SetTextureTint(const glm::vec4& color) { m_TextureTint = color; }

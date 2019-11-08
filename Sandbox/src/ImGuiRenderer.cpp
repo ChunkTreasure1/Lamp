@@ -122,6 +122,8 @@ namespace Sandbox2D
 									ImGui::InputInt(pProp.Name.c_str(), p);
 
 									pComp->SetProperty(pProp, &p);
+
+									delete p;
 									break;
 								}
 
@@ -131,6 +133,8 @@ namespace Sandbox2D
 									ImGui::Checkbox(pProp.Name.c_str(), p);
 
 									pComp->SetProperty(pProp, &p);
+
+									delete p;
 									break;
 								}
 
@@ -142,6 +146,8 @@ namespace Sandbox2D
 									ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
 
 									pComp->SetProperty(pProp, &f);
+
+									delete p;
 									break;
 								}
 
@@ -153,6 +159,8 @@ namespace Sandbox2D
 									ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
 
 									pComp->SetProperty(pProp, &f);
+
+									delete p;
 									break;
 								}
 
@@ -165,6 +173,8 @@ namespace Sandbox2D
 
 									//Change to only send name
 									pComp->SetProperty(pProp, &f);
+
+									delete p;
 									break;
 								}
 
@@ -175,7 +185,9 @@ namespace Sandbox2D
 									strcpy(buf, s->c_str());
 									ImGui::InputText(pProp.Name.c_str(), buf, s->size());
 
-									pComp->SetProperty(pProp, &buf);
+									pComp->SetProperty(pProp, buf);
+
+									delete buf;
 									break;
 								}
 
@@ -187,6 +199,8 @@ namespace Sandbox2D
 									ImGui::ColorEdit4(pProp.Name.c_str(), f);
 
 									pComp->SetProperty(pProp, &f);
+
+									delete p;
 									break;
 								}
 							}
