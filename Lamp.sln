@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lamp", "Lamp\Lamp.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoLoud", "Lamp\vendor\SoLoud\SoLoud.vcxproj", "{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -48,6 +50,12 @@ Global
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Dist|x64.Build.0 = Dist|x64
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Release|x64.ActiveCfg = Release|x64
 		{F4C124E3-60A1-A37E-69B9-2E55D5170AE0}.Release|x64.Build.0 = Release|x64
+		{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}.Debug|x64.ActiveCfg = Debug|x64
+		{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}.Debug|x64.Build.0 = Debug|x64
+		{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}.Dist|x64.ActiveCfg = Dist|x64
+		{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}.Dist|x64.Build.0 = Dist|x64
+		{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}.Release|x64.ActiveCfg = Release|x64
+		{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

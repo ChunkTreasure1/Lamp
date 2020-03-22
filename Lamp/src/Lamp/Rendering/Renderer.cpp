@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "Renderer.h"
 
-#include "Lamp/Entity/BaseComponents/SpriteComponent.h"
 #include "Renderer2D.h"
 
 namespace Lamp
@@ -12,9 +11,19 @@ namespace Lamp
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_MULTISAMPLE);
+
+		//glEnable(GL_DEPTH_TEST);
 		Renderer2D::Initialize();
 
 	}
+
+	void Renderer::Shutdown()
+	{
+		Renderer2D::Shutdown();
+	}
+
 	void Renderer::Begin(OrthographicCamera & camera)
 	{
 		s_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
@@ -28,5 +37,15 @@ namespace Lamp
 	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void Renderer::DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray)
+	{
+		glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+	{
+		glViewport(0, 0, width, height);
 	}
 }

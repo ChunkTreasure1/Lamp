@@ -12,27 +12,28 @@ namespace Lamp
 	{
 	public:
 		OrthographicCameraController(float aspectRatio, bool rotation = false);
+		~OrthographicCameraController();
 
 		void Update(Timestep ts);
 		void OnEvent(Event& e);
 
 		//Getting
-		OrthographicCamera& GetCamera() { return m_Camera; }
-		const OrthographicCamera& GetCamera() const { return m_Camera; }
+		OrthographicCamera GetCamera() { return m_Camera; }
+		const OrthographicCamera GetCamera() const { return m_Camera; }
 
 		//Setting
 		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
 		void SetHasControl(bool state) { m_HasControl = state; }
+		void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
 
-		glm::vec2 ScreenToWorldCoords(glm::vec2 coords, glm::vec2 windowSize);
-
+		glm::vec2 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 
 	private:
 		float m_AspectRatio;
-		float m_ZoomLevel = 1.f;
+		float m_ZoomLevel = 1.5f;
 		OrthographicCamera m_Camera;
 
 		bool m_Rotation;

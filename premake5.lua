@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
+include "Lamp/vendor/SoLoud"
 
 project "Lamp"
 	location "Lamp"
@@ -51,7 +52,9 @@ project "Lamp"
 		"%{prj.name}/vendor/imgui/",
 		"%{prj.name}/vendor/glad/include",
 		"%{prj.name}/vendor/glm",
-		"%{prj.name}/vendor/stb_image"
+		"%{prj.name}/vendor/stb_image",
+		"%{prj.name}/vendor/SoLoud/include",
+		"%{prj.name}/vendor/rapidxml"
 	}
 	
 	links 
@@ -59,6 +62,8 @@ project "Lamp"
 		"GLFW",
 		"ImGui",
 		"Glad",
+		"SoLoud",
+		"xaudio2.lib",
 		"opengl32.lib"
 	}
 
@@ -112,7 +117,10 @@ project "Sandbox"
 		"Lamp/vendor",
 		"Lamp/vendor/glad/include",
 		"Lamp/vendor/GLFW/include",
-		"Lamp/vendor/imgui/"
+		"Lamp/vendor/imgui/",
+		"Lamp/vendor/rapidxml",
+		"%{prj.name}/src",
+		"%{prj.name}/vendor/SoLoud/include"
 	}
 
 	links
@@ -129,7 +137,6 @@ project "Sandbox"
 		}
 
 		filter "configurations:Debug"
-			debugdir ("bin/" .. outputdir .."/%{prj.name}")
 			defines "LP_DEBUG"
 			runtime "Debug"
 			symbols "on"

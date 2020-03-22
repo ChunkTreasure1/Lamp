@@ -2,22 +2,23 @@
 #include "Sandbox2D.h"
 
 #include "Lamp/Rendering/Renderer2D.h"
+#include <Lamp/Physics/Collision.h>
+#include <Lamp/Brushes/BrushManager.h>
+#include <Lamp/Level/LevelSystem.h>
 
 namespace Sandbox2D
 {
 	Sandbox2D::Sandbox2D()
 		: Lamp::Layer("Sandbox2D"), m_CameraController(m_AspectRatio), m_SelectedFile(""), m_DockspaceID(0)
 	{
-		m_pEntityManager.reset(new Lamp::EntityManager());
-		m_pEntity = m_pEntityManager->CreateEntity(glm::vec3(10.f, 0.f, 0.f), "engine/textures/ff.PNG");
-
 		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
 	{
 		m_CameraController.Update(ts);
-		m_pEntityManager->Update();
+		Lamp::EntityManager::Get().Update(ts);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
@@ -27,8 +28,8 @@ namespace Sandbox2D
 
 		Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
 
-		m_pEntityManager->Draw();
-		Lamp::Renderer2D::DrawQuad({ 2.0f, 0.0f }, { 1.0f, 1.0f }, { 1.f, 0.8f, 0.5f, 1.f});
+		Lamp::BrushManager::Get().Draw();
+		Lamp::EntityManager::Get().Draw();
 
 		Lamp::Renderer2D::End();
 		m_FrameBuffer->Unbind();
@@ -36,7 +37,7 @@ namespace Sandbox2D
 	 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)
 	{
-		CreateDockspace();
+		CreateDockspace();	
 
 		UpdatePerspective();
 		UpdateAssetBrowser();

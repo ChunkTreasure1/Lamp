@@ -7,6 +7,9 @@
     <Filter Include="src\Lamp">
       <UniqueIdentifier>{E68621CF-D253-7CDA-FB6C-6A82E798B168}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Brushes">
+      <UniqueIdentifier>{11EE2076-FDE6-3FC8-2619-254D12711FD4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Core">
       <UniqueIdentifier>{FEEA001B-6AAB-7C51-33E6-C5CE9F65C12D}</UniqueIdentifier>
     </Filter>
@@ -31,6 +34,15 @@
     <Filter Include="src\Lamp\Layer">
       <UniqueIdentifier>{3298B97B-1E66-AD81-07FA-1DA8F36689E6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Level">
+      <UniqueIdentifier>{EDBCBB7B-D98A-AF81-C21E-20A8AE8B8BE6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Physics">
+      <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Physics\Components">
+      <UniqueIdentifier>{6D0E5056-D91B-7E3C-6202-7A27CE0E4AF3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
     </Filter>
@@ -42,6 +54,9 @@
     </Filter>
     <Filter Include="src\Lamp\Rendering\Vertices">
       <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Utility">
+      <UniqueIdentifier>{29CB8030-15C4-9F82-3EF6-84072A4E7F8E}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -75,6 +90,12 @@
     <ClInclude Include="src\Lamp.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Brushes\Brush2D.h">
+      <Filter>src\Lamp\Brushes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Brushes\BrushManager.h">
+      <Filter>src\Lamp\Brushes</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Application.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
@@ -87,16 +108,25 @@
     <ClInclude Include="src\Lamp\Core\Log.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Sound.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Timestep.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\BaseComponent.h">
+      <Filter>src\Lamp\Entity\Base</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\Component.h">
       <Filter>src\Lamp\Entity\Base</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\ComponentProperties.h">
+      <Filter>src\Lamp\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\ComponentRegistry.h">
       <Filter>src\Lamp\Entity\Base</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\Entity.h">
@@ -112,6 +142,9 @@
       <Filter>src\Lamp\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
+      <Filter>src\Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Event\EntityEvent.h">
       <Filter>src\Lamp\Event</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\Event.h">
@@ -150,6 +183,24 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Level\Level.h">
+      <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Level\LevelSystem.h">
+      <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Collision.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h">
+      <Filter>src\Lamp\Physics\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h">
+      <Filter>src\Lamp\Physics\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Physics.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\FrameBuffer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -185,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\Random.h">
+      <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h">
       <Filter>src</Filter>
@@ -1286,6 +1340,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
+      <Filter>src\Lamp\Brushes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
@@ -1294,6 +1351,12 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Entity\Base\ComponentRegistry.cpp">
+      <Filter>src\Lamp\Entity\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Entity\Base\EntityManager.cpp">
+      <Filter>src\Lamp\Entity\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp">
       <Filter>src\Lamp\ImGui</Filter>
@@ -1315,6 +1378,18 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
       <Filter>src\Lamp\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
+      <Filter>src\Lamp\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp">
+      <Filter>src\Lamp\Physics\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp">
+      <Filter>src\Lamp\Physics\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Physics.cpp">
+      <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering</Filter>

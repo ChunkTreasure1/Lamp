@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "Sandbox2D.h"
 
+#include <Lamp/Level/LevelSystem.h>
+
 namespace Sandbox2D
 {
 	void Sandbox2D::UpdatePerspective()
@@ -54,7 +56,7 @@ namespace Sandbox2D
 				ImGui::SameLine();
 				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
 				{
-					if (m_SelectedFile.GetFileType() == Lamp::FileType_Texture)
+					if (m_SelectedFile.GetFileType() == Lamp::FileType::Texture)
 					{
 						std::shared_ptr<Lamp::Texture2D> selected;
 						selected = Lamp::Texture2D::Create(m_SelectedFile.GetPath());
@@ -92,9 +94,9 @@ namespace Sandbox2D
 				{
 					mousePos -= windowPos;
 
-					for (Lamp::IEntity* pEnt : m_pEntityManager->GetEntities())
+					for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get().GetEntities())
 					{
-						if (Lamp::IEntity* pEnt = Lamp::EntityManager::GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize), m_pEntityManager))
+						if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get().GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize)))
 						{
 							m_pSelectedEntity = pEnt;
 						}

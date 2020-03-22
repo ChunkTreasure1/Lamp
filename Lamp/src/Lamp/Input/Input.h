@@ -13,7 +13,9 @@ namespace Lamp
 		Input& operator=(const Input&) = delete;
 
 		inline static bool IsKeyPressed(int keyCode) { return s_pInstance->IsKeyPressedImpl(keyCode); }
+		inline static bool IsKeyReleased(int keyCode) { return s_pInstance->IsKeyReleasedImpl(keyCode); }
 		inline static bool IsMouseButtonPressed(int button) { return s_pInstance->IsMouseButtonPressedImpl(button); }
+		inline static bool IsMouseButtonReleased(int button) { return s_pInstance->IsMouseButtonReleasedImpl(button); }
 		inline static std::pair<float, float> GetMousePosition() { return s_pInstance->GetMousePositionImpl(); }
 
 		inline static float GetMouseX() { return s_pInstance->GetMouseXImpl(); }
@@ -21,7 +23,9 @@ namespace Lamp
 
 	protected:
 		virtual bool IsKeyPressedImpl(int keyCode) = 0;
+		virtual bool IsKeyReleasedImpl(int keyCode) = 0;
 		virtual bool IsMouseButtonPressedImpl(int button) = 0;
+		virtual bool IsMouseButtonReleasedImpl(int button) = 0;
 		virtual std::pair<float, float> GetMousePositionImpl() = 0;
 
 		virtual float GetMouseXImpl() = 0;

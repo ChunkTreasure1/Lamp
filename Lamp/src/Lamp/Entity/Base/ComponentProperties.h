@@ -72,6 +72,60 @@ namespace Lamp
 			}
 		}
 
+		static PropertyType GetTypeFromString(const char* string)
+		{
+			if (string == "String")
+			{
+				return PropertyType::String;
+			}
+			else if (string == "Bool")
+			{
+				return PropertyType::Bool;
+			}
+			else if (string == "Int")
+			{
+				return PropertyType::Int;
+			}
+			else if (string == "Float")
+			{
+				return PropertyType::Float;
+			}
+			else if (string == "Float2")
+			{
+				return PropertyType::Float2;
+			}
+			else if (string == "Float3")
+			{
+				return PropertyType::Float3;
+			}
+			else if (string == "Float4")
+			{
+				return PropertyType::Float4;
+			}
+			else if (string == "Color")
+			{
+				return PropertyType::Color;
+			}
+
+			return PropertyType::Int;
+		}
+		static std::string GetStringFromType(PropertyType type)
+		{
+			switch (type)
+			{
+			case PropertyType::String: return "String";
+			case PropertyType::Bool:   return "Bool";
+			case PropertyType::Int:	   return "Int";
+			case PropertyType::Float:  return "Float";
+			case PropertyType::Float2: return "Float2";
+			case PropertyType::Float3: return "Float3";
+			case PropertyType::Float4: return "Float4";
+			case PropertyType::Color:  return "Color";
+			}
+
+			return "";
+		}
+
 	private:
 		std::vector<ComponentProperty> m_Properties;
 	};

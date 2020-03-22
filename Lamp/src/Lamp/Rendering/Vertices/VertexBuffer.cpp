@@ -10,7 +10,7 @@ namespace Lamp
 		glGenBuffers(1, &m_RendererID);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_DYNAMIC_DRAW);
 	}
 
 	VertexBuffer::~VertexBuffer()
@@ -26,6 +26,12 @@ namespace Lamp
 	void VertexBuffer::Unbind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	void VertexBuffer::SetVertices(float* pVertices, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_DYNAMIC_DRAW);
 	}
 
 	VertexBuffer* VertexBuffer::Create(float* pVertices, uint32_t size)

@@ -15,6 +15,7 @@ namespace Lamp
 
 		void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& pVertexBuffer);
 		void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& pIndexBuffer);
+		std::vector<std::shared_ptr<VertexBuffer>>& GetVertexBuffer() { return m_VertexBuffers; }
 
 		std::shared_ptr<IndexBuffer>& GetIndexBuffer() { return m_pIndexBuffer; }
 

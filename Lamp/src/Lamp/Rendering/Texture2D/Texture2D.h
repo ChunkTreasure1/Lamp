@@ -3,6 +3,7 @@
 #include <string>
 
 #include <glad/glad.h>
+#include "Lamp/Core/Core.h"
 
 namespace Lamp
 {
@@ -23,8 +24,8 @@ namespace Lamp
 		inline const uint32_t GetID() const { return m_RendererID; }
 
 	public:
-		static std::shared_ptr<Texture2D> Create(uint32_t width, uint32_t height) { return std::make_shared<Texture2D>(width, height); }
-		static std::shared_ptr<Texture2D> Create(const std::string& path) { return std::make_shared<Texture2D>(path); }
+		static Ref<Texture2D> Create(uint32_t width, uint32_t height) { return std::make_shared<Texture2D>(width, height); }
+		static Ref<Texture2D> Create(const std::string& path) { return std::make_shared<Texture2D>(path); }
 
 	private:
 		uint32_t m_RendererID;

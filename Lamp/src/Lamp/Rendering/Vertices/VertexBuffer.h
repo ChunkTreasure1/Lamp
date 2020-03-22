@@ -16,6 +16,7 @@ namespace Lamp
 
 		inline void SetBufferLayout(const BufferLayout& buff) { m_BufferLayout = buff; }
 		inline BufferLayout& GetBufferLayout() { return m_BufferLayout; }
+		void SetVertices(float* pVertices, uint32_t size);
 
 	public:
 		static VertexBuffer* Create(float* pVertices, uint32_t size);

@@ -2,11 +2,12 @@
 
 namespace Lamp
 {
-	enum FileType
+	enum class FileType
 	{
-		FileType_Empty = 0,
-		FileType_Texture,
-		FileType_Text
+		Empty = 0,
+		Texture,
+		Text,
+		Level
 	};
 
 	class File
@@ -22,15 +23,19 @@ namespace Lamp
 
 			if (s == "PNG" || s == "png")
 			{
-				m_FileType = FileType_Texture;
+				m_FileType = FileType::Texture;
 			}
 			else if (s == "TXT" || s == "txt")
 			{
-				m_FileType = FileType_Text;
+				m_FileType = FileType::Text;
+			}
+			else if (s == "LEVEL" || s == "level")
+			{
+				m_FileType = FileType::Level;
 			}
 			else
 			{
-				m_FileType = FileType_Empty;
+				m_FileType = FileType::Empty;
 			}
 		}
 
@@ -47,9 +52,11 @@ namespace Lamp
 	public:
 		static std::vector<std::string> GetAssetFolders();
 		static std::vector<std::string> GetFiles(std::string& path);
+		static std::vector<std::string> GetLevelFiles(std::string& path);
 		static std::vector<std::string> GetFolders(std::string& path);
 
 		static bool ContainsFolder(std::string& path);
 		static void PrintFoldersAndFiles(std::vector<std::string>& files, int startId = -1);
+		static void PrintLevelFiles(std::vector<std::string>& files, int startID = -1);
 	};
 }

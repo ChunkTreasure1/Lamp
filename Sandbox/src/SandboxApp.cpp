@@ -5,7 +5,6 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-#include "Lamp/Entity/BaseComponents/TransformComponent.h"
 #include "Lamp/Entity/Base/EntityManager.h"
 #include "Sandbox2D.h"
 

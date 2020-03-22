@@ -5,6 +5,8 @@
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
+#include "Sound.h"
+
 namespace Lamp
 {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -19,6 +21,7 @@ namespace Lamp
 
 	Window::~Window()
 	{
+		Sound::UnInitialize();
 		glfwTerminate();
 	}
 
@@ -30,7 +33,7 @@ namespace Lamp
 		}
 
 		glfwSetErrorCallback(GLFWErrorCallback);
-
+		glfwWindowHint(GLFW_SAMPLES, 4);
 		//Create the window
 		m_pWindow = glfwCreateWindow(props.Width, props.Height, props.Title.c_str(), NULL, NULL);
 		if (!m_pWindow)
@@ -53,12 +56,11 @@ namespace Lamp
 		LP_CORE_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
 		LP_CORE_INFO("  Version: {0}", glGetString(GL_VERSION));
 
+		Sound::Initialize();
+		LP_CORE_INFO("Sound initialized!");
+
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetIsVSync(props.IsVSync);
-
-		//Enable alpha blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
@@ -66,6 +68,16 @@ namespace Lamp
 		m_Data.VSync = props.IsVSync;
 
 		//Set GLFW callbacks
+		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			data.Width = width;
+			data.Height = height;
+
+			WindowResizeEvent event(width, height);
+			data.EventCallback(event);
+		});
+
 		glfwSetWindowCloseCallback(m_pWindow, [](GLFWwindow* pWindow) 
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWindow);

@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Dist|x64">
+      <Configuration>Dist</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5B657FD1-4707-AAA7-30C2-BDFB1C0331F8}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SoLoud</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>bin\Debug-windows-x86_64\SoLoud\</OutDir>
+    <IntDir>bin-int\Debug-windows-x86_64\SoLoud\</IntDir>
+    <TargetName>SoLoud</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>bin\Release-windows-x86_64\SoLoud\</OutDir>
+    <IntDir>bin-int\Release-windows-x86_64\SoLoud\</IntDir>
+    <TargetName>SoLoud</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <OutDir>bin\Dist-windows-x86_64\SoLoud\</OutDir>
+    <IntDir>bin-int\Dist-windows-x86_64\SoLoud\</IntDir>
+    <TargetName>SoLoud</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WITH_XAUDIO2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WITH_XAUDIO2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WITH_XAUDIO2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\audiosource\speech\darray.h" />
+    <ClInclude Include="src\audiosource\speech\klatt.h" />
+    <ClInclude Include="src\audiosource\speech\resonator.h" />
+    <ClInclude Include="src\audiosource\speech\tts.h" />
+    <ClInclude Include="src\audiosource\tedsid\sid.h" />
+    <ClInclude Include="src\audiosource\tedsid\ted.h" />
+    <ClInclude Include="src\audiosource\wav\dr_flac.h" />
+    <ClInclude Include="src\audiosource\wav\dr_mp3.h" />
+    <ClInclude Include="src\audiosource\wav\dr_wav.h" />
+    <ClInclude Include="src\audiosource\wav\stb_vorbis.h" />
+    <ClInclude Include="src\tools\resamplerlab\stb_image_write.h" />
+    <ClInclude Include="src\tools\tedsid2dump\cbmtune.h" />
+    <ClInclude Include="src\tools\tedsid2dump\cpu.h" />
+    <ClInclude Include="src\tools\tedsid2dump\cpu7501asm.h" />
+    <ClInclude Include="src\tools\tedsid2dump\mem.h" />
+    <ClInclude Include="src\tools\tedsid2dump\psid.h" />
+    <ClInclude Include="src\tools\tedsid2dump\roms.h" />
+    <ClInclude Include="src\tools\tedsid2dump\sid.h" />
+    <ClInclude Include="src\tools\tedsid2dump\tedmem.h" />
+    <ClInclude Include="src\tools\tedsid2dump\tedplay.h" />
+    <ClInclude Include="src\tools\tedsid2dump\types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\audiosource\monotone\soloud_monotone.cpp" />
+    <ClCompile Include="src\audiosource\openmpt\soloud_openmpt.cpp" />
+    <ClCompile Include="src\audiosource\sfxr\soloud_sfxr.cpp" />
+    <ClCompile Include="src\audiosource\speech\darray.cpp" />
+    <ClCompile Include="src\audiosource\speech\klatt.cpp" />
+    <ClCompile Include="src\audiosource\speech\resonator.cpp" />
+    <ClCompile Include="src\audiosource\speech\soloud_speech.cpp" />
+    <ClCompile Include="src\audiosource\speech\tts.cpp" />
+    <ClCompile Include="src\audiosource\tedsid\sid.cpp" />
+    <ClCompile Include="src\audiosource\tedsid\soloud_tedsid.cpp" />
+    <ClCompile Include="src\audiosource\tedsid\ted.cpp" />
+    <ClCompile Include="src\audiosource\vic\soloud_vic.cpp" />
+    <ClCompile Include="src\audiosource\vizsn\soloud_vizsn.cpp" />
+    <ClCompile Include="src\audiosource\wav\dr_impl.cpp" />
+    <ClCompile Include="src\audiosource\wav\soloud_wav.cpp" />
+    <ClCompile Include="src\audiosource\wav\soloud_wavstream.cpp" />
+    <ClCompile Include="src\backend\alsa\soloud_alsa.cpp" />
+    <ClCompile Include="src\backend\coreaudio\soloud_coreaudio.cpp" />
+    <ClCompile Include="src\backend\null\soloud_null.cpp" />
+    <ClCompile Include="src\backend\openal\soloud_openal.cpp" />
+    <ClCompile Include="src\backend\opensles\soloud_opensles.cpp" />
+    <ClCompile Include="src\backend\oss\soloud_oss.cpp" />
+    <ClCompile Include="src\backend\portaudio\soloud_portaudio.cpp" />
+    <ClCompile Include="src\backend\sdl\soloud_sdl1.cpp" />
+    <ClCompile Include="src\backend\sdl\soloud_sdl2.cpp" />
+    <ClCompile Include="src\backend\sdl2_static\soloud_sdl2_static.cpp" />
+    <ClCompile Include="src\backend\sdl_static\soloud_sdl_static.cpp" />
+    <ClCompile Include="src\backend\wasapi\soloud_wasapi.cpp" />
+    <ClCompile Include="src\backend\winmm\soloud_winmm.cpp" />
+    <ClCompile Include="src\backend\xaudio2\soloud_xaudio2.cpp" />
+    <ClCompile Include="src\c_api\soloud_c.cpp" />
+    <ClCompile Include="src\core\soloud.cpp" />
+    <ClCompile Include="src\core\soloud_audiosource.cpp" />
+    <ClCompile Include="src\core\soloud_bus.cpp" />
+    <ClCompile Include="src\core\soloud_core_3d.cpp" />
+    <ClCompile Include="src\core\soloud_core_basicops.cpp" />
+    <ClCompile Include="src\core\soloud_core_faderops.cpp" />
+    <ClCompile Include="src\core\soloud_core_filterops.cpp" />
+    <ClCompile Include="src\core\soloud_core_getters.cpp" />
+    <ClCompile Include="src\core\soloud_core_setters.cpp" />
+    <ClCompile Include="src\core\soloud_core_voicegroup.cpp" />
+    <ClCompile Include="src\core\soloud_core_voiceops.cpp" />
+    <ClCompile Include="src\core\soloud_fader.cpp" />
+    <ClCompile Include="src\core\soloud_fft.cpp" />
+    <ClCompile Include="src\core\soloud_fft_lut.cpp" />
+    <ClCompile Include="src\core\soloud_file.cpp" />
+    <ClCompile Include="src\core\soloud_filter.cpp" />
+    <ClCompile Include="src\core\soloud_queue.cpp" />
+    <ClCompile Include="src\core\soloud_thread.cpp" />
+    <ClCompile Include="src\filter\soloud_bassboostfilter.cpp" />
+    <ClCompile Include="src\filter\soloud_biquadresonantfilter.cpp" />
+    <ClCompile Include="src\filter\soloud_dcremovalfilter.cpp" />
+    <ClCompile Include="src\filter\soloud_echofilter.cpp" />
+    <ClCompile Include="src\filter\soloud_fftfilter.cpp" />
+    <ClCompile Include="src\filter\soloud_flangerfilter.cpp" />
+    <ClCompile Include="src\filter\soloud_lofifilter.cpp" />
+    <ClCompile Include="src\filter\soloud_robotizefilter.cpp" />
+    <ClCompile Include="src\filter\soloud_waveshaperfilter.cpp" />
+    <ClCompile Include="src\tools\codegen\main.cpp" />
+    <ClCompile Include="src\tools\lutgen\main.cpp">
+      <ObjectFileName>$(IntDir)\main1.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\tools\resamplerlab\main.cpp">
+      <ObjectFileName>$(IntDir)\main2.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\tools\sanity\sanity.cpp" />
+    <ClCompile Include="src\tools\tedsid2dump\cbmtune.cpp" />
+    <ClCompile Include="src\tools\tedsid2dump\cpu.cpp" />
+    <ClCompile Include="src\tools\tedsid2dump\main.cpp">
+      <ObjectFileName>$(IntDir)\main3.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\tools\tedsid2dump\sid.cpp">
+      <ObjectFileName>$(IntDir)\sid1.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\tools\tedsid2dump\tedmem.cpp" />
+    <ClCompile Include="src\tools\tedsid2dump\tedplay.cpp" />
+    <ClCompile Include="src\tools\tedsid2dump\tedsound.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

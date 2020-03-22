@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "imgui.h"
+#include "Lamp/Physics/Physics.h"
 
 namespace Lamp
 {
@@ -17,14 +18,15 @@ namespace Lamp
 		m_pWindow = std::unique_ptr<Window>(new Window());
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		Renderer::Initialize();
+
 		m_pImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_pImGuiLayer);
-
-		Renderer::Initialize();
 	}
 
 	Application::~Application()
 	{
+		Renderer::Shutdown();
 	}
 
 	void Application::Run()
@@ -37,6 +39,7 @@ namespace Lamp
 
 			if (!m_Minimized)
 			{
+				Lamp::Physics::CheckCollisions();
 				for (Layer* layer : m_LayerStack)
 				{
 					layer->Update(timestep);
@@ -93,12 +96,15 @@ namespace Lamp
 		if (e.GetWidth() == 0 && e.GetHeight() == 0)
 		{
 			m_Minimized = true;
+			return false;
 		}
 		else
 		{
 			m_Minimized = false;
 		}
-		return true;
+
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		return false;
 	}
 	
 	void Application::OnItemClicked(File & file)

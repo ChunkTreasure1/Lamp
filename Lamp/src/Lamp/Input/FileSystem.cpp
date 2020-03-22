@@ -4,6 +4,8 @@
 #include "imgui.h"
 #include "Lamp/Core/Application.h"
 
+#include "Lamp/Level/LevelSystem.h"
+
 namespace Lamp
 {
 	//Returns the paths to the files within the assets folder
@@ -30,6 +32,21 @@ namespace Lamp
 		{
 			std::string s = entry.path().string();
 			if (s.find(".") != std::string::npos)
+			{
+				files.push_back(s);
+			}
+		}
+
+		return files;
+	}
+
+	std::vector<std::string> FileSystem::GetLevelFiles(std::string& path)
+	{
+		std::vector<std::string> files;
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			std::string s = entry.path().string();
+			if (s.find(".level") != std::string::npos)
 			{
 				files.push_back(s);
 			}
@@ -110,6 +127,50 @@ namespace Lamp
 				PrintFoldersAndFiles(Lamp::FileSystem::GetFolders(folders[i]), startId);
 				ImGui::TreePop();
 			}
+		}
+	}
+
+	//Prints all the availible folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
+	void FileSystem::PrintLevelFiles(std::vector<std::string>& folders, int startID)
+	{
+		if (folders.size() == 0)
+		{
+			return;
+		}
+
+		for (int i = 0; i < folders.size(); i++)
+		{
+			std::string s = folders[i];
+			std::size_t pos = s.find_last_of("/\\");
+			s = s.substr(pos + 1);
+
+			std::vector<std::string> files = Lamp::FileSystem::GetLevelFiles(folders[i]);
+
+			for (int j = 0; j < files.size(); j++)
+			{
+				//startId++;
+				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+				std::string p = files[j];
+				std::size_t posp = p.find_last_of("/\\");
+				p = p.substr(posp + 1);
+
+				if (p.find(".level"))
+				{
+					if (ImGui::MenuItem(p.c_str()))
+					{
+						File f = File(p.c_str());
+
+						if (f.GetFileType() == FileType::Level)
+						{
+							Lamp::LevelSystem::SaveLevel("engine/levels/" + Lamp::LevelSystem::GetCurrentLevel()->GetName() + ".level", Lamp::LevelSystem::GetCurrentLevel());
+							LevelSystem::LoadLevel("engine/levels/" + f.GetPath());
+						}
+					}
+				}
+			}
+
+			PrintLevelFiles(GetFolders(folders[i]), startID);
 		}
 	}
 }

@@ -34,8 +34,6 @@ namespace Sandbox2D
 
 		//------------TEST ENTITIES-------------
 		Lamp::IEntity* m_pEntity;
-		std::shared_ptr<Lamp::EntityManager> m_pEntityManager;
-
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
 		//--------------------------------------
 
