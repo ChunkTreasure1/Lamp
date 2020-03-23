@@ -26,6 +26,7 @@ namespace Lamp
 		void UploadFloat4(const std::string& name, const glm::vec4& value) const;
 
 		void UploadMat4(const std::string& name, const glm::mat4& mat);
+		inline const uint32_t GetID() const { return m_ID; }
 
 	public:
 		static std::shared_ptr<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);

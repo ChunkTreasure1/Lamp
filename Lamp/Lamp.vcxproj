@@ -178,12 +178,16 @@
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
+    <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h" />
+    <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
+    <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
+    <ClInclude Include="src\Lamp\Rendering\TestShader.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h" />
@@ -576,11 +580,14 @@
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
@@ -609,4 +616,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 

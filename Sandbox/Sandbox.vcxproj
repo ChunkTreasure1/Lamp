@@ -131,29 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\GameLayer.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Enemies\EnemyComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\General\SpriteAnimationComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\General\SpriteComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Level\PlatformComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Level\PlatformGeneratorComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\PlayerComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Shooting\BulletComponent.h" />
     <ClInclude Include="src\Sandbox2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Game\GameLayer.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Enemies\EnemyComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\General\SpriteAnimationComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\General\SpriteComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Level\PlatformComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Level\PlatformGeneratorComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\PlayerComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Shooting\BulletComponent.cpp" />
-    <ClCompile Include="src\Game\ImGuiRenderer.cpp" />
-    <ClCompile Include="src\ImGuiRenderer.cpp">
-      <ObjectFileName>$(IntDir)\ImGuiRenderer1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="src\ImGuiRenderer.cpp" />
     <ClCompile Include="src\Sandbox2D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>

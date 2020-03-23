@@ -13,7 +13,8 @@ namespace Lamp
 	{
 		for (size_t i = 0; i < m_Brushes.size(); i++)
 		{
-			delete m_Brushes[i];
+			//FIX
+			//delete m_Brushes[i];
 		}
 
 		m_Brushes.clear();

@@ -10,7 +10,7 @@ namespace Sandbox2D
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_CameraController.SetHasControl(m_PerspectiveHover);
+			//m_CameraController.SetHasControl(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -21,7 +21,7 @@ namespace Sandbox2D
 				ImGui::EndMenuBar();
 			}
 
-			m_CameraController.SetAspectRatio(m_AspectRatio);
+			//m_CameraController.SetAspectRatio(m_AspectRatio);
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 
 			float height = ImGui::GetWindowSize().x / m_AspectRatio;
@@ -96,14 +96,14 @@ namespace Sandbox2D
 
 					for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get().GetEntities())
 					{
-						if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get().GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize)))
-						{
-							m_pSelectedEntity = pEnt;
-						}
-						else
-						{
-							m_pSelectedEntity = nullptr;
-						}
+						//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get().GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize)))
+						//{
+						//	m_pSelectedEntity = pEnt;
+						//}
+						//else
+						//{
+						//	m_pSelectedEntity = nullptr;
+						//}
 					}
 				}
 			}

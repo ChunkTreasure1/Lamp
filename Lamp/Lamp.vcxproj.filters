@@ -46,6 +46,9 @@
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\Cameras">
+      <UniqueIdentifier>{9ECEFFAB-8ADE-AB7C-F397-109BDFC69A15}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
@@ -201,6 +204,12 @@
     <ClInclude Include="src\Lamp\Physics\Physics.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\FrameBuffer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -216,8 +225,14 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Renderer3D.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\TestShader.h">
+      <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -1391,6 +1406,12 @@
     <ClCompile Include="src\Lamp\Physics\Physics.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
@@ -1404,6 +1425,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">

@@ -6,6 +6,7 @@
 #include "imgui/imgui_internal.h"
 
 #include <glm/gtc/type_ptr.hpp>
+#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 
 namespace Sandbox2D
 {
@@ -30,7 +31,7 @@ namespace Sandbox2D
 		void UpdateProperties();
 
 	private:
-		Lamp::OrthographicCameraController m_CameraController;
+		Lamp::PerspectiveCameraController m_PCam;
 
 		//------------TEST ENTITIES-------------
 		Lamp::IEntity* m_pEntity;
