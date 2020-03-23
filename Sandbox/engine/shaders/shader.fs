@@ -1,4 +1,9 @@
 #version 330 core
+struct Material
+{
+
+}
+
 out vec4 FragColor;
 
 in vec2 v_TexCoord;
