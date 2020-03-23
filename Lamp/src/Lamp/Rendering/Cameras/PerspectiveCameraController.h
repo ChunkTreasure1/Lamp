@@ -3,6 +3,7 @@
 #include "PerspectiveCamera.h"
 #include "Lamp/Core/Timestep.h"
 #include "Lamp/Event/ApplicationEvent.h"
+#include "Lamp/Event/MouseEvent.h"
 
 namespace Lamp
 {
@@ -23,6 +24,7 @@ namespace Lamp
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
+		bool OnMouseMoved(MouseMovedEvent& e);
 
 	private:
 		PerspectiveCamera m_Camera;
@@ -33,5 +35,8 @@ namespace Lamp
 		float m_NearPlane = 0.1f;
 		float m_FarPlane = 100.f;
 		float m_FOV = 45.f;
+
+		float m_LastX = 1280 / 2;
+		float m_LastY = 720 / 2;
 	};
 }

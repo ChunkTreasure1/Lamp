@@ -9,7 +9,7 @@ namespace Lamp
 		: m_Camera(fov, nearPlane, farPlane), m_FOV(fov), m_NearPlane(nearPlane), m_FarPlane(farPlane)
 	{
 		m_Camera.SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
-		m_Camera.SetRotation(glm::vec3(-55.f, 0.f, 0.f));
+		m_Camera.SetRotation(glm::vec3(0.f, 0.f, 0.f));
 	}
 
 	PerspectiveCameraController::~PerspectiveCameraController()
@@ -42,6 +42,7 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
+		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
 	}
 
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
@@ -49,6 +50,39 @@ namespace Lamp
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
 
-		return false;
+		return true;
+	}
+
+	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
+	{
+		float xOffset = e.GetX() - m_LastX;
+		float yOffset = m_LastY - e.GetY();
+		m_LastX = e.GetX();
+		m_LastY = e.GetY();
+
+		float sensitivity = 0.15f;
+		xOffset *= sensitivity;
+		yOffset *= sensitivity;
+
+		m_Camera.SetYaw(m_Camera.GetYaw() + xOffset);
+		m_Camera.SetPitch(m_Camera.GetPitch() + yOffset);
+
+		if (m_Camera.GetPitch() > 89.f)
+		{
+			m_Camera.SetPitch(89.f);
+		}
+		if (m_Camera.GetPitch() < -89.f)
+		{
+			m_Camera.SetPitch(-89.f);
+		}
+
+		glm::vec3 dir;
+		dir.x = cos(glm::radians(m_Camera.GetYaw()) * cos(glm::radians(m_Camera.GetPitch())));
+		dir.y = sin(glm::radians(m_Camera.GetPitch()));
+		dir.z = sin(glm::radians(m_Camera.GetYaw()) * cos(glm::radians(m_Camera.GetPitch())));
+
+		m_Camera.SetFront(glm::normalize(dir));
+		m_Camera.SetRotation({ m_Camera.GetYaw(), m_Camera.GetPitch(), 0.f });
+		return true;
 	}
 }

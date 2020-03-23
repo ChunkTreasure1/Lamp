@@ -21,9 +21,16 @@ namespace Lamp
 		inline const glm::vec3& GetFront() const { return m_Front; }
 		inline const glm::vec3& GetUp() const { return m_Up; }
 
+		inline const float GetYaw() const { return m_Yaw; }
+		inline const float GetPitch() const { return m_Pitch; }
+
 		//Setting
 		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; RecalculateViewMatrix(); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; RecalculateViewMatrix(); }
+		inline void SetYaw(float yaw) { m_Yaw = yaw; }
+		inline void SetPitch(float pitch) { m_Pitch = pitch; }
+
+		inline void SetFront(const glm::vec3& front) { m_Front = front; }
 
 	private:
 		void RecalculateViewMatrix();
@@ -38,5 +45,8 @@ namespace Lamp
 
 		glm::vec3 m_Front = { 0.f, 0.f, -1.f };
 		glm::vec3 m_Up = { 0.f, 1.f, 0.f };
+
+		float m_Yaw = 0.f;
+		float m_Pitch = 0.f;
 	};
 }

@@ -57,7 +57,7 @@ namespace Sandbox2D
 
 	void Sandbox2D::OnEvent(Lamp::Event& e)
 	{
-
+		m_PCam.OnEvent(e);
 
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox2D::OnMouseMoved));
