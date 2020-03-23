@@ -22,7 +22,7 @@ namespace Lamp
 
 		static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray);
 		static void DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray);
-		static void SetClearColor(const glm::vec4& color) { glClearColor(color.r, color.g, color.g, color.a); glClearDepth(1.f); }
+		static void SetClearColor(const glm::vec4& color) { glClearColor(color.r, color.g, color.g, color.a); }
 		static void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 		static void OnWindowResize(uint32_t width, uint32_t height);

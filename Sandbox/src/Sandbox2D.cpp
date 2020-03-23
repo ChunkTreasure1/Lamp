@@ -12,35 +12,19 @@ namespace Sandbox2D
 	Sandbox2D::Sandbox2D()
 		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f)
 	{
-		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		//m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
 	{
 		m_PCam.Update(ts);
-		//m_CameraController.Update(ts);
-		//Lamp::EntityManager::Get().Update(ts);
+		Lamp::EntityManager::Get().Update(ts);
 
-		//Lamp::Renderer::SetClearColor(m_ClearColor);
-		//Lamp::Renderer::Clear();
-
-		//m_FrameBuffer->Bind();
-		//Lamp::Renderer::Clear();
-
-		//Lamp::Renderer2D::Begin(m_CameraController.GetCamera());
-
-		//Lamp::BrushManager::Get().Draw();
-		//Lamp::EntityManager::Get().Draw();
-
-		//Lamp::Renderer2D::End();
-		//m_FrameBuffer->Unbind();
-	
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
 		Lamp::Renderer3D::Begin(m_PCam.GetCamera());
-
 		Lamp::Renderer3D::TestDraw();
 
 		Lamp::Renderer3D::End();

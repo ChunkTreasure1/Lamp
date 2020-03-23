@@ -45,6 +45,8 @@ namespace Lamp
 		//Set the current context
 		glfwMakeContextCurrent(m_pWindow);
 
+		glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 		//Load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{

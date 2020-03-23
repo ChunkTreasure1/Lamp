@@ -16,6 +16,12 @@ namespace Lamp
 	
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenRenderbuffers(1, &m_DepthID);
+		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthID);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_WindowWidth, m_WindowHeight);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthID);
 	}
 
 	FrameBuffer::~FrameBuffer()
@@ -38,6 +44,9 @@ namespace Lamp
 	{
 		m_WindowWidth = width;
 		m_WindowHeight = height;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthID);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_WindowWidth, m_WindowHeight);
 	}
 
 	std::shared_ptr<FrameBuffer> FrameBuffer::Create(const uint32_t width, const uint32_t height)

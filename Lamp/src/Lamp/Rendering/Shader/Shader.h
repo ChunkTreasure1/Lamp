@@ -23,6 +23,7 @@ namespace Lamp
 		void UploadBool(const std::string& name, bool value) const;
 		void UploadInt(const std::string& name, int value) const;
 		void UploadFloat(const std::string& name, float value) const;
+		void UploadFloat3(const std::string& name, const glm::vec3& value) const;
 		void UploadFloat4(const std::string& name, const glm::vec4& value) const;
 
 		void UploadMat4(const std::string& name, const glm::mat4& mat);
