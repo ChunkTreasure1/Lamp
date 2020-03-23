@@ -134,7 +134,7 @@ namespace Lamp
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float3, "a_Normal"},
 			{ ElementType::Float2, "a_TexCoords" }
-		});
+			});
 
 		s_pData->pVertexArray->AddVertexBuffer(pBuffer);
 
@@ -161,6 +161,8 @@ namespace Lamp
 		s_pData->pShader->Bind();
 		s_pData->pShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		s_pData->pShader->UploadFloat3("u_CameraPosition", camera.GetPosition());
+		s_pData->pShader->UploadFloat3("u_SpotLight.position", camera.GetPosition());
+		s_pData->pShader->UploadFloat3("u_SpotLight.direction", camera.GetFront());
 
 		s_pData->pLightShader->Bind();
 		s_pData->pLightShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
@@ -183,16 +185,34 @@ namespace Lamp
 
 		s_pData->pShader->UploadMat4("u_Model", model);
 
-		//Light
-		s_pData->pShader->UploadFloat3("u_Light.ambient", { 0.5f, 0.5f, 0.5f });
-		s_pData->pShader->UploadFloat3("u_Light.specular", { 1.f, 1.f, 1.f });
-		s_pData->pShader->UploadFloat3("u_Light.position", { 1.2f, 1.f, -2.f });
+		s_pData->pShader->UploadFloat3("u_DirLight.direction", { -0.2f, -1.f, 0.3f });
+		s_pData->pShader->UploadFloat3("u_DirLight.ambient", { 0.05f, 0.05f, 0.05f });
+		s_pData->pShader->UploadFloat3("u_DirLight.diffuse", { 0.4f, 0.4f, 0.4f });
+		s_pData->pShader->UploadFloat3("u_DirLight.specular", { 0.5f, 0.5f, 0.5f });
 
-		//Material
+		s_pData->pShader->UploadFloat3("u_PointLight.position", { -1.f, 0.4f, 2.f });
+		s_pData->pShader->UploadFloat3("u_PointLight.ambient", { 0.05f, 0.05f, 0.05f });
+		s_pData->pShader->UploadFloat3("u_PointLight.diffuse", { 0.8f, 0.8f, 0.8f });
+		s_pData->pShader->UploadFloat3("u_PointLight.specular", { 1.f, 1.f, 1.f });
+		s_pData->pShader->UploadFloat("u_PointLight.constant", 1.f);
+		s_pData->pShader->UploadFloat("u_PointLight.linear", 0.09f);
+		s_pData->pShader->UploadFloat("u_PointLight.quadric", 0.032f);
+
+		s_pData->pShader->UploadFloat3("u_SpotLight.ambient", { 0.f, 0.f, 0.f });
+		s_pData->pShader->UploadFloat3("u_SpotLight.diffuse", { 1.f, 1.f, 1.f });
+		s_pData->pShader->UploadFloat3("u_SpotLight.specular", { 1.f, 1.f, 1.f });
+
+		s_pData->pShader->UploadFloat("u_SpotLight.constant", 1.f);
+		s_pData->pShader->UploadFloat("u_SpotLight.linear", 0.09f);
+		s_pData->pShader->UploadFloat("u_SpotLight.quadratic", 0.032f);
+		s_pData->pShader->UploadFloat("u_SpotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		s_pData->pShader->UploadFloat("u_SpotLight.outerCutOff", glm::cos(glm::radians(15.f)));
+
 		s_pData->pShader->UploadFloat3("u_Material.ambient", { 1.0f, 0.5f, 0.31f });
 		s_pData->pShader->UploadFloat3("u_Material.diffuse", { 1.0f, 0.5f, 0.31f });
 		s_pData->pShader->UploadFloat3("u_Material.specular", { 0.5f, 0.5f, 0.5f });
 		s_pData->pShader->UploadFloat("u_Material.shininess", 32.0f);
+
 
 		// render container
 		s_pData->pVertexArray->Bind();
