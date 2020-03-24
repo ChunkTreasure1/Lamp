@@ -25,6 +25,7 @@ namespace Lamp
 		glEnable(GL_DEPTH_TEST);
 
 		s_pData = new Renderer3DStorage();
+
 		//s_pData->pShader = std::make_shared<Shader>("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
 		//s_pData->pLightShader = std::make_shared<Shader>("engine/shaders/lightShader.vs", "engine/shaders/lightShader.fs");
 
@@ -152,9 +153,7 @@ namespace Lamp
 	}
 	void Renderer3D::Begin(PerspectiveCamera& camera)
 	{
-		//s_pData->pShader->Bind();
 		s_pData->pCamera = &camera;
-
 	}
 	void Renderer3D::End()
 	{

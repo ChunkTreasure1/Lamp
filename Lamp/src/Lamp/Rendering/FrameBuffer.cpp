@@ -26,12 +26,10 @@ namespace Lamp
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		// The depth buffer
-		GLuint depthrenderbuffer;
-		glGenRenderbuffers(1, &depthrenderbuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+		glGenRenderbuffers(1, &m_DepthID);
+		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthID);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_WindowWidth, m_WindowHeight);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthID);
 	
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_Texture, 0);
 	}
@@ -58,7 +56,17 @@ namespace Lamp
 		m_WindowHeight = height;
 
 		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthID);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_WindowWidth, m_WindowHeight);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_WindowWidth, m_WindowHeight);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthID);
+
+		glBindTexture(GL_TEXTURE_2D, m_Texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_WindowWidth, m_WindowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 	}
 
 	std::shared_ptr<FrameBuffer> FrameBuffer::Create(const uint32_t width, const uint32_t height)

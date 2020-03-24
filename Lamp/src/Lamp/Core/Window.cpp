@@ -45,8 +45,6 @@ namespace Lamp
 		//Set the current context
 		glfwMakeContextCurrent(m_pWindow);
 
-		glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 		//Load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
@@ -183,5 +181,17 @@ namespace Lamp
 		}
 
 		m_Data.VSync = state;
+	}
+
+	void Window::ShowCursor(bool state)
+	{
+		if (!state)
+		{
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+		else 
+		{
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
 	}
 }

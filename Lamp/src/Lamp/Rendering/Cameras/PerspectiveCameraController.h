@@ -20,7 +20,9 @@ namespace Lamp
 		PerspectiveCamera GetCamera() { return m_Camera; }
 		const PerspectiveCamera GetCamera() const { return m_Camera; }
 
-		void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
+		inline void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
+		void UpdatePerspective(float width, float height);
+		inline void SetHasControl(bool state) { if (m_HasControl && !state) { m_LastHadControl = true; } m_HasControl = state; }
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
@@ -39,5 +41,8 @@ namespace Lamp
 
 		float m_LastX = 1280 / 2;
 		float m_LastY = 720 / 2;
+		bool m_HasControl = false;
+		bool m_LastHadControl = false;
+		bool m_RightMouseButtonPressed = false;
 	};
 }

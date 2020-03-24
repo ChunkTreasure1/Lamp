@@ -10,7 +10,7 @@ namespace Sandbox2D
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
-			//m_CameraController.SetHasControl(m_PerspectiveHover);
+			m_PCam.SetHasControl(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -21,20 +21,16 @@ namespace Sandbox2D
 				ImGui::EndMenuBar();
 			}
 
-			//m_CameraController.SetAspectRatio(m_AspectRatio);
 			ImVec2 pos = ImGui::GetCursorScreenPos();
 
-			float height = ImGui::GetWindowSize().x / m_AspectRatio;
-
-			float offset = (ImGui::GetWindowSize().y - height) / 2;
-
-			//m_FrameBuffer->Update((uint32_t)height, (uint32_t)ImGui::GetWindowSize().y);
-
 			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_FrameBuffer->GetTexture(),
-				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + offset),
-				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y - offset),
+				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y),
+				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
+
+			m_PCam.UpdatePerspective(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			m_FrameBuffer->Update(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 		}
 		ImGui::End();
 	}

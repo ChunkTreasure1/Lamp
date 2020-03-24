@@ -45,6 +45,7 @@ namespace Lamp
 		//Setting
 		inline void SetEventCallback(const EventCallbackFn& callback) { m_Data.EventCallback = callback; }
 		inline void SetIsVSync(bool state);
+		void ShowCursor(bool state);
 
 	private:
 		//Member vars

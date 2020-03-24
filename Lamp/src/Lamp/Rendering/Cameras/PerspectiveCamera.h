@@ -51,7 +51,7 @@ namespace Lamp
 		glm::vec3 m_Up = { 0.f, 1.f, 0.f };
 		glm::vec3 m_Right = { 1.f, 0.f, 0.f };
 
-		float m_Yaw = 0.f;
+		float m_Yaw = -90.0f;;
 		float m_Pitch = 0.f;
 	};
 }
