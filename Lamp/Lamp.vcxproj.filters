@@ -37,6 +37,9 @@
     <Filter Include="src\Lamp\Level">
       <UniqueIdentifier>{EDBCBB7B-D98A-AF81-C21E-20A8AE8B8BE6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Meshes">
+      <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Physics">
       <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
     </Filter>
@@ -92,6 +95,9 @@
   <ItemGroup>
     <ClInclude Include="src\Lamp.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Brushes\Brush.h">
+      <Filter>src\Lamp\Brushes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Brushes\Brush2D.h">
       <Filter>src\Lamp\Brushes</Filter>
@@ -191,6 +197,15 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Level\LevelSystem.h">
       <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Material.h">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Mesh.h">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Model.h">
+      <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Collision.h">
       <Filter>src\Lamp\Physics</Filter>
@@ -1393,6 +1408,12 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
       <Filter>src\Lamp\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Model.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp">
       <Filter>src\Lamp\Physics\Components</Filter>

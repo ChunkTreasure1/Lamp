@@ -68,6 +68,17 @@ namespace Lamp
 		}
 	}
 
+	void BrushManager::OnEvent(Event& e)
+	{
+		if (e.GetEventType() == EventType::AppRender)
+		{
+			for (auto brush : m_Brushes)
+			{
+				brush->Draw();
+			}
+		}
+	}
+
 	Brush2D* BrushManager::GetBrushFromPoint(const glm::vec2& pos)
 	{
 		for (auto& brush : m_Brushes)

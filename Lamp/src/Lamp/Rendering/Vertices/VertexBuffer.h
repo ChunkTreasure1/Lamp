@@ -2,13 +2,21 @@
 
 #include <functional>
 #include "BufferLayout.h"
+#include <glm/glm.hpp>
 
 namespace Lamp
 {
+	struct Vertex
+	{
+		glm::vec3 position;
+		glm::vec3 normal;
+		glm::vec2 textureCoords;
+	};
+
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(float* pVertices, uint32_t size);
+		VertexBuffer(std::vector<Vertex>& pVertices, uint32_t size);
 		~VertexBuffer();
 
 		void Bind() const;
@@ -19,7 +27,7 @@ namespace Lamp
 		void SetVertices(float* pVertices, uint32_t size);
 
 	public:
-		static VertexBuffer* Create(float* pVertices, uint32_t size);
+		static VertexBuffer* Create(std::vector<Vertex>& pVertices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;
@@ -29,7 +37,7 @@ namespace Lamp
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer(uint32_t* pIndices, uint32_t count);
+		IndexBuffer(std::vector<uint32_t>& pIndices, uint32_t count);
 		~IndexBuffer();
 
 		void Bind() const;
@@ -38,7 +46,7 @@ namespace Lamp
 		uint32_t GetCount() { return m_Count; }
 
 	public:
-		static IndexBuffer* Create(uint32_t* pIndices, uint32_t size);
+		static IndexBuffer* Create(std::vector<uint32_t>& pIndices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Brush2D.h"
+#include "Lamp/Event/Event.h"
 
 namespace Lamp
 {
@@ -15,6 +16,7 @@ namespace Lamp
 		Brush2D* Create(const std::string& spritePath);
 		Brush2D* Create(const std::string& spriteBath, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, bool shouldCollide);
 		void Remove(const Brush2D* brush);
+		void OnEvent(Event& e);
 
 		Brush2D* GetBrushFromPoint(const glm::vec2& pos);
 
