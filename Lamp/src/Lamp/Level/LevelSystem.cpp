@@ -74,11 +74,11 @@ namespace Lamp
 			char* pScale = doc.allocate_string(ToString(brush->GetScale()).c_str());
 			child->append_attribute(doc.allocate_attribute("scale", pScale));
 
-			char* pTex = doc.allocate_string(brush->GetTexturePath().c_str());
-			child->append_attribute(doc.allocate_attribute("texture", pTex));
+			//char* pTex = doc.allocate_string(brush->GetTexturePath().c_str());
+			//child->append_attribute(doc.allocate_attribute("texture", pTex));
 
-			char* pColl = doc.allocate_string(ToString(brush->GetShouldCollide()).c_str());
-			child->append_attribute(doc.allocate_attribute("shouldCollide", pColl));
+			//char* pColl = doc.allocate_string(ToString(brush->GetShouldCollide()).c_str());
+			//child->append_attribute(doc.allocate_attribute("shouldCollide", pColl));
 
 			pBrushes->append_node(child);
 		}
@@ -198,9 +198,9 @@ namespace Lamp
 		return true;
 	}
 
-	std::vector<Brush2D*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, BrushManager& brushManager)
+	std::vector<Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, BrushManager& brushManager)
 	{
-		std::vector<Brush2D*> pBrushes;
+		std::vector<Brush*> pBrushes;
 
 		for (rapidxml::xml_node<>* pBrush = pNode->first_node("Brush"); pBrush; pBrush = pBrush->next_sibling())
 		{
@@ -218,7 +218,7 @@ namespace Lamp
 			bool shouldCollide = false;
 			GetValue(pBrush->first_attribute("shouldCollide")->value(), shouldCollide);
 
-			pBrushes.push_back(brushManager.Create(path, pos, rot, scale, shouldCollide));
+			pBrushes.push_back(brushManager.Create(path, pos, rot, scale));
 		}
 
 		return pBrushes;

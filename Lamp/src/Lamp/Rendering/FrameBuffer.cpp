@@ -9,19 +9,31 @@ namespace Lamp
 		: m_WindowWidth(width), m_WindowHeight(height)
 	{
 		glGenFramebuffers(1, &m_RendererID);
-	
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+
+		// The texture we're going to render to
 		glGenTextures(1, &m_Texture);
+
+		// "Bind" the newly created texture : all future texture functions will modify this texture
 		glBindTexture(GL_TEXTURE_2D, m_Texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_WindowWidth, m_WindowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+		// Give an empty image to OpenGL ( the last "0" means "empty" )
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_WindowWidth, m_WindowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+		// Poor filtering
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		// The depth buffer
+		GLuint depthrenderbuffer;
+		glGenRenderbuffers(1, &depthrenderbuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_WindowWidth, m_WindowHeight);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
 	
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenRenderbuffers(1, &m_DepthID);
-		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthID);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_WindowWidth, m_WindowHeight);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthID);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_Texture, 0);
 	}
 
 	FrameBuffer::~FrameBuffer()

@@ -25,6 +25,7 @@ namespace Lamp
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
+		bool OnMouseScrolled(MouseScrolledEvent& e);
 
 	private:
 		PerspectiveCamera m_Camera;

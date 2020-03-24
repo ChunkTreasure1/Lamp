@@ -28,7 +28,7 @@ namespace Sandbox2D
 
 			float offset = (ImGui::GetWindowSize().y - height) / 2;
 
-			m_FrameBuffer->Update((uint32_t)height, (uint32_t)ImGui::GetWindowSize().y);
+			//m_FrameBuffer->Update((uint32_t)height, (uint32_t)ImGui::GetWindowSize().y);
 
 			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_FrameBuffer->GetTexture(),
 				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + offset),

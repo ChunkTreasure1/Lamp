@@ -6,51 +6,52 @@ namespace Lamp
 	BrushManager BrushManager::s_Manager;
 
 	BrushManager::BrushManager()
+		: m_pShader(nullptr)
 	{
 	}
 
 	BrushManager::~BrushManager()
 	{
-		for (size_t i = 0; i < m_Brushes.size(); i++)
+		for (auto& brush : m_Brushes)
 		{
-			//FIX
-			//delete m_Brushes[i];
+			delete brush;
 		}
 
 		m_Brushes.clear();
 	}
 
-	void BrushManager::Draw()
+	Brush* BrushManager::Create(const std::string& path)
 	{
-		for (auto& brush : m_Brushes)
+		if (m_pShader == nullptr)
 		{
-			brush->Draw();
+			m_pShader = Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
 		}
-	}
 
-	Brush2D* BrushManager::Create(const std::string& spritePath)
-	{
-		auto brush = new Brush2D(spritePath);
+		auto brush = new Brush(path);
+		brush->GetModel().GetMaterial().SetShader(m_pShader);
+
+		brush->GetModel().GetMaterial().SetDiffuse(Texture2D::Create("engine/textures/container_diff.png"));
+		brush->GetModel().GetMaterial().SetSpecular(Texture2D::Create("engine/textures/container_spec.png"));
+
 		m_Brushes.push_back(brush);
 	
 		return m_Brushes[m_Brushes.size() - 1];
 	}
 
-	Brush2D* BrushManager::Create(const std::string& spritePath, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, bool shouldCollide)
+	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
 	{
-		auto brush = new Brush2D(spritePath);
+		auto brush = new Brush(path);
 		
 		brush->SetPosition(pos);
 		brush->SetRotation(rot);
 		brush->SetScale(scale);
-		brush->SetShouldCollider(shouldCollide);
 
 		m_Brushes.push_back(brush);
 
 		return m_Brushes[m_Brushes.size() - 1];
 	}
 
-	void BrushManager::Remove(const Brush2D* brush)
+	void BrushManager::Remove(const Brush* brush)
 	{
 		auto it = std::find(m_Brushes.begin(), m_Brushes.end(), brush);
 		for (auto someBrush : m_Brushes)
@@ -79,7 +80,7 @@ namespace Lamp
 		}
 	}
 
-	Brush2D* BrushManager::GetBrushFromPoint(const glm::vec2& pos)
+	Brush* BrushManager::GetBrushFromPoint(const glm::vec2& pos)
 	{
 		for (auto& brush : m_Brushes)
 		{

@@ -28,11 +28,11 @@ namespace Lamp
 		}
 		if (Input::IsKeyPressed(LP_KEY_A))
 		{
-			m_CameraPosition -= glm::normalize(glm::cross(m_Camera.GetFront(), m_Camera.GetUp())) * m_CameraTranslationSpeed * (float)ts;
+			m_CameraPosition -= m_Camera.GetRight() * m_CameraTranslationSpeed * (float)ts;
 		}
 		if (Input::IsKeyPressed(LP_KEY_D))
 		{
-			m_CameraPosition += glm::normalize(glm::cross(m_Camera.GetFront(), m_Camera.GetUp())) * m_CameraTranslationSpeed * (float)ts;
+			m_CameraPosition += m_Camera.GetRight() * m_CameraTranslationSpeed * (float)ts;
 		}
 
 		m_Camera.SetPosition(m_CameraPosition);
@@ -43,6 +43,7 @@ namespace Lamp
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
+		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
 	}
 
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
@@ -76,13 +77,18 @@ namespace Lamp
 			m_Camera.SetPitch(-89.f);
 		}
 
-		glm::vec3 dir;
-		dir.x = cos(glm::radians(m_Camera.GetYaw()) * cos(glm::radians(m_Camera.GetPitch())));
-		dir.y = sin(glm::radians(m_Camera.GetPitch()));
-		dir.z = sin(glm::radians(m_Camera.GetYaw()) * cos(glm::radians(m_Camera.GetPitch())));
+		m_Camera.UpdateVectors();
+		return true;
+	}
+	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
+	{
+		m_CameraTranslationSpeed += e.GetYOffset() * 0.5f;
+		m_CameraTranslationSpeed = std::min(m_CameraTranslationSpeed, 10.f);
+		if (m_CameraTranslationSpeed < 0)
+		{
+			m_CameraTranslationSpeed = 0;
+		}
 
-		m_Camera.SetFront(glm::normalize(dir));
-		m_Camera.SetRotation({ m_Camera.GetYaw(), m_Camera.GetPitch(), 0.f });
 		return true;
 	}
 }

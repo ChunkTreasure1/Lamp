@@ -20,8 +20,9 @@ namespace Lamp
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_DepthID;
-		uint32_t m_Texture;
+		uint32_t m_ColorID;
 
+		uint32_t m_Texture;
 		uint32_t m_WindowWidth;
 		uint32_t m_WindowHeight;
 	};

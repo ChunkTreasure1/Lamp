@@ -16,24 +16,26 @@ namespace Lamp
 	{
 	public:
 		Model(const std::string& path)
-			: m_ModelMatrix(1.f)
+			: m_ModelMatrix(1.f), m_Material(0)
 		{
 			LoadModel(path);
 		}
 
-		void OnEvent(Event& e);
+		void Draw();
 
-		inline std::vector<Material>& GetMaterials() { return m_Materials; }
+		//Setting
+		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
+
+		//Getting
+		inline Material& GetMaterial() { return m_Material; }
 
 	private:
 		void LoadModel(const std::string& path);
 		void ProcessNode(aiNode* pNode, const aiScene* pScene);
 		Mesh ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
 		
-		bool OnRender(AppRenderEvent& e);
-
 	private:
-		std::vector<Material> m_Materials;
+		Material m_Material;
 		std::vector<Mesh> m_Meshes;
 		std::string m_Directory;
 

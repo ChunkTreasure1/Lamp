@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 struct Material
 {
 	sampler2D diffuse;
@@ -124,9 +124,9 @@ void main()
 
 	vec3 result = CalculateDirectional(u_DirLight, norm, viewDir);
 
-	result += CalculatePoint(u_PointLight, norm, v_FragPos, viewDir);
+	//result += CalculatePoint(u_PointLight, norm, v_FragPos, viewDir);
 
-	result += CalculateSpot(u_SpotLight, norm, v_FragPos, viewDir);
+	//result += CalculateSpot(u_SpotLight, norm, v_FragPos, viewDir);
 
 	FragColor =  vec4(result, 1.0);
 }
