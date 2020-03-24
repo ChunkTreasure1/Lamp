@@ -19,53 +19,53 @@ namespace Lamp
 
 	void Renderer2D::Initialize()
 	{
-		s_pData = new Renderer2DStorage();
+		//s_pData = new Renderer2DStorage();
 
-		////////Square////////
-		s_pData->pQuadVertexArray = VertexArray::Create();
+		//////////Square////////
+		//s_pData->pQuadVertexArray = VertexArray::Create();
 
-		float squareVertices[5 * 4] = {
-			-0.5f, -0.5f, 0.0f, 0.f, 0.f,
-			 0.5f, -0.5f, 0.0f, 1.f, 0.f,
-			 0.5f,  0.5f, 0.0f, 1.f, 1.f,
-			-0.5f,  0.5f, 0.0f, 0.f, 1.f
-		};
+		//float squareVertices[5 * 4] = {
+		//	-0.5f, -0.5f, 0.0f, 0.f, 0.f,
+		//	 0.5f, -0.5f, 0.0f, 1.f, 0.f,
+		//	 0.5f,  0.5f, 0.0f, 1.f, 1.f,
+		//	-0.5f,  0.5f, 0.0f, 0.f, 1.f
+		//};
 
-		Ref<VertexBuffer> pSquareVB;
-		pSquareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-		pSquareVB->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float2, "a_TexCoord" }
-			});
-		s_pData->pQuadVertexArray->AddVertexBuffer(pSquareVB);
+		//Ref<VertexBuffer> pSquareVB;
+		//pSquareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		//pSquareVB->SetBufferLayout
+		//({
+		//	{ ElementType::Float3, "a_Position" },
+		//	{ ElementType::Float2, "a_TexCoord" }
+		//	});
+		//s_pData->pQuadVertexArray->AddVertexBuffer(pSquareVB);
 
-		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		Ref<IndexBuffer> pSquareIB;
-		pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-		s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
+		//uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		//Ref<IndexBuffer> pSquareIB;
+		//pSquareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		//s_pData->pQuadVertexArray->SetIndexBuffer(pSquareIB);
 
-		////////Lines////////
-		s_pData->pLineVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> pLineVB;
-		pLineVB.reset(VertexBuffer::Create(nullptr, 0.f));
-		pLineVB->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" }
-		});
-		s_pData->pLineVertexArray->AddVertexBuffer(pLineVB);
+		//////////Lines////////
+		//s_pData->pLineVertexArray = VertexArray::Create();
+		//Ref<VertexBuffer> pLineVB;
+		//pLineVB.reset(VertexBuffer::Create(nullptr, 0.f));
+		//pLineVB->SetBufferLayout
+		//({
+		//	{ ElementType::Float3, "a_Position" }
+		//});
+		//s_pData->pLineVertexArray->AddVertexBuffer(pLineVB);
 
-		uint32_t lineIndices[2] = { 0, 1 };
-		Ref<IndexBuffer> pLineIB;
-		pLineIB.reset(IndexBuffer::Create(lineIndices, sizeof(lineIndices) / sizeof(uint32_t)));
-		s_pData->pLineVertexArray->SetIndexBuffer(pSquareIB);
+		//uint32_t lineIndices[2] = { 0, 1 };
+		//Ref<IndexBuffer> pLineIB;
+		//pLineIB.reset(IndexBuffer::Create(lineIndices, sizeof(lineIndices) / sizeof(uint32_t)));
+		//s_pData->pLineVertexArray->SetIndexBuffer(pSquareIB);
 
-		s_pData->pWhiteTexture = Texture2D::Create(1, 1);
-		uint32_t whiteTextureData = 0xffffffff;
-		s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		//s_pData->pWhiteTexture = Texture2D::Create(1, 1);
+		//uint32_t whiteTextureData = 0xffffffff;
+		//s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		s_pData->pTextureShader = Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag");
-		s_pData->pTextureShader->UploadInt("u_Texture", 0);
+		//s_pData->pTextureShader = Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag");
+		//s_pData->pTextureShader->UploadInt("u_Texture", 0);
 	}
 
 	void Renderer2D::Shutdown()

@@ -54,7 +54,13 @@ project "Lamp"
 		"%{prj.name}/vendor/glm",
 		"%{prj.name}/vendor/stb_image",
 		"%{prj.name}/vendor/SoLoud/include",
-		"%{prj.name}/vendor/rapidxml"
+		"%{prj.name}/vendor/rapidxml",
+		"%{prj.name}/vendor/assimp/include"
+	}
+	
+	libdirs
+	{
+		"%{prj.name}/vendor/assimp"
 	}
 	
 	links 
@@ -64,7 +70,8 @@ project "Lamp"
 		"Glad",
 		"SoLoud",
 		"xaudio2.lib",
-		"opengl32.lib"
+		"opengl32.lib",
+		"assimp-vc142-mt.lib"
 	}
 
 	filter "system:windows"
@@ -120,7 +127,13 @@ project "Sandbox"
 		"Lamp/vendor/imgui/",
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/SoLoud/include"
+		"%{prj.name}/vendor/SoLoud/include",
+		"Lamp/vendor/assimp/include"
+	}
+
+	libdirs
+	{
+		"Lamp/vendor/assimp"
 	}
 
 	links

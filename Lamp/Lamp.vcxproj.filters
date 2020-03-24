@@ -37,6 +37,9 @@
     <Filter Include="src\Lamp\Level">
       <UniqueIdentifier>{EDBCBB7B-D98A-AF81-C21E-20A8AE8B8BE6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Meshes">
+      <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Physics">
       <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
     </Filter>
@@ -45,6 +48,9 @@
     </Filter>
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Rendering\Cameras">
+      <UniqueIdentifier>{9ECEFFAB-8ADE-AB7C-F397-109BDFC69A15}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
@@ -89,6 +95,9 @@
   <ItemGroup>
     <ClInclude Include="src\Lamp.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Brushes\Brush.h">
+      <Filter>src\Lamp\Brushes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Brushes\Brush2D.h">
       <Filter>src\Lamp\Brushes</Filter>
@@ -189,6 +198,15 @@
     <ClInclude Include="src\Lamp\Level\LevelSystem.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Material.h">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Mesh.h">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Model.h">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Collision.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
@@ -200,6 +218,12 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Physics.h">
       <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\FrameBuffer.h">
       <Filter>src\Lamp\Rendering</Filter>
@@ -214,6 +238,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Renderer3D.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
@@ -1382,6 +1409,12 @@
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Model.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp">
       <Filter>src\Lamp\Physics\Components</Filter>
     </ClCompile>
@@ -1390,6 +1423,12 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Physics.cpp">
       <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering</Filter>
@@ -1404,6 +1443,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">

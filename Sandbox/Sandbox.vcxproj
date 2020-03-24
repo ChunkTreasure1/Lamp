@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;vendor\SoLoud\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;vendor\SoLoud\include;..\Lamp\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -88,6 +88,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\Lamp\vendor\assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -95,7 +96,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;vendor\SoLoud\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;vendor\SoLoud\include;..\Lamp\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -108,6 +109,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\Lamp\vendor\assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -115,7 +117,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;vendor\SoLoud\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;vendor\SoLoud\include;..\Lamp\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -128,38 +130,22 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\Lamp\vendor\assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\GameLayer.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Enemies\EnemyComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\General\SpriteAnimationComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\General\SpriteComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Level\PlatformComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Level\PlatformGeneratorComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\PlayerComponent.h" />
-    <ClInclude Include="src\Game\Gameplay\Components\Shooting\BulletComponent.h" />
     <ClInclude Include="src\Sandbox2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Game\GameLayer.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Enemies\EnemyComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\General\SpriteAnimationComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\General\SpriteComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Level\PlatformComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Level\PlatformGeneratorComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\PlayerComponent.cpp" />
-    <ClCompile Include="src\Game\Gameplay\Components\Shooting\BulletComponent.cpp" />
-    <ClCompile Include="src\Game\ImGuiRenderer.cpp" />
-    <ClCompile Include="src\ImGuiRenderer.cpp">
-      <ObjectFileName>$(IntDir)\ImGuiRenderer1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="src\ImGuiRenderer.cpp" />
     <ClCompile Include="src\Sandbox2D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\FlatColor.frag" />
     <None Include="engine\shaders\FlatColor.vert" />
+    <None Include="engine\shaders\shader_fs.glsl" />
+    <None Include="engine\shaders\shader_vs.glsl" />
     <None Include="engine\shaders\Texture.frag" />
     <None Include="engine\shaders\Texture.vert" />
   </ItemGroup>

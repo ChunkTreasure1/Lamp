@@ -6,6 +6,8 @@
 #include "imgui/imgui_internal.h"
 
 #include <glm/gtc/type_ptr.hpp>
+#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
+#include <Lamp/Meshes/Model.h>
 
 namespace Sandbox2D
 {
@@ -30,11 +32,13 @@ namespace Sandbox2D
 		void UpdateProperties();
 
 	private:
-		Lamp::OrthographicCameraController m_CameraController;
+		Lamp::PerspectiveCameraController m_PCam;
 
 		//------------TEST ENTITIES-------------
 		Lamp::IEntity* m_pEntity;
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
+
+		Lamp::Model m_Model;
 		//--------------------------------------
 
 		//---------------Editor-----------------

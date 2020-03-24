@@ -10,85 +10,13 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Game">
-      <UniqueIdentifier>{F6C81ECF-E295-79DA-0BAF-6782F7DAAE68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Gameplay">
-      <UniqueIdentifier>{B546F8ED-215D-F683-6AD4-81A5D629C70B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Gameplay\Components">
-      <UniqueIdentifier>{AA70BEC7-962B-AE73-3FE3-26BE2B7DF803}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Gameplay\Components\Enemies">
-      <UniqueIdentifier>{7FA15299-6B88-1491-14D9-7AAE009F8DF7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Gameplay\Components\General">
-      <UniqueIdentifier>{974CE71E-8333-A916-2C84-0F34184A227D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Gameplay\Components\Level">
-      <UniqueIdentifier>{B1E9392A-9D25-3D94-0638-558BF292E5AE}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Gameplay\Components\Shooting">
-      <UniqueIdentifier>{64E9E0F8-D0AD-DFE8-9913-10B305977B1E}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\GameLayer.h">
-      <Filter>src\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\Enemies\EnemyComponent.h">
-      <Filter>src\Game\Gameplay\Components\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\General\SpriteAnimationComponent.h">
-      <Filter>src\Game\Gameplay\Components\General</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\General\SpriteComponent.h">
-      <Filter>src\Game\Gameplay\Components\General</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\Level\PlatformComponent.h">
-      <Filter>src\Game\Gameplay\Components\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\Level\PlatformGeneratorComponent.h">
-      <Filter>src\Game\Gameplay\Components\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\PlayerComponent.h">
-      <Filter>src\Game\Gameplay\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Gameplay\Components\Shooting\BulletComponent.h">
-      <Filter>src\Game\Gameplay\Components\Shooting</Filter>
-    </ClInclude>
     <ClInclude Include="src\Sandbox2D.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Game\GameLayer.cpp">
-      <Filter>src\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\Enemies\EnemyComponent.cpp">
-      <Filter>src\Game\Gameplay\Components\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\General\SpriteAnimationComponent.cpp">
-      <Filter>src\Game\Gameplay\Components\General</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\General\SpriteComponent.cpp">
-      <Filter>src\Game\Gameplay\Components\General</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\Level\PlatformComponent.cpp">
-      <Filter>src\Game\Gameplay\Components\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\Level\PlatformGeneratorComponent.cpp">
-      <Filter>src\Game\Gameplay\Components\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\PlayerComponent.cpp">
-      <Filter>src\Game\Gameplay\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Gameplay\Components\Shooting\BulletComponent.cpp">
-      <Filter>src\Game\Gameplay\Components\Shooting</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\ImGuiRenderer.cpp">
-      <Filter>src\Game</Filter>
-    </ClCompile>
     <ClCompile Include="src\ImGuiRenderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -110,6 +38,12 @@
       <Filter>engine\shaders</Filter>
     </None>
     <None Include="engine\shaders\Texture.vert">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\shader_fs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\shader_vs.glsl">
       <Filter>engine\shaders</Filter>
     </None>
   </ItemGroup>

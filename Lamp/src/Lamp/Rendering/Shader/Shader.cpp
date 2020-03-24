@@ -99,6 +99,11 @@ namespace Lamp
 		glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
 	}
 
+	void Shader::UploadFloat3(const std::string& name, const glm::vec3& value) const
+	{
+		glUniform3f(glGetUniformLocation(m_ID, name.c_str()), value.x, value.y, value.z);
+	}
+
 	void Shader::UploadFloat4(const std::string& name, const glm::vec4& value) const
 	{
 		glUniform4f(glGetUniformLocation(m_ID, name.c_str()), value.x, value.y, value.z, value.w);

@@ -5,12 +5,12 @@
 namespace Lamp
 {
 	//////Vertex Buffer//////
-	VertexBuffer::VertexBuffer(float* pVertices, uint32_t size)
+	VertexBuffer::VertexBuffer(std::vector<Vertex>& pVertices, uint32_t size)
 	{
 		glGenBuffers(1, &m_RendererID);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, &pVertices[0], GL_STATIC_DRAW);
 	}
 
 	VertexBuffer::~VertexBuffer()
@@ -34,19 +34,19 @@ namespace Lamp
 		glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_DYNAMIC_DRAW);
 	}
 
-	VertexBuffer* VertexBuffer::Create(float* pVertices, uint32_t size)
+	VertexBuffer* VertexBuffer::Create(std::vector<Vertex>& pVertices, uint32_t size)
 	{
 		return new VertexBuffer(pVertices, size);
 	}
 
 	//////Index Buffer//////
 
-	IndexBuffer::IndexBuffer(uint32_t* pIndices, uint32_t count)
+	IndexBuffer::IndexBuffer(std::vector<uint32_t>& pIndices, uint32_t count)
 		: m_Count(count)
 	{
 		glGenBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), pIndices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), &pIndices[0], GL_STATIC_DRAW);
 	}
 
 	IndexBuffer::~IndexBuffer()
@@ -64,7 +64,7 @@ namespace Lamp
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	IndexBuffer* IndexBuffer::Create(uint32_t* pIndices, uint32_t size)
+	IndexBuffer* IndexBuffer::Create(std::vector<uint32_t>& pIndices, uint32_t size)
 	{
 		return new IndexBuffer(pIndices, size);
 	}
