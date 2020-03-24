@@ -28,6 +28,7 @@ namespace Lamp
 		inline const glm::vec3& GetPosition() { return m_Position; }
 		inline const glm::vec3& GetRotation() { return m_Rotation; }
 		inline const glm::vec3& GetScale() { return m_Scale; }
+		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Model& GetModel() { return m_Model; }
 
 	private:

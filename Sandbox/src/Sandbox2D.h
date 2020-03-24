@@ -7,7 +7,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
-#include <Lamp/Meshes/Model.h>
+#include <Lamp/Brushes/Brush.h>
 
 namespace Sandbox2D
 {
@@ -31,6 +31,8 @@ namespace Sandbox2D
 		void UpdateAssetBrowser();
 		void UpdateProperties();
 
+		void EditTransform(const Lamp::PerspectiveCamera& camera, glm::mat4& mat);
+
 	private:
 		Lamp::PerspectiveCameraController m_PCam;
 
@@ -38,12 +40,13 @@ namespace Sandbox2D
 		Lamp::IEntity* m_pEntity;
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
 
-		Lamp::Model m_Model;
+		Lamp::Brush* m_pBrush;
 		//--------------------------------------
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
+		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
 		ImGuiID m_DockspaceID;
 
 		//Perspective

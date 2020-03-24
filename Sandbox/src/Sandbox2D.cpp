@@ -11,12 +11,12 @@
 namespace Sandbox2D
 {
 	Sandbox2D::Sandbox2D()
-		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f), m_Model("engine/models/test.fbx")
+		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f)
 	{
 		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
-		Lamp::BrushManager::Get().Create("engine/models/test.fbx");
+		m_pBrush = Lamp::BrushManager::Get().Create("engine/models/test.fbx");
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
