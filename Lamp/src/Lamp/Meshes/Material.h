@@ -28,6 +28,7 @@ namespace Lamp
 	private:
 		Ref<Texture2D> m_pDiffuse;
 		Ref<Texture2D> m_pSpecular;
+		float m_Shininess;
 
 		Ref<Shader> m_pShader;
 		uint32_t m_Index;

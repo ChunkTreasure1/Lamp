@@ -31,8 +31,6 @@ namespace Sandbox2D
 		void UpdateAssetBrowser();
 		void UpdateProperties();
 
-		void EditTransform(const Lamp::PerspectiveCamera& camera, glm::mat4& mat);
-
 	private:
 		Lamp::PerspectiveCameraController m_PCam;
 
@@ -51,7 +49,6 @@ namespace Sandbox2D
 
 		//Perspective
 		const float m_AspectRatio = 1.7f;
-		std::shared_ptr<Lamp::FrameBuffer> m_FrameBuffer;
 		
 		//Asset browser
 		Lamp::File m_SelectedFile;

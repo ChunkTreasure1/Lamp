@@ -1,0 +1,16 @@
+<Geometry name="test">
+	<Vertices>
+		<v value="x,y,z"/>
+	</Vertices>
+	<Indices>
+		<i value="v"/>
+	</Indices>
+	<Materials>
+		<Material name="mat">
+			<Diffuse path="somePath"/>
+			<Specular path="somePath"/>
+			<Shininess value="32"/>
+			<Shader vertex="path" fragment=""/>
+		</Material>
+	</Materials>
+</Geometry>

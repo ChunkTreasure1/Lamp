@@ -13,7 +13,6 @@ namespace Sandbox2D
 	Sandbox2D::Sandbox2D()
 		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f)
 	{
-		m_FrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
 		m_pBrush = Lamp::BrushManager::Get().Create("engine/models/test.fbx");
@@ -27,9 +26,6 @@ namespace Sandbox2D
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
-		m_FrameBuffer->Bind();
-		Lamp::Renderer::Clear();
-
 		Lamp::Renderer3D::Begin(m_PCam.GetCamera());
 
 		Lamp::AppRenderEvent renderEvent;
@@ -37,7 +33,6 @@ namespace Sandbox2D
 		Lamp::BrushManager::Get().OnEvent(renderEvent);
 
 		Lamp::Renderer3D::End();
-		m_FrameBuffer->Unbind();
 	}
 	 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)
