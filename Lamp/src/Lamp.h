@@ -8,7 +8,7 @@
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 
 #include "Lamp/Entity/Base/EntityManager.h"
-#include "Lamp/Rendering/FrameBuffer.h"
+#include "Lamp/Rendering/Vertices/FrameBuffer.h"
 #include "Lamp/Core/Core.h"
 
 #include "Lamp/Input/Input.h"

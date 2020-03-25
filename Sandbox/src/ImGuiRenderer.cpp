@@ -2,6 +2,7 @@
 #include "Sandbox2D.h"
 
 #include <Lamp/Level/LevelSystem.h>
+#include <ImGuizmo/ImGuizmo/ImGuizmo.h>
 
 namespace Sandbox2D
 {
@@ -31,8 +32,18 @@ namespace Sandbox2D
 
 			m_PCam.UpdatePerspective(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 			m_FrameBuffer->Update(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			m_PerspectiveSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 		}
 		ImGui::End();
+
+		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
+
+		float* pMat = (float*)glm::value_ptr(m_pBrush->GetModelMatrix());
+		ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+		m_pBrush->SetModelMatrix(glm::make_mat4(pMat));
 	}
 
 	void Sandbox2D::UpdateAssetBrowser()

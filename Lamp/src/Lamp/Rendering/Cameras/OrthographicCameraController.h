@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lamp/Core/Timestep.h"
-#include "Lamp/Rendering/OrthographicCamera.h"
+#include "Lamp/Rendering/Cameras/OrthographicCamera.h"
 
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Event/MouseEvent.h"

@@ -35,7 +35,9 @@ project "Lamp"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/stb/**.h",
-		"%{prj.name}/vendor/stb_image/stb/**.cpp"
+		"%{prj.name}/vendor/stb_image/stb/**.cpp",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo/**.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo/**.cpp"
 	}
 
 	defines 
@@ -55,7 +57,8 @@ project "Lamp"
 		"%{prj.name}/vendor/stb_image",
 		"%{prj.name}/vendor/SoLoud/include",
 		"%{prj.name}/vendor/rapidxml",
-		"%{prj.name}/vendor/assimp/include"
+		"%{prj.name}/vendor/assimp/include",
+		"%{prj.name}/vendor/ImGuizmo"
 	}
 	
 	libdirs

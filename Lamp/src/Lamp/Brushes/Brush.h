@@ -23,7 +23,8 @@ namespace Lamp
 		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); m_Model.SetModelMatrix(m_ModelMatrix); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); m_Model.SetModelMatrix(m_ModelMatrix); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); m_Model.SetModelMatrix(m_ModelMatrix); }
-		
+		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; m_Model.SetModelMatrix(m_ModelMatrix); }
+
 		//Getting
 		inline const glm::vec3& GetPosition() { return m_Position; }
 		inline const glm::vec3& GetRotation() { return m_Rotation; }

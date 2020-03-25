@@ -1,5 +1,5 @@
 #pragma once
-#include "OrthographicCameraController.h"
+#include "Cameras/OrthographicCameraController.h"
 #include "Lamp/Rendering/Shader/Shader.h"
 
 #include "Lamp/Event/Event.h"
