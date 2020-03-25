@@ -2,6 +2,7 @@
 #include "GeometrySystem.h"
 
 #include <rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml_print.hpp>
 
 namespace Lamp
 {
@@ -11,12 +12,15 @@ namespace Lamp
 		Material mat(0);
 
 		std::string t = path;
-		t.substr(t.find_last_of('/'), t.find_first_of('.'));
+		t = t.substr(t.find_last_of('/') + 1, t.find_last_of('.'));
+		t = t.substr(0, t.find_last_of('.'));
+
 
 		Model model(meshes, mat, t);
 
 		return model;
 	}
+
 	Model GeometrySystem::LoadFromFile(const std::string& path)
 	{
 		rapidxml::xml_document<> file;
@@ -115,9 +119,98 @@ namespace Lamp
 
 		return Model(meshes, mat, name);
 	}
-	bool GeometrySystem::SaveToPath(const Model& model, const std::string& path)
+
+	bool GeometrySystem::SaveToPath(Model& model, const std::string& path)
 	{
-		return false;
+		using namespace rapidxml;
+
+		LP_CORE_INFO("Saving model to file...");
+
+		std::ofstream file;
+		xml_document<> doc;
+		file.open(path);
+
+		xml_node<>* pRoot = doc.allocate_node(node_element, "Geometry");
+		pRoot->append_attribute(doc.allocate_attribute("name", model.GetName().c_str()));
+
+		/////Meshes/////
+		xml_node<>* pMeshes = doc.allocate_node(node_element, "Meshes");
+		for (auto& mesh : model.GetMeshes())
+		{
+			xml_node<>* pMesh = doc.allocate_node(node_element, "Mesh");
+			char* pMatId = doc.allocate_string(std::to_string(mesh.GetMaterialIndex()).c_str());
+			pMesh->append_attribute(doc.allocate_attribute("matId", pMatId));
+
+			xml_node<>* pVertices = doc.allocate_node(node_element, "Vertices");
+			for (auto& vert : mesh.GetVertices())
+			{
+				xml_node<>* pVert = doc.allocate_node(node_element, "Vertex");
+
+				char* pPos = doc.allocate_string(ToString(vert.position).c_str());
+				pVert->append_attribute(doc.allocate_attribute("position", pPos));
+
+				char* pNormal = doc.allocate_string(ToString(vert.normal).c_str());
+				pVert->append_attribute(doc.allocate_attribute("normal", pNormal));
+
+				char* pTex = doc.allocate_string(ToString(vert.textureCoords).c_str());
+				pVert->append_attribute(doc.allocate_attribute("textureCoordinate", pTex));
+
+				pVertices->append_node(pVert);
+			}
+			pMesh->append_node(pVertices);
+
+			xml_node<>* pIndices = doc.allocate_node(node_element, "Indices");
+			for (auto& indice : mesh.GetIndices())
+			{
+				xml_node<>* pIndice = doc.allocate_node(node_element, "Indice");
+
+				char* pValue = doc.allocate_string(ToString((int)indice).c_str());
+				pIndice->append_attribute(doc.allocate_attribute("value", pValue));
+
+				pIndices->append_node(pIndice);
+			}
+			pMesh->append_node(pIndices);
+			pMeshes->append_node(pMesh);
+		}
+		pRoot->append_node(pMeshes);
+		////////////////
+
+		////Material////
+		xml_node<>* pMaterials = doc.allocate_node(node_element, "Materials");
+
+		xml_node<>* pMaterial = doc.allocate_node(node_element, "Material");
+		pMaterial->append_attribute(doc.allocate_attribute("name", model.GetMaterial().GetName().c_str()));
+
+		xml_node<>* pDiff = doc.allocate_node(node_element, "Diffuse");
+		pDiff->append_attribute(doc.allocate_attribute("path", model.GetMaterial().GetDiffuse()->GetPath().c_str()));
+		pMaterial->append_node(pDiff);
+
+		xml_node<>* pSpec = doc.allocate_node(node_element, "Specular");
+		pSpec->append_attribute(doc.allocate_attribute("path", model.GetMaterial().GetSpecular()->GetPath().c_str()));
+		pMaterial->append_node(pSpec);
+
+		xml_node<>* pShine = doc.allocate_node(node_element, "Shininess");
+		char* pS = doc.allocate_string(ToString(model.GetMaterial().GetShininess()).c_str());
+		pShine->append_attribute(doc.allocate_attribute("value", pS));
+		pMaterial->append_node(pShine);
+
+		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
+		pShader->append_attribute(doc.allocate_attribute("vertex", model.GetMaterial().GetShader()->GetVertexPath().c_str()));
+		pShader->append_attribute(doc.allocate_attribute("fragment", model.GetMaterial().GetShader()->GetFragementPath().c_str()));
+		pMaterial->append_node(pShader);
+		
+		pMaterials->append_node(pMaterial);
+		////////////////
+
+		pRoot->append_node(pMaterials);
+		doc.append_node(pRoot);
+
+		file << doc;
+		file.close();
+
+		LP_CORE_INFO("Saved model!");
+
+		return true;
 	}
 
 	std::vector<Mesh> GeometrySystem::LoadModel(const std::string& path)
@@ -129,7 +222,6 @@ namespace Lamp
 		{
 			std::string err = "ERROR::ASSIMP::" + std::string(importer.GetErrorString());
 			LP_CORE_ERROR(err);
-			return;
 		}
 
 		std::vector<Mesh> meshes;
@@ -140,8 +232,6 @@ namespace Lamp
 
 	void GeometrySystem::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Mesh>& meshes)
 	{
-		std::vector<Mesh> meshes;
-
 		for (size_t i = 0; i < pNode->mNumMeshes; i++)
 		{
 			aiMesh* pMesh = pScene->mMeshes[pNode->mMeshes[i]];
@@ -250,5 +340,24 @@ namespace Lamp
 			return true;
 		}
 		return false;
+	}
+
+	std::string GeometrySystem::ToString(const int& var)
+	{
+		return std::to_string(var);
+	}
+	std::string GeometrySystem::ToString(const float& var)
+	{
+		return std::to_string(var);
+	}
+	std::string GeometrySystem::ToString(const glm::vec2& var)
+	{
+		std::string str(std::to_string(var.x) + "," + std::to_string(var.y));
+		return str;
+	}
+	std::string GeometrySystem::ToString(const glm::vec3& var)
+	{
+		std::string str(std::to_string(var.x) + "," + std::to_string(var.y) + "," + std::to_string(var.z));
+		return str;
 	}
 }

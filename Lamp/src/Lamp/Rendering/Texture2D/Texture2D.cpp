@@ -23,6 +23,7 @@ namespace Lamp
 	}
 
 	Texture2D::Texture2D(const std::string& path)
+		: m_Path(path)
 	{
 		auto tex = TextureCache::GetTexture(path);
 		m_RendererID = std::get<0>(tex);

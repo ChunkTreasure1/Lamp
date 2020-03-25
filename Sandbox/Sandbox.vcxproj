@@ -144,6 +144,8 @@
   <ItemGroup>
     <None Include="engine\shaders\FlatColor.frag" />
     <None Include="engine\shaders\FlatColor.vert" />
+    <None Include="engine\shaders\shader_fs.glsl" />
+    <None Include="engine\shaders\shader_vs.glsl" />
     <None Include="engine\shaders\Texture.frag" />
     <None Include="engine\shaders\Texture.vert" />
   </ItemGroup>

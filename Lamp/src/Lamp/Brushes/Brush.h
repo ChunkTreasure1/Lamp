@@ -10,8 +10,8 @@ namespace Lamp
 	class Brush
 	{
 	public:
-		Brush(const std::string& path)
-			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Model(path)
+		Brush(Model model)
+			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Model(model)
 		{}
 
 		void Draw()

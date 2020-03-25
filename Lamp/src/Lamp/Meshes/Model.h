@@ -27,6 +27,8 @@ namespace Lamp
 
 		//Getting
 		inline Material& GetMaterial() { return m_Material; }
+		inline const std::string& GetName() { return m_Name; }
+		inline std::vector<Mesh>& GetMeshes() { return m_Meshes; }
 
 	private:
 		

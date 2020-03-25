@@ -19,12 +19,15 @@ namespace Lamp
 		inline void SetSpecular(Ref<Texture2D> spec) { m_pSpecular = spec; }
 		inline void SetShader(Ref<Shader> shader) { m_pShader = shader; }
 		inline void SetShininess(float val) { m_Shininess = val; }
+		inline void SetName(const std::string& name) { m_Name = name; }
 
 		//Getting
 		inline const Ref<Texture2D>& GetDiffuse() { return m_pDiffuse; }
 		inline const Ref<Texture2D>& GetSpecular() { return m_pSpecular; }
 		inline const uint32_t GetIndex() { return m_Index; }
 		inline const Ref<Shader>& GetShader() { return m_pShader; }
+		inline const std::string& GetName() { return m_Name; }
+		inline const float GetShininess() { return m_Shininess; }
 
 	private:
 		Ref<Texture2D> m_pDiffuse;
@@ -33,5 +36,6 @@ namespace Lamp
 
 		Ref<Shader> m_pShader;
 		uint32_t m_Index;
+		std::string m_Name;
 	};
 }

@@ -15,7 +15,7 @@ namespace Sandbox2D
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
-		m_pBrush = Lamp::BrushManager::Get().Create("engine/models/test.fbx");
+		m_pBrush = Lamp::BrushManager::Get().Create("engine/models/top.fbx");
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)

@@ -40,5 +40,11 @@
     <None Include="engine\shaders\Texture.vert">
       <Filter>engine\shaders</Filter>
     </None>
+    <None Include="engine\shaders\shader_fs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\shader_vs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
