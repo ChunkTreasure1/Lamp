@@ -24,11 +24,13 @@ namespace Lamp
 
 		//Setting
 		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
+		inline void SetLGFPath(const std::string& path) { m_LGFPath = path; }
 
 		//Getting
 		inline Material& GetMaterial() { return m_Material; }
 		inline const std::string& GetName() { return m_Name; }
 		inline std::vector<Mesh>& GetMeshes() { return m_Meshes; }
+		inline const std::string& GetLGFPath() { return m_LGFPath; }
 
 	private:
 		
@@ -36,6 +38,7 @@ namespace Lamp
 		Material m_Material;
 		std::vector<Mesh> m_Meshes;
 		std::string m_Name;
+		std::string m_LGFPath;
 
 		glm::mat4 m_ModelMatrix;
 	};

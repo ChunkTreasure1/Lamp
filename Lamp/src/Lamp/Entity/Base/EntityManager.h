@@ -29,13 +29,13 @@ namespace Lamp
 		IEntity* GetEntityFromPoint(const glm::vec2& pos);
 
 	public:
-		static void SetCurrentManager(EntityManager& manager) { s_CurrentManager = manager; }
-		static EntityManager& Get() { return s_CurrentManager; }
+		static void SetCurrentManager(Ref<EntityManager> manager) { s_CurrentManager = manager; }
+		static Ref<EntityManager>& Get() { return s_CurrentManager; }
 
 	private:
 		std::vector<IEntity*> m_pEntites;
 
 	private:
-		static EntityManager s_CurrentManager;
+		static Ref<EntityManager> s_CurrentManager;
 	};
 }

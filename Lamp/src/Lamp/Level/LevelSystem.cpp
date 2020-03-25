@@ -30,12 +30,12 @@ namespace Lamp
 
 		if (rapidxml::xml_node<>* pBrushes = pRootNode->first_node("Brushes"))
 		{
-			pLevel->GetBrushManager().SetBrushes(LoadBrushes(pBrushes, pLevel->GetBrushManager()));
+			pLevel->GetBrushManager()->SetBrushes(LoadBrushes(pBrushes, pLevel->GetBrushManager()));
 		}
 
 		if (rapidxml::xml_node<>* pEntities = pRootNode->first_node("Entities"))
 		{
-			pLevel->GetEntityManager().SetEntities(LoadEntities(pEntities, pLevel->GetEntityManager()));
+			pLevel->GetEntityManager()->SetEntities(LoadEntities(pEntities, pLevel->GetEntityManager()));
 		}
 
 		m_CurrentLevel = pLevel;
@@ -61,9 +61,11 @@ namespace Lamp
 
 		/////Brushes/////
 		rapidxml::xml_node<>* pBrushes = doc.allocate_node(rapidxml::node_element, "Brushes");
-		for (auto brush : level->GetBrushManager().GetBrushes())
+		for (auto brush : level->GetBrushManager()->GetBrushes())
 		{
 			rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "Brush");
+
+			child->append_attribute(doc.allocate_attribute("lgfPath", brush->GetModel().GetLGFPath().c_str()));
 
 			char* pPos = doc.allocate_string(ToString(brush->GetPosition()).c_str());
 			child->append_attribute(doc.allocate_attribute("position", pPos));
@@ -73,12 +75,6 @@ namespace Lamp
 
 			char* pScale = doc.allocate_string(ToString(brush->GetScale()).c_str());
 			child->append_attribute(doc.allocate_attribute("scale", pScale));
-
-			//char* pTex = doc.allocate_string(brush->GetTexturePath().c_str());
-			//child->append_attribute(doc.allocate_attribute("texture", pTex));
-
-			//char* pColl = doc.allocate_string(ToString(brush->GetShouldCollide()).c_str());
-			//child->append_attribute(doc.allocate_attribute("shouldCollide", pColl));
 
 			pBrushes->append_node(child);
 		}
@@ -198,13 +194,13 @@ namespace Lamp
 		return true;
 	}
 
-	std::vector<Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, BrushManager& brushManager)
+	std::vector<Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, Ref<BrushManager>& brushManager)
 	{
 		std::vector<Brush*> pBrushes;
 
 		for (rapidxml::xml_node<>* pBrush = pNode->first_node("Brush"); pBrush; pBrush = pBrush->next_sibling())
 		{
-			std::string path(pBrush->first_attribute("texture")->value());
+			std::string path(pBrush->first_attribute("lgfPath")->value());
 
 			glm::vec3 pos(0, 0, 0);
 			GetValue(pBrush->first_attribute("position")->value(), pos);
@@ -215,22 +211,19 @@ namespace Lamp
 			glm::vec3 scale(1, 1, 1);
 			GetValue(pBrush->first_attribute("scale")->value(), scale);
 
-			bool shouldCollide = false;
-			GetValue(pBrush->first_attribute("shouldCollide")->value(), shouldCollide);
-
-			pBrushes.push_back(brushManager.Create(path, pos, rot, scale));
+			pBrushes.push_back(brushManager->Create(path, pos, rot, scale));
 		}
 
 		return pBrushes;
 	}
 
-	std::vector<IEntity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, EntityManager& entityManager)
+	std::vector<IEntity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, Ref<EntityManager>& entityManager)
 	{
 		std::vector<IEntity*> pEntities;
 
 		for (rapidxml::xml_node<>* pEntity = pNode->first_node("Entity"); pEntity; pEntity = pEntity->next_sibling())
 		{
-			IEntity* pEnt = entityManager.Create();
+			IEntity* pEnt = entityManager->Create();
 
 			std::string name = pEntity->first_attribute("name")->value();
 

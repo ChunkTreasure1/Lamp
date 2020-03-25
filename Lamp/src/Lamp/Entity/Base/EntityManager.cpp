@@ -3,7 +3,7 @@
 
 namespace Lamp
 {
-	EntityManager EntityManager::s_CurrentManager;
+	Ref<EntityManager> EntityManager::s_CurrentManager;
 
 	void EntityManager::Update(Timestep ts)
 	{

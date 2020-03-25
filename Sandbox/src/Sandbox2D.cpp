@@ -14,14 +14,12 @@ namespace Sandbox2D
 		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f)
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
-
-		m_pBrush = Lamp::BrushManager::Get().Create("engine/models/top.lgf");
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
 	{
 		m_PCam.Update(ts);
-		Lamp::EntityManager::Get().Update(ts);
+		Lamp::EntityManager::Get()->Update(ts);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
@@ -30,7 +28,7 @@ namespace Sandbox2D
 
 		Lamp::AppRenderEvent renderEvent;
 		//Lamp::EntityManager::Get().OnEvent(renderEvent);
-		Lamp::BrushManager::Get().OnEvent(renderEvent);
+		Lamp::BrushManager::Get()->OnEvent(renderEvent);
 
 		Lamp::Renderer3D::End();
 	}

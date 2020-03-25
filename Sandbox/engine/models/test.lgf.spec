@@ -1,8 +1,8 @@
-<Geometry name="top">
+<Geometry name="test">
 	<Meshes>
 		<Mesh matId="0">
-			<VerticeCount count="7768"/>
-			<IndiceCount count="11664"/>
+			<VerticeCount count="24"/>
+			<IndiceCount count="36"/>
 		</Mesh>
 	</Meshes>
 	<Materials>

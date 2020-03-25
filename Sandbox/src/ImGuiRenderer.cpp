@@ -40,11 +40,11 @@ namespace Sandbox2D
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 
-		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
+		//ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
 
-		float* pMat = (float*)glm::value_ptr(m_pBrush->GetModelMatrix());
-		ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
-		m_pBrush->SetModelMatrix(glm::make_mat4(pMat));
+		//float* pMat = (float*)glm::value_ptr(m_pBrush->GetModelMatrix());
+		//ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+		//m_pBrush->SetModelMatrix(glm::make_mat4(pMat));
 	}
 
 	void Sandbox2D::UpdateAssetBrowser()
@@ -102,7 +102,7 @@ namespace Sandbox2D
 				{
 					mousePos -= windowPos;
 
-					for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get().GetEntities())
+					for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get()->GetEntities())
 					{
 						//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get().GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize)))
 						//{

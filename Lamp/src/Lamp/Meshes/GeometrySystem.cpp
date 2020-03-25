@@ -131,6 +131,7 @@ namespace Lamp
 		using namespace rapidxml;
 
 		LP_CORE_INFO("Saving model to file...");
+		model.SetLGFPath(path);
 
 		std::ofstream file;
 		xml_document<> doc;
