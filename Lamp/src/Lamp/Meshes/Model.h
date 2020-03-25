@@ -15,10 +15,9 @@ namespace Lamp
 	class Model
 	{
 	public:
-		Model(const std::string& path)
-			: m_ModelMatrix(1.f), m_Material(0)
+		Model(std::vector<Mesh> meshes, Material mat, const std::string& name)
+			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name)
 		{
-			LoadModel(path);
 		}
 
 		void Draw();
@@ -30,14 +29,11 @@ namespace Lamp
 		inline Material& GetMaterial() { return m_Material; }
 
 	private:
-		void LoadModel(const std::string& path);
-		void ProcessNode(aiNode* pNode, const aiScene* pScene);
-		Mesh ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
 		
 	private:
 		Material m_Material;
 		std::vector<Mesh> m_Meshes;
-		std::string m_Directory;
+		std::string m_Name;
 
 		glm::mat4 m_ModelMatrix;
 	};

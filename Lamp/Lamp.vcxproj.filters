@@ -52,9 +52,6 @@
     <Filter Include="src\Lamp\Rendering\Cameras">
       <UniqueIdentifier>{9ECEFFAB-8ADE-AB7C-F397-109BDFC69A15}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\Guizmos">
-      <UniqueIdentifier>{B0FC520E-9C0C-FFDE-05C6-63FDF1F4ED77}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
@@ -206,6 +203,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Level\LevelSystem.h">
       <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h">
+      <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\Material.h">
       <Filter>src\Lamp\Meshes</Filter>
@@ -1420,6 +1420,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
       <Filter>src\Lamp\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
       <Filter>src\Lamp\Meshes</Filter>
