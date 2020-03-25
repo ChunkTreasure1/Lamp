@@ -29,17 +29,19 @@ namespace Lamp
 			m_pShader = Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
 		}
 
-		auto brush = new Brush(GeometrySystem::ImportModel(path));
-		brush->GetModel().GetMaterial().SetShader(m_pShader);
+		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		/*brush->GetModel().GetMaterial().SetShader(m_pShader);
 
 		brush->GetModel().GetMaterial().SetDiffuse(Texture2D::Create("engine/textures/container_diff.png"));
 		brush->GetModel().GetMaterial().SetSpecular(Texture2D::Create("engine/textures/container_spec.png"));
 
 		std::string s = path;
-		s.substr(0, s.find_last_of('.'));
+		s = s.substr(0, s.find_last_of('.'));
 		s += ".lgf";
 
-		GeometrySystem::SaveToPath(brush->GetModel(), s);
+		GeometrySystem::SaveToPath(brush->GetModel(), s);*/
+
+
 
 		m_Brushes.push_back(brush);
 	

@@ -8,12 +8,12 @@ namespace Lamp
 {
 	struct Vertex
 	{
-		Vertex()
-		{}
+		//Vertex()
+		//{}
 
-		Vertex(const glm::vec3& pos, glm::vec3& normal, const glm::vec2& tex)
-			: position(pos), normal(normal), textureCoords(tex)
-		{}
+		//Vertex(const glm::vec3& pos, glm::vec3& normal, const glm::vec2& tex)
+		//	: position(pos), normal(normal), textureCoords(tex)
+		//{}
 
 		glm::vec3 position;
 		glm::vec3 normal;

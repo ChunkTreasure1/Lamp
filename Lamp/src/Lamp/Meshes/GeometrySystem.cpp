@@ -26,7 +26,7 @@ namespace Lamp
 		rapidxml::xml_document<> file;
 		rapidxml::xml_node<>* pRootNode;
 
-		std::ifstream modelFile(path);
+		std::ifstream modelFile(path + ".spec");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(modelFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 	
@@ -45,37 +45,38 @@ namespace Lamp
 			{
 				std::vector<Vertex> vertices;
 				std::vector<uint32_t> indices;
-				
+
 				int matId;
 				GetValue(pMesh->first_attribute("matId")->value(), matId);
 
-				if (rapidxml::xml_node<>* pVertices = pMesh->first_node("Vertices"))
+				int vertCount;
+				if (rapidxml::xml_node<>* pVCount = pMesh->first_node("VerticeCount"))
 				{
-					for (rapidxml::xml_node<>* pVertex = pVertices->first_node("Vertex"); pVertex; pVertex->next_sibling())
-					{
-						glm::vec3 pos(0.f, 0.f, 0.f);
-						GetValue(pVertex->first_attribute("position")->value(), pos);
-
-						glm::vec3 normal(0.f, 0.f, 0.f);
-						GetValue(pVertex->first_attribute("normal")->value(), normal);
-
-						glm::vec2 texCoords(0.f, 0.f);
-						GetValue(pVertex->first_attribute("textureCoordinate")->value(), texCoords);
-					
-						vertices.push_back(Vertex(pos, normal, texCoords));
-					}
+					GetValue(pVCount->first_attribute("count")->value(), vertCount);
 				}
-				if (rapidxml::xml_node<>* pIndices = pMesh->first_node("Indices"))
-				{
-					for (rapidxml::xml_node<>* pIndice = pIndices->first_node("Indice"); pIndice; pIndice->next_sibling())
-					{
-						int value = 0;
-						GetValue(pIndice->first_attribute("value")->value(), value);
 
-						indices.push_back((uint32_t)value);
-					}
-				}			
+				int indiceCount;
+				if (rapidxml::xml_node<>* pICount = pMesh->first_node("IndiceCount"))
+				{
+					GetValue(pICount->first_attribute("count")->value(), indiceCount);
+				}
 			
+				std::ifstream in(path, std::ios::in | std::ios::binary);
+				for (size_t i = 0; i < vertCount; i++)
+				{
+					Vertex vert;
+					in.read((char*)&vert, sizeof(Vertex));
+
+					vertices.push_back(vert);
+				}
+				for (size_t i = 0; i < indiceCount; i++)
+				{
+					uint32_t indice;
+					in.read((char*)&indice, sizeof(uint32_t));
+
+					indices.push_back(indice);
+				}
+
 				meshes.push_back(Mesh(vertices, indices, matId));
 			}
 		}
@@ -102,7 +103,7 @@ namespace Lamp
 				}
 				if (rapidxml::xml_node<>* pShine = pMaterial->first_node("Shininess"))
 				{
-					GetValue(pShine->first_attribute("Shininess")->value(), shininess);
+					GetValue(pShine->first_attribute("value")->value(), shininess);
 				}
 				if (rapidxml::xml_node<>* pShader = pMaterial->first_node("Shader"))
 				{
@@ -122,13 +123,18 @@ namespace Lamp
 
 	bool GeometrySystem::SaveToPath(Model& model, const std::string& path)
 	{
+		std::ofstream out(path, std::ios::out | std::ios::binary);
+		out.write((char*)&model.GetMeshes()[0].GetVertices()[0], model.GetMeshes()[0].GetVertices().size() * sizeof(Vertex));
+		out.write((char*)&model.GetMeshes()[0].GetIndices()[0], model.GetMeshes()[0].GetIndices().size() * sizeof(uint32_t));
+		out.close(); 
+
 		using namespace rapidxml;
 
 		LP_CORE_INFO("Saving model to file...");
 
 		std::ofstream file;
 		xml_document<> doc;
-		file.open(path);
+		file.open(path + ".spec");
 
 		xml_node<>* pRoot = doc.allocate_node(node_element, "Geometry");
 		pRoot->append_attribute(doc.allocate_attribute("name", model.GetName().c_str()));
@@ -141,35 +147,16 @@ namespace Lamp
 			char* pMatId = doc.allocate_string(std::to_string(mesh.GetMaterialIndex()).c_str());
 			pMesh->append_attribute(doc.allocate_attribute("matId", pMatId));
 
-			xml_node<>* pVertices = doc.allocate_node(node_element, "Vertices");
-			for (auto& vert : mesh.GetVertices())
-			{
-				xml_node<>* pVert = doc.allocate_node(node_element, "Vertex");
+			xml_node<>* pVertCount = doc.allocate_node(node_element, "VerticeCount");
+			char* pVCount = doc.allocate_string(ToString((int)mesh.GetVertices().size()).c_str());
+			pVertCount->append_attribute(doc.allocate_attribute("count", pVCount));
+			pMesh->append_node(pVertCount);
 
-				char* pPos = doc.allocate_string(ToString(vert.position).c_str());
-				pVert->append_attribute(doc.allocate_attribute("position", pPos));
+			xml_node<>* pIndiceCount = doc.allocate_node(node_element, "IndiceCount");
+			char* pICount = doc.allocate_string(ToString((int)mesh.GetIndices().size()).c_str());
+			pIndiceCount->append_attribute(doc.allocate_attribute("count", pICount));
+			pMesh->append_node(pIndiceCount);
 
-				char* pNormal = doc.allocate_string(ToString(vert.normal).c_str());
-				pVert->append_attribute(doc.allocate_attribute("normal", pNormal));
-
-				char* pTex = doc.allocate_string(ToString(vert.textureCoords).c_str());
-				pVert->append_attribute(doc.allocate_attribute("textureCoordinate", pTex));
-
-				pVertices->append_node(pVert);
-			}
-			pMesh->append_node(pVertices);
-
-			xml_node<>* pIndices = doc.allocate_node(node_element, "Indices");
-			for (auto& indice : mesh.GetIndices())
-			{
-				xml_node<>* pIndice = doc.allocate_node(node_element, "Indice");
-
-				char* pValue = doc.allocate_string(ToString((int)indice).c_str());
-				pIndice->append_attribute(doc.allocate_attribute("value", pValue));
-
-				pIndices->append_node(pIndice);
-			}
-			pMesh->append_node(pIndices);
 			pMeshes->append_node(pMesh);
 		}
 		pRoot->append_node(pMeshes);

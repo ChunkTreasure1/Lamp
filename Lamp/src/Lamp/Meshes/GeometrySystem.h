@@ -7,6 +7,7 @@
 
 namespace Lamp
 {
+
 	class GeometrySystem
 	{
 	public:
