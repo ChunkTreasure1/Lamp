@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "BrushManager.h"
 
+#include "Lamp/Meshes/GeometrySystem.h"
+
 namespace Lamp
 {
 	BrushManager BrushManager::s_Manager;
@@ -27,11 +29,19 @@ namespace Lamp
 			m_pShader = Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
 		}
 
-		auto brush = new Brush(path);
-		brush->GetModel().GetMaterial().SetShader(m_pShader);
+		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		/*brush->GetModel().GetMaterial().SetShader(m_pShader);
 
 		brush->GetModel().GetMaterial().SetDiffuse(Texture2D::Create("engine/textures/container_diff.png"));
 		brush->GetModel().GetMaterial().SetSpecular(Texture2D::Create("engine/textures/container_spec.png"));
+
+		std::string s = path;
+		s = s.substr(0, s.find_last_of('.'));
+		s += ".lgf";
+
+		GeometrySystem::SaveToPath(brush->GetModel(), s);*/
+
+
 
 		m_Brushes.push_back(brush);
 	
@@ -40,13 +50,13 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
 	{
-		auto brush = new Brush(path);
-		
-		brush->SetPosition(pos);
-		brush->SetRotation(rot);
-		brush->SetScale(scale);
+		//auto brush = new Brush(path);
+		//
+		//brush->SetPosition(pos);
+		//brush->SetRotation(rot);
+		//brush->SetScale(scale);
 
-		m_Brushes.push_back(brush);
+		//m_Brushes.push_back(brush);
 
 		return m_Brushes[m_Brushes.size() - 1];
 	}

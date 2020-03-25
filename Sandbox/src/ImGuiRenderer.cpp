@@ -2,6 +2,8 @@
 #include "Sandbox2D.h"
 
 #include <Lamp/Level/LevelSystem.h>
+#include <ImGuizmo/ImGuizmo/ImGuizmo.h>
+#include <Lamp/Rendering/Renderer3D.h>
 
 namespace Sandbox2D
 {
@@ -22,17 +24,27 @@ namespace Sandbox2D
 			}
 
 			ImVec2 pos = ImGui::GetCursorScreenPos();
-
-			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_FrameBuffer->GetTexture(),
+								
+			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)Lamp::Renderer3D::GetFrameBuffer()->GetTexture(),
 				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y),
 				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
 
 			m_PCam.UpdatePerspective(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-			m_FrameBuffer->Update(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			Lamp::Renderer3D::GetFrameBuffer()->Update(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			m_PerspectiveSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 		}
 		ImGui::End();
+
+		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
+
+		float* pMat = (float*)glm::value_ptr(m_pBrush->GetModelMatrix());
+		ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+		m_pBrush->SetModelMatrix(glm::make_mat4(pMat));
 	}
 
 	void Sandbox2D::UpdateAssetBrowser()

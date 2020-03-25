@@ -3,6 +3,8 @@
 #include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Meshes/Material.h"
 
+#include "Lamp/Rendering/Vertices/FrameBuffer.h"
+
 namespace Lamp
 {
 	class Renderer3D
@@ -14,8 +16,11 @@ namespace Lamp
 		static void Begin(PerspectiveCamera& camera);
 		static void End();
 
-		static void TestDraw();
 		static void DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat);
 
+		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
+
+	private:
+		static Ref<FrameBuffer> m_pFrameBuffer;
 	};
 }

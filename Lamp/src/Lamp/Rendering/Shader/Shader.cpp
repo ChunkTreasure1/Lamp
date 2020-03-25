@@ -4,7 +4,7 @@
 namespace Lamp
 {
 	Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
-		: m_ID(0)
+		: m_ID(0), m_VertexPath(vertexPath), m_FragmentPath(fragmentPath)
 	{
 		std::string vertexCode;
 		std::string fragmentCode;
