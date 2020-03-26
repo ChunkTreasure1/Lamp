@@ -30,6 +30,7 @@ namespace Sandbox2D
 		void UpdatePerspective();
 		void UpdateAssetBrowser();
 		void UpdateProperties();
+		void UpdateModelImporter();
 
 	private:
 		Lamp::PerspectiveCameraController m_PCam;
@@ -60,6 +61,7 @@ namespace Sandbox2D
 		Lamp::IEntity* m_pSelectedEntity = nullptr;
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
+		std::shared_ptr<Lamp::Shader> m_pShader;
 		//--------------------------------------
 	};
 }

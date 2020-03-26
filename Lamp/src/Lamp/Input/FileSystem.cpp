@@ -5,6 +5,9 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Level/LevelSystem.h"
+#include <ShObjIdl.h>
+#include <locale>
+#include <codecvt>
 
 namespace Lamp
 {
@@ -69,6 +72,42 @@ namespace Lamp
 		}
 
 		return folders;
+	}
+
+	std::string FileSystem::GetFileFromDialogue()
+	{
+		wchar_t* path = 0;
+
+		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+		if (SUCCEEDED(hr))
+		{
+			IFileOpenDialog* pFileOpen;
+
+			hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+			if (SUCCEEDED(hr))
+			{
+				hr = pFileOpen->Show(NULL);
+				if (SUCCEEDED(hr))
+				{
+					IShellItem* pItem;
+					hr = pFileOpen->GetResult(&pItem);
+					if (SUCCEEDED(hr))
+					{
+						
+						hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &path);
+						pItem->Release();
+					}
+				}
+				pFileOpen->Release();
+			}
+			CoUninitialize();
+		}
+		std::wstringstream ss;
+		ss << path;
+
+		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+
+		return converter.to_bytes(ss.str());
 	}
 
 	//Returns whether or not a folder contains folders

@@ -32,7 +32,6 @@ namespace Lamp
 
 	private:
 		std::vector<Brush*> m_Brushes;
-		Ref<Shader> m_pShader;
 
 	private:
 		static Ref<BrushManager> s_Manager;

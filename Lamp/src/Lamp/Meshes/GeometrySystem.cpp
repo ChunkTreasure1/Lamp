@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-	Model GeometrySystem::ImportModel(const std::string& path)
+	Ref<Model> GeometrySystem::ImportModel(const std::string& path)
 	{
 		std::vector<Mesh> meshes = LoadModel(path);
 		Material mat(0);
@@ -16,12 +16,12 @@ namespace Lamp
 		t = t.substr(0, t.find_last_of('.'));
 
 
-		Model model(meshes, mat, t);
+		Ref<Model> model = std::make_shared<Model>(meshes, mat, t);
 
 		return model;
 	}
 
-	Model GeometrySystem::LoadFromFile(const std::string& path)
+	Ref<Model> GeometrySystem::LoadFromFile(const std::string& path)
 	{
 		rapidxml::xml_document<> file;
 		rapidxml::xml_node<>* pRootNode;
@@ -118,31 +118,31 @@ namespace Lamp
 			}
 		}
 
-		return Model(meshes, mat, name);
+		return std::make_shared<Model>(meshes, mat, name);
 	}
 
-	bool GeometrySystem::SaveToPath(Model& model, const std::string& path)
+	bool GeometrySystem::SaveToPath(Ref<Model>& model, const std::string& path)
 	{
 		std::ofstream out(path, std::ios::out | std::ios::binary);
-		out.write((char*)&model.GetMeshes()[0].GetVertices()[0], model.GetMeshes()[0].GetVertices().size() * sizeof(Vertex));
-		out.write((char*)&model.GetMeshes()[0].GetIndices()[0], model.GetMeshes()[0].GetIndices().size() * sizeof(uint32_t));
+		out.write((char*)&model->GetMeshes()[0].GetVertices()[0], model->GetMeshes()[0].GetVertices().size() * sizeof(Vertex));
+		out.write((char*)&model->GetMeshes()[0].GetIndices()[0], model->GetMeshes()[0].GetIndices().size() * sizeof(uint32_t));
 		out.close(); 
 
 		using namespace rapidxml;
 
 		LP_CORE_INFO("Saving model to file...");
-		model.SetLGFPath(path);
+		model->SetLGFPath(path);
 
 		std::ofstream file;
 		xml_document<> doc;
 		file.open(path + ".spec");
 
 		xml_node<>* pRoot = doc.allocate_node(node_element, "Geometry");
-		pRoot->append_attribute(doc.allocate_attribute("name", model.GetName().c_str()));
+		pRoot->append_attribute(doc.allocate_attribute("name", model->GetName().c_str()));
 
 		/////Meshes/////
 		xml_node<>* pMeshes = doc.allocate_node(node_element, "Meshes");
-		for (auto& mesh : model.GetMeshes())
+		for (auto& mesh : model->GetMeshes())
 		{
 			xml_node<>* pMesh = doc.allocate_node(node_element, "Mesh");
 			char* pMatId = doc.allocate_string(std::to_string(mesh.GetMaterialIndex()).c_str());
@@ -167,24 +167,24 @@ namespace Lamp
 		xml_node<>* pMaterials = doc.allocate_node(node_element, "Materials");
 
 		xml_node<>* pMaterial = doc.allocate_node(node_element, "Material");
-		pMaterial->append_attribute(doc.allocate_attribute("name", model.GetMaterial().GetName().c_str()));
+		pMaterial->append_attribute(doc.allocate_attribute("name", model->GetMaterial().GetName().c_str()));
 
 		xml_node<>* pDiff = doc.allocate_node(node_element, "Diffuse");
-		pDiff->append_attribute(doc.allocate_attribute("path", model.GetMaterial().GetDiffuse()->GetPath().c_str()));
+		pDiff->append_attribute(doc.allocate_attribute("path", model->GetMaterial().GetDiffuse()->GetPath().c_str()));
 		pMaterial->append_node(pDiff);
 
 		xml_node<>* pSpec = doc.allocate_node(node_element, "Specular");
-		pSpec->append_attribute(doc.allocate_attribute("path", model.GetMaterial().GetSpecular()->GetPath().c_str()));
+		pSpec->append_attribute(doc.allocate_attribute("path", model->GetMaterial().GetSpecular()->GetPath().c_str()));
 		pMaterial->append_node(pSpec);
 
 		xml_node<>* pShine = doc.allocate_node(node_element, "Shininess");
-		char* pS = doc.allocate_string(ToString(model.GetMaterial().GetShininess()).c_str());
+		char* pS = doc.allocate_string(ToString(model->GetMaterial().GetShininess()).c_str());
 		pShine->append_attribute(doc.allocate_attribute("value", pS));
 		pMaterial->append_node(pShine);
 
 		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
-		pShader->append_attribute(doc.allocate_attribute("vertex", model.GetMaterial().GetShader()->GetVertexPath().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("fragment", model.GetMaterial().GetShader()->GetFragementPath().c_str()));
+		pShader->append_attribute(doc.allocate_attribute("vertex", model->GetMaterial().GetShader()->GetVertexPath().c_str()));
+		pShader->append_attribute(doc.allocate_attribute("fragment", model->GetMaterial().GetShader()->GetFragementPath().c_str()));
 		pMaterial->append_node(pShader);
 		
 		pMaterials->append_node(pMaterial);

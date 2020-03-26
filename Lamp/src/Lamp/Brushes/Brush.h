@@ -10,27 +10,27 @@ namespace Lamp
 	class Brush
 	{
 	public:
-		Brush(Model model)
+		Brush(Ref<Model> model)
 			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Model(model)
 		{}
 
 		void Draw()
 		{
-			m_Model.Draw();
+			m_Model->Draw();
 		}
 
 		//Setting
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); m_Model.SetModelMatrix(m_ModelMatrix); }
-		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); m_Model.SetModelMatrix(m_ModelMatrix); }
-		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); m_Model.SetModelMatrix(m_ModelMatrix); }
-		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; m_Model.SetModelMatrix(m_ModelMatrix); }
+		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); m_Model->SetModelMatrix(m_ModelMatrix); }
+		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); m_Model->SetModelMatrix(m_ModelMatrix); }
+		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); m_Model->SetModelMatrix(m_ModelMatrix); }
+		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; m_Model->SetModelMatrix(m_ModelMatrix); }
 
 		//Getting
 		inline const glm::vec3& GetPosition() { return m_Position; }
 		inline const glm::vec3& GetRotation() { return m_Rotation; }
 		inline const glm::vec3& GetScale() { return m_Scale; }
 		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
-		inline Model& GetModel() { return m_Model; }
+		inline Ref<Model>& GetModel() { return m_Model; }
 
 	private:
 		void CalculateModelMatrix()
@@ -43,7 +43,7 @@ namespace Lamp
 		}
 
 	private:
-		Model m_Model;
+		Ref<Model> m_Model;
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

@@ -11,7 +11,7 @@
 namespace Sandbox2D
 {
 	Sandbox2D::Sandbox2D()
-		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f)
+		: Lamp::Layer("Sandbox2D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 	}
@@ -40,6 +40,7 @@ namespace Sandbox2D
 		UpdatePerspective();
 		UpdateAssetBrowser();
 		UpdateProperties();
+		UpdateModelImporter();
 	}
 
 	void Sandbox2D::OnEvent(Lamp::Event& e)

@@ -8,7 +8,6 @@ namespace Lamp
 	Ref<BrushManager> BrushManager::s_Manager = nullptr;
 
 	BrushManager::BrushManager()
-		: m_pShader(nullptr)
 	{
 	}
 
@@ -24,11 +23,6 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path)
 	{
-		if (m_pShader == nullptr)
-		{
-			m_pShader = Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
-		}
-
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
 		//auto brush = new Brush(GeometrySystem::ImportModel(path));
 		//brush->GetModel().GetMaterial().SetShader(m_pShader);
@@ -41,8 +35,6 @@ namespace Lamp
 		//s += ".lgf";
 
 		//GeometrySystem::SaveToPath(brush->GetModel(), s);
-
-
 
 		m_Brushes.push_back(brush);
 	

@@ -4,6 +4,7 @@
 #include <Lamp/Level/LevelSystem.h>
 #include <ImGuizmo/ImGuizmo/ImGuizmo.h>
 #include <Lamp/Rendering/Renderer3D.h>
+#include <Lamp/Meshes/GeometrySystem.h>
 
 namespace Sandbox2D
 {
@@ -24,7 +25,7 @@ namespace Sandbox2D
 			}
 
 			ImVec2 pos = ImGui::GetCursorScreenPos();
-								
+
 			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)Lamp::Renderer3D::GetFrameBuffer()->GetTexture(),
 				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y),
 				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
@@ -97,7 +98,7 @@ namespace Sandbox2D
 				ImGui::End();
 
 
-				if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x&&
+				if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
 					mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
 				{
 					mousePos -= windowPos;
@@ -126,99 +127,140 @@ namespace Sandbox2D
 						{
 							switch (pProp.PropertyType)
 							{
-								case Lamp::PropertyType::Int:
-								{
-									int* p = static_cast<int*>(pProp.Value);
-									ImGui::InputInt(pProp.Name.c_str(), p);
+							case Lamp::PropertyType::Int:
+							{
+								int* p = static_cast<int*>(pProp.Value);
+								ImGui::InputInt(pProp.Name.c_str(), p);
 
-									pComp->SetProperty(pProp, &p);
+								pComp->SetProperty(pProp, &p);
 
-									delete p;
-									break;
-								}
+								delete p;
+								break;
+							}
 
-								case Lamp::PropertyType::Bool:
-								{
-									bool* p = static_cast<bool*>(pProp.Value);
-									ImGui::Checkbox(pProp.Name.c_str(), p);
+							case Lamp::PropertyType::Bool:
+							{
+								bool* p = static_cast<bool*>(pProp.Value);
+								ImGui::Checkbox(pProp.Name.c_str(), p);
 
-									pComp->SetProperty(pProp, &p);
+								pComp->SetProperty(pProp, &p);
 
-									delete p;
-									break;
-								}
+								delete p;
+								break;
+							}
 
-								case Lamp::PropertyType::Float2:
-								{
-									glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+							case Lamp::PropertyType::Float2:
+							{
+								glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 
-									float f[2] = { p->x, p->y };
-									ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
+								float f[2] = { p->x, p->y };
+								ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
 
-									pComp->SetProperty(pProp, &f);
+								pComp->SetProperty(pProp, &f);
 
-									delete p;
-									break;
-								}
+								delete p;
+								break;
+							}
 
-								case Lamp::PropertyType::Float3:
-								{
-									glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+							case Lamp::PropertyType::Float3:
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 
-									float f[3] = { p->x, p->y, p->z };
-									ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
+								float f[3] = { p->x, p->y, p->z };
+								ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
 
-									pComp->SetProperty(pProp, &f);
+								pComp->SetProperty(pProp, &f);
 
-									delete p;
-									break;
-								}
+								delete p;
+								break;
+							}
 
-								case Lamp::PropertyType::Float4:
-								{
-									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-									
-									float f[4] = { p->x, p->y, p->z, p->w };
-									ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
+							case Lamp::PropertyType::Float4:
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
-									//Change to only send name
-									pComp->SetProperty(pProp, &f);
+								float f[4] = { p->x, p->y, p->z, p->w };
+								ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
 
-									delete p;
-									break;
-								}
+								//Change to only send name
+								pComp->SetProperty(pProp, &f);
 
-								case Lamp::PropertyType::String:
-								{
-									std::string* s = static_cast<std::string*>(pProp.Value);
-									char* buf = new char[s->size() + 1];
-									strcpy(buf, s->c_str());
-									ImGui::InputText(pProp.Name.c_str(), buf, s->size());
+								delete p;
+								break;
+							}
 
-									pComp->SetProperty(pProp, buf);
+							case Lamp::PropertyType::String:
+							{
+								std::string* s = static_cast<std::string*>(pProp.Value);
+								char* buf = new char[s->size() + 1];
+								strcpy(buf, s->c_str());
+								ImGui::InputText(pProp.Name.c_str(), buf, s->size());
 
-									delete buf;
-									break;
-								}
+								pComp->SetProperty(pProp, buf);
 
-								case Lamp::PropertyType::Color:
-								{
-									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+								delete buf;
+								break;
+							}
 
-									float f[4] = { p->x, p->y, p->z, p->w };
-									ImGui::ColorEdit4(pProp.Name.c_str(), f);
+							case Lamp::PropertyType::Color:
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
-									pComp->SetProperty(pProp, &f);
+								float f[4] = { p->x, p->y, p->z, p->w };
+								ImGui::ColorEdit4(pProp.Name.c_str(), f);
 
-									delete p;
-									break;
-								}
+								pComp->SetProperty(pProp, &f);
+
+								delete p;
+								break;
+							}
 							}
 						}
 					}
 				}
 			}
 		}
+		ImGui::End();
+	}
+
+	void Sandbox2D::UpdateModelImporter()
+	{
+		if (m_pShader == nullptr)
+		{
+			m_pShader = Lamp::Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
+		}
+
+		ImGui::Begin("Model importer");
+
+		static std::string path = "";
+		static std::string savePath = "";
+
+		static std::shared_ptr<Lamp::Model> model;
+
+		if (ImGui::Button("Load"))
+		{
+			path = Lamp::FileSystem::GetFileFromDialogue();
+			model = Lamp::GeometrySystem::ImportModel(path);
+
+			savePath = path.substr(0, path.find_last_of('.'));
+			savePath += ".lgf";
+
+			model->GetMaterial().SetShader(m_pShader);
+
+			model->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/container_diff.png"));
+			model->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/container_spec.png"));
+		}
+		ImGui::Text(path.c_str());
+		ImGui::Text(savePath.c_str());
+
+		if (ImGui::Button("Save"))
+		{
+			Lamp::GeometrySystem::SaveToPath(model, savePath);
+			path = "";
+			savePath = "";
+			model = nullptr;
+		}
+
 		ImGui::End();
 	}
 

@@ -11,9 +11,9 @@ namespace Lamp
 	class GeometrySystem
 	{
 	public:
-		static Model ImportModel(const std::string& path);
-		static Model LoadFromFile(const std::string& path);
-		static bool SaveToPath(Model& model, const std::string& path);
+		static Ref<Model> ImportModel(const std::string& path);
+		static Ref<Model> LoadFromFile(const std::string& path);
+		static bool SaveToPath(Ref<Model>& model, const std::string& path);
 
 	private:
 		static std::vector<Mesh> LoadModel(const std::string& path);
