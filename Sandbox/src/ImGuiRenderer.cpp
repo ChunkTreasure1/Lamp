@@ -250,8 +250,8 @@ namespace Sandbox2D
 			model->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/container_diff.png"));
 			model->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/container_spec.png"));
 		}
-		ImGui::Text(path.c_str());
-		ImGui::Text(savePath.c_str());
+		ImGui::Text(("Source path: " + path).c_str());
+		ImGui::Text(("Destination path: " + savePath).c_str());
 
 		if (ImGui::Button("Save"))
 		{
