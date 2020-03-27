@@ -13,7 +13,7 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(PerspectiveCamera& camera);
+		static void Begin(PerspectiveCamera& camera, bool isMain = true);
 		static void End();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat);

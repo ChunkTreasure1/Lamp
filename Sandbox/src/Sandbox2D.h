@@ -25,6 +25,7 @@ namespace Sandbox2D
 	private:
 		void CreateDockspace();
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
+		void GetInput();
 
 		//ImGui
 		void UpdatePerspective();
@@ -54,14 +55,20 @@ namespace Sandbox2D
 		//Asset browser
 		Lamp::File m_SelectedFile;
 		int m_CurrSample = -1;
+		bool m_AssetBrowserOpen = true;
 
 		//Inspector
 		bool m_MousePressed = false;
 		bool m_PerspectiveHover = false;
 		Lamp::IEntity* m_pSelectedEntity = nullptr;
+		bool m_InspectiorOpen = true;
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
 		std::shared_ptr<Lamp::Shader> m_pShader;
+
+		//Model importer
+		bool m_ModelImporterOpen = false;
+		std::shared_ptr<Lamp::Model> m_pModelToImport;
 		//--------------------------------------
 	};
 }

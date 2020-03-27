@@ -31,7 +31,7 @@ namespace Lamp
 		inline const uint32_t GetID() const { return m_RendererID; }
 
 		inline const TextureType GetType() const { return m_Type; }
-		inline const std::string& GetPath() const { return m_Path; }
+		inline std::string& GetPath() { return m_Path; }
 
 	public:
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height) { return std::make_shared<Texture2D>(width, height); }

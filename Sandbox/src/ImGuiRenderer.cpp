@@ -5,6 +5,7 @@
 #include <ImGuizmo/ImGuizmo/ImGuizmo.h>
 #include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Meshes/GeometrySystem.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 namespace Sandbox2D
 {
@@ -50,7 +51,12 @@ namespace Sandbox2D
 
 	void Sandbox2D::UpdateAssetBrowser()
 	{
-		ImGui::Begin("Asset Browser");
+		if (!m_AssetBrowserOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Asset Browser", &m_AssetBrowserOpen);
 		{
 			//Asset browser
 			{
@@ -80,10 +86,15 @@ namespace Sandbox2D
 
 	void Sandbox2D::UpdateProperties()
 	{
-		ImGui::Begin("Properties");
+		if (!m_InspectiorOpen)
+		{
+			return;
+		}
+		ImGui::Begin("Properties", &m_InspectiorOpen);
 		{
 			if (m_MousePressed)
 			{
+
 				ImGuiIO& io = ImGui::GetIO();
 				glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 
@@ -103,9 +114,10 @@ namespace Sandbox2D
 				{
 					mousePos -= windowPos;
 
+					m_PCam.ScreenToWorldCoords(mousePos, windowSize);
 					for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get()->GetEntities())
 					{
-						//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get().GetEntityFromPoint(m_CameraController.ScreenToWorldCoords(mousePos, windowSize)))
+						//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize)))
 						//{
 						//	m_pSelectedEntity = pEnt;
 						//}
@@ -119,6 +131,15 @@ namespace Sandbox2D
 
 			if (m_pSelectedEntity)
 			{
+				if (ImGui::CollapsingHeader("Transform"))
+				{
+					glm::vec3 pos = m_pSelectedEntity->GetPosition();
+					float f[3] = { pos.x, pos.y, pos.z };
+
+					ImGui::InputFloat3("Position", f);
+					m_pSelectedEntity->SetPosition(glm::make_vec3(f));
+				}
+
 				for (auto& pComp : m_pSelectedEntity->GetComponents())
 				{
 					if (ImGui::CollapsingHeader(pComp->GetName().c_str()))
@@ -131,10 +152,6 @@ namespace Sandbox2D
 							{
 								int* p = static_cast<int*>(pProp.Value);
 								ImGui::InputInt(pProp.Name.c_str(), p);
-
-								pComp->SetProperty(pProp, &p);
-
-								delete p;
 								break;
 							}
 
@@ -142,10 +159,6 @@ namespace Sandbox2D
 							{
 								bool* p = static_cast<bool*>(pProp.Value);
 								ImGui::Checkbox(pProp.Name.c_str(), p);
-
-								pComp->SetProperty(pProp, &p);
-
-								delete p;
 								break;
 							}
 
@@ -156,9 +169,7 @@ namespace Sandbox2D
 								float f[2] = { p->x, p->y };
 								ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
 
-								pComp->SetProperty(pProp, &f);
-
-								delete p;
+								*p = glm::make_vec2(f);
 								break;
 							}
 
@@ -169,9 +180,7 @@ namespace Sandbox2D
 								float f[3] = { p->x, p->y, p->z };
 								ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
 
-								pComp->SetProperty(pProp, &f);
-
-								delete p;
+								*p = glm::make_vec3(f);
 								break;
 							}
 
@@ -182,23 +191,14 @@ namespace Sandbox2D
 								float f[4] = { p->x, p->y, p->z, p->w };
 								ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
 
-								//Change to only send name
-								pComp->SetProperty(pProp, &f);
-
-								delete p;
+								*p = glm::make_vec4(f);
 								break;
 							}
 
 							case Lamp::PropertyType::String:
 							{
 								std::string* s = static_cast<std::string*>(pProp.Value);
-								char* buf = new char[s->size() + 1];
-								strcpy(buf, s->c_str());
-								ImGui::InputText(pProp.Name.c_str(), buf, s->size());
-
-								pComp->SetProperty(pProp, buf);
-
-								delete buf;
+								ImGui::InputText(pProp.Name.c_str(), s);
 								break;
 							}
 
@@ -209,9 +209,7 @@ namespace Sandbox2D
 								float f[4] = { p->x, p->y, p->z, p->w };
 								ImGui::ColorEdit4(pProp.Name.c_str(), f);
 
-								pComp->SetProperty(pProp, &f);
-
-								delete p;
+								*p = glm::make_vec4(f);
 								break;
 							}
 							}
@@ -225,40 +223,66 @@ namespace Sandbox2D
 
 	void Sandbox2D::UpdateModelImporter()
 	{
+		if (!m_ModelImporterOpen)
+		{
+			return;
+		}
+
 		if (m_pShader == nullptr)
 		{
 			m_pShader = Lamp::Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
 		}
 
-		ImGui::Begin("Model importer");
+		ImGui::Begin("Model importer", &m_ModelImporterOpen);
 
 		static std::string path = "";
 		static std::string savePath = "";
 
-		static std::shared_ptr<Lamp::Model> model;
-
 		if (ImGui::Button("Load"))
 		{
 			path = Lamp::FileSystem::GetFileFromDialogue();
-			model = Lamp::GeometrySystem::ImportModel(path);
+			m_pModelToImport = Lamp::GeometrySystem::ImportModel(path);
 
 			savePath = path.substr(0, path.find_last_of('.'));
 			savePath += ".lgf";
 
-			model->GetMaterial().SetShader(m_pShader);
+			m_pModelToImport->GetMaterial().SetShader(m_pShader);
 
-			model->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/container_diff.png"));
-			model->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/container_spec.png"));
+			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Save"))
+		{
+			Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath);
+			path = "";
+			savePath = "";
+			m_pModelToImport = nullptr;
 		}
 		ImGui::Text(("Source path: " + path).c_str());
 		ImGui::Text(("Destination path: " + savePath).c_str());
 
-		if (ImGui::Button("Save"))
+		if (m_pModelToImport != nullptr)
 		{
-			Lamp::GeometrySystem::SaveToPath(model, savePath);
-			path = "";
-			savePath = "";
-			model = nullptr;
+			static std::string diffPath = m_pModelToImport->GetMaterial().GetDiffuse()->GetPath();
+			ImGui::InputText("Diffuse path:", &diffPath);
+			ImGui::SameLine();
+			if (ImGui::Button("Load"))
+			{
+				diffPath = Lamp::FileSystem::GetFileFromDialogue();
+			}
+			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
+
+			static std::string specPath = m_pModelToImport->GetMaterial().GetSpecular()->GetPath();
+			ImGui::InputText("Specular path:", &specPath);
+			ImGui::SameLine();
+			if (ImGui::Button("Load"))
+			{
+				specPath = Lamp::FileSystem::GetFileFromDialogue();
+			}
+			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
+
+			ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
 		}
 
 		ImGui::End();
@@ -316,11 +340,14 @@ namespace Sandbox2D
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-				// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+				ImGui::EndMenu();
+			}
 
-				if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))                 dockspace_flags ^= ImGuiDockNodeFlags_NoSplit;
+			if (ImGui::BeginMenu("Tools"))
+			{
+				ImGui::MenuItem("Import Model", NULL, &m_ModelImporterOpen);
+				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
+				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 
 				ImGui::EndMenu();
 			}
@@ -337,4 +364,5 @@ namespace Sandbox2D
 
 		return true;
 	}
+
 }

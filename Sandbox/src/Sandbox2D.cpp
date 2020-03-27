@@ -19,6 +19,7 @@ namespace Sandbox2D
 	void Sandbox2D::Update(Lamp::Timestep ts)
 	{
 		m_PCam.Update(ts);
+		GetInput();
 		Lamp::EntityManager::Get()->Update(ts);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
@@ -49,19 +50,22 @@ namespace Sandbox2D
 
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox2D::OnMouseMoved));
-
-		if (e.GetEventType() == Lamp::EventType::MouseButtonPressed)
-		{
-			m_MousePressed = true;
-		}
-		else if (e.GetEventType() == Lamp::EventType::MouseButtonReleased)
-		{
-			m_MousePressed = false;
-		}
 	}
 
 	void Sandbox2D::OnItemClicked(Lamp::File& file)
 	{
 		m_SelectedFile = file;
+	}
+
+	void Sandbox2D::GetInput()
+	{
+		if (Lamp::Input::IsMouseButtonPressed(0))
+		{
+			m_MousePressed = true;
+		}
+		else if (Lamp::Input::IsMouseButtonReleased(0))
+		{
+			m_MousePressed = false;
+		}
 	}
 }

@@ -32,10 +32,13 @@ namespace Lamp
 	void Renderer3D::Shutdown()
 	{
 	}
-	void Renderer3D::Begin(PerspectiveCamera& camera)
+	void Renderer3D::Begin(PerspectiveCamera& camera, bool isMain)
 	{
-		m_pFrameBuffer->Bind();
-		Lamp::Renderer::Clear();
+		if (isMain)
+		{
+			m_pFrameBuffer->Bind();
+			Lamp::Renderer::Clear();
+		}
 
 		s_pData->pCamera = &camera;
 	}

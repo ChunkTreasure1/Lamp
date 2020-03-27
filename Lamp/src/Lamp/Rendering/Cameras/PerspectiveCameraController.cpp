@@ -5,6 +5,7 @@
 
 #include "Lamp/Core/Window.h"
 #include "Lamp/Core/Application.h"
+#include "Lamp/Physics/Physics.h"
 
 namespace Lamp
 {
@@ -25,11 +26,16 @@ namespace Lamp
 		{
 			m_RightMouseButtonPressed = true;
 			Application::Get().GetWindow().ShowCursor(false);
+			m_LastHadControl = false;
+			m_HasControl = true;
 		}
 		if (Input::IsMouseButtonReleased(1))
 		{
 			m_RightMouseButtonPressed = false;
 			Application::Get().GetWindow().ShowCursor(true);
+
+			m_LastHadControl = true;
+			m_HasControl = false;
 		}
 
 		if (m_RightMouseButtonPressed)
@@ -68,6 +74,65 @@ namespace Lamp
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
 		glViewport(0, 0, width, height);
+	}
+
+	glm::vec3 PerspectiveCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size)
+	{
+		glm::vec3 pos0;
+		if (!Unproject(glm::vec3(coords.x, coords.y, 0), pos0, size))
+		{
+			return glm::vec3(0, 0, 0);
+		}
+
+		glm::vec3 pos1;
+		if (!Unproject(glm::vec3(coords.x, coords.y, 1), pos1, size))
+		{
+			return glm::vec3(0.f, 0.f, 0.f);
+		}
+
+		glm::vec3 v = (pos1 - pos0);
+		v = glm::normalize(v);
+
+		if (!_finite(v.x) || !_finite(v.y) || !_finite(v.z))
+		{
+			return glm::vec3(0, 0, 0);
+		}
+
+		glm::vec3 colp(0, 0, 0);
+
+		glm::vec3 vPos(pos0.x, pos0.y, pos0.z);
+		glm::vec3 vDir(v.x, v.y, v.z);
+
+		Ray ray;
+		ray.origin = m_Camera.GetPosition();
+		ray.direction = -vDir;
+
+		SpherePhysicsObject obj(6);
+		obj.SetPosition({ 0.f, 0.f, 0.f });
+
+		bool result = Physics::IntersectRaySphere(ray, obj);
+	}
+
+	bool PerspectiveCameraController::Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size, glm::vec2 topLeft, glm::vec2 widthHeight)
+	{
+		int viewport[4] = { 0, 0, size.x, size.y };
+
+		glm::vec4 vIn;
+		vIn.x = (viewPos.x - viewport[0]) * 2 / viewport[2] - 1.f;
+		vIn.y = (viewPos.y - viewport[1]) * 2 / viewport[3] - 1.f;
+		vIn.z = viewPos.z;
+		vIn.w = 1.f;
+
+		glm::mat4 mInv = glm::inverse(m_Camera.GetViewProjectionMatrix());
+		glm::vec4 vOut = vIn * mInv;
+		if (vOut.w == 0.f)
+		{
+			return false;
+		}
+
+		result = glm::vec3(vOut.x / vOut.w, vOut.y / vOut.w, vOut.z / vOut.w);
+
+		return true;
 	}
 
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)

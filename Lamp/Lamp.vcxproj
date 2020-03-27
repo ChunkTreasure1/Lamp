@@ -151,6 +151,7 @@
     <ClInclude Include="src\Lamp\Core\Core.h" />
     <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
+    <ClInclude Include="src\Lamp\Core\Math.h" />
     <ClInclude Include="src\Lamp\Core\Sound.h" />
     <ClInclude Include="src\Lamp\Core\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
@@ -186,6 +187,8 @@
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsObject.h" />
+    <ClInclude Include="src\Lamp\Physics\SpherePhysicsObject.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h" />

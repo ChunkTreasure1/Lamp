@@ -1377,6 +1377,9 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsObject.h" />
+    <ClInclude Include="src\Lamp\Physics\SpherePhysicsObject.h" />
+    <ClInclude Include="src\Lamp\Core\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
