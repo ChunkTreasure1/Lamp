@@ -17,10 +17,14 @@ namespace Lamp
 		static void End();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat);
+		static void DrawSphere();
+		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB);
 
 		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
 
 	private:
+		static void CreateSphere(float radius);
+
 		static Ref<FrameBuffer> m_pFrameBuffer;
 	};
 }

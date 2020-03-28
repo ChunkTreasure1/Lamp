@@ -10,7 +10,14 @@ namespace Lamp
 		glGenBuffers(1, &m_RendererID);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, &pVertices[0], GL_STATIC_DRAW);
+		if (size > 0)
+		{
+			glBufferData(GL_ARRAY_BUFFER, size, &pVertices[0], GL_DYNAMIC_DRAW);
+		}
+		else 
+		{
+			glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		}
 	}
 
 	VertexBuffer::~VertexBuffer()
@@ -28,10 +35,10 @@ namespace Lamp
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void VertexBuffer::SetVertices(float* pVertices, uint32_t size)
+	void VertexBuffer::SetVertices(std::vector<Vertex>& pVertices, uint32_t size)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, pVertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, &pVertices[0], GL_DYNAMIC_DRAW);
 	}
 
 	VertexBuffer* VertexBuffer::Create(std::vector<Vertex>& pVertices, uint32_t size)

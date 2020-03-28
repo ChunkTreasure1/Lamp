@@ -26,7 +26,9 @@ namespace Sandbox2D
 		Lamp::Renderer::Clear();
 
 		Lamp::Renderer3D::Begin(m_PCam.GetCamera());
+		Lamp::Renderer3D::DrawLine({ 0,0,0 }, { 3, 4, 2 });
 
+		//Lamp::Renderer3D::DrawSphere();
 		Lamp::AppRenderEvent renderEvent;
 		//Lamp::EntityManager::Get().OnEvent(renderEvent);
 		Lamp::BrushManager::Get()->OnEvent(renderEvent);

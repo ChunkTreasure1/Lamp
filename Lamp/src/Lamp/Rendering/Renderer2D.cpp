@@ -160,21 +160,21 @@ namespace Lamp
 	
 	void Renderer2D::DrawLine(const glm::vec3& posA, const glm::vec3& posB)
 	{
-		float verts[3 * 2] = {
-			posA.x, posA.y, posA.z,
-			posB.x, posB.y, posB.z
-		};
+	//	float verts[3 * 2] = {
+	//		posA.x, posA.y, posA.z,
+	//		posB.x, posB.y, posB.z
+	//	};
 
-		s_pData->pLineVertexArray->GetVertexBuffer()[0]->SetVertices(verts, sizeof(verts));
+	//	s_pData->pLineVertexArray->GetVertexBuffer()[0]->SetVertices(verts, sizeof(verts));
 
-		s_pData->pTextureShader->UploadFloat4("u_Color", { 1.f, 1.f, 1.f, 1.f });
-		s_pData->pWhiteTexture->Bind();
+	//	s_pData->pTextureShader->UploadFloat4("u_Color", { 1.f, 1.f, 1.f, 1.f });
+	//	s_pData->pWhiteTexture->Bind();
 
-		glm::mat4 transform = glm::mat4(1.f);
-		s_pData->pTextureShader->UploadMat4("u_Transform", transform);
+	//	glm::mat4 transform = glm::mat4(1.f);
+	//	s_pData->pTextureShader->UploadMat4("u_Transform", transform);
 
-		s_pData->pLineVertexArray->Bind();
-		Renderer::DrawIndexedLines(s_pData->pLineVertexArray);
+	//	s_pData->pLineVertexArray->Bind();
+	//	Renderer::DrawIndexedLines(s_pData->pLineVertexArray);
 	}
 
 	void Renderer2D::DrawLine(const glm::vec2& posA, const glm::vec2& posB)

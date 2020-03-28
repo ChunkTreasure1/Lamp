@@ -8,13 +8,6 @@ namespace Lamp
 {
 	struct Vertex
 	{
-		//Vertex()
-		//{}
-
-		//Vertex(const glm::vec3& pos, glm::vec3& normal, const glm::vec2& tex)
-		//	: position(pos), normal(normal), textureCoords(tex)
-		//{}
-
 		glm::vec3 position;
 		glm::vec3 normal;
 		glm::vec2 textureCoords;
@@ -31,7 +24,7 @@ namespace Lamp
 
 		inline void SetBufferLayout(const BufferLayout& buff) { m_BufferLayout = buff; }
 		inline BufferLayout& GetBufferLayout() { return m_BufferLayout; }
-		void SetVertices(float* pVertices, uint32_t size);
+		void SetVertices(std::vector<Vertex>& pVertices, uint32_t size);
 
 	public:
 		static VertexBuffer* Create(std::vector<Vertex>& pVertices, uint32_t size);
