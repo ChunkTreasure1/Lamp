@@ -79,7 +79,7 @@ namespace Lamp
 	glm::vec3 PerspectiveCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size)
 	{
 		glm::vec3 pos0;
-		if (!Unproject(glm::vec3(coords.x, coords.y, 0), pos0, size))
+		if (!Unproject(glm::vec3(coords.x, coords.y, -1), pos0, size))
 		{
 			return glm::vec3(0, 0, 0);
 		}

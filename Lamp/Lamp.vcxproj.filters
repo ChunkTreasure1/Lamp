@@ -123,6 +123,9 @@
     <ClInclude Include="src\Lamp\Core\Log.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Math.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Sound.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
@@ -226,6 +229,12 @@
       <Filter>src\Lamp\Physics\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Physics.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsObject.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\SpherePhysicsObject.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h">
@@ -1377,9 +1386,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\PhysicsObject.h" />
-    <ClInclude Include="src\Lamp\Physics\SpherePhysicsObject.h" />
-    <ClInclude Include="src\Lamp\Core\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
