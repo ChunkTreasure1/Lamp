@@ -27,11 +27,11 @@ namespace Sandbox3D
 
 		Lamp::Renderer3D::Begin(m_PCam.GetCamera());
 
-		//sLamp::Renderer3D::DrawSphere();
 		Lamp::AppRenderEvent renderEvent;
 		//Lamp::EntityManager::Get()->OnEvent(renderEvent);
 		Lamp::BrushManager::Get()->OnEvent(renderEvent);
 		m_PCam.OnEvent(renderEvent);
+		RenderGrid();
 
 		Lamp::Renderer3D::End();
 	}
@@ -42,7 +42,7 @@ namespace Sandbox3D
 
 		//UpdatePerspective();
 		//UpdateAssetBrowser();
-		//UpdateProperties();
+		UpdateProperties();
 		UpdateModelImporter();
 	}
 
@@ -63,7 +63,8 @@ namespace Sandbox3D
 	{
 		if (Lamp::Input::IsMouseButtonPressed(0))
 		{
-			m_PCam.ScreenToWorldCoords(m_MouseHoverPos, glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetHeight()));
+			m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PCam.ScreenToWorldCoords(m_MouseHoverPos, glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetHeight())), m_PCam.GetCamera().GetPosition());
+			m_pSelectedEntity = nullptr;
 
 			m_MousePressed = true;
 		}
@@ -75,6 +76,28 @@ namespace Sandbox3D
 
 	void Sandbox3D::RenderGrid()
 	{
+		glm::vec3 pos;
+		if (m_pSelectedBrush)
+		{
+			pos = m_pSelectedBrush->GetPosition();
+		}
+		else if (m_pSelectedEntity)
+		{
+			pos = m_pSelectedEntity->GetPosition();
+		}
+		else 
+		{
+			return;
+		}
 
+		for (size_t z = 0; z < 10; z++)
+		{
+			Lamp::Renderer3D::DrawLine(glm::vec3(pos.x - 5.f, pos.y, pos.z + 0.5f * (float)z - 1.25f), glm::vec3(pos.x + 5.f, pos.y, pos.z + 0.5f * (float)z - 1.25f), 1.f);
+		}
+
+		for (size_t x = 0; x < 10; x++)
+		{
+			Lamp::Renderer3D::DrawLine(glm::vec3(pos.x + 0.5f * (float)x - 1.5f, pos.y, pos.z - 5.f), glm::vec3(pos.x + 0.5f * (float)x - 1.5f, pos.y, pos.z + 5.f), 1.f);
+		}
 	}
 }

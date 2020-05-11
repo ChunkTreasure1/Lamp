@@ -19,7 +19,7 @@ namespace Lamp
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat);
 		static void DrawSphere();
-		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB);
+		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
 
 		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
 

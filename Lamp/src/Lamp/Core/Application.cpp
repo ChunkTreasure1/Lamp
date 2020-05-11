@@ -2,7 +2,6 @@
 #include "Application.h"
 
 #include "imgui.h"
-#include "Lamp/Physics/Physics.h"
 
 namespace Lamp
 {
@@ -39,7 +38,7 @@ namespace Lamp
 
 			if (!m_Minimized)
 			{
-				Lamp::Physics::CheckCollisions();
+				//Lamp::Physics::CheckCollisions();
 				for (Layer* layer : m_LayerStack)
 				{
 					layer->Update(timestep);

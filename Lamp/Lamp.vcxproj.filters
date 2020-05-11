@@ -222,19 +222,7 @@
     <ClInclude Include="src\Lamp\Physics\Collision.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Physics.h">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\PhysicsObject.h">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\SpherePhysicsObject.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h">
@@ -1386,6 +1374,10 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\Base\Physical\PhysicalEntity.h" />
+    <ClInclude Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.h" />
+    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
+    <ClInclude Include="src\Lamp\Physics\Ray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
@@ -1438,12 +1430,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Model.cpp">
       <Filter>src\Lamp\Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp">
-      <Filter>src\Lamp\Physics\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Physics.cpp">
       <Filter>src\Lamp\Physics</Filter>
@@ -1499,5 +1485,7 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
+    <ClCompile Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.cpp" />
   </ItemGroup>
 </Project>

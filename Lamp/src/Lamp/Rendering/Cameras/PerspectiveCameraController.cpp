@@ -5,7 +5,6 @@
 
 #include "Lamp/Core/Window.h"
 #include "Lamp/Core/Application.h"
-#include "Lamp/Physics/Physics.h"
 
 #include "Lamp/Rendering/Renderer3D.h"
 
@@ -88,20 +87,7 @@ namespace Lamp
 		glm::vec3 dir = glm::vec3(dCoords.x, dCoords.y, dCoords.z);
 		dir = glm::normalize(dir);
 
-		Ray ray;
-		ray.origin = m_Camera.GetPosition();
-		ray.direction = dir;
-
-		std::array<glm::vec3, 2> pos = { ray.origin, (ray.direction * 10.f) + ray.origin };
-
-		m_LinePositions.push_back(pos);
-
-		SpherePhysicsObject obj(3.f);
-		obj.SetPosition({ 0.f, 0.f, 0.f });
-
-		bool result = Physics::IntersectRaySphere(ray, obj);
-
-		return glm::vec3(0, 0, 0);
+		return dir;
 	}
 
 	bool PerspectiveCameraController::Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size)
@@ -185,11 +171,6 @@ namespace Lamp
 
 	bool PerspectiveCameraController::OnRender(AppRenderEvent& e)
 	{
-		for (size_t i = 0; i < m_LinePositions.size(); i++)
-		{
-			Lamp::Renderer3D::DrawLine(m_LinePositions[i][0], m_LinePositions[i][1]);
-		}
-
 		return true;
 	}
 }

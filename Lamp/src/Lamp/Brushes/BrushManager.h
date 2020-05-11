@@ -12,13 +12,12 @@ namespace Lamp
 		BrushManager();
 		~BrushManager();
 
-		void Draw();
 		Brush* Create(const std::string& path);
 		Brush* Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale);
 		void Remove(const Brush* brush);
 		void OnEvent(Event& e);
 
-		Brush* GetBrushFromPoint(const glm::vec2& pos);
+		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 		//Setting
 		inline void SetBrushes(std::vector<Brush*> brushes) { m_Brushes = brushes; }

@@ -52,7 +52,6 @@ namespace Lamp
 		glEnable(GL_DEPTH_TEST);
 
 		s_pData = new Renderer3DStorage();
-		CreateSphere(6.f);
 
 		///////Line///////
 		s_pData->pLineVertexArray = VertexArray::Create();
@@ -117,7 +116,6 @@ namespace Lamp
 		s_pData->material.GetShader()->Bind();
 		s_pData->material.GetShader()->UploadMat4("u_ViewProjection", s_pData->pCamera->GetViewProjectionMatrix());
 		
-		glLineWidth(10.f);
 		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
 	}
 
@@ -145,8 +143,10 @@ namespace Lamp
 		s_pData->pSphereArray->Bind();
 		Renderer::DrawIndexed(s_pData->pSphereArray);
 	}
-	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB)
+	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
 	{
+		glLineWidth(width);
+
 		if (s_pData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
 		{
 			StartNewBatch();

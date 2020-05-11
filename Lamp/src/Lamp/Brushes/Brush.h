@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Lamp/Meshes/Model.h"
+#include "Lamp/Entity/Base/Physical/SpherePhysicalEntity.h"
 
 namespace Lamp
 {
@@ -12,7 +13,10 @@ namespace Lamp
 	public:
 		Brush(Ref<Model> model)
 			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Model(model)
-		{}
+		{
+			m_PhysicalEntity = std::make_shared<SpherePhysicalEntity>(1.5f);
+			m_PhysicalEntity->SetBrush(this);
+		}
 
 		void Draw()
 		{
@@ -31,6 +35,7 @@ namespace Lamp
 		inline const glm::vec3& GetScale() { return m_Scale; }
 		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Ref<Model>& GetModel() { return m_Model; }
+		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_PhysicalEntity; }
 
 	private:
 		void CalculateModelMatrix()
@@ -44,6 +49,7 @@ namespace Lamp
 
 	private:
 		Ref<Model> m_Model;
+		Ref<PhysicalEntity> m_PhysicalEntity;
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

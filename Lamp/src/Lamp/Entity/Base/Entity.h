@@ -8,6 +8,7 @@
 #include "Lamp/Event/Event.h"
 
 #include <algorithm>
+#include "Physical/SpherePhysicalEntity.h"
 
 class EntityManager;
 
@@ -18,7 +19,10 @@ namespace Lamp
 	public:
 		IEntity()
 			: m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1), m_Name("")
-		{}
+		{
+			m_pPhysicalEntity = std::make_shared<SpherePhysicalEntity>(3.f);
+			m_pPhysicalEntity->SetEntity(this);
+		}
 		~IEntity() {}
 
 		void Update(Timestep ts)
@@ -68,6 +72,7 @@ namespace Lamp
 		inline const glm::vec3& GetScale() const { return m_Scale; }
 
 		inline const std::string& GetName() const { return m_Name; }
+		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_pPhysicalEntity; }
 
 		//Setting
 		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; }
@@ -125,6 +130,7 @@ namespace Lamp
 
 	private:
 		bool m_IsActive = true;
+		Ref<PhysicalEntity> m_pPhysicalEntity;
 
 		std::vector<Ref<IEntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<IEntityComponent>> m_pComponentMap;

@@ -62,6 +62,7 @@ namespace Sandbox3D
 		bool m_MousePressed = false;
 		bool m_PerspectiveHover = false;
 		Lamp::IEntity* m_pSelectedEntity = nullptr;
+		Lamp::Brush* m_pSelectedBrush = nullptr;
 		bool m_InspectiorOpen = true;
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);

@@ -1,15 +1,18 @@
 #pragma once
 
-#include "PhysicsObject.h"
+#include "PhysicalEntity.h"
 
 namespace Lamp
 {
-	class SpherePhysicsObject : public PhysicsObject
+	class SpherePhysicalEntity : public PhysicalEntity
 	{
 	public:
-		SpherePhysicsObject(float radius)
+		SpherePhysicalEntity(float radius) 
 			: m_Radius(radius), m_RadiusSqr(radius * radius)
 		{}
+		virtual ~SpherePhysicalEntity() override {}
+	
+		virtual bool Intersect(const Ray& ray) const;
 
 		//Getting
 		inline const float GetRadius() { return m_Radius; }

@@ -163,6 +163,8 @@
     <ClInclude Include="src\Lamp\Entity\Base\EntityManager.h" />
     <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h" />
     <ClInclude Include="src\Lamp\Entity\BaseComponents\TransformComponent.h" />
+    <ClInclude Include="src\Lamp\Entity\Base\Physical\PhysicalEntity.h" />
+    <ClInclude Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
@@ -185,10 +187,8 @@
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsObject.h" />
-    <ClInclude Include="src\Lamp\Physics\SpherePhysicsObject.h" />
+    <ClInclude Include="src\Lamp\Physics\Ray.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h" />
@@ -580,6 +580,7 @@
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\Lamp\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Entity\Base\EntityManager.cpp" />
+    <ClCompile Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
@@ -592,7 +593,6 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />

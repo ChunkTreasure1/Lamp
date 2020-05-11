@@ -2,6 +2,8 @@
 #include "BrushManager.h"
 
 #include "Lamp/Meshes/GeometrySystem.h"
+#include "Lamp/Physics/Ray.h"
+#include "Lamp/Entity/Base/Physical/PhysicalEntity.h"
 
 namespace Lamp
 {
@@ -83,17 +85,15 @@ namespace Lamp
 		}
 	}
 
-	Brush* BrushManager::GetBrushFromPoint(const glm::vec2& pos)
+	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
 		for (auto& brush : m_Brushes)
 		{
-			glm::vec4 rect(brush->GetPosition().x, brush->GetPosition().y, brush->GetScale().x, brush->GetScale().y);
+			Ray ray;
+			ray.origin = origin;
+			ray.direction = pos;
 
-			if ((pos.x > (rect.x - (rect.z / 2))) &&
-				pos.x < (rect.x + (rect.z / 2)) &&
-				
-				pos.y > (rect.y - (rect.w / 2)) &&
-				pos.y < (rect.y + (rect.w / 2)))
+			if (brush->GetPhysicalEntity()->Intersect(ray))
 			{
 				return brush;
 			}

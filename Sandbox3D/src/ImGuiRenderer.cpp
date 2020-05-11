@@ -92,41 +92,41 @@ namespace Sandbox3D
 		}
 		ImGui::Begin("Properties", &m_InspectiorOpen);
 		{
-			if (m_MousePressed)
-			{
+			//if (m_MousePressed)
+			//{
 
-				ImGuiIO& io = ImGui::GetIO();
-				glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
+			//	ImGuiIO& io = ImGui::GetIO();
+			//	glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 
-				glm::vec2 windowPos;
-				glm::vec2 windowSize;
+			//	glm::vec2 windowPos;
+			//	glm::vec2 windowSize;
 
-				ImGui::Begin("Perspective");
-				{
-					windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-					windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-				}
-				ImGui::End();
+			//	ImGui::Begin("Perspective");
+			//	{
+			//		windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+			//		windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			//	}
+			//	ImGui::End();
 
 
-				if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
-					mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
-				{
-					mousePos -= windowPos;
+			//	if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
+			//		mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
+			//	{
+			//		mousePos -= windowPos;
 
-					for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get()->GetEntities())
-					{
-						//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize)))
-						//{
-						//	m_pSelectedEntity = pEnt;
-						//}
-						//else
-						//{
-						//	m_pSelectedEntity = nullptr;
-						//}
-					}
-				}
-			}
+			//		for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get()->GetEntities())
+			//		{
+			//			//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize)))
+			//			//{
+			//			//	m_pSelectedEntity = pEnt;
+			//			//}
+			//			//else
+			//			//{
+			//			//	m_pSelectedEntity = nullptr;
+			//			//}
+			//		}
+			//	}
+			//}
 
 			if (m_pSelectedEntity)
 			{
@@ -214,6 +214,29 @@ namespace Sandbox3D
 							}
 						}
 					}
+				}
+			}
+			else if (m_pSelectedBrush)
+			{
+				if (ImGui::CollapsingHeader("Transform"))
+				{
+					glm::vec3 pos = m_pSelectedBrush->GetPosition();
+					float f[3] = { pos.x, pos.y, pos.z };
+
+					ImGui::InputFloat3("Position", f);
+					m_pSelectedBrush->SetPosition(glm::make_vec3(f));
+
+					glm::vec3 rot = m_pSelectedBrush->GetRotation();
+					float r[3] = { rot.x, rot.y, rot.z };
+
+					ImGui::InputFloat3("Rotation", r);
+					m_pSelectedBrush->SetRotation(glm::make_vec3(r));
+
+					glm::vec3 scale = m_pSelectedBrush->GetScale();
+					float s[3] = { scale.x, scale.y, scale.z };
+
+					ImGui::InputFloat3("Scale", s);
+					m_pSelectedBrush->SetScale(glm::make_vec3(s));
 				}
 			}
 		}
