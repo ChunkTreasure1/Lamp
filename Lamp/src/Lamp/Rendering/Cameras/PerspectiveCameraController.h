@@ -31,10 +31,13 @@ namespace Lamp
 		bool OnWindowResized(WindowResizeEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
+		bool OnRender(AppRenderEvent& e);
 
 	private:
 		PerspectiveCamera m_Camera;
 		glm::vec3 m_CameraPosition = { 0.f, 0.f, 0.f };
+
+		std::vector<std::array<glm::vec3, 2>> m_LinePositions;
 
 		float m_CameraTranslationSpeed = 5.f;
 		float m_AspectRatio = 0.f;

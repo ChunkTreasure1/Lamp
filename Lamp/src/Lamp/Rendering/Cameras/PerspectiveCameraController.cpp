@@ -7,6 +7,8 @@
 #include "Lamp/Core/Application.h"
 #include "Lamp/Physics/Physics.h"
 
+#include "Lamp/Rendering/Renderer3D.h"
+
 namespace Lamp
 {
 	PerspectiveCameraController::PerspectiveCameraController(float fov, float nearPlane, float farPlane)
@@ -64,6 +66,7 @@ namespace Lamp
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
+		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnRender));
 	}
 
 	void PerspectiveCameraController::UpdatePerspective(float width, float height)
@@ -75,39 +78,30 @@ namespace Lamp
 
 	glm::vec3 PerspectiveCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size)
 	{
-		glm::vec3 pos0;
-		if (!Unproject(glm::vec3(coords.x, coords.y, -1), pos0, size))
-		{
-			return glm::vec3(0, 0, 0);
-		}
+		float x = (coords.x / size.x) * 2.f - 1.f;
+		float y = (coords.y / size.y) * 2.f - 1.f;
+		float z = 1.f;
 
-		glm::vec3 pos1;
-		if (!Unproject(glm::vec3(coords.x, coords.y, 1), pos1, size))
-		{
-			return glm::vec3(0.f, 0.f, 0.f);
-		}
+		glm::mat4 matInv = glm::inverse(m_Camera.GetViewProjectionMatrix());
+		glm::vec4 dCoords = matInv * glm::vec4(x, -y, z, 1);
 
-		glm::vec3 v = (pos1 - pos0);
-		v = glm::normalize(v);
-
-		if (!_finite(v.x) || !_finite(v.y) || !_finite(v.z))
-		{
-			return glm::vec3(0, 0, 0);
-		}
-
-		glm::vec3 colp(0, 0, 0);
-
-		glm::vec3 vPos(pos0.x, pos0.y, pos0.z);
-		glm::vec3 vDir(v.x, v.y, v.z);
+		glm::vec3 dir = glm::vec3(dCoords.x, dCoords.y, dCoords.z);
+		dir = glm::normalize(dir);
 
 		Ray ray;
 		ray.origin = m_Camera.GetPosition();
-		ray.direction = vDir;
+		ray.direction = dir;
+
+		std::array<glm::vec3, 2> pos = { ray.origin, (ray.direction * 10.f) + ray.origin };
+
+		m_LinePositions.push_back(pos);
 
 		SpherePhysicsObject obj(3.f);
 		obj.SetPosition({ 0.f, 0.f, 0.f });
 
 		bool result = Physics::IntersectRaySphere(ray, obj);
+
+		return glm::vec3(0, 0, 0);
 	}
 
 	bool PerspectiveCameraController::Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size)
@@ -186,6 +180,16 @@ namespace Lamp
 				m_CameraTranslationSpeed = 0;
 			}
 		}
+		return true;
+	}
+
+	bool PerspectiveCameraController::OnRender(AppRenderEvent& e)
+	{
+		for (size_t i = 0; i < m_LinePositions.size(); i++)
+		{
+			Lamp::Renderer3D::DrawLine(m_LinePositions[i][0], m_LinePositions[i][1]);
+		}
+
 		return true;
 	}
 }

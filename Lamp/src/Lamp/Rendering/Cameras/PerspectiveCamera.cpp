@@ -5,7 +5,7 @@
 namespace Lamp
 {
 	PerspectiveCamera::PerspectiveCamera(float fov, float nearPlane, float farPlane)
-		: m_ProjectionMatrix(glm::perspective(glm::radians(fov), (float)Application::Get().GetWindow().GetWidth() / Application::Get().GetWindow().GetHeight(), nearPlane, farPlane)), m_ViewMatrix(1.f)
+		: m_ProjectionMatrix(glm::perspective(glm::radians(fov), (float)Application::Get().GetWindow().GetWidth() / Application::Get().GetWindow().GetHeight(), nearPlane, farPlane)), m_ViewMatrix(1.f), m_TransformMatrix(1.f)
 	{
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}

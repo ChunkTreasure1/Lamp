@@ -24,10 +24,28 @@ namespace Lamp
 
 		inline const float GetYaw() const { return m_Yaw; }
 		inline const float GetPitch() const { return m_Pitch; }
+		inline const glm::mat4& GetTM() { return m_TransformMatrix; }
 
 		//Setting
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; RecalculateViewMatrix(); }
-		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; RecalculateViewMatrix(); }
+		inline void SetPosition(const glm::vec3& pos) 
+		{ 
+			m_Position = pos; RecalculateViewMatrix(); 
+			m_TransformMatrix = glm::translate(glm::mat4(1.f), m_Position) 
+			* glm::rotate(glm::mat4(1.f), m_Rotation.x, { 1.f, 0.f, 0.f }) 
+			* glm::rotate(glm::mat4(1.f), m_Rotation.y, { 0.f, 1.f, 0.f })
+			* glm::rotate(glm::mat4(1.f), m_Rotation.z, { 0.f, 0.f, 1.f }); 
+		}
+
+		inline void SetRotation(const glm::vec3& rot) 
+		{ 
+			m_Rotation = rot; 
+			RecalculateViewMatrix(); 
+		
+			m_TransformMatrix = glm::translate(glm::mat4(1.f), m_Position)
+				* glm::rotate(glm::mat4(1.f), m_Rotation.x, { 1.f, 0.f, 0.f })
+				* glm::rotate(glm::mat4(1.f), m_Rotation.y, { 0.f, 1.f, 0.f })
+				* glm::rotate(glm::mat4(1.f), m_Rotation.z, { 0.f, 0.f, 1.f });
+		}
 		inline void SetYaw(float yaw) { m_Yaw = yaw; }
 		inline void SetPitch(float pitch) { m_Pitch = pitch; }
 
@@ -42,6 +60,7 @@ namespace Lamp
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix;
 		glm::mat4 m_ViewProjectionMatrix;
+		glm::mat4 m_TransformMatrix;
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

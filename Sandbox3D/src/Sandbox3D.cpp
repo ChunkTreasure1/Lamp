@@ -26,12 +26,12 @@ namespace Sandbox3D
 		Lamp::Renderer::Clear();
 
 		Lamp::Renderer3D::Begin(m_PCam.GetCamera());
-		Lamp::Renderer3D::DrawLine({ 0, 0 ,0 }, { 0, 10, 0 });
 
 		//sLamp::Renderer3D::DrawSphere();
 		Lamp::AppRenderEvent renderEvent;
 		//Lamp::EntityManager::Get()->OnEvent(renderEvent);
 		Lamp::BrushManager::Get()->OnEvent(renderEvent);
+		m_PCam.OnEvent(renderEvent);
 
 		Lamp::Renderer3D::End();
 	}
@@ -63,7 +63,7 @@ namespace Sandbox3D
 	{
 		if (Lamp::Input::IsMouseButtonPressed(0))
 		{
-			m_PCam.ScreenToWorldCoords(m_MouseHoverPos, glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetWidth()));
+			m_PCam.ScreenToWorldCoords(m_MouseHoverPos, glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetHeight()));
 
 			m_MousePressed = true;
 		}
@@ -71,5 +71,10 @@ namespace Sandbox3D
 		{
 			m_MousePressed = false;
 		}
+	}
+
+	void Sandbox3D::RenderGrid()
+	{
+
 	}
 }

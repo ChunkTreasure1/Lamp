@@ -26,6 +26,7 @@ namespace Sandbox3D
 		void CreateDockspace();
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		void GetInput();
+		void RenderGrid();
 
 		//ImGui
 		void UpdatePerspective();

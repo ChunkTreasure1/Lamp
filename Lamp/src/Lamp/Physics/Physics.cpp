@@ -37,7 +37,7 @@ namespace Lamp
 		}
 
 
-
+		LP_INFO("Raycast Hit!");
 		return true;
 	}
 }
