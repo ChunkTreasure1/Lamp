@@ -12,12 +12,35 @@
 
 namespace Lamp
 {
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+	};
+
 	struct Renderer3DStorage
 	{
-		PerspectiveCamera* pCamera;
+		static const uint32_t MaxLines = 10000;
+		static const uint32_t MaxLineVerts = MaxLines * 2;
+		static const uint32_t MaxLineIndices = MaxLines * 2;
 
-		Ref<VertexArray> pSphereArray;
+		//////Lines//////
 		Ref<VertexArray> pLineVertexArray;
+		Ref<VertexBuffer> pLineVertexBuffer;
+		uint32_t LineIndexCount = 0;
+
+		LineVertex* pLineVertexBufferBase = nullptr;
+		LineVertex* pLineVertexBufferPtr = nullptr;
+		/////////////////
+
+		Renderer3DStorage()
+			: material(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag"), 0)
+		{}
+
+		PerspectiveCamera* pCamera;
+		Ref<VertexArray> pSphereArray;
+
+		Material material;
 	};
 
 	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
@@ -31,42 +54,71 @@ namespace Lamp
 		s_pData = new Renderer3DStorage();
 		CreateSphere(6.f);
 
-		//////////Lines////////
+		///////Line///////
 		s_pData->pLineVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> pLineVB;
-
-		std::vector<Vertex> lineVerts;
-		pLineVB.reset(VertexBuffer::Create(lineVerts, sizeof(Vertex) * lineVerts.size()));
-		pLineVB->SetBufferLayout
+		s_pData->pLineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
+		s_pData->pLineVertexBuffer->SetBufferLayout
 		({
-			{ ElementType::Float3, "a_Position" }
-			});
-		s_pData->pLineVertexArray->AddVertexBuffer(pLineVB);
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float4, "a_Color" }
+		});
+		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
+		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
-		std::vector<uint32_t> lineIndices{ 0, 1 };
-		Ref<IndexBuffer> pLineIB;
-		pLineIB.reset(IndexBuffer::Create(lineIndices, sizeof(lineIndices) / sizeof(uint32_t)));
+		uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
+		uint32_t offset = 0;
+		for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
+		{
+			pLineIndices[i + 0] = offset + 0;
+			pLineIndices[i + 1] = offset + 1;
+
+			offset += 2;
+		}
+
+		Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
 		s_pData->pLineVertexArray->SetIndexBuffer(pLineIB);
 
-		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		delete[] pLineIndices;
+		//////////////////
+
+		//m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}
+
 	void Renderer3D::Shutdown()
 	{
+		delete s_pData;
 	}
+
 	void Renderer3D::Begin(PerspectiveCamera& camera, bool isMain)
 	{
 		if (isMain)
 		{
-			m_pFrameBuffer->Bind();
+			//m_pFrameBuffer->Bind();
 			Lamp::Renderer::Clear();
 		}
 
 		s_pData->pCamera = &camera;
+
+		ResetBatchData();
 	}
 
 	void Renderer3D::End()
 	{
-		m_pFrameBuffer->Unbind();
+		//m_pFrameBuffer->Unbind();
+
+		uint32_t dataSize = (uint8_t*)s_pData->pLineVertexBufferPtr - (uint8_t*)s_pData->pLineVertexBufferBase;
+		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
+
+		Flush();
+	}
+
+	void Renderer3D::Flush()
+	{
+		s_pData->material.GetShader()->Bind();
+		s_pData->material.GetShader()->UploadMat4("u_ViewProjection", s_pData->pCamera->GetViewProjectionMatrix());
+		
+		glLineWidth(10.f);
+		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
 	}
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat)
@@ -95,18 +147,20 @@ namespace Lamp
 	}
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB)
 	{
-		std::vector<Vertex> verts;
-		Vertex vertA, vertB;
-		vertA.position = posA;
-		vertB.position = posB;
+		if (s_pData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
+		{
+			StartNewBatch();
+		}
 
-		verts.push_back(vertA);
-		verts.push_back(vertB);
+		s_pData->pLineVertexBufferPtr->Position = posA;
+		s_pData->pLineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		s_pData->pLineVertexBufferPtr++;
 
-		s_pData->pLineVertexArray->GetVertexBuffer()[0]->SetVertices(verts, sizeof(Vertex) * verts.size());
+		s_pData->pLineVertexBufferPtr->Position = posB;
+		s_pData->pLineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		s_pData->pLineVertexBufferPtr++;
 
-		s_pData->pLineVertexArray->Bind();
-		Renderer::DrawIndexedLines(s_pData->pLineVertexArray);
+		s_pData->LineIndexCount += 2;
 	}
 	void Renderer3D::CreateSphere(float radius)
 	{
@@ -180,8 +234,7 @@ namespace Lamp
 
 		s_pData->pSphereArray = VertexArray::Create();
 
-		Ref<VertexBuffer> pBuffer;
-		pBuffer.reset(VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size()));
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size());
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" },
@@ -191,11 +244,20 @@ namespace Lamp
 
 		s_pData->pSphereArray->AddVertexBuffer(pBuffer);
 
-		Ref<IndexBuffer> pIndexBuffer;
-		pIndexBuffer.reset(IndexBuffer::Create(indices, indices.size()));
+		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(indices, indices.size());
 		s_pData->pSphereArray->SetIndexBuffer(pIndexBuffer);
 
 		s_pData->pSphereArray->Unbind();
 
+	}
+	void Renderer3D::StartNewBatch()
+	{
+		End();
+		ResetBatchData();
+	}
+	void Renderer3D::ResetBatchData()
+	{
+		s_pData->LineIndexCount = 0;
+		s_pData->pLineVertexBufferPtr = s_pData->pLineVertexBufferBase;
 	}
 }

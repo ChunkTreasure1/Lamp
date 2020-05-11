@@ -25,7 +25,7 @@ namespace Lamp
 		inline void SetHasControl(bool state) { if (m_HasControl && !state) { m_LastHadControl = true; } m_HasControl = state; }
 
 		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
-		bool Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size, glm::vec2 topLeft = glm::vec2(0, 0), glm::vec2 widthHeight = glm::vec2(0, 0));
+		bool Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size);
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);

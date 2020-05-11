@@ -74,35 +74,35 @@ namespace Lamp
 
 		static PropertyType GetTypeFromString(const char* string)
 		{
-			if (string == "String")
+			if (strcmp(string, "String") == 0)
 			{
 				return PropertyType::String;
 			}
-			else if (string == "Bool")
+			else if (strcmp(string, "Bool") == 0)
 			{
 				return PropertyType::Bool;
 			}
-			else if (string == "Int")
+			else if (strcmp(string, "Int") == 0)
 			{
 				return PropertyType::Int;
 			}
-			else if (string == "Float")
+			else if (strcmp(string, "Float") == 0)
 			{
 				return PropertyType::Float;
 			}
-			else if (string == "Float2")
+			else if (strcmp(string, "Float2") == 0)
 			{
 				return PropertyType::Float2;
 			}
-			else if (string == "Float3")
+			else if (strcmp(string, "Float3") == 0)
 			{
 				return PropertyType::Float3;
 			}
-			else if (string == "Float4")
+			else if (strcmp(string, "Float4") == 0)
 			{
 				return PropertyType::Float4;
 			}
-			else if (string == "Color")
+			else if (strcmp(string, "Color") == 0)
 			{
 				return PropertyType::Color;
 			}

@@ -38,9 +38,11 @@ namespace Lamp
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
-	void Renderer::DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount)
 	{
-		glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		vertexArray->Bind();
+		glDrawElements(GL_LINES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

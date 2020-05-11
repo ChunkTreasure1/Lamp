@@ -4,6 +4,8 @@
 #include "BufferLayout.h"
 #include <glm/glm.hpp>
 
+#include "Lamp/Core/Core.h"
+
 namespace Lamp
 {
 	struct Vertex
@@ -17,6 +19,7 @@ namespace Lamp
 	{
 	public:
 		VertexBuffer(std::vector<Vertex>& pVertices, uint32_t size);
+		VertexBuffer(uint32_t size);
 		~VertexBuffer();
 
 		void Bind() const;
@@ -25,9 +28,11 @@ namespace Lamp
 		inline void SetBufferLayout(const BufferLayout& buff) { m_BufferLayout = buff; }
 		inline BufferLayout& GetBufferLayout() { return m_BufferLayout; }
 		void SetVertices(std::vector<Vertex>& pVertices, uint32_t size);
+		void SetData(const void* data, uint32_t size);
 
 	public:
-		static VertexBuffer* Create(std::vector<Vertex>& pVertices, uint32_t size);
+		static Ref<VertexBuffer> Create(std::vector<Vertex>& pVertices, uint32_t size);
+		static Ref<VertexBuffer> Create(uint32_t size);
 
 	private:
 		uint32_t m_RendererID;
@@ -38,6 +43,7 @@ namespace Lamp
 	{
 	public:
 		IndexBuffer(std::vector<uint32_t>& pIndices, uint32_t count);
+		IndexBuffer(uint32_t* pIndices, uint32_t count);
 		~IndexBuffer();
 
 		void Bind() const;
@@ -46,7 +52,8 @@ namespace Lamp
 		uint32_t GetCount() { return m_Count; }
 
 	public:
-		static IndexBuffer* Create(std::vector<uint32_t>& pIndices, uint32_t size);
+		static Ref<IndexBuffer> Create(std::vector<uint32_t>& pIndices, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* pIndices, uint32_t count);
 
 	private:
 		uint32_t m_RendererID;

@@ -12,7 +12,7 @@ namespace Lamp
 	{
 	public:
 		Brush2D(const std::string& spritePath)
-			: m_SpritePath(spritePath), m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1)
+			: m_SpritePath(spritePath), m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1), m_ShouldCollide(false)
 		{
 			m_Sprite = Texture2D::Create(spritePath);
 		}
@@ -41,7 +41,6 @@ namespace Lamp
 	private:
 		std::string m_SpritePath;
 		Ref<Texture2D> m_Sprite;
-
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

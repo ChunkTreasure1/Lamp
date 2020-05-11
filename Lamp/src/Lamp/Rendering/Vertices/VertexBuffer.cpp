@@ -20,6 +20,14 @@ namespace Lamp
 		}
 	}
 
+	VertexBuffer::VertexBuffer(uint32_t size)
+	{
+		glGenBuffers(1, &m_RendererID);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+
 	VertexBuffer::~VertexBuffer()
 	{
 		glDeleteBuffers(1, &m_RendererID);
@@ -41,9 +49,22 @@ namespace Lamp
 		glBufferData(GL_ARRAY_BUFFER, size, &pVertices[0], GL_DYNAMIC_DRAW);
 	}
 
-	VertexBuffer* VertexBuffer::Create(std::vector<Vertex>& pVertices, uint32_t size)
+	void VertexBuffer::SetData(const void* data, uint32_t size)
 	{
-		return new VertexBuffer(pVertices, size);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	Ref<VertexBuffer> VertexBuffer::Create(std::vector<Vertex>& pVertices, uint32_t size)
+	{
+		return std::make_shared<VertexBuffer>(pVertices, size);
+	}
+
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	{
+		return std::make_shared<VertexBuffer>(size);
 	}
 
 	//////Index Buffer//////
@@ -54,6 +75,14 @@ namespace Lamp
 		glGenBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), &pIndices[0], GL_STATIC_DRAW);
+	}
+
+	IndexBuffer::IndexBuffer(uint32_t* pIndices, uint32_t count)
+	{
+		glGenBuffers(1, &m_RendererID);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), pIndices, GL_STATIC_DRAW);
 	}
 
 	IndexBuffer::~IndexBuffer()
@@ -71,8 +100,12 @@ namespace Lamp
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	IndexBuffer* IndexBuffer::Create(std::vector<uint32_t>& pIndices, uint32_t size)
+	Ref<IndexBuffer> IndexBuffer::Create(std::vector<uint32_t>& pIndices, uint32_t size)
 	{
-		return new IndexBuffer(pIndices, size);
+		return std::make_shared<IndexBuffer>(pIndices, size);
+	}
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* pIndices, uint32_t count)
+	{
+		return std::make_shared<IndexBuffer>(pIndices, count);
 	}
 }

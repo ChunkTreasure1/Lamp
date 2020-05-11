@@ -16,19 +16,17 @@ namespace Lamp
 	{
 		m_pVertexArray = VertexArray::Create();
 
-		Ref<VertexBuffer> pBuffer;
-		pBuffer.reset(VertexBuffer::Create(m_Vertices, sizeof(Vertex) * m_Vertices.size()));
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * m_Vertices.size());
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float3, "a_Normal" },
 			{ ElementType::Float2, "a_TexCoords" }
-		});
+			});
 
 		m_pVertexArray->AddVertexBuffer(pBuffer);
 
-		Ref<IndexBuffer> pIndexBuffer;
-		pIndexBuffer.reset(IndexBuffer::Create(m_Indices, m_Indices.size()));
+		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, m_Indices.size());
 		m_pVertexArray->SetIndexBuffer(pIndexBuffer);
 
 		m_pVertexArray->Unbind();

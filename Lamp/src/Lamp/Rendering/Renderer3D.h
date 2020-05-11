@@ -15,6 +15,7 @@ namespace Lamp
 
 		static void Begin(PerspectiveCamera& camera, bool isMain = true);
 		static void End();
+		static void Flush();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat);
 		static void DrawSphere();
@@ -24,7 +25,9 @@ namespace Lamp
 
 	private:
 		static void CreateSphere(float radius);
-
 		static Ref<FrameBuffer> m_pFrameBuffer;
+
+		static void StartNewBatch();
+		static void ResetBatchData();
 	};
 }

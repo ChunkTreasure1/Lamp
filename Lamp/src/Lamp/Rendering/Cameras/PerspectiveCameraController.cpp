@@ -26,15 +26,12 @@ namespace Lamp
 		{
 			m_RightMouseButtonPressed = true;
 			Application::Get().GetWindow().ShowCursor(false);
-			m_LastHadControl = false;
-			m_HasControl = true;
+			m_LastHadControl = true;
 		}
 		if (Input::IsMouseButtonReleased(1))
 		{
 			m_RightMouseButtonPressed = false;
 			Application::Get().GetWindow().ShowCursor(true);
-
-			m_LastHadControl = true;
 			m_HasControl = false;
 		}
 
@@ -64,7 +61,7 @@ namespace Lamp
 	void PerspectiveCameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		//dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
+		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
 	}
@@ -105,26 +102,24 @@ namespace Lamp
 
 		Ray ray;
 		ray.origin = m_Camera.GetPosition();
-		ray.direction = -vDir;
+		ray.direction = vDir;
 
-		SpherePhysicsObject obj(6);
+		SpherePhysicsObject obj(3.f);
 		obj.SetPosition({ 0.f, 0.f, 0.f });
 
 		bool result = Physics::IntersectRaySphere(ray, obj);
 	}
 
-	bool PerspectiveCameraController::Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size, glm::vec2 topLeft, glm::vec2 widthHeight)
+	bool PerspectiveCameraController::Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size)
 	{
-		int viewport[4] = { 0, 0, size.x, size.y };
-
 		glm::vec4 vIn;
-		vIn.x = (viewPos.x - viewport[0]) * 2 / viewport[2] - 1.f;
-		vIn.y = (viewPos.y - viewport[1]) * 2 / viewport[3] - 1.f;
+		vIn.x = (viewPos.x / size.x) * 2.f - 1;
+		vIn.y = (viewPos.y / size.y) * 2.f - 1;
 		vIn.z = viewPos.z;
 		vIn.w = 1.f;
 
 		glm::mat4 mInv = glm::inverse(m_Camera.GetViewProjectionMatrix());
-		glm::vec4 vOut = vIn * mInv;
+		glm::vec4 vOut =  mInv * vIn;
 		if (vOut.w == 0.f)
 		{
 			return false;
@@ -147,12 +142,12 @@ namespace Lamp
 	{
 		if (m_RightMouseButtonPressed)
 		{
-			if (!m_LastHadControl && m_HasControl)
+			if (!m_HasControl)
 			{
 				m_LastX = e.GetX();
 				m_LastY = e.GetY();
 
-				m_LastHadControl = m_HasControl;
+				m_HasControl = true;
 			}
 
 			float xOffset = e.GetX() - m_LastX;
