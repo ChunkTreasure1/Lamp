@@ -41,7 +41,7 @@ namespace Lamp
 		void CalculateModelMatrix()
 		{
 			m_ModelMatrix = glm::translate(glm::mat4(1.f), m_Position)
-				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.x), glm::vec3(1.f, 0.f, 0.f))
+				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.x + 90.f), glm::vec3(1.f, 0.f, 0.f))
 				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.y), glm::vec3(0.f, 1.f, 0.f))
 				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.z), glm::vec3(0.f, 0.f, 1.f))
 				* glm::scale(glm::mat4(1.f), m_Scale);

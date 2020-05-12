@@ -2,6 +2,7 @@
 #include "Model.h"
 
 #include "Lamp/Rendering/Renderer3D.h"
+#include "glm/glm.hpp"
 
 namespace Lamp
 {

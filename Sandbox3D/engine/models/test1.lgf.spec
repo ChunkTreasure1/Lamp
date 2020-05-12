@@ -1,8 +1,8 @@
-<Geometry name="C:\Programing\Lamp\Sandbox\engine\models\top">
+<Geometry name="C:\Programing\Lamp\Sandbox3D\engine\models\test1">
 	<Meshes>
 		<Mesh matId="0">
-			<VerticeCount count="7768"/>
-			<IndiceCount count="11664"/>
+			<VerticeCount count="24"/>
+			<IndiceCount count="36"/>
 		</Mesh>
 	</Meshes>
 	<Materials>

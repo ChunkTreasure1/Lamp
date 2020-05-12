@@ -1,6 +1,6 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="engine/models/test.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000"/>
+		<Brush lgfPath="engine/models/test1.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000"/>
 	</Brushes>
 </Level>
 
