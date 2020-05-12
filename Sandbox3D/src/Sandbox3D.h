@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 #include <Lamp/Brushes/Brush.h>
+#include <Lamp/Event/MouseEvent.h>
 
 namespace Sandbox3D
 {
@@ -24,9 +25,10 @@ namespace Sandbox3D
 
 	private:
 		void CreateDockspace();
-		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		void GetInput();
 		void RenderGrid();
+
+		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
@@ -52,6 +54,7 @@ namespace Sandbox3D
 
 		//Perspective
 		const float m_AspectRatio = 1.7f;
+		bool m_PerspectiveFocused = false;
 		
 		//Asset browser
 		Lamp::File m_SelectedFile;
@@ -66,6 +69,7 @@ namespace Sandbox3D
 		bool m_InspectiorOpen = true;
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
+		glm::vec2 m_WindowSize = glm::vec2(0, 0);
 		std::shared_ptr<Lamp::Shader> m_pShader;
 
 		//Model importer

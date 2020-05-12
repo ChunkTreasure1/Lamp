@@ -11,7 +11,7 @@
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
-		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(45.f, 0.1f, 100.f), m_pShader(nullptr)
+		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 	}
@@ -38,10 +38,10 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnImGuiRender(Lamp::Timestep ts)
 	{
-		//CreateDockspace();	
+		CreateDockspace();	
 
-		//UpdatePerspective();
-		//UpdateAssetBrowser();
+		UpdatePerspective();
+		UpdateAssetBrowser();
 		UpdateProperties();
 		UpdateModelImporter();
 	}
@@ -63,12 +63,24 @@ namespace Sandbox3D
 	{
 		if (Lamp::Input::IsMouseButtonPressed(0))
 		{
-			m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PCam.ScreenToWorldCoords(m_MouseHoverPos, glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetHeight())), m_PCam.GetCamera().GetPosition());
+			if (m_PerspectiveHover && m_PerspectiveFocused)
+			{
+				m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PCam.ScreenToWorldCoords(m_MouseHoverPos, m_WindowSize), m_PCam.GetCamera().GetPosition());
+			}
 			m_pSelectedEntity = nullptr;
 
 			m_MousePressed = true;
 		}
 		else if (Lamp::Input::IsMouseButtonReleased(0))
+		{
+			m_MousePressed = false;
+		}
+
+		if (Lamp::Input::IsMouseButtonPressed(1))
+		{
+			m_MousePressed = true;
+		}
+		else if (Lamp::Input::IsMouseButtonReleased(1))
 		{
 			m_MousePressed = false;
 		}
@@ -99,5 +111,11 @@ namespace Sandbox3D
 		{
 			Lamp::Renderer3D::DrawLine(glm::vec3(pos.x + 0.5f * (float)x - 1.5f, pos.y, pos.z - 5.f), glm::vec3(pos.x + 0.5f * (float)x - 1.5f, pos.y, pos.z + 5.f), 1.f);
 		}
+	}
+	bool Sandbox3D::OnMouseMoved(Lamp::MouseMovedEvent& e)
+	{
+		m_PCam.OnMouseMoved(m_MouseHoverPos);
+
+		return true;
 	}
 }

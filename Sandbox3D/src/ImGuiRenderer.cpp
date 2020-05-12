@@ -6,6 +6,7 @@
 #include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 
 namespace Sandbox3D
 {
@@ -13,6 +14,37 @@ namespace Sandbox3D
 	{
 		ImGui::Begin("Perspective");
 		{
+			if (m_MousePressed)
+			{
+
+				ImGuiIO& io = ImGui::GetIO();
+
+				glm::vec2 mousePos = glm::vec2(io.MousePos.x, io.MousePos.y);
+
+				glm::vec2 windowPos;
+				glm::vec2 windowSize;
+
+				ImGui::Begin("Perspective");
+				{
+					windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+					windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+
+					m_PerspectiveFocused = ImGui::IsItemFocused();
+				}
+				ImGui::End();
+
+				m_WindowSize = windowSize;
+
+
+				if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
+					mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
+				{
+					mousePos -= windowPos;
+					m_MouseHoverPos = mousePos;
+
+				}
+			}
+
 			m_PerspectiveHover = ImGui::IsWindowHovered();
 			m_PCam.SetHasControl(m_PerspectiveHover);
 
@@ -92,42 +124,6 @@ namespace Sandbox3D
 		}
 		ImGui::Begin("Properties", &m_InspectiorOpen);
 		{
-			//if (m_MousePressed)
-			//{
-
-			//	ImGuiIO& io = ImGui::GetIO();
-			//	glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
-
-			//	glm::vec2 windowPos;
-			//	glm::vec2 windowSize;
-
-			//	ImGui::Begin("Perspective");
-			//	{
-			//		windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-			//		windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-			//	}
-			//	ImGui::End();
-
-
-			//	if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
-			//		mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
-			//	{
-			//		mousePos -= windowPos;
-
-			//		for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get()->GetEntities())
-			//		{
-			//			//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize)))
-			//			//{
-			//			//	m_pSelectedEntity = pEnt;
-			//			//}
-			//			//else
-			//			//{
-			//			//	m_pSelectedEntity = nullptr;
-			//			//}
-			//		}
-			//	}
-			//}
-
 			if (m_pSelectedEntity)
 			{
 				if (ImGui::CollapsingHeader("Transform"))
@@ -378,13 +374,6 @@ namespace Sandbox3D
 		}
 
 		ImGui::End();
-	}
-
-	bool Sandbox3D::OnMouseMoved(Lamp::MouseMovedEvent& e)
-	{
-		m_MouseHoverPos = glm::vec2(e.GetX(), e.GetY());
-
-		return true;
 	}
 
 }

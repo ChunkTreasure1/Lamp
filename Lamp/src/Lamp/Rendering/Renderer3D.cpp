@@ -80,7 +80,7 @@ namespace Lamp
 		delete[] pLineIndices;
 		//////////////////
 
-		//m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}
 
 	void Renderer3D::Shutdown()
@@ -92,7 +92,7 @@ namespace Lamp
 	{
 		if (isMain)
 		{
-			//m_pFrameBuffer->Bind();
+			m_pFrameBuffer->Bind();
 			Lamp::Renderer::Clear();
 		}
 
@@ -103,7 +103,7 @@ namespace Lamp
 
 	void Renderer3D::End()
 	{
-		//m_pFrameBuffer->Unbind();
+		m_pFrameBuffer->Unbind();
 
 		uint32_t dataSize = (uint8_t*)s_pData->pLineVertexBufferPtr - (uint8_t*)s_pData->pLineVertexBufferBase;
 		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
