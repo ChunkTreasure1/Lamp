@@ -8,12 +8,53 @@
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
+#include <Lamp/Physics/Colliders/BoundingSphere.h>
+#include <Lamp/Physics/Colliders/AABB.h>
+
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
+
+		std::shared_ptr<Lamp::BoundingSphere> sphere1 = std::make_shared<Lamp::BoundingSphere>(glm::vec3(0.f, 0.f, 0.f), 1.f);
+		std::shared_ptr<Lamp::BoundingSphere> sphere2 = std::make_shared<Lamp::BoundingSphere>(glm::vec3(0.f, 3.f, 0.f), 1.f);
+		std::shared_ptr<Lamp::BoundingSphere> sphere3 = std::make_shared<Lamp::BoundingSphere>(glm::vec3(0.f, 0.f, 2.f), 1.f);
+		std::shared_ptr<Lamp::BoundingSphere> sphere4 = std::make_shared<Lamp::BoundingSphere>(glm::vec3(1.f, 0.f, 0.f), 1.f);
+
+		Lamp::IntersectData intersect1 = sphere1->IntersectBoundingSphere(sphere2);
+		Lamp::IntersectData intersect2 = sphere1->IntersectBoundingSphere(sphere3);
+		Lamp::IntersectData intersect3 = sphere1->IntersectBoundingSphere(sphere4);
+
+		std::string int1 = std::to_string(intersect1.IsIntersecting) + ": " + std::to_string(intersect1.Distance);
+		std::string int2 = std::to_string(intersect2.IsIntersecting) + ": " + std::to_string(intersect2.Distance);
+		std::string int3 = std::to_string(intersect3.IsIntersecting) + ": " + std::to_string(intersect3.Distance);
+
+		LP_INFO(int1);
+		LP_INFO(int2);
+		LP_INFO(int3);
+
+		std::shared_ptr<Lamp::AABB> ab1 = std::make_shared<Lamp::AABB>(glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
+		std::shared_ptr<Lamp::AABB> ab2 = std::make_shared<Lamp::AABB>(glm::vec3(1.f, 1.f, 1.f), glm::vec3(2.f, 2.f, 2.f));
+		std::shared_ptr<Lamp::AABB> ab3 = std::make_shared<Lamp::AABB>(glm::vec3(1.f, 0.f, 0.f), glm::vec3(2.f, 1.f, 1.f));
+		std::shared_ptr<Lamp::AABB> ab4 = std::make_shared<Lamp::AABB>(glm::vec3(0.f, 0.f, -2.f), glm::vec3(1.f, 1.f, -1.f));
+		std::shared_ptr<Lamp::AABB> ab5 = std::make_shared<Lamp::AABB>(glm::vec3(0.f, 0.5f, 0.f), glm::vec3(1.f, 1.5f, 1.f));
+	
+		Lamp::IntersectData intersect4 = ab1->IntersectAABB(ab2);
+		Lamp::IntersectData intersect5 = ab1->IntersectAABB(ab3);
+		Lamp::IntersectData intersect6 = ab1->IntersectAABB(ab4);
+		Lamp::IntersectData intersect7 = ab1->IntersectAABB(ab5);
+
+		std::string int4 = std::to_string(intersect4.IsIntersecting) + ": " + std::to_string(intersect4.Distance);
+		std::string int5 = std::to_string(intersect5.IsIntersecting) + ": " + std::to_string(intersect5.Distance);
+		std::string int6 = std::to_string(intersect6.IsIntersecting) + ": " + std::to_string(intersect6.Distance);
+		std::string int7 = std::to_string(intersect7.IsIntersecting) + ": " + std::to_string(intersect7.Distance);
+	
+		LP_INFO(int4);
+		LP_INFO(int5);
+		LP_INFO(int6);
+		LP_INFO(int7);
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)

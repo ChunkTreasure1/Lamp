@@ -12,7 +12,7 @@ namespace Lamp
 		{}
 		virtual ~SpherePhysicalEntity() override {}
 	
-		virtual bool Intersect(const Ray& ray) const;
+		virtual bool Intersect(const Ray& ray) const override;
 
 		//Getting
 		inline const float GetRadius() { return m_Radius; }

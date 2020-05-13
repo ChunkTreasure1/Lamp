@@ -16,10 +16,12 @@ namespace Lamp
 		virtual ~PhysicalEntity() {}
 
 		virtual bool Intersect(const Ray& ray) const = 0;
+		void Integrate(float delta);
 
 		//Getting
 		inline IEntity* GetEntity() { return m_pEntity; }
 		inline Brush* GetBrush() { return m_pBrush; }
+		inline const glm::vec3& GetVelocity() const { return m_Velocity; }
 
 		//Setting
 		inline void SetEntity(IEntity* entity) { m_pEntity = entity; }
@@ -28,5 +30,7 @@ namespace Lamp
 	protected:
 		IEntity* m_pEntity;
 		Brush* m_pBrush;
+
+		glm::vec3 m_Velocity;
 	};
 }

@@ -185,6 +185,9 @@
     <ClInclude Include="src\Lamp\Meshes\Material.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
@@ -592,6 +595,8 @@
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
