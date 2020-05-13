@@ -9,6 +9,7 @@ namespace Lamp
 	public:
 
 		static void CheckCollisions() { Collision::CheckCollisions(); }
+		static std::pair<float, float> GetVelocities(Ref<PhysicalEntity>& coll1, Ref<PhysicalEntity>& coll2);
 
 		//Getting
 		static const float GetGravity() { return m_Gravity; }

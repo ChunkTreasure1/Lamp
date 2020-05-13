@@ -188,9 +188,11 @@
     <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\Lamp\Physics\Ray.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.h" />
@@ -583,6 +585,7 @@
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\Lamp\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Entity\Base\EntityManager.cpp" />
+    <ClCompile Include="src\Lamp\Entity\Base\Physical\PhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
@@ -597,8 +600,10 @@
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />

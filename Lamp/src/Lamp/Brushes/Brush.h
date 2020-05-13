@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Lamp/Meshes/Model.h"
-#include "Lamp/Entity/Base/Physical/SpherePhysicalEntity.h"
+#include "Lamp/Entity/Base/Physical/PhysicalEntity.h"
 
 namespace Lamp
 {
@@ -14,8 +14,9 @@ namespace Lamp
 		Brush(Ref<Model> model)
 			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Model(model)
 		{
-			m_PhysicalEntity = std::make_shared<SpherePhysicalEntity>(1.5f);
+			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
 			m_PhysicalEntity->SetBrush(this);
+			m_PhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 		}
 
 		void Draw()

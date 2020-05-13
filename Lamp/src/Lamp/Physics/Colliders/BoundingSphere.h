@@ -12,12 +12,13 @@ namespace Lamp
 	{
 	public:
 		BoundingSphere(const glm::vec3& center, float radius)
-			: m_Center(center), m_Radius(radius)
+			: Collider(CollType::Sphere), m_Center(center), m_Radius(radius)
 		{}
 		~BoundingSphere() {}
 
 		virtual IntersectData IntersectRay(const Ray& ray) const override;
-		virtual IntersectData IntersectBoundingSphere(const Ref<BoundingSphere>& other) const override;
+		virtual IntersectData Intersect(const Ref<Collider>& other) const override;
+		virtual void Transform(const glm::vec3& translation) override;
 
 		//Getting
 		inline const glm::vec3& GetCenter() { return m_Center; }

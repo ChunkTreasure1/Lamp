@@ -5,15 +5,33 @@
 
 namespace Lamp
 {
-	IntersectData AABB::IntersectAABB(const Ref<AABB>& other) const
+	IntersectData AABB::IntersectRay(const Ray& ray) const
 	{
-		glm::vec3 distancesA = other->GetMinExtents() - GetMaxExtents();
-		glm::vec3 distancesB = GetMinExtents() - other->GetMaxExtents();
+		return IntersectData(false, glm::vec3(0.f));
+	}
 
-		glm::vec3 distances = glm::max(distancesA, distancesB);
+	IntersectData AABB::Intersect(const Ref<Collider>& other) const
+	{
+		if (other->GetType() == CollType::AABB)
+		{
+			Ref<AABB> coll = std::dynamic_pointer_cast<AABB>(other);
 
-		float maxDistance = Math::Max(distances);
+			glm::vec3 distancesA = coll->GetMinExtents() - GetMaxExtents();
+			glm::vec3 distancesB = GetMinExtents() - coll->GetMaxExtents();
 
-		return IntersectData(maxDistance < 0, maxDistance);
+			glm::vec3 distances = glm::max(distancesA, distancesB);
+
+			float maxDistance = Math::Max(distances);
+
+			return IntersectData(maxDistance < 0, distances);
+		}
+
+		return IntersectData(false, glm::vec3(0.f));
+	}
+
+	void AABB::Transform(const glm::vec3& translation)
+	{
+		m_MaxExtents += translation;
+		m_MinExtents += translation;
 	}
 }

@@ -10,22 +10,38 @@ namespace Lamp
 	
 	struct IntersectData
 	{
-		IntersectData(const bool intersecting, const float dist)
-			: IsIntersecting(intersecting), Distance(dist)
+		IntersectData(const bool intersecting, const glm::vec3 dir)
+			: IsIntersecting(intersecting), Direction(dir)
 		{}
 
 		const bool IsIntersecting;
-		const float Distance;
+		const glm::vec3 Direction;
+	};
+
+	enum class CollType
+	{
+		None = 1,
+		Sphere,
+		AABB,
+		Plane
 	};
 
 	class Collider
 	{
 	public:
-		Collider() {}
+		Collider(CollType type)
+			: m_Type(type)
+		{}
 		~Collider() {}
 
-		virtual IntersectData IntersectRay(const Ray& ray) const { return IntersectData(false, 0.f); }
-		virtual IntersectData IntersectBoundingSphere(const Ref<BoundingSphere>& other) const { return IntersectData(false, 0.f); }
-		virtual IntersectData IntersectAABB(const Ref<AABB>& other) const { return IntersectData(false, 0.f); }
+		virtual IntersectData IntersectRay(const Ray& ray) const = 0;
+		virtual IntersectData Intersect(const Ref<Collider>& other) const = 0;
+		virtual void Transform(const glm::vec3& translation) = 0;
+
+		//Getting
+		inline CollType GetType() const { return m_Type; }
+
+	private:
+		CollType m_Type = CollType::None;
 	};
 }
