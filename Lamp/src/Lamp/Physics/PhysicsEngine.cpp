@@ -33,8 +33,8 @@ namespace Lamp
 					glm::vec3 dir = glm::normalize(data.Direction);
 					glm::vec3 otherDir = glm::reflect(dir, glm::normalize(m_PhysicalEntites[i]->GetVelocity()));
 
-					m_PhysicalEntites[i]->SetVelocity(glm::reflect(m_PhysicalEntites[i]->GetVelocity(), otherDir));
-					m_PhysicalEntites[j]->SetVelocity(glm::reflect(m_PhysicalEntites[j]->GetVelocity(), dir));
+					m_PhysicalEntites[i]->SetVelocity(glm::reflect(glm::normalize(m_PhysicalEntites[i]->GetVelocity()), otherDir));
+					m_PhysicalEntites[j]->SetVelocity(glm::reflect(glm::normalize(m_PhysicalEntites[j]->GetVelocity()), dir));
 				}
 			}
 		}

@@ -11,6 +11,7 @@
 #include <Lamp/Physics/Colliders/BoundingSphere.h>
 #include <Lamp/Physics/Colliders/AABB.h>
 #include <Lamp/Physics/PhysicsEngine.h>
+#include <Lamp/Physics/Physics.h>
 
 namespace Sandbox3D
 {
@@ -23,9 +24,11 @@ namespace Sandbox3D
 		auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 
 		brush1->SetPosition({ -10, 1, 0 });
-		brush2->SetPosition({ 10, 1, 0 });
-		brush1->GetPhysicalEntity()->SetVelocity({ 1, 0, 0 });
-		brush2->GetPhysicalEntity()->SetVelocity({ -1, 0, 0 });
+		brush2->SetPosition({ 10, 1.5, 0 });
+		brush1->GetPhysicalEntity()->SetVelocity({ 0, 0, 0 });
+		brush2->GetPhysicalEntity()->SetVelocity({ 0, 0, 0 });
+		brush1->GetPhysicalEntity()->SetMass(1.f);
+		brush2->GetPhysicalEntity()->SetMass(2.f);
 
 		Lamp::PhysicsEngine::Get()->AddEntity(brush1->GetPhysicalEntity());
 		Lamp::PhysicsEngine::Get()->AddEntity(brush2->GetPhysicalEntity());
