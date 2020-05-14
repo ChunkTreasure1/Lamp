@@ -93,7 +93,7 @@ namespace Lamp
 			ray.origin = origin;
 			ray.direction = pos;
 
-			if (brush->GetPhysicalEntity()->Intersect(ray))
+			if (brush->GetPhysicalEntity()->GetCollider()->IntersectRay(ray).IsIntersecting)
 			{
 				return brush;
 			}

@@ -8,18 +8,40 @@
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
+#include <Lamp/Physics/Colliders/BoundingSphere.h>
+#include <Lamp/Physics/Colliders/AABB.h>
+#include <Lamp/Physics/PhysicsEngine.h>
+#include <Lamp/Physics/Physics.h>
+
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
+
+		auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
+		auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
+
+		brush1->SetPosition({ -10, 1, 0 });
+		brush2->SetPosition({ 10, 1.5, 0 });
+		brush1->GetPhysicalEntity()->SetVelocity({ 0, 0, 0 });
+		brush2->GetPhysicalEntity()->SetVelocity({ 0, 0, 0 });
+		brush1->GetPhysicalEntity()->SetMass(1.f);
+		brush2->GetPhysicalEntity()->SetMass(2.f);
+
+		Lamp::PhysicsEngine::Get()->AddEntity(brush1->GetPhysicalEntity());
+		Lamp::PhysicsEngine::Get()->AddEntity(brush2->GetPhysicalEntity());
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)
 	{
 		m_PCam.Update(ts);
 		GetInput();
+
+		Lamp::PhysicsEngine::Get()->Simulate(ts);
+		Lamp::PhysicsEngine::Get()->HandleCollisions();
+
 		Lamp::EntityManager::Get()->Update(ts);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
@@ -110,7 +132,7 @@ namespace Sandbox3D
 
 		for (size_t x = 1; x <= 10; x++)
 		{
-			Lamp::Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, - 0.5f * (float)x), glm::vec3(5.f, 0.f, -0.5f * (float)x), 1.f);
+			Lamp::Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, -0.5f * (float)x), glm::vec3(5.f, 0.f, -0.5f * (float)x), 1.f);
 		}
 
 		for (size_t z = 1; z <= 10; z++)

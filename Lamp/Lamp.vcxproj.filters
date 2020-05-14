@@ -1378,6 +1378,11 @@
     <ClInclude Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.h" />
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
     <ClInclude Include="src\Lamp\Physics\Ray.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
+    <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
@@ -1487,5 +1492,10 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
     <ClCompile Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp" />
+    <ClCompile Include="src\Lamp\Entity\Base\Physical\PhysicalEntity.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
   </ItemGroup>
 </Project>

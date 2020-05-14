@@ -218,6 +218,8 @@ namespace Sandbox3D
 			}
 			else if (m_pSelectedBrush)
 			{
+				ImGui::Text("Brush");
+
 				if (ImGui::CollapsingHeader("Transform"))
 				{
 					glm::vec3 pos = m_pSelectedBrush->GetPosition();
@@ -237,6 +239,19 @@ namespace Sandbox3D
 
 					ImGui::InputFloat3("Scale", s);
 					m_pSelectedBrush->SetScale(glm::make_vec3(s));
+				}
+
+				if (ImGui::CollapsingHeader("Physics"))
+				{
+					glm::vec3 vel = m_pSelectedBrush->GetPhysicalEntity()->GetVelocity();
+					float f[3] = { vel.x, vel.y, vel.z };
+
+					ImGui::InputFloat3("Velocity", f);
+					m_pSelectedBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
+
+					float m = m_pSelectedBrush->GetPhysicalEntity()->GetMass();
+					ImGui::InputFloat("Mass", &m);
+					m_pSelectedBrush->GetPhysicalEntity()->SetMass(m);
 				}
 			}
 		}

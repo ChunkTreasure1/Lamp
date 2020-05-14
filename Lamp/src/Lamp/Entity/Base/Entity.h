@@ -8,7 +8,7 @@
 #include "Lamp/Event/Event.h"
 
 #include <algorithm>
-#include "Physical/SpherePhysicalEntity.h"
+#include "Physical/PhysicalEntity.h"
 
 class EntityManager;
 
@@ -20,8 +20,9 @@ namespace Lamp
 		IEntity()
 			: m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1), m_Name("")
 		{
-			m_pPhysicalEntity = std::make_shared<SpherePhysicalEntity>(3.f);
+			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
 			m_pPhysicalEntity->SetEntity(this);
+			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 		}
 		~IEntity() {}
 
