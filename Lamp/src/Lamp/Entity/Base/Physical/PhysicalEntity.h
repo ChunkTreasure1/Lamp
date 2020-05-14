@@ -15,7 +15,7 @@ namespace Lamp
 	public:
 		PhysicalEntity()
 			: m_pEntity(nullptr), m_pBrush(nullptr), m_IsPhysicalized(false), m_LastPosition({0.f, 0.f, 0.f}),
-			m_Mass(0.f)
+			m_Mass(0.f), m_Velocity(0.f)
 		{
 		}
 		~PhysicalEntity() {}

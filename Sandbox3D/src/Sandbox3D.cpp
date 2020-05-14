@@ -22,13 +22,11 @@ namespace Sandbox3D
 
 		auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
+		auto light = Lamp::BrushManager::Get()->Create("engine/models/lightModel.lgf");
 
 		brush1->SetPosition({ -10, 1, 0 });
 		brush2->SetPosition({ 10, 1.5, 0 });
-		brush1->GetPhysicalEntity()->SetVelocity({ 0, 0, 0 });
-		brush2->GetPhysicalEntity()->SetVelocity({ 0, 0, 0 });
-		brush1->GetPhysicalEntity()->SetMass(1.f);
-		brush2->GetPhysicalEntity()->SetMass(2.f);
+		light->SetPosition({ 5, 3, 2 });
 
 		Lamp::PhysicsEngine::Get()->AddEntity(brush1->GetPhysicalEntity());
 		Lamp::PhysicsEngine::Get()->AddEntity(brush2->GetPhysicalEntity());

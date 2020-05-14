@@ -60,7 +60,7 @@ namespace Lamp
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
-		});
+			});
 		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
 		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -115,7 +115,7 @@ namespace Lamp
 	{
 		s_pData->material.GetShader()->Bind();
 		s_pData->material.GetShader()->UploadMat4("u_ViewProjection", s_pData->pCamera->GetViewProjectionMatrix());
-		
+
 		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
 	}
 
@@ -128,11 +128,28 @@ namespace Lamp
 
 		mat.GetShader()->Bind();
 		mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-
 		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->pCamera->GetViewProjectionMatrix());
 		mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->pCamera->GetPosition());
-		mat.GetShader()->UploadFloat3("u_SpotLight.position", s_pData->pCamera->GetPosition());
-		mat.GetShader()->UploadFloat3("u_SpotLight.direction", s_pData->pCamera->GetFront());
+
+		/////Lighting/////
+		glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
+		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
+
+		mat.GetShader()->UploadFloat("u_Material.shininess", mat.GetShininess());
+
+		mat.GetShader()->UploadFloat3("u_DirectionalLight.ambient", { 0.2f, 0.2f, 0.2f });
+		mat.GetShader()->UploadFloat3("u_DirectionalLight.diffuse", { 0.5f, 0.5f, 0.5f });
+		mat.GetShader()->UploadFloat3("u_DirectionalLight.specular", { 1.f, 1.f, 1.f });
+		mat.GetShader()->UploadFloat3("u_DirectionalLight.direction", { 1.f, -1.f, 0.5f });
+
+		mat.GetShader()->UploadFloat("u_PointLight.constant", 1.f);
+		mat.GetShader()->UploadFloat("u_PointLight.linear", 0.09f);
+		mat.GetShader()->UploadFloat("u_PointLight.quadratic", 0.032f);
+		mat.GetShader()->UploadFloat3("u_PointLight.position", { 5, 3, 2 });
+		mat.GetShader()->UploadFloat3("u_PointLight.ambient", { 0.5f, 0.2f, 0.2f });
+		mat.GetShader()->UploadFloat3("u_PointLight.diffuse", { 0.7f, 0.3f, 0.5f });
+		mat.GetShader()->UploadFloat3("u_PointLight.specular", { 1.f, 1.f, 1.f });
+		/////////////////
 
 		mesh.GetVertexArray()->Bind();
 		Renderer::DrawIndexed(mesh.GetVertexArray());

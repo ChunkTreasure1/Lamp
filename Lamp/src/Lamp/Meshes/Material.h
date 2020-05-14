@@ -8,11 +8,11 @@ namespace Lamp
 	{
 	public:
 		Material(Ref<Texture2D> diff, Ref<Texture2D> spec, Ref<Shader> shader, uint32_t matIndex)
-			: m_pDiffuse(diff), m_pSpecular(spec), m_pShader(shader), m_Shininess(1.f), m_Index(matIndex)
+			: m_pDiffuse(diff), m_pSpecular(spec), m_pShader(shader), m_Shininess(32.f), m_Index(matIndex)
 		{}
 
 		Material(uint32_t index)
-			: m_Index(index), m_Shininess(1.f)
+			: m_Index(index), m_Shininess(32.f)
 		{}
 		//Setting
 		inline void SetDiffuse(Ref<Texture2D> diff) { m_pDiffuse = diff; }

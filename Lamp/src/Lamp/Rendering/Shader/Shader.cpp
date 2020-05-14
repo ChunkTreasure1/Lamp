@@ -114,6 +114,12 @@ namespace Lamp
 		uint32_t transfromLoc = glGetUniformLocation(m_ID, name.c_str());
 		glUniformMatrix4fv(transfromLoc, 1, GL_FALSE, glm::value_ptr(mat));
 	}
+	void Shader::UploadMat3(const std::string& name, const glm::mat3& mat)
+	{
+		uint32_t transfromLoc = glGetUniformLocation(m_ID, name.c_str());
+		glUniformMatrix3fv(transfromLoc, 1, GL_FALSE, glm::value_ptr(mat));
+	}
+
 	std::shared_ptr<Shader> Shader::Create(const std::string& vertexPath, const std::string& fragmentPath)
 	{
 		return std::make_shared<Shader>(vertexPath, fragmentPath);

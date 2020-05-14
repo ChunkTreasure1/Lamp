@@ -27,6 +27,8 @@ namespace Lamp
 		void UploadFloat4(const std::string& name, const glm::vec4& value) const;
 
 		void UploadMat4(const std::string& name, const glm::mat4& mat);
+		void UploadMat3(const std::string& name, const glm::mat3& mat);
+
 		inline const uint32_t GetID() const { return m_ID; }
 		inline std::string& GetVertexPath() { return m_VertexPath; }
 		inline const std::string& GetFragementPath() { return m_FragmentPath; }
