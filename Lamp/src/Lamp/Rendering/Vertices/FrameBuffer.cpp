@@ -34,6 +34,18 @@ namespace Lamp
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_Texture, 0);
 	}
 
+	FrameBuffer::FrameBuffer(const uint32_t width, const uint32_t height, bool state)
+	{
+		glGenFramebuffers(1, &m_RendererID);
+
+		glGenTextures(1, &m_DepthID);
+		glBindTexture(GL_TEXTURE_2D, m_DepthID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
 	FrameBuffer::~FrameBuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
@@ -72,5 +84,10 @@ namespace Lamp
 	std::shared_ptr<FrameBuffer> FrameBuffer::Create(const uint32_t width, const uint32_t height)
 	{
 		return std::make_shared<FrameBuffer>(width, height);
+	}
+
+	std::shared_ptr<FrameBuffer> FrameBuffer::CreateShadowBuffer(const uint32_t width, const uint32_t height)
+	{
+		return std::make_shared<FrameBuffer>(width, height, false);
 	}
 }

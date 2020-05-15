@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Lamp/Core/Application.h"
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
+#include "Lamp/Rendering/TextureCube/TextureCube.h"
 
 namespace Lamp
 {
@@ -33,14 +34,20 @@ namespace Lamp
 		LineVertex* pLineVertexBufferPtr = nullptr;
 		/////////////////
 
+		/////Skybox/////
+		Ref<VertexArray> pSkyBoxVertexArray;
+		Ref<Shader> SkyboxShader;
+		////////////////
+
 		Renderer3DStorage()
-			: material(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag"), 0)
+			: material(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/lineShader_vs.glsl", "engine/shaders/lineShader_fs.glsl"), 0)
 		{}
 
 		PerspectiveCamera* pCamera;
 		Ref<VertexArray> pSphereArray;
 
 		Material material;
+		Ref<TextureCube> cubeMap;
 	};
 
 	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
@@ -50,8 +57,25 @@ namespace Lamp
 	{
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_FRAMEBUFFER_SRGB);
+
+		glCullFace(GL_BACK);
+		glDepthFunc(GL_LEQUAL);
 
 		s_pData = new Renderer3DStorage();
+
+		std::vector<std::string> paths =
+		{
+			"engine/textures/skybox/right.jpg",
+			"engine/textures/skybox/left.jpg",
+			"engine/textures/skybox/top.jpg",
+			"engine/textures/skybox/bottom.jpg",
+			"engine/textures/skybox/front.jpg",
+			"engine/textures/skybox/back.jpg",
+		};
+		s_pData->cubeMap = TextureCube::Create(paths);
+		s_pData->SkyboxShader = Shader::Create("engine/shaders/skyboxShader_vs.glsl", "engine/shaders/skyboxShader_fs.glsl");
 
 		///////Line///////
 		s_pData->pLineVertexArray = VertexArray::Create();
@@ -60,7 +84,7 @@ namespace Lamp
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
-			});
+		});
 		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
 		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -78,6 +102,45 @@ namespace Lamp
 		s_pData->pLineVertexArray->SetIndexBuffer(pLineIB);
 
 		delete[] pLineIndices;
+		//////////////////
+
+		//////Skybox//////
+		std::vector<float> boxPositions =
+		{
+			-1, -1, -1,
+			 1, -1, -1,
+			 1,  1, -1,
+			-1,  1, -1,
+			-1, -1,  1,
+			 1, -1,  1,
+			 1,  1,  1,
+			-1,  1,  1
+		};
+
+		std::vector<uint32_t> boxIndicies =
+		{
+			0, 1, 3, 3, 1, 2,
+			1, 5, 2, 2, 5, 6,
+			5, 4, 6, 6, 4, 7,
+			4, 0, 7, 7, 0, 3,
+			3, 2, 7, 7, 2, 6,
+			4, 5, 0, 0, 5, 1
+		};
+
+		s_pData->pSkyBoxVertexArray = VertexArray::Create();
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, sizeof(float) * boxPositions.size());
+		pBuffer->SetBufferLayout
+		({
+			{ ElementType::Float3, "a_Position" }
+			});
+
+		s_pData->pSkyBoxVertexArray->AddVertexBuffer(pBuffer);
+
+
+		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, boxIndicies.size());
+		s_pData->pSkyBoxVertexArray->SetIndexBuffer(indexBuffer);
+
+		s_pData->pSkyBoxVertexArray->Unbind();
 		//////////////////
 
 		//m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
@@ -145,14 +208,32 @@ namespace Lamp
 		mat.GetShader()->UploadFloat("u_PointLight.constant", 1.f);
 		mat.GetShader()->UploadFloat("u_PointLight.linear", 0.09f);
 		mat.GetShader()->UploadFloat("u_PointLight.quadratic", 0.032f);
-		mat.GetShader()->UploadFloat3("u_PointLight.position", { 5, 3, 2 });
-		mat.GetShader()->UploadFloat3("u_PointLight.ambient", { 0.5f, 0.2f, 0.2f });
-		mat.GetShader()->UploadFloat3("u_PointLight.diffuse", { 0.7f, 0.3f, 0.5f });
+		mat.GetShader()->UploadFloat3("u_PointLight.position", { 0, 7, 0 });
+		mat.GetShader()->UploadFloat3("u_PointLight.ambient", { 0.2f, 0.2f, 0.2f });
+		mat.GetShader()->UploadFloat3("u_PointLight.diffuse", { 3.f, 3.f, 3.f });
 		mat.GetShader()->UploadFloat3("u_PointLight.specular", { 1.f, 1.f, 1.f });
 		/////////////////
 
 		mesh.GetVertexArray()->Bind();
 		Renderer::DrawIndexed(mesh.GetVertexArray());
+	}
+
+	void Renderer3D::DrawSkybox()
+	{
+		glDepthMask(GL_FALSE);
+		s_pData->cubeMap->Bind();
+		s_pData->SkyboxShader->Bind();
+
+		s_pData->pSkyBoxVertexArray->Bind();
+
+		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
+		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->pCamera->GetProjectionMatrix());
+
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->pCamera->GetViewMatrix()));
+		s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
+
+		Renderer::DrawIndexed(s_pData->pSkyBoxVertexArray);
+		glDepthMask(GL_TRUE);
 	}
 
 	void Renderer3D::DrawSphere()

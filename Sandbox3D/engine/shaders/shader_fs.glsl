@@ -57,9 +57,10 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - fragPos);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+
 	float diff = max(dot(normal, lightDir), 0.0);
-	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
+	float spec = pow(max(dot(normal, halfwayDir), 0.0), u_Material.shininess);
 
 	float distance = length(light.position - fragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
@@ -80,8 +81,9 @@ void main()
 	vec3 norm = normalize(v_Normal);
 	vec3 viewDir = normalize(u_CameraPosition - v_FragPos);
 
-	vec3 result = CalculateDirLight(u_DirectionalLight, norm, viewDir);
-	result += CalculatePointLight(u_PointLight, norm, v_FragPos, viewDir);
+	//CalculateDirLight(u_DirectionalLight, norm, viewDir);
+
+	vec3 result = CalculatePointLight(u_PointLight, norm, v_FragPos, viewDir);
 
 	FragColor = vec4(result, 1.0);
 }

@@ -20,6 +20,8 @@ namespace Lamp
 	public:
 		VertexBuffer(std::vector<Vertex>& pVertices, uint32_t size);
 		VertexBuffer(uint32_t size);
+		VertexBuffer(std::vector<float>& vertices, uint32_t size);
+
 		~VertexBuffer();
 
 		void Bind() const;
@@ -33,6 +35,7 @@ namespace Lamp
 	public:
 		static Ref<VertexBuffer> Create(std::vector<Vertex>& pVertices, uint32_t size);
 		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(std::vector<float>& vertices, uint32_t size);
 
 	private:
 		uint32_t m_RendererID;

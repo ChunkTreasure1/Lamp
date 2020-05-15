@@ -56,7 +56,7 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + vertexPath);
 		}
 
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -67,7 +67,7 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + fragmentPath);
 		}
 
 		m_ID = glCreateProgram();

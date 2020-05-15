@@ -28,6 +28,13 @@ namespace Lamp
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
 
+	VertexBuffer::VertexBuffer(std::vector<float>& vertices, uint32_t size)
+	{
+		glGenBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, &vertices[0], GL_STATIC_DRAW);
+	}
+
 	VertexBuffer::~VertexBuffer()
 	{
 		glDeleteBuffers(1, &m_RendererID);
@@ -65,6 +72,11 @@ namespace Lamp
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
 		return std::make_shared<VertexBuffer>(size);
+	}
+
+	Ref<VertexBuffer> VertexBuffer::Create(std::vector<float>& vertices, uint32_t size)
+	{
+		return std::make_shared<VertexBuffer>(vertices, size);
 	}
 
 	//////Index Buffer//////

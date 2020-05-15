@@ -142,14 +142,14 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\FlatColor.frag" />
-    <None Include="engine\shaders\FlatColor.vert" />
     <None Include="engine\shaders\lightShader_fs.glsl" />
     <None Include="engine\shaders\lightShader_vs.glsl" />
+    <None Include="engine\shaders\lineShader_fs.glsl" />
+    <None Include="engine\shaders\lineShader_vs.glsl" />
     <None Include="engine\shaders\shader_fs.glsl" />
     <None Include="engine\shaders\shader_vs.glsl" />
-    <None Include="engine\shaders\Texture.frag" />
-    <None Include="engine\shaders\Texture.vert" />
+    <None Include="engine\shaders\skyboxShader_fs.glsl" />
+    <None Include="engine\shaders\skyboxShader_vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

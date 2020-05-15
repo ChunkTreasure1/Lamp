@@ -20,16 +20,16 @@ namespace Sandbox3D
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
-		auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
-		auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
+		//auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
+		//auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		auto light = Lamp::BrushManager::Get()->Create("engine/models/lightModel.lgf");
 
-		brush1->SetPosition({ -10, 1, 0 });
-		brush2->SetPosition({ 10, 1.5, 0 });
-		light->SetPosition({ 5, 3, 2 });
+		//brush1->SetPosition({ -10, 1, 0 });
+		//brush2->SetPosition({ 10, 1.5, 0 });
+		light->SetPosition({ 0, 7, 0 });
 
-		Lamp::PhysicsEngine::Get()->AddEntity(brush1->GetPhysicalEntity());
-		Lamp::PhysicsEngine::Get()->AddEntity(brush2->GetPhysicalEntity());
+		//Lamp::PhysicsEngine::Get()->AddEntity(brush1->GetPhysicalEntity());
+		//Lamp::PhysicsEngine::Get()->AddEntity(brush2->GetPhysicalEntity());
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)
@@ -53,6 +53,7 @@ namespace Sandbox3D
 		m_PCam.OnEvent(renderEvent);
 		RenderGrid();
 
+		Lamp::Renderer3D::DrawSkybox();
 		Lamp::Renderer3D::End();
 	}
 

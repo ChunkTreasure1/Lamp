@@ -6,6 +6,8 @@ namespace Lamp
 	{
 	public:
 		FrameBuffer(const uint32_t width, const uint32_t height);
+		FrameBuffer(const uint32_t width, const uint32_t height, bool state);
+
 		~FrameBuffer();
 
 		void Bind();
@@ -16,6 +18,7 @@ namespace Lamp
 
 	public:
 		static std::shared_ptr<FrameBuffer> Create(const uint32_t width, const uint32_t height);
+		static std::shared_ptr<FrameBuffer> CreateShadowBuffer(const uint32_t, const uint32_t);
 
 	private:
 		uint32_t m_RendererID;
