@@ -25,11 +25,9 @@ namespace Sandbox3D
 				ImGui::EndMenuBar();
 			}
 
-			ImVec2 pos = ImGui::GetCursorScreenPos();
-
 			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)Lamp::Renderer3D::GetFrameBuffer()->GetTexture(),
-				ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y),
-				ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y),
+				ImVec2(ImGui::GetCursorScreenPos()),
+				ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowSize().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y),
 				ImVec2(0, 1),
 				ImVec2(1, 0));
 
@@ -42,11 +40,21 @@ namespace Sandbox3D
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 
-		//ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
+		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
 
-		//float* pMat = (float*)glm::value_ptr(m_pBrush->GetModelMatrix());
-		//ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
-		//m_pBrush->SetModelMatrix(glm::make_mat4(pMat));
+		if (m_pSelectedBrush)
+		{
+			float* pMat = (float*)glm::value_ptr(m_pSelectedBrush->GetModelMatrix());
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+			m_pSelectedBrush->SetModelMatrix(glm::make_mat4(pMat));
+		}
+
+		if (m_pSelectedEntity)
+		{
+			float* pMat = (float*)glm::value_ptr(m_pSelectedEntity->GetModelMatrix());
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+			m_pSelectedEntity->SetModelMatrix(glm::make_mat4(pMat));
+		}
 	}
 
 	void Sandbox3D::UpdateAssetBrowser()
@@ -92,41 +100,31 @@ namespace Sandbox3D
 		}
 		ImGui::Begin("Properties", &m_InspectiorOpen);
 		{
-			//if (m_MousePressed)
-			//{
 
-			//	ImGuiIO& io = ImGui::GetIO();
-			//	glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
+			ImGuiIO& io = ImGui::GetIO();
+			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 
-			//	glm::vec2 windowPos;
-			//	glm::vec2 windowSize;
+			glm::vec2 windowPos;
+			glm::vec2 windowSize;
 
-			//	ImGui::Begin("Perspective");
-			//	{
-			//		windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-			//		windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-			//	}
-			//	ImGui::End();
+			ImGui::Begin("Perspective");
+			{
+				windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+				windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			}
+			ImGui::End();
 
+			if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
+				mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
+			{
+				mousePos -= windowPos;
 
-			//	if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
-			//		mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
-			//	{
-			//		mousePos -= windowPos;
-
-			//		for (Lamp::IEntity* pEnt : Lamp::EntityManager::Get()->GetEntities())
-			//		{
-			//			//if (Lamp::IEntity* pEnt = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize)))
-			//			//{
-			//			//	m_pSelectedEntity = pEnt;
-			//			//}
-			//			//else
-			//			//{
-			//			//	m_pSelectedEntity = nullptr;
-			//			//}
-			//		}
-			//	}
-			//}
+				m_MouseHoverPos = mousePos;
+				if (m_MousePressed)
+				{
+					m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize), m_PCam.GetCamera().GetPosition());
+				}
+			}
 
 			if (m_pSelectedEntity)
 			{

@@ -22,14 +22,13 @@ namespace Lamp
 
 		inline void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
 		void UpdatePerspective(float width, float height);
-		inline void SetHasControl(bool state) { if (m_HasControl && !state) { m_LastHadControl = true; } m_HasControl = state; }
+		inline void SetHasControl(bool state) { m_HasControl = state; }
 
 		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
-		bool Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size);
+		bool OnMouseMoved(const glm::vec2& e);
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
-		bool OnMouseMoved(MouseMovedEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnRender(AppRenderEvent& e);
 
@@ -48,7 +47,6 @@ namespace Lamp
 		float m_LastX = 1280 / 2;
 		float m_LastY = 720 / 2;
 		bool m_HasControl = false;
-		bool m_LastHadControl = false;
 		bool m_RightMouseButtonPressed = false;
 	};
 }

@@ -58,7 +58,7 @@ namespace Lamp
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_FRAMEBUFFER_SRGB);
+		//glEnable(GL_FRAMEBUFFER_SRGB);
 
 		glCullFace(GL_BACK);
 		glDepthFunc(GL_LEQUAL);
@@ -143,7 +143,7 @@ namespace Lamp
 		s_pData->pSkyBoxVertexArray->Unbind();
 		//////////////////
 
-		//m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}
 
 	void Renderer3D::Shutdown()
@@ -155,7 +155,7 @@ namespace Lamp
 	{
 		if (isMain)
 		{
-			//m_pFrameBuffer->Bind();
+			m_pFrameBuffer->Bind();
 			Lamp::Renderer::Clear();
 		}
 
@@ -166,12 +166,12 @@ namespace Lamp
 
 	void Renderer3D::End()
 	{
-		//m_pFrameBuffer->Unbind();
 
 		uint32_t dataSize = (uint8_t*)s_pData->pLineVertexBufferPtr - (uint8_t*)s_pData->pLineVertexBufferBase;
 		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
 
 		Flush();
+		m_pFrameBuffer->Unbind();
 	}
 
 	void Renderer3D::Flush()

@@ -59,9 +59,9 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnImGuiRender(Lamp::Timestep ts)
 	{
-		//CreateDockspace();	
+		CreateDockspace();	
 
-		//UpdatePerspective();
+		UpdatePerspective();
 		UpdateAssetBrowser();
 		UpdateProperties();
 		UpdateModelImporter();
@@ -84,14 +84,17 @@ namespace Sandbox3D
 	{
 		if (Lamp::Input::IsMouseButtonPressed(0))
 		{
-			m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PCam.ScreenToWorldCoords(m_MouseHoverPos, glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetHeight())), m_PCam.GetCamera().GetPosition());
 			m_pSelectedEntity = nullptr;
-
 			m_MousePressed = true;
 		}
 		else if (Lamp::Input::IsMouseButtonReleased(0))
 		{
 			m_MousePressed = false;
+		}
+
+		if (Lamp::Input::IsMouseButtonPressed(1))
+		{
+			m_PCam.OnMouseMoved(m_MouseHoverPos);
 		}
 	}
 

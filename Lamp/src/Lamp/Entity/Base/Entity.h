@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include "Physical/PhysicalEntity.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 class EntityManager;
 
@@ -73,14 +74,16 @@ namespace Lamp
 		inline const glm::vec3& GetScale() const { return m_Scale; }
 
 		inline const std::string& GetName() const { return m_Name; }
+		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_pPhysicalEntity; }
 
 		//Setting
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; }
-		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; }
-		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; }
+		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); }
+		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); }
+		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); }
 
 		inline void SetName(const std::string& name) { m_Name = name; }
+		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 
 		template<typename T>
 		Ref<T> GetComponent()
@@ -130,6 +133,16 @@ namespace Lamp
 		}
 
 	private:
+		void CalculateModelMatrix()
+		{
+			m_ModelMatrix = glm::translate(glm::mat4(1.f), m_Position)
+				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.x + 90.f), glm::vec3(1.f, 0.f, 0.f))
+				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.y), glm::vec3(0.f, 1.f, 0.f))
+				* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.z), glm::vec3(0.f, 0.f, 1.f))
+				* glm::scale(glm::mat4(1.f), m_Scale);
+		}
+
+	private:
 		bool m_IsActive = true;
 		Ref<PhysicalEntity> m_pPhysicalEntity;
 
@@ -142,6 +155,7 @@ namespace Lamp
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
+		glm::mat4 m_ModelMatrix;
 
 		std::string m_Name;
 	};

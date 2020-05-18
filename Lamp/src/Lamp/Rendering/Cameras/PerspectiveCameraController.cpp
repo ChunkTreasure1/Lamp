@@ -27,7 +27,6 @@ namespace Lamp
 		{
 			m_RightMouseButtonPressed = true;
 			Application::Get().GetWindow().ShowCursor(false);
-			m_LastHadControl = true;
 		}
 		if (Input::IsMouseButtonReleased(1))
 		{
@@ -63,7 +62,6 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
-		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnRender));
 	}
@@ -90,26 +88,6 @@ namespace Lamp
 		return dir;
 	}
 
-	bool PerspectiveCameraController::Unproject(const glm::vec3& viewPos, glm::vec3& result, const glm::vec2& size)
-	{
-		glm::vec4 vIn;
-		vIn.x = (viewPos.x / size.x) * 2.f - 1;
-		vIn.y = (viewPos.y / size.y) * 2.f - 1;
-		vIn.z = viewPos.z;
-		vIn.w = 1.f;
-
-		glm::mat4 mInv = glm::inverse(m_Camera.GetViewProjectionMatrix());
-		glm::vec4 vOut =  mInv * vIn;
-		if (vOut.w == 0.f)
-		{
-			return false;
-		}
-
-		result = glm::vec3(vOut.x / vOut.w, vOut.y / vOut.w, vOut.z / vOut.w);
-
-		return true;
-	}
-
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
@@ -118,22 +96,22 @@ namespace Lamp
 		return true;
 	}
 
-	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
+	bool PerspectiveCameraController::OnMouseMoved(const glm::vec2& e)
 	{
 		if (m_RightMouseButtonPressed)
 		{
 			if (!m_HasControl)
 			{
-				m_LastX = e.GetX();
-				m_LastY = e.GetY();
+				m_LastX = e.x;
+				m_LastY = e.y;
 
 				m_HasControl = true;
 			}
 
-			float xOffset = e.GetX() - m_LastX;
-			float yOffset = m_LastY - e.GetY();
-			m_LastX = e.GetX();
-			m_LastY = e.GetY();
+			float xOffset = e.x - m_LastX;
+			float yOffset = m_LastY - e.y;
+			m_LastX = e.x;
+			m_LastY = e.y;
 
 			float sensitivity = 0.15f;
 			xOffset *= sensitivity;
@@ -155,6 +133,7 @@ namespace Lamp
 		}
 		return true;
 	}
+
 	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		if (m_RightMouseButtonPressed)

@@ -42,8 +42,6 @@ namespace Sandbox3D
 		//------------TEST ENTITIES-------------
 		Lamp::IEntity* m_pEntity;
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
-
-		Lamp::Brush* m_pBrush;
 		//--------------------------------------
 
 		//---------------Editor-----------------
