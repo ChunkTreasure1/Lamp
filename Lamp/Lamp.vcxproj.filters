@@ -1384,6 +1384,7 @@
     <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
@@ -1499,5 +1500,6 @@
     <ClCompile Include="src\Lamp\Entity\Base\Physical\PhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
   </ItemGroup>
 </Project>
