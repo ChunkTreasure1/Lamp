@@ -26,18 +26,6 @@ namespace Lamp
 	Brush* BrushManager::Create(const std::string& path)
 	{
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
-		//auto brush = new Brush(GeometrySystem::ImportModel(path));
-		//brush->GetModel().GetMaterial().SetShader(m_pShader);
-
-		//brush->GetModel().GetMaterial().SetDiffuse(Texture2D::Create("engine/textures/container_diff.png"));
-		//brush->GetModel().GetMaterial().SetSpecular(Texture2D::Create("engine/textures/container_spec.png"));
-
-		//std::string s = path;
-		//s = s.substr(0, s.find_last_of('.'));
-		//s += ".lgf";
-
-		//GeometrySystem::SaveToPath(brush->GetModel(), s);
-
 		m_Brushes.push_back(brush);
 	
 		return m_Brushes[m_Brushes.size() - 1];
@@ -53,7 +41,7 @@ namespace Lamp
 
 		m_Brushes.push_back(brush);
 
-		return m_Brushes[m_Brushes.size() - 1];
+		return brush;
 	}
 
 	void BrushManager::Remove(const Brush* brush)
@@ -80,7 +68,7 @@ namespace Lamp
 		{
 			for (auto brush : m_Brushes)
 			{
-				brush->Draw();
+				brush->Render();
 			}
 		}
 	}

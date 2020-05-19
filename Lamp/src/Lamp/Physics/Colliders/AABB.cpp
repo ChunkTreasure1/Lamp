@@ -7,20 +7,30 @@ namespace Lamp
 {
 	IntersectData AABB::IntersectRay(const Ray& ray) const
 	{
-		float tMin = (m_MinExtents.x - ray.origin.x) / ray.direction.x;
-		float tMax = (m_MaxExtents.x - ray.origin.x) / ray.direction.x;
+		glm::vec3 invDir = { 1 / ray.direction.x, 1 / ray.direction.y, 1/ ray.direction.z };
 
-		if (tMin > tMax)
+		float tMin, tMax, tyMin, tyMax, tzMin, tzMax;
+
+		if (invDir.x >= 0)
 		{
-			std::swap(tMin, tMax);
+			tMin = (m_MinExtents.x - ray.origin.x) * invDir.x;
+			tMax = (m_MaxExtents.x - ray.origin.x) * invDir.x;
+		}
+		else 
+		{
+			tMin = (m_MaxExtents.x - ray.origin.x) * invDir.x;
+			tMax = (m_MinExtents.x - ray.origin.x) * invDir.x;
 		}
 
-		float tyMin = (m_MinExtents.y - ray.origin.y) / ray.direction.y;
-		float tyMax = (m_MaxExtents.y - ray.origin.y) / ray.direction.y;
-
-		if (tyMin > tyMax)
+		if (invDir.y >= 0)
 		{
-			std::swap(tyMin, tyMax);
+			tyMin = (m_MinExtents.y - ray.origin.y) * invDir.y;
+			tyMax = (m_MaxExtents.y - ray.origin.y) * invDir.y;
+		}
+		else
+		{
+			tyMin = (m_MaxExtents.y - ray.origin.y) * invDir.y;
+			tyMax = (m_MinExtents.y - ray.origin.y) * invDir.y;
 		}
 
 		if ((tMin > tyMax) || (tyMin > tMax))
@@ -38,12 +48,15 @@ namespace Lamp
 			tMax = tyMax;
 		}
 
-		float tzMin = (m_MinExtents.z - ray.origin.z) / ray.direction.z;
-		float tzMax = (m_MaxExtents.z - ray.origin.z) / ray.direction.z;
-
-		if (tzMin > tzMax)
+		if (invDir.z >= 0)
 		{
-			std::swap(tzMin, tzMin);
+			tzMin = (m_MinExtents.z - ray.origin.z) * invDir.z;
+			tzMax = (m_MaxExtents.z - ray.origin.z) * invDir.z;
+		}
+		else 
+		{
+			tzMin = (m_MaxExtents.z - ray.origin.z) * invDir.z;
+			tzMax = (m_MinExtents.z - ray.origin.z) * invDir.z;
 		}
 
 		if ((tMin > tzMax) || tzMin > tMax)

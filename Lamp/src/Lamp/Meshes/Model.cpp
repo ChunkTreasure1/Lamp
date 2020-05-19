@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-	void Model::Draw()
+	void Model::Render()
 	{
 		for (size_t i = 0; i < m_Meshes.size(); i++)
 		{

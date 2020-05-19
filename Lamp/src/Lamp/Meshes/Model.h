@@ -20,7 +20,7 @@ namespace Lamp
 		{
 		}
 
-		void Draw();
+		void Render();
 
 		//Setting
 		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }

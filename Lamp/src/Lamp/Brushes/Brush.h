@@ -19,9 +19,9 @@ namespace Lamp
 			m_PhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 		}
 
-		void Draw()
+		void Render()
 		{
-			m_Model->Draw();
+			m_Model->Render();
 		}
 
 		//Setting
