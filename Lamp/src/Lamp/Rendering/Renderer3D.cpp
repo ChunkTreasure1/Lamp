@@ -198,8 +198,6 @@ namespace Lamp
 		glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
 		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
 
-		mat.GetShader()->UploadFloat("u_Material.shininess", mat.GetShininess());
-
 		mat.GetShader()->UploadFloat3("u_DirectionalLight.ambient", { 0.2f, 0.2f, 0.2f });
 		mat.GetShader()->UploadFloat3("u_DirectionalLight.diffuse", { 0.5f, 0.5f, 0.5f });
 		mat.GetShader()->UploadFloat3("u_DirectionalLight.specular", { 1.f, 1.f, 1.f });

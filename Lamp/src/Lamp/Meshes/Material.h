@@ -29,6 +29,8 @@ namespace Lamp
 		inline const std::string& GetName() { return m_Name; }
 		inline const float GetShininess() { return m_Shininess; }
 
+		void UploadData();
+
 	private:
 		Ref<Texture2D> m_pDiffuse;
 		Ref<Texture2D> m_pSpecular;
