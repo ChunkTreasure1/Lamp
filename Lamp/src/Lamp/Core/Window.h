@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include "Lamp/Event/Event.h"
-#include "Lamp/Core/Timestep.h"
+#include "Lamp/Core/Time/Timestep.h"
 
 namespace Lamp
 {

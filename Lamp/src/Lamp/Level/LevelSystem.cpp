@@ -217,13 +217,13 @@ namespace Lamp
 		return pBrushes;
 	}
 
-	std::vector<IEntity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, Ref<EntityManager>& entityManager)
+	std::vector<Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, Ref<EntityManager>& entityManager)
 	{
-		std::vector<IEntity*> pEntities;
+		std::vector<Entity*> pEntities;
 
 		for (rapidxml::xml_node<>* pEntity = pNode->first_node("Entity"); pEntity; pEntity = pEntity->next_sibling())
 		{
-			IEntity* pEnt = entityManager->Create();
+			Entity* pEnt = entityManager->Create();
 
 			std::string name = pEntity->first_attribute("name")->value();
 
@@ -244,7 +244,7 @@ namespace Lamp
 			for (rapidxml::xml_node<>* pComponent = pEntity->first_node("Component"); pComponent; pComponent = pComponent->next_sibling())
 			{
 				auto name = pComponent->first_attribute("name")->value();
-				Ref<IEntityComponent> pComp = ComponentRegistry::Create(name);
+				Ref<EntityComponent> pComp = ComponentRegistry::Create(name);
 				pComp->MakeOwner(pEnt);
 				pComp->Initialize();
 

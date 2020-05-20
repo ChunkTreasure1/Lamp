@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PerspectiveCamera.h"
-#include "Lamp/Core/Timestep.h"
+#include "Lamp/Core/Time/Timestep.h"
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
@@ -22,7 +22,7 @@ namespace Lamp
 
 		inline void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
 		void UpdatePerspective(float width, float height);
-		inline void SetHasControl(bool state) { m_HasControl = state; }
+		inline void SetCameraControlsEnabled(bool state) { m_CameraControlsEnabled = state; }
 
 		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
 		bool OnMouseMoved(const glm::vec2& e);
@@ -38,15 +38,18 @@ namespace Lamp
 
 		std::vector<std::array<glm::vec3, 2>> m_LinePositions;
 
-		float m_CameraTranslationSpeed = 5.f;
+		float m_TranslationSpeed = 5.f;
 		float m_AspectRatio = 0.f;
 		float m_NearPlane = 0.1f;
 		float m_FarPlane = 100.f;
 		float m_FOV = 45.f;
+		float m_MaxTranslationSpeed = 20.f;
 
 		float m_LastX = 1280 / 2;
 		float m_LastY = 720 / 2;
+
 		bool m_HasControl = false;
 		bool m_RightMouseButtonPressed = false;
+		bool m_CameraControlsEnabled = false;
 	};
 }

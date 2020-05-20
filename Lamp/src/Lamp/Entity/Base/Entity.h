@@ -15,42 +15,18 @@ class EntityManager;
 
 namespace Lamp
 {
-	class IEntity
+	class Entity
 	{
 	public:
-		IEntity()
+		Entity()
 			: m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1), m_Name("")
 		{
 			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
 			m_pPhysicalEntity->SetEntity(this);
 			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 		}
-		~IEntity() {}
+		~Entity() {}
 
-		void Update(Timestep ts)
-		{
-			for (auto& pComp : m_pComponents)
-			{
-				if (m_pComponents.size() == 0)
-				{
-					return;
-				}
-
-				pComp->Update(ts);
-			}
-		}
-		void Draw()
-		{
-			for (auto& pComp : m_pComponents)
-			{
-				if (m_pComponents.size() == 0)
-				{
-					return;
-				}
-
-				pComp->Draw();
-			}
-		}
 		void OnEvent(Event& e)
 		{
 			for (auto& pComp : m_pComponents)
@@ -68,7 +44,7 @@ namespace Lamp
 		}
 
 		//Getting
-		inline std::vector<Ref<IEntityComponent>> GetComponents() const { return m_pComponents; }
+		inline std::vector<Ref<EntityComponent>> GetComponents() const { return m_pComponents; }
 		inline const glm::vec3& GetPosition() const { return m_Position; }
 		inline const glm::vec3& GetRotation() const { return m_Rotation; }
 		inline const glm::vec3& GetScale() const { return m_Scale; }
@@ -118,7 +94,7 @@ namespace Lamp
 			}
 		}
 
-		bool AddComponent(Ref<IEntityComponent> comp)
+		bool AddComponent(Ref<EntityComponent> comp)
 		{
 			std::string str = comp->GetName();
 			str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
@@ -146,17 +122,14 @@ namespace Lamp
 		bool m_IsActive = true;
 		Ref<PhysicalEntity> m_pPhysicalEntity;
 
-		std::vector<Ref<IEntityComponent>> m_pComponents;
-		std::unordered_map<std::string, Ref<IEntityComponent>> m_pComponentMap;
-
-		ComponentArray m_pComponentArray;
-		ComponentBitSet m_ComponentBitSet;
+		std::vector<Ref<EntityComponent>> m_pComponents;
+		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
-		glm::mat4 m_ModelMatrix;
 
+		glm::mat4 m_ModelMatrix;
 		std::string m_Name;
 	};
 }

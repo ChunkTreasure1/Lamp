@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Core/Timestep.h"
+#include "Lamp/Core/Time/Timestep.h"
 #include "Lamp/Rendering/Cameras/OrthographicCamera.h"
 
 #include "Lamp/Event/ApplicationEvent.h"

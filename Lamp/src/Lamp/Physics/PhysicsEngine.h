@@ -12,6 +12,8 @@ namespace Lamp
 		PhysicsEngine() {}
 
 		void AddEntity(Ref<PhysicalEntity>& entity);
+		void RemoveEntity(Ref<PhysicalEntity>& entity);
+
 		void Simulate(float delta);
 		void HandleCollisions();
 

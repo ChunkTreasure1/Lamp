@@ -8,14 +8,14 @@
 namespace Lamp
 {
 	class Brush;
-	class IEntity;
+	class Entity;
 
 	class PhysicalEntity
 	{
 	public:
 		PhysicalEntity()
 			: m_pEntity(nullptr), m_pBrush(nullptr), m_IsPhysicalized(false), m_LastPosition({0.f, 0.f, 0.f}),
-			m_Mass(0.f), m_Velocity(0.f)
+			m_Mass(0.f), m_Velocity(0.f), m_Collider(nullptr)
 		{
 		}
 		~PhysicalEntity() {}
@@ -23,7 +23,7 @@ namespace Lamp
 		void Integrate(float delta);
 
 		//Getting
-		inline IEntity* GetEntity() { return m_pEntity; }
+		inline Entity* GetEntity() { return m_pEntity; }
 		inline Brush* GetBrush() { return m_pBrush; }
 		inline const glm::vec3& GetVelocity() const { return m_Velocity; }
 		inline Ref<Collider>& GetCollider() { return m_Collider; }
@@ -31,7 +31,7 @@ namespace Lamp
 		inline const float GetMass() { return m_Mass; }
 
 		//Setting
-		inline void SetEntity(IEntity* entity) { m_pEntity = entity; }
+		inline void SetEntity(Entity* entity) { m_pEntity = entity; }
 		inline void SetBrush(Brush* brush) { m_pBrush = brush; }
 		inline void SetVelocity(const glm::vec3& vel) { m_Velocity = vel; }
 		inline void SetCollider(Ref<Collider> coll) { m_Collider = coll; }
@@ -39,7 +39,7 @@ namespace Lamp
 
 	protected:
 		Ref<Collider> m_Collider;
-		IEntity* m_pEntity;
+		Entity* m_pEntity;
 		Brush* m_pBrush;
 
 		bool m_IsPhysicalized;

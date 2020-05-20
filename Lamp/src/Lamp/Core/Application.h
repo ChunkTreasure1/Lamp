@@ -9,6 +9,7 @@
 
 #include "Lamp/ImGui/ImGuiLayer.h"
 #include "Lamp/Input/FileSystem.h"
+#include "Time/FrameTime.h"
 
 namespace Lamp
 {
@@ -31,6 +32,7 @@ namespace Lamp
 
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }
+		inline const FrameTime& GetFrameTime() { return m_FrameTime; }
 
 	private:
 		static Application* s_pInstance;
@@ -43,6 +45,8 @@ namespace Lamp
 		bool m_Running = true;
 		bool m_Minimized = false;
 		float m_LastFrameTime = 0.f;
+
+		FrameTime m_FrameTime;
 	};
 	
 	static Application* CreateApplication();

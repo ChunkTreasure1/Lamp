@@ -14,7 +14,7 @@ namespace Lamp
 		return false;
 	}
 
-	Ref<IEntityComponent> ComponentRegistry::Create(const std::string& name)
+	Ref<EntityComponent> ComponentRegistry::Create(const std::string& name)
 	{
 		if (auto it = s_Methods().find(name); it != s_Methods().end())
 		{

@@ -129,7 +129,7 @@ namespace Lamp
 		};
 
 		s_pData->SkyBoxVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, sizeof(float) * boxPositions.size());
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
@@ -138,7 +138,7 @@ namespace Lamp
 		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
 
 
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, boxIndicies.size());
+		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
 		s_pData->SkyBoxVertexArray->SetIndexBuffer(indexBuffer);
 
 		s_pData->SkyBoxVertexArray->Unbind();
@@ -224,6 +224,7 @@ namespace Lamp
 		s_pData->SphereArray->Bind();
 		Renderer::DrawIndexed(s_pData->SphereArray);
 	}
+	
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
 	{
 		glLineWidth(width);
@@ -243,6 +244,7 @@ namespace Lamp
 
 		s_pData->LineIndexCount += 2;
 	}
+
 	void Renderer3D::CreateSphere(float radius)
 	{
 		std::vector<Vertex> vertices;
@@ -313,29 +315,31 @@ namespace Lamp
 			}
 		}
 
-		s_pData->pSphereArray = VertexArray::Create();
+		s_pData->SphereArray = VertexArray::Create();
 
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size());
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(vertices, (uint32_t)(sizeof(Vertex) * vertices.size()));
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float3, "a_Normal" },
 			{ ElementType::Float2, "a_TexCoords" }
-			});
+		});
 
-		s_pData->pSphereArray->AddVertexBuffer(pBuffer);
+		s_pData->SphereArray->AddVertexBuffer(pBuffer);
 
 		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(indices, indices.size());
-		s_pData->pSphereArray->SetIndexBuffer(pIndexBuffer);
+		s_pData->SphereArray->SetIndexBuffer(pIndexBuffer);
 
-		s_pData->pSphereArray->Unbind();
+		s_pData->SphereArray->Unbind();
 
 	}
+	
 	void Renderer3D::StartNewBatch()
 	{
 		End();
 		ResetBatchData();
 	}
+	
 	void Renderer3D::ResetBatchData()
 	{
 		s_pData->LineIndexCount = 0;

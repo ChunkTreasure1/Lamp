@@ -1,29 +1,15 @@
 #include "lppch.h"
 #include "EntityManager.h"
 
+#include "Lamp/Physics/PhysicsEngine.h"
+
 namespace Lamp
 {
 	Ref<EntityManager> EntityManager::s_CurrentManager;
 
-	void EntityManager::Update(Timestep ts)
-	{
-		for (int i = 0; i < m_pEntites.size(); i++)
-		{
-			m_pEntites[i]->Update(ts);
-		}
-	}
-
-	void EntityManager::Draw()
-	{
-		for (IEntity* pE : m_pEntites)
-		{
-			pE->Draw();
-		}
-	}
-
 	void EntityManager::OnEvent(Event& e)
 	{
-		for (IEntity* pE : m_pEntites)
+		for (Entity* pE : m_pEntites)
 		{
 			pE->OnEvent(e);
 		}
@@ -39,15 +25,17 @@ namespace Lamp
 		m_pEntites.clear();
 	}
 
-	IEntity* EntityManager::Create()
+	Entity* EntityManager::Create()
 	{
-		IEntity* pEnt = new IEntity();
+		Entity* pEnt = new Entity();
 		m_pEntites.emplace_back(pEnt);
+		
+		Lamp::PhysicsEngine::Get()->AddEntity(pEnt->GetPhysicalEntity());
 
 		return pEnt;
 	}
 
-	bool EntityManager::Remove(IEntity* pEnt)
+	bool EntityManager::Remove(Entity* pEnt)
 	{
 		pEnt->Destroy();
 		auto it = std::find(m_pEntites.begin(), m_pEntites.end(), pEnt);
@@ -59,6 +47,8 @@ namespace Lamp
 		{
 			return false;
 		}
+		Lamp::PhysicsEngine::Get()->RemoveEntity(pEnt->GetPhysicalEntity());
+
 		delete pEnt;
 
 		pEnt = NULL;
@@ -66,19 +56,17 @@ namespace Lamp
 		return true;
 	}
 
-	IEntity* EntityManager::GetEntityFromPoint(const glm::vec2& pos)
+	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		for (Lamp::IEntity* pEnt : GetEntities())
+		for (Lamp::Entity* ent : GetEntities())
 		{
-			glm::vec4 rect(pEnt->GetPosition().x, pEnt->GetPosition().y, pEnt->GetScale().x, pEnt->GetScale().y);
+			Ray ray;
+			ray.origin = origin;
+			ray.direction = pos;
 
-			if ((pos.x > (rect.x - (rect.z / 2))) &&
-				pos.x < (rect.x + (rect.z / 2)) &&
-
-				pos.y >(rect.y - (rect.w / 2)) &&
-				pos.y < (rect.y + (rect.w / 2)))
+			if (ent->GetPhysicalEntity()->GetCollider()->IntersectRay(ray).IsIntersecting)
 			{
-				return pEnt;
+				return ent;
 			}
 		}
 

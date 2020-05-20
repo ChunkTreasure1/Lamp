@@ -6,19 +6,16 @@
 
 namespace Lamp
 {
-	class ConvexPolygonColliderComponent : public IEntityComponent
+	class ConvexPolygonColliderComponent : public EntityComponent
 	{
 	public:
 		ConvexPolygonColliderComponent()
-			: IEntityComponent("ConvexPolygonColliderComponent"), m_VerticeCount(4), m_SideLength(1), m_Tag(""), m_Mass(0.f)
+			: EntityComponent("ConvexPolygonColliderComponent"), m_VerticeCount(4), m_SideLength(1), m_Tag(""), m_Mass(0.f)
 		{}
 
 		////////Base////////
 		virtual void Initialize() override;
-		virtual void Update(Lamp::Timestep myTS) override;
 		virtual void OnEvent(Lamp::Event& e) override {}
-		virtual void Draw() override;
-		virtual void SetProperty(Lamp::ComponentProperty& someProp, void* someData) override {}
 		////////////////////
 		
 		//Getting
@@ -54,7 +51,7 @@ namespace Lamp
 		inline void SetMass(float mass) { m_Mass = mass; }
 
 	public:
-		static Ref<IEntityComponent> Create() { return std::make_shared<ConvexPolygonColliderComponent>(); }
+		static Ref<EntityComponent> Create() { return std::make_shared<ConvexPolygonColliderComponent>(); }
 		static std::string GetFactoryName() { return "ConvexPolygonColliderComponent"; }
 
 	private:

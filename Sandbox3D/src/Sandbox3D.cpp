@@ -12,11 +12,13 @@
 #include <Lamp/Physics/Colliders/AABB.h>
 #include <Lamp/Physics/PhysicsEngine.h>
 #include <Lamp/Physics/Physics.h>
+#include <Lamp/Entity/BaseComponents/MeshComponent.h>
+#include <Lamp/Meshes/GeometrySystem.h>
 
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
-		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PCam(60.f, 0.1f, 100.f), m_pShader(nullptr)
+		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PerspectiveCamera(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
@@ -28,29 +30,35 @@ namespace Sandbox3D
 		//brush2->SetPosition({ 10, 1.5, 0 });
 		light->SetPosition({ 0, 7, 0 });
 
-		//Lamp::PhysicsEngine::Get()->AddEntity(brush1->GetPhysicalEntity());
-		//Lamp::PhysicsEngine::Get()->AddEntity(brush2->GetPhysicalEntity());
+
+		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+		ent->SetPosition({ 10, 0, 0 });
+
+		auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
+		comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/test.lgf"));
+
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)
 	{
-		m_PCam.Update(ts);
+		m_PerspectiveCamera.Update(ts);
 		GetInput();
 
 		Lamp::PhysicsEngine::Get()->Simulate(ts);
 		Lamp::PhysicsEngine::Get()->HandleCollisions();
 
-		Lamp::EntityManager::Get()->Update(ts);
+		Lamp::AppUpdateEvent updateEvent(ts);
+		Lamp::EntityManager::Get()->OnEvent(updateEvent);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
-		Lamp::Renderer3D::Begin(m_PCam.GetCamera());
+		Lamp::Renderer3D::Begin(m_PerspectiveCamera.GetCamera());
 
 		Lamp::AppRenderEvent renderEvent;
-		//Lamp::EntityManager::Get()->OnEvent(renderEvent);
+		Lamp::EntityManager::Get()->OnEvent(renderEvent);
 		Lamp::BrushManager::Get()->OnEvent(renderEvent);
-		m_PCam.OnEvent(renderEvent);
+		m_PerspectiveCamera.OnEvent(renderEvent);
 		RenderGrid();
 
 		Lamp::Renderer3D::DrawSkybox();
@@ -59,7 +67,7 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnImGuiRender(Lamp::Timestep ts)
 	{
-		CreateDockspace();	
+		CreateDockspace();
 
 		UpdatePerspective();
 		UpdateAssetBrowser();
@@ -69,7 +77,7 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnEvent(Lamp::Event& e)
 	{
-		m_PCam.OnEvent(e);
+		m_PerspectiveCamera.OnEvent(e);
 
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
@@ -84,7 +92,6 @@ namespace Sandbox3D
 	{
 		if (Lamp::Input::IsMouseButtonPressed(0))
 		{
-			m_pSelectedEntity = nullptr;
 			m_MousePressed = true;
 		}
 		else if (Lamp::Input::IsMouseButtonReleased(0))
@@ -94,7 +101,7 @@ namespace Sandbox3D
 
 		if (Lamp::Input::IsMouseButtonPressed(1))
 		{
-			m_PCam.OnMouseMoved(m_MouseHoverPos);
+			m_PerspectiveCamera.OnMouseMoved(m_MouseHoverPos);
 		}
 	}
 

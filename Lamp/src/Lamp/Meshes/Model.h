@@ -30,7 +30,7 @@ namespace Lamp
 		inline Material& GetMaterial() { return m_Material; }
 		inline const std::string& GetName() { return m_Name; }
 		inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
-		inline const std::string& GetLGFPath() { return m_LGFPath; }
+		inline std::string& GetLGFPath() { return m_LGFPath; }
 		inline const glm::mat4& GetMatrix() { return m_ModelMatrix; }
 
 	private:

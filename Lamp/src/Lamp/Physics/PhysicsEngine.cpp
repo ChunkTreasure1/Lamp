@@ -12,6 +12,15 @@ namespace Lamp
 		m_PhysicalEntites.push_back(entity);
 	}
 
+	void PhysicsEngine::RemoveEntity(Ref<PhysicalEntity>& entity)
+	{
+		auto it = std::find(m_PhysicalEntites.begin(), m_PhysicalEntites.end(), entity);
+		if (it != m_PhysicalEntites.end())
+		{
+			m_PhysicalEntites.erase(it);
+		}
+	}
+
 	void PhysicsEngine::Simulate(float delta)
 	{
 		for (auto& entity : m_PhysicalEntites)

@@ -36,9 +36,10 @@ namespace Lamp
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
+			m_FrameTime.Begin();
+
 			if (!m_Minimized)
 			{
-				//Lamp::Physics::CheckCollisions();
 				for (Layer* layer : m_LayerStack)
 				{
 					layer->Update(timestep);
@@ -54,6 +55,8 @@ namespace Lamp
 
 			m_pImGuiLayer->End();
 			m_pWindow->Update(timestep);
+		
+			m_FrameTime.End();
 		}
 	}
 

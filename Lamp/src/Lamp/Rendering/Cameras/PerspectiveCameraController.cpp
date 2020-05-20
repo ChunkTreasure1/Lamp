@@ -39,19 +39,19 @@ namespace Lamp
 		{
 			if (Input::IsKeyPressed(LP_KEY_W))
 			{
-				m_CameraPosition += m_CameraTranslationSpeed * m_Camera.GetFront() * (float)ts;
+				m_CameraPosition += m_TranslationSpeed * m_Camera.GetFront() * (float)ts;
 			}
 			if (Input::IsKeyPressed(LP_KEY_S))
 			{
-				m_CameraPosition -= m_CameraTranslationSpeed * m_Camera.GetFront() * (float)ts;
+				m_CameraPosition -= m_TranslationSpeed * m_Camera.GetFront() * (float)ts;
 			}
 			if (Input::IsKeyPressed(LP_KEY_A))
 			{
-				m_CameraPosition -= m_Camera.GetRight() * m_CameraTranslationSpeed * (float)ts;
+				m_CameraPosition -= m_Camera.GetRight() * m_TranslationSpeed * (float)ts;
 			}
 			if (Input::IsKeyPressed(LP_KEY_D))
 			{
-				m_CameraPosition += m_Camera.GetRight() * m_CameraTranslationSpeed * (float)ts;
+				m_CameraPosition += m_Camera.GetRight() * m_TranslationSpeed * (float)ts;
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace Lamp
 	{
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 	}
 
 	glm::vec3 PerspectiveCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size)
@@ -138,11 +138,11 @@ namespace Lamp
 	{
 		if (m_RightMouseButtonPressed)
 		{
-			m_CameraTranslationSpeed += e.GetYOffset() * 0.5f;
-			m_CameraTranslationSpeed = std::min(m_CameraTranslationSpeed, 10.f);
-			if (m_CameraTranslationSpeed < 0)
+			m_TranslationSpeed += e.GetYOffset() * 0.5f;
+			m_TranslationSpeed = std::min(m_TranslationSpeed, m_MaxTranslationSpeed);
+			if (m_TranslationSpeed < 0)
 			{
-				m_CameraTranslationSpeed = 0;
+				m_TranslationSpeed = 0;
 			}
 		}
 		return true;

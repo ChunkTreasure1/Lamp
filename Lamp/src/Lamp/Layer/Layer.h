@@ -1,6 +1,6 @@
 #pragma once
 #include "Lamp/Event/Event.h"
-#include "Lamp/Core/Timestep.h"
+#include "Lamp/Core/Time/Timestep.h"
 
 #include "Lamp/Input/FileSystem.h"
 

@@ -28,7 +28,7 @@ namespace Lamp
 
 				for (size_t a = 0; a < polyA->GetVertices().size(); a++)
 				{
-					int b = (a + 1) % polyA->GetVertices().size();
+					size_t b = (a + 1) % polyA->GetVertices().size();
 					glm::vec2 axisProj = polyA->GetVertices()[a] - polyA->GetVertices()[b];
 
 					float d = sqrtf(axisProj.x * axisProj.x + axisProj.y * axisProj.y);

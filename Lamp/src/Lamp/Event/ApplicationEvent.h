@@ -2,6 +2,8 @@
 #include "Event.h"
 #include <sstream>
 
+#include "Lamp/Core/Time/Timestep.h"
+
 namespace Lamp
 {
 	class WindowResizeEvent : public Event
@@ -50,10 +52,17 @@ namespace Lamp
 	class AppUpdateEvent : public Event
 	{
 	public:
-		AppUpdateEvent() {}
+		AppUpdateEvent(Timestep ts)
+			: m_Timestep(ts)
+		{}
+
+		inline const Timestep& GetTimestep() { return m_Timestep; }
 
 		EVENT_CLASS_TYPE(AppUpdate);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+
+	private:
+		Timestep m_Timestep;
 	};
 
 	class AppRenderEvent : public Event

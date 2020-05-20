@@ -129,16 +129,10 @@
     <ClInclude Include="src\Lamp\Core\Sound.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Core\Timestep.h">
-      <Filter>src\Lamp\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\BaseComponent.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Entity\Base\Component.h">
       <Filter>src\Lamp\Entity\Base</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\ComponentProperties.h">
@@ -152,12 +146,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\EntityManager.h">
       <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Entity\BaseComponents\SpriteComponent.h">
-      <Filter>src\Lamp\Entity\BaseComponents</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Entity\BaseComponents\TransformComponent.h">
-      <Filter>src\Lamp\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
       <Filter>src\Lamp\Event</Filter>
@@ -1375,7 +1363,6 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Entity\Base\Physical\PhysicalEntity.h" />
-    <ClInclude Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.h" />
     <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
     <ClInclude Include="src\Lamp\Physics\Ray.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
@@ -1385,6 +1372,11 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
+    <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
+    <ClInclude Include="src\Lamp\Core\Time\Timestep.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Entity\BaseComponents\MeshComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Brushes\BrushManager.cpp">
@@ -1493,7 +1485,6 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
-    <ClCompile Include="src\Lamp\Entity\Base\Physical\SpherePhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp" />
@@ -1502,5 +1493,7 @@
     <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
+    <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
+    <ClCompile Include="src\Lamp\Entity\BaseComponents\MeshComponent.cpp" />
   </ItemGroup>
 </Project>

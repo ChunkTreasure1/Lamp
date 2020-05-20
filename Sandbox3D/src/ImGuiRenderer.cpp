@@ -14,7 +14,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_PCam.SetHasControl(m_PerspectiveHover);
+			m_PerspectiveCamera.SetCameraControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -31,9 +31,13 @@ namespace Sandbox3D
 				ImVec2(0, 1),
 				ImVec2(1, 0));
 
-			m_PCam.UpdatePerspective(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-			Lamp::Renderer3D::GetFrameBuffer()->Update(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			m_PerspectiveCamera.UpdatePerspective(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+			Lamp::Renderer3D::GetFrameBuffer()->Update((const uint32_t)ImGui::GetWindowSize().x, (const uint32_t)ImGui::GetWindowSize().y);
 			m_PerspectiveSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+
+			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond());
+
+			ImGui::Text(frameInfo.c_str());
 		}
 		ImGui::End();
 
@@ -45,14 +49,14 @@ namespace Sandbox3D
 		if (m_pSelectedBrush)
 		{
 			float* pMat = (float*)glm::value_ptr(m_pSelectedBrush->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
 			m_pSelectedBrush->SetModelMatrix(glm::make_mat4(pMat));
 		}
 
 		if (m_pSelectedEntity)
 		{
 			float* pMat = (float*)glm::value_ptr(m_pSelectedEntity->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PCam.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PCam.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
 			m_pSelectedEntity->SetModelMatrix(glm::make_mat4(pMat));
 		}
 	}
@@ -120,14 +124,27 @@ namespace Sandbox3D
 				mousePos -= windowPos;
 
 				m_MouseHoverPos = mousePos;
-				if (m_MousePressed)
+				if (m_MousePressed && m_PerspectiveHover)
 				{
-					m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PCam.ScreenToWorldCoords(mousePos, windowSize), m_PCam.GetCamera().GetPosition());
+					m_pSelectedBrush = nullptr;
+					m_pSelectedEntity = nullptr;
+
+					m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, windowSize), m_PerspectiveCamera.GetCamera().GetPosition());
+					if (!m_pSelectedBrush)
+					{
+						m_pSelectedEntity = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, windowSize), m_PerspectiveCamera.GetCamera().GetPosition());
+					}
 				}
 			}
 
 			if (m_pSelectedEntity)
 			{
+				ImGui::Text("Entity");
+
+				std::string name = m_pSelectedEntity->GetName();
+				ImGui::InputText("Name", &name);
+				m_pSelectedEntity->SetName(name);
+
 				if (ImGui::CollapsingHeader("Transform"))
 				{
 					glm::vec3 pos = m_pSelectedEntity->GetPosition();
@@ -135,6 +152,18 @@ namespace Sandbox3D
 
 					ImGui::InputFloat3("Position", f);
 					m_pSelectedEntity->SetPosition(glm::make_vec3(f));
+
+					glm::vec3 rot = m_pSelectedEntity->GetRotation();
+					float r[3] = { rot.x, rot.y, rot.z };
+
+					ImGui::InputFloat3("Rotation", r);
+					m_pSelectedEntity->SetRotation(glm::make_vec3(r));
+				
+					glm::vec3 scale = m_pSelectedEntity->GetScale();
+					float s[3] = { scale.x, scale.y, scale.z };
+
+					ImGui::InputFloat3("Scale", s);
+					m_pSelectedEntity->SetScale(glm::make_vec3(s));
 				}
 
 				for (auto& pComp : m_pSelectedEntity->GetComponents())

@@ -14,7 +14,7 @@ namespace Lamp
 
 		Brush* Create(const std::string& path);
 		Brush* Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale);
-		void Remove(const Brush* brush);
+		void Remove(Brush* brush);
 		void OnEvent(Event& e);
 
 		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);

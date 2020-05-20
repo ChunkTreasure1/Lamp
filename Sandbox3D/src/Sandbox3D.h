@@ -37,10 +37,10 @@ namespace Sandbox3D
 		void UpdateModelImporter();
 
 	private:
-		Lamp::PerspectiveCameraController m_PCam;
+		Lamp::PerspectiveCameraController m_PerspectiveCamera;
 
 		//------------TEST ENTITIES-------------
-		Lamp::IEntity* m_pEntity;
+		Lamp::Entity* m_pEntity;
 		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
 		//--------------------------------------
 
@@ -62,7 +62,7 @@ namespace Sandbox3D
 		//Inspector
 		bool m_MousePressed = false;
 		bool m_PerspectiveHover = false;
-		Lamp::IEntity* m_pSelectedEntity = nullptr;
+		Lamp::Entity* m_pSelectedEntity = nullptr;
 		Lamp::Brush* m_pSelectedBrush = nullptr;
 		bool m_InspectiorOpen = true;
 

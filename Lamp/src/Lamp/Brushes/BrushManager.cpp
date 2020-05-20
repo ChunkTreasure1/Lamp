@@ -4,6 +4,7 @@
 #include "Lamp/Meshes/GeometrySystem.h"
 #include "Lamp/Physics/Ray.h"
 #include "Lamp/Entity/Base/Physical/PhysicalEntity.h"
+#include "Lamp/Physics/PhysicsEngine.h"
 
 namespace Lamp
 {
@@ -28,7 +29,8 @@ namespace Lamp
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
 		m_Brushes.push_back(brush);
 	
-		return m_Brushes[m_Brushes.size() - 1];
+		Lamp::PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
+		return brush;
 	}
 
 	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
@@ -41,25 +43,20 @@ namespace Lamp
 
 		m_Brushes.push_back(brush);
 
+		Lamp::PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
-	void BrushManager::Remove(const Brush* brush)
+	void BrushManager::Remove(Brush* brush)
 	{
 		auto it = std::find(m_Brushes.begin(), m_Brushes.end(), brush);
-		for (auto someBrush : m_Brushes)
-		{
-			if (someBrush == brush)
-			{
-				delete someBrush;
-				break;
-			}
-		}
-
 		if (it != m_Brushes.end())
 		{
 			m_Brushes.erase(it);
 		}
+
+		Lamp::PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
+		delete brush;
 	}
 
 	void BrushManager::OnEvent(Event& e)
