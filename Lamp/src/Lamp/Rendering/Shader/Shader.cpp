@@ -34,6 +34,9 @@ namespace Lamp
 			LP_CORE_ERROR("Failed to open" + vertexPath + "!");
 		}
 
+		std::getline(vertexFile, line);
+		m_Type = ShaderTypeFromString(line);
+
 		while (std::getline(vertexFile, line))
 		{
 			vertexCode += line + "\n";
@@ -123,5 +126,27 @@ namespace Lamp
 	std::shared_ptr<Shader> Shader::Create(const std::string& vertexPath, const std::string& fragmentPath)
 	{
 		return std::make_shared<Shader>(vertexPath, fragmentPath);
+	}
+
+	ShaderType Shader::ShaderTypeFromString(const std::string& s)
+	{
+		if (s == "//Illum")
+		{
+			return ShaderType::Illum;
+		}
+		else if (s == "//Blinn")
+		{
+			return ShaderType::Blinn;
+		}
+		else if (s == "//Phong")
+		{
+			return ShaderType::Phong;
+		}
+		else if (s == "BlinnPhong")
+		{
+			return ShaderType::BlinnPhong;
+		}
+
+		return ShaderType::Unknown;
 	}
 }

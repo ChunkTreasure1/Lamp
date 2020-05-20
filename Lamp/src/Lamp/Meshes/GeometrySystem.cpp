@@ -8,7 +8,7 @@ namespace Lamp
 {
 	Ref<Model> GeometrySystem::ImportModel(const std::string& path)
 	{
-		std::vector<Mesh> meshes = LoadModel(path);
+		std::vector<Ref<Mesh>> meshes = LoadModel(path);
 		Material mat(0);
 
 		std::string t = path;
@@ -34,7 +34,7 @@ namespace Lamp
 		pRootNode = file.first_node("Geometry");
 
 		std::string name = "";
-		std::vector<Mesh> meshes;
+		std::vector<Ref<Mesh>> meshes;
 		Material mat(0);
 
 		name = pRootNode->first_attribute("name")->value();
@@ -49,13 +49,13 @@ namespace Lamp
 				int matId;
 				GetValue(pMesh->first_attribute("matId")->value(), matId);
 
-				int vertCount;
+				int vertCount = 0;
 				if (rapidxml::xml_node<>* pVCount = pMesh->first_node("VerticeCount"))
 				{
 					GetValue(pVCount->first_attribute("count")->value(), vertCount);
 				}
 
-				int indiceCount;
+				int indiceCount = 0;
 				if (rapidxml::xml_node<>* pICount = pMesh->first_node("IndiceCount"))
 				{
 					GetValue(pICount->first_attribute("count")->value(), indiceCount);
@@ -77,7 +77,7 @@ namespace Lamp
 					indices.push_back(indice);
 				}
 
-				meshes.push_back(Mesh(vertices, indices, matId));
+				meshes.push_back(std::make_shared<Mesh>(vertices, indices, matId));
 			}
 		}
 
@@ -85,13 +85,15 @@ namespace Lamp
 		{
 			for (rapidxml::xml_node<>* pMaterial = pMaterials->first_node("Material"); pMaterial; pMaterial = pMaterial->next_sibling())
 			{
-				std::string name = pMaterial->first_attribute("name")->value();
+				std::string name;
 				std::string diffPath;
 				std::string specPath;
 
-				float shininess;
+				float shininess = 0;
 				std::string vertexPath;
 				std::string fragmentPath;
+
+				name = pMaterial->first_attribute("name")->value();
 
 				if (rapidxml::xml_node<>* pDiff = pMaterial->first_node("Diffuse"))
 				{
@@ -124,8 +126,8 @@ namespace Lamp
 	bool GeometrySystem::SaveToPath(Ref<Model>& model, const std::string& path)
 	{
 		std::ofstream out(path, std::ios::out | std::ios::binary);
-		out.write((char*)&model->GetMeshes()[0].GetVertices()[0], model->GetMeshes()[0].GetVertices().size() * sizeof(Vertex));
-		out.write((char*)&model->GetMeshes()[0].GetIndices()[0], model->GetMeshes()[0].GetIndices().size() * sizeof(uint32_t));
+		out.write((char*)&model->GetMeshes()[0]->GetVertices()[0], model->GetMeshes()[0]->GetVertices().size() * sizeof(Vertex));
+		out.write((char*)&model->GetMeshes()[0]->GetIndices()[0], model->GetMeshes()[0]->GetIndices().size() * sizeof(uint32_t));
 		out.close(); 
 
 		using namespace rapidxml;
@@ -145,16 +147,16 @@ namespace Lamp
 		for (auto& mesh : model->GetMeshes())
 		{
 			xml_node<>* pMesh = doc.allocate_node(node_element, "Mesh");
-			char* pMatId = doc.allocate_string(std::to_string(mesh.GetMaterialIndex()).c_str());
+			char* pMatId = doc.allocate_string(std::to_string(mesh->GetMaterialIndex()).c_str());
 			pMesh->append_attribute(doc.allocate_attribute("matId", pMatId));
 
 			xml_node<>* pVertCount = doc.allocate_node(node_element, "VerticeCount");
-			char* pVCount = doc.allocate_string(ToString((int)mesh.GetVertices().size()).c_str());
+			char* pVCount = doc.allocate_string(ToString((int)mesh->GetVertices().size()).c_str());
 			pVertCount->append_attribute(doc.allocate_attribute("count", pVCount));
 			pMesh->append_node(pVertCount);
 
 			xml_node<>* pIndiceCount = doc.allocate_node(node_element, "IndiceCount");
-			char* pICount = doc.allocate_string(ToString((int)mesh.GetIndices().size()).c_str());
+			char* pICount = doc.allocate_string(ToString((int)mesh->GetIndices().size()).c_str());
 			pIndiceCount->append_attribute(doc.allocate_attribute("count", pICount));
 			pMesh->append_node(pIndiceCount);
 
@@ -201,10 +203,16 @@ namespace Lamp
 		return true;
 	}
 
-	std::vector<Mesh> GeometrySystem::LoadModel(const std::string& path)
+	std::vector<Ref<Mesh>> GeometrySystem::LoadModel(const std::string& path)
 	{
 		Assimp::Importer importer;
+		std::vector<Ref<Mesh>> meshes;
+
 		const aiScene* pScene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		if (!pScene)
+		{
+			return meshes;
+		}
 
 		if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 		{
@@ -212,13 +220,12 @@ namespace Lamp
 			LP_CORE_ERROR(err);
 		}
 
-		std::vector<Mesh> meshes;
 		ProcessNode(pScene->mRootNode, pScene, meshes);
 
 		return meshes;
 	}
 
-	void GeometrySystem::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Mesh>& meshes)
+	void GeometrySystem::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<Mesh>>& meshes)
 	{
 		for (size_t i = 0; i < pNode->mNumMeshes; i++)
 		{
@@ -234,7 +241,7 @@ namespace Lamp
 		return;
 	}
 
-	Mesh GeometrySystem::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
+	Ref<Mesh> GeometrySystem::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
@@ -247,6 +254,7 @@ namespace Lamp
 			glm::vec3 normal;
 			glm::vec2 texCoords;
 
+			//'50' is the downscaling, might need some changes
 			pos.x = pMesh->mVertices[i].x / 50;
 			pos.y = pMesh->mVertices[i].y / 50;
 			pos.z = pMesh->mVertices[i].z / 50;
@@ -281,7 +289,7 @@ namespace Lamp
 			}
 		}
 
-		return Mesh(vertices, indices, pMesh->mMaterialIndex);
+		return std::make_shared<Mesh>(vertices, indices, pMesh->mMaterialIndex);
 	}
 
 	bool GeometrySystem::GetValue(char* val, glm::vec2& var)

@@ -26,28 +26,29 @@ namespace Lamp
 		static const uint32_t MaxLineIndices = MaxLines * 2;
 
 		//////Lines//////
-		Ref<VertexArray> pLineVertexArray;
-		Ref<VertexBuffer> pLineVertexBuffer;
+		Ref<VertexArray> LineVertexArray;
+		Ref<VertexBuffer> LineVertexBuffer;
 		uint32_t LineIndexCount = 0;
 
-		LineVertex* pLineVertexBufferBase = nullptr;
-		LineVertex* pLineVertexBufferPtr = nullptr;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
 		/////////////////
 
 		/////Skybox/////
-		Ref<VertexArray> pSkyBoxVertexArray;
+		Ref<VertexArray> SkyBoxVertexArray;
 		Ref<Shader> SkyboxShader;
 		////////////////
 
 		Renderer3DStorage()
-			: material(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/lineShader_vs.glsl", "engine/shaders/lineShader_fs.glsl"), 0)
+			: LineMaterial(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/lineShader_vs.glsl", "engine/shaders/lineShader_fs.glsl"), 0),
+			Camera(nullptr)
 		{}
 
-		PerspectiveCamera* pCamera;
-		Ref<VertexArray> pSphereArray;
+		PerspectiveCamera* Camera;
+		Ref<VertexArray> SphereArray;
 
-		Material material;
-		Ref<TextureCube> cubeMap;
+		Material LineMaterial;
+		Ref<TextureCube> CubeMap;
 	};
 
 	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
@@ -74,19 +75,19 @@ namespace Lamp
 			"engine/textures/skybox/front.jpg",
 			"engine/textures/skybox/back.jpg",
 		};
-		s_pData->cubeMap = TextureCube::Create(paths);
+		s_pData->CubeMap = TextureCube::Create(paths);
 		s_pData->SkyboxShader = Shader::Create("engine/shaders/skyboxShader_vs.glsl", "engine/shaders/skyboxShader_fs.glsl");
 
 		///////Line///////
-		s_pData->pLineVertexArray = VertexArray::Create();
-		s_pData->pLineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
-		s_pData->pLineVertexBuffer->SetBufferLayout
+		s_pData->LineVertexArray = VertexArray::Create();
+		s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
+		s_pData->LineVertexBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
 		});
-		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
-		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
+		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
+		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
 		uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
 		uint32_t offset = 0;
@@ -99,7 +100,7 @@ namespace Lamp
 		}
 
 		Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
-		s_pData->pLineVertexArray->SetIndexBuffer(pLineIB);
+		s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
 
 		delete[] pLineIndices;
 		//////////////////
@@ -127,20 +128,20 @@ namespace Lamp
 			4, 5, 0, 0, 5, 1
 		};
 
-		s_pData->pSkyBoxVertexArray = VertexArray::Create();
+		s_pData->SkyBoxVertexArray = VertexArray::Create();
 		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, sizeof(float) * boxPositions.size());
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
 			});
 
-		s_pData->pSkyBoxVertexArray->AddVertexBuffer(pBuffer);
+		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
 
 
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, boxIndicies.size());
-		s_pData->pSkyBoxVertexArray->SetIndexBuffer(indexBuffer);
+		s_pData->SkyBoxVertexArray->SetIndexBuffer(indexBuffer);
 
-		s_pData->pSkyBoxVertexArray->Unbind();
+		s_pData->SkyBoxVertexArray->Unbind();
 		//////////////////
 
 		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
@@ -159,16 +160,15 @@ namespace Lamp
 			Lamp::Renderer::Clear();
 		}
 
-		s_pData->pCamera = &camera;
+		s_pData->Camera = &camera;
 
 		ResetBatchData();
 	}
 
 	void Renderer3D::End()
 	{
-
-		uint32_t dataSize = (uint8_t*)s_pData->pLineVertexBufferPtr - (uint8_t*)s_pData->pLineVertexBufferBase;
-		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
+		uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
+		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
 		m_pFrameBuffer->Unbind();
@@ -176,13 +176,13 @@ namespace Lamp
 
 	void Renderer3D::Flush()
 	{
-		s_pData->material.GetShader()->Bind();
-		s_pData->material.GetShader()->UploadMat4("u_ViewProjection", s_pData->pCamera->GetViewProjectionMatrix());
+		s_pData->LineMaterial.GetShader()->Bind();
+		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->Camera->GetViewProjectionMatrix());
 
-		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
+		Renderer::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Mesh& mesh, Material& mat)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		mat.GetDiffuse()->Bind();
@@ -191,53 +191,38 @@ namespace Lamp
 
 		mat.GetShader()->Bind();
 		mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->pCamera->GetViewProjectionMatrix());
-		mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->pCamera->GetPosition());
-
-		/////Lighting/////
+		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->Camera->GetViewProjectionMatrix());
+		mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->Camera->GetPosition());
+		
 		glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
 		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
 
-		mat.GetShader()->UploadFloat3("u_DirectionalLight.ambient", { 0.2f, 0.2f, 0.2f });
-		mat.GetShader()->UploadFloat3("u_DirectionalLight.diffuse", { 0.5f, 0.5f, 0.5f });
-		mat.GetShader()->UploadFloat3("u_DirectionalLight.specular", { 1.f, 1.f, 1.f });
-		mat.GetShader()->UploadFloat3("u_DirectionalLight.direction", { 1.f, -1.f, 0.5f });
-
-		mat.GetShader()->UploadFloat("u_PointLight.constant", 1.f);
-		mat.GetShader()->UploadFloat("u_PointLight.linear", 0.09f);
-		mat.GetShader()->UploadFloat("u_PointLight.quadratic", 0.032f);
-		mat.GetShader()->UploadFloat3("u_PointLight.position", { 0, 7, 0 });
-		mat.GetShader()->UploadFloat3("u_PointLight.ambient", { 0.2f, 0.2f, 0.2f });
-		mat.GetShader()->UploadFloat3("u_PointLight.diffuse", { 3.f, 3.f, 3.f });
-		mat.GetShader()->UploadFloat3("u_PointLight.specular", { 1.f, 1.f, 1.f });
-		/////////////////
-
-		mesh.GetVertexArray()->Bind();
-		Renderer::DrawIndexed(mesh.GetVertexArray());
+		mesh->GetVertexArray()->Bind();
+		Renderer::DrawIndexed(mesh->GetVertexArray());
 	}
 
 	void Renderer3D::DrawSkybox()
 	{
 		glDepthMask(GL_FALSE);
-		s_pData->cubeMap->Bind();
+		s_pData->CubeMap->Bind();
 		s_pData->SkyboxShader->Bind();
 
-		s_pData->pSkyBoxVertexArray->Bind();
+		s_pData->SkyBoxVertexArray->Bind();
 
 		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->pCamera->GetProjectionMatrix());
+		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->Camera->GetProjectionMatrix());
 
-		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->pCamera->GetViewMatrix()));
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->Camera->GetViewMatrix()));
 		s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
 
-		Renderer::DrawIndexed(s_pData->pSkyBoxVertexArray);
+		Renderer::DrawIndexed(s_pData->SkyBoxVertexArray);
 		glDepthMask(GL_TRUE);
 	}
 
 	void Renderer3D::DrawSphere()
 	{
-		s_pData->pSphereArray->Bind();
-		Renderer::DrawIndexed(s_pData->pSphereArray);
+		s_pData->SphereArray->Bind();
+		Renderer::DrawIndexed(s_pData->SphereArray);
 	}
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
 	{
@@ -248,13 +233,13 @@ namespace Lamp
 			StartNewBatch();
 		}
 
-		s_pData->pLineVertexBufferPtr->Position = posA;
-		s_pData->pLineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->pLineVertexBufferPtr++;
+		s_pData->LineVertexBufferPtr->Position = posA;
+		s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		s_pData->LineVertexBufferPtr++;
 
-		s_pData->pLineVertexBufferPtr->Position = posB;
-		s_pData->pLineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->pLineVertexBufferPtr++;
+		s_pData->LineVertexBufferPtr->Position = posB;
+		s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		s_pData->LineVertexBufferPtr++;
 
 		s_pData->LineIndexCount += 2;
 	}
@@ -354,6 +339,6 @@ namespace Lamp
 	void Renderer3D::ResetBatchData()
 	{
 		s_pData->LineIndexCount = 0;
-		s_pData->pLineVertexBufferPtr = s_pData->pLineVertexBufferBase;
+		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
 	}
 }

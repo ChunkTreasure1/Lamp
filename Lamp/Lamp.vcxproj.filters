@@ -1501,5 +1501,6 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
   </ItemGroup>
 </Project>

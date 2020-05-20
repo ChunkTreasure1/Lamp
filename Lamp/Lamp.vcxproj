@@ -598,6 +598,7 @@
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />

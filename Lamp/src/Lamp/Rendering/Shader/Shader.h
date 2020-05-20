@@ -14,6 +14,15 @@
 
 namespace Lamp
 {
+	enum class ShaderType
+	{
+		Illum = 0,
+		Blinn,
+		Phong,
+		BlinnPhong,
+		Unknown
+	};
+
 	class Shader
 	{
 	public:
@@ -32,13 +41,18 @@ namespace Lamp
 		inline const uint32_t GetID() const { return m_ID; }
 		inline std::string& GetVertexPath() { return m_VertexPath; }
 		inline const std::string& GetFragementPath() { return m_FragmentPath; }
+		inline const ShaderType GetType() { return m_Type; }
 
 	public:
 		static std::shared_ptr<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
 
 	private:
+		ShaderType ShaderTypeFromString(const std::string& s);
+
+	private:
 		uint32_t m_ID;
 		std::string m_VertexPath;
 		std::string m_FragmentPath;
+		ShaderType m_Type;
 	};
 }

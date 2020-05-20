@@ -16,9 +16,9 @@ namespace Lamp
 		static bool SaveToPath(Ref<Model>& model, const std::string& path);
 
 	private:
-		static std::vector<Mesh> LoadModel(const std::string& path);
-		static void ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Mesh>& meshes);
-		static Mesh ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
+		static std::vector<Ref<Mesh>> LoadModel(const std::string& path);
+		static void ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<Mesh>>& meshes);
+		static Ref<Mesh> ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
 
 		static bool GetValue(char* val, int& var);
 		static bool GetValue(char* val, float& var);

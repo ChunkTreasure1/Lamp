@@ -15,7 +15,7 @@ namespace Lamp
 	class Model
 	{
 	public:
-		Model(std::vector<Mesh> meshes, Material mat, const std::string& name)
+		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name)
 			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name)
 		{
 		}
@@ -29,7 +29,7 @@ namespace Lamp
 		//Getting
 		inline Material& GetMaterial() { return m_Material; }
 		inline const std::string& GetName() { return m_Name; }
-		inline std::vector<Mesh>& GetMeshes() { return m_Meshes; }
+		inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
 		inline const std::string& GetLGFPath() { return m_LGFPath; }
 		inline const glm::mat4& GetMatrix() { return m_ModelMatrix; }
 
@@ -37,7 +37,7 @@ namespace Lamp
 		
 	private:
 		Material m_Material;
-		std::vector<Mesh> m_Meshes;
+		std::vector<Ref<Mesh>> m_Meshes;
 		std::string m_Name;
 		std::string m_LGFPath;
 
