@@ -86,4 +86,17 @@ namespace Lamp
 
 		return nullptr;
 	}
+
+	Brush* BrushManager::GetBrushFromPhysicalEntity(Ref<PhysicalEntity>& pEnt)
+	{
+		for (auto& brush : m_Brushes)
+		{
+			if (brush->GetPhysicalEntity() == pEnt)
+			{
+				return brush;
+			}
+		}
+
+		return nullptr;
+	}
 }

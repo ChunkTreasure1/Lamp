@@ -8,6 +8,8 @@
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/ApplicationEvent.h"
 
+#include "imgui.h"
+
 namespace Lamp
 {
 	class ImGuiLayer : public Layer
@@ -24,5 +26,6 @@ namespace Lamp
 		
 	private:
 		float m_Time = 0.f;
+		ImFont* m_pFont;
 	};
 }

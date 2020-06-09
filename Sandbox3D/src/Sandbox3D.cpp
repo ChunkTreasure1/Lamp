@@ -36,7 +36,6 @@ namespace Sandbox3D
 
 		auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
 		comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/test.lgf"));
-
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)

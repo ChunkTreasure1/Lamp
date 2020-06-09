@@ -17,13 +17,14 @@ namespace Lamp
 		void Remove(Brush* brush);
 		void OnEvent(Event& e);
 
-		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 		//Setting
 		inline void SetBrushes(std::vector<Brush*> brushes) { m_Brushes = brushes; }
 
 		//Getting
 		inline std::vector<Brush*>& GetBrushes() { return m_Brushes; }
+		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);
+		Brush* GetBrushFromPhysicalEntity(Ref<PhysicalEntity>& pEnt);
 
 	public:
 		static void SetCurrentManager(Ref<BrushManager> manager) { s_Manager = manager; }

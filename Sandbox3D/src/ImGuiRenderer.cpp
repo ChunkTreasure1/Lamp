@@ -35,7 +35,7 @@ namespace Sandbox3D
 			Lamp::Renderer3D::GetFrameBuffer()->Update((const uint32_t)ImGui::GetWindowSize().x, (const uint32_t)ImGui::GetWindowSize().y);
 			m_PerspectiveSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 
-			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond());
+			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
 
 			ImGui::Text(frameInfo.c_str());
 		}

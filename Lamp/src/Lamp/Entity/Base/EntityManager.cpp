@@ -56,6 +56,19 @@ namespace Lamp
 		return true;
 	}
 
+	Entity* EntityManager::GetEntityFromPhysicalEntity(PhysicalEntity* pEnt)
+	{
+		for (auto& ent : m_pEntites)
+		{
+			if (ent->GetPhysicalEntity().get() == pEnt)
+			{
+				return ent;
+			}
+		}
+
+		return nullptr;
+	}
+
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
 		for (Lamp::Entity* ent : GetEntities())

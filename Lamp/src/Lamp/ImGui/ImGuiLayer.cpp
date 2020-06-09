@@ -1,8 +1,6 @@
 #include "lppch.h"
 #include "ImGuiLayer.h"
 
-#include "imgui.h"
-
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
 
@@ -16,7 +14,7 @@
 namespace Lamp
 {
 	ImGuiLayer::ImGuiLayer()
-		: Layer("ImGuiLayer")
+		: Layer("ImGuiLayer"), m_pFont(nullptr)
 	{
 	}
 
@@ -38,6 +36,8 @@ namespace Lamp
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		//Enable multiple viewports
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
+
+		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Roboto-Regular.ttf", 14.f);
 
 		//Setup ImGui style
 		ImGui::StyleColorsDark();
@@ -93,5 +93,6 @@ namespace Lamp
 
 			glfwMakeContextCurrent(pBackup_current_context);
 		}
+
 	}
 }

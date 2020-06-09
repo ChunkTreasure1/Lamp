@@ -22,7 +22,6 @@ namespace Lamp
 			: m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1), m_Name("")
 		{
 			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_pPhysicalEntity->SetEntity(this);
 			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 		}
 		~Entity() {}
