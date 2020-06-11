@@ -14,7 +14,7 @@ namespace Lamp
 	using Ref = std::shared_ptr<T>;
 }
 
-namespace Game
+namespace Sandbox3D
 {
 	template<typename T>
 	using Scope = std::unique_ptr<T>;

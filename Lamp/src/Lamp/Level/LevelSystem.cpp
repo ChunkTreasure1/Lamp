@@ -1,10 +1,10 @@
 #include "lppch.h"
 #include "LevelSystem.h"
 
-#include "Lamp/Brushes/BrushManager.h"
+#include "Lamp/Objects/Brushes/BrushManager.h"
 #include <rapidxml/rapidxml_print.hpp>
 
-#include "Lamp/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 
 namespace Lamp
 {

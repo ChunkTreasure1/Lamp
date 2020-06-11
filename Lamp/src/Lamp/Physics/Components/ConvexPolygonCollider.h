@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Entity/Base/BaseComponent.h"
+#include "Lamp/Objects/Entity/Base/BaseComponent.h"
 
 #include <vector>
 

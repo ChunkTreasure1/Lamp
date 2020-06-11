@@ -3,7 +3,7 @@
 
 #include "Lamp/Meshes/GeometrySystem.h"
 #include "Lamp/Physics/Ray.h"
-#include "Lamp/Entity/Base/Physical/PhysicalEntity.h"
+#include "Lamp/Objects/Entity/Base/Physical/PhysicalEntity.h"
 #include "Lamp/Physics/PhysicsEngine.h"
 
 namespace Lamp
@@ -28,7 +28,7 @@ namespace Lamp
 	{
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
 		m_Brushes.push_back(brush);
-	
+
 		Lamp::PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
@@ -36,7 +36,7 @@ namespace Lamp
 	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
 	{
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
-		
+
 		brush->SetPosition(pos);
 		brush->SetRotation(rot);
 		brush->SetScale(scale);

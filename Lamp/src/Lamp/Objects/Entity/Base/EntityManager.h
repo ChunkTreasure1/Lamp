@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Lamp/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 
 namespace Lamp
 {

@@ -5,7 +5,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-#include "Lamp/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
 #include "Sandbox3D.h"
 
 #include <glm/gtc/type_ptr.hpp>

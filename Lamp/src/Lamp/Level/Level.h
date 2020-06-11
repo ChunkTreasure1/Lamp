@@ -2,10 +2,10 @@
 
 #include <string>
 
-#include "Lamp/Brushes/Brush2D.h"
-#include "Lamp/Brushes/BrushManager.h"
+#include "Lamp/Objects/Brushes/Brush2D.h"
+#include "Lamp/Objects/Brushes/BrushManager.h"
 
-#include "Lamp/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
 
 namespace Lamp
 {

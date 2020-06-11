@@ -6,7 +6,7 @@
 #include "Lamp/Core/Application.h"
 #include <algorithm>
 
-#include "Lamp/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 #include "Lamp/Rendering/Vertices/VertexArray.h"
 
 namespace Lamp

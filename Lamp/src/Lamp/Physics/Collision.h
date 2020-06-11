@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Components/ConvexPolygonCollider.h"
-#include "Lamp/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 
 #include "Lamp/Level/LevelSystem.h"
 #include "Lamp/Event/EntityEvent.h"

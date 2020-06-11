@@ -1,9 +1,9 @@
 #include "lppch.h"
 #include "PhysicalEntity.h"
 
-#include "Lamp/Entity/Base/Entity.h"
-#include "Lamp/Brushes/Brush.h"
-#include "Lamp/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Brushes/Brush.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
 
 namespace Lamp
 {

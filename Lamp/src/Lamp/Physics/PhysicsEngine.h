@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Lamp/Entity/Base/Physical/PhysicalEntity.h"
+#include "Lamp/Objects/Entity/Base/Physical/PhysicalEntity.h"
 #include "Lamp/Core/Core.h"
 
 namespace Lamp

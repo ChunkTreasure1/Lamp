@@ -4,7 +4,7 @@
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
 #include <Lamp/Physics/Collision.h>
-#include <Lamp/Brushes/BrushManager.h>
+#include <Lamp/Objects/Brushes/BrushManager.h>
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
@@ -12,7 +12,7 @@
 #include <Lamp/Physics/Colliders/AABB.h>
 #include <Lamp/Physics/PhysicsEngine.h>
 #include <Lamp/Physics/Physics.h>
-#include <Lamp/Entity/BaseComponents/MeshComponent.h>
+#include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 
 namespace Sandbox3D
@@ -20,10 +20,11 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PerspectiveCamera(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
-		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
+		m_Layers.push_back(Lamp::ObjectLayer(0, "Main", false));
 
 		//auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		//auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
+		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 		auto light = Lamp::BrushManager::Get()->Create("engine/models/lightModel.lgf");
 
 		//brush1->SetPosition({ -10, 1, 0 });
@@ -72,6 +73,7 @@ namespace Sandbox3D
 		UpdateAssetBrowser();
 		UpdateProperties();
 		UpdateModelImporter();
+		UpdateLayerView();
 	}
 
 	void Sandbox3D::OnEvent(Lamp::Event& e)

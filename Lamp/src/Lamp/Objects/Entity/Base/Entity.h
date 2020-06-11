@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "Lamp/Entity/Base/BaseComponent.h"
+#include "Lamp/Objects/Entity/Base/BaseComponent.h"
 #include <glm/glm.hpp>
 #include "Lamp/Event/Event.h"
 
@@ -11,15 +11,16 @@
 #include "Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Lamp/Objects/Object.h"
+
 class EntityManager;
 
 namespace Lamp
 {
-	class Entity
+	class Entity : public Object
 	{
 	public:
 		Entity()
-			: m_Position(0, 0, 0), m_Rotation(0, 0, 0), m_Scale(1, 1, 1), m_Name("")
 		{
 			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
 			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
@@ -44,21 +45,6 @@ namespace Lamp
 
 		//Getting
 		inline std::vector<Ref<EntityComponent>> GetComponents() const { return m_pComponents; }
-		inline const glm::vec3& GetPosition() const { return m_Position; }
-		inline const glm::vec3& GetRotation() const { return m_Rotation; }
-		inline const glm::vec3& GetScale() const { return m_Scale; }
-
-		inline const std::string& GetName() const { return m_Name; }
-		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
-		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_pPhysicalEntity; }
-
-		//Setting
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); }
-		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); }
-		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); }
-
-		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 
 		template<typename T>
 		Ref<T> GetComponent()
@@ -118,17 +104,7 @@ namespace Lamp
 		}
 
 	private:
-		bool m_IsActive = true;
-		Ref<PhysicalEntity> m_pPhysicalEntity;
-
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;
-
-		glm::vec3 m_Position;
-		glm::vec3 m_Rotation;
-		glm::vec3 m_Scale;
-
-		glm::mat4 m_ModelMatrix;
-		std::string m_Name;
 	};
 }

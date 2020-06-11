@@ -2,9 +2,9 @@
 #include "ConvexPolygonCollider.h"
 #include <Lamp/Rendering/Renderer2D.h>
 
-#include "Lamp/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include <Lamp/Entity/Base/ComponentRegistry.h>
+#include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
 
 namespace Lamp
 {

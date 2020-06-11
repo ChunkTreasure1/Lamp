@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Lamp/Entity/Base/BaseComponent.h"
-#include "Lamp/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Base/BaseComponent.h"
+#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 
 #include "Lamp/Meshes/Model.h"
 

@@ -352,6 +352,13 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
+	void Sandbox3D::UpdateLayerView()
+	{
+		ImGui::Begin("Layers");
+
+		ImGui::End();
+	}
+
 	void Sandbox3D::CreateDockspace()
 	{
 		static bool opt_fullscreen_persistant = true;
