@@ -3,8 +3,7 @@
 
 namespace Lamp
 {
-	Ref<ObjectLayerManager> ObjectLayerManager::s_Manager = nullptr;
-
+	Ref<ObjectLayerManager> ObjectLayerManager::s_ObjectLayerManager = nullptr;
 	void ObjectLayerManager::OnEvent(Event& e)
 	{
 		for (auto& l : m_Layers)

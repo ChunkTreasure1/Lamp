@@ -21,6 +21,8 @@ namespace Lamp
 	Entity* EntityManager::Create()
 	{
 		Entity* pEnt = new Entity();
+		pEnt->SetLayerID(0);
+
 		m_pEntites.emplace_back(pEnt);
 
 		ObjectLayerManager::Get()->AddToLayer(pEnt, 0);

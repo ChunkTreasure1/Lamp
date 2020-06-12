@@ -22,8 +22,8 @@ namespace Lamp
 	public:
 		Entity()
 		{
-			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
+			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
+			m_PhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Entity";
 		}
 		~Entity() {}

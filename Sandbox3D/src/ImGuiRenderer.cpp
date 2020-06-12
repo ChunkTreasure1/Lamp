@@ -359,7 +359,12 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLayerView()
 	{
-		ImGui::Begin("Layers");
+		if (!m_LayerViewOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Layers", &m_LayerViewOpen);
 
 		int startId = 0;
 
@@ -433,6 +438,11 @@ namespace Sandbox3D
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("Save Level"))
+				{
+					Lamp::LevelSystem::SaveLevel("engine/levels/" + Lamp::LevelSystem::GetCurrentLevel()->GetName() + ".level", Lamp::LevelSystem::GetCurrentLevel());
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -441,6 +451,7 @@ namespace Sandbox3D
 				ImGui::MenuItem("Import Model", NULL, &m_ModelImporterOpen);
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
+				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
 
 				ImGui::EndMenu();
 			}

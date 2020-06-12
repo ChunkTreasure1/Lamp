@@ -18,6 +18,7 @@ namespace Lamp
 		LevelSystem() = delete;
 		static std::vector<Brush*> LoadBrushes(rapidxml::xml_node<>* pNode, Ref<BrushManager>& brushManager);
 		static std::vector<Entity*> LoadEntities(rapidxml::xml_node<>* pNode, Ref<EntityManager>& entityManager);
+		static std::vector<ObjectLayer> LoadLayers(rapidxml::xml_node<>* pNode, Ref<ObjectLayerManager>& objLayerManager);
 
 	private:
 		static bool GetValue(char* val, bool& var);

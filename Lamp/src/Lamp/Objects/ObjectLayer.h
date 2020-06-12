@@ -45,6 +45,7 @@ namespace Lamp
 			}
 		}
 		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
+		inline void SetLayers(std::vector<ObjectLayer>& layers) { m_Layers = layers; }
 
 		void AddToLayer(Object* obj, uint32_t layerId)
 		{
@@ -53,8 +54,12 @@ namespace Lamp
 				if (m_Layers[i].ID == layerId)
 				{
 					m_Layers[i].Objects.push_back(obj);
+					return;
 				}
 			}
+
+			//Layer not found, set it to main layer
+			m_Layers[0].Objects.push_back(obj);
 		}
 		void AddToLayer(Object* obj, const std::string& name)
 		{
@@ -65,14 +70,17 @@ namespace Lamp
 					m_Layers[i].Objects.push_back(obj);
 				}
 			}
+
+			//Layer not found, set it to main layer
+			m_Layers[0].Objects.push_back(obj);
 		}
 
 	public:
-		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_Manager = manager; }
-		static Ref<ObjectLayerManager>& Get() { return s_Manager; }
+		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }
+		static Ref<ObjectLayerManager>& Get() { return s_ObjectLayerManager; }
 
 	private:
-		static Ref<ObjectLayerManager> s_Manager;
+		static Ref<ObjectLayerManager> s_ObjectLayerManager;
 
 	private:
 		std::vector<ObjectLayer> m_Layers;

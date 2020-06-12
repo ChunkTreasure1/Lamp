@@ -16,11 +16,10 @@ namespace Lamp
 		Brush(Ref<Model> model)
 			: m_Model(model)
 		{
-			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
+			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
+			m_PhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Brush";
 		}
-
 		bool OnRender()
 		{
 			m_Model->Render();

@@ -74,6 +74,9 @@ namespace Sandbox3D
 		//Model importer
 		bool m_ModelImporterOpen = false;
 		std::shared_ptr<Lamp::Model> m_pModelToImport;
+
+		//Layers
+		bool m_LayerViewOpen = true;
 		//--------------------------------------
 	};
 }

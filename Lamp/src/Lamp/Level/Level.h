@@ -18,12 +18,11 @@ namespace Lamp
 			m_BrushManager = std::make_shared<BrushManager>();
 			m_EntityManager = std::make_shared<EntityManager>();
 			m_ObjectLayerManager = std::make_shared<ObjectLayerManager>();
-
-			ObjectLayerManager::SetCurrentManager(m_ObjectLayerManager);
 		}
 
 		inline Ref<BrushManager>& GetBrushManager() { return m_BrushManager; }
 		inline Ref<EntityManager>& GetEntityManager() { return m_EntityManager; }
+		inline Ref<ObjectLayerManager>& GetObjectLayerManager() { return m_ObjectLayerManager; }
 		inline const std::string& GetName() { return m_Name; }
 
 	private:

@@ -27,6 +27,12 @@ namespace Lamp
 		pRootNode = file.first_node("Level");
 
 		pLevel = std::make_shared<Level>(pRootNode->first_attribute("name")->value());
+		ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
+
+		if (rapidxml::xml_node<>* pLayers = pRootNode->first_node("Layers"))
+		{
+			pLevel->GetObjectLayerManager()->SetLayers(LoadLayers(pLayers, pLevel->GetObjectLayerManager()));
+		}
 
 		if (rapidxml::xml_node<>* pBrushes = pRootNode->first_node("Brushes"))
 		{
@@ -87,6 +93,27 @@ namespace Lamp
 		pRoot->append_node(pBrushes);
 
 		/////////////////
+
+		rapidxml::xml_node<>* pLayers = doc.allocate_node(rapidxml::node_element, "Layers");
+		for (auto layer : ObjectLayerManager::Get()->GetLayers())
+		{
+			if (layer.ID == 0)
+				continue;
+
+			rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "Layer");
+
+			char* pId = doc.allocate_string(ToString((int)layer.ID).c_str());
+			child->append_attribute(doc.allocate_attribute("id", pId));
+
+			char* pName = doc.allocate_string(layer.Name.c_str());
+			child->append_attribute(doc.allocate_attribute("name", pName));
+
+			char* pDestroyable = doc.allocate_string(ToString(layer.IsDestroyable).c_str());
+			child->append_attribute(doc.allocate_attribute("destroyable", pDestroyable));
+
+			pLayers->append_node(child);
+		}
+		pRoot->append_node(pLayers);
 
 		////Entities/////
 		//rapidxml::xml_node<>* pEntities = doc.allocate_node(rapidxml::node_element, "Entities");
@@ -198,6 +225,26 @@ namespace Lamp
 		LP_CORE_INFO("Saved level!");
 
 		return true;
+	}
+
+	std::vector<ObjectLayer> LevelSystem::LoadLayers(rapidxml::xml_node<>* pNode, Ref<ObjectLayerManager>& objLayerManager)
+	{
+		std::vector<ObjectLayer> layers;
+
+		for (rapidxml::xml_node<>* pLayer = pNode->first_node("Layer"); pLayer; pLayer = pLayer->next_sibling())
+		{
+			std::string name(pLayer->first_attribute("name")->value());
+
+			int id;
+			GetValue(pLayer->first_attribute("id")->value(), id);
+
+			bool destroyable;
+			GetValue(pLayer->first_attribute("destroyable")->value(), destroyable);
+
+			layers.push_back(ObjectLayer((uint32_t)id, name, destroyable));
+		}
+
+		return layers;
 	}
 
 	std::vector<Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, Ref<BrushManager>& brushManager)

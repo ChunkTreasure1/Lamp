@@ -28,6 +28,8 @@ namespace Lamp
 	Brush* BrushManager::Create(const std::string& path)
 	{
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		brush->SetLayerID(0);
+
 		m_Brushes.push_back(brush);
 
 		ObjectLayerManager::Get()->AddToLayer(brush, 0);
