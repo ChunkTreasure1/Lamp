@@ -9,7 +9,6 @@
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
-#include <Lamp/Objects/Layer.h>
 
 namespace Sandbox3D
 {
@@ -75,9 +74,6 @@ namespace Sandbox3D
 		//Model importer
 		bool m_ModelImporterOpen = false;
 		std::shared_ptr<Lamp::Model> m_pModelToImport;
-
-		//Layer
-		std::vector<Lamp::ObjectLayer> m_Layers;
 		//--------------------------------------
 	};
 }

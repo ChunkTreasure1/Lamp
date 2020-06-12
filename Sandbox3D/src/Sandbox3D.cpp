@@ -15,13 +15,13 @@
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 
+#include <Lamp/Objects/ObjectLayer.h>
+
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PerspectiveCamera(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
-		m_Layers.push_back(Lamp::ObjectLayer(0, "Main", false));
-
 		//auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		//auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
@@ -48,7 +48,7 @@ namespace Sandbox3D
 		Lamp::PhysicsEngine::Get()->HandleCollisions();
 
 		Lamp::AppUpdateEvent updateEvent(ts);
-		Lamp::EntityManager::Get()->OnEvent(updateEvent);
+		Lamp::ObjectLayerManager::Get()->OnEvent(updateEvent);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
@@ -56,8 +56,7 @@ namespace Sandbox3D
 		Lamp::Renderer3D::Begin(m_PerspectiveCamera.GetCamera());
 
 		Lamp::AppRenderEvent renderEvent;
-		Lamp::EntityManager::Get()->OnEvent(renderEvent);
-		Lamp::BrushManager::Get()->OnEvent(renderEvent);
+		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
 		m_PerspectiveCamera.OnEvent(renderEvent);
 		RenderGrid();
 

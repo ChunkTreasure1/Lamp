@@ -13,10 +13,8 @@ namespace Lamp
 		~BrushManager();
 
 		Brush* Create(const std::string& path);
-		Brush* Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale);
+		Brush* Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name);
 		void Remove(Brush* brush);
-		void OnEvent(Event& e);
-
 
 		//Setting
 		inline void SetBrushes(std::vector<Brush*> brushes) { m_Brushes = brushes; }

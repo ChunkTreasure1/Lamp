@@ -7,4 +7,5 @@ namespace Lamp
 		: m_DebugName(name)
 	{
 	}
+
 }

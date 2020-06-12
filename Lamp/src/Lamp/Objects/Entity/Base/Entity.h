@@ -24,10 +24,11 @@ namespace Lamp
 		{
 			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
 			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
+			m_Name = "Entity";
 		}
 		~Entity() {}
 
-		void OnEvent(Event& e)
+		void OnEvent(Event& e) override 
 		{
 			for (auto& pComp : m_pComponents)
 			{

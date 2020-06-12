@@ -2,18 +2,11 @@
 #include "EntityManager.h"
 
 #include "Lamp/Physics/PhysicsEngine.h"
+#include "Lamp/Objects/ObjectLayer.h"
 
 namespace Lamp
 {
 	Ref<EntityManager> EntityManager::s_CurrentManager;
-
-	void EntityManager::OnEvent(Event& e)
-	{
-		for (Entity* pE : m_pEntites)
-		{
-			pE->OnEvent(e);
-		}
-	}
 
 	void EntityManager::Shutdown()
 	{
@@ -29,8 +22,9 @@ namespace Lamp
 	{
 		Entity* pEnt = new Entity();
 		m_pEntites.emplace_back(pEnt);
-		
-		Lamp::PhysicsEngine::Get()->AddEntity(pEnt->GetPhysicalEntity());
+
+		ObjectLayerManager::Get()->AddToLayer(pEnt, 0);
+		PhysicsEngine::Get()->AddEntity(pEnt->GetPhysicalEntity());
 
 		return pEnt;
 	}

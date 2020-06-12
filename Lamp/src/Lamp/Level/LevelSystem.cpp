@@ -76,6 +76,12 @@ namespace Lamp
 			char* pScale = doc.allocate_string(ToString(brush->GetScale()).c_str());
 			child->append_attribute(doc.allocate_attribute("scale", pScale));
 
+			char* pLayer = doc.allocate_string(ToString((int)brush->GetLayerID()).c_str());
+			child->append_attribute(doc.allocate_attribute("layerID", pLayer));
+
+			char* pName = doc.allocate_string(brush->GetName().c_str());
+			child->append_attribute(doc.allocate_attribute("name", pName));
+
 			pBrushes->append_node(child);
 		}
 		pRoot->append_node(pBrushes);
@@ -211,7 +217,12 @@ namespace Lamp
 			glm::vec3 scale(1, 1, 1);
 			GetValue(pBrush->first_attribute("scale")->value(), scale);
 
-			pBrushes.push_back(brushManager->Create(path, pos, rot, scale));
+			int layerID;
+			GetValue(pBrush->first_attribute("layerID")->value(), layerID);
+
+			std::string name = pBrush->first_attribute("name")->value();
+
+			pBrushes.push_back(brushManager->Create(path, pos, rot, scale, layerID, name));
 		}
 
 		return pBrushes;

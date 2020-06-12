@@ -1378,7 +1378,7 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
-    <ClInclude Include="src\Lamp\Objects\Layer.h" />
+    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1497,5 +1497,6 @@
       <Filter>src\Lamp\Entity\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
   </ItemGroup>
 </Project>

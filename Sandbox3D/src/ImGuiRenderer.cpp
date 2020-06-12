@@ -6,6 +6,7 @@
 #include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include <Lamp/Objects/ObjectLayer.h>
 
 namespace Sandbox3D
 {
@@ -247,6 +248,10 @@ namespace Sandbox3D
 			{
 				ImGui::Text("Brush");
 
+				std::string name = m_pSelectedBrush->GetName();
+				ImGui::InputText("Name", &name);
+				m_pSelectedBrush->SetName(name);
+
 				if (ImGui::CollapsingHeader("Transform"))
 				{
 					glm::vec3 pos = m_pSelectedBrush->GetPosition();
@@ -355,6 +360,23 @@ namespace Sandbox3D
 	void Sandbox3D::UpdateLayerView()
 	{
 		ImGui::Begin("Layers");
+
+		int startId = 0;
+
+		for (Lamp::ObjectLayer& layer : Lamp::ObjectLayerManager::Get()->GetLayers())
+		{
+			if (ImGui::TreeNode(layer.Name.c_str()))
+			{
+				for (int i = 0; i < layer.Objects.size(); i++)
+				{
+					startId++;
+					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, layer.Objects[i]->GetName().c_str());
+				}
+
+				ImGui::TreePop();
+			}
+		}
 
 		ImGui::End();
 	}

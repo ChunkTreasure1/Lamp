@@ -2,7 +2,7 @@
 
 #include "Entity/Base/Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "Lamp/Objects/Layer.h"
+#include "Lamp/Event/Event.h"
 
 namespace Lamp
 {
@@ -19,7 +19,7 @@ namespace Lamp
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetLayer(ObjectLayer& layer) { m_Layer = layer; }
+		inline void SetLayerID(uint32_t id) { m_LayerID = id; }
 
 		//Getting
 		inline const glm::vec3& GetPosition() { return m_Position; }
@@ -28,6 +28,9 @@ namespace Lamp
 		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_pPhysicalEntity; }
 		inline const std::string& GetName() { return m_Name; }
+		inline uint32_t GetLayerID() { return m_LayerID; }
+
+		virtual void OnEvent(Event& e) {}
 
 	protected:
 		void CalculateModelMatrix()
@@ -51,6 +54,6 @@ namespace Lamp
 
 		glm::mat4 m_ModelMatrix;
 		std::string m_Name;
-		ObjectLayer	m_Layer;
+		uint32_t m_LayerID;
 	};
 }

@@ -1,0 +1,80 @@
+#pragma once
+
+#include "Object.h"
+#include "Lamp/Event/Event.h"
+
+#include <string>
+
+namespace Lamp
+{
+	struct ObjectLayer
+	{
+		ObjectLayer(uint32_t num, const std::string& name, bool state)
+			: ID(num), Name(name), IsDestroyable(state)
+		{}
+
+		ObjectLayer(uint32_t num)
+			: ID(num), Name("Layer"), IsDestroyable(true)
+		{}
+
+		uint32_t ID;
+		std::string Name;
+		bool IsDestroyable;
+		std::vector<Object*> Objects;
+	};
+
+	class ObjectLayerManager
+	{
+	public:
+		ObjectLayerManager()
+		{
+			m_Layers.push_back(ObjectLayer(0, "Main", false));
+		}
+
+		void OnEvent(Event& e);
+
+		inline void AddLayer(ObjectLayer& layer) { m_Layers.push_back(layer); }
+		inline bool RemoveLayer(uint32_t id)
+		{
+			for (int i = 0; i < m_Layers.size(); i++)
+			{
+				if (m_Layers[i].ID == id)
+				{
+					m_Layers.erase(m_Layers.begin() + i);
+				}
+			}
+		}
+		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
+
+		void AddToLayer(Object* obj, uint32_t layerId)
+		{
+			for (int i = 0; i < m_Layers.size(); i++)
+			{
+				if (m_Layers[i].ID == layerId)
+				{
+					m_Layers[i].Objects.push_back(obj);
+				}
+			}
+		}
+		void AddToLayer(Object* obj, const std::string& name)
+		{
+			for (int i = 0; i < m_Layers.size(); i++)
+			{
+				if (m_Layers[i].Name == name)
+				{
+					m_Layers[i].Objects.push_back(obj);
+				}
+			}
+		}
+
+	public:
+		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_Manager = manager; }
+		static Ref<ObjectLayerManager>& Get() { return s_Manager; }
+
+	private:
+		static Ref<ObjectLayerManager> s_Manager;
+
+	private:
+		std::vector<ObjectLayer> m_Layers;
+	};
+}

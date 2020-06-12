@@ -10,7 +10,6 @@ namespace Lamp
 	{
 	public:
 		EntityManager() {}
-		void OnEvent(Event& e);
 
 		void Shutdown();
 		Entity* Create();

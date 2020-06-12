@@ -18,18 +18,27 @@ namespace Lamp
 		{
 			m_pPhysicalEntity = std::make_shared<PhysicalEntity>();
 			m_pPhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
+			m_Name = "Brush";
 		}
 
-		void Render()
+		bool OnRender()
 		{
 			m_Model->Render();
+
+			return true;
 		}
 
 		virtual void UpdatedMatrix() override
 		{
 			m_Model->SetModelMatrix(m_ModelMatrix);
 		}
-
+		virtual void OnEvent(Event& e) override
+		{
+			if (e.GetEventType() == EventType::AppRender)
+			{
+				OnRender();
+			}
+		}
 		//Getting
 		inline Ref<Model>& GetModel() { return m_Model; }
 

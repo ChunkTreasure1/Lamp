@@ -5,6 +5,7 @@
 #include "Lamp/Physics/Ray.h"
 #include "Lamp/Objects/Entity/Base/Physical/PhysicalEntity.h"
 #include "Lamp/Physics/PhysicsEngine.h"
+#include "Lamp/Objects/ObjectLayer.h"
 
 namespace Lamp
 {
@@ -29,21 +30,25 @@ namespace Lamp
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
 		m_Brushes.push_back(brush);
 
-		Lamp::PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
+		ObjectLayerManager::Get()->AddToLayer(brush, 0);
+		PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
-	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
+	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name)
 	{
 		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
 
 		brush->SetPosition(pos);
 		brush->SetRotation(rot);
 		brush->SetScale(scale);
+		brush->SetLayerID(layerId);
+		brush->SetName(name);
 
 		m_Brushes.push_back(brush);
 
-		Lamp::PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
+		ObjectLayerManager::Get()->AddToLayer(brush, layerId);
+		PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
@@ -57,17 +62,6 @@ namespace Lamp
 
 		Lamp::PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
 		delete brush;
-	}
-
-	void BrushManager::OnEvent(Event& e)
-	{
-		if (e.GetEventType() == EventType::AppRender)
-		{
-			for (auto brush : m_Brushes)
-			{
-				brush->Render();
-			}
-		}
 	}
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)

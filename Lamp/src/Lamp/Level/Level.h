@@ -4,8 +4,8 @@
 
 #include "Lamp/Objects/Brushes/Brush2D.h"
 #include "Lamp/Objects/Brushes/BrushManager.h"
-
 #include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/ObjectLayer.h"
 
 namespace Lamp
 {
@@ -17,6 +17,9 @@ namespace Lamp
 		{
 			m_BrushManager = std::make_shared<BrushManager>();
 			m_EntityManager = std::make_shared<EntityManager>();
+			m_ObjectLayerManager = std::make_shared<ObjectLayerManager>();
+
+			ObjectLayerManager::SetCurrentManager(m_ObjectLayerManager);
 		}
 
 		inline Ref<BrushManager>& GetBrushManager() { return m_BrushManager; }
@@ -27,5 +30,6 @@ namespace Lamp
 		std::string m_Name;
 		Ref<BrushManager> m_BrushManager;
 		Ref<EntityManager> m_EntityManager;
+		Ref<ObjectLayerManager> m_ObjectLayerManager;
 	};
 }

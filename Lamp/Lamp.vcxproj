@@ -183,7 +183,7 @@
     <ClInclude Include="src\Lamp\Meshes\Material.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
-    <ClInclude Include="src\Lamp\Objects\Layer.h" />
+    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
@@ -602,6 +602,7 @@
     <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
+    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp" />
