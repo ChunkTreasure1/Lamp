@@ -156,12 +156,14 @@
     <ClInclude Include="src\Lamp\Core\Sound.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\GUID.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
@@ -586,6 +588,7 @@
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />

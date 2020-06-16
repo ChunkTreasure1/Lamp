@@ -37,7 +37,8 @@ uniform vec3 u_CameraPosition;
 uniform Material u_Material;
 
 uniform DirectionalLight u_DirectionalLight;
-uniform PointLight u_PointLight;
+uniform PointLight u_PointLight[12];
+uniform int u_LightCount;
 
 vec3 CalculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
@@ -81,9 +82,12 @@ void main()
 	vec3 norm = normalize(v_Normal);
 	vec3 viewDir = normalize(u_CameraPosition - v_FragPos);
 
-	//CalculateDirLight(u_DirectionalLight, norm, viewDir);
-
-	vec3 result = CalculatePointLight(u_PointLight, norm, v_FragPos, viewDir);
+	vec3 result = vec3(0, 0, 0);
+	
+	for(int i = 0; i < u_LightCount; i++)
+	{
+		result += CalculatePointLight(u_PointLight[i], norm, v_FragPos, viewDir);
+	}
 
 	FragColor = vec4(result, 1.0);
 }

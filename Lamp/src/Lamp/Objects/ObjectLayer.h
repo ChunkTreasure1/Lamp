@@ -73,6 +73,25 @@ namespace Lamp
 			//Layer not found, set it to main layer
 			m_Layers[0].Objects.push_back(obj);
 		}
+		
+		void RemoveFromLayer(Object* obj, uint32_t layerId)
+		{
+			for (auto layer : m_Layers)
+			{
+				if (layer.ID == layerId)
+				{
+					auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
+					if (it != layer.Objects.end())
+					{
+						layer.Objects.erase(it);
+					}
+
+					delete obj;
+					obj = nullptr;
+				}
+			}
+		}
+
 		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 	public:

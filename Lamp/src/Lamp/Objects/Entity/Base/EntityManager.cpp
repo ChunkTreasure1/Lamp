@@ -43,12 +43,9 @@ namespace Lamp
 		{
 			return false;
 		}
-		Lamp::PhysicsEngine::Get()->RemoveEntity(pEnt->GetPhysicalEntity());
 
-		delete pEnt;
-
-		pEnt = NULL;
-
+		ObjectLayerManager::Get()->RemoveFromLayer(dynamic_cast<Object*>(pEnt), pEnt->GetLayerID());
+		PhysicsEngine::Get()->RemoveEntity(pEnt->GetPhysicalEntity());
 		return true;
 	}
 

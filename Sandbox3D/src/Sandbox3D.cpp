@@ -16,6 +16,7 @@
 #include <Lamp/Meshes/GeometrySystem.h>
 
 #include <Lamp/Objects/ObjectLayer.h>
+#include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 
 namespace Sandbox3D
 {
@@ -25,18 +26,29 @@ namespace Sandbox3D
 		//auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		//auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
-		auto light = Lamp::BrushManager::Get()->Create("engine/models/lightModel.lgf");
 
 		//brush1->SetPosition({ -10, 1, 0 });
 		//brush2->SetPosition({ 10, 1.5, 0 });
-		light->SetPosition({ 0, 7, 0 });
 
+		{
+			Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+			ent->SetPosition({ 10, 0, 0 });
 
-		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
-		ent->SetPosition({ 10, 0, 0 });
+			auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
+			comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/test.lgf"));
+		}
 
-		auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
-		comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/test.lgf"));
+		{
+			Lamp::Entity* ent2 = Lamp::EntityManager::Get()->Create();
+			ent2->SetPosition({ 0.f, 7.f, 0.f });
+			auto comp = ent2->GetOrCreateComponent<Lamp::MeshComponent>();
+			comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/lightModel.lgf"));
+
+			auto light = ent2->GetOrCreateComponent<Lamp::LightComponent>();
+			light->SetAmbient({ 0.2f, 0.2f, 0.2f });
+			light->SetDiffuse({ 3.f, 3.f, 3.f });
+			light->SetSpecular({ 1.f, 1.f, 1.f });
+		}
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)

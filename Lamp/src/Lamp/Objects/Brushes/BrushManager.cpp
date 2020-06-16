@@ -62,7 +62,8 @@ namespace Lamp
 			m_Brushes.erase(it);
 		}
 
-		Lamp::PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
+		ObjectLayerManager::Get()->RemoveFromLayer(brush, brush->GetLayerID());
+		PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
 		delete brush;
 	}
 
