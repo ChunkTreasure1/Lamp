@@ -8,6 +8,8 @@
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Objects/ObjectLayer.h>
 
+#include <Lamp/Objects/Entity/Base/Entity.h>
+
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
@@ -47,18 +49,11 @@ namespace Sandbox3D
 
 		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
 
-		if (m_pSelectedBrush)
+		if (m_pSelectedObject)
 		{
-			float* pMat = (float*)glm::value_ptr(m_pSelectedBrush->GetModelMatrix());
+			float* pMat = (float*)glm::value_ptr(m_pSelectedObject->GetModelMatrix());
 			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
-			m_pSelectedBrush->SetModelMatrix(glm::make_mat4(pMat));
-		}
-
-		if (m_pSelectedEntity)
-		{
-			float* pMat = (float*)glm::value_ptr(m_pSelectedEntity->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
-			m_pSelectedEntity->SetModelMatrix(glm::make_mat4(pMat));
+			m_pSelectedObject->SetModelMatrix(glm::make_mat4(pMat));
 		}
 	}
 
@@ -127,47 +122,40 @@ namespace Sandbox3D
 				m_MouseHoverPos = mousePos;
 				if (m_MousePressed && m_PerspectiveHover)
 				{
-					m_pSelectedBrush = nullptr;
-					m_pSelectedEntity = nullptr;
-
-					m_pSelectedBrush = Lamp::BrushManager::Get()->GetBrushFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, windowSize), m_PerspectiveCamera.GetCamera().GetPosition());
-					if (!m_pSelectedBrush)
-					{
-						m_pSelectedEntity = Lamp::EntityManager::Get()->GetEntityFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, windowSize), m_PerspectiveCamera.GetCamera().GetPosition());
-					}
+					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, windowSize), m_PerspectiveCamera.GetCamera().GetPosition());
 				}
 			}
 
-			if (m_pSelectedEntity)
+			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 			{
 				ImGui::Text("Entity");
 
-				std::string name = m_pSelectedEntity->GetName();
+				std::string name = pEnt->GetName();
 				ImGui::InputText("Name", &name);
-				m_pSelectedEntity->SetName(name);
+				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					glm::vec3 pos = m_pSelectedEntity->GetPosition();
+					glm::vec3 pos = pEnt->GetPosition();
 					float f[3] = { pos.x, pos.y, pos.z };
 
 					ImGui::InputFloat3("Position", f);
-					m_pSelectedEntity->SetPosition(glm::make_vec3(f));
+					pEnt->SetPosition(glm::make_vec3(f));
 
-					glm::vec3 rot = m_pSelectedEntity->GetRotation();
+					glm::vec3 rot = pEnt->GetRotation();
 					float r[3] = { rot.x, rot.y, rot.z };
 
 					ImGui::InputFloat3("Rotation", r);
-					m_pSelectedEntity->SetRotation(glm::make_vec3(r));
+					pEnt->SetRotation(glm::make_vec3(r));
 
-					glm::vec3 scale = m_pSelectedEntity->GetScale();
+					glm::vec3 scale = pEnt->GetScale();
 					float s[3] = { scale.x, scale.y, scale.z };
 
 					ImGui::InputFloat3("Scale", s);
-					m_pSelectedEntity->SetScale(glm::make_vec3(s));
+					pEnt->SetScale(glm::make_vec3(s));
 				}
 
-				for (auto& pComp : m_pSelectedEntity->GetComponents())
+				for (auto& pComp : pEnt->GetComponents())
 				{
 					if (ImGui::CollapsingHeader(pComp->GetName().c_str()))
 					{
@@ -244,46 +232,46 @@ namespace Sandbox3D
 					}
 				}
 			}
-			else if (m_pSelectedBrush)
+			else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
 			{
 				ImGui::Text("Brush");
 
-				std::string name = m_pSelectedBrush->GetName();
+				std::string name = pBrush->GetName();
 				ImGui::InputText("Name", &name);
-				m_pSelectedBrush->SetName(name);
+				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					glm::vec3 pos = m_pSelectedBrush->GetPosition();
+					glm::vec3 pos = pBrush->GetPosition();
 					float f[3] = { pos.x, pos.y, pos.z };
 
 					ImGui::InputFloat3("Position", f);
-					m_pSelectedBrush->SetPosition(glm::make_vec3(f));
+					pBrush->SetPosition(glm::make_vec3(f));
 
-					glm::vec3 rot = m_pSelectedBrush->GetRotation();
+					glm::vec3 rot = pBrush->GetRotation();
 					float r[3] = { rot.x, rot.y, rot.z };
 
 					ImGui::InputFloat3("Rotation", r);
-					m_pSelectedBrush->SetRotation(glm::make_vec3(r));
+					pBrush->SetRotation(glm::make_vec3(r));
 
-					glm::vec3 scale = m_pSelectedBrush->GetScale();
+					glm::vec3 scale = pBrush->GetScale();
 					float s[3] = { scale.x, scale.y, scale.z };
 
 					ImGui::InputFloat3("Scale", s);
-					m_pSelectedBrush->SetScale(glm::make_vec3(s));
+					pBrush->SetScale(glm::make_vec3(s));
 				}
 
 				if (ImGui::CollapsingHeader("Physics"))
 				{
-					glm::vec3 vel = m_pSelectedBrush->GetPhysicalEntity()->GetVelocity();
+					glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
 					float f[3] = { vel.x, vel.y, vel.z };
 
 					ImGui::InputFloat3("Velocity", f);
-					m_pSelectedBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
+					pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
 
-					float m = m_pSelectedBrush->GetPhysicalEntity()->GetMass();
+					float m = pBrush->GetPhysicalEntity()->GetMass();
 					ImGui::InputFloat("Mass", &m);
-					m_pSelectedBrush->GetPhysicalEntity()->SetMass(m);
+					pBrush->GetPhysicalEntity()->SetMass(m);
 				}
 			}
 		}
@@ -391,7 +379,11 @@ namespace Sandbox3D
 					startId++;
 					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, layer.Objects[i]->GetName().c_str());
-
+					
+					if(ImGui::IsItemClicked())
+					{
+						m_pSelectedObject = layer.Objects[i];
+					}
 				}
 
 				ImGui::TreePop();
@@ -483,5 +475,4 @@ namespace Sandbox3D
 
 		return true;
 	}
-
 }

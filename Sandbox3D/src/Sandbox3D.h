@@ -40,11 +40,6 @@ namespace Sandbox3D
 	private:
 		Lamp::PerspectiveCameraController m_PerspectiveCamera;
 
-		//------------TEST ENTITIES-------------
-		Lamp::Entity* m_pEntity;
-		std::shared_ptr<Lamp::Texture2D> m_pTestTexture;
-		//--------------------------------------
-
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -63,8 +58,8 @@ namespace Sandbox3D
 		//Inspector
 		bool m_MousePressed = false;
 		bool m_PerspectiveHover = false;
-		Lamp::Entity* m_pSelectedEntity = nullptr;
-		Lamp::Brush* m_pSelectedBrush = nullptr;
+
+		Lamp::Object* m_pSelectedObject = nullptr;
 		bool m_InspectiorOpen = true;
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
