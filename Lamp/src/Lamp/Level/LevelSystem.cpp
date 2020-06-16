@@ -244,6 +244,8 @@ namespace Lamp
 			layers.push_back(ObjectLayer((uint32_t)id, name, destroyable));
 		}
 
+		layers.push_back(ObjectLayer(0, "Main", false));
+
 		return layers;
 	}
 

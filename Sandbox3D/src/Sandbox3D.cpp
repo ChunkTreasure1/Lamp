@@ -25,18 +25,18 @@ namespace Sandbox3D
 		//auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		//auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
-		//auto light = Lamp::BrushManager::Get()->Create("engine/models/lightModel.lgf");
+		auto light = Lamp::BrushManager::Get()->Create("engine/models/lightModel.lgf");
 
 		//brush1->SetPosition({ -10, 1, 0 });
 		//brush2->SetPosition({ 10, 1.5, 0 });
-		//light->SetPosition({ 0, 7, 0 });
+		light->SetPosition({ 0, 7, 0 });
 
 
-		//Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
-		//ent->SetPosition({ 10, 0, 0 });
+		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+		ent->SetPosition({ 10, 0, 0 });
 
-		//auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
-		//comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/test.lgf"));
+		auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
+		comp->SetModel(Lamp::GeometrySystem::LoadFromFile("engine/models/test.lgf"));
 	}
 
 	void Sandbox3D::Update(Lamp::Timestep ts)

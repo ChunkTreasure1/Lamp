@@ -17,18 +17,26 @@ namespace Lamp
 		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }
+
 		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetLayerID(uint32_t id) { m_LayerID = id; }
+		
+		inline void SetIsFrozen(bool state) { m_IsFrozen = state; }
+		inline void SetIsActive(bool state) { m_IsActive = state; }
 
 		//Getting
 		inline const glm::vec3& GetPosition() { return m_Position; }
 		inline const glm::vec3& GetRotation() { return m_Rotation; }
 		inline const glm::vec3& GetScale() { return m_Scale; }
+
 		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_PhysicalEntity; }
 		inline const std::string& GetName() { return m_Name; }
+		
 		inline uint32_t GetLayerID() { return m_LayerID; }
+		inline bool GetIsFrozen() { return m_IsFrozen; }
+		inline bool GetIsActive() { return m_IsActive; }
 
 		virtual void OnEvent(Event& e) {}
 
@@ -46,6 +54,7 @@ namespace Lamp
 
 	protected:
 		bool m_IsActive = true;
+		bool m_IsFrozen = false;
 		Ref<PhysicalEntity> m_PhysicalEntity;
 
 		glm::vec3 m_Position;

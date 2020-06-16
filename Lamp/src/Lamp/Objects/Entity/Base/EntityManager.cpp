@@ -67,16 +67,10 @@ namespace Lamp
 
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		for (Lamp::Entity* ent : GetEntities())
+		Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		if (entity)
 		{
-			Ray ray;
-			ray.origin = origin;
-			ray.direction = pos;
-
-			if (ent->GetPhysicalEntity()->GetCollider()->IntersectRay(ray).IsIntersecting)
-			{
-				return ent;
-			}
+			return entity;
 		}
 
 		return nullptr;

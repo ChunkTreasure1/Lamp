@@ -10,7 +10,7 @@ namespace Lamp
 	struct ObjectLayer
 	{
 		ObjectLayer(uint32_t num, const std::string& name, bool state)
-			: ID(num), Name(name), IsDestroyable(state)
+			: ID(num), Name(name), IsDestroyable(state), IsActive(true)
 		{}
 
 		ObjectLayer(uint32_t num)
@@ -19,17 +19,16 @@ namespace Lamp
 
 		uint32_t ID;
 		std::string Name;
-		bool IsDestroyable;
 		std::vector<Object*> Objects;
+		bool IsDestroyable;
+		bool IsActive;
 	};
 
 	class ObjectLayerManager
 	{
 	public:
 		ObjectLayerManager()
-		{
-			m_Layers.push_back(ObjectLayer(0, "Main", false));
-		}
+		{}
 
 		void OnEvent(Event& e);
 
@@ -74,6 +73,7 @@ namespace Lamp
 			//Layer not found, set it to main layer
 			m_Layers[0].Objects.push_back(obj);
 		}
+		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 	public:
 		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }

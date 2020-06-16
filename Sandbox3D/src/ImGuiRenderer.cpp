@@ -159,7 +159,7 @@ namespace Sandbox3D
 
 					ImGui::InputFloat3("Rotation", r);
 					m_pSelectedEntity->SetRotation(glm::make_vec3(r));
-				
+
 					glm::vec3 scale = m_pSelectedEntity->GetScale();
 					float s[3] = { scale.x, scale.y, scale.z };
 
@@ -370,13 +370,28 @@ namespace Sandbox3D
 
 		for (Lamp::ObjectLayer& layer : Lamp::ObjectLayerManager::Get()->GetLayers())
 		{
+			if (ImGui::Button("A"))
+			{
+				layer.IsActive = !layer.IsActive;
+			}
+
+			ImGui::SameLine();
 			if (ImGui::TreeNode(layer.Name.c_str()))
 			{
+
 				for (int i = 0; i < layer.Objects.size(); i++)
 				{
+					if (ImGui::Button("A"))
+					{
+						layer.Objects[i]->SetIsActive(!layer.Objects[i]->GetIsActive());
+					}
+
+					ImGui::SameLine();
+
 					startId++;
 					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, layer.Objects[i]->GetName().c_str());
+
 				}
 
 				ImGui::TreePop();

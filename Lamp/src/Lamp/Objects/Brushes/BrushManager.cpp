@@ -68,16 +68,10 @@ namespace Lamp
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		for (auto& brush : m_Brushes)
+		Brush* brush = dynamic_cast<Brush*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		if (brush)
 		{
-			Ray ray;
-			ray.origin = origin;
-			ray.direction = pos;
-
-			if (brush->GetPhysicalEntity()->GetCollider()->IntersectRay(ray).IsIntersecting)
-			{
-				return brush;
-			}
+			return brush;
 		}
 
 		return nullptr;

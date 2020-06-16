@@ -48,8 +48,10 @@ namespace Lamp
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			style.WindowRounding = 0.f;
-			style.Colors[ImGuiCol_WindowBg].w = 1.f;
 		}
+		
+		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.05f, 1.f);
+		style.Colors[ImGuiCol_Text] = ImVec4(0.86275f, 0.86275f, 0.86275f, 1.f);
 
 		Application& app = Application::Get();
 		GLFWwindow* pWindow = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
