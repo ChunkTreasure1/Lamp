@@ -37,6 +37,7 @@ namespace Lamp
 		virtual IntersectData IntersectRay(const Ray& ray) const = 0;
 		virtual IntersectData Intersect(const Ref<Collider>& other) const = 0;
 		virtual void Transform(const glm::vec3& translation) = 0;
+		virtual void SetTranslation(const glm::vec3& trans) = 0;
 
 		//Getting
 		inline CollType GetType() const { return m_Type; }

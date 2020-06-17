@@ -20,6 +20,8 @@ namespace Lamp
 		virtual IntersectData Intersect(const Ref<Collider>& other) const override;
 		virtual void Transform(const glm::vec3& translation) override;
 
+		virtual void SetTranslation(const glm::vec3& trans) override { m_Center = trans; }
+
 		//Getting
 		inline const glm::vec3& GetCenter() { return m_Center; }
 		inline const float GetRadius() const { return m_Radius; }

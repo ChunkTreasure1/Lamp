@@ -18,7 +18,7 @@ namespace Lamp
 
 		if (pEnt)
 		{
-			pEnt->SetPosition(pEnt->GetPosition() + m_Velocity * delta);
+			pEnt->SetPhysicsPosition(pEnt->GetPosition() + m_Velocity * delta);
 			glm::vec3 diff = pEnt->GetPosition() - m_LastPosition;
 
 			if (m_Collider)

@@ -14,7 +14,8 @@ namespace Lamp
 		{}
 
 		//Setting
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); UpdatedMatrix(); }
+		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; m_PhysicalEntity->GetCollider()->SetTranslation(pos); CalculateModelMatrix(); UpdatedMatrix(); }
+		inline void SetPhysicsPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }
 

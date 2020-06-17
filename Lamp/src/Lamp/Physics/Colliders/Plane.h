@@ -16,6 +16,7 @@ namespace Lamp
 		virtual IntersectData IntersectRay(const Ray& ray) const override;
 		virtual IntersectData Intersect(const Ref<Collider>& other) const override;
 		virtual void Transform(const glm::vec3& translation) override;
+		virtual void SetTranslation(const glm::vec3& trans) { m_Normal = trans; }
 
 		//Getting
 		inline const glm::vec3& GetNormal() const { return m_Normal; }

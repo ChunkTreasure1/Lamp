@@ -177,6 +177,13 @@ namespace Sandbox3D
 								break;
 							}
 
+							case Lamp::PropertyType::Float:
+							{
+								float* p = static_cast<float*>(pProp.Value);
+								ImGui::InputFloat(pProp.Name.c_str(), p);
+								break;
+							}
+
 							case Lamp::PropertyType::Float2:
 							{
 								glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
