@@ -25,6 +25,11 @@ namespace Lamp
 	{
 		for (auto& entity : m_PhysicalEntites)
 		{
+			if (!entity->GetIsPhysicalized() || !entity->GetIsActive())
+			{
+				continue;
+			}
+
 			entity->Integrate(delta);
 		}
 	}

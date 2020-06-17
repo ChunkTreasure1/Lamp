@@ -24,7 +24,7 @@ namespace Lamp
 		inline void SetLayerID(uint32_t id) { m_LayerID = id; }
 		
 		inline void SetIsFrozen(bool state) { m_IsFrozen = state; }
-		inline void SetIsActive(bool state) { m_IsActive = state; }
+		inline void SetIsActive(bool state) { m_IsActive = state; m_PhysicalEntity->SetIsActive(state); }
 
 		//Getting
 		inline const glm::vec3& GetPosition() { return m_Position; }
