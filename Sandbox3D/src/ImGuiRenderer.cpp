@@ -28,19 +28,20 @@ namespace Sandbox3D
 				ImGui::EndMenuBar();
 			}
 
-			ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)Lamp::Renderer3D::GetFrameBuffer()->GetTexture(),
-				ImVec2(ImGui::GetCursorScreenPos()),
-				ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowSize().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y),
-				ImVec2(0, 1),
-				ImVec2(1, 0));
+			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
+			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
+			{
+				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
-			m_PerspectiveCamera.UpdatePerspective(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-			Lamp::Renderer3D::GetFrameBuffer()->Update((const uint32_t)ImGui::GetWindowSize().x, (const uint32_t)ImGui::GetWindowSize().y);
-			m_PerspectiveSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+				m_PerspectiveCamera.UpdatePerspective(perspectivePanelSize.x, perspectivePanelSize.y);
+			}
+
+			uint32_t textureID = Lamp::Renderer3D::GetFrameBuffer()->GetColorAttachment();
+			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
-
-			ImGui::Text(frameInfo.c_str());
+			//ImGui::Text(frameInfo.c_str());
 		}
 		ImGui::End();
 
@@ -103,7 +104,6 @@ namespace Sandbox3D
 
 			ImGuiIO& io = ImGui::GetIO();
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
-
 			glm::vec2 windowPos;
 			glm::vec2 windowSize;
 
@@ -120,9 +120,9 @@ namespace Sandbox3D
 				mousePos -= windowPos;
 
 				m_MouseHoverPos = mousePos;
-				if (m_MousePressed && m_PerspectiveHover)
+				if (m_MousePressed)
 				{
-					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, windowSize), m_PerspectiveCamera.GetCamera().GetPosition());
+					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_PerspectiveCamera.GetCamera().GetPosition());
 				}
 			}
 
@@ -163,77 +163,77 @@ namespace Sandbox3D
 						{
 							switch (pProp.PropertyType)
 							{
-							case Lamp::PropertyType::Int:
-							{
-								int* p = static_cast<int*>(pProp.Value);
-								ImGui::InputInt(pProp.Name.c_str(), p);
-								break;
-							}
+								case Lamp::PropertyType::Int:
+								{
+									int* p = static_cast<int*>(pProp.Value);
+									ImGui::InputInt(pProp.Name.c_str(), p);
+									break;
+								}
 
-							case Lamp::PropertyType::Bool:
-							{
-								bool* p = static_cast<bool*>(pProp.Value);
-								ImGui::Checkbox(pProp.Name.c_str(), p);
-								break;
-							}
+								case Lamp::PropertyType::Bool:
+								{
+									bool* p = static_cast<bool*>(pProp.Value);
+									ImGui::Checkbox(pProp.Name.c_str(), p);
+									break;
+								}
 
-							case Lamp::PropertyType::Float:
-							{
-								float* p = static_cast<float*>(pProp.Value);
-								ImGui::InputFloat(pProp.Name.c_str(), p);
-								break;
-							}
+								case Lamp::PropertyType::Float:
+								{
+									float* p = static_cast<float*>(pProp.Value);
+									ImGui::InputFloat(pProp.Name.c_str(), p);
+									break;
+								}
 
-							case Lamp::PropertyType::Float2:
-							{
-								glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+								case Lamp::PropertyType::Float2:
+								{
+									glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 
-								float f[2] = { p->x, p->y };
-								ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
+									float f[2] = { p->x, p->y };
+									ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
 
-								*p = glm::make_vec2(f);
-								break;
-							}
+									*p = glm::make_vec2(f);
+									break;
+								}
 
-							case Lamp::PropertyType::Float3:
-							{
-								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+								case Lamp::PropertyType::Float3:
+								{
+									glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 
-								float f[3] = { p->x, p->y, p->z };
-								ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
+									float f[3] = { p->x, p->y, p->z };
+									ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
 
-								*p = glm::make_vec3(f);
-								break;
-							}
+									*p = glm::make_vec3(f);
+									break;
+								}
 
-							case Lamp::PropertyType::Float4:
-							{
-								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+								case Lamp::PropertyType::Float4:
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
-								float f[4] = { p->x, p->y, p->z, p->w };
-								ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
+									float f[4] = { p->x, p->y, p->z, p->w };
+									ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
 
-								*p = glm::make_vec4(f);
-								break;
-							}
+									*p = glm::make_vec4(f);
+									break;
+								}
 
-							case Lamp::PropertyType::String:
-							{
-								std::string* s = static_cast<std::string*>(pProp.Value);
-								ImGui::InputText(pProp.Name.c_str(), s);
-								break;
-							}
+								case Lamp::PropertyType::String:
+								{
+									std::string* s = static_cast<std::string*>(pProp.Value);
+									ImGui::InputText(pProp.Name.c_str(), s);
+									break;
+								}
 
-							case Lamp::PropertyType::Color:
-							{
-								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+								case Lamp::PropertyType::Color:
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
-								float f[4] = { p->x, p->y, p->z, p->w };
-								ImGui::ColorEdit4(pProp.Name.c_str(), f);
+									float f[4] = { p->x, p->y, p->z, p->w };
+									ImGui::ColorEdit4(pProp.Name.c_str(), f);
 
-								*p = glm::make_vec4(f);
-								break;
-							}
+									*p = glm::make_vec4(f);
+									break;
+								}
 							}
 						}
 					}
@@ -386,8 +386,8 @@ namespace Sandbox3D
 					startId++;
 					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, layer.Objects[i]->GetName().c_str());
-					
-					if(ImGui::IsItemClicked())
+
+					if (ImGui::IsItemClicked())
 					{
 						m_pSelectedObject = layer.Objects[i];
 					}

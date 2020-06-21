@@ -144,27 +144,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
     <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
-    <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Core\Math.h" />
     <ClInclude Include="src\Lamp\Core\Sound.h" />
+    <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\GUID.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
@@ -185,8 +173,19 @@
     <ClInclude Include="src\Lamp\Meshes\Material.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
-    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
+    <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
+    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h" />
+    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
+    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
     <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h" />
@@ -583,16 +582,10 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
@@ -605,6 +598,12 @@
     <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
     <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />

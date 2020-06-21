@@ -7,20 +7,11 @@
     <Filter Include="src\Lamp">
       <UniqueIdentifier>{E68621CF-D253-7CDA-FB6C-6A82E798B168}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Brushes">
-      <UniqueIdentifier>{11EE2076-FDE6-3FC8-2619-254D12711FD4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Core">
       <UniqueIdentifier>{FEEA001B-6AAB-7C51-33E6-C5CE9F65C12D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Entity">
-      <UniqueIdentifier>{721481E3-DE9F-EEA7-E7B0-719C53BB4AA8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Entity\Base">
-      <UniqueIdentifier>{3C08B2F0-2897-3BBA-D1B5-4FB5BD234C60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Entity\BaseComponents">
-      <UniqueIdentifier>{6221BEFF-4E47-8866-378D-0D322352AD32}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Core\Time">
+      <UniqueIdentifier>{5CD62326-48BA-E47B-B11A-DFCE9D1DCFFD}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Event">
       <UniqueIdentifier>{B71C467B-A3EA-3981-8C7E-AAA778EB15E6}</UniqueIdentifier>
@@ -40,8 +31,29 @@
     <Filter Include="src\Lamp\Meshes">
       <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Objects">
+      <UniqueIdentifier>{9FABB438-8BA4-D38A-B4D6-B80FA02EB396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Objects\Brushes">
+      <UniqueIdentifier>{CABB8570-B6E0-D4F0-DF2B-BA80CBAFD30E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Objects\Entity">
+      <UniqueIdentifier>{0B8F3667-77C6-7EFE-80D0-E221EC86A5F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Objects\Entity\Base">
+      <UniqueIdentifier>{750AC907-61C5-B8B3-0A7D-31FEF6160344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Objects\Entity\Base\Physical">
+      <UniqueIdentifier>{E10D19BC-4DD2-17AC-1638-487682BBB3E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Objects\Entity\BaseComponents">
+      <UniqueIdentifier>{DBFEA38A-C750-7B7A-B06F-B88A9C609463}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Physics">
       <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Physics\Colliders">
+      <UniqueIdentifier>{284968DA-1459-14AB-7D12-79C969410344}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Physics\Components">
       <UniqueIdentifier>{6D0E5056-D91B-7E3C-6202-7A27CE0E4AF3}</UniqueIdentifier>
@@ -55,8 +67,14 @@
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\Shadows">
+      <UniqueIdentifier>{BBFA1D8B-A70A-CA5B-10C4-2E7AFCF2B8F4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Texture2D">
       <UniqueIdentifier>{8927768A-75E2-6536-1E9A-DE800A34B0C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Rendering\TextureCube">
+      <UniqueIdentifier>{B25DA800-9E83-7267-87C9-F732738E9733}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering\Vertices">
       <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
@@ -119,6 +137,12 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Sound.h">
       <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Time\FrameTime.h">
+      <Filter>src\Lamp\Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Time\Timestep.h">
+      <Filter>src\Lamp\Core\Time</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
@@ -183,10 +207,70 @@
     <ClInclude Include="src\Lamp\Meshes\Model.h">
       <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
+      <Filter>src\Lamp\Objects\Brushes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h">
+      <Filter>src\Lamp\Objects\Brushes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h">
+      <Filter>src\Lamp\Objects\Brushes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h">
+      <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Object.h">
+      <Filter>src\Lamp\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h">
+      <Filter>src\Lamp\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Collision.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h">
+      <Filter>src\Lamp\Physics\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Physics.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Ray.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h">
@@ -213,6 +297,9 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h">
+      <Filter>src\Lamp\Rendering\Shadows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
@@ -221,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h">
+      <Filter>src\Lamp\Rendering\TextureCube</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
@@ -1338,49 +1428,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
-    <ClInclude Include="src\Lamp\Physics\Ray.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
-    <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
-    <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
-    <ClInclude Include="src\Lamp\Core\Time\Timestep.h">
-      <Filter>src\Lamp\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
-      <Filter>src\Lamp\Brushes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h">
-      <Filter>src\Lamp\Brushes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h">
-      <Filter>src\Lamp\Brushes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Object.h" />
-    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\GUID.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1388,6 +1435,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Log.cpp">
       <Filter>src\Lamp\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp">
+      <Filter>src\Lamp\Core\Time</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
@@ -1419,13 +1469,52 @@
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Material.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Model.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp">
+      <Filter>src\Lamp\Objects\Brushes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp">
+      <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp">
+      <Filter>src\Lamp\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp">
+      <Filter>src\Lamp\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp">
+      <Filter>src\Lamp\Physics\Components</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Physics.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
@@ -1452,6 +1541,9 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp">
+      <Filter>src\Lamp\Rendering\Shadows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
@@ -1460,6 +1552,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp">
+      <Filter>src\Lamp\Rendering\TextureCube</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
@@ -1479,27 +1574,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp" />
-    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
-    <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp">
-      <Filter>src\Lamp\Brushes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp">
-      <Filter>src\Lamp\Entity\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
-    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
   </ItemGroup>
 </Project>

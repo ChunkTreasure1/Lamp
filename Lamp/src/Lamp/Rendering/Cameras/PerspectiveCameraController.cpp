@@ -70,7 +70,6 @@ namespace Lamp
 	{
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
-		glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 	}
 
 	glm::vec3 PerspectiveCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size)
