@@ -31,9 +31,9 @@ namespace Lamp
 		m_Height = std::get<2>(tex);
 	}
 
-	void Texture2D::Bind()
+	void Texture2D::Bind(uint32_t slot) const
 	{
-		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glBindTexture(slot, m_RendererID);
 	}
 
 	void Texture2D::Unbind()

@@ -7,15 +7,11 @@
 namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
+	RendererCapabilities Renderer::s_RenderCapabilities;
 
 	void Renderer::Initialize()
 	{
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		Renderer2D::Initialize();
-		Renderer3D::Initialize();
-
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &s_RenderCapabilities.MaxTextureSlots);
 	}
 
 	void Renderer::Shutdown()
@@ -33,9 +29,11 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount = 0)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		vertexArray->Bind();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void Renderer::DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount)

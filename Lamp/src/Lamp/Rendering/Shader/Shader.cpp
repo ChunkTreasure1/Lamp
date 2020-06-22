@@ -112,6 +112,11 @@ namespace Lamp
 		glUniform4f(glGetUniformLocation(m_ID, name.c_str()), value.x, value.y, value.z, value.w);
 	}
 
+	void Shader::UploadIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		glUniform1iv(glGetUniformLocation(m_ID, name.c_str()), count, values);
+	}
+
 	void Shader::UploadMat4(const std::string& name, const glm::mat4& mat)
 	{
 		uint32_t transfromLoc = glGetUniformLocation(m_ID, name.c_str());

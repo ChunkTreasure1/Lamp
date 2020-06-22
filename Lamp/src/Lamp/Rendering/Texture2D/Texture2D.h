@@ -19,7 +19,7 @@ namespace Lamp
 		Texture2D(const std::string& path);
 		Texture2D(uint32_t width, uint32_t height);
 
-		void Bind();
+		void Bind(uint32_t slot = 0) const;
 		void Unbind();
 
 		void SetData(void* data, uint32_t size);

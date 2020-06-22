@@ -23,12 +23,9 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PerspectiveCamera(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
-		//auto brush1 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
-		//auto brush2 = Lamp::BrushManager::Get()->Create("engine/models/test.lgf");
-		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
+		Lamp::Renderer3D::Initialize();
 
-		//brush1->SetPosition({ -10, 1, 0 });
-		//brush2->SetPosition({ 10, 1.5, 0 });
+		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
 		{
 			Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
