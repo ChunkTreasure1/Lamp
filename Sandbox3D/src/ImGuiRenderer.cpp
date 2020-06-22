@@ -41,7 +41,8 @@ namespace Sandbox3D
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
-			//ImGui::Text(frameInfo.c_str());
+			ImGui::SetCursorPos(ImVec2(20, 40));
+			ImGui::Text(frameInfo.c_str());
 		}
 		ImGui::End();
 
@@ -114,16 +115,10 @@ namespace Sandbox3D
 			}
 			ImGui::End();
 
-			if (mousePos.x < (windowPos.x + windowSize.x) && mousePos.x > windowPos.x &&
-				mousePos.y < (windowPos.y + windowSize.y) && mousePos.y > windowPos.y)
+			if (m_MousePressed && m_PerspectiveHover)
 			{
 				mousePos -= windowPos;
-
-				m_MouseHoverPos = mousePos;
-				if (m_MousePressed)
-				{
-					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_PerspectiveCamera.GetCamera().GetPosition());
-				}
+				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_PerspectiveCamera.GetCamera().GetPosition());
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))

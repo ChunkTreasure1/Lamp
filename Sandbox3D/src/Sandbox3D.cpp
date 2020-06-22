@@ -80,9 +80,9 @@ namespace Sandbox3D
 	{
 		CreateDockspace();
 
+		UpdateProperties();
 		UpdatePerspective();
 		UpdateAssetBrowser();
-		UpdateProperties();
 		UpdateModelImporter();
 		UpdateLayerView();
 	}
