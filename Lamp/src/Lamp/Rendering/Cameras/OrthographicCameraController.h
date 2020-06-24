@@ -23,7 +23,6 @@ namespace Lamp
 
 		//Setting
 		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
-		void SetHasControl(bool state) { m_HasControl = state; }
 		void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
 
 		glm::vec2 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
@@ -37,7 +36,6 @@ namespace Lamp
 		OrthographicCamera m_Camera;
 
 		bool m_Rotation;
-		bool m_HasControl;
 
 		glm::vec3 m_CameraPosition = { 0.f, 0.f, 0.f };
 		float m_CameraRotation = 0.f;

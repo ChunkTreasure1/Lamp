@@ -23,8 +23,6 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PerspectiveCamera(60.f, 0.1f, 100.f), m_pShader(nullptr)
 	{
-		Lamp::Renderer3D::Initialize();
-
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("engine/levels/Level.level");
 
 		{

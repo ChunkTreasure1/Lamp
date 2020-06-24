@@ -20,6 +20,7 @@ namespace Lamp
 		Blinn,
 		Phong,
 		BlinnPhong,
+		Sprite,
 		Unknown
 	};
 

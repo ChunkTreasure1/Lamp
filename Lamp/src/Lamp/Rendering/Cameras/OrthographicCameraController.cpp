@@ -9,7 +9,7 @@
 namespace Lamp
 {
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Rotation(rotation), m_HasControl(true), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel)
+		: m_AspectRatio(aspectRatio), m_Rotation(rotation), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel)
 	{
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
@@ -64,15 +64,10 @@ namespace Lamp
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		if (m_HasControl)
-		{
-			m_ZoomLevel -= e.GetYOffset() * 0.25f;
-			m_ZoomLevel = std::max(m_ZoomLevel, 0.4f);
-			m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
-			return true;
-		}
-
-		return false;
+		m_ZoomLevel -= e.GetYOffset() * 0.25f;
+		m_ZoomLevel = std::max(m_ZoomLevel, 0.4f);
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		return true;
 	}
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)

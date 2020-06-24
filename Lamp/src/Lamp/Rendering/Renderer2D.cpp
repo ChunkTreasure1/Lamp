@@ -62,11 +62,6 @@ namespace Lamp
 
 	void Renderer2D::Initialize()
 	{
-		//Remove!!!
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_MULTISAMPLE);
-
 		s_pData = new Renderer2DStorage();
 
 		////////Quad////////
@@ -79,7 +74,7 @@ namespace Lamp
 			{ ElementType::Float4, "a_Color" },
 			{ ElementType::Float2, "a_TexCoord" },
 			{ ElementType::Float, "a_TexIndex" }
-			});
+		});
 		s_pData->pQuadVertexArray->AddVertexBuffer(s_pData->pQuadVertexBuffer);
 
 		s_pData->QuadVertexBufferBase = new QuadVertex[s_pData->MaxVertices];
@@ -119,7 +114,7 @@ namespace Lamp
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
-			});
+		});
 		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
 		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -151,7 +146,7 @@ namespace Lamp
 			samplers[i] = i;
 		}
 
-		s_pData->pTextureShader = Shader::Create("engine/shaders/Texture.vert", "engine/shaders/Texture.frag");
+		s_pData->pTextureShader = Shader::Create("engine/shaders/2d/Texture.vert", "engine/shaders/2d/Texture.frag");
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, Renderer::GetCapabilities().MaxTextureSlots);
 
@@ -191,7 +186,6 @@ namespace Lamp
 
 	void Renderer2D::Flush()
 	{
-
 		//Bind textures
 		for (uint32_t i = 0; i < s_pData->TextureSlotIndex; i++)
 		{
@@ -202,7 +196,7 @@ namespace Lamp
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray, s_pData->QuadIndexCount);
 		s_pData->Stats.DrawCalls++;
 
-		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
+		//Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
 		s_pData->Stats.DrawCalls++;
 	}
 
@@ -381,14 +375,12 @@ namespace Lamp
 
 	void Renderer2D::StartNewBatch()
 	{
-
 		End();
 		ResetBatchData();
 	}
 
 	void Renderer2D::ResetBatchData()
 	{
-
 		s_pData->QuadIndexCount = 0;
 		s_pData->QuadVertexBufferPtr = s_pData->QuadVertexBufferBase;
 		s_pData->TextureSlotIndex = 1;

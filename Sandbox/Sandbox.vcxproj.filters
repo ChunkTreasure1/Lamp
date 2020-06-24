@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Sandbox2D">
+      <UniqueIdentifier>{AA155D3F-1680-11B6-5FBE-C25BCB67EF0A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sandbox3D">
+      <UniqueIdentifier>{CB155D3F-3780-11B6-80BE-C25BEC67EF0A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Sandbox2D\Sandbox2D.h">
+      <Filter>Sandbox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Sandbox3D.h">
+      <Filter>Sandbox3D</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp">
+      <Filter>Sandbox2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp">
+      <Filter>Sandbox3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp">
+      <Filter>Sandbox3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SandboxApp.cpp" />
+  </ItemGroup>
+</Project>

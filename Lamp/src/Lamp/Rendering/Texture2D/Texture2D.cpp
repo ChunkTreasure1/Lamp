@@ -18,7 +18,7 @@ namespace Lamp
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		//Set filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 
@@ -33,7 +33,7 @@ namespace Lamp
 
 	void Texture2D::Bind(uint32_t slot) const
 	{
-		glBindTexture(slot, m_RendererID);
+		glBindTextureUnit(slot, m_RendererID);
 	}
 
 	void Texture2D::Unbind()

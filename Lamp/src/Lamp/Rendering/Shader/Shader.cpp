@@ -147,9 +147,13 @@ namespace Lamp
 		{
 			return ShaderType::Phong;
 		}
-		else if (s == "BlinnPhong")
+		else if (s == "//BlinnPhong")
 		{
 			return ShaderType::BlinnPhong;
+		}
+		else if (s == "//Sprite")
+		{
+			return ShaderType::Sprite;
 		}
 
 		return ShaderType::Unknown;

@@ -7,7 +7,7 @@ namespace Lamp
 	class Material
 	{
 	public:
-		Material(Ref<Texture2D> diff, Ref<Texture2D> spec, Ref<Shader> shader, uint32_t matIndex)
+		Material(Ref<Texture2D>& diff, Ref<Texture2D>& spec, Ref<Shader> shader, uint32_t matIndex)
 			: m_pDiffuse(diff), m_pSpecular(spec), m_pShader(shader), m_Shininess(32.f), m_Index(matIndex)
 		{}
 
