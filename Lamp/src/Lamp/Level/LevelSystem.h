@@ -37,6 +37,5 @@ namespace Lamp
 		static std::string ToString(const glm::vec4& var);
 
 		static Ref<Level> m_CurrentLevel;
-
 	};
 }

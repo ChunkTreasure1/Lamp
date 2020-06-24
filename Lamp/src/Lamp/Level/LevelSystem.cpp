@@ -116,106 +116,106 @@ namespace Lamp
 		pRoot->append_node(pLayers);
 
 		////Entities/////
-		//rapidxml::xml_node<>* pEntities = doc.allocate_node(rapidxml::node_element, "Entities");
-		//for (auto entity : level->GetEntityManager().GetEntities())
-		//{
-		//	rapidxml::xml_node<>* ent = doc.allocate_node(rapidxml::node_element, "Entity");
+		rapidxml::xml_node<>* pEntities = doc.allocate_node(rapidxml::node_element, "Entities");
+		for (auto entity : level->GetEntityManager()->GetEntities())
+		{
+			rapidxml::xml_node<>* ent = doc.allocate_node(rapidxml::node_element, "Entity");
 
-		//	char* pName = doc.allocate_string(entity->GetName().c_str());
-		//	ent->append_attribute(doc.allocate_attribute("name", pName));
+			char* pName = doc.allocate_string(entity->GetName().c_str());
+			ent->append_attribute(doc.allocate_attribute("name", pName));
 
-		//	char* pPos = doc.allocate_string(ToString(entity->GetPosition()).c_str());
-		//	ent->append_attribute(doc.allocate_attribute("position", pPos));
+			char* pPos = doc.allocate_string(ToString(entity->GetPosition()).c_str());
+			ent->append_attribute(doc.allocate_attribute("position", pPos));
 
-		//	char* pRot = doc.allocate_string(ToString(entity->GetRotation()).c_str());
-		//	ent->append_attribute(doc.allocate_attribute("rotation", pRot));
+			char* pRot = doc.allocate_string(ToString(entity->GetRotation()).c_str());
+			ent->append_attribute(doc.allocate_attribute("rotation", pRot));
 
-		//	char* pScale = doc.allocate_string(ToString(entity->GetScale()).c_str());
-		//	ent->append_attribute(doc.allocate_attribute("scale", pScale));
+			char* pScale = doc.allocate_string(ToString(entity->GetScale()).c_str());
+			ent->append_attribute(doc.allocate_attribute("scale", pScale));
 
-		//	for (auto component : entity->GetComponents())
-		//	{
-		//		rapidxml::xml_node<>* comp = doc.allocate_node(rapidxml::node_element, "Component");
-		//		
-		//		std::string str = component->GetName();
-		//		str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+			for (auto component : entity->GetComponents())
+			{
+				rapidxml::xml_node<>* comp = doc.allocate_node(rapidxml::node_element, "Component");
+				
+				std::string str = component->GetName();
+				str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
 
-		//		char* pCompName = doc.allocate_string(str.c_str());
-		//		comp->append_attribute(doc.allocate_attribute("name", pCompName));
+				char* pCompName = doc.allocate_string(str.c_str());
+				comp->append_attribute(doc.allocate_attribute("name", pCompName));
 
-		//		for (auto prop : component->GetComponentProperties().GetProperties())
-		//		{
-		//			rapidxml::xml_node<>* param = doc.allocate_node(rapidxml::node_element, "Param");
+				for (auto prop : component->GetComponentProperties().GetProperties())
+				{
+					rapidxml::xml_node<>* param = doc.allocate_node(rapidxml::node_element, "Param");
 
-		//			char* pParamName = doc.allocate_string(prop.Name.c_str());
-		//			param->append_attribute(doc.allocate_attribute("name", pParamName));
+					char* pParamName = doc.allocate_string(prop.Name.c_str());
+					param->append_attribute(doc.allocate_attribute("name", pParamName));
 
-		//			char* pType = doc.allocate_string(ComponentProperties::GetStringFromType(prop.PropertyType).c_str());
-		//			param->append_attribute(doc.allocate_attribute("type", pType));
+					char* pType = doc.allocate_string(ComponentProperties::GetStringFromType(prop.PropertyType).c_str());
+					param->append_attribute(doc.allocate_attribute("type", pType));
 
-		//			switch (prop.PropertyType)
-		//			{
-		//			case Lamp::PropertyType::String:
-		//			{
-		//				char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Bool:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<bool*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Int:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<int*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Float:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<float*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Float2:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec2*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Float3:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Float4:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			case Lamp::PropertyType::Color:
-		//			{
-		//				char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
-		//				param->append_attribute(doc.allocate_attribute("value", pValue));
-		//				break;
-		//			}
-		//			default:
-		//				break;
-		//			}
+					switch (prop.PropertyType)
+					{
+					case Lamp::PropertyType::String:
+					{
+						char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Bool:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<bool*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Int:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<int*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Float:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<float*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Float2:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec2*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Float3:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Float4:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					case Lamp::PropertyType::Color:
+					{
+						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
+					default:
+						break;
+					}
 
-		//			comp->append_node(param);
-		//		}
+					comp->append_node(param);
+				}
 
-		//		ent->append_node(comp);
-		//	}
+				ent->append_node(comp);
+			}
 
-		//	pEntities->append_node(ent);
-		//}
-		//pRoot->append_node(pEntities);
+			pEntities->append_node(ent);
+		}
+		pRoot->append_node(pEntities);
 		/////////////////
 
 		doc.append_node(pRoot);
