@@ -58,6 +58,7 @@ namespace Lamp
 		Renderer2D::Statistics Stats;
 	};
 
+	Ref<FrameBuffer> Renderer2D::m_pFrameBuffer = nullptr;
 	static Renderer2DStorage* s_pData;
 
 	void Renderer2D::Initialize()
@@ -154,6 +155,8 @@ namespace Lamp
 
 		delete[] samplers;
 		////////////////////////
+
+		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}
 
 	void Renderer2D::Shutdown()
@@ -165,6 +168,8 @@ namespace Lamp
 
 	void Renderer2D::Begin(const OrthographicCamera camera)
 	{
+		m_pFrameBuffer->Bind();
+		Renderer::Clear();
 
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
@@ -174,7 +179,6 @@ namespace Lamp
 
 	void Renderer2D::End()
 	{
-
 		uint32_t dataSize = (uint8_t*)s_pData->QuadVertexBufferPtr - (uint8_t*)s_pData->QuadVertexBufferBase;
 		s_pData->pQuadVertexBuffer->SetData(s_pData->QuadVertexBufferBase, dataSize);
 
@@ -182,6 +186,7 @@ namespace Lamp
 		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
 
 		Flush();
+		m_pFrameBuffer->Unbind();
 	}
 
 	void Renderer2D::Flush()

@@ -16,7 +16,7 @@ namespace Lamp
 			case GL_DEBUG_SEVERITY_HIGH:         LP_CORE_CRITICAL(message); return;
 			case GL_DEBUG_SEVERITY_MEDIUM:       LP_CORE_ERROR(message); return;
 			case GL_DEBUG_SEVERITY_LOW:          LP_CORE_WARN(message); return;
-			case GL_DEBUG_SEVERITY_NOTIFICATION: LP_CORE_TRACE(message); return;
+			case GL_DEBUG_SEVERITY_NOTIFICATION: return; //LP_CORE_TRACE(message); return;
 		}
 
 		LP_CORE_ASSERT(false, "Unknown severity level!");

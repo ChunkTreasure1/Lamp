@@ -14,8 +14,10 @@ namespace Lamp
 	public:
 		Brush2D(const std::string& spritePath)
 		{
+			m_Name = "Unnamned Brush";
+
 			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(std::make_shared<AABB>(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(-0.5f, 0.5f, -0.5f)));
+			m_PhysicalEntity->SetCollider(std::make_shared<AABB>(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f)));
 
 			m_Sprite = Texture2D::Create(spritePath);
 		}

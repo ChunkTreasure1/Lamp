@@ -18,7 +18,41 @@ namespace Sandbox2D
 		virtual void OnItemClicked(Lamp::File& file) override;
 
 	private:
+		void GetInput();
+		void UpdateDockspace();
+		bool MouseMoved(Lamp::MouseMovedEvent& e);
+
+		void RenderPerspective();
+		void RenderAssetBrowser();
+		void RenderProperties();
+		void RenderLayerView();
+
+	private:
 		Lamp::OrthographicCameraController* m_CameraController;
+
+		//---------------Editor-----------------
+		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
+		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
+		ImGuiID m_DockspaceID;
+
+		//Asset browser
+		Lamp::File m_SelectedFile;
+		int m_CurrSample = -1;
+		bool m_AssetBrowserOpen = true;
+
+		//Inspector
+		bool m_MousePressed = false;
+		bool m_PerspectiveHover = false;
+
+		Lamp::Object* m_pSelectedObject = nullptr;
+		bool m_InspectiorOpen = true;
+
+		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
+		glm::vec2 m_WindowSize = glm::vec2(0, 0);
+
+		//Layers
+		bool m_LayerViewOpen = true;
+		//--------------------------------------
 	};
 }

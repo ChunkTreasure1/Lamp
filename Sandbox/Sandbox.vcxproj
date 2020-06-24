@@ -139,9 +139,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp" />
+    <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="engine\shaders\2d\FlatColor.frag" />
+    <None Include="engine\shaders\2d\FlatColor.vert" />
+    <None Include="engine\shaders\2d\Texture.frag" />
+    <None Include="engine\shaders\2d\Texture.vert" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

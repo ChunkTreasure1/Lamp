@@ -5,6 +5,7 @@
 #include "Cameras/OrthographicCamera.h"
 
 #include "Lamp/Core/Core.h"
+#include "Lamp/Rendering/Vertices/FrameBuffer.h"
 
 namespace Lamp
 {
@@ -27,6 +28,8 @@ namespace Lamp
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB);
 		static void DrawLine(const glm::vec2& posA, const glm::vec2& posB);
 
+		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
+
 		struct Statistics
 		{
 			uint32_t DrawCalls = 0;
@@ -42,5 +45,8 @@ namespace Lamp
 	private:
 		static void StartNewBatch();
 		static void ResetBatchData();
+
+	private:
+		static Ref<FrameBuffer> m_pFrameBuffer;
 	};
 }

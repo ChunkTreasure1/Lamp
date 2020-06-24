@@ -16,6 +16,7 @@ namespace Lamp
 
 		void Update(Timestep ts);
 		void OnEvent(Event& e);
+		void UpdateProjection(uint32_t width, uint32_t height);
 
 		//Getting
 		OrthographicCamera GetCamera() { return m_Camera; }
@@ -24,11 +25,12 @@ namespace Lamp
 		//Setting
 		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
 		void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
+		void SetCameraControlsEnabled(bool state) { m_ControlsEnabled = state; }
 
 		glm::vec2 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
+
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnWindowResized(WindowResizeEvent& e);
 
 	private:
 		float m_AspectRatio;
@@ -36,6 +38,7 @@ namespace Lamp
 		OrthographicCamera m_Camera;
 
 		bool m_Rotation;
+		bool m_ControlsEnabled = false;
 
 		glm::vec3 m_CameraPosition = { 0.f, 0.f, 0.f };
 		float m_CameraRotation = 0.f;
