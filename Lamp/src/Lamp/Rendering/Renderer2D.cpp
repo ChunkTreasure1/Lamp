@@ -201,7 +201,7 @@ namespace Lamp
 		Renderer::DrawIndexed(s_pData->pQuadVertexArray, s_pData->QuadIndexCount);
 		s_pData->Stats.DrawCalls++;
 
-		//Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
+		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
 		s_pData->Stats.DrawCalls++;
 	}
 

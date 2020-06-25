@@ -27,7 +27,7 @@ namespace Lamp
 		void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
 		void SetCameraControlsEnabled(bool state) { m_ControlsEnabled = state; }
 
-		glm::vec2 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
+		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
 
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);

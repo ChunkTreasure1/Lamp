@@ -197,7 +197,7 @@ namespace Sandbox2D
 			{
 				mousePos -= windowPos;
 
-				glm::vec3 pos = glm::vec3(m_CameraController->ScreenToWorldCoords(mousePos, m_PerspectiveSize), -1);
+				glm::vec3 pos = m_CameraController->ScreenToWorldCoords(mousePos, m_PerspectiveSize);
 
 				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera().GetPosition());
 			}
@@ -323,7 +323,6 @@ namespace Sandbox2D
 				ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
-				//NEEDS FIXING!!
 				if (ImGui::CollapsingHeader("Transform"))
 				{
 					glm::vec3 pos = pBrush->GetPosition();
@@ -375,7 +374,7 @@ namespace Sandbox2D
 
 		for (Lamp::ObjectLayer& layer : Lamp::ObjectLayerManager::Get()->GetLayers())
 		{
-			if (ImGui::Button("A"))
+			if (ImGui::Button((std::string("A###") + layer.Name).c_str()))
 			{
 				layer.IsActive = !layer.IsActive;
 			}
@@ -383,10 +382,9 @@ namespace Sandbox2D
 			ImGui::SameLine();
 			if (ImGui::TreeNode(layer.Name.c_str()))
 			{
-
 				for (int i = 0; i < layer.Objects.size(); i++)
 				{
-					if (ImGui::Button("A"))
+					if (ImGui::Button((std::string("A###") + std::to_string(i)).c_str()))
 					{
 						layer.Objects[i]->SetIsActive(!layer.Objects[i]->GetIsActive());
 					}

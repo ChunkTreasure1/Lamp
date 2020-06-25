@@ -15,6 +15,7 @@ namespace Lamp
 		virtual IntersectData Intersect(const Ref<Collider>& other) const override;
 		virtual void Transform(const glm::vec3& translation) override;
 		virtual void SetTranslation(const glm::vec3& trans) override;
+		virtual void Render() override;
 
 		inline const glm::vec3& GetMinExtents() const { return m_MinExtents; }
 		inline const glm::vec3& GetMaxExtents() const { return m_MaxExtents; }

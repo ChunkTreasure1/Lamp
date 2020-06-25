@@ -2,6 +2,7 @@
 #include "AABB.h"
 
 #include "Lamp/Core/Math.h"
+#include "Lamp/Rendering/Renderer2D.h"
 
 namespace Lamp
 {
@@ -106,5 +107,10 @@ namespace Lamp
 	{
 		m_WorldMax = trans + m_MaxExtents;
 		m_WorldMin = trans + m_MinExtents;
+	}
+
+	void AABB::Render()
+	{
+		Lamp::Renderer2D::DrawLine({ m_WorldMax.x, m_WorldMax.y }, { m_WorldMin.x, m_WorldMin.y });
 	}
 }

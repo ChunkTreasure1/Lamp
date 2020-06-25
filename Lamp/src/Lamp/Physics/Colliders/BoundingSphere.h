@@ -21,6 +21,7 @@ namespace Lamp
 		virtual void Transform(const glm::vec3& translation) override;
 
 		virtual void SetTranslation(const glm::vec3& trans) override { m_Center = trans; }
+		virtual void Render() override {}
 
 		//Getting
 		inline const glm::vec3& GetCenter() { return m_Center; }

@@ -55,16 +55,19 @@ namespace Lamp
 		}
 	}
 
-	glm::vec2 OrthographicCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& windowSize)
+	glm::vec3 OrthographicCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& windowSize)
 	{
-		float x = (coords.x / windowSize.x) * 2.f - 1;
-		float y = (coords.y / windowSize.y) * 2.f - 1;
-		float z = 0;
+		float x = (coords.x / windowSize.x) * 2.f - 1.f;
+		float y = (coords.y / windowSize.y) * 2.f - 1.f;
+		float z = 1.f;
 
 		glm::mat4 matInv = glm::inverse(m_Camera.GetViewProjectionMatrix());
-		glm::vec4 coord = matInv * glm::vec4(x, -y, z, 1);
+		glm::vec4 dCoords = matInv * glm::vec4(x, -y, z, 1);
 
-		return { coord.x, coord.y };
+		glm::vec3 dir = glm::vec3(dCoords.x, dCoords.y, dCoords.z);
+		dir = glm::normalize(dir);
+
+		return dir;
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)

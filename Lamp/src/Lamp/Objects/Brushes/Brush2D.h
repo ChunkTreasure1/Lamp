@@ -34,6 +34,7 @@ namespace Lamp
 		bool OnRender()
 		{
 			Renderer2D::DrawQuad(m_ModelMatrix, m_Sprite);
+			m_PhysicalEntity->GetCollider()->Render();
 
 			return true;
 		}
