@@ -14,6 +14,7 @@ namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
@@ -45,6 +46,7 @@ namespace Sandbox3D
 			ImGui::Text(frameInfo.c_str());
 		}
 		ImGui::End();
+		ImGui::PopStyleVar();
 
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);

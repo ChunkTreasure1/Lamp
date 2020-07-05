@@ -91,12 +91,57 @@ namespace Lamp
 				}
 			}
 		}
+		void MoveToLayer(Object* obj, uint32_t layerId)
+		{
+			if (!Exists(layerId))
+			{
+				LP_CORE_WARN("Layer does not exist!");
+				return;
+			}
+
+			for (auto& layer : m_Layers)
+			{
+				if (layer.ID == obj->GetLayerID())
+				{
+					auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
+					if (it != layer.Objects.end())
+					{
+						layer.Objects.erase(it);
+					}
+				}
+			}
+
+			for (auto& layer : m_Layers)
+			{
+				if (layer.ID == layerId)
+				{
+					layer.Objects.push_back(obj);
+					obj->SetLayerID(layerId);
+
+					return;
+				}
+			}
+		}
 
 		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 	public:
 		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }
 		static Ref<ObjectLayerManager>& Get() { return s_ObjectLayerManager; }
+
+	private:
+		bool Exists(uint32_t layerId)
+		{
+			for (auto& layer : m_Layers)
+			{
+				if (layer.ID == layerId)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 
 	private:
 		static Ref<ObjectLayerManager> s_ObjectLayerManager;

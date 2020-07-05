@@ -2,6 +2,7 @@
 #include "AABB.h"
 
 #include "Lamp/Core/Math.h"
+#include "Lamp/Rendering/Renderer2D.h"
 
 namespace Lamp
 {
@@ -83,8 +84,8 @@ namespace Lamp
 		{
 			Ref<AABB> coll = std::dynamic_pointer_cast<AABB>(other);
 
-			glm::vec3 distancesA = coll->GetMinExtents() - GetMaxExtents();
-			glm::vec3 distancesB = GetMinExtents() - coll->GetMaxExtents();
+			glm::vec3 distancesA = coll->GetWorldMin() - GetWorldMax();
+			glm::vec3 distancesB = GetWorldMin() - coll->GetWorldMax();
 
 			glm::vec3 distances = glm::max(distancesA, distancesB);
 
@@ -98,7 +99,18 @@ namespace Lamp
 
 	void AABB::Transform(const glm::vec3& translation)
 	{
-		m_MaxExtents += translation;
-		m_MinExtents += translation;
+		m_WorldMax += translation;
+		m_WorldMin += translation;
+	}
+
+	void AABB::SetTranslation(const glm::vec3& trans)
+	{
+		m_WorldMax = trans + m_MaxExtents;
+		m_WorldMin = trans + m_MinExtents;
+	}
+
+	void AABB::Render()
+	{
+		Lamp::Renderer2D::DrawLine({ m_WorldMax.x, m_WorldMax.y }, { m_WorldMin.x, m_WorldMin.y });
 	}
 }

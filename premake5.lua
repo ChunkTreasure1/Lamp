@@ -87,7 +87,7 @@ project "Lamp"
 		}
 
 		filter "configurations:Debug"
-			defines "LP_DEBUG"
+			defines { "LP_DEBUG", "LP_ENABLE_ASSERTS" }
 			runtime "Debug"
 			symbols "on"
 
@@ -101,8 +101,8 @@ project "Lamp"
 			runtime "Release"
 			optimize "on"
 			
-project "Sandbox3D"
-	location "Sandbox3D"
+project "Sandbox"
+	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
@@ -153,7 +153,7 @@ project "Sandbox3D"
 		}
 
 		filter "configurations:Debug"
-			defines "LP_DEBUG"
+			defines { "LP_DEBUG", "LP_ENABLE_ASSERTS" }
 			runtime "Debug"
 			symbols "on"
 

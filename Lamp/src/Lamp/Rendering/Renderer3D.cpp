@@ -40,7 +40,7 @@ namespace Lamp
 		////////////////
 
 		Renderer3DStorage()
-			: LineMaterial(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/lineShader_vs.glsl", "engine/shaders/lineShader_fs.glsl"), 0),
+			: LineMaterial(Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl"), 0),
 			Camera(nullptr)
 		{}
 
@@ -56,27 +56,19 @@ namespace Lamp
 
 	void Renderer3D::Initialize()
 	{
-		glEnable(GL_MULTISAMPLE);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		//glEnable(GL_FRAMEBUFFER_SRGB);
-
-		glCullFace(GL_BACK);
-		glDepthFunc(GL_LEQUAL);
-
 		s_pData = new Renderer3DStorage();
 
 		std::vector<std::string> paths =
 		{
-			"engine/textures/skybox/right.jpg",
-			"engine/textures/skybox/left.jpg",
-			"engine/textures/skybox/top.jpg",
-			"engine/textures/skybox/bottom.jpg",
-			"engine/textures/skybox/front.jpg",
-			"engine/textures/skybox/back.jpg",
+			"assets/textures/skybox/right.jpg",
+			"assets/textures/skybox/left.jpg",
+			"assets/textures/skybox/top.jpg",
+			"assets/textures/skybox/bottom.jpg",
+			"assets/textures/skybox/front.jpg",
+			"assets/textures/skybox/back.jpg",
 		};
 		s_pData->CubeMap = TextureCube::Create(paths);
-		s_pData->SkyboxShader = Shader::Create("engine/shaders/skyboxShader_vs.glsl", "engine/shaders/skyboxShader_fs.glsl");
+		s_pData->SkyboxShader = Shader::Create("engine/shaders/3d/skyboxShader_vs.glsl", "engine/shaders/3d/skyboxShader_fs.glsl");
 
 		///////Line///////
 		s_pData->LineVertexArray = VertexArray::Create();
@@ -133,7 +125,7 @@ namespace Lamp
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
-			});
+		});
 
 		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
 
@@ -198,7 +190,7 @@ namespace Lamp
 		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
 
 		mesh->GetVertexArray()->Bind();
-		Renderer::DrawIndexed(mesh->GetVertexArray());
+		Renderer::DrawIndexed(mesh->GetVertexArray(), 0);
 	}
 
 	void Renderer3D::DrawSkybox()
@@ -215,16 +207,10 @@ namespace Lamp
 		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->Camera->GetViewMatrix()));
 		s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
 
-		Renderer::DrawIndexed(s_pData->SkyBoxVertexArray);
+		Renderer::DrawIndexed(s_pData->SkyBoxVertexArray, 0);
 		glDepthMask(GL_TRUE);
 	}
 
-	void Renderer3D::DrawSphere()
-	{
-		s_pData->SphereArray->Bind();
-		Renderer::DrawIndexed(s_pData->SphereArray);
-	}
-	
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
 	{
 		glLineWidth(width);
@@ -243,95 +229,6 @@ namespace Lamp
 		s_pData->LineVertexBufferPtr++;
 
 		s_pData->LineIndexCount += 2;
-	}
-
-	void Renderer3D::CreateSphere(float radius)
-	{
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
-
-		float sectorCount = 10.f;
-		float stackCount = 10.f;
-		float x, y, z, xy;
-		float nx, ny, nz, lengthInv = 1.f / radius;
-		float s, t;
-
-		float sectorStep = 2 * glm::pi<float>() / sectorCount;
-		float stackStep = glm::pi<float>() / stackCount;
-		float sectorAngle, stackAngle;
-
-		for (size_t i = 0; i <= stackCount; ++i)
-		{
-			stackAngle = glm::pi<float>() / 2 - i * stackStep;
-			xy = radius * cosf(stackAngle);
-			z = radius * sinf(stackAngle);
-
-			for (size_t j = 0; j <= sectorCount; ++j)
-			{
-				Vertex vert;
-
-				sectorAngle = j * sectorStep;
-
-				x = xy * cosf(sectorAngle);
-				y = xy * sinf(sectorAngle);
-
-				vert.position = { x, y, z };
-
-				nx = x * lengthInv;
-				ny = y * lengthInv;
-				nz = z * lengthInv;
-
-				vert.normal = { nx, ny, nz };
-
-				s = (float)j / sectorCount;
-				t = (float)i / stackCount;
-				vert.textureCoords = { s, t };
-
-				vertices.push_back(vert);
-			}
-		}
-
-		int k1, k2;
-		for (size_t i = 0; i < stackCount; ++i)
-		{
-			k1 = i * (sectorCount + 1);
-			k2 = k1 + sectorCount + 1;
-
-			for (size_t j = 0; j < sectorCount; ++j, ++k1, ++k2)
-			{
-				if (i != 0)
-				{
-					indices.push_back(k1);
-					indices.push_back(k2);
-					indices.push_back(k1 + 1);
-				}
-
-				if (i != (stackCount - 1))
-				{
-					indices.push_back(k1 + 1);
-					indices.push_back(k2);
-					indices.push_back(k2 + 1);
-				}
-			}
-		}
-
-		s_pData->SphereArray = VertexArray::Create();
-
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(vertices, (uint32_t)(sizeof(Vertex) * vertices.size()));
-		pBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float2, "a_TexCoords" }
-		});
-
-		s_pData->SphereArray->AddVertexBuffer(pBuffer);
-
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(indices, indices.size());
-		s_pData->SphereArray->SetIndexBuffer(pIndexBuffer);
-
-		s_pData->SphereArray->Unbind();
-
 	}
 	
 	void Renderer3D::StartNewBatch()

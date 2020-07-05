@@ -4,27 +4,19 @@
 #include <glad/glad.h>
 #include <stb/stb_image.h>
 
+#include "Lamp/Core/Core.h"
+
 namespace Lamp
 {
 	std::tuple<uint32_t, uint32_t, uint32_t> TextureLoader::LoadTexture(const std::string& path)
 	{
 		uint32_t texture;
 
-		//Generate texture and bind it to GL_TEXTURE_2D
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		//Set texture wrapping
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		//Set filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+
+		LP_CORE_ASSERT(data, "Failed to load image!");
 
 		GLenum dataFormat = 0, internalFormat = 0;
 		if (channels == 4)
@@ -38,15 +30,19 @@ namespace Lamp
 			dataFormat = GL_RGB;
 		}
 
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			LP_CORE_WARN("Failed to load texture!");
-		}
+		LP_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+		glTextureStorage2D(texture, 1, internalFormat, width, height);
+
+		glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTextureSubImage2D(texture, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
+
 		stbi_image_free(data);
 
 		return std::tuple(texture, width, height);

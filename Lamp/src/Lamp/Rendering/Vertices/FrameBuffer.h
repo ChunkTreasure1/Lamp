@@ -20,6 +20,9 @@ namespace Lamp
 		static std::shared_ptr<FrameBuffer> Create(const uint32_t width, const uint32_t height);
 
 	private:
+		void Invalidate();
+		
+	private:
 		uint32_t m_RendererID;
 		uint32_t m_DepthID;
 		uint32_t m_ColorID;

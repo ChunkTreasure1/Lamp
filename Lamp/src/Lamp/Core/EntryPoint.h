@@ -7,8 +7,7 @@ extern Lamp::Application* Lamp::CreateApplication();
 int main(int argc, char** argv)
 {
 	Lamp::Log::Init();
-	LP_CORE_WARN("Initialized Log");
-	LP_INFO("Initialized Log");
+	LP_CORE_INFO("Initialized Log");
 
 	auto pApp = Lamp::CreateApplication();
 	pApp->Run();

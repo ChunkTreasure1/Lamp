@@ -11,6 +11,12 @@
 
 namespace Lamp
 {
+	struct RendererCapabilities
+	{
+	public:
+		GLint MaxTextureSlots = 0;
+	};
+
 	class Renderer
 	{
 	public:
@@ -20,12 +26,16 @@ namespace Lamp
 		static void Begin(OrthographicCamera& camera);
 		static void End();
 
-		static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray);
+		static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count);
 		static void DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount);
 		static void SetClearColor(const glm::vec4& color) { glClearColor(color.r, color.g, color.g, color.a); }
 		static void Clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 		static void OnWindowResize(uint32_t width, uint32_t height);
+		static RendererCapabilities& GetCapabilities() { return s_RenderCapabilities; }
+
+	private:
+		static RendererCapabilities s_RenderCapabilities;
 
 	private: 
 		struct SceneData

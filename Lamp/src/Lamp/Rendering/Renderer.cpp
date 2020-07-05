@@ -7,19 +7,43 @@
 namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
+	RendererCapabilities Renderer::s_RenderCapabilities;
+
+	void OpenGLMessageCallback(unsigned source, unsigned type, unsigned id, unsigned severity, int length, const char* message, const void* userParam)
+	{
+		switch (severity)
+		{
+			case GL_DEBUG_SEVERITY_HIGH:         LP_CORE_CRITICAL(message); return;
+			case GL_DEBUG_SEVERITY_MEDIUM:       LP_CORE_ERROR(message); return;
+			case GL_DEBUG_SEVERITY_LOW:          LP_CORE_WARN(message); return;
+			case GL_DEBUG_SEVERITY_NOTIFICATION: return; //LP_CORE_TRACE(message); return;
+		}
+
+		LP_CORE_ASSERT(false, "Unknown severity level!");
+	}
 
 	void Renderer::Initialize()
 	{
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_MULTISAMPLE);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		//glEnable(GL_FRAMEBUFFER_SRGB);
 
-		Renderer2D::Initialize();
+		glCullFace(GL_BACK);
+		glDepthFunc(GL_LEQUAL);
+
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &s_RenderCapabilities.MaxTextureSlots);
+	
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback(OpenGLMessageCallback, 0);
+
 		Renderer3D::Initialize();
-
+		Renderer2D::Initialize();
 	}
 
 	void Renderer::Shutdown()
 	{
+		Renderer3D::Shutdown();
 		Renderer2D::Shutdown();
 	}
 
@@ -33,9 +57,11 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount = 0)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		vertexArray->Bind();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void Renderer::DrawIndexedLines(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount)

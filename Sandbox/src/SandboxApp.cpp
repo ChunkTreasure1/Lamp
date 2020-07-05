@@ -1,21 +1,23 @@
 #include <Lamp.h>
 
 #include "Lamp/Core/EntryPoint.h"
+#include "Sandbox3D/Sandbox3D.h"
+#include "Sandbox2D/Sandbox2D.h"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
-
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
-#include "Sandbox3D.h"
-
-#include <glm/gtc/type_ptr.hpp>
+#define LP_SANDBOX_2D
 
 class Sandbox : public Lamp::Application
 {
 public:
 	Sandbox()
 	{
+#if defined(LP_SANDBOX_3D)
 		PushLayer(new Sandbox3D::Sandbox3D());
+#elif defined(LP_SANDBOX_2D)
+		PushLayer(new Sandbox2D::Sandbox2D());
+#else
+		LP_CORE_ASSERT(false, "No Sandbox defined!");
+#endif
 	};
 	~Sandbox() {};
 };
