@@ -10,10 +10,12 @@ namespace Sandbox2D
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/2DLevel.level");
 		auto brush = Lamp::BrushManager::Get()->Create2D("assets/textures/vlad.PNG");
 		auto brush1 = Lamp::BrushManager::Get()->Create2D("assets/textures/ff.PNG");
+		brush1->SetPosition({ 1.f, 0.f, 0.f });
+
+		auto ent = Lamp::EntityManager::Get()->Create();
 
 		Lamp::ObjectLayerManager::Get()->AddLayer(Lamp::ObjectLayer(1, "Test", true));
-		Lamp::ObjectLayerManager::Get()->MoveToLayer(brush1, 1);
-		brush1->SetPosition({ 1.f, 0.f, 0.f });
+		Lamp::ObjectLayerManager::Get()->MoveToLayer(ent, 1);
 	}
 
 	void Sandbox2D::Update(Lamp::Timestep ts)
@@ -48,6 +50,8 @@ namespace Sandbox2D
 		RenderPerspective();
 		RenderAssetBrowser();
 		RenderLayerView();
+
+		ImGui::ShowDemoWindow();
 	}
 
 	void Sandbox2D::OnEvent(Lamp::Event& e)

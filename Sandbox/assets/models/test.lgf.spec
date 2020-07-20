@@ -7,10 +7,10 @@
 	</Meshes>
 	<Materials>
 		<Material name="">
-			<Diffuse path="engine/textures/container_diff.png"/>
-			<Specular path="engine/textures/container_spec.png"/>
+			<Diffuse path="assets/textures/container_diff.png"/>
+			<Specular path="assets/textures/container_spec.png"/>
 			<Shininess value="32.000000"/>
-			<Shader vertex="engine/shaders/shader_vs.glsl" fragment="engine/shaders/shader_fs.glsl"/>
+			<Shader vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
 		</Material>
 	</Materials>
 </Geometry>

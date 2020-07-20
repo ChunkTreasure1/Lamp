@@ -314,6 +314,15 @@ namespace Sandbox2D
 						}
 					}
 				}
+
+				float indentation = ImGui::GetWindowSize().x / 2 - 55.f;
+				ImGui::Indent(indentation);
+
+				if (ImGui::Button("Add Component"))
+				{
+					ImGui::Begin("Test");
+					ImGui::End();
+				}
 			}
 			else if (auto pBrush = dynamic_cast<Lamp::Brush2D*>(m_pSelectedObject))
 			{
@@ -406,5 +415,9 @@ namespace Sandbox2D
 		}
 
 		ImGui::End();
+	}
+
+	void Sandbox2D::RenderLog()
+	{
 	}
 }

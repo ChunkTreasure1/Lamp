@@ -26,6 +26,7 @@ namespace Sandbox2D
 		void RenderAssetBrowser();
 		void RenderProperties();
 		void RenderLayerView();
+		void RenderLog();
 
 	private:
 		Lamp::OrthographicCameraController* m_CameraController;

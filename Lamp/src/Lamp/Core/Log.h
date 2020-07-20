@@ -17,10 +17,10 @@ namespace Lamp
 		static std::shared_ptr<spdlog::logger> s_ClientLogger;
 	};
 
-	//Core logging macros
+//Core logging macros
 #define LP_CORE_TRACE(...)     ::Lamp::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define LP_CORE_INFO(...)      ::Lamp::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define LP_CORE_WARN(...)      ::Lamp::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define LP_CORE_INFO(...)      ::Lamp::Log::GetCoreLogger()->info(__VA_ARGS__) 
+#define LP_CORE_WARN(...)      ::Lamp::Log::GetCoreLogger()->warn(__VA_ARGS__) 
 #define LP_CORE_ERROR(...)     ::Lamp::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define LP_CORE_CRITICAL(...)     ::Lamp::Log::GetCoreLogger()->critical(__VA_ARGS__)
 

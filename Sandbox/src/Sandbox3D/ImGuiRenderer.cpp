@@ -235,6 +235,11 @@ namespace Sandbox3D
 						}
 					}
 				}
+
+				if (ImGui::Button("Add Component"))
+				{
+
+				}
 			}
 			else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
 			{

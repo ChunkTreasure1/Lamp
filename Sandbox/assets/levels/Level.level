@@ -1,6 +1,6 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="engine/models/test.lgf" position="0.000000,3.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="10.000000,10.000000,10.000000" layerID="0" name="epixbruhs"/>
+		<Brush lgfPath="assets/models/test.lgf" position="0.000000,3.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="10.000000,10.000000,10.000000" layerID="0" name="epixbruhs"/>
 	</Brushes>
 	<Layers>
 	</Layers>

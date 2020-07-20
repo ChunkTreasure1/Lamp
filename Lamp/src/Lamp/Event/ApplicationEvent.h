@@ -73,4 +73,29 @@ namespace Lamp
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
+
+	class AppLogEvent : public Event
+	{
+	public:
+		AppLogEvent(const std::string& message, const std::string& severity) 
+			: m_Message(message), m_Severity(severity)
+		{}
+
+		inline const std::string& GetMessage() { return m_Message; }
+		inline const std::string& GetSeverity() { return m_Severity; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "AppLogEvent: " << m_Message << ", " << m_Severity << std::endl;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(AppLog);
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+
+	private:
+		std::string m_Message;
+		std::string m_Severity;
+	};
 }
