@@ -6,9 +6,10 @@ extern Lamp::Application* Lamp::CreateApplication();
 
 int main(int argc, char** argv)
 {
-	Lamp::Log::Init();
-	LP_CORE_INFO("Initialized Log");
+	//Initialize non application systems
+	Lamp::Log::Initialize();
 
+	//Handle the main application
 	auto pApp = Lamp::CreateApplication();
 	pApp->Run();
 

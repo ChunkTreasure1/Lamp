@@ -17,8 +17,10 @@ namespace Lamp
 		m_pWindow = std::unique_ptr<Window>(new Window());
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		//Initialize all the systems
 		Renderer::Initialize();
 
+		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_pImGuiLayer);
 	}
@@ -38,6 +40,7 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
+			//Update the application layers
 			if (!m_Minimized)
 			{
 				for (Layer* layer : m_LayerStack)
@@ -46,6 +49,7 @@ namespace Lamp
 				}
 			}
 
+			//Render the GUI
 			m_pImGuiLayer->Begin();
 
 			for (Layer* pLayer : m_LayerStack)

@@ -32,7 +32,7 @@ namespace Lamp
 		using EventCallbackFn = std::function<void(Event&)>;
 
 		//Functions
-		void Init(const WindowProps& props);
+		void Initialize(const WindowProps& props);
 		void SwapBuffer();
 		void Update(Timestep ts);
 

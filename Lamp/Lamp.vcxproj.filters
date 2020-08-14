@@ -135,9 +135,6 @@
     <ClInclude Include="src\Lamp\Core\Math.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Core\Sound.h">
-      <Filter>src\Lamp\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h">
       <Filter>src\Lamp\Core\Time</Filter>
     </ClInclude>

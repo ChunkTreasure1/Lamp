@@ -5,8 +5,6 @@
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
-#include "Sound.h"
-
 namespace Lamp
 {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -16,16 +14,15 @@ namespace Lamp
 
 	Window::Window(WindowProps& props)
 	{
-		Init(props);
+		Initialize(props);
 	}
 
 	Window::~Window()
 	{
-		Sound::UnInitialize();
 		glfwTerminate();
 	}
 
-	void Window::Init(const WindowProps & props)
+	void Window::Initialize(const WindowProps & props)
 	{
 		if (!glfwInit())
 		{
@@ -55,8 +52,6 @@ namespace Lamp
 		LP_CORE_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
 		LP_CORE_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
 		LP_CORE_INFO("  Version: {0}", glGetString(GL_VERSION));
-
-		Sound::Initialize();
 		LP_CORE_INFO("Sound initialized!");
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);

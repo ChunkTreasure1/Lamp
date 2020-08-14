@@ -32,7 +32,7 @@ namespace Lamp
 		}
 		static float Max(const glm::vec3& v)
 		{
-			float max = -FLT_MAX;
+			float max = FLT_MIN;
 
 			if (v.x > max)
 			{

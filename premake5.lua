@@ -13,7 +13,6 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
-include "Lamp/vendor/SoLoud"
 
 project "Lamp"
 	location "Lamp"
@@ -55,7 +54,6 @@ project "Lamp"
 		"%{prj.name}/vendor/glad/include",
 		"%{prj.name}/vendor/glm",
 		"%{prj.name}/vendor/stb_image",
-		"%{prj.name}/vendor/SoLoud/include",
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/ImGuizmo"
@@ -71,7 +69,6 @@ project "Lamp"
 		"GLFW",
 		"ImGui",
 		"Glad",
-		"SoLoud",
 		"xaudio2.lib",
 		"opengl32.lib",
 		"assimp-vc142-mt.lib"
@@ -130,7 +127,6 @@ project "Sandbox"
 		"Lamp/vendor/imgui/",
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/SoLoud/include",
 		"Lamp/vendor/assimp/include"
 	}
 

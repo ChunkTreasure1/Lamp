@@ -348,7 +348,7 @@ namespace Sandbox3D
 			}
 			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
 
-			ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
+			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
 		}
 
 		ImGui::End();
