@@ -72,6 +72,10 @@ namespace Sandbox3D
 
 		//Layers
 		bool m_LayerViewOpen = true;
+
+		//Play
+		bool m_ShouldPlay = false;
+		bool m_ShouldPlayPhysics = false;
 		//--------------------------------------
 	};
 }

@@ -46,7 +46,7 @@ namespace Lamp
 
 			m_pShader->UploadInt("u_Material.diffuse", 0);
 			m_pShader->UploadInt("u_Material.specular", 1);
-			m_pShader->UploadInt("u_Material.shininess", m_Shininess);
+			m_pShader->UploadFloat("u_Material.shininess", m_Shininess);
 			m_pShader->UploadInt("u_LightCount", i);
 		}
 	}

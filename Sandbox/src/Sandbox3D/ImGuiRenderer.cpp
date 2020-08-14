@@ -472,6 +472,14 @@ namespace Sandbox3D
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Play"))
+			{
+				ImGui::MenuItem("Play", "CTRL + G", &m_ShouldPlay);
+				ImGui::MenuItem("Play physics", NULL, &m_ShouldPlayPhysics);
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 

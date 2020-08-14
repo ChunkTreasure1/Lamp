@@ -51,11 +51,17 @@ namespace Sandbox3D
 		m_PerspectiveCamera.Update(ts);
 		GetInput();
 
-		Lamp::PhysicsEngine::Get()->Simulate(ts);
-		Lamp::PhysicsEngine::Get()->HandleCollisions();
+		if (m_ShouldPlay || m_ShouldPlayPhysics)
+		{
+			Lamp::PhysicsEngine::Get()->Simulate(ts);
+			Lamp::PhysicsEngine::Get()->HandleCollisions();
+		}
 
-		Lamp::AppUpdateEvent updateEvent(ts);
-		Lamp::ObjectLayerManager::Get()->OnEvent(updateEvent);
+		if (m_ShouldPlay)
+		{
+			Lamp::AppUpdateEvent updateEvent(ts);
+			Lamp::ObjectLayerManager::Get()->OnEvent(updateEvent);
+		}
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
