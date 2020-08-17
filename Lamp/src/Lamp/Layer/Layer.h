@@ -14,7 +14,6 @@ namespace Lamp
 		
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void Update(Timestep ts) {}
 
 		virtual void OnImGuiRender(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}

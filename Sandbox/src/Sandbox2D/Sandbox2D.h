@@ -11,7 +11,7 @@ namespace Sandbox2D
 	public:
 		Sandbox2D();
 
-		virtual void Update(Lamp::Timestep ts) override;
+		bool OnUpdate(Lamp::AppUpdateEvent& e);
 		virtual void OnImGuiRender(Lamp::Timestep ts) override;
 		virtual void OnEvent(Lamp::Event& e) override;
 

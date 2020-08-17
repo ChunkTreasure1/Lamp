@@ -28,7 +28,7 @@ namespace Lamp
 			//TODO: change to file dialog instead
 			SetComponentProperties
 			({
-				{ PropertyType::String, "Path", static_cast<void*>(&m_Model->GetLGFPath())}
+				{ PropertyType::String, "Path", RegisterData(&m_Model->GetLGFPath())}
 			});
 		}
 

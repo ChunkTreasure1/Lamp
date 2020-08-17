@@ -2,6 +2,8 @@
 #include "Application.h"
 
 #include "imgui.h"
+#include "Lamp/Physics/PhysicsEngine.h"
+#include "Lamp/Objects/ObjectLayer.h"
 
 namespace Lamp
 {
@@ -40,13 +42,17 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
+			PhysicsEngine::Get()->Simulate(timestep);
+			PhysicsEngine::Get()->HandleCollisions();
+
+			AppUpdateEvent updateEvent(timestep);
+			ObjectLayerManager::Get()->OnEvent(updateEvent);
+
 			//Update the application layers
 			if (!m_Minimized)
 			{
-				for (Layer* layer : m_LayerStack)
-				{
-					layer->Update(timestep);
-				}
+				AppUpdateEvent updateEvent(timestep);
+				OnEvent(updateEvent);
 			}
 
 			//Render the GUI

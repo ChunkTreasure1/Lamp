@@ -5,7 +5,7 @@ namespace Sandbox2D
 	Sandbox2D::Sandbox2D()
 		: m_SelectedFile("")
 	{
-		m_CameraController = new Lamp::OrthographicCameraController(Lamp::Application::Get().GetWindow().GetWidth() / Lamp::Application::Get().GetWindow().GetHeight());
+		m_CameraController = new Lamp::OrthographicCameraController((float)Lamp::Application::Get().GetWindow().GetWidth() / (float)Lamp::Application::Get().GetWindow().GetHeight());
 	
 		auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/2DLevel.level");
 		auto brush = Lamp::BrushManager::Get()->Create2D("assets/textures/vlad.PNG");
@@ -18,16 +18,10 @@ namespace Sandbox2D
 		Lamp::ObjectLayerManager::Get()->MoveToLayer(ent, 1);
 	}
 
-	void Sandbox2D::Update(Lamp::Timestep ts)
+	bool Sandbox2D::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		m_CameraController->Update(ts);
+		m_CameraController->Update(e.GetTimestep());
 		GetInput();
-
-		Lamp::PhysicsEngine::Get()->Simulate(ts);
-		Lamp::PhysicsEngine::Get()->HandleCollisions();
-
-		Lamp::AppUpdateEvent updateEvent(ts);
-		Lamp::ObjectLayerManager::Get()->OnEvent(updateEvent);
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
@@ -40,6 +34,8 @@ namespace Sandbox2D
 		m_CameraController->OnEvent(renderEvent);
 
 		Lamp::Renderer2D::End();
+
+		return true;
 	}
 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)
@@ -60,6 +56,7 @@ namespace Sandbox2D
 
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox2D::MouseMoved));
+		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox2D::OnUpdate));
 	}
 
 	void Sandbox2D::OnItemClicked(Lamp::File& file)

@@ -111,7 +111,7 @@ namespace Sandbox2D
 				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
-				m_CameraController->UpdateProjection(perspectivePanelSize.x, perspectivePanelSize.y);
+				m_CameraController->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
 			uint32_t textureID = Lamp::Renderer2D::GetFrameBuffer()->GetColorAttachment();

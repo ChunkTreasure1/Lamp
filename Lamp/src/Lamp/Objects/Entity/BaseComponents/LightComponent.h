@@ -18,12 +18,12 @@ namespace Lamp
 		{
 			SetComponentProperties
 			({
-				{ PropertyType::Float, "Light constant", static_cast<void*>(&m_LightConstant) },
-				{ PropertyType::Float, "Linear constant", static_cast<void*>(&m_LinearConstant) },
-				{ PropertyType::Float, "Quadratic constant", static_cast<void*>(&m_QuadraticConstant) },
-				{ PropertyType::Float3, "Ambient", static_cast<void*>(&m_Ambient) },
-				{ PropertyType::Float3, "Diffuse", static_cast<void*>(&m_Diffuse) },
-				{ PropertyType::Float3, "Specular", static_cast<void*>(&m_Specular) }
+				{ PropertyType::Float, "Light constant", RegisterData(&m_LightConstant) },
+				{ PropertyType::Float, "Linear constant", RegisterData(&m_LinearConstant) },
+				{ PropertyType::Float, "Quadratic constant", RegisterData(&m_QuadraticConstant) },
+				{ PropertyType::Float3, "Ambient", RegisterData(&m_Ambient) },
+				{ PropertyType::Float3, "Diffuse", RegisterData(&m_Diffuse) },
+				{ PropertyType::Float3, "Specular", RegisterData(&m_Specular) }
 			});
 		}
 

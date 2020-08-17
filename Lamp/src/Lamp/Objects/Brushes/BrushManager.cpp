@@ -123,6 +123,8 @@ namespace Lamp
 		{
 			return brush;
 		}
+
+		return nullptr;
 	}
 
 	Brush2D* BrushManager::GetBrush2DFromPhysicalEntity(Ref<PhysicalEntity>& pEnt)

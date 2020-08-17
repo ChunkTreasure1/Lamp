@@ -16,7 +16,7 @@ namespace Lamp
 	{
 		m_pVertexArray = VertexArray::Create();
 
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * m_Vertices.size());
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" },
@@ -26,7 +26,7 @@ namespace Lamp
 
 		m_pVertexArray->AddVertexBuffer(pBuffer);
 
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, m_Indices.size());
+		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, (uint32_t)m_Indices.size());
 		m_pVertexArray->SetIndexBuffer(pIndexBuffer);
 
 		m_pVertexArray->Unbind();

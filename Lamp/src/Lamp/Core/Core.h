@@ -32,6 +32,8 @@ namespace Lamp
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;
+
+#define RegisterData(x) static_cast<void*>(x)
 }
 
 namespace Sandbox3D
@@ -44,6 +46,15 @@ namespace Sandbox3D
 }
 
 namespace Sandbox2D
+{
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+}
+
+namespace GameLauncher
 {
 	template<typename T>
 	using Scope = std::unique_ptr<T>;

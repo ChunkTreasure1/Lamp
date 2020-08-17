@@ -10,6 +10,8 @@
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
 
+#include <Game/Game.h>
+
 namespace Sandbox3D
 {
 	class Sandbox3D : public Lamp::Layer
@@ -17,7 +19,7 @@ namespace Sandbox3D
 	public:
 		Sandbox3D();
 
-		virtual void Update(Lamp::Timestep ts) override;
+		bool OnUpdate(Lamp::AppUpdateEvent& e);
 		virtual void OnImGuiRender(Lamp::Timestep ts) override;
 		virtual void OnEvent(Lamp::Event& e) override;
 
@@ -38,7 +40,7 @@ namespace Sandbox3D
 		void UpdateLayerView();
 
 	private:
-		Lamp::PerspectiveCameraController m_PerspectiveCamera;
+		Scope<Game> m_pGame;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

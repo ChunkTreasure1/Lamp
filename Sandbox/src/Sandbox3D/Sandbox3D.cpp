@@ -17,64 +17,35 @@
 
 #include <Lamp/Objects/ObjectLayer.h>
 #include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
+#include <Lamp/Core/Game.h>
 
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
-		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_PerspectiveCamera(60.f, 0.1f, 100.f), m_pShader(nullptr)
+		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
-		auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
-
-		{
-			Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
-			ent->SetPosition({ 10, 0, 0 });
-
-			auto comp = ent->GetOrCreateComponent<Lamp::MeshComponent>();
-			comp->SetModel(Lamp::GeometrySystem::LoadFromFile("assets/models/test.lgf"));
-		}
-
-		{
-			Lamp::Entity* ent2 = Lamp::EntityManager::Get()->Create();
-			ent2->SetPosition({ 0.f, 7.f, 0.f });
-			auto comp = ent2->GetOrCreateComponent<Lamp::MeshComponent>();
-			comp->SetModel(Lamp::GeometrySystem::LoadFromFile("assets/models/lightModel.lgf"));
-
-			auto light = ent2->GetOrCreateComponent<Lamp::LightComponent>();
-			light->SetAmbient({ 0.2f, 0.2f, 0.2f });
-			light->SetDiffuse({ 3.f, 3.f, 3.f });
-			light->SetSpecular({ 1.f, 1.f, 1.f });
-		}
+		m_pGame = std::make_unique<Game>();
+		m_pGame->OnStart();
 	}
 
-	void Sandbox3D::Update(Lamp::Timestep ts)
+	bool Sandbox3D::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		m_PerspectiveCamera.Update(ts);
 		GetInput();
-
-		if (m_ShouldPlay || m_ShouldPlayPhysics)
-		{
-			Lamp::PhysicsEngine::Get()->Simulate(ts);
-			Lamp::PhysicsEngine::Get()->HandleCollisions();
-		}
-
-		if (m_ShouldPlay)
-		{
-			Lamp::AppUpdateEvent updateEvent(ts);
-			Lamp::ObjectLayerManager::Get()->OnEvent(updateEvent);
-		}
 
 		Lamp::Renderer::SetClearColor(m_ClearColor);
 		Lamp::Renderer::Clear();
 
-		Lamp::Renderer3D::Begin(m_PerspectiveCamera.GetCamera());
+		Lamp::Renderer3D::Begin(m_pGame->GetCamera()->GetCamera());
 
 		Lamp::AppRenderEvent renderEvent;
 		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
-		m_PerspectiveCamera.OnEvent(renderEvent);
+		m_pGame->OnEvent(renderEvent);
 		RenderGrid();
 
 		Lamp::Renderer3D::DrawSkybox();
 		Lamp::Renderer3D::End();
+
+		return true;
 	}
 
 	void Sandbox3D::OnImGuiRender(Lamp::Timestep ts)
@@ -90,10 +61,11 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnEvent(Lamp::Event& e)
 	{
-		m_PerspectiveCamera.OnEvent(e);
+		m_pGame->OnEvent(e);
 
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
+		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
 	}
 
 	void Sandbox3D::OnItemClicked(Lamp::File& file)
@@ -114,7 +86,7 @@ namespace Sandbox3D
 
 		if (Lamp::Input::IsMouseButtonPressed(1))
 		{
-			m_PerspectiveCamera.OnMouseMoved(m_MouseHoverPos);
+			m_pGame->GetCamera()->OnMouseMoved(m_MouseHoverPos);
 		}
 	}
 

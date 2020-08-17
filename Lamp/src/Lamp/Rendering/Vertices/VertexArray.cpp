@@ -8,15 +8,17 @@ namespace Lamp
 	{
 		switch (type)
 		{
-			case Lamp::ElementType::Bool: return GL_BOOL;
-			case Lamp::ElementType::Int: return GL_INT;
-			case Lamp::ElementType::Float: return GL_FLOAT;
-			case Lamp::ElementType::Float2: return GL_FLOAT;
-			case Lamp::ElementType::Float3: return GL_FLOAT;
-			case Lamp::ElementType::Float4: return GL_FLOAT;
-			case Lamp::ElementType::Mat3: return GL_FLOAT;
-			case Lamp::ElementType::Mat4: return GL_FLOAT;
+			case ElementType::Bool: return GL_BOOL;
+			case ElementType::Int: return GL_INT;
+			case ElementType::Float: return GL_FLOAT;
+			case ElementType::Float2: return GL_FLOAT;
+			case ElementType::Float3: return GL_FLOAT;
+			case ElementType::Float4: return GL_FLOAT;
+			case ElementType::Mat3: return GL_FLOAT;
+			case ElementType::Mat4: return GL_FLOAT;
 		}
+
+		return GL_BOOL;
 	}
 
 	VertexArray::VertexArray()

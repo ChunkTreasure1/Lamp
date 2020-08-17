@@ -7,7 +7,7 @@ namespace Lamp
 {
 	Plane Plane::Normalized() const
 	{
-		float mag = m_Normal.length();
+		float mag = (float)m_Normal.length();
 
 		return Plane(m_Normal / mag, m_Center);
 	}

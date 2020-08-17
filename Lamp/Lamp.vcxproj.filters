@@ -129,6 +129,9 @@
     <ClInclude Include="src\Lamp\Core\EntryPoint.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Game.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Log.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>

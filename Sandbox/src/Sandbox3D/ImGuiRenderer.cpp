@@ -18,7 +18,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_PerspectiveCamera.SetCameraControlsEnabled(m_PerspectiveHover);
+			m_pGame->GetCamera()->SetCameraControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -35,7 +35,7 @@ namespace Sandbox3D
 				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
-				m_PerspectiveCamera.UpdatePerspective(perspectivePanelSize.x, perspectivePanelSize.y);
+				m_pGame->GetCamera()->UpdatePerspective(perspectivePanelSize.x, perspectivePanelSize.y);
 			}
 
 			uint32_t textureID = Lamp::Renderer3D::GetFrameBuffer()->GetColorAttachment();
@@ -56,7 +56,7 @@ namespace Sandbox3D
 		if (m_pSelectedObject)
 		{
 			float* pMat = (float*)glm::value_ptr(m_pSelectedObject->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_PerspectiveCamera.GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_pGame->GetCamera()->GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_pGame->GetCamera()->GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
 			m_pSelectedObject->SetModelMatrix(glm::make_mat4(pMat));
 		}
 	}
@@ -120,7 +120,7 @@ namespace Sandbox3D
 			if (m_MousePressed && m_PerspectiveHover)
 			{
 				mousePos -= windowPos;
-				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_PerspectiveCamera.ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_PerspectiveCamera.GetCamera().GetPosition());
+				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_pGame->GetCamera()->ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_pGame->GetCamera()->GetCamera().GetPosition());
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
