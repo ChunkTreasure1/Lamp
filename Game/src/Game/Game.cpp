@@ -15,13 +15,13 @@ void Game::OnStart()
 
 	{
 		Lamp::Entity* ent2 = Lamp::EntityManager::Get()->Create();
-		ent2->SetPosition({ 0.f, 7.f, 0.f });
+		ent2->SetPosition({ 0.f, 7.f, -2.f });
 		auto comp = ent2->GetOrCreateComponent<Lamp::MeshComponent>();
 		comp->SetModel(Lamp::GeometrySystem::LoadFromFile("assets/models/lightModel.lgf"));
 
 		auto light = ent2->GetOrCreateComponent<Lamp::LightComponent>();
 		light->SetAmbient({ 0.2f, 0.2f, 0.2f });
-		light->SetDiffuse({ 3.f, 3.f, 3.f });
+		light->SetDiffuse({ 0.4f, 0.4f, 0.4f });
 		light->SetSpecular({ 1.f, 1.f, 1.f });
 	}
 }

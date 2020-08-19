@@ -238,7 +238,7 @@ namespace Sandbox3D
 
 				if (ImGui::Button("Add Component"))
 				{
-
+					ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0.f, 0.f), ImVec2(10.f, 10.f), 0, 0.f);
 				}
 			}
 			else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
