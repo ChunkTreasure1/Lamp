@@ -73,7 +73,7 @@ namespace Lamp
 			//Layer not found, set it to main layer
 			m_Layers[0].Objects.push_back(obj);
 		}
-		
+
 		void RemoveFromLayer(Object* obj, uint32_t layerId)
 		{
 			for (auto layer : m_Layers)
@@ -91,6 +91,7 @@ namespace Lamp
 				}
 			}
 		}
+
 		void MoveToLayer(Object* obj, uint32_t layerId)
 		{
 			if (!Exists(layerId))
@@ -128,7 +129,6 @@ namespace Lamp
 	public:
 		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }
 		static Ref<ObjectLayerManager>& Get() { return s_ObjectLayerManager; }
-
 	private:
 		bool Exists(uint32_t layerId)
 		{

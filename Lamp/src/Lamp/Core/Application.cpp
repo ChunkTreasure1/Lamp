@@ -2,8 +2,10 @@
 #include "Application.h"
 
 #include "imgui.h"
+
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
+#include "Lamp/Rendering/RenderCommand.h"
 
 namespace Lamp
 {
@@ -16,10 +18,9 @@ namespace Lamp
 		s_pInstance = this;
 
 		//Create the window
-		m_pWindow = std::unique_ptr<Window>(new Window());
+		m_pWindow = Window::Create();
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		//Initialize all the systems
 		Renderer::Initialize();
 
 		//Setup the GUI system
@@ -49,13 +50,13 @@ namespace Lamp
 			ObjectLayerManager::Get()->OnEvent(updateEvent);
 
 			//Update the application layers
+
 			if (!m_Minimized)
 			{
 				AppUpdateEvent updateEvent(timestep);
 				OnEvent(updateEvent);
 			}
 
-			//Render the GUI
 			m_pImGuiLayer->Begin();
 
 			for (Layer* pLayer : m_LayerStack)
@@ -115,7 +116,7 @@ namespace Lamp
 			m_Minimized = false;
 		}
 
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
 		return false;
 	}
 	

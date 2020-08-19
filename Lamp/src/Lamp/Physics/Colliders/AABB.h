@@ -19,7 +19,6 @@ namespace Lamp
 
 		inline const glm::vec3& GetMinExtents() const { return m_MinExtents; }
 		inline const glm::vec3& GetMaxExtents() const { return m_MaxExtents; }
-
 		inline const glm::vec3& GetWorldMin() const { return m_WorldMin; }
 		inline const glm::vec3& GetWorldMax() const { return m_WorldMax; }
 

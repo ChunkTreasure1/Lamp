@@ -26,42 +26,23 @@ namespace Lamp
 	class Window
 	{
 	public:
-		Window(WindowProps& props = WindowProps());
-		~Window();
-
 		using EventCallbackFn = std::function<void(Event&)>;
 
-		//Functions
-		void Initialize(const WindowProps& props);
-		void SwapBuffer();
-		void Update(Timestep ts);
+		virtual ~Window() = default;
+		virtual void Update(Timestep ts) = 0;
 
 		//Getting
-		inline const uint32_t GetWidth() const { return m_Data.Width; }
-		inline const uint32_t GetHeight() const { return m_Data.Height; }
-		inline const bool GetIsVSync() const { return m_Data.VSync; }
-		inline void* GetNativeWindow() const { return m_pWindow; }
+		virtual const uint32_t GetWidth() const = 0;
+		virtual const uint32_t GetHeight() const = 0;
+		virtual const bool GetIsVSync() const = 0;
+		virtual void* GetNativeWindow() const = 0;
 
 		//Setting
-		inline void SetEventCallback(const EventCallbackFn& callback) { m_Data.EventCallback = callback; }
-		inline void SetIsVSync(bool state);
-		void ShowCursor(bool state);
+		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void SetIsVSync(bool state) = 0;
+		virtual void ShowCursor(bool state) = 0;
 
-	private:
-		//Member vars
-		GLFWwindow* m_pWindow;
-
-		struct WindowData
-		{
-			std::string Title;
-			uint32_t Width;
-			uint32_t Height;
-			bool VSync;
-
-			EventCallbackFn EventCallback;
-		};
-
-		WindowData m_Data;
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 }
 

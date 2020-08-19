@@ -20,41 +20,40 @@ namespace Lamp
 		Blinn,
 		Phong,
 		BlinnPhong,
-		Sprite,
 		Unknown
 	};
 
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexPath, const std::string& fragmentPath);
+		virtual ~Shader() = default;
 
-		void Bind();
-		void UploadBool(const std::string& name, bool value) const;
-		void UploadInt(const std::string& name, int value) const;
-		void UploadFloat(const std::string& name, float value) const;
-		void UploadFloat3(const std::string& name, const glm::vec3& value) const;
-		void UploadFloat4(const std::string& name, const glm::vec4& value) const;
-		void UploadIntArray(const std::string& name, int* values, uint32_t count);
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
+		virtual void UploadBool(const std::string& name, bool value) const = 0;
+		virtual void UploadInt(const std::string& name, int value) const = 0;
+		virtual void UploadFloat(const std::string& name, float value) const = 0;
+		virtual void UploadFloat3(const std::string& name, const glm::vec3& value) const = 0;
+		virtual void UploadFloat4(const std::string& name, const glm::vec4& value) const = 0;
 		
-		void UploadMat4(const std::string& name, const glm::mat4& mat);
-		void UploadMat3(const std::string& name, const glm::mat3& mat);
+		virtual void UploadMat4(const std::string& name, const glm::mat4& mat) = 0;
+		virtual void UploadMat3(const std::string& name, const glm::mat3& mat) = 0;
+		virtual void UploadIntArray(const std::string& name, int* values, uint32_t count) const = 0;
 
-		inline const uint32_t GetID() const { return m_ID; }
-		inline std::string& GetVertexPath() { return m_VertexPath; }
-		inline const std::string& GetFragementPath() { return m_FragmentPath; }
+		virtual const std::string& GetName() = 0;
+		virtual std::string& GetFragmentPath() = 0;
+		virtual std::string& GetVertexPath() = 0;
+
 		inline const ShaderType GetType() { return m_Type; }
 
 	public:
 		static std::shared_ptr<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
 
-	private:
+	protected:
 		ShaderType ShaderTypeFromString(const std::string& s);
 
-	private:
-		uint32_t m_ID;
-		std::string m_VertexPath;
-		std::string m_FragmentPath;
+	protected:
 		ShaderType m_Type;
 	};
 }

@@ -29,6 +29,7 @@ namespace Lamp
 		//Getting
 		inline std::vector<Brush*>& GetBrushes() { return m_Brushes; }
 		inline std::vector<Brush2D*>& Get2DBrushes() { return m_2DBrushes; }
+
 		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 		Brush* GetBrushFromPhysicalEntity(Ref<PhysicalEntity>& pEnt);
 

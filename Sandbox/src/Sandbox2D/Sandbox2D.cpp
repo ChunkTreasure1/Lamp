@@ -1,5 +1,7 @@
 #include "Sandbox2D.h"
 
+#include <Lamp/Rendering/RenderCommand.h>
+
 namespace Sandbox2D
 {
 	Sandbox2D::Sandbox2D()
@@ -23,8 +25,8 @@ namespace Sandbox2D
 		m_CameraController->Update(e.GetTimestep());
 		GetInput();
 
-		Lamp::Renderer::SetClearColor(m_ClearColor);
-		Lamp::Renderer::Clear();
+		Lamp::RenderCommand::SetClearColor(m_ClearColor);
+		Lamp::RenderCommand::Clear();
 
 		Lamp::Renderer2D::ResetStats();
 		Lamp::Renderer2D::Begin(m_CameraController->GetCamera());

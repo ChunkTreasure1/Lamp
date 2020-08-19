@@ -4,6 +4,8 @@
 #include "Vertices/VertexArray.h"
 #include "Renderer2D.h"
 
+#include "RenderCommand.h"
+
 namespace Lamp
 {
 	struct QuadVertex
@@ -52,7 +54,7 @@ namespace Lamp
 
 		Ref<Shader> pTextureShader;
 		Ref<Texture2D> pWhiteTexture;
-		Ref<Texture2D>* TextureSlots{ new Ref<Texture2D>[Renderer::GetCapabilities().MaxTextureSlots] };
+		Ref<Texture2D>* TextureSlots{ new Ref<Texture2D>[RenderCommand::GetCapabilities().MaxTextureSlots] };
 
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
 		Renderer2D::Statistics Stats;
@@ -141,15 +143,15 @@ namespace Lamp
 		uint32_t whiteTextureData = 0xffffffff;
 		s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		int* samplers{ new int[Renderer::GetCapabilities().MaxTextureSlots] };
-		for (int i = 0; i < Renderer::GetCapabilities().MaxTextureSlots; i++)
+		int* samplers{ new int[RenderCommand::GetCapabilities().MaxTextureSlots] };
+		for (int i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
 		{
 			samplers[i] = i;
 		}
 
 		s_pData->pTextureShader = Shader::Create("engine/shaders/2d/Texture.vert", "engine/shaders/2d/Texture.frag");
 		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, Renderer::GetCapabilities().MaxTextureSlots);
+		s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 
 		s_pData->TextureSlots[0] = s_pData->pWhiteTexture;
 
@@ -169,7 +171,7 @@ namespace Lamp
 	void Renderer2D::Begin(const OrthographicCamera camera)
 	{
 		m_pFrameBuffer->Bind();
-		Renderer::Clear();
+		RenderCommand::Clear();
 
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
@@ -198,10 +200,10 @@ namespace Lamp
 		}
 
 		//Draw
-		Renderer::DrawIndexed(s_pData->pQuadVertexArray, s_pData->QuadIndexCount);
+		RenderCommand::DrawIndexed(s_pData->pQuadVertexArray, s_pData->QuadIndexCount);
 		s_pData->Stats.DrawCalls++;
 
-		Renderer::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
+		RenderCommand::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
 		s_pData->Stats.DrawCalls++;
 	}
 

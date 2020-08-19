@@ -11,6 +11,8 @@
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 #include "Lamp/Rendering/TextureCube/TextureCube.h"
 
+#include "RenderCommand.h"
+
 namespace Lamp
 {
 	struct LineVertex
@@ -149,7 +151,7 @@ namespace Lamp
 		if (isMain)
 		{
 			m_pFrameBuffer->Bind();
-			Lamp::Renderer::Clear();
+			RenderCommand::Clear();
 		}
 
 		s_pData->Camera = &camera;
@@ -171,7 +173,7 @@ namespace Lamp
 		s_pData->LineMaterial.GetShader()->Bind();
 		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->Camera->GetViewProjectionMatrix());
 
-		Renderer::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
+		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
@@ -190,7 +192,7 @@ namespace Lamp
 		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
 
 		mesh->GetVertexArray()->Bind();
-		Renderer::DrawIndexed(mesh->GetVertexArray(), 0);
+		RenderCommand::DrawIndexed(mesh->GetVertexArray(), 0);
 	}
 
 	void Renderer3D::DrawSkybox()
@@ -207,7 +209,7 @@ namespace Lamp
 		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->Camera->GetViewMatrix()));
 		s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
 
-		Renderer::DrawIndexed(s_pData->SkyBoxVertexArray, 0);
+		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, 0);
 		glDepthMask(GL_TRUE);
 	}
 

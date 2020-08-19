@@ -6,24 +6,25 @@
 #define LP_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 #ifdef LP_DEBUG
-#if defined(LP_PLATFORM_WINDOWS)
-#define LP_DEBUGBREAK() __debugbreak()
-#define GLFW_EXPOSE_NATIVE_WIN32
+	#if defined(LP_PLATFORM_WINDOWS)
+		#define LP_DEBUGBREAK() __debugbreak()
+		#define GLFW_EXPOSE_NATIVE_WIN32
+	#else
+		#error "Platform does not support debugbreak!"
+	#endif
 #else
-#error "Platform does not support debugbreak!"
-#endif
-#else
-#define LP_DEBUGBREAK()
+	#define LP_DEBUGBREAK()
 #endif // DEBUG
 
 #ifdef LP_ENABLE_ASSERTS
-#define LP_ASSERT(x, ...) { if(!(x)) { LP_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
-#define LP_CORE_ASSERT(x, ...) { if(!(x)) { LP_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
+	#define LP_ASSERT(x, ...) { if(!(x)) { LP_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
+	#define LP_CORE_ASSERT(x, ...) { if(!(x)) { LP_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
 #else
-#define LP_ASSERT()
-#define LP_CORE_ASSERT()
+	#define LP_ASSERT()
+	#define LP_CORE_ASSERT()
 #endif
 
+#define RegisterData(x) static_cast<void*>(x)
 
 namespace Lamp
 {
@@ -32,8 +33,6 @@ namespace Lamp
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;
-
-#define RegisterData(x) static_cast<void*>(x)
 }
 
 namespace Sandbox3D

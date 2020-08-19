@@ -7,25 +7,25 @@ namespace Lamp
 	class VertexArray
 	{
 	public:
-		VertexArray();
-		~VertexArray();
+		//VertexArray();
+		virtual ~VertexArray() = default;
 
-		void Bind();
-		void Unbind();
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
 
-		void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& pVertexBuffer);
-		void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& pIndexBuffer);
-		std::vector<std::shared_ptr<VertexBuffer>>& GetVertexBuffer() { return m_VertexBuffers; }
+		virtual void AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer) = 0;
+		virtual void SetIndexBuffer(const Ref<IndexBuffer>& pIndexBuffer) = 0;
+		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
 
-		std::shared_ptr<IndexBuffer>& GetIndexBuffer() { return m_pIndexBuffer; }
+		virtual Ref<IndexBuffer>& GetIndexBuffer() = 0;
 
 	public:
-		static std::shared_ptr<VertexArray> Create();
+		static Ref<VertexArray> Create();
 
-	private:
-		uint32_t m_RendererID;
-		uint32_t m_NumAttributes = 0;
-		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
-		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
+	//private:
+	//	uint32_t m_RendererID;
+	//	uint32_t m_NumAttributes = 0;
+	//	std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
+	//	std::shared_ptr<IndexBuffer> m_pIndexBuffer;
 	};
 }

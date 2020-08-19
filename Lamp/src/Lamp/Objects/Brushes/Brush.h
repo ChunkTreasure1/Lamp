@@ -25,6 +25,7 @@ namespace Lamp
 		{
 			m_Model->SetModelMatrix(m_ModelMatrix);
 		}
+
 		virtual void OnEvent(Event& e) override
 		{
 			if (e.GetEventType() == EventType::AppRender)

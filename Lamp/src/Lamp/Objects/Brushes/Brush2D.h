@@ -38,7 +38,6 @@ namespace Lamp
 
 			return true;
 		}
-
 	private:
 		bool m_ShouldCollide;
 		std::string m_SpritePath;

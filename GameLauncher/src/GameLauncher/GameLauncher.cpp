@@ -1,5 +1,7 @@
 #include "GameLauncher.h"
 
+#include <Lamp/Rendering/RenderCommand.h>
+
 namespace GameLauncher
 {
 	GameLauncher::GameLauncher()
@@ -10,8 +12,8 @@ namespace GameLauncher
 
 	bool GameLauncher::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		Lamp::Renderer::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.f));
-		Lamp::Renderer::Clear();
+		Lamp::RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.f));
+		Lamp::RenderCommand::Clear();
 
 		Lamp::Renderer3D::Begin(m_pGame->GetCamera()->GetCamera());
 

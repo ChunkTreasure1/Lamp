@@ -1,75 +1,19 @@
 #include "lppch.h"
 #include "VertexArray.h"
 
-#include <glad/glad.h>
+#include "Lamp/Rendering/Renderer.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
+
 namespace Lamp
 {
-	static GLenum ElementTypeToGLEnum(ElementType type)
+	Ref<VertexArray> VertexArray::Create()
 	{
-		switch (type)
+		switch (Renderer::GetAPI())
 		{
-			case ElementType::Bool: return GL_BOOL;
-			case ElementType::Int: return GL_INT;
-			case ElementType::Float: return GL_FLOAT;
-			case ElementType::Float2: return GL_FLOAT;
-			case ElementType::Float3: return GL_FLOAT;
-			case ElementType::Float4: return GL_FLOAT;
-			case ElementType::Mat3: return GL_FLOAT;
-			case ElementType::Mat4: return GL_FLOAT;
+			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexArray>();
 		}
 
-		return GL_BOOL;
-	}
-
-	VertexArray::VertexArray()
-	{
-		glGenVertexArrays(1, &m_RendererID);
-	}
-
-	VertexArray::~VertexArray()
-	{
-		glDeleteVertexArrays(1, &m_RendererID);
-	}
-
-	void VertexArray::Bind()
-	{
-		glBindVertexArray(m_RendererID);
-	}
-
-	void VertexArray::Unbind()
-	{
-		glBindVertexArray(0);
-	}
-
-	void VertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& pVertexBuffer)
-	{
-		glBindVertexArray(m_RendererID);
-		pVertexBuffer->Bind();
-
-		for (auto& element : pVertexBuffer->GetBufferLayout().GetElements())
-		{
-			glVertexAttribPointer(m_NumAttributes, 
-								  element.GetComponentCount(element.ElementType), 
-								  ElementTypeToGLEnum(element.ElementType), 
-								  element.Normalized ? GL_TRUE : GL_FALSE, 
-								  pVertexBuffer->GetBufferLayout().GetStride(), 
-								  (const void*)element.Offset);
-			glEnableVertexAttribArray(m_NumAttributes);
-			m_NumAttributes++;
-		}
-
-		m_VertexBuffers.push_back(pVertexBuffer);
-	}
-
-	void VertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& pIndexBuffer)
-	{
-		glBindVertexArray(m_RendererID);
-		pIndexBuffer->Bind();
-
-		m_pIndexBuffer = pIndexBuffer;
-	}
-	std::shared_ptr<VertexArray> VertexArray::Create()
-	{
-		return std::make_shared<VertexArray>();
+		return nullptr;
 	}
 }

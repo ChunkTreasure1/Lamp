@@ -1,8 +1,9 @@
 #include "lppch.h"
 #include "AABB.h"
 
-#include "Lamp/Core/Math.h"
 #include "Lamp/Rendering/Renderer2D.h"
+
+#include "Lamp/Core/Math.h"
 
 namespace Lamp
 {
@@ -99,6 +100,9 @@ namespace Lamp
 
 	void AABB::Transform(const glm::vec3& translation)
 	{
+		m_MaxExtents += translation;
+		m_MinExtents += translation;
+
 		m_WorldMax += translation;
 		m_WorldMin += translation;
 	}

@@ -18,48 +18,36 @@ namespace Lamp
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(std::vector<Vertex>& pVertices, uint32_t size);
-		VertexBuffer(uint32_t size);
-		VertexBuffer(std::vector<float>& vertices, uint32_t size);
+		virtual ~VertexBuffer() = default;
 
-		~VertexBuffer();
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
-		void Bind() const;
-		void Unbind() const;
+		virtual void SetBufferLayout(const BufferLayout& buff) = 0;
+		virtual BufferLayout& GetBufferLayout() = 0;
 
-		inline void SetBufferLayout(const BufferLayout& buff) { m_BufferLayout = buff; }
-		inline BufferLayout& GetBufferLayout() { return m_BufferLayout; }
-		void SetVertices(std::vector<Vertex>& pVertices, uint32_t size);
-		void SetData(const void* data, uint32_t size);
+		virtual void SetVertices(std::vector<Vertex>& pVertices, uint32_t size) = 0;
+		virtual void SetData(const void* data, uint32_t size) = 0;
 
 	public:
 		static Ref<VertexBuffer> Create(std::vector<Vertex>& pVertices, uint32_t size);
 		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(std::vector<float>& vertices, uint32_t size);
-
-	private:
-		uint32_t m_RendererID;
-		BufferLayout m_BufferLayout;
 	};
 
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer(std::vector<uint32_t>& pIndices, uint32_t count);
-		IndexBuffer(uint32_t* pIndices, uint32_t count);
-		~IndexBuffer();
+		virtual ~IndexBuffer() = default;
 
-		void Bind() const;
-		void Unbind() const;
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
-		uint32_t GetCount() { return m_Count; }
+		virtual uint32_t GetCount() = 0;
 
 	public:
 		static Ref<IndexBuffer> Create(std::vector<uint32_t>& pIndices, uint32_t count);
 		static Ref<IndexBuffer> Create(uint32_t* pIndices, uint32_t count);
 
-	private:
-		uint32_t m_RendererID;
-		uint32_t m_Count;
 	};
 }

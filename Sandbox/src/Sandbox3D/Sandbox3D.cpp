@@ -19,6 +19,8 @@
 #include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Core/Game.h>
 
+#include <Lamp/Rendering/RenderCommand.h>
+
 namespace Sandbox3D
 {
 	Sandbox3D::Sandbox3D()
@@ -32,8 +34,8 @@ namespace Sandbox3D
 	{
 		GetInput();
 
-		Lamp::Renderer::SetClearColor(m_ClearColor);
-		Lamp::Renderer::Clear();
+		Lamp::RenderCommand::SetClearColor(m_ClearColor);
+		Lamp::RenderCommand::Clear();
 
 		Lamp::Renderer3D::Begin(m_pGame->GetCamera()->GetCamera());
 

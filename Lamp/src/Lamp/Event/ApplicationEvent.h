@@ -77,7 +77,7 @@ namespace Lamp
 	class AppLogEvent : public Event
 	{
 	public:
-		AppLogEvent(const std::string& message, const std::string& severity) 
+		AppLogEvent(const std::string& message, const std::string& severity)
 			: m_Message(message), m_Severity(severity)
 		{}
 

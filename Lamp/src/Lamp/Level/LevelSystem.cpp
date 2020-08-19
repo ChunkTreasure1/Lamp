@@ -61,7 +61,7 @@ namespace Lamp
 		std::ofstream file;
 		rapidxml::xml_document<> doc;
 		file.open(path);
-		
+
 		rapidxml::xml_node<>* pRoot = doc.allocate_node(rapidxml::node_element, "Level");
 		pRoot->append_attribute(doc.allocate_attribute("name", level->GetName().c_str()));
 
@@ -75,7 +75,7 @@ namespace Lamp
 
 			char* pPos = doc.allocate_string(ToString(brush->GetPosition()).c_str());
 			child->append_attribute(doc.allocate_attribute("position", pPos));
-			
+
 			char* pRot = doc.allocate_string(ToString(brush->GetRotation()).c_str());
 			child->append_attribute(doc.allocate_attribute("rotation", pRot));
 
@@ -136,7 +136,7 @@ namespace Lamp
 			for (auto component : entity->GetComponents())
 			{
 				rapidxml::xml_node<>* comp = doc.allocate_node(rapidxml::node_element, "Component");
-				
+
 				std::string str = component->GetName();
 				str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
 
@@ -155,56 +155,56 @@ namespace Lamp
 
 					switch (prop.PropertyType)
 					{
-					case Lamp::PropertyType::String:
-					{
-						char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Bool:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<bool*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Int:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<int*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<float*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float2:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec2*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float3:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float4:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Color:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					default:
-						break;
+						case Lamp::PropertyType::String:
+						{
+							char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Bool:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<bool*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Int:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<int*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<float*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float2:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec2*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float3:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float4:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Color:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						default:
+							break;
 					}
 
 					comp->append_node(param);
@@ -315,103 +315,103 @@ namespace Lamp
 
 					switch (type)
 					{
-					case Lamp::PropertyType::String:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::String:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								std::string* p = static_cast<std::string*>(prop.Value);
-								*p = std::string(pParam->first_attribute("value")->value());
+								if (prop.Name == paramName)
+								{
+									std::string* p = static_cast<std::string*>(prop.Value);
+									*p = std::string(pParam->first_attribute("value")->value());
+								}
 							}
-						}
 
-						break;
-					}
-					case Lamp::PropertyType::Bool:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
-						{
-							if (prop.Name == paramName)
-							{
-								bool* p = static_cast<bool*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
-							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Int:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Bool:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								int* p = static_cast<int*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									bool* p = static_cast<bool*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Int:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								float* p = static_cast<float*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									int* p = static_cast<int*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float2:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									float* p = static_cast<float*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float3:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float2:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float4:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float3:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Color:
-					{
-						for (auto prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float4:
 						{
-							if (prop.Name == paramName)
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
 							}
+							break;
 						}
-						break;
-					}
+						case Lamp::PropertyType::Color:
+						{
+							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							{
+								if (prop.Name == paramName)
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
+							}
+							break;
+						}
 					}
 				}
 
@@ -501,7 +501,7 @@ namespace Lamp
 		{
 			str = "1";
 		}
-		else 
+		else
 		{
 			str = "0";
 		}
