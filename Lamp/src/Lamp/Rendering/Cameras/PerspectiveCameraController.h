@@ -5,26 +5,21 @@
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
+#include "CameraControllerBase.h"
+
 namespace Lamp
 {
-	class PerspectiveCameraController
+	class PerspectiveCameraController : public CameraControllerBase
 	{
 	public:
 		PerspectiveCameraController(float fov, float nearPlane, float farPlane);
-		~PerspectiveCameraController();
+		virtual ~PerspectiveCameraController() override;
 
-		void Update(Timestep ts);
-		void OnEvent(Event& e);
+		virtual void Update(Timestep ts) override;
+		virtual void OnEvent(Event& e) override;
+		virtual void UpdateProjection(uint32_t width, uint32_t height) override;
+		virtual glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
 
-		//Getting
-		PerspectiveCamera GetCamera() { return m_Camera; }
-		const PerspectiveCamera GetCamera() const { return m_Camera; }
-
-		inline void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
-		void UpdatePerspective(float width, float height);
-		inline void SetCameraControlsEnabled(bool state) { m_CameraControlsEnabled = state; }
-
-		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
 		bool OnMouseMoved(const glm::vec2& e);
 
 	private:
@@ -33,13 +28,9 @@ namespace Lamp
 		bool OnRender(AppRenderEvent& e);
 
 	private:
-		PerspectiveCamera m_Camera;
-		glm::vec3 m_CameraPosition = { 0.f, 0.f, 0.f };
-
 		std::vector<std::array<glm::vec3, 2>> m_LinePositions;
 
 		float m_TranslationSpeed = 5.f;
-		float m_AspectRatio = 0.f;
 		float m_NearPlane = 0.1f;
 		float m_FarPlane = 100.f;
 		float m_FOV = 45.f;
@@ -50,6 +41,5 @@ namespace Lamp
 
 		bool m_HasControl = false;
 		bool m_RightMouseButtonPressed = false;
-		bool m_CameraControlsEnabled = false;
 	};
 }

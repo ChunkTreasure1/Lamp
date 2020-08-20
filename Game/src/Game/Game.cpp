@@ -1,8 +1,11 @@
 #include "Game.h"
 
+#include <Lamp/Meshes/GeometrySystem.h>
+#include <Lamp//Objects/Entity/BaseComponents/LightComponent.h>
+#include <Lamp//Objects/Entity/BaseComponents/MeshComponent.h>
+
 void Game::OnStart()
 {
-	m_pPerspectiveCamera = std::make_shared<Lamp::PerspectiveCameraController>(60.f, 0.1f, 100.f);
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 
 	{
@@ -28,15 +31,11 @@ void Game::OnStart()
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
 {
-	m_pPerspectiveCamera->Update(e.GetTimestep());
-
 	return true;
 }
 
 void Game::OnEvent(Lamp::Event& e)
 {
-	m_pPerspectiveCamera->OnEvent(e);
-
 	Lamp::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Game::OnUpdate));
 }

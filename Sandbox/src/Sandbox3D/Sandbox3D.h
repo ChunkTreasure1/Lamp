@@ -41,6 +41,7 @@ namespace Sandbox3D
 
 	private:
 		Scope<Game> m_pGame;
+		Ref<Lamp::PerspectiveCameraController> m_CameraController;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

@@ -29,7 +29,7 @@ namespace Sandbox2D
 		void RenderLog();
 
 	private:
-		Lamp::OrthographicCameraController* m_CameraController;
+		Ref<Lamp::OrthographicCameraController> m_CameraController;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

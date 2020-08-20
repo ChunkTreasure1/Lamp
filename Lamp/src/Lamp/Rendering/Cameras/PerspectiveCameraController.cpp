@@ -7,14 +7,17 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Renderer3D.h"
+#include "PerspectiveCamera.h"
 
 namespace Lamp
 {
 	PerspectiveCameraController::PerspectiveCameraController(float fov, float nearPlane, float farPlane)
-		: m_Camera(fov, nearPlane, farPlane), m_FOV(fov), m_NearPlane(nearPlane), m_FarPlane(farPlane)
+		: m_FOV(fov), m_NearPlane(nearPlane), m_FarPlane(farPlane)
 	{
-		m_Camera.SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
-		m_Camera.SetRotation(glm::vec3(0.f, 0.f, 0.f));
+		m_Camera = std::make_shared<PerspectiveCamera>(fov, nearPlane, farPlane);
+
+		m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
+		m_Camera->SetRotation(glm::vec3(0.f, 0.f, 0.f));
 	}
 
 	PerspectiveCameraController::~PerspectiveCameraController()
@@ -39,23 +42,23 @@ namespace Lamp
 		{
 			if (Input::IsKeyPressed(LP_KEY_W))
 			{
-				m_CameraPosition += m_TranslationSpeed * m_Camera.GetFront() * (float)ts;
+				m_Position += m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
 			}
 			if (Input::IsKeyPressed(LP_KEY_S))
 			{
-				m_CameraPosition -= m_TranslationSpeed * m_Camera.GetFront() * (float)ts;
+				m_Position -= m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
 			}
 			if (Input::IsKeyPressed(LP_KEY_A))
 			{
-				m_CameraPosition -= m_Camera.GetRight() * m_TranslationSpeed * (float)ts;
+				m_Position -= std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
 			}
 			if (Input::IsKeyPressed(LP_KEY_D))
 			{
-				m_CameraPosition += m_Camera.GetRight() * m_TranslationSpeed * (float)ts;
+				m_Position += std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
 			}
 		}
 
-		m_Camera.SetPosition(m_CameraPosition);
+		m_Camera->SetPosition(m_Position);
 	}
 
 	void PerspectiveCameraController::OnEvent(Event& e)
@@ -66,10 +69,10 @@ namespace Lamp
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnRender));
 	}
 
-	void PerspectiveCameraController::UpdatePerspective(float width, float height)
+	void PerspectiveCameraController::UpdateProjection(uint32_t width, uint32_t height)
 	{
-		m_AspectRatio = width / height;
-		m_Camera.SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
+		m_AspectRatio = (float)width / (float)height;
+		m_Camera->SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
 	}
 
 	glm::vec3 PerspectiveCameraController::ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size)
@@ -78,7 +81,7 @@ namespace Lamp
 		float y = (coords.y / size.y) * 2.f - 1.f;
 		float z = 1.f;
 
-		glm::mat4 matInv = glm::inverse(m_Camera.GetViewProjectionMatrix());
+		glm::mat4 matInv = glm::inverse(m_Camera->GetViewProjectionMatrix());
 		glm::vec4 dCoords = matInv * glm::vec4(x, -y, z, 1);
 
 		glm::vec3 dir = glm::vec3(dCoords.x, dCoords.y, dCoords.z);
@@ -90,7 +93,7 @@ namespace Lamp
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
+		m_Camera->SetProjection(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
 
 		return true;
 	}
@@ -116,19 +119,19 @@ namespace Lamp
 			xOffset *= sensitivity;
 			yOffset *= sensitivity;
 
-			m_Camera.SetYaw(m_Camera.GetYaw() + xOffset);
-			m_Camera.SetPitch(m_Camera.GetPitch() + yOffset);
+			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetYaw(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetYaw() + xOffset);
+			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() + yOffset);
 
-			if (m_Camera.GetPitch() > 89.f)
+			if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() > 89.f)
 			{
-				m_Camera.SetPitch(89.f);
+				std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(89.f);
 			}
-			if (m_Camera.GetPitch() < -89.f)
+			if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() < -89.f)
 			{
-				m_Camera.SetPitch(-89.f);
+				std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(-89.f);
 			}
 
-			m_Camera.UpdateVectors();
+			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->UpdateVectors();
 		}
 		return true;
 	}

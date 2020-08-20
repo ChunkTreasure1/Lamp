@@ -94,7 +94,7 @@ namespace Sandbox2D
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_CameraController->SetCameraControlsEnabled(m_PerspectiveHover);
+			m_CameraController->SetControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -132,7 +132,7 @@ namespace Sandbox2D
 		if (m_pSelectedObject)
 		{
 			float* pMat = (float*)glm::value_ptr(m_pSelectedObject->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_CameraController->GetCamera().GetViewMatrix()), (const float*)glm::value_ptr(m_CameraController->GetCamera().GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_CameraController->GetCamera()->GetViewMatrix()), (const float*)glm::value_ptr(m_CameraController->GetCamera()->GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
 			m_pSelectedObject->SetModelMatrix(glm::make_mat4(pMat));
 		}
 	}
@@ -199,7 +199,7 @@ namespace Sandbox2D
 
 				glm::vec3 pos = m_CameraController->ScreenToWorldCoords(mousePos, m_PerspectiveSize);
 
-				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera().GetPosition());
+				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera()->GetPosition());
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))

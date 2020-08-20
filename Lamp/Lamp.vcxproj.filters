@@ -1473,6 +1473,8 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
+    <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">

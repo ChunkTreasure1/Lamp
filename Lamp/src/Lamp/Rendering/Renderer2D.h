@@ -16,7 +16,7 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const OrthographicCamera camera);
+		static void Begin(const Ref<CameraBase>& camera);
 		static void End();
 		static void Flush();
 

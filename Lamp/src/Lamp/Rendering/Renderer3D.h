@@ -13,7 +13,7 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(PerspectiveCamera& camera, bool isMain = true);
+		static void Begin(const Ref<CameraBase>& camera, bool isMain = true);
 		static void End();
 		static void Flush();
 

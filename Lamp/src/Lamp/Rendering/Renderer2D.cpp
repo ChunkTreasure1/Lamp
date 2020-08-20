@@ -168,13 +168,13 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer2D::Begin(const OrthographicCamera camera)
+	void Renderer2D::Begin(const Ref<CameraBase>& camera)
 	{
 		m_pFrameBuffer->Bind();
 		RenderCommand::Clear();
 
 		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
 
 		ResetBatchData();
 	}

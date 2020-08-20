@@ -46,7 +46,7 @@ namespace Lamp
 			Camera(nullptr)
 		{}
 
-		PerspectiveCamera* Camera;
+		Ref<CameraBase> Camera;
 		Ref<VertexArray> SphereArray;
 
 		Material LineMaterial;
@@ -146,7 +146,7 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer3D::Begin(PerspectiveCamera& camera, bool isMain)
+	void Renderer3D::Begin(const Ref<CameraBase>& camera, bool isMain)
 	{
 		if (isMain)
 		{
@@ -154,7 +154,7 @@ namespace Lamp
 			RenderCommand::Clear();
 		}
 
-		s_pData->Camera = &camera;
+		s_pData->Camera = camera;
 
 		ResetBatchData();
 	}

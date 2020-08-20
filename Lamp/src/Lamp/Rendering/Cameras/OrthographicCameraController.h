@@ -6,28 +6,20 @@
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
+#include "CameraControllerBase.h"
+
 namespace Lamp
 {
-	class OrthographicCameraController
+	class OrthographicCameraController : public CameraControllerBase
 	{
 	public:
 		OrthographicCameraController(float aspectRatio, bool rotation = false);
-		~OrthographicCameraController();
+		virtual ~OrthographicCameraController() override;
 
-		void Update(Timestep ts);
-		void OnEvent(Event& e);
-		void UpdateProjection(uint32_t width, uint32_t height);
-
-		//Getting
-		OrthographicCamera GetCamera() { return m_Camera; }
-		const OrthographicCamera GetCamera() const { return m_Camera; }
-
-		//Setting
-		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
-		void SetPosition(const glm::vec3& somePos) { m_CameraPosition = somePos; }
-		void SetCameraControlsEnabled(bool state) { m_ControlsEnabled = state; }
-
-		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size);
+		virtual void Update(Timestep ts) override;
+		virtual void OnEvent(Event& e) override;
+		virtual void UpdateProjection(uint32_t width, uint32_t height) override;
+		virtual glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
 
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
@@ -35,7 +27,6 @@ namespace Lamp
 	private:
 		float m_AspectRatio;
 		float m_ZoomLevel = 1.5f;
-		OrthographicCamera m_Camera;
 
 		bool m_Rotation;
 		bool m_ControlsEnabled = false;

@@ -7,17 +7,7 @@ namespace Sandbox2D
 	Sandbox2D::Sandbox2D()
 		: m_SelectedFile("")
 	{
-		m_CameraController = new Lamp::OrthographicCameraController((float)Lamp::Application::Get().GetWindow().GetWidth() / (float)Lamp::Application::Get().GetWindow().GetHeight());
-	
-		auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/2DLevel.level");
-		auto brush = Lamp::BrushManager::Get()->Create2D("assets/textures/vlad.PNG");
-		auto brush1 = Lamp::BrushManager::Get()->Create2D("assets/textures/ff.PNG");
-		brush1->SetPosition({ 1.f, 0.f, 0.f });
-
-		auto ent = Lamp::EntityManager::Get()->Create();
-
-		Lamp::ObjectLayerManager::Get()->AddLayer(Lamp::ObjectLayer(1, "Test", true));
-		Lamp::ObjectLayerManager::Get()->MoveToLayer(ent, 1);
+		m_CameraController = std::make_shared<Lamp::OrthographicCameraController>((float)Lamp::Application::Get().GetWindow().GetWidth() / (float)Lamp::Application::Get().GetWindow().GetHeight());
 	}
 
 	bool Sandbox2D::OnUpdate(Lamp::AppUpdateEvent& e)

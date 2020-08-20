@@ -5,16 +5,6 @@
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
-#include <Lamp/Physics/Colliders/BoundingSphere.h>
-#include <Lamp/Physics/Colliders/AABB.h>
-#include <Lamp/Physics/PhysicsEngine.h>
-#include <Lamp/Physics/Physics.h>
-#include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
-#include <Lamp/Meshes/GeometrySystem.h>
-
-#include <Lamp/Objects/ObjectLayer.h>
-#include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
-
 class Game : public Lamp::GameBase
 {
 public:
