@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		Object()
-			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name("")
+			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
 		{}
 
 		//Setting
