@@ -5,9 +5,9 @@
 namespace Lamp
 {
 	PerspectiveCamera::PerspectiveCamera(float fov, float nearPlane, float farPlane)
-		: m_TransformMatrix(1.f)
+		: m_TransformMatrix(1.f), m_FOV(fov)
 	{
-		m_ProjectionMatrix = glm::perspective(glm::radians(fov), (float)Application::Get().GetWindow().GetWidth() / Application::Get().GetWindow().GetHeight(), nearPlane, farPlane);
+		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), (float)Application::Get().GetWindow().GetWidth() / Application::Get().GetWindow().GetHeight(), nearPlane, farPlane);
 		m_ViewMatrix = glm::mat4(1.f);
 
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
@@ -15,7 +15,9 @@ namespace Lamp
 
 	void PerspectiveCamera::SetProjection(float fov, float aspect, float nearPlane, float farPlane)
 	{
-		m_ProjectionMatrix = glm::perspective(glm::radians(fov), aspect, nearPlane, farPlane);
+		m_FOV = fov;
+
+		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), aspect, nearPlane, farPlane);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 

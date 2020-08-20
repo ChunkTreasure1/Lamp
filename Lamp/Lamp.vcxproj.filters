@@ -1475,6 +1475,7 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1654,5 +1655,6 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
   </ItemGroup>
 </Project>

@@ -17,5 +17,6 @@ namespace GameLauncher
 
 	private:
 		Scope<Game> m_pGame;
+		Ref<Lamp::CameraBase> m_Camera;
 	};
 }

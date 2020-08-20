@@ -21,6 +21,7 @@ namespace Lamp
 		inline const float GetYaw() const { return m_Yaw; }
 		inline const float GetPitch() const { return m_Pitch; }
 		inline const glm::mat4& GetTM() { return m_TransformMatrix; }
+		inline float& GetFOV() { return m_FOV; }
 
 		//Setting
 		inline void SetYaw(float yaw) { m_Yaw = yaw; }
@@ -40,7 +41,8 @@ namespace Lamp
 		glm::vec3 m_Up = { 0.f, 1.f, 0.f };
 		glm::vec3 m_Right = { 1.f, 0.f, 0.f };
 
-		float m_Yaw = -90.0f;;
+		float m_Yaw = -90.0f;
 		float m_Pitch = 0.f;
+		float m_FOV;
 	};
 }
