@@ -16,6 +16,8 @@ namespace GameLauncher
 		Lamp::RenderCommand::Clear();
 
 		Lamp::Renderer3D::Begin(m_pGame->GetCamera()->GetCamera());
+		Lamp::Renderer3D::DrawLine(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.1f, 0.1f, 0.f), 0.1f);
+
 
 		Lamp::AppRenderEvent renderEvent;
 		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);

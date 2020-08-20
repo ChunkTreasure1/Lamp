@@ -207,7 +207,7 @@ namespace Sandbox2D
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				ImGui::InputText("Name", &name);
+				//ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -296,7 +296,7 @@ namespace Sandbox2D
 								case Lamp::PropertyType::String:
 								{
 									std::string* s = static_cast<std::string*>(pProp.Value);
-									ImGui::InputText(pProp.Name.c_str(), s);
+									//ImGui::InputText(pProp.Name.c_str(), s);
 									break;
 								}
 
@@ -329,7 +329,7 @@ namespace Sandbox2D
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				ImGui::InputText("Name", &name);
+				//ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))

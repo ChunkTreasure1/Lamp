@@ -30,7 +30,7 @@ namespace Lamp
 		//////Lines//////
 		Ref<VertexArray> LineVertexArray;
 		Ref<VertexBuffer> LineVertexBuffer;
-		uint32_t LineIndexCount = 0;
+		uint32_t LineIndexCount = 1;
 
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;

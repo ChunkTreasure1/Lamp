@@ -1,4 +1,4 @@
-#version 460 core
+#version 440 core
 out vec4 FragColor;
 
 in vec4 v_Color;

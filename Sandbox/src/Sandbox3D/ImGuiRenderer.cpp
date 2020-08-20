@@ -9,6 +9,7 @@
 #include <Lamp/Objects/ObjectLayer.h>
 
 #include <Lamp/Objects/Entity/Base/Entity.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 namespace Sandbox3D
 {
@@ -128,7 +129,7 @@ namespace Sandbox3D
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				ImGui::InputText("Name", &name);
+				//ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -217,7 +218,7 @@ namespace Sandbox3D
 								case Lamp::PropertyType::String:
 								{
 									std::string* s = static_cast<std::string*>(pProp.Value);
-									ImGui::InputText(pProp.Name.c_str(), s);
+									//ImGui::InputText(pProp.Name.c_str(), s);
 									break;
 								}
 
@@ -246,7 +247,7 @@ namespace Sandbox3D
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				ImGui::InputText("Name", &name);
+				//ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -331,7 +332,7 @@ namespace Sandbox3D
 		if (m_pModelToImport != nullptr)
 		{
 			static std::string diffPath = m_pModelToImport->GetMaterial().GetDiffuse()->GetPath();
-			ImGui::InputText("Diffuse path:", &diffPath);
+			//ImGui::InputText("Diffuse path:", &diffPath);
 			ImGui::SameLine();
 			if (ImGui::Button("Load"))
 			{
@@ -340,7 +341,7 @@ namespace Sandbox3D
 			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
 
 			static std::string specPath = m_pModelToImport->GetMaterial().GetSpecular()->GetPath();
-			ImGui::InputText("Specular path:", &specPath);
+			//ImGui::InputText("Specular path:", &specPath);
 			ImGui::SameLine();
 			if (ImGui::Button("Load"))
 			{
