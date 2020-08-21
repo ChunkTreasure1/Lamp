@@ -10,9 +10,10 @@
 namespace Lamp
 {
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Rotation(rotation)
+		: m_AspectRatio(aspectRatio), m_CanRotate(rotation)
 	{
 		m_Camera = std::make_shared<OrthographicCamera>(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_ControlsEnabled = true;
 
 		m_Camera->SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
@@ -25,26 +26,26 @@ namespace Lamp
 		if (m_ControlsEnabled)
 		{
 			if (Input::IsKeyPressed(LP_KEY_A))
-				m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
+				m_Position.x -= m_CameraTranslationSpeed * ts;
 			else if (Input::IsKeyPressed(LP_KEY_D))
-				m_CameraPosition.x += m_CameraTranslationSpeed * ts;
+				m_Position.x += m_CameraTranslationSpeed * ts;
 
 			if (Input::IsKeyPressed(LP_KEY_W))
-				m_CameraPosition.y += m_CameraTranslationSpeed * ts;
+				m_Position.y += m_CameraTranslationSpeed * ts;
 			else if (Input::IsKeyPressed(LP_KEY_S))
-				m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
+				m_Position.y -= m_CameraTranslationSpeed * ts;
 
-			if (m_Rotation)
+			if (m_CanRotate)
 			{
 				if (Input::IsKeyPressed(LP_KEY_Q))
-					m_CameraRotation += m_CameraRotationSpeed * ts;
+					m_Rotation.z += m_CameraRotationSpeed * ts;
 				if (Input::IsKeyPressed(LP_KEY_E))
-					m_CameraRotation -= m_CameraRotationSpeed * ts;
+					m_Rotation.z -= m_CameraRotationSpeed * ts;
 
-				m_Camera->SetRotation(glm::vec3(0.f, 0.f, m_CameraRotation));
+				m_Camera->SetRotation(m_Rotation);
 			}
 			m_CameraTranslationSpeed = m_ZoomLevel;
-			m_Camera->SetPosition(m_CameraPosition);
+			m_Camera->SetPosition(m_Position);
 		}
 	}
 

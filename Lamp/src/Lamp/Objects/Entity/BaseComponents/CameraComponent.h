@@ -18,7 +18,7 @@ namespace Lamp
 		CameraComponent()
 			: EntityComponent("CameraComponent")
 		{
-			m_PerspectiveCamera = std::make_shared<PerspectiveCamera>(60.f, 0.1, 100.f);
+			m_PerspectiveCamera = std::make_shared<PerspectiveCamera>(60.f, 0.1f, 100.f);
 		}
 		~CameraComponent() {}
 

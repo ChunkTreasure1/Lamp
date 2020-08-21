@@ -4,6 +4,8 @@
 
 #include <glm/glm.hpp>
 
+class Game;
+
 namespace Sandbox2D
 {
 	class Sandbox2D : public Lamp::Layer 
@@ -18,6 +20,7 @@ namespace Sandbox2D
 		virtual void OnItemClicked(Lamp::File& file) override;
 
 	private:
+		void RenderGrid();
 		void GetInput();
 		void UpdateDockspace();
 		bool MouseMoved(Lamp::MouseMovedEvent& e);
@@ -30,6 +33,7 @@ namespace Sandbox2D
 
 	private:
 		Ref<Lamp::OrthographicCameraController> m_CameraController;
+		Scope<Game> m_pGame;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

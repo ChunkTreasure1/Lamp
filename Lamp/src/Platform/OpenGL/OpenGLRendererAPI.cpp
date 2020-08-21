@@ -60,7 +60,9 @@ namespace Lamp
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		uint32_t c = count ? count : vertexArray->GetIndexBuffer()->GetCount();
+		vertexArray->Bind();
+		glDrawElements(GL_TRIANGLES, c, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void OpenGLRendererAPI::DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount)

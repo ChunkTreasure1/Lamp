@@ -1,6 +1,7 @@
 #include "Sandbox2D.h"
 
 #include <Lamp/Rendering/RenderCommand.h>
+#include <Game/Game.h>
 
 namespace Sandbox2D
 {
@@ -8,6 +9,9 @@ namespace Sandbox2D
 		: m_SelectedFile("")
 	{
 		m_CameraController = std::make_shared<Lamp::OrthographicCameraController>((float)Lamp::Application::Get().GetWindow().GetWidth() / (float)Lamp::Application::Get().GetWindow().GetHeight());
+		m_CameraController->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+		m_pGame = std::make_unique<Game>();
+		m_pGame->OnStart();
 	}
 
 	bool Sandbox2D::OnUpdate(Lamp::AppUpdateEvent& e)
@@ -38,8 +42,6 @@ namespace Sandbox2D
 		RenderPerspective();
 		RenderAssetBrowser();
 		RenderLayerView();
-
-		ImGui::ShowDemoWindow();
 	}
 
 	void Sandbox2D::OnEvent(Lamp::Event& e)

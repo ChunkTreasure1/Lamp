@@ -4,7 +4,7 @@
 #include "Sandbox3D/Sandbox3D.h"
 #include "Sandbox2D/Sandbox2D.h"
 
-#define LP_SANDBOX_3D
+#define LP_SANDBOX_2D
 
 class Sandbox : public Lamp::Application
 {
