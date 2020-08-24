@@ -6,6 +6,7 @@
 
 #include "Lamp/Objects/Object.h"
 #include "Lamp/Physics/Colliders/AABB.h"
+#include "Lamp/Event/ApplicationEvent.h"
 
 namespace Lamp
 {
@@ -24,14 +25,12 @@ namespace Lamp
 
 		virtual void OnEvent(Event& e) override
 		{
-			if (e.GetEventType() == EventType::AppRender)
-			{
-				OnRender();
-			}
+			EventDispatcher dispatcher(e);
+			dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Brush2D::OnRender));
 		}
 
 	private:
-		bool OnRender()
+		bool OnRender(AppRenderEvent& e)
 		{
 			Renderer2D::DrawQuad(m_ModelMatrix, m_Sprite);
 			m_PhysicalEntity->GetCollider()->Render();

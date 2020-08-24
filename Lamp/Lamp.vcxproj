@@ -176,16 +176,13 @@
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
@@ -617,10 +614,10 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />

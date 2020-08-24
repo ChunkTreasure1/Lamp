@@ -243,6 +243,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h">
       <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
@@ -284,6 +287,12 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffer.h">
       <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
@@ -1473,9 +1482,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
-    <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
@@ -1537,6 +1543,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp">
       <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
@@ -1655,6 +1664,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
   </ItemGroup>
 </Project>
