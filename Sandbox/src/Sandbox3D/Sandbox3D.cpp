@@ -28,7 +28,7 @@ namespace Sandbox3D
 	{
 		m_CameraController = std::make_shared<Lamp::PerspectiveCameraController>(60.f, 0.1f, 100.f);
 
-		m_pGame = std::make_unique<Game>();
+		m_pGame = std::make_unique<Game>();	
 		m_pGame->OnStart();
 	}
 

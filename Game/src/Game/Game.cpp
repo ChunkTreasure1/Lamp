@@ -8,17 +8,16 @@
 
 void Game::OnStart()
 {
-	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/2DLevel.level");
+	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 
-	Lamp::BrushManager::Get()->Create2D("assets/textures/ff.png");
+	//Lamp::BrushManager::Get()->Create2D("assets/textures/ff.png");
 
-	//{
-	//	Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
-	//	ent->SetPosition({ 10, 0, 0 });
+	{
+		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+		ent->SetPosition({ 10, 0, 0 });
 
-	//	auto comp = ent->GetOrCreateComponent<Lamp::CameraComponent>();
-	//	comp->SetIsMain(true);
-	//}
+		auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
+	}
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)

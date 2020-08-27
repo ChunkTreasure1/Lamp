@@ -14,8 +14,8 @@ namespace Lamp
 		{
 			/////Lighting/////
 			m_pShader->UploadFloat3("u_DirectionalLight.ambient", { 0.2f, 0.2f, 0.2f });
-			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", { 0.5f, 0.5f, 0.5f });
-			m_pShader->UploadFloat3("u_DirectionalLight.specular", { 1.f, 1.f, 1.f });
+			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", { 1.f, 1.f, 1.f });
+			m_pShader->UploadFloat3("u_DirectionalLight.specular", { 0.1f, 0.1f, 0.1f });
 			m_pShader->UploadFloat3("u_DirectionalLight.direction", { 1.f, -1.f, 0.5f });
 			
 			int i = 0;

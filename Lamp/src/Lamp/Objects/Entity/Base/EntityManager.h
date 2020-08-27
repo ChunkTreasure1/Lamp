@@ -16,7 +16,7 @@ namespace Lamp
 		bool Remove(Entity* pEnt);
 
 		//Getting
-		inline const std::vector<Entity*> GetEntities() { return m_pEntites; }
+		inline const std::vector<Entity*>& GetEntities() { return m_pEntites; }
 		Entity* GetEntityFromPhysicalEntity(PhysicalEntity* pEnt);
 
 		//Setting
