@@ -178,10 +178,8 @@ namespace Lamp
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
 	{
-		glActiveTexture(GL_TEXTURE0);
-		mat.GetDiffuse()->Bind();
-		glActiveTexture(GL_TEXTURE1);
-		mat.GetSpecular()->Bind();
+		mat.GetDiffuse()->Bind(0);
+		mat.GetSpecular()->Bind(1);
 
 		mat.GetShader()->Bind();
 		mat.GetShader()->UploadMat4("u_Model", modelMatrix);
