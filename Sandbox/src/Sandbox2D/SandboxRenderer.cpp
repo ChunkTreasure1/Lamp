@@ -300,7 +300,18 @@ namespace Sandbox2D
 									break;
 								}
 
-								case Lamp::PropertyType::Color:
+								case Lamp::PropertyType::Color3:
+								{
+									glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+
+									float f[3] = { p->x, p->y, p->z };
+									ImGui::ColorEdit3(pProp.Name.c_str(), f);
+
+									*p = glm::make_vec3(f);
+									break;
+								}
+
+								case Lamp::PropertyType::Color4:
 								{
 									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 

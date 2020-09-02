@@ -197,11 +197,16 @@ namespace Lamp
 							param->append_attribute(doc.allocate_attribute("value", pValue));
 							break;
 						}
-						case Lamp::PropertyType::Color:
+						case Lamp::PropertyType::Color3:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Color4:
 						{
 							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
 							param->append_attribute(doc.allocate_attribute("value", pValue));
-							break;
 						}
 						default:
 							break;
@@ -317,7 +322,7 @@ namespace Lamp
 					{
 						case Lamp::PropertyType::String:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -330,7 +335,7 @@ namespace Lamp
 						}
 						case Lamp::PropertyType::Bool:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -342,7 +347,7 @@ namespace Lamp
 						}
 						case Lamp::PropertyType::Int:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -354,7 +359,7 @@ namespace Lamp
 						}
 						case Lamp::PropertyType::Float:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -366,7 +371,7 @@ namespace Lamp
 						}
 						case Lamp::PropertyType::Float2:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -378,7 +383,7 @@ namespace Lamp
 						}
 						case Lamp::PropertyType::Float3:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -390,7 +395,7 @@ namespace Lamp
 						}
 						case Lamp::PropertyType::Float4:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{
@@ -400,9 +405,21 @@ namespace Lamp
 							}
 							break;
 						}
-						case Lamp::PropertyType::Color:
+						case Lamp::PropertyType::Color3:
 						{
-							for (auto prop : pComp->GetComponentProperties().GetProperties())
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
+							{
+								if (prop.Name == paramName)
+								{
+									glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
+								}
+							}
+							break;
+						}
+						case Lamp::PropertyType::Color4:
+						{
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
 								if (prop.Name == paramName)
 								{

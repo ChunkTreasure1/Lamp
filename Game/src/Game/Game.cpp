@@ -10,8 +10,6 @@ void Game::OnStart()
 {
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 
-	Lamp::BrushManager::Get()->Create("assets/models/test.lgf");
-
 	{
 		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
 		ent->SetPosition({ 0, 0, 0 });
