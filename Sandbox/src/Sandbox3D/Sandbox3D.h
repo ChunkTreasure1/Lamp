@@ -38,6 +38,8 @@ namespace Sandbox3D
 		void UpdateProperties();
 		void UpdateModelImporter();
 		void UpdateLayerView();
+		void UpdateAddComponent();
+		void UpdateCreateTool();
 
 	private:
 		Scope<Game> m_pGame;
@@ -79,6 +81,12 @@ namespace Sandbox3D
 		//Play
 		bool m_ShouldPlay = false;
 		bool m_ShouldPlayPhysics = false;
+
+		//Components
+		bool m_AddComponentOpen = false;
+
+		//Create
+		bool m_CreateToolOpen = true;
 		//--------------------------------------
 	};
 }

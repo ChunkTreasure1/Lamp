@@ -16,8 +16,6 @@ namespace Lamp
 
 		static bool Register(const std::string& name, TCreateMethod func);
 		static Ref<EntityComponent> Create(const std::string& name);
-
-	private:
 		static std::unordered_map<std::string, TCreateMethod>& s_Methods();
 	};
 }

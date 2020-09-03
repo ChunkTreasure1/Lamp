@@ -63,6 +63,8 @@ namespace Sandbox3D
 		UpdateAssetBrowser();
 		UpdateModelImporter();
 		UpdateLayerView();
+		UpdateAddComponent();
+		UpdateCreateTool();
 	}
 
 	void Sandbox3D::OnEvent(Lamp::Event& e)

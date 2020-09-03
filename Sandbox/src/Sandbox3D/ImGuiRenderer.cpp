@@ -10,6 +10,7 @@
 
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
 
 namespace Sandbox3D
 {
@@ -161,88 +162,88 @@ namespace Sandbox3D
 						{
 							switch (pProp.PropertyType)
 							{
-								case Lamp::PropertyType::Int:
-								{
-									int* p = static_cast<int*>(pProp.Value);
-									ImGui::InputInt(pProp.Name.c_str(), p);
-									break;
-								}
+							case Lamp::PropertyType::Int:
+							{
+								int* p = static_cast<int*>(pProp.Value);
+								ImGui::InputInt(pProp.Name.c_str(), p);
+								break;
+							}
 
-								case Lamp::PropertyType::Bool:
-								{
-									bool* p = static_cast<bool*>(pProp.Value);
-									ImGui::Checkbox(pProp.Name.c_str(), p);
-									break;
-								}
+							case Lamp::PropertyType::Bool:
+							{
+								bool* p = static_cast<bool*>(pProp.Value);
+								ImGui::Checkbox(pProp.Name.c_str(), p);
+								break;
+							}
 
-								case Lamp::PropertyType::Float:
-								{
-									float* p = static_cast<float*>(pProp.Value);
-									ImGui::InputFloat(pProp.Name.c_str(), p);
-									break;
-								}
+							case Lamp::PropertyType::Float:
+							{
+								float* p = static_cast<float*>(pProp.Value);
+								ImGui::InputFloat(pProp.Name.c_str(), p);
+								break;
+							}
 
-								case Lamp::PropertyType::Float2:
-								{
-									glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+							case Lamp::PropertyType::Float2:
+							{
+								glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 
-									float f[2] = { p->x, p->y };
-									ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
+								float f[2] = { p->x, p->y };
+								ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
 
-									*p = glm::make_vec2(f);
-									break;
-								}
+								*p = glm::make_vec2(f);
+								break;
+							}
 
-								case Lamp::PropertyType::Float3:
-								{
-									glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+							case Lamp::PropertyType::Float3:
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 
-									float f[3] = { p->x, p->y, p->z };
-									ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
+								float f[3] = { p->x, p->y, p->z };
+								ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
 
-									*p = glm::make_vec3(f);
-									break;
-								}
+								*p = glm::make_vec3(f);
+								break;
+							}
 
-								case Lamp::PropertyType::Float4:
-								{
-									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+							case Lamp::PropertyType::Float4:
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
-									float f[4] = { p->x, p->y, p->z, p->w };
-									ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
+								float f[4] = { p->x, p->y, p->z, p->w };
+								ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
 
-									*p = glm::make_vec4(f);
-									break;
-								}
+								*p = glm::make_vec4(f);
+								break;
+							}
 
-								case Lamp::PropertyType::String:
-								{
-									std::string* s = static_cast<std::string*>(pProp.Value);
-									//ImGui::InputText(pProp.Name.c_str(), s);
-									break;
-								}
+							case Lamp::PropertyType::String:
+							{
+								std::string* s = static_cast<std::string*>(pProp.Value);
+								//ImGui::InputText(pProp.Name.c_str(), s);
+								break;
+							}
 
-								case Lamp::PropertyType::Color3:
-								{
-									glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+							case Lamp::PropertyType::Color3:
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 
-									float f[3] = { p->x, p->y, p->z };
-									ImGui::ColorEdit3(pProp.Name.c_str(), f);
+								float f[3] = { p->x, p->y, p->z };
+								ImGui::ColorEdit3(pProp.Name.c_str(), f);
 
-									*p = glm::make_vec3(f);
-									break;
-								}
+								*p = glm::make_vec3(f);
+								break;
+							}
 
-								case Lamp::PropertyType::Color4:
-								{
-									glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+							case Lamp::PropertyType::Color4:
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
-									float f[4] = { p->x, p->y, p->z, p->w };
-									ImGui::ColorEdit4(pProp.Name.c_str(), f);
+								float f[4] = { p->x, p->y, p->z, p->w };
+								ImGui::ColorEdit4(pProp.Name.c_str(), f);
 
-									*p = glm::make_vec4(f);
-									break;
-								}
+								*p = glm::make_vec4(f);
+								break;
+							}
 							}
 						}
 					}
@@ -250,7 +251,7 @@ namespace Sandbox3D
 
 				if (ImGui::Button("Add Component"))
 				{
-					ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0.f, 0.f), ImVec2(10.f, 10.f), 0, 0.f);
+					m_AddComponentOpen = !m_AddComponentOpen;
 				}
 			}
 			else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
@@ -409,6 +410,73 @@ namespace Sandbox3D
 
 				ImGui::TreePop();
 			}
+		}
+
+		ImGui::End();
+	}
+
+	void Sandbox3D::UpdateAddComponent()
+	{
+		if (!m_AddComponentOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Add Component", &m_AddComponentOpen);
+		
+		static std::string selected = "";
+
+		for (auto& key : Lamp::ComponentRegistry::s_Methods())
+		{
+			if (ImGui::Selectable(key.first.c_str()))
+			{
+				selected = key.first;
+			}
+		}
+
+		if (ImGui::Button("Close"))
+		{
+			m_AddComponentOpen = false;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Add"))
+		{
+			if (selected != "")
+			{
+				if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+				{
+					Ref<Lamp::EntityComponent> comp = Lamp::ComponentRegistry::Create(selected);
+					if (comp != nullptr)
+					{
+						if (pEnt->AddComponent(comp))
+						{
+							m_AddComponentOpen = false;
+						}
+					}
+				}
+			}
+		}
+
+		ImGui::End();
+	}
+
+	void Sandbox3D::UpdateCreateTool()
+	{
+		if (!m_CreateToolOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Create", &m_CreateToolOpen);
+		
+		if (ImGui::Button("Entity"))
+		{
+			Lamp::Entity* pEnt = Lamp::EntityManager::Get()->Create();
+			pEnt->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+
+			m_pSelectedObject = pEnt;
 		}
 
 		ImGui::End();
