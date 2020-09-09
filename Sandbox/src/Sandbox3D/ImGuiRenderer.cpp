@@ -447,6 +447,12 @@ namespace Sandbox3D
 			{
 				if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 				{
+					if (pEnt->HasComponent(selected))
+					{
+						m_AddComponentOpen = false;
+						LP_ERROR("Entity already has component!");
+					}
+
 					Ref<Lamp::EntityComponent> comp = Lamp::ComponentRegistry::Create(selected);
 					if (comp != nullptr)
 					{

@@ -80,6 +80,27 @@ namespace Lamp
 			}
 		}
 
+		template<typename T>
+		bool HasComponent()
+		{
+			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		bool HasComponent(const std::string& name)
+		{
+			if (auto it = m_pComponentMap.find(name); it != m_pComponentMap.end())
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		bool AddComponent(Ref<EntityComponent> comp)
 		{
 			std::string str = comp->GetName();
