@@ -1,0 +1,313 @@
+#include "lppch.h"
+#include "AudioEngine.h"
+#include "Lamp/Input/FileSystem.h"
+
+namespace Lamp
+{
+	Ref<AudioEngine> AudioEngine::s_Instance;
+
+	AudioImplementation::AudioImplementation()
+	{
+		StudioSystem = nullptr;
+		AudioEngine::ErrorCheck(FMOD::Studio::System::create(&StudioSystem));
+		AudioEngine::ErrorCheck(StudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, nullptr));
+	
+		System = nullptr;
+		AudioEngine::ErrorCheck(StudioSystem->getCoreSystem(&System));
+	}
+
+	AudioImplementation::~AudioImplementation()
+	{
+		AudioEngine::ErrorCheck(StudioSystem->unloadAll());
+		AudioEngine::ErrorCheck(StudioSystem->release());
+	}
+
+	void AudioImplementation::Update()
+	{
+		std::vector<ChannelMap::iterator> stoppedChannels;
+		for (auto it = Channels.begin(); it != Channels.end(); ++it)
+		{
+			bool isPlaying = false;
+			it->second->isPlaying(&isPlaying);
+			
+			if (!isPlaying)
+			{
+				stoppedChannels.push_back(it);
+			}
+		}
+
+		for (auto& it : stoppedChannels)
+		{
+			Channels.erase(it);
+		}
+
+		AudioEngine::ErrorCheck(StudioSystem->update());
+	}
+
+	AudioImplementation* g_AudioImplementation;
+
+	void AudioEngine::Initialize()
+	{
+		s_Instance = std::make_shared<AudioEngine>();
+		g_AudioImplementation = new AudioImplementation();
+
+		s_Instance->LoadBanksFromDefault();
+	}
+
+	void AudioEngine::Update()
+	{
+		g_AudioImplementation->Update();
+	}
+
+	void AudioEngine::Shutdown()
+	{
+		delete g_AudioImplementation;
+	}
+
+	int AudioEngine::ErrorCheck(FMOD_RESULT result)
+	{
+		if (result != FMOD_OK)
+		{
+			LP_CORE_WARN("FMOD: " + result);
+			return 1;
+		}
+
+		return 0;
+	}
+
+	void AudioEngine::LoadBanksFromDefault()
+	{
+		std::vector<std::string> files = FileSystem::GetFiles(std::string(DefaultBankPath));
+		if (files.size() > 0)
+		{
+			for (auto& file : files)
+			{
+				std::replace(file.begin(), file.end(), '\\', '/');
+
+				LoadBank(file, FMOD_STUDIO_LOAD_BANK_NORMAL);
+			}
+		}
+	}
+
+	void AudioEngine::LoadBank(const std::string& name, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
+	{
+		if (auto it = g_AudioImplementation->Banks.find(name); it != g_AudioImplementation->Banks.end())
+		{
+			return;
+		}
+
+		FMOD::Studio::Bank* bank;
+		AudioEngine::ErrorCheck(g_AudioImplementation->StudioSystem->loadBankFile(name.c_str(), flags, &bank));
+		if (bank)
+		{
+			g_AudioImplementation->Banks[name] = bank;
+		}
+	}
+
+	void AudioEngine::LoadEvent(const std::string& name)
+	{
+		if (auto it = g_AudioImplementation->Events.find(name); it != g_AudioImplementation->Events.end())
+		{
+			return;
+		}
+
+		FMOD::Studio::EventDescription* eventDesc = nullptr;
+		AudioEngine::ErrorCheck(g_AudioImplementation->StudioSystem->getEvent(name.c_str(), &eventDesc));
+	
+		if (eventDesc)
+		{
+			FMOD::Studio::EventInstance* eventInstance = nullptr;
+			AudioEngine::ErrorCheck(eventDesc->createInstance(&eventInstance));
+			if (eventInstance)
+			{
+				g_AudioImplementation->Events[name] = eventInstance;
+			}
+		}
+	}
+
+	void AudioEngine::LoadSound(const std::string& name, bool threeD, bool looping, bool stream)
+	{		
+		if (auto it = g_AudioImplementation->Sounds.find(name); it != g_AudioImplementation->Sounds.end())
+		{
+			return;
+		}
+
+		FMOD_MODE mode = FMOD_DEFAULT;
+		mode |= threeD ? FMOD_3D : FMOD_2D;
+		mode |= looping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
+		mode |= stream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
+
+		FMOD::Sound* sound = nullptr;
+		AudioEngine::ErrorCheck(g_AudioImplementation->System->createSound(name.c_str(), mode, nullptr, &sound));
+		if (sound)
+		{
+			g_AudioImplementation->Sounds[name] = sound;
+		}
+	}
+
+	void AudioEngine::UnloadSound(const std::string& name)
+	{
+		if (auto it = g_AudioImplementation->Sounds.find(name); it != g_AudioImplementation->Sounds.end())
+		{
+			AudioEngine::ErrorCheck(it->second->release());
+			g_AudioImplementation->Sounds.erase(it);
+		}
+	}
+
+	void AudioEngine::Set3DListenerAndOrientation(const glm::vec3& pos, float volume)
+	{
+	}
+
+	int AudioEngine::PlaySound(const std::string& name, const glm::vec3& pos, float volume)
+	{
+		int channelId = g_AudioImplementation->NextChannelID++;
+		auto it = g_AudioImplementation->Sounds.find(name);
+
+		if (it == g_AudioImplementation->Sounds.end())
+		{
+			LoadSound(name);
+			it = g_AudioImplementation->Sounds.find(name);
+			if (it == g_AudioImplementation->Sounds.end())
+			{
+				return channelId;
+			}
+		}
+
+		FMOD::Channel* channel = nullptr;
+		AudioEngine::ErrorCheck(g_AudioImplementation->System->playSound(it->second, nullptr, true, &channel));
+		if (channel)
+		{
+			FMOD_MODE currMode;
+			it->second->getMode(&currMode);
+			if (currMode & FMOD_3D)
+			{
+				FMOD_VECTOR position = VectorToFmod(pos);
+				AudioEngine::ErrorCheck(channel->set3DAttributes(&position, nullptr));
+			}
+
+			AudioEngine::ErrorCheck(channel->setVolume(DBToVolume(volume)));
+			AudioEngine::ErrorCheck(channel->setPaused(false));
+
+			g_AudioImplementation->Channels[channelId] = channel;
+		}
+
+		return channelId;
+	}
+
+	void AudioEngine::PlayEvent(const std::string& name)
+	{
+		auto it = g_AudioImplementation->Events.find(name);
+		if (it != g_AudioImplementation->Events.end())
+		{
+			LoadEvent(name);
+		}
+
+		AudioEngine::ErrorCheck(it->second->start());
+	}
+
+	void AudioEngine::StopChannel(int channel)
+	{
+		if (auto it = g_AudioImplementation->Channels.find(channel); it != g_AudioImplementation->Channels.end())
+		{
+			AudioEngine::ErrorCheck(it->second->stop());
+		}
+	}
+
+	void AudioEngine::StopEvent(const std::string& name, bool immediate)
+	{
+		if (auto it = g_AudioImplementation->Events.find(name); it != g_AudioImplementation->Events.end())
+		{
+			FMOD_STUDIO_STOP_MODE mode;
+			mode = immediate ? FMOD_STUDIO_STOP_IMMEDIATE : FMOD_STUDIO_STOP_ALLOWFADEOUT;
+			AudioEngine::ErrorCheck(it->second->stop(mode));
+		}
+	}
+
+	void AudioEngine::GetEventParameter(const std::string& name, const std::string& eventParams, float* parameter)
+	{
+		if (auto it = g_AudioImplementation->Events.find(name); it != g_AudioImplementation->Events.end())
+		{
+			AudioEngine::ErrorCheck(it->second->getParameterByName(eventParams.c_str(), parameter));
+		}
+	}
+
+	void AudioEngine::SetEventParameter(const std::string& name, const std::string& paramName, float value)
+	{
+		if (auto it = g_AudioImplementation->Events.find(name); it != g_AudioImplementation->Events.end())
+		{
+			AudioEngine::ErrorCheck(it->second->setParameterByName(paramName.c_str(), value));
+		}
+	}
+
+	void AudioEngine::StopAllChannels()
+	{
+		for (auto channel : g_AudioImplementation->Channels)
+		{
+			AudioEngine::ErrorCheck(channel.second->stop());
+		}
+	}
+
+	void AudioEngine::SetChannel3DPosition(int channel, const glm::vec3& position)
+	{	
+		if (auto it = g_AudioImplementation->Channels.find(channel); it != g_AudioImplementation->Channels.end())
+		{
+			FMOD_VECTOR pos = VectorToFmod(position);
+			AudioEngine::ErrorCheck(it->second->set3DAttributes(&pos, NULL));
+		}
+	}
+
+	void AudioEngine::SetChannelVolume(int channel, float volume)
+	{
+		if (auto it = g_AudioImplementation->Channels.find(channel); it != g_AudioImplementation->Channels.end())
+		{
+			AudioEngine::ErrorCheck(it->second->setVolume(DBToVolume(volume)));
+		}
+	}
+
+	bool AudioEngine::IsPlaying(int channel) const
+	{
+		if (auto it = g_AudioImplementation->Channels.find(channel); it != g_AudioImplementation->Channels.end())
+		{
+			bool playing;
+			AudioEngine::ErrorCheck(it->second->isPlaying(&playing));
+
+			return playing;
+		}
+
+		return false;
+	}
+
+	bool AudioEngine::IsEventPlaying(const std::string& name) const
+	{
+		if (auto it = g_AudioImplementation->Events.find(name); it != g_AudioImplementation->Events.end())
+		{
+			FMOD_STUDIO_PLAYBACK_STATE* state = nullptr;
+			if (it->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	float AudioEngine::DBToVolume(float db)
+	{
+		return std::powf(10.f, 0.05f * db);
+	}
+
+	float AudioEngine::VolumeToDB(float volume)
+	{
+		return 20.f * std::log10f(volume);
+	}
+
+	FMOD_VECTOR AudioEngine::VectorToFmod(const glm::vec3& pos)
+	{
+		FMOD_VECTOR vec;
+		vec.x = pos.x;
+		vec.y = pos.y;
+		vec.z = pos.z;
+
+		return vec;
+	}
+}

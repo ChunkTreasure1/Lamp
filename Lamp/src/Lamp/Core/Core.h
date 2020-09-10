@@ -25,6 +25,7 @@
 #endif
 
 #define RegisterData(x) static_cast<void*>(x)
+#define DefaultBankPath "assets\\audio\\banks"
 
 namespace Lamp
 {

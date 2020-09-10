@@ -7,6 +7,9 @@
     <Filter Include="src\Lamp">
       <UniqueIdentifier>{E68621CF-D253-7CDA-FB6C-6A82E798B168}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Audio">
+      <UniqueIdentifier>{6729FD7A-53F7-F080-3C8B-61A728F8CCE5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Core">
       <UniqueIdentifier>{FEEA001B-6AAB-7C51-33E6-C5CE9F65C12D}</UniqueIdentifier>
     </Filter>
@@ -128,6 +131,9 @@
   <ItemGroup>
     <ClInclude Include="src\Lamp.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Audio\AudioEngine.h">
+      <Filter>src\Lamp\Audio</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Application.h">
       <Filter>src\Lamp\Core</Filter>
@@ -1664,5 +1670,6 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
   </ItemGroup>
 </Project>

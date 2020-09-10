@@ -56,12 +56,14 @@ project "Lamp"
 		"%{prj.name}/vendor/stb_image",
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
-		"%{prj.name}/vendor/ImGuizmo"
+		"%{prj.name}/vendor/ImGuizmo",
+		"%{prj.name}/vendor/fmod/include"
 	}
 	
 	libdirs
 	{
-		"%{prj.name}/vendor/assimp"
+		"%{prj.name}/vendor/assimp",
+		"%{prj.name}/vendor/fmod"
 	}
 	
 	links 
@@ -71,7 +73,9 @@ project "Lamp"
 		"Glad",
 		"xaudio2.lib",
 		"opengl32.lib",
-		"assimp-vc142-mt.lib"
+		"assimp-vc142-mt.lib",
+		"fmodstudio_vc.lib",
+		"fmod_vc.lib"
 	}
 
 	filter "system:windows"
@@ -129,12 +133,14 @@ project "Sandbox"
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
+		"Lamp/vendor/fmod/include",
 		"Game/src"
 	}
 
 	libdirs
 	{
 		"Lamp/vendor/assimp",
+		"Lamp/vendor/fmod",
 		gamedir
 	}
 
@@ -194,12 +200,14 @@ project "Game"
 		"Lamp/vendor/imgui/",
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
-		"Lamp/vendor/assimp/include"
+		"Lamp/vendor/assimp/include",
+		"Lamp/vendor/fmod/include"
 	}
 
 	libdirs
 	{
-		"Lamp/vendor/assimp"
+		"Lamp/vendor/assimp",
+		"Lamp/vendor/fmod"
 	}
 
 	links
@@ -259,12 +267,14 @@ project "GameLauncher"
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
+		"Lamp/vendor/fmod/include",
 		"Game/src"
 	}
 
 	libdirs
 	{
 		"Lamp/vendor/assimp",
+		"Lamp/vendor/fmod",
 		gamedir
 	}
 

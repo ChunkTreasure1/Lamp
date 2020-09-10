@@ -5,11 +5,11 @@
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
+#include <Lamp/Audio/AudioEngine.h>
 
 void Game::OnStart()
 {
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
-
 	{
 		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
 		ent->SetPosition({ 0, 0, 0 });
