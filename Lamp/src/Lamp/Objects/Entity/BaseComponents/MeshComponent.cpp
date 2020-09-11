@@ -21,6 +21,11 @@ namespace Lamp
 
 	bool MeshComponent::OnRender(AppRenderEvent& e)
 	{
+		if (m_Model == nullptr)
+		{
+			return false;
+		}
+
 		m_Model->Render();
 
 		return true;
