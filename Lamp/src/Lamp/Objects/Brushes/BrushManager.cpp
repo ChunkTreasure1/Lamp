@@ -17,12 +17,6 @@ namespace Lamp
 
 	BrushManager::~BrushManager()
 	{
-		for (auto& brush : m_Brushes)
-		{
-			delete brush;
-		}
-
-		m_Brushes.clear();
 	}
 
 	Brush2D* BrushManager::Create2D(const std::string& path)

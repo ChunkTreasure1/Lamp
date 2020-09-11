@@ -30,11 +30,33 @@ namespace Lamp
 		FMOD::System* System;
 
 		int NextChannelID;
+		int NumberOfListeners = 0;
 
 		SoundMap Sounds;
 		ChannelMap Channels;
 		EventMap Events;
 		BankMap Banks;
+	};
+
+	struct Listener
+	{
+		Listener(uint32_t id)
+			: ListenerID(id)
+		{}
+
+		uint32_t ListenerID;
+	};
+
+	struct ListenerAttributes
+	{
+		ListenerAttributes(const glm::vec3& pos, const glm::vec3& vel, const glm::vec3& forward, const glm::vec3& up)
+			: Position(pos), Velocity(vel), Forward(forward), Up(up)
+		{}
+
+		glm::vec3 Position;
+		glm::vec3 Velocity;
+		glm::vec3 Forward;
+		glm::vec3 Up;
 	};
 
 	class AudioEngine
@@ -48,7 +70,7 @@ namespace Lamp
 		void Set3DListenerAndOrientation(const glm::vec3& pos = { 0.f, 0.f, 0.f }, float volume = 0.f);
 		int PlaySound(const std::string& name, const glm::vec3& pos = { 0.f, 0.f, 0.f }, float volume = 0.f);
 
-		void PlayEvent(const std::string& name);
+		void PlayEvent(const std::string& name, const glm::vec3& pos);
 		void StopChannel(int channel);
 		void StopEvent(const std::string& name, bool immediate = false);
 
@@ -58,7 +80,12 @@ namespace Lamp
 
 		void SetChannel3DPosition(int channel, const glm::vec3& position);
 		void SetChannelVolume(int channel, float volume);
+
+		void SetListenerAttributes(const Listener& listener, const ListenerAttributes& attr);
 		
+		Listener AddListener();
+		void RemoveListener(const Listener& listener);
+
 		bool IsPlaying(int channel) const;
 		bool IsEventPlaying(const std::string& name) const;
 

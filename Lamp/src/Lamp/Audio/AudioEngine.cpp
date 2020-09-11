@@ -10,10 +10,22 @@ namespace Lamp
 	{
 		StudioSystem = nullptr;
 		AudioEngine::ErrorCheck(FMOD::Studio::System::create(&StudioSystem));
-		AudioEngine::ErrorCheck(StudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, nullptr));
+		AudioEngine::ErrorCheck(StudioSystem->getCoreSystem(&System));
+
+		//Set the settings
+
+		int sampleRate = 0;
+		int numRawSpeakers = 0;
+		FMOD_SPEAKERMODE speakerMode = FMOD_SPEAKERMODE_DEFAULT;
+
+		AudioEngine::ErrorCheck(System->getSoftwareFormat(&sampleRate, &speakerMode, &numRawSpeakers));
+		AudioEngine::ErrorCheck(System->setSoftwareFormat(sampleRate, speakerMode, numRawSpeakers));
+		AudioEngine::ErrorCheck(System->set3DSettings(1.f, 1.f, 1.f));
+		
+		//Initialize the studio system
+		AudioEngine::ErrorCheck(StudioSystem->initialize(512, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, nullptr));
 	
 		System = nullptr;
-		AudioEngine::ErrorCheck(StudioSystem->getCoreSystem(&System));
 	}
 
 	AudioImplementation::~AudioImplementation()
@@ -194,14 +206,30 @@ namespace Lamp
 		return channelId;
 	}
 
-	void AudioEngine::PlayEvent(const std::string& name)
+	void AudioEngine::PlayEvent(const std::string& name, const glm::vec3& pos)
 	{
 		auto it = g_AudioImplementation->Events.find(name);
-		if (it != g_AudioImplementation->Events.end())
+		if (it == g_AudioImplementation->Events.end())
 		{
 			LoadEvent(name);
+			it = g_AudioImplementation->Events.find(name);
 		}
 
+		FMOD_3D_ATTRIBUTES attributes;
+		attributes.position = VectorToFmod(pos);
+		attributes.forward = VectorToFmod(glm::vec3(0.f, 0.f, 1.f));
+		attributes.up = VectorToFmod(glm::vec3(0.f, 1.f, 0.f));
+		attributes.velocity = VectorToFmod(glm::vec3(0.f, 0.f, 0.f));
+
+		FMOD::Studio::EventDescription* eventDesc;
+		AudioEngine::ErrorCheck(it->second->getDescription(&eventDesc));
+
+		bool is3D;
+		AudioEngine::ErrorCheck(eventDesc->is3D(&is3D));
+		if (is3D)
+		{
+			AudioEngine::ErrorCheck(it->second->set3DAttributes(&attributes));
+		}
 		AudioEngine::ErrorCheck(it->second->start());
 	}
 
@@ -262,6 +290,34 @@ namespace Lamp
 		{
 			AudioEngine::ErrorCheck(it->second->setVolume(DBToVolume(volume)));
 		}
+	}
+
+	void AudioEngine::SetListenerAttributes(const Listener& listener, const ListenerAttributes& attr)
+	{
+		FMOD_3D_ATTRIBUTES attributes;
+		attributes.forward = VectorToFmod(attr.Forward);
+		attributes.position = VectorToFmod(attr.Position);
+		attributes.up = VectorToFmod(attr.Up);
+		attributes.velocity = VectorToFmod(attr.Velocity);
+
+		AudioEngine::ErrorCheck(g_AudioImplementation->StudioSystem->setListenerAttributes(listener.ListenerID, &attributes, NULL));
+	}
+
+	Listener AudioEngine::AddListener()
+	{
+		int curr;
+		g_AudioImplementation->StudioSystem->getNumListeners(&curr);
+		curr++;
+
+		g_AudioImplementation->StudioSystem->setNumListeners(curr);
+		g_AudioImplementation->StudioSystem->getNumListeners(&curr);
+
+		return Listener(curr);
+	}
+
+	void AudioEngine::RemoveListener(const Listener& listener)
+	{
+
 	}
 
 	bool AudioEngine::IsPlaying(int channel) const

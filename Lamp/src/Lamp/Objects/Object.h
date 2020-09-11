@@ -3,6 +3,7 @@
 #include "Entity/Base/Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "Lamp/Event/Event.h"
+#include "Lamp/Event/EntityEvent.h"
 
 namespace Lamp
 {
@@ -14,7 +15,16 @@ namespace Lamp
 		{}
 
 		//Setting
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; m_PhysicalEntity->GetCollider()->SetTranslation(pos); CalculateModelMatrix(); UpdatedMatrix(); }
+		void SetPosition(const glm::vec3& pos) 
+		{ 
+			m_Position = pos; 
+			m_PhysicalEntity->GetCollider()->SetTranslation(pos); 
+			CalculateModelMatrix(); 
+			UpdatedMatrix(); 
+
+			EntityPositionChangedEvent e;
+			OnEvent(e);
+		}
 		inline void SetPhysicsPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }

@@ -249,6 +249,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h">
       <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
@@ -1488,8 +1491,12 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
+      <Filter>src\Lamp\Audio</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Core\Application.cpp">
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
@@ -1549,6 +1556,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp">
       <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
@@ -1670,6 +1680,6 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
   </ItemGroup>
 </Project>

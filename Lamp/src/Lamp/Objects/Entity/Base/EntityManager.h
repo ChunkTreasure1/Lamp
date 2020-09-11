@@ -11,7 +11,6 @@ namespace Lamp
 	public:
 		EntityManager() {}
 
-		void Shutdown();
 		Entity* Create();
 		bool Remove(Entity* pEnt);
 

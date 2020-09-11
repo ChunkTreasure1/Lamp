@@ -17,6 +17,16 @@ namespace Lamp
 			: ID(num), Name("Layer"), IsDestroyable(true)
 		{}
 
+		~ObjectLayer()
+		{
+			for (auto& obj : Objects)
+			{
+				delete obj;
+			}
+
+			Objects.clear();
+		}
+
 		uint32_t ID;
 		std::string Name;
 		std::vector<Object*> Objects;
@@ -29,6 +39,11 @@ namespace Lamp
 	public:
 		ObjectLayerManager()
 		{}
+
+		~ObjectLayerManager()
+		{
+			m_Layers.clear();
+		}
 
 		void OnEvent(Event& e);
 

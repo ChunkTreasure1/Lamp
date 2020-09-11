@@ -8,16 +8,6 @@ namespace Lamp
 {
 	Ref<EntityManager> EntityManager::s_CurrentManager;
 
-	void EntityManager::Shutdown()
-	{
-		for (size_t i = 0; i < m_pEntites.size(); i++)
-		{
-			delete m_pEntites[i];
-		}
-
-		m_pEntites.clear();
-	}
-
 	Entity* EntityManager::Create()
 	{
 		Entity* pEnt = new Entity();
