@@ -160,7 +160,6 @@
     <ClInclude Include="src\Lamp\Event\MouseEvent.h" />
     <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Lamp\Input\FileSystem.h" />
-    <ClInclude Include="src\Lamp\Input\IOManager.h" />
     <ClInclude Include="src\Lamp\Input\Input.h" />
     <ClInclude Include="src\Lamp\Input\KeyCodes.h" />
     <ClInclude Include="src\Lamp\Input\MouseButtonCodes.h" />
@@ -604,7 +603,6 @@
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
-    <ClCompile Include="src\Lamp\Input\IOManager.cpp" />
     <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />

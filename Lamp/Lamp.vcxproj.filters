@@ -177,9 +177,6 @@
     <ClInclude Include="src\Lamp\Input\FileSystem.h">
       <Filter>src\Lamp\Input</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Input\IOManager.h">
-      <Filter>src\Lamp\Input</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Input\Input.h">
       <Filter>src\Lamp\Input</Filter>
     </ClInclude>
@@ -1503,9 +1500,6 @@
       <Filter>src\Lamp\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Input\FileSystem.cpp">
-      <Filter>src\Lamp\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Input\IOManager.cpp">
       <Filter>src\Lamp\Input</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Input\WindowsInput.cpp">
