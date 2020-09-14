@@ -16,7 +16,7 @@ namespace Lamp
 		AppTick, AppUpdate, AppRender, AppLog,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
-		EntityCollisionEvent, EntityStoppedCollisionEvent
+		EntityCollisionEvent, EntityStoppedCollisionEvent, EntityPositionChangedEvent
 	};
 
 	enum EventCategory

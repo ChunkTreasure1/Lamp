@@ -6,6 +6,7 @@
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/Rendering/RenderCommand.h"
+#include "Lamp/Audio/AudioEngine.h"
 
 namespace Lamp
 {
@@ -22,6 +23,7 @@ namespace Lamp
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Initialize();
+		AudioEngine::Initialize();
 
 		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();
@@ -30,6 +32,7 @@ namespace Lamp
 
 	Application::~Application()
 	{
+		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 	}
 
@@ -45,6 +48,7 @@ namespace Lamp
 
 			PhysicsEngine::Get()->Simulate(timestep);
 			PhysicsEngine::Get()->HandleCollisions();
+			AudioEngine::Update();
 
 			AppUpdateEvent updateEvent(timestep);
 			ObjectLayerManager::Get()->OnEvent(updateEvent);

@@ -129,7 +129,7 @@ namespace Lamp
 		return false;
 	}
 
-	//Prints all the availible folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
+	//Prints all the available folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
 	void FileSystem::PrintFoldersAndFiles(std::vector<std::string>& folders, int startId)
 	{
 		if (folders.size() == 0)

@@ -56,4 +56,21 @@ namespace Lamp
 		Entity* m_pCollidedWith;
 		std::string m_Tag;
 	};
+
+	class EntityPositionChangedEvent : public Event
+	{
+	public:
+		EntityPositionChangedEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "EntityPositionChanged";
+			return ss.str();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntityEvent);
+		EVENT_CLASS_TYPE(EntityPositionChangedEvent);
+	};
 }

@@ -5,11 +5,13 @@
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
+#include <Lamp/Audio/AudioEngine.h>
+#include <Lamp/Objects/Entity/BaseComponents/AudioComponent.h>
+#include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
 
 void Game::OnStart()
 {
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
-
 	{
 		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
 		ent->SetPosition({ 0, 0, 0 });
@@ -17,6 +19,16 @@ void Game::OnStart()
 		auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
 		auto mesh = ent->GetOrCreateComponent<Lamp::MeshComponent>();
 		mesh->SetModel(Lamp::GeometrySystem::LoadFromFile("assets/models/lightModel.lgf"));
+		auto audio = ent->GetOrCreateComponent<Lamp::AudioComponent>();
+
+		audio->SetEvent("test");
+		audio->Play();
+	}
+
+	{
+		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+		ent->GetOrCreateComponent<Lamp::AudioListenerComponent>();
+		ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
 	}
 }
 

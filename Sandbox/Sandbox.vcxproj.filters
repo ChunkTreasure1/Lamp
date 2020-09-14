@@ -27,6 +27,7 @@
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox3D\SandboxController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp">

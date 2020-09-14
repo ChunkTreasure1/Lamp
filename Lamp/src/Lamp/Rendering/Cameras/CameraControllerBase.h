@@ -22,11 +22,12 @@ namespace Lamp
 		//Getting
 		Ref<CameraBase>& GetCamera() { return m_Camera; }
 		const Ref<CameraBase>& GetCamera() const { return m_Camera; }
+		inline const glm::vec3& GetPosition() { return m_Position; }
 
 		//Setting
-		void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
-		void SetPosition(const glm::vec3& pos) { m_Position = pos; }
-		void SetControlsEnabled(bool state) { m_ControlsEnabled = state; }
+		inline void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
+		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; }
+		inline void SetControlsEnabled(bool state) { m_ControlsEnabled = state; }
 
 	protected:
 		Ref<CameraBase> m_Camera;
