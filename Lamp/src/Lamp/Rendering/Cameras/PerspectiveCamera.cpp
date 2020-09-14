@@ -42,5 +42,7 @@ namespace Lamp
 		// Also re-calculate the Right and Up vector
 		m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 		m_Up = glm::normalize(glm::cross(m_Right, m_Front));
+
+		SetRotation(glm::vec3(m_Yaw, m_Pitch, m_Rotation.z));
 	}
 }

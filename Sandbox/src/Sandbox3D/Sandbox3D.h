@@ -9,6 +9,7 @@
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
+#include "SandboxController.h"
 
 #include <Game/Game.h>
 
@@ -43,7 +44,7 @@ namespace Sandbox3D
 
 	private:
 		Scope<Game> m_pGame;
-		Ref<Lamp::PerspectiveCameraController> m_CameraController;
+		Ref<SandboxController> m_SandboxController;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

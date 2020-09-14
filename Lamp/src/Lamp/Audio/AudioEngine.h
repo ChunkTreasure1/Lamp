@@ -62,6 +62,9 @@ namespace Lamp
 	class AudioEngine
 	{
 	public:
+		AudioEngine() {}
+		~AudioEngine() {}
+
 		void LoadBank(const std::string& name, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
 		void LoadEvent(const std::string& name);
 		void LoadSound(const std::string& name, bool threeD = false, bool looping = false, bool stream = false);
@@ -107,5 +110,6 @@ namespace Lamp
 
 	private:
 		void LoadBanksFromDefault();
+		void LoadDefaults();
 	};
 }

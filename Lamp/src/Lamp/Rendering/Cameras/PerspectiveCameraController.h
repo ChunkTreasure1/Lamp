@@ -20,7 +20,7 @@ namespace Lamp
 		virtual void UpdateProjection(uint32_t width, uint32_t height) override;
 		virtual glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
 
-		bool OnMouseMoved(const glm::vec2& e);
+		bool OnMouseMoved(MouseMovedEvent& e);
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);

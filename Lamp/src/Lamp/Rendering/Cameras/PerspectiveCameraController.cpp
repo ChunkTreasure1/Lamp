@@ -67,6 +67,7 @@ namespace Lamp
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnRender));
+		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
 	}
 
 	void PerspectiveCameraController::UpdateProjection(uint32_t width, uint32_t height)
@@ -98,22 +99,22 @@ namespace Lamp
 		return true;
 	}
 
-	bool PerspectiveCameraController::OnMouseMoved(const glm::vec2& e)
+	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
 		if (m_RightMouseButtonPressed)
 		{
 			if (!m_HasControl)
 			{
-				m_LastX = e.x;
-				m_LastY = e.y;
+				m_LastX = e.GetX();
+				m_LastY = e.GetY();
 
 				m_HasControl = true;
 			}
 
-			float xOffset = e.x - m_LastX;
-			float yOffset = m_LastY - e.y;
-			m_LastX = e.x;
-			m_LastY = e.y;
+			float xOffset = e.GetX() - m_LastX;
+			float yOffset = m_LastY - e.GetY();
+			m_LastX = e.GetX();
+			m_LastY = e.GetY();
 
 			float sensitivity = 0.15f;
 			xOffset *= sensitivity;

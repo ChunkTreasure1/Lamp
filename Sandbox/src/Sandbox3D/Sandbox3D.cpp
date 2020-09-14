@@ -26,21 +26,20 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
-		m_CameraController = std::make_shared<Lamp::PerspectiveCameraController>(60.f, 0.1f, 100.f);
-
+		m_SandboxController = std::make_shared<SandboxController>();
 		m_pGame = std::make_unique<Game>();	
 		m_pGame->OnStart();
 	}
 
 	bool Sandbox3D::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		m_CameraController->Update(e.GetTimestep());
+		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
 		Lamp::RenderCommand::SetClearColor(m_ClearColor);
 		Lamp::RenderCommand::Clear();
 
-		Lamp::Renderer3D::Begin(m_CameraController->GetCamera());
+		Lamp::Renderer3D::Begin(m_SandboxController->GetCameraController()->GetCamera());
 
 		Lamp::AppRenderEvent renderEvent;
 		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
@@ -70,7 +69,7 @@ namespace Sandbox3D
 	void Sandbox3D::OnEvent(Lamp::Event& e)
 	{
 		m_pGame->OnEvent(e);
-		m_CameraController->OnEvent(e);
+		m_SandboxController->OnEvent(e);
 
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
@@ -91,11 +90,6 @@ namespace Sandbox3D
 		else if (Lamp::Input::IsMouseButtonReleased(0))
 		{
 			m_MousePressed = false;
-		}
-
-		if (Lamp::Input::IsMouseButtonPressed(1))
-		{
-			m_CameraController->OnMouseMoved(m_MouseHoverPos);
 		}
 	}
 

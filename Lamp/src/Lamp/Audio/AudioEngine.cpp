@@ -2,6 +2,8 @@
 #include "AudioEngine.h"
 #include "Lamp/Input/FileSystem.h"
 
+#include <thread>
+
 namespace Lamp
 {
 	Ref<AudioEngine> AudioEngine::s_Instance;
@@ -21,10 +23,10 @@ namespace Lamp
 		AudioEngine::ErrorCheck(System->getSoftwareFormat(&sampleRate, &speakerMode, &numRawSpeakers));
 		AudioEngine::ErrorCheck(System->setSoftwareFormat(sampleRate, speakerMode, numRawSpeakers));
 		AudioEngine::ErrorCheck(System->set3DSettings(1.f, 1.f, 1.f));
-		
+
 		//Initialize the studio system
 		AudioEngine::ErrorCheck(StudioSystem->initialize(512, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, nullptr));
-	
+
 		System = nullptr;
 	}
 
@@ -41,7 +43,7 @@ namespace Lamp
 		{
 			bool isPlaying = false;
 			it->second->isPlaying(&isPlaying);
-			
+
 			if (!isPlaying)
 			{
 				stoppedChannels.push_back(it);
@@ -101,6 +103,10 @@ namespace Lamp
 		}
 	}
 
+	void AudioEngine::LoadDefaults()
+	{
+	}	
+
 	void AudioEngine::LoadBank(const std::string& name, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
 	{
 		if (auto it = g_AudioImplementation->Banks.find(name); it != g_AudioImplementation->Banks.end())
@@ -125,7 +131,7 @@ namespace Lamp
 
 		FMOD::Studio::EventDescription* eventDesc = nullptr;
 		AudioEngine::ErrorCheck(g_AudioImplementation->StudioSystem->getEvent(name.c_str(), &eventDesc));
-	
+
 		if (eventDesc)
 		{
 			FMOD::Studio::EventInstance* eventInstance = nullptr;
@@ -138,7 +144,7 @@ namespace Lamp
 	}
 
 	void AudioEngine::LoadSound(const std::string& name, bool threeD, bool looping, bool stream)
-	{		
+	{
 		if (auto it = g_AudioImplementation->Sounds.find(name); it != g_AudioImplementation->Sounds.end())
 		{
 			return;
@@ -276,7 +282,7 @@ namespace Lamp
 	}
 
 	void AudioEngine::SetChannel3DPosition(int channel, const glm::vec3& position)
-	{	
+	{
 		if (auto it = g_AudioImplementation->Channels.find(channel); it != g_AudioImplementation->Channels.end())
 		{
 			FMOD_VECTOR pos = VectorToFmod(position);

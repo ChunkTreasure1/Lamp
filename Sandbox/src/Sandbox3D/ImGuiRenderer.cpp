@@ -20,7 +20,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_CameraController->SetControlsEnabled(m_PerspectiveHover);
+			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -37,7 +37,7 @@ namespace Sandbox3D
 				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
-				m_CameraController->UpdateProjection(perspectivePanelSize.x, perspectivePanelSize.y);
+				m_SandboxController->GetCameraController()->UpdateProjection(perspectivePanelSize.x, perspectivePanelSize.y);
 			}
 
 			uint32_t textureID = Lamp::Renderer3D::GetFrameBuffer()->GetColorAttachment();
@@ -52,14 +52,15 @@ namespace Sandbox3D
 
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+		static glm::mat4 trans = glm::mat4(1.f);
 
 		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
 
 		if (m_pSelectedObject)
 		{
-			float* pMat = glm::value_ptr(m_pSelectedObject->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_CameraController->GetCamera()->GetViewMatrix()), (const float*)glm::value_ptr(m_CameraController->GetCamera()->GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
-			m_pSelectedObject->SetModelMatrix(glm::make_mat4(pMat));
+			trans = m_pSelectedObject->GetModelMatrix();
+			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()), (const float*)glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, glm::value_ptr(trans));
+			m_pSelectedObject->SetModelMatrix(trans);
 		}
 	}
 
@@ -122,7 +123,7 @@ namespace Sandbox3D
 			if (m_MousePressed && m_PerspectiveHover)
 			{
 				mousePos -= windowPos;
-				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_CameraController->ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_CameraController->GetCamera()->GetPosition());
+				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_SandboxController->GetCameraController()->GetPosition());
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
@@ -130,7 +131,7 @@ namespace Sandbox3D
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -219,7 +220,7 @@ namespace Sandbox3D
 							case Lamp::PropertyType::String:
 							{
 								std::string* s = static_cast<std::string*>(pProp.Value);
-								//ImGui::InputText(pProp.Name.c_str(), s);
+								ImGui::InputText(pProp.Name.c_str(), s);
 								break;
 							}
 
@@ -259,7 +260,7 @@ namespace Sandbox3D
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -344,7 +345,7 @@ namespace Sandbox3D
 		if (m_pModelToImport != nullptr)
 		{
 			static std::string diffPath = m_pModelToImport->GetMaterial().GetDiffuse()->GetPath();
-			//ImGui::InputText("Diffuse path:", &diffPath);
+			ImGui::InputText("Diffuse path:", &diffPath);
 			ImGui::SameLine();
 			if (ImGui::Button("Load"))
 			{
@@ -353,7 +354,7 @@ namespace Sandbox3D
 			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
 
 			static std::string specPath = m_pModelToImport->GetMaterial().GetSpecular()->GetPath();
-			//ImGui::InputText("Specular path:", &specPath);
+			ImGui::InputText("Specular path:", &specPath);
 			ImGui::SameLine();
 			if (ImGui::Button("Load"))
 			{
@@ -361,7 +362,7 @@ namespace Sandbox3D
 			}
 			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
 
-			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
+			ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
 		}
 
 		ImGui::End();
