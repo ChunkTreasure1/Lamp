@@ -5,11 +5,10 @@
 #include "examples/imgui_impl_opengl3.h"
 
 #include "Lamp/Core/Application.h"
+#include <ImGuizmo/ImGuizmo.h>
 //TEMPORARY
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-
-#include <ImGuizmo/ImGuizmo.h>
 
 namespace Lamp
 {

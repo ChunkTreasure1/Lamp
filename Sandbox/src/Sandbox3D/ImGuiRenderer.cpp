@@ -2,7 +2,6 @@
 #include "Sandbox3D.h"
 
 #include <Lamp/Level/LevelSystem.h>
-#include <ImGuizmo/ImGuizmo/ImGuizmo.h>
 #include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
@@ -11,14 +10,18 @@
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
+#include <ImGuizmo/ImGuizmo.h>
 
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
 	{
+		glm::vec2 perspectivePos;
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Perspective");
 		{
+			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
 			m_PerspectiveHover = ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
@@ -50,18 +53,11 @@ namespace Sandbox3D
 		ImGui::End();
 		ImGui::PopStyleVar();
 
-		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
-		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
-		static glm::mat4 trans = glm::mat4(1.f);
-
-		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
-
-		if (m_pSelectedObject)
-		{
-			trans = m_pSelectedObject->GetModelMatrix();
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()), (const float*)glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, glm::value_ptr(trans));
-			m_pSelectedObject->SetModelMatrix(trans);
-		}
+		static glm::mat4 transform = glm::mat4(1.f);
+		ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
+		ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
+			glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
+			ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(transform));
 	}
 
 	void Sandbox3D::UpdateAssetBrowser()

@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "Sandbox2D.h"
 
-#include <ImGuizmo/ImGuizmo/ImGuizmo.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 namespace Sandbox2D
@@ -123,18 +122,6 @@ namespace Sandbox2D
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
-
-		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
-		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
-
-		ImGuizmo::SetRect(0, 0, m_PerspectiveSize.x, m_PerspectiveSize.y);
-
-		if (m_pSelectedObject)
-		{
-			float* pMat = (float*)glm::value_ptr(m_pSelectedObject->GetModelMatrix());
-			ImGuizmo::Manipulate((const float*)glm::value_ptr(m_CameraController->GetCamera()->GetViewMatrix()), (const float*)glm::value_ptr(m_CameraController->GetCamera()->GetProjectionMatrix()), mCurrentGizmoOperation, mCurrentGizmoMode, pMat);
-			m_pSelectedObject->SetModelMatrix(glm::make_mat4(pMat));
-		}
 	}
 
 	void Sandbox2D::RenderAssetBrowser()
