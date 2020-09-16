@@ -21,8 +21,8 @@ void Game::OnStart()
 		mesh->SetModel(Lamp::GeometrySystem::LoadFromFile("assets/models/lightModel.lgf"));
 		auto audio = ent->GetOrCreateComponent<Lamp::AudioComponent>();
 
-		audio->SetEvent("test");
-		audio->Play();
+		//audio->SetEvent("test");
+		//audio->Play();
 	}
 
 	{
