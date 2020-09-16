@@ -44,7 +44,13 @@ namespace Lamp
 			rotation = glm::conjugate(rotation);
 			
 			m_Rotation = glm::eulerAngles(rotation);
+			m_Rotation.x = -glm::degrees(m_Rotation.x);
+			m_Rotation.y = -glm::degrees(m_Rotation.y);
+			m_Rotation.z = -glm::degrees(m_Rotation.z);
+
 			m_Position = position;
+			m_PhysicalEntity->GetCollider()->SetTranslation(position);
+
 			m_Scale = scale;
 		}
 		inline void SetName(const std::string& name) { m_Name = name; }

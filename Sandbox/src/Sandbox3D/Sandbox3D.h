@@ -7,6 +7,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
+#include <ImGuizmo/ImGuizmo.h>
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
 #include "SandboxController.h"
@@ -45,7 +46,6 @@ namespace Sandbox3D
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
-
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -55,6 +55,7 @@ namespace Sandbox3D
 		//Perspective
 		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
+		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
 		
 		//Asset browser
 		Lamp::File m_SelectedFile;

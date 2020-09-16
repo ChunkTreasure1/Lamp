@@ -91,6 +91,21 @@ namespace Sandbox3D
 		{
 			m_MousePressed = false;
 		}
+
+		if (Lamp::Input::IsKeyPressed(LP_KEY_1))
+		{
+			m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
+		}
+
+		if (Lamp::Input::IsKeyPressed(LP_KEY_2))
+		{
+			m_ImGuizmoOperation = ImGuizmo::ROTATE;
+		}
+
+		if (Lamp::Input::IsKeyPressed(LP_KEY_3))
+		{
+			m_ImGuizmoOperation = ImGuizmo::SCALE;
+		}
 	}
 
 	void Sandbox3D::RenderGrid()

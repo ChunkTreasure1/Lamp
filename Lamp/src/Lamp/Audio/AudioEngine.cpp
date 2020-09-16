@@ -14,8 +14,8 @@ namespace Lamp
 		AudioEngine::ErrorCheck(FMOD::Studio::System::create(&StudioSystem));
 		AudioEngine::ErrorCheck(StudioSystem->getCoreSystem(&System));
 
-		//Set the settings
 
+		//Set the settings
 		int sampleRate = 0;
 		int numRawSpeakers = 0;
 		FMOD_SPEAKERMODE speakerMode = FMOD_SPEAKERMODE_DEFAULT;

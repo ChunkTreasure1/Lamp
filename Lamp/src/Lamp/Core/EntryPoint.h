@@ -4,6 +4,8 @@
 
 extern Lamp::Application* Lamp::CreateApplication();
 
+void t(int) {}
+
 int main(int argc, char** argv)
 {
 	Lamp::Log::Initialize();

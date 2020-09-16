@@ -61,7 +61,7 @@ namespace Sandbox3D
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(transform));
+				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
 
 			m_pSelectedObject->SetModelMatrix(transform);
 		}
