@@ -2,6 +2,7 @@
 
 #include "Entity/Base/Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #include "Lamp/Event/Event.h"
 #include "Lamp/Event/EntityEvent.h"
 
@@ -29,7 +30,29 @@ namespace Lamp
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }
 
-		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
+		void SetModelMatrix(const glm::mat4& mat) 
+		{ 
+			m_ModelMatrix = mat;
+
+			glm::vec3 scale;
+			glm::quat rotation;
+			glm::vec3 position;
+			glm::vec3 skew;
+			glm::vec4 perspective;
+
+			glm::decompose(m_ModelMatrix, scale, rotation, position, skew, perspective);
+			rotation = glm::conjugate(rotation);
+			
+			m_Rotation = glm::eulerAngles(rotation);
+			m_Rotation.x = -glm::degrees(m_Rotation.x);
+			m_Rotation.y = -glm::degrees(m_Rotation.y);
+			m_Rotation.z = -glm::degrees(m_Rotation.z);
+
+			m_Position = position;
+			m_PhysicalEntity->GetCollider()->SetTranslation(position);
+
+			m_Scale = scale;
+		}
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetLayerID(uint32_t id) { m_LayerID = id; }
 		

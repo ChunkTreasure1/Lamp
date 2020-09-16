@@ -1,19 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Game">
-      <UniqueIdentifier>{7FA9857C-6BE0-860D-14CD-6C1000E3020F}</UniqueIdentifier>
+    <Filter Include="Lamp">
+      <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor">
+      <UniqueIdentifier>{EC6A4D3D-5820-C632-E114-C0094DC9BC36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor\ImGuizmo">
+      <UniqueIdentifier>{CCE60BD4-B875-959D-6194-A9984D02A643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor\ImGuizmo\include">
+      <UniqueIdentifier>{3F1A494A-2BD5-38F6-D48C-B140C0268386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor\ImGuizmo\include\ImGuizmo">
+      <UniqueIdentifier>{7F830934-EB47-0824-B4AD-38EE2031A459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Game">
+      <UniqueIdentifier>{F6C81ECF-E295-79DA-0BAF-6782F7DAAE68}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Core.h" />
+    <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
+      <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClInclude>
     <ClInclude Include="src\Game\Game.h">
-      <Filter>Game</Filter>
+      <Filter>src\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClCompile>
     <ClCompile Include="src\Game\Game.cpp">
-      <Filter>Game</Filter>
+      <Filter>src\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

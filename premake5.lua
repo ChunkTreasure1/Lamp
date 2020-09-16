@@ -35,8 +35,8 @@ project "Lamp"
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/stb/**.h",
 		"%{prj.name}/vendor/stb_image/stb/**.cpp",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo/**.h",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo/**.cpp"
+		"%{prj.name}/vendor/ImGuizmo/include/**.h",
+		"%{prj.name}/vendor/ImGuizmo/include/**.cpp"
 	}
 
 	defines 
@@ -56,8 +56,8 @@ project "Lamp"
 		"%{prj.name}/vendor/stb_image",
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
-		"%{prj.name}/vendor/ImGuizmo",
-		"%{prj.name}/vendor/fmod/include"
+		"%{prj.name}/vendor/fmod/include",
+		"%{prj.name}/vendor/ImGuizmo/include"
 	}
 	
 	libdirs
@@ -118,7 +118,8 @@ project "Sandbox"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/engine/**.vert",
-		"%{prj.name}/engine/**.frag"
+		"%{prj.name}/engine/**.frag",
+
 	}
 
 	includedirs
@@ -134,7 +135,8 @@ project "Sandbox"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
-		"Game/src"
+		"Game/src",
+		"Lamp/vendor/ImGuizmo/include"
 	}
 
 	libdirs
@@ -187,6 +189,8 @@ project "Game"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"Lamp/vendor/ImGuizmo/include/**.h",
+		"Lamp/vendor/ImGuizmo/include/**.cpp"
 	}
 
 	includedirs
@@ -201,7 +205,8 @@ project "Game"
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
-		"Lamp/vendor/fmod/include"
+		"Lamp/vendor/fmod/include",
+		"Lamp/vendor/ImGuizmo/include"
 	}
 
 	libdirs
@@ -253,6 +258,8 @@ project "GameLauncher"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"Lamp/vendor/ImGuizmo/include/**.h",
+		"Lamp/vendor/ImGuizmo/include/**.cpp"
 	}
 
 	includedirs
@@ -268,7 +275,8 @@ project "GameLauncher"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
-		"Game/src"
+		"Game/src",
+		"Lamp/vendor/ImGuizmo/include"
 	}
 
 	libdirs

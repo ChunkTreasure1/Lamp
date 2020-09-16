@@ -100,8 +100,11 @@
     <Filter Include="vendor\ImGuizmo">
       <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor\ImGuizmo\ImGuizmo">
-      <UniqueIdentifier>{3343AFB4-1F68-FE34-48B3-E3C43437FD52}</UniqueIdentifier>
+    <Filter Include="vendor\ImGuizmo\include">
+      <UniqueIdentifier>{E6A94282-52E1-8A19-5BEB-EE3CC7A1B112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuizmo\include\ImGuizmo">
+      <UniqueIdentifier>{069F18FE-F2EF-0340-1B54-F201070497A9}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -249,6 +252,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
@@ -390,8 +396,8 @@
     <ClInclude Include="src\lppch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\ImGuizmo\ImGuizmo.h">
-      <Filter>vendor\ImGuizmo\ImGuizmo</Filter>
+    <ClInclude Include="vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
+      <Filter>vendor\ImGuizmo\include\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1488,7 +1494,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1552,6 +1557,9 @@
       <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp">
@@ -1668,12 +1676,11 @@
     <ClCompile Include="src\lppch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\ImGuizmo\ImGuizmo.cpp">
-      <Filter>vendor\ImGuizmo\ImGuizmo</Filter>
+    <ClCompile Include="vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
+      <Filter>vendor\ImGuizmo\include\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
   </ItemGroup>
 </Project>
