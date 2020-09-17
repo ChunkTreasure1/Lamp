@@ -10,13 +10,14 @@ namespace Lamp
 	{
 		std::vector<Ref<Mesh>> meshes = LoadModel(path);
 		Material mat(0);
+		SAABB boundingBox;
 
 		std::string t = path;
 		t = t.substr(t.find_last_of('/') + 1, t.find_last_of('.'));
 		t = t.substr(0, t.find_last_of('.'));
 
 
-		Ref<Model> model = std::make_shared<Model>(meshes, mat, t);
+		Ref<Model> model = std::make_shared<Model>(meshes, mat, t, boundingBox);
 
 		return model;
 	}
@@ -36,6 +37,7 @@ namespace Lamp
 		std::string name = "";
 		std::vector<Ref<Mesh>> meshes;
 		Material mat(0);
+		SAABB boundingBox;
 
 		name = pRootNode->first_attribute("name")->value();
 
@@ -120,7 +122,19 @@ namespace Lamp
 			}
 		}
 
-		return std::make_shared<Model>(meshes, mat, name);
+		if (rapidxml::xml_node<>* pBB = pRootNode->first_node("BoundingBox"))
+		{
+			if (rapidxml::xml_node<>* pMax = pBB->first_node("Max"))
+			{
+				GetValue(pMax->first_attribute("position")->value(), boundingBox.Max);
+			}
+			if (rapidxml::xml_node<>* pMin = pBB->first_node("Min"))
+			{
+				GetValue(pMin->first_attribute("position")->value(), boundingBox.Min);
+			}
+		}
+
+		return std::make_shared<Model>(meshes, mat, name, boundingBox);
 	}
 
 	bool GeometrySystem::SaveToPath(Ref<Model>& model, const std::string& path)

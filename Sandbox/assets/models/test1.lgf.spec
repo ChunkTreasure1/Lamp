@@ -12,6 +12,10 @@
 			<Shininess value="32.000000"/>
 			<Shader vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
 		</Material>
-	</Materials>
+	</Materials>'
+	<BoundingBox>
+		<Max position="0,0,0"/>
+		<Min position="0,0,0"/>
+	</BoundingBox>
 </Geometry>
 

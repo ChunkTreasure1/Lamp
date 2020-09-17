@@ -16,8 +16,8 @@ namespace Lamp
 	class Model
 	{
 	public:
-		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name)
-			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name)
+		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb)
+			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb)
 		{
 			float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
 			float xMin = FLT_MAX, yMin = FLT_MAX, zMin = FLT_MAX;
