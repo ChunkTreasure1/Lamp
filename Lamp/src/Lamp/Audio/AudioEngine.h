@@ -95,8 +95,6 @@ namespace Lamp
 		float DBToVolume(float db);
 		float VolumeToDB(float volume);
 
-		FMOD_VECTOR VectorToFmod(const glm::vec3& pos);
-
 	public:
 		static void Initialize();
 		static void Update();
@@ -111,5 +109,6 @@ namespace Lamp
 	private:
 		void LoadBanksFromDefault();
 		void LoadDefaults();
+		FMOD_VECTOR VectorToFmod(const glm::vec3& pos);
 	};
 }

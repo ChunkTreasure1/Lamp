@@ -3,8 +3,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
 #include "Lamp/Meshes/Model.h"
 #include "Lamp/Objects/Entity/Base/Physical/PhysicalEntity.h"
+#include "Lamp/Physics/Colliders/AABB.h"
 
 #include "Lamp/Objects/Object.h"
 
@@ -17,7 +19,7 @@ namespace Lamp
 			: m_Model(model)
 		{
 			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
+			m_PhysicalEntity->SetCollider(std::make_shared<AABB>(m_Model->GetBoundingBox(), m_Position));
 			m_Name = "Brush";
 		}
 

@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Collider.h"
+#include "Lamp/Utility/Structs.h"
 
 namespace Lamp
 {
 	class AABB : public Collider
 	{
 	public:
-		AABB(const glm::vec3& min, const glm::vec3& max)
-			: Collider(CollType::AABB), m_MinExtents(min), m_MaxExtents(max), m_WorldMin(min), m_WorldMax(max)
+		AABB(const SAABB& bb, const glm::vec3 pos)
+			: Collider(CollType::AABB), m_MinExtents(bb.Min), m_MaxExtents(bb.Max), m_WorldMin(bb.Min + pos), m_WorldMax(bb.Max + pos)
 		{}
 
 		virtual IntersectData IntersectRay(const Ray& ray) const override;

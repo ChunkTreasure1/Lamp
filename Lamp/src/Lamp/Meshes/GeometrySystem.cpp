@@ -10,6 +10,7 @@ namespace Lamp
 	{
 		std::vector<Ref<Mesh>> meshes = LoadModel(path);
 		Material mat(0);
+		SAABB boundingBox;
 
 		std::string t = path;
 		t = t.substr(t.find_last_of('/') + 1, t.find_last_of('.'));
@@ -54,7 +55,7 @@ namespace Lamp
 		boundingBox.Max = glm::vec3(xMax, yMax, zMax);
 		boundingBox.Min = glm::vec3(xMin, yMin, zMin);
 
-		Ref<Model> model = std::make_shared<Model>(meshes, mat, t);
+		Ref<Model> model = std::make_shared<Model>(meshes, mat, t, boundingBox);
 
 		return model;
 	}
@@ -74,6 +75,7 @@ namespace Lamp
 		std::string name = "";
 		std::vector<Ref<Mesh>> meshes;
 		Material mat(0);
+		SAABB boundingBox;
 
 		name = pRootNode->first_attribute("name")->value();
 
