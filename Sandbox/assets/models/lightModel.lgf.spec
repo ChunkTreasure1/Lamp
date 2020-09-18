@@ -1,4 +1,4 @@
-<Geometry name="C:\Programing\Lamp\Sandbox3D\engine\models\lightModel">
+<Geometry name="lightModel">
 	<Meshes>
 		<Mesh matId="0">
 			<VerticeCount count="1984"/>
@@ -13,5 +13,9 @@
 			<Shader vertex="engine/shaders/3d/lightShader_vs.glsl" fragment="engine/shaders/3d/lightShader_fs.glsl"/>
 		</Material>
 	</Materials>
+	<BoundingBox>
+		<Max position="0.5,0.5,0.5"/>
+		<Min position="-0.5,-0.5,-0.5"/>
+	</BoundingBox>
 </Geometry>
 

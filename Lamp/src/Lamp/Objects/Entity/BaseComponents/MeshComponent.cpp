@@ -27,6 +27,7 @@ namespace Lamp
 		}
 
 		m_Model->Render();
+		m_Model->RenderBoundingBox();
 
 		return true;
 	}

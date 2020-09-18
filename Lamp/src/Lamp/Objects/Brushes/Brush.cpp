@@ -35,6 +35,7 @@ namespace Lamp
 	bool Brush::OnRender()
 	{
 		m_Model->Render();
+		m_Model->RenderBoundingBox();
 
 		return true;
 	}
