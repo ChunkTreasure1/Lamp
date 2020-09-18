@@ -106,6 +106,14 @@ namespace Sandbox3D
 		{
 			m_ImGuizmoOperation = ImGuizmo::SCALE;
 		}
+
+		if (Lamp::Input::IsKeyPressed(LP_KEY_DELETE))
+		{
+			if (m_pSelectedObject)
+			{
+				//Need to rework managers first
+			}
+		}
 	}
 
 	void Sandbox3D::RenderGrid()

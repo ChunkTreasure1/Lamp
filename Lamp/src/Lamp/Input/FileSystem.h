@@ -55,6 +55,7 @@ namespace Lamp
 		static std::vector<std::string> GetLevelFiles(std::string& path);
 		static std::vector<std::string> GetFolders(std::string& path);
 		static std::string GetFileFromDialogue();
+		static std::string SaveFileInDialogue();
 
 		static bool ContainsFolder(std::string& path);
 		static void PrintFoldersAndFiles(std::vector<std::string>& files, int startId = -1);

@@ -15,6 +15,44 @@ namespace Lamp
 		t = t.substr(t.find_last_of('/') + 1, t.find_last_of('.'));
 		t = t.substr(0, t.find_last_of('.'));
 
+		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
+		float xMin = FLT_MAX, yMin = FLT_MAX, zMin = FLT_MAX;
+
+		for (auto& vert : meshes[0]->GetVertices())
+		{
+			//X-axis
+			if (vert.position.x < xMin)
+			{
+				xMin = vert.position.x;
+			}
+			if (vert.position.x > xMax)
+			{
+				xMax = vert.position.x;
+			}
+
+			//Y-axis
+			if (vert.position.y < yMin)
+			{
+				yMin = vert.position.y;
+			}
+			if (vert.position.y > yMax)
+			{
+				yMax = vert.position.y;
+			}
+
+			//Z-axis
+			if (vert.position.z < zMin)
+			{
+				zMin = vert.position.z;
+			}
+			if (vert.position.z > zMax)
+			{
+				zMax = vert.position.z;
+			}
+		}
+
+		boundingBox.Max = glm::vec3(xMax, yMax, zMax);
+		boundingBox.Min = glm::vec3(xMin, yMin, zMin);
 
 		Ref<Model> model = std::make_shared<Model>(meshes, mat, t);
 
@@ -120,7 +158,19 @@ namespace Lamp
 			}
 		}
 
-		return std::make_shared<Model>(meshes, mat, name);
+		if (rapidxml::xml_node<>* pBB = pRootNode->first_node("BoundingBox"))
+		{
+			if (rapidxml::xml_node<>* pMax = pBB->first_node("Max"))
+			{
+				GetValue(pMax->first_attribute("position")->value(), boundingBox.Max);
+			}
+			if (rapidxml::xml_node<>* pMin = pBB->first_node("Min"))
+			{
+				GetValue(pMin->first_attribute("position")->value(), boundingBox.Min);
+			}
+		}
+
+		return std::make_shared<Model>(meshes, mat, name, boundingBox, path);
 	}
 
 	bool GeometrySystem::SaveToPath(Ref<Model>& model, const std::string& path)

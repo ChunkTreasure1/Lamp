@@ -20,6 +20,11 @@ namespace Lamp
 		{
 		}
 
+		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb, const std::string& path)
+			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb), m_LGFPath(path)
+		{
+		}
+
 		void Render();
 
 		//Setting

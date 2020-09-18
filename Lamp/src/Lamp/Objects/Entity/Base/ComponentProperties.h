@@ -12,6 +12,7 @@ namespace Lamp
 	enum class PropertyType
 	{
 		String,
+		Path,
 		Bool,
 		Int,
 		Float,
@@ -81,6 +82,10 @@ namespace Lamp
 			{
 				return PropertyType::Color4;
 			}
+			else if (strcmp(string, "Path") == 0)
+			{
+				return PropertyType::Path;
+			}
 
 			return PropertyType::Int;
 		}
@@ -97,6 +102,7 @@ namespace Lamp
 				case PropertyType::Float4: return "Float4";
 				case PropertyType::Color3: return "Color3";
 				case PropertyType::Color4: return "Color4";
+				case PropertyType::Path:   return "Path";
 			}
 
 			return "";

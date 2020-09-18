@@ -134,7 +134,7 @@ namespace Sandbox3D
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -223,7 +223,23 @@ namespace Sandbox3D
 							case Lamp::PropertyType::String:
 							{
 								std::string* s = static_cast<std::string*>(pProp.Value);
-								//ImGui::InputText(pProp.Name.c_str(), s);
+								ImGui::InputText(pProp.Name.c_str(), s);
+								break;
+							}
+
+							case Lamp::PropertyType::Path:
+							{
+								std::string* s = static_cast<std::string*>(pProp.Value);
+								ImGui::InputText(pProp.Name.c_str(), s);
+								ImGui::SameLine();
+								if (ImGui::Button("Open"))
+								{
+									std::string path = Lamp::FileSystem::GetFileFromDialogue();
+									if (path != "" && std::filesystem::exists(path))
+									{
+										*s = path;
+									}
+								}
 								break;
 							}
 
@@ -263,7 +279,7 @@ namespace Sandbox3D
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -321,22 +337,26 @@ namespace Sandbox3D
 		static std::string path = "";
 		static std::string savePath = "";
 
-		if (ImGui::Button("Load"))
+		if (ImGui::Button("Load##fbx"))
 		{
 			path = Lamp::FileSystem::GetFileFromDialogue();
-			m_pModelToImport = Lamp::GeometrySystem::ImportModel(path);
+			if (path != "" && std::filesystem::exists(path))
+			{
+				m_pModelToImport = Lamp::GeometrySystem::ImportModel(path);
 
-			savePath = path.substr(0, path.find_last_of('.'));
-			savePath += ".lgf";
+				savePath = path.substr(0, path.find_last_of('.'));
+				savePath += ".lgf";
 
-			m_pModelToImport->GetMaterial().SetShader(m_pShader);
+				m_pModelToImport->GetMaterial().SetShader(m_pShader);
 
-			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
-			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+				m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+				m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+			}
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Save"))
 		{
+			savePath = Lamp::FileSystem::SaveFileInDialogue();
 			Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath);
 			path = "";
 			savePath = "";
@@ -348,24 +368,24 @@ namespace Sandbox3D
 		if (m_pModelToImport != nullptr)
 		{
 			static std::string diffPath = m_pModelToImport->GetMaterial().GetDiffuse()->GetPath();
-			//ImGui::InputText("Diffuse path:", &diffPath);
+			ImGui::InputText("Diffuse path:", &diffPath);
 			ImGui::SameLine();
-			if (ImGui::Button("Load"))
+			if (ImGui::Button("Load##diff"))
 			{
 				diffPath = Lamp::FileSystem::GetFileFromDialogue();
 			}
 			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
 
 			static std::string specPath = m_pModelToImport->GetMaterial().GetSpecular()->GetPath();
-			//ImGui::InputText("Specular path:", &specPath);
+			ImGui::InputText("Specular path:", &specPath);
 			ImGui::SameLine();
-			if (ImGui::Button("Load"))
+			if (ImGui::Button("Load##spec"))
 			{
 				specPath = Lamp::FileSystem::GetFileFromDialogue();
 			}
 			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
 
-			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
+			ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
 		}
 
 		ImGui::End();
@@ -381,10 +401,11 @@ namespace Sandbox3D
 		ImGui::Begin("Layers", &m_LayerViewOpen);
 
 		int startId = 0;
+		int j = 0;
 
 		for (Lamp::ObjectLayer& layer : Lamp::ObjectLayerManager::Get()->GetLayers())
 		{
-			if (ImGui::Button("A"))
+			if (ImGui::Button(std::string("A##" + std::to_string(j)).c_str()))
 			{
 				layer.IsActive = !layer.IsActive;
 			}
@@ -395,7 +416,7 @@ namespace Sandbox3D
 
 				for (int i = 0; i < layer.Objects.size(); i++)
 				{
-					if (ImGui::Button("A"))
+					if (ImGui::Button(std::string("A##" + std::to_string(i)).c_str()))
 					{
 						layer.Objects[i]->SetIsActive(!layer.Objects[i]->GetIsActive());
 					}
@@ -414,6 +435,7 @@ namespace Sandbox3D
 
 				ImGui::TreePop();
 			}
+			j++;
 		}
 
 		ImGui::End();

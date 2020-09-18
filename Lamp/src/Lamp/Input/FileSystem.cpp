@@ -102,12 +102,58 @@ namespace Lamp
 			}
 			CoUninitialize();
 		}
-		std::wstringstream ss;
-		ss << path;
+		if (path)
+		{
+			std::wstringstream ss;
+			ss << path;
+		
+			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
 
-		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+			return converter.to_bytes(ss.str());
+		}
 
-		return converter.to_bytes(ss.str());
+		return "";
+	}
+
+	std::string FileSystem::SaveFileInDialogue()
+	{
+		wchar_t* path = 0;
+
+		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+		if (SUCCEEDED(hr))
+		{
+			IFileSaveDialog* pFileOpen;
+
+			hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileOpen));
+			if (SUCCEEDED(hr))
+			{
+				hr = pFileOpen->Show(NULL);
+				if (SUCCEEDED(hr))
+				{
+					IShellItem* pItem;
+					hr = pFileOpen->GetResult(&pItem);
+					if (SUCCEEDED(hr))
+					{
+
+						hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &path);
+						pItem->Release();
+					}
+				}
+				pFileOpen->Release();
+			}
+			CoUninitialize();
+		}
+		if (path)
+		{
+			std::wstringstream ss;
+			ss << path;
+
+			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+
+			return converter.to_bytes(ss.str());
+		}
+
+		return "";
 	}
 
 	//Returns whether or not a folder contains folders
