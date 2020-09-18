@@ -1683,5 +1683,8 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp" />
   </ItemGroup>
 </Project>

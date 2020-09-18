@@ -85,9 +85,8 @@ namespace Lamp
 			m_Brushes.erase(it);
 		}
 
-		ObjectLayerManager::Get()->RemoveFromLayer(brush, brush->GetLayerID());
+
 		PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
-		delete brush;
 	}
 
 	void BrushManager::Remove(Brush2D* brush)
@@ -97,6 +96,8 @@ namespace Lamp
 		{
 			m_2DBrushes.erase(it);
 		}
+
+		PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
 	}
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)

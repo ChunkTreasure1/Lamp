@@ -616,8 +616,11 @@
     <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />

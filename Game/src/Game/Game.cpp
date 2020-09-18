@@ -13,7 +13,7 @@ void Game::OnStart()
 {
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 	{
-		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+		Lamp::Entity* ent = Lamp::Entity::Create();
 		ent->SetPosition({ 0, 0, 0 });
 
 		auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
@@ -26,9 +26,15 @@ void Game::OnStart()
 	}
 
 	{
-		Lamp::Entity* ent = Lamp::EntityManager::Get()->Create();
+		Lamp::Entity* ent = Lamp::Entity::Create();
 		ent->GetOrCreateComponent<Lamp::AudioListenerComponent>();
 		ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
+	}
+
+	{
+		Lamp::Entity* ent = Lamp::Entity::Create();
+		ent->Destroy();
+		float a = 0.f;
 	}
 }
 

@@ -28,21 +28,8 @@ namespace Lamp
 		}
 		~Entity() {}
 
-		void OnEvent(Event& e) override 
-		{
-			for (auto& pComp : m_pComponents)
-			{
-				if (m_pComponents.size() == 0)
-				{
-					return;
-				}
-
-				pComp->OnEvent(e);
-			}
-		}
-		void Destroy()
-		{
-		}
+		virtual void OnEvent(Event& e) override;
+		virtual void Destroy() override;
 
 		//Getting
 		inline std::vector<Ref<EntityComponent>> GetComponents() const { return m_pComponents; }
@@ -114,6 +101,9 @@ namespace Lamp
 
 			return false;
 		}
+
+	public:
+		static Entity* Create();
 
 	private:
 		std::vector<Ref<EntityComponent>> m_pComponents;

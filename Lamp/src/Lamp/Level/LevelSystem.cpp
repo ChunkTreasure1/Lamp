@@ -28,6 +28,7 @@ namespace Lamp
 
 		pLevel = std::make_shared<Level>(pRootNode->first_attribute("name")->value());
 		ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
+		PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
 
 		if (rapidxml::xml_node<>* pLayers = pRootNode->first_node("Layers"))
 		{

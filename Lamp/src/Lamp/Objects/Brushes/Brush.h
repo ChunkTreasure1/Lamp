@@ -23,29 +23,18 @@ namespace Lamp
 			m_Name = "Brush";
 		}
 
-		virtual void UpdatedMatrix() override
-		{
-			m_Model->SetModelMatrix(m_ModelMatrix);
-		}
-
-		virtual void OnEvent(Event& e) override
-		{
-			if (e.GetEventType() == EventType::AppRender)
-			{
-				OnRender();
-			}
-		}
+		virtual void UpdatedMatrix() override;
+		virtual void OnEvent(Event& e) override;
+		virtual void Destroy() override;
 
 		//Getting
 		inline Ref<Model>& GetModel() { return m_Model; }
 
-	private:
-		bool OnRender()
-		{
-			m_Model->Render();
+	public:
+		static Brush* Create(const std::string& path);
 
-			return true;
-		}
+	private:
+		bool OnRender();
 
 	private:
 		Ref<Model> m_Model;

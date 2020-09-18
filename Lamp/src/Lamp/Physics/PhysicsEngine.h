@@ -10,6 +10,10 @@ namespace Lamp
 	{
 	public:
 		PhysicsEngine() {}
+		~PhysicsEngine()
+		{
+			float a = 0.f;
+		}
 
 		void AddEntity(Ref<PhysicalEntity>& entity);
 		void RemoveEntity(Ref<PhysicalEntity>& entity);
@@ -17,6 +21,8 @@ namespace Lamp
 		void Simulate(float delta);
 		void HandleCollisions();
 
+	public:
+		static void SetCurrentEngine(Ref<PhysicsEngine> engine) { s_PhysicsEngine = engine; }
 		static Ref<PhysicsEngine>& Get() { return s_PhysicsEngine; }
 
 	private:

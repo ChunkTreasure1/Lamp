@@ -23,7 +23,6 @@ namespace Lamp
 
 	bool EntityManager::Remove(Entity* pEnt)
 	{
-		pEnt->Destroy();
 		auto it = std::find(m_pEntites.begin(), m_pEntites.end(), pEnt);
 		if (it != m_pEntites.end())
 		{
@@ -34,7 +33,6 @@ namespace Lamp
 			return false;
 		}
 
-		ObjectLayerManager::Get()->RemoveFromLayer(dynamic_cast<Object*>(pEnt), pEnt->GetLayerID());
 		PhysicsEngine::Get()->RemoveEntity(pEnt->GetPhysicalEntity());
 		return true;
 	}

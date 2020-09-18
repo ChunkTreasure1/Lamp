@@ -13,33 +13,17 @@ namespace Lamp
 	class Brush2D : public Object
 	{
 	public:
-		Brush2D(const std::string& spritePath)
-		{
-			m_Name = "Unnamned Brush";
-			SAABB bb;
-			bb.Min = glm::vec3(-0.5f, -0.5f, -0.5f);
-			bb.Max = glm::vec3(0.5f, 0.5f, 0.5f);
+		Brush2D(const std::string& spritePath);
 
-			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(std::make_shared<AABB>(bb, m_Position));
+		virtual void OnEvent(Event& e) override;
+		virtual void Destroy() override;
 
-			m_Sprite = Texture2D::Create(spritePath);
-		}
-
-		virtual void OnEvent(Event& e) override
-		{
-			EventDispatcher dispatcher(e);
-			dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Brush2D::OnRender));
-		}
+	public:
+		static Brush2D* Create(const std::string& path);
 
 	private:
-		bool OnRender(AppRenderEvent& e)
-		{
-			Renderer2D::DrawQuad(m_ModelMatrix, m_Sprite);
-			m_PhysicalEntity->GetCollider()->Render();
+		bool OnRender(AppRenderEvent& e);
 
-			return true;
-		}
 	private:
 		bool m_ShouldCollide;
 		std::string m_SpritePath;

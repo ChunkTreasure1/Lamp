@@ -5,7 +5,7 @@
 
 namespace Lamp
 {
-	Ref<PhysicsEngine> PhysicsEngine::s_PhysicsEngine = std::make_shared<PhysicsEngine>();
+	Ref<PhysicsEngine> PhysicsEngine::s_PhysicsEngine = nullptr;
 
 	void PhysicsEngine::AddEntity(Ref<PhysicalEntity>& entity)
 	{
