@@ -53,8 +53,7 @@ namespace Lamp
 				Ref<T> c(new T(std::forward<TArgs>(mArgs)...));
 				c->MakeOwner(this);
 
-				m_pComponents.emplace_back(c);
-
+				m_pComponents.push_back(c);
 				m_pComponentMap[T::GetFactoryName()] = c;
 
 				c->Initialize();
@@ -95,7 +94,11 @@ namespace Lamp
 
 			if (auto it = m_pComponentMap.find(str); it == m_pComponentMap.end())
 			{
-				m_pComponentMap[str] = std::move(comp);
+				comp->MakeOwner(this);
+				comp->Initialize();
+
+				m_pComponents.push_back(comp);
+				m_pComponentMap[str] = comp;
 				return true;
 			}
 

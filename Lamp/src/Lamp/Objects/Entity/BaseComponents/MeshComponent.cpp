@@ -34,7 +34,10 @@ namespace Lamp
 
 	bool MeshComponent::OnUpdate(AppUpdateEvent& e)
 	{
-		m_Model->SetModelMatrix(m_pEntity->GetModelMatrix());
+		if (m_Model)
+		{
+			m_Model->SetModelMatrix(m_pEntity->GetModelMatrix());
+		}
 
 		return true;
 	}
