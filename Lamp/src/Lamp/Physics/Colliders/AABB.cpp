@@ -15,24 +15,24 @@ namespace Lamp
 
 		if (invDir.x >= 0)
 		{
-			tMin = (m_MinExtents.x - ray.origin.x) * invDir.x;
-			tMax = (m_MaxExtents.x - ray.origin.x) * invDir.x;
+			tMin = (m_WorldMin.x - ray.origin.x) * invDir.x;
+			tMax = (m_WorldMax.x - ray.origin.x) * invDir.x;
 		}
 		else 
 		{
-			tMin = (m_MaxExtents.x - ray.origin.x) * invDir.x;
-			tMax = (m_MinExtents.x - ray.origin.x) * invDir.x;
+			tMin = (m_WorldMax.x - ray.origin.x) * invDir.x;
+			tMax = (m_WorldMin.x - ray.origin.x) * invDir.x;
 		}
 
 		if (invDir.y >= 0)
 		{
-			tyMin = (m_MinExtents.y - ray.origin.y) * invDir.y;
-			tyMax = (m_MaxExtents.y - ray.origin.y) * invDir.y;
+			tyMin = (m_WorldMin.y - ray.origin.y) * invDir.y;
+			tyMax = (m_WorldMax.y - ray.origin.y) * invDir.y;
 		}
 		else
 		{
-			tyMin = (m_MaxExtents.y - ray.origin.y) * invDir.y;
-			tyMax = (m_MinExtents.y - ray.origin.y) * invDir.y;
+			tyMin = (m_WorldMax.y - ray.origin.y) * invDir.y;
+			tyMax = (m_WorldMin.y - ray.origin.y) * invDir.y;
 		}
 
 		if ((tMin > tyMax) || (tyMin > tMax))
@@ -52,13 +52,13 @@ namespace Lamp
 
 		if (invDir.z >= 0)
 		{
-			tzMin = (m_MinExtents.z - ray.origin.z) * invDir.z;
-			tzMax = (m_MaxExtents.z - ray.origin.z) * invDir.z;
+			tzMin = (m_WorldMin.z - ray.origin.z) * invDir.z;
+			tzMax = (m_WorldMax.z - ray.origin.z) * invDir.z;
 		}
 		else 
 		{
-			tzMin = (m_MaxExtents.z - ray.origin.z) * invDir.z;
-			tzMax = (m_MinExtents.z - ray.origin.z) * invDir.z;
+			tzMin = (m_WorldMax.z - ray.origin.z) * invDir.z;
+			tzMax = (m_WorldMin.z - ray.origin.z) * invDir.z;
 		}
 
 		if ((tMin > tzMax) || tzMin > tMax)

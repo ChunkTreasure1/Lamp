@@ -111,7 +111,8 @@ namespace Sandbox3D
 		{
 			if (m_pSelectedObject)
 			{
-				//Need to rework managers first
+				m_pSelectedObject->Destroy();
+				m_pSelectedObject = nullptr;
 			}
 		}
 	}

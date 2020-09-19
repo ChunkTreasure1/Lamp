@@ -597,6 +597,7 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>

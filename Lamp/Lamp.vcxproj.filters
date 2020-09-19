@@ -1495,6 +1495,7 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\Structs.h" />
+    <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
