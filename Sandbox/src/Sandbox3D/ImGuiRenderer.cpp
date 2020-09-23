@@ -2,15 +2,15 @@
 #include "Sandbox3D.h"
 
 #include <Lamp/Level/LevelSystem.h>
-#include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Objects/ObjectLayer.h>
 
 #include <Lamp/Objects/Entity/Base/Entity.h>
-#include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
 #include <ImGuizmo/ImGuizmo.h>
+
+#include <Lamp/Core/CoreLogger.h>
 
 namespace Sandbox3D
 {
@@ -514,6 +514,48 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
+	void Sandbox3D::UpdateLogTool()
+	{
+		if (!m_LogToolOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Log", &m_LogToolOpen);
+		
+		if (ImGui::Button("Clear"))
+		{
+			Lamp::Log::GetCoreLogger()->GetMessages().clear();
+		}
+
+		ImGui::Separator();
+
+		for (auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
+		{
+			if (msg.Level == Lamp::LogLevel::Trace)
+			{
+				ImGui::TextColored(ImVec4(212.f / 255.f, 212.f / 255.f, 212.f / 255.f, 1.f), msg.Msg.c_str());
+			}
+			else if (msg.Level == Lamp::LogLevel::Info)
+			{
+				ImGui::Text(msg.Msg.c_str());
+			}
+			else if (msg.Level == Lamp::LogLevel::Warn)
+			{
+				ImGui::TextColored(ImVec4(255.f / 255.f, 235.f / 255.f, 54.f / 255.f, 1.f), msg.Msg.c_str());
+			}
+			else if (msg.Level == Lamp::LogLevel::Error)
+			{
+				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
+			}
+			else if (msg.Level == Lamp::LogLevel::Critical)
+			{
+				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
+			}
+		}
+		ImGui::End();
+	}
+
 	void Sandbox3D::CreateDockspace()
 	{
 		static bool opt_fullscreen_persistant = true;
@@ -580,6 +622,7 @@ namespace Sandbox3D
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
+				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 
 				ImGui::EndMenu();
 			}

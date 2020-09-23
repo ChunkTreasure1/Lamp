@@ -9,14 +9,19 @@ namespace Lamp
 	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
 		: m_pWindowHandle(windowHandle)
 	{
+#ifdef LP_ENABLE_ASSERT
 		LP_CORE_ASSERT(windowHandle, "Window handle is null!");
+#endif
 	}
 
 	void OpenGLContext::Initialize()
 	{
 		glfwMakeContextCurrent(m_pWindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+#ifdef LP_ENABLE_ASSERTS
 		LP_CORE_ASSERT(status, "Failed to initialize Glad!");
+#endif
 
 		LP_CORE_INFO("OpenGL Info:");
 		LP_CORE_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
@@ -30,7 +35,7 @@ namespace Lamp
 		glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
 		glGetIntegerv(GL_MINOR_VERSION, &versionMinor);
 
-		LP_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5), "Lamp requires minimun OpenGL 4.5!");
+		LP_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5), "Lamp requires minimum OpenGL 4.5!");
 #endif
 	}
 

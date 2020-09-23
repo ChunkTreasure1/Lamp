@@ -64,6 +64,7 @@ namespace Sandbox3D
 		UpdateLayerView();
 		UpdateAddComponent();
 		UpdateCreateTool();
+		UpdateLogTool();
 	}
 
 	void Sandbox3D::OnEvent(Lamp::Event& e)

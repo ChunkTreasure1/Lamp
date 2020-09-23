@@ -147,6 +147,7 @@
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
+    <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
     <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
     <ClInclude Include="src\Lamp\Core\Game.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />

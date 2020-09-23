@@ -3,6 +3,7 @@
 #include "Lamp/Core/EntryPoint.h"
 
 #include "GameLauncher/GameLauncher.h"
+#define LP_CLIENT
 
 class GameApp : public Lamp::Application
 {

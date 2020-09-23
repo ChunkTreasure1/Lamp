@@ -42,6 +42,7 @@ namespace Sandbox3D
 		void UpdateLayerView();
 		void UpdateAddComponent();
 		void UpdateCreateTool();
+		void UpdateLogTool();
 
 	private:
 		Scope<Game> m_pGame;
@@ -89,6 +90,9 @@ namespace Sandbox3D
 
 		//Create
 		bool m_CreateToolOpen = true;
+
+		//Logginh
+		bool m_LogToolOpen = false;
 		//--------------------------------------
 	};
 }
