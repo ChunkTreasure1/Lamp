@@ -25,7 +25,7 @@ namespace Lamp
 		bool OnPositionChanged(EntityPositionChangedEvent& e);
 
 	public:
-		static Ref<EntityComponent> Create() { return std::make_shared<AudioListenerComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<AudioListenerComponent>(); }
 		static std::string GetFactoryName() { return "AudioListenerComponent"; }
 
 	private:

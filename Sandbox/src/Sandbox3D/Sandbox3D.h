@@ -72,11 +72,11 @@ namespace Sandbox3D
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
 		glm::vec2 m_WindowSize = glm::vec2(0, 0);
-		std::shared_ptr<Lamp::Shader> m_pShader;
+		Ref<Lamp::Shader> m_pShader;
 
 		//Model importer
 		bool m_ModelImporterOpen = false;
-		std::shared_ptr<Lamp::Model> m_pModelToImport;
+		Ref<Lamp::Model> m_pModelToImport;
 
 		//Layers
 		bool m_LayerViewOpen = true;

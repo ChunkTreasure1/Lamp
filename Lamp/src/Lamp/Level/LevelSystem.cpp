@@ -26,7 +26,7 @@ namespace Lamp
 		file.parse<0>(&buffer[0]);
 		pRootNode = file.first_node("Level");
 
-		pLevel = std::make_shared<Level>(pRootNode->first_attribute("name")->value());
+		pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value());
 		ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
 		PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
 

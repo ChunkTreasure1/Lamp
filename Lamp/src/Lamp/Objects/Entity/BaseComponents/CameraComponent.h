@@ -18,7 +18,7 @@ namespace Lamp
 		CameraComponent()
 			: EntityComponent("CameraComponent")
 		{
-			m_PerspectiveCamera = std::make_shared<PerspectiveCamera>(60.f, 0.1f, 100.f);
+			m_PerspectiveCamera = CreateRef<PerspectiveCamera>(60.f, 0.1f, 100.f);
 		}
 		~CameraComponent() {}
 
@@ -35,7 +35,7 @@ namespace Lamp
 		bool OnUpdate(AppUpdateEvent& e);
 
 	public:
-		static Ref<EntityComponent> Create() { return std::make_shared<CameraComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }
 		static std::string GetFactoryName() { return "CameraComponent"; }
 
 	private:

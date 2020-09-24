@@ -11,7 +11,7 @@ namespace Sandbox3D
 		SandboxController()
 			: m_Listener(0)
 		{
-			m_CameraController = std::make_shared<Lamp::PerspectiveCameraController>(60.f, 0.1f, 100.f);
+			m_CameraController = CreateRef<Lamp::PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		}
 
 		//Getting

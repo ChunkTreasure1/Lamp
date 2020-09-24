@@ -17,7 +17,7 @@ namespace Lamp
 		switch (s_API)
 		{
 			case RendererAPI::API::None: LP_CORE_ERROR("None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_unique<OpenGLRendererAPI>();
+			case RendererAPI::API::OpenGL: return CreateScope<OpenGLRendererAPI>();
 		}
 
 		return nullptr;

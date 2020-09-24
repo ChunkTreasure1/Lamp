@@ -34,7 +34,7 @@ namespace Lamp
 		void Stop();
 
 	public:
-		static Ref<EntityComponent> Create() { return std::make_shared<AudioComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<AudioComponent>(); }
 		static std::string GetFactoryName() { return "AudioComponent"; }
 
 	private:

@@ -15,6 +15,6 @@ namespace Lamp
 		virtual inline const uint32_t GetDepthAttachment() const = 0;
 
 	public:
-		static std::shared_ptr<FrameBuffer> Create(const uint32_t width, const uint32_t height);
+		static Ref<FrameBuffer> Create(const uint32_t width, const uint32_t height);
 	};
 }

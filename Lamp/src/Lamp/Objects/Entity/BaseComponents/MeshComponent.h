@@ -37,7 +37,7 @@ namespace Lamp
 		bool OnUpdate(AppUpdateEvent& e);
 
 	public:
-		static Ref<EntityComponent> Create() { return std::make_shared<MeshComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<MeshComponent>(); }
 		static std::string GetFactoryName() { return "MeshComponent"; }
 
 	private:

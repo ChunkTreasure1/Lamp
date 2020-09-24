@@ -22,8 +22,8 @@ namespace Lamp
 	public:
 		Entity()
 		{
-			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(std::make_shared<BoundingSphere>(m_Position, 1.f));
+			m_PhysicalEntity = CreateRef<PhysicalEntity>();
+			m_PhysicalEntity->SetCollider(CreateRef<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Entity";
 		}
 		~Entity() {}
@@ -42,7 +42,7 @@ namespace Lamp
 				return std::dynamic_pointer_cast<T>(it->second);
 			}
 
-			return std::shared_ptr<T>(nullptr);
+			return Ref<T>(nullptr);
 		}
 
 		template<typename T, typename... TArgs>

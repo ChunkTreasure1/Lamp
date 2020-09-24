@@ -26,8 +26,8 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
-		m_SandboxController = std::make_shared<SandboxController>();
-		m_pGame = std::make_unique<Game>();	
+		m_SandboxController = CreateRef<SandboxController>();
+		m_pGame = CreateScope<Game>();	
 		m_pGame->OnStart();
 	}
 

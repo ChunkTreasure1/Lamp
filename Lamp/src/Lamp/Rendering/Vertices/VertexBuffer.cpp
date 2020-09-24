@@ -10,7 +10,7 @@ namespace Lamp
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(pVertices, size);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(pVertices, size);
 		}
 
 		return nullptr;
@@ -20,7 +20,7 @@ namespace Lamp
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(size);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(size);
 		}
 
 		return nullptr;
@@ -30,7 +30,7 @@ namespace Lamp
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(vertices, size);
 		}
 
 		return nullptr;
@@ -41,7 +41,7 @@ namespace Lamp
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLIndexBuffer>(pIndices, size);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLIndexBuffer>(pIndices, size);
 		}
 
 		return nullptr;
@@ -51,7 +51,7 @@ namespace Lamp
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return std::make_shared<OpenGLIndexBuffer>(pIndices, count);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLIndexBuffer>(pIndices, count);
 		}
 
 		return nullptr;

@@ -62,7 +62,7 @@ namespace Lamp
 
 	void AudioEngine::Initialize()
 	{
-		s_Instance = std::make_shared<AudioEngine>();
+		s_Instance = CreateRef<AudioEngine>();
 		g_AudioImplementation = new AudioImplementation();
 
 		s_Instance->LoadBanksFromDefault();

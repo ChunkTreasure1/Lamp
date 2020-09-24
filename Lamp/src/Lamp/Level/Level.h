@@ -16,10 +16,10 @@ namespace Lamp
 		Level(const std::string& name)
 			: m_Name(name)
 		{
-			m_ObjectLayerManager = std::make_shared<ObjectLayerManager>();
-			m_BrushManager = std::make_shared<BrushManager>();
-			m_EntityManager = std::make_shared<EntityManager>();
-			m_PhysicsEngine = std::make_shared<PhysicsEngine>();
+			m_ObjectLayerManager = CreateRef<ObjectLayerManager>();
+			m_BrushManager = CreateRef<BrushManager>();
+			m_EntityManager = CreateRef<EntityManager>();
+			m_PhysicsEngine = CreateRef<PhysicsEngine>();
 		}
 
 		~Level()

@@ -25,7 +25,7 @@ namespace Lamp
 	//private:
 	//	uint32_t m_RendererID;
 	//	uint32_t m_NumAttributes = 0;
-	//	std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
-	//	std::shared_ptr<IndexBuffer> m_pIndexBuffer;
+	//	std::vector<Ref<VertexBuffer>> m_VertexBuffers;
+	//	Ref<IndexBuffer> m_pIndexBuffer;
 	};
 }

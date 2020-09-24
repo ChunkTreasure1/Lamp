@@ -12,7 +12,7 @@ namespace Lamp
 		void Bind();
 		void Unbind();
 
-		static std::shared_ptr<ShadowMap> Create(const uint32_t width, const uint32_t height);
+		static Ref<ShadowMap> Create(const uint32_t width, const uint32_t height);
 
 	private:
 		uint32_t m_RendererID;

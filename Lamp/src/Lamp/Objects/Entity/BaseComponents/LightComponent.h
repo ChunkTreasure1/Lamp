@@ -55,7 +55,7 @@ namespace Lamp
 		bool OnUpdate(AppUpdateEvent& e);
 
 	public:
-		static Ref<EntityComponent> Create() { return std::make_shared<LightComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<LightComponent>(); }
 		static std::string GetFactoryName() { return "LightComponent"; }
 
 	private:

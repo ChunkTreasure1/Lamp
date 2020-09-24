@@ -10,7 +10,7 @@ namespace Lamp
 	Scope<Window> Window::Create(const WindowProps& props)
 	{
 #ifdef LP_PLATFORM_WINDOWS
-		return std::make_unique<WindowsWindow>(props);
+		return CreateScope<WindowsWindow>(props);
 #endif
 	}
 }

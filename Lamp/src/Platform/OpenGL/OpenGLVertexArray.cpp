@@ -62,7 +62,7 @@ namespace Lamp
 		m_VertexBuffers.push_back(pVertexBuffer);
 	}
 
-	void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& pIndexBuffer)
+	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& pIndexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		pIndexBuffer->Bind();

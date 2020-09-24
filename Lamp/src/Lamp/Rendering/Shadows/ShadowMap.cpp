@@ -40,8 +40,8 @@ namespace Lamp
 	{
 	}
 
-	std::shared_ptr<ShadowMap> ShadowMap::Create(const uint32_t width, const uint32_t height)
+	Ref<ShadowMap> ShadowMap::Create(const uint32_t width, const uint32_t height)
 	{
-		return std::make_shared<ShadowMap>(width, height);
+		return CreateRef<ShadowMap>(width, height);
 	}
 }

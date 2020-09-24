@@ -7,7 +7,7 @@ namespace GameLauncher
 {
 	GameLauncher::GameLauncher()
 	{
-		m_pGame = std::make_unique<Game>();
+		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 	}
 

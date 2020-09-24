@@ -8,9 +8,9 @@ namespace Sandbox2D
 	Sandbox2D::Sandbox2D()
 		: m_SelectedFile("")
 	{
-		m_CameraController = std::make_shared<Lamp::OrthographicCameraController>((float)Lamp::Application::Get().GetWindow().GetWidth() / (float)Lamp::Application::Get().GetWindow().GetHeight());
+		m_CameraController = CreateRef<Lamp::OrthographicCameraController>((float)Lamp::Application::Get().GetWindow().GetWidth() / (float)Lamp::Application::Get().GetWindow().GetHeight());
 		m_CameraController->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-		m_pGame = std::make_unique<Game>();
+		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 	}
 

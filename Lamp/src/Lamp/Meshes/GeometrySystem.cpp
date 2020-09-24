@@ -55,7 +55,7 @@ namespace Lamp
 		boundingBox.Max = glm::vec3(xMax, yMax, zMax);
 		boundingBox.Min = glm::vec3(xMin, yMin, zMin);
 
-		Ref<Model> model = std::make_shared<Model>(meshes, mat, t, boundingBox);
+		Ref<Model> model = CreateRef<Model>(meshes, mat, t, boundingBox);
 
 		return model;
 	}
@@ -117,7 +117,7 @@ namespace Lamp
 					indices.push_back(indice);
 				}
 
-				meshes.push_back(std::make_shared<Mesh>(vertices, indices, matId));
+				meshes.push_back(CreateRef<Mesh>(vertices, indices, matId));
 			}
 		}
 
@@ -172,7 +172,7 @@ namespace Lamp
 			}
 		}
 
-		return std::make_shared<Model>(meshes, mat, name, boundingBox, path);
+		return CreateRef<Model>(meshes, mat, name, boundingBox, path);
 	}
 
 	bool GeometrySystem::SaveToPath(Ref<Model>& model, const std::string& path)
@@ -341,7 +341,7 @@ namespace Lamp
 			}
 		}
 
-		return std::make_shared<Mesh>(vertices, indices, pMesh->mMaterialIndex);
+		return CreateRef<Mesh>(vertices, indices, pMesh->mMaterialIndex);
 	}
 
 	bool GeometrySystem::GetValue(char* val, glm::vec2& var)

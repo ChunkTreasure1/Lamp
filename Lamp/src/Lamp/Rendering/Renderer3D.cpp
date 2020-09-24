@@ -41,10 +41,19 @@ namespace Lamp
 		Ref<Shader> SkyboxShader;
 		////////////////
 
+		/////Grid/////
+		Ref<Shader> GridShader;
+		//////////////
+
 		Renderer3DStorage()
 			: LineMaterial(Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl"), 0),
 			Camera(nullptr)
 		{}
+
+		~Renderer3DStorage()
+		{
+			delete[] LineVertexBufferBase;
+		}
 
 		Ref<CameraBase> Camera;
 		Ref<VertexArray> SphereArray;
@@ -71,6 +80,7 @@ namespace Lamp
 		};
 		s_pData->CubeMap = TextureCube::Create(paths);
 		s_pData->SkyboxShader = Shader::Create("engine/shaders/3d/skyboxShader_vs.glsl", "engine/shaders/3d/skyboxShader_fs.glsl");
+		s_pData->GridShader = Shader::Create("engine/shaders/3d/gridShader_vs.glsl", "engine/shaders/3d/gridShader_fs.glsl");
 
 		///////Line///////
 		s_pData->LineVertexArray = VertexArray::Create();
@@ -165,6 +175,9 @@ namespace Lamp
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
+		s_pData->GridShader->Bind();
+
+		s_pData->GridShader->Unbind();
 		m_pFrameBuffer->Unbind();
 	}
 

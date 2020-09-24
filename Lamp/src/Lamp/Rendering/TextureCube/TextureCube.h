@@ -17,7 +17,7 @@ namespace Lamp
 		inline const uint32_t GetID() const { return m_RendererID; }
 
 	public:
-		static Ref<TextureCube> Create(const std::vector<std::string>& paths) { return std::make_shared<TextureCube>(paths); }
+		static Ref<TextureCube> Create(const std::vector<std::string>& paths) { return CreateRef<TextureCube>(paths); }
 	
 		uint32_t m_RendererID;
 		std::vector<std::string> m_Paths;

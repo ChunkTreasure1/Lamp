@@ -18,8 +18,8 @@ namespace Lamp
 		Brush(Ref<Model> model)
 			: m_Model(model)
 		{
-			m_PhysicalEntity = std::make_shared<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(std::make_shared<AABB>(m_Model->GetBoundingBox(), m_Position));
+			m_PhysicalEntity = CreateRef<PhysicalEntity>();
+			m_PhysicalEntity->SetCollider(CreateRef<AABB>(m_Model->GetBoundingBox(), m_Position));
 			m_Name = "Brush";
 		}
 

@@ -3,12 +3,12 @@
 
 namespace Lamp
 {
-	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+	Ref<spdlog::logger> Log::s_ClientLogger;
 	
 #ifdef LP_CLIENT
-	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
+	Ref<spdlog::logger> Log::s_CoreLogger;
 #else
-	std::shared_ptr<CoreLogger> Log::s_CoreLogger;
+	Ref<CoreLogger> Log::s_CoreLogger;
 #endif
 
 	void Log::Initialize()
@@ -22,7 +22,7 @@ namespace Lamp
 		s_CoreLogger = spdlog::stdout_color_mt("LAMP");
 		s_CoreLogger->set_level(spdlog::level::trace);
 #else
-		s_CoreLogger = std::make_shared<CoreLogger>();
+		s_CoreLogger = CreateRef<CoreLogger>();
 #endif
 	}
 }

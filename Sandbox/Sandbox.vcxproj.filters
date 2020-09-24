@@ -61,5 +61,31 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
+    <None Include="engine\shaders\3d\lightShader_fs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\lightShader_vs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\lineShader_fs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\lineShader_vs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\shader_fs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\shader_vs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\skyboxShader_fs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\skyboxShader_vs.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
+    <None Include="engine\shaders\3d\gridShader_vs.glsl" />
+    <None Include="engine\shaders\3d\gridShader_fs.glsl" />
   </ItemGroup>
 </Project>

@@ -13,8 +13,8 @@ namespace Lamp
 		bb.Min = glm::vec3(-0.5f, -0.5f, -0.5f);
 		bb.Max = glm::vec3(0.5f, 0.5f, 0.5f);
 
-		m_PhysicalEntity = std::make_shared<PhysicalEntity>();
-		m_PhysicalEntity->SetCollider(std::make_shared<AABB>(bb, m_Position));
+		m_PhysicalEntity = CreateRef<PhysicalEntity>();
+		m_PhysicalEntity->SetCollider(CreateRef<AABB>(bb, m_Position));
 
 		m_Sprite = Texture2D::Create(spritePath);
 	}

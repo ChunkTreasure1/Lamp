@@ -51,7 +51,7 @@ namespace Lamp
 		inline void SetMass(float mass) { m_Mass = mass; }
 
 	public:
-		static Ref<EntityComponent> Create() { return std::make_shared<ConvexPolygonColliderComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<ConvexPolygonColliderComponent>(); }
 		static std::string GetFactoryName() { return "ConvexPolygonColliderComponent"; }
 
 	private:

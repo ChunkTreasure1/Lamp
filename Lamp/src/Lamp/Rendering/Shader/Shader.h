@@ -48,7 +48,7 @@ namespace Lamp
 		inline const ShaderType GetType() { return m_Type; }
 
 	public:
-		static std::shared_ptr<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
+		static Ref<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
 
 	protected:
 		ShaderType ShaderTypeFromString(const std::string& s);

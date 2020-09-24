@@ -1,8 +1,10 @@
 #pragma once
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
-
+#include "Core.h"
 #include "CoreLogger.h"
+
+#include <algorithm>
 
 namespace Lamp
 {
@@ -11,21 +13,21 @@ namespace Lamp
 	public:
 		static void Initialize();
 
-		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+		inline static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
 #ifdef LP_CLIENT
-		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+		inline static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
 #else
-		inline static std::shared_ptr<CoreLogger>& GetCoreLogger() { return s_CoreLogger; }
+		inline static Ref<CoreLogger>& GetCoreLogger() { return s_CoreLogger; }
 #endif
 
 	private:
-		static std::shared_ptr<spdlog::logger> s_ClientLogger;
+		static Ref<spdlog::logger> s_ClientLogger;
 
 #ifdef LP_CLIENT
-		static std::shared_ptr<spdlog::logger> s_CoreLogger;
+		static Ref<spdlog::logger> s_CoreLogger;
 #else
-		static std::shared_ptr<CoreLogger> s_CoreLogger;
+		static Ref<CoreLogger> s_CoreLogger;
 #endif
 	};
 
