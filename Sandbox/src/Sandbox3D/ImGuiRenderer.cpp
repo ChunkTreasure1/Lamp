@@ -516,6 +516,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLogTool()
 	{
+		static bool autoScroll = true;
+
 		if (!m_LogToolOpen)
 		{
 			return;
@@ -523,13 +525,27 @@ namespace Sandbox3D
 
 		ImGui::Begin("Log", &m_LogToolOpen);
 		
+		if (ImGui::BeginPopup("Options"))
+		{
+			ImGui::Checkbox("Auto-scroll", &autoScroll);
+			ImGui::EndPopup();
+		}
+
 		if (ImGui::Button("Clear"))
 		{
 			Lamp::Log::GetCoreLogger()->GetMessages().clear();
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Options"))
+		{
+			ImGui::OpenPopup("Options");
+		}
 
 		ImGui::Separator();
 
+		ImGui::BeginChild("text");
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 		for (auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
 		{
 			if (msg.Level == Lamp::LogLevel::Trace)
@@ -553,6 +569,13 @@ namespace Sandbox3D
 				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
 			}
 		}
+		ImGui::PopStyleVar();
+
+		if (autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+		{
+			ImGui::SetScrollHereY(1.f);
+		}
+		ImGui::EndChild();
 		ImGui::End();
 	}
 
