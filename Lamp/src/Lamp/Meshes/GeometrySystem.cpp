@@ -244,7 +244,24 @@ namespace Lamp
 		pMaterials->append_node(pMaterial);
 		////////////////
 
+		/////Bounding box//////
+		xml_node<>* pBB = doc.allocate_node(node_element, "BoundingBox");
+		
+		xml_node<>* pMax = doc.allocate_node(node_element, "Max");
+		char* pPos1 = doc.allocate_string(ToString(model->GetBoundingBox().Max).c_str());
+		pMax->append_attribute(doc.allocate_attribute("position", pPos1));
+
+		xml_node<>* pMin = doc.allocate_node(node_element, "Min");
+		char* pPos2 = doc.allocate_string(ToString(model->GetBoundingBox().Min).c_str());
+		pMin->append_attribute(doc.allocate_attribute("position", pPos2));
+
+		pBB->append_node(pMax);
+		pBB->append_node(pMin);
+		///////////////////////
+
 		pRoot->append_node(pMaterials);
+		pRoot->append_node(pBB);
+
 		doc.append_node(pRoot);
 
 		file << doc;

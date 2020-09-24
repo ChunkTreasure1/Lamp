@@ -18,8 +18,10 @@ namespace Lamp
 		static void Flush();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat);
-		static void DrawSkybox();
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
+
+		static void DrawSkybox();
+		static void DrawGrid();
 
 		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
 

@@ -48,6 +48,7 @@ namespace Sandbox3D
 		RenderGrid();
 
 		Lamp::Renderer3D::DrawSkybox();
+		//Lamp::Renderer3D::DrawGrid();
 		Lamp::Renderer3D::End();
 
 		return true;

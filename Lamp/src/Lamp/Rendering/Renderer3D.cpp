@@ -42,6 +42,7 @@ namespace Lamp
 		////////////////
 
 		/////Grid/////
+		Ref<VertexArray> GridVertexArray;
 		Ref<Shader> GridShader;
 		//////////////
 
@@ -148,6 +149,35 @@ namespace Lamp
 		s_pData->SkyBoxVertexArray->Unbind();
 		//////////////////
 
+		/////Grid/////
+		std::vector<float> gridPos =
+		{
+			-1, -1, 0,
+			 1, -1, 0,
+			 1,  1, 0,
+			-1, 1, 0,
+		};
+
+		std::vector<uint32_t> gridIndices =
+		{
+			0, 1, 3,
+			1, 2, 3
+		};
+		
+		s_pData->GridVertexArray = VertexArray::Create();
+		Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
+		buffer->SetBufferLayout
+		({
+			{ ElementType::Float3, "a_Position" }
+		});
+		s_pData->GridVertexArray->AddVertexBuffer(buffer);
+
+		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
+		s_pData->GridVertexArray->SetIndexBuffer(indexBuffer);
+
+		s_pData->GridVertexArray->Unbind();
+		//////////////
+
 		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 	}
 
@@ -177,7 +207,6 @@ namespace Lamp
 		Flush();
 		s_pData->GridShader->Bind();
 
-		s_pData->GridShader->Unbind();
 		m_pFrameBuffer->Unbind();
 	}
 
@@ -222,6 +251,18 @@ namespace Lamp
 
 		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, 0);
 		glDepthMask(GL_TRUE);
+	}
+
+	void Renderer3D::DrawGrid()
+	{
+		s_pData->GridShader->Bind();
+		s_pData->GridVertexArray->Bind();
+
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->Camera->GetViewMatrix()));
+		s_pData->GridShader->UploadMat4("u_View", viewMat);
+
+		s_pData->GridShader->UploadMat4("u_Projection", s_pData->Camera->GetProjectionMatrix());
+		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}
 
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
