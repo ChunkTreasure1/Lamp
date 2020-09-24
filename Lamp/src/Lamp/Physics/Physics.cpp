@@ -33,7 +33,7 @@ namespace Lamp
 		{
 			v1a = (mass1 * v1 + mass2 * v2) / (mass1 + mass2);
 
-			LP_INFO("Vel1: {0}", v1a);
+			LP_CORE_INFO("Vel1: {0}", v1a);
 		}
 
 		return v1a;

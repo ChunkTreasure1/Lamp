@@ -37,7 +37,7 @@ namespace Lamp
 		}
 
 
-		LP_INFO("Raycast Hit!");
+		LP_CORE_INFO("Raycast Hit!");
 		return IntersectData(true, glm::vec3(0.f));
 	}
 

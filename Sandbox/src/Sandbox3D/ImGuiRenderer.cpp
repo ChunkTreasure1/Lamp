@@ -511,6 +511,17 @@ namespace Sandbox3D
 			m_pSelectedObject = pEnt;
 		}
 
+		static bool brushListOpen = false;
+		if (ImGui::Button("Brush"))
+		{
+			brushListOpen = !brushListOpen;
+		}
+
+		if (brushListOpen)
+		{
+
+		}
+
 		ImGui::End();
 	}
 
