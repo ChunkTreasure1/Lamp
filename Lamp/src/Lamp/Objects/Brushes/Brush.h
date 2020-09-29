@@ -34,7 +34,7 @@ namespace Lamp
 		static Brush* Create(const std::string& path);
 
 	private:
-		bool OnRender();
+		bool OnRender(AppRenderEvent& e);
 
 	private:
 		Ref<Model> m_Model;

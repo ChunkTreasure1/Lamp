@@ -13,10 +13,8 @@ namespace Lamp
 
 	void Brush::OnEvent(Event& e)
 	{
-		if (e.GetEventType() == EventType::AppRender)
-		{
-			OnRender();
-		}
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Brush::OnRender));
 	}
 
 	void Brush::Destroy()
@@ -32,11 +30,11 @@ namespace Lamp
 		return BrushManager::Get()->Create(path);
 	}
 
-	bool Brush::OnRender()
+	bool Brush::OnRender(AppRenderEvent& e)
 	{
 		m_Model->Render();
 
-		if (g_pEnv->ShouldRenderBB)
+		if (g_pEnv->ShouldRenderBB && !e.GetPassInfo().IsShadowPass)
 		{
 			m_Model->RenderBoundingBox();
 		}

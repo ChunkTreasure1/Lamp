@@ -38,40 +38,58 @@ namespace Sandbox3D
 		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
+		{
+			//Shadow testing
+			Lamp::Renderer3D::GetShadowBuffer()->Bind();
+			Lamp::RenderCommand::ClearDepth();
 
-		//Shadow testing
-		Lamp::Renderer3D::GetShadowBuffer()->Bind();
-		Lamp::RenderCommand::ClearDepth();
+			//Creating the render pass info
+			Lamp::RenderPassInfo passInfo;
+			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passInfo.IsShadowPass = true;
 
-		Lamp::Renderer3D::Begin(m_SandboxController->GetCameraController()->GetCamera());
+			glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
+			glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 
-		Lamp::AppRenderEvent renderEvent;
-		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
-		OnEvent(renderEvent);
+			passInfo.ViewProjection = proj * view;
 
-		Lamp::Renderer3D::End();
-		Lamp::Renderer3D::GetShadowBuffer()->Unbind();
+			Lamp::Renderer3D::Begin(passInfo);
 
+			Lamp::AppRenderEvent renderEvent(passInfo);
+			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
+			OnEvent(renderEvent);
 
-		Lamp::RenderCommand::SetClearColor(m_ClearColor);
-		Lamp::RenderCommand::Clear();
+			Lamp::Renderer3D::End();
+			Lamp::Renderer3D::GetShadowBuffer()->Unbind();
+		}
 
-		Lamp::Renderer3D::GetFrameBuffer()->Bind();
-		Lamp::RenderCommand::Clear();
+		{
+			Lamp::RenderCommand::SetClearColor(m_ClearColor);
+			Lamp::RenderCommand::Clear();
 
-		Lamp::Renderer3D::Begin(m_SandboxController->GetCameraController()->GetCamera());
+			Lamp::Renderer3D::GetFrameBuffer()->Bind();
+			Lamp::RenderCommand::Clear();
 
-		glBindTexture(GL_TEXTURE_2D, Lamp::Renderer3D::GetShadowBuffer()->GetDepthAttachment());
+			//Creating the render pass info
+			Lamp::RenderPassInfo passInfo;
+			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passInfo.IsShadowPass = false;
+			passInfo.ViewProjection = m_SandboxController->GetCameraController()->GetCamera()->GetViewProjectionMatrix();
 
-		Lamp::AppRenderEvent renderEvent;
-		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
-		OnEvent(renderEvent);
+			Lamp::Renderer3D::Begin(passInfo);
 
-		RenderGrid();
+			glBindTexture(GL_TEXTURE_2D, Lamp::Renderer3D::GetShadowBuffer()->GetDepthAttachment());
 
-		Lamp::Renderer3D::DrawSkybox();
-		Lamp::Renderer3D::End();
-		Lamp::Renderer3D::GetFrameBuffer()->Unbind();
+			Lamp::AppRenderEvent renderEvent(passInfo);
+			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
+			OnEvent(renderEvent);
+
+			RenderGrid();
+
+			Lamp::Renderer3D::DrawSkybox();
+			Lamp::Renderer3D::End();
+			Lamp::Renderer3D::GetFrameBuffer()->Unbind();
+		}
 
 		return true;
 	}

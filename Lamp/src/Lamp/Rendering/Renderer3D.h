@@ -7,18 +7,21 @@
 
 namespace Lamp
 {
-	struct RenderpassInfo
+	struct RenderPassInfo
 	{
+		Ref<CameraBase> Camera;
 
+		glm::mat4 ViewProjection = glm::mat4(1.f);
+		bool IsShadowPass;
 	};
-
+	
 	class Renderer3D
 	{
 	public:
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const Ref<CameraBase>& camera);
+		static void Begin(const RenderPassInfo& passInfo);
 		static void End();
 		static void Flush();
 

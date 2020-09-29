@@ -28,7 +28,7 @@ namespace Lamp
 
 		m_Model->Render();
 
-		if (g_pEnv->ShouldRenderBB)
+		if (g_pEnv->ShouldRenderBB && !e.GetPassInfo().IsShadowPass)
 		{
 			m_Model->RenderBoundingBox();
 		}
