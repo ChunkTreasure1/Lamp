@@ -17,7 +17,7 @@ namespace GameLauncher
 		Lamp::RenderCommand::Clear();
 
 		//Improve
-		for (auto& entity : Lamp::EntityManager::Get()->GetEntities())
+		/*for (auto& entity : Lamp::EntityManager::Get()->GetEntities())
 		{
 			if (auto& comp = entity->GetComponent<Lamp::CameraComponent>())
 			{
@@ -37,7 +37,7 @@ namespace GameLauncher
 		OnEvent(e);
 
 		Lamp::Renderer3D::DrawSkybox();
-		Lamp::Renderer3D::End();
+		Lamp::Renderer3D::End();*/
 
 		return true;
 	}

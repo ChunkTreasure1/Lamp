@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec2 v_TexCoord;
 in vec3 v_Normal;
 in vec3 v_FragPos;
+in vec4 v_FragPosLight;
 
 struct Material
 {
@@ -39,6 +40,7 @@ uniform Material u_Material;
 uniform DirectionalLight u_DirectionalLight;
 uniform PointLight u_PointLight[12];
 uniform int u_LightCount;
+uniform sampler2D u_ShadowMap;
 
 vec3 CalculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
@@ -77,6 +79,17 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	return (ambient + diffuse + specular);
 }
 
+float CalculateShadow(vec4 fragPosLight)
+{
+	vec3 projCoords = fragPosLight.xyz / fragPosLight.w;
+	projCoords = projCoords * 0.5 + 0.5;
+
+	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	return currentDepth > closestDepth ? 1.0 : 0.0;
+}
+
 void main()
 {
 	vec3 norm = normalize(v_Normal);
@@ -90,6 +103,9 @@ void main()
 	}
 
 	result += CalculateDirLight(u_DirectionalLight, norm, viewDir);
+
+	float shadow = CalculateShadow(v_FragPosLight);
+	vec3 lighting = result * (1.0 - shadow);
 
 	FragColor = vec4(result, 1.0);
 }

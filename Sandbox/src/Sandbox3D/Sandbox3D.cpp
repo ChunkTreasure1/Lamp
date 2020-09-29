@@ -38,6 +38,10 @@ namespace Sandbox3D
 		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
+		glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
+		glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 lightViewProj = proj * view;
+
 		{
 			//Shadow testing
 			Lamp::Renderer3D::GetShadowBuffer()->Bind();
@@ -48,10 +52,7 @@ namespace Sandbox3D
 			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passInfo.IsShadowPass = true;
 
-			glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
-			glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
-
-			passInfo.ViewProjection = proj * view;
+			passInfo.ViewProjection = lightViewProj;
 
 			Lamp::Renderer3D::Begin(passInfo);
 
@@ -75,10 +76,9 @@ namespace Sandbox3D
 			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passInfo.IsShadowPass = false;
 			passInfo.ViewProjection = m_SandboxController->GetCameraController()->GetCamera()->GetViewProjectionMatrix();
+			passInfo.LightViewProjection = lightViewProj;
 
 			Lamp::Renderer3D::Begin(passInfo);
-
-			glBindTexture(GL_TEXTURE_2D, Lamp::Renderer3D::GetShadowBuffer()->GetDepthAttachment());
 
 			Lamp::AppRenderEvent renderEvent(passInfo);
 			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);

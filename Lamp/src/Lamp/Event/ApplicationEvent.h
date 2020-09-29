@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Lamp/Core/Time/Timestep.h"
+#include "Lamp/Rendering/Renderer3D.h"
 
 namespace Lamp
 {

@@ -55,7 +55,7 @@ namespace Lamp
 			delete[] LineVertexBufferBase;
 		}
 
-		RenderPassInfo& CurrentRenderPass;
+		RenderPassInfo CurrentRenderPass;
 		Ref<VertexArray> SphereArray;
 
 		Material LineMaterial;
@@ -63,6 +63,7 @@ namespace Lamp
 	};
 
 	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
+	Ref<FrameBuffer> Renderer3D::m_pShadowBuffer = nullptr;
 	static Renderer3DStorage* s_pData;
 
 	void Renderer3D::Initialize()
@@ -220,7 +221,11 @@ namespace Lamp
 
 		if (!s_pData->CurrentRenderPass.IsShadowPass)
 		{
+			glBindTextureUnit(2, m_pShadowBuffer->GetDepthAttachment());
+
+			mat.GetShader()->UploadInt("u_ShadowMap", 2);
 			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
+			mat.GetShader()->UploadMat4("u_LightViewProjection", s_pData->CurrentRenderPass.LightViewProjection);
 		}
 		
 		glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
