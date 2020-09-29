@@ -13,10 +13,10 @@ namespace Lamp
 		if (m_pShader->GetType() == ShaderType::Illum)
 		{
 			/////Lighting/////
-			m_pShader->UploadFloat3("u_DirectionalLight.ambient", { 0.2f, 0.2f, 0.2f });
-			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", { 1.f, 1.f, 1.f });
-			m_pShader->UploadFloat3("u_DirectionalLight.specular", { 0.1f, 0.1f, 0.1f });
-			m_pShader->UploadFloat3("u_DirectionalLight.direction", { 1.f, -1.f, 0.5f });
+			m_pShader->UploadFloat3("u_DirectionalLight.ambient", g_pEnv->DirLightInfo.Ambient);
+			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLightInfo.Diffuse);
+			m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLightInfo.Specular);
+			m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLightInfo.Direction);
 			
 			int i = 0;
 			//Point lights
@@ -24,6 +24,7 @@ namespace Lamp
 			{
 				if (i > 11)
 				{
+					LP_CORE_WARN("There are more lights in scene than able to render! Will skip some lights.");
 					break;
 				}
 

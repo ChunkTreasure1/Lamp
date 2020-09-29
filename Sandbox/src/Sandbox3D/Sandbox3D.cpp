@@ -29,6 +29,8 @@ namespace Sandbox3D
 		m_SandboxController = CreateRef<SandboxController>();
 		m_pGame = CreateScope<Game>();	
 		m_pGame->OnStart();
+
+		g_pEnv->ShouldRenderBB = true;
 	}
 
 	bool Sandbox3D::OnUpdate(Lamp::AppUpdateEvent& e)
@@ -36,10 +38,30 @@ namespace Sandbox3D
 		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
+
+		//Shadow testing
+		Lamp::Renderer3D::GetShadowBuffer()->Bind();
+		Lamp::RenderCommand::ClearDepth();
+
+		Lamp::Renderer3D::Begin(m_SandboxController->GetCameraController()->GetCamera());
+
+		Lamp::AppRenderEvent renderEvent;
+		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
+		OnEvent(renderEvent);
+
+		Lamp::Renderer3D::End();
+		Lamp::Renderer3D::GetShadowBuffer()->Unbind();
+
+
 		Lamp::RenderCommand::SetClearColor(m_ClearColor);
 		Lamp::RenderCommand::Clear();
 
+		Lamp::Renderer3D::GetFrameBuffer()->Bind();
+		Lamp::RenderCommand::Clear();
+
 		Lamp::Renderer3D::Begin(m_SandboxController->GetCameraController()->GetCamera());
+
+		glBindTexture(GL_TEXTURE_2D, Lamp::Renderer3D::GetShadowBuffer()->GetDepthAttachment());
 
 		Lamp::AppRenderEvent renderEvent;
 		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
@@ -48,8 +70,8 @@ namespace Sandbox3D
 		RenderGrid();
 
 		Lamp::Renderer3D::DrawSkybox();
-		//Lamp::Renderer3D::DrawGrid();
 		Lamp::Renderer3D::End();
+		Lamp::Renderer3D::GetFrameBuffer()->Unbind();
 
 		return true;
 	}

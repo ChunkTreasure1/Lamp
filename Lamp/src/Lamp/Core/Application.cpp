@@ -10,6 +10,8 @@
 
 #include "CoreLogger.h"
 
+GlobalEnvironment* g_pEnv;
+
 namespace Lamp
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -19,6 +21,7 @@ namespace Lamp
 	Application::Application()
 	{
 		s_pInstance = this;
+		g_pEnv = new GlobalEnvironment();
 
 		//Create the window
 		m_pWindow = Window::Create();
@@ -36,6 +39,8 @@ namespace Lamp
 	{
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
+
+		delete g_pEnv;
 	}
 
 	void Application::Run()

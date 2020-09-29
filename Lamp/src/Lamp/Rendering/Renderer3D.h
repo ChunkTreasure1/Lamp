@@ -7,13 +7,18 @@
 
 namespace Lamp
 {
+	struct RenderpassInfo
+	{
+
+	};
+
 	class Renderer3D
 	{
 	public:
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const Ref<CameraBase>& camera, bool isMain = true);
+		static void Begin(const Ref<CameraBase>& camera);
 		static void End();
 		static void Flush();
 
@@ -24,9 +29,11 @@ namespace Lamp
 		static void DrawGrid();
 
 		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
+		static Ref<FrameBuffer>& GetShadowBuffer() { return m_pShadowBuffer; }
 
 	private:
 		static Ref<FrameBuffer> m_pFrameBuffer;
+		static Ref<FrameBuffer> m_pShadowBuffer;
 
 		static void StartNewBatch();
 		static void ResetBatchData();

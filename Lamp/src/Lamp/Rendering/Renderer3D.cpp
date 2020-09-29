@@ -179,6 +179,7 @@ namespace Lamp
 		//////////////
 
 		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024);
 	}
 
 	void Renderer3D::Shutdown()
@@ -186,14 +187,8 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer3D::Begin(const Ref<CameraBase>& camera, bool isMain)
+	void Renderer3D::Begin(const Ref<CameraBase>& camera)
 	{
-		if (isMain)
-		{
-			m_pFrameBuffer->Bind();
-			RenderCommand::Clear();
-		}
-
 		s_pData->Camera = camera;
 
 		ResetBatchData();
@@ -205,9 +200,6 @@ namespace Lamp
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
-		s_pData->GridShader->Bind();
-
-		m_pFrameBuffer->Unbind();
 	}
 
 	void Renderer3D::Flush()

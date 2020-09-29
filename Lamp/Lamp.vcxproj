@@ -150,6 +150,7 @@
     <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
     <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
     <ClInclude Include="src\Lamp\Core\Game.h" />
+    <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Core\Math.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
@@ -223,7 +224,6 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
-    <ClInclude Include="src\Lamp\Utility\Structs.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />

@@ -9,7 +9,6 @@
 #include "Material.h"
 #include "Lamp/Event/Event.h"
 #include "Lamp/Event/ApplicationEvent.h"
-#include "Lamp/Utility/Structs.h"
 
 namespace Lamp
 {

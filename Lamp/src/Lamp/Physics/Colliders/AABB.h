@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Collider.h"
-#include "Lamp/Utility/Structs.h"
 
 namespace Lamp
 {
