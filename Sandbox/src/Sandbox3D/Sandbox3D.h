@@ -25,8 +25,6 @@ namespace Sandbox3D
 		virtual void OnImGuiRender(Lamp::Timestep ts) override;
 		virtual void OnEvent(Lamp::Event& e) override;
 
-		virtual void OnItemClicked(Lamp::File& file) override;
-
 	private:
 		void CreateDockspace();
 		void GetInput();

@@ -5,6 +5,7 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Level/LevelSystem.h"
+#include "Lamp/Event/ApplicationEvent.h"
 #include <ShObjIdl.h>
 #include <locale>
 #include <codecvt>
@@ -28,7 +29,7 @@ namespace Lamp
 	}
 
 	//Gets the files in a specified folder
-	std::vector<std::string> FileSystem::GetFiles(std::string & path)
+	std::vector<std::string> FileSystem::GetFiles(std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -58,8 +59,21 @@ namespace Lamp
 		return files;
 	}
 
+	std::vector<std::string> FileSystem::GetBrushFiles(std::string& path)
+	{
+		std::vector<std::string> files;
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			std::string s = entry.path().string();
+			if (s.find(".lgf") != std::string::npos)
+			{
+				files.push_back(s);
+			}
+		}
+	}
+
 	//Gets the folders in a specified folder
-	std::vector<std::string> FileSystem::GetFolders(std::string & path)
+	std::vector<std::string> FileSystem::GetFolders(std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
@@ -93,7 +107,7 @@ namespace Lamp
 					hr = pFileOpen->GetResult(&pItem);
 					if (SUCCEEDED(hr))
 					{
-						
+
 						hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &path);
 						pItem->Release();
 					}
@@ -106,7 +120,7 @@ namespace Lamp
 		{
 			std::wstringstream ss;
 			ss << path;
-		
+
 			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
 
 			return converter.to_bytes(ss.str());
@@ -157,7 +171,7 @@ namespace Lamp
 	}
 
 	//Returns whether or not a folder contains folders
-	bool FileSystem::ContainsFolder(std::string & path)
+	bool FileSystem::ContainsFolder(std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -205,7 +219,8 @@ namespace Lamp
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, p.c_str());
 					if (ImGui::IsItemClicked())
 					{
-						Application::Get().OnItemClicked(File(files[j]));
+						AppItemClickedEvent event(files[j]);
+						Application::Get().OnEvent(event);
 					}
 				}
 
@@ -233,7 +248,7 @@ namespace Lamp
 
 			for (int j = 0; j < files.size(); j++)
 			{
-				//startId++;
+				startID++;
 				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 				std::string p = files[j];
@@ -256,6 +271,41 @@ namespace Lamp
 			}
 
 			PrintLevelFiles(GetFolders(folders[i]), startID);
+		}
+	}
+
+	void FileSystem::PrintBrushes(std::vector<std::string>& files, int startID)
+	{
+		if (files.size() == 0)
+		{
+			return;
+		}
+
+		for (int i = 0; i < files.size(); i++)
+		{
+			std::string s = files[i];
+			std::size_t pos = s.find_last_of("/\\");
+			s = s.substr(pos + 1);
+
+			std::vector<std::string> files = Lamp::FileSystem::GetBrushFiles(files[i]);
+
+			for (int j = 0; j < files.size(); j++)
+			{
+				startID++;
+				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+				std::string p = files[j];
+				std::size_t posp = p.find_last_of("/\\");
+				p = p.substr(posp + 1);
+
+				ImGui::TreeNodeEx((void*)(intptr_t)startID, nodeFlags, p.c_str());
+				if (ImGui::IsItemClicked())
+				{
+					AppItemClickedEvent event(File(files[j]));
+					Application::Get().OnEvent()
+				}
+			}
+			PrintBrushes(files, startID);
 		}
 	}
 }

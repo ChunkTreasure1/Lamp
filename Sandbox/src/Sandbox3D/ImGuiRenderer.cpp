@@ -502,24 +502,45 @@ namespace Sandbox3D
 		}
 
 		ImGui::Begin("Create", &m_CreateToolOpen);
-		
-		if (ImGui::Button("Entity"))
-		{
-			Lamp::Entity* pEnt = Lamp::EntityManager::Get()->Create();
-			pEnt->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-
-			m_pSelectedObject = pEnt;
-		}
 
 		static bool brushListOpen = false;
-		if (ImGui::Button("Brush"))
+		
+		if (!brushListOpen)
 		{
-			brushListOpen = !brushListOpen;
+			if (ImGui::Button("Entity"))
+			{
+				Lamp::Entity* pEnt = Lamp::EntityManager::Get()->Create();
+				pEnt->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+
+				m_pSelectedObject = pEnt;
+			}
+
+			if (ImGui::Button("Brush"))
+			{
+				brushListOpen = !brushListOpen;
+			}
 		}
 
 		if (brushListOpen)
 		{
+			if (ImGui::Button("Back##0"))
+			{
+				brushListOpen = false;
+			}
 
+			ImGui::SameLine();
+
+			if (ImGui::Button("Create"))
+			{
+			}
+
+			if (ImGui::BeginChild("Brushes"))
+			{
+				std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
+				Lamp::FileSystem::PrintBrushes(folders);
+
+				ImGui::EndChild();
+			}
 		}
 
 		ImGui::End();

@@ -98,4 +98,17 @@ namespace Lamp
 		std::string m_Message;
 		std::string m_Severity;
 	};
+
+	class AppItemClickedEvent : public Event
+	{
+	public:
+		AppItemClickedEvent(const File& file)
+			: m_File(file)
+		{}
+
+		const File& GetFile() { return m_File; }
+
+	private:
+		File m_File;
+	};
 }
