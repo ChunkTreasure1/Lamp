@@ -14,6 +14,11 @@ struct GlobalEnvironment
 
 	} DirLightInfo;
 
+	struct LevelEnvironment
+	{
+		glm::vec3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
+	} GlobalLevelEnvironment;
+
 	bool ShouldRenderBB = false;
 };
 

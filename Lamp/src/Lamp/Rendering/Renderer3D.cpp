@@ -244,7 +244,7 @@ namespace Lamp
 		s_pData->SkyBoxVertexArray->Bind();
 
 		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.ViewProjection);
+		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
 
 		if (!s_pData->CurrentRenderPass.IsShadowPass)
 		{

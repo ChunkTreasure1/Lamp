@@ -87,5 +87,7 @@
     </None>
     <None Include="engine\shaders\3d\gridShader_vs.glsl" />
     <None Include="engine\shaders\3d\gridShader_fs.glsl" />
+    <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl" />
+    <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl" />
   </ItemGroup>
 </Project>

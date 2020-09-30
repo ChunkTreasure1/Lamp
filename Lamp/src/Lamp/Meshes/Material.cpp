@@ -17,7 +17,10 @@ namespace Lamp
 			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLightInfo.Diffuse);
 			m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLightInfo.Specular);
 			m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLightInfo.Direction);
+			m_pShader->UploadFloat3("u_DirectionalLight.position", g_pEnv->DirLightInfo.Position);
 			
+			m_pShader->UploadFloat3("u_Environment.globalAmbient", g_pEnv->GlobalLevelEnvironment.GlobalAmbient);
+
 			int i = 0;
 			//Point lights
 			for (auto& ent : EntityManager::Get()->GetEntities())

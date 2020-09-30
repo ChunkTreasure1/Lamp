@@ -160,6 +160,8 @@
     <None Include="engine\shaders\3d\shader_vs.glsl" />
     <None Include="engine\shaders\3d\skyboxShader_fs.glsl" />
     <None Include="engine\shaders\3d\skyboxShader_vs.glsl" />
+    <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl" />
+    <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">
