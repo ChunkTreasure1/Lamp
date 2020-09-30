@@ -220,7 +220,9 @@ namespace Lamp
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, p.c_str());
 					if (ImGui::IsItemClicked())
 					{
-						Application::Get().OnItemClicked(File(files[j]));
+						File f(files[j]);
+						AppItemClickedEvent e(f);
+						Application::Get().OnEvent(e);
 					}
 				}
 

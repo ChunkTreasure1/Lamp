@@ -28,7 +28,7 @@ namespace Sandbox3D
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
 		m_SandboxController = CreateRef<SandboxController>();
-		m_pGame = CreateScope<Game>();	
+		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 
 		g_pEnv->ShouldRenderBB = true;
@@ -144,30 +144,17 @@ namespace Sandbox3D
 		glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 		glm::mat4 lightViewProj = proj * view;
 
-		{
-			Lamp::RenderPassInfo passInfo;
-			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passInfo.IsShadowPass = true;
-			passInfo.ViewProjection = lightViewProj;
-			passInfo.ClearColor = m_ClearColor;
+		Lamp::RenderPassInfo passInfo;
+		passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		passInfo.IsShadowPass = true;
+		passInfo.LightViewProjection = lightViewProj;
+		passInfo.ClearColor = m_ClearColor;
 
-			Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
+		Ref<Lamp::RenderPass> shadowPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
+		Lamp::RenderPassManager::Get()->AddPass(shadowPass);
 
-			Lamp::RenderPassManager::Get()->AddPass(renderPass);
-		}
-
-		{
-			//Creating the render pass info
-			Lamp::RenderPassInfo passInfo;
-			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passInfo.IsShadowPass = false;
-			passInfo.ViewProjection = m_SandboxController->GetCameraController()->GetCamera()->GetViewProjectionMatrix();
-			passInfo.LightViewProjection = lightViewProj;
-			passInfo.ClearColor = m_ClearColor;
-
-			Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo);
-			
-			Lamp::RenderPassManager::Get()->AddPass(renderPass);
-		}
+		passInfo.IsShadowPass = false;
+		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo);
+		Lamp::RenderPassManager::Get()->AddPass(renderPass);
 	}
 }

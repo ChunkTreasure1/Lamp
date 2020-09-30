@@ -15,6 +15,15 @@ namespace Lamp
 
 	void RenderPass::Render()
 	{
+		if (m_PassInfo.IsShadowPass)
+		{
+			m_PassInfo.ViewProjection = m_PassInfo.LightViewProjection;
+		}
+		else 
+		{
+			m_PassInfo.ViewProjection = m_PassInfo.Camera->GetViewProjectionMatrix();
+		}
+
 		RenderCommand::SetClearColor(m_PassInfo.ClearColor);
 		RenderCommand::Clear();
 
@@ -32,6 +41,7 @@ namespace Lamp
 			f;
 		}
 
+		Renderer3D::DrawSkybox();
 		Renderer3D::End();
 		m_FrameBuffer->Unbind();
 	}

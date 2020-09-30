@@ -52,6 +52,7 @@ namespace Lamp
 	public:
 		static std::vector<std::string> GetAssetFolders();
 		static std::vector<std::string> GetFiles(std::string& path);
+		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetLevelFiles(std::string& path);
 		static std::vector<std::string> GetFolders(std::string& path);
 		static std::string GetFileFromDialogue();
@@ -60,5 +61,6 @@ namespace Lamp
 		static bool ContainsFolder(std::string& path);
 		static void PrintFoldersAndFiles(std::vector<std::string>& files, int startId = -1);
 		static void PrintLevelFiles(std::vector<std::string>& files, int startID = -1);
+		static void PrintBrushes(std::vector<std::string>& files, int startID = -1);
 	};
 }

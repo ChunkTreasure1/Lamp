@@ -22,10 +22,9 @@ namespace Sandbox3D
 		Sandbox3D();
 
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
+
 		virtual void OnImGuiRender(Lamp::Timestep ts) override;
 		virtual void OnEvent(Lamp::Event& e) override;
-
-		virtual void OnItemClicked(Lamp::File& file) override;
 
 	private:
 		void CreateDockspace();
