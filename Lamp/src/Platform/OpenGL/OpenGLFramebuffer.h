@@ -9,7 +9,7 @@ namespace Lamp
 	class OpenGLFramebuffer : public FrameBuffer
 	{
 	public:
-		OpenGLFramebuffer(const uint32_t width, const uint32_t height);
+		OpenGLFramebuffer(const uint32_t width, const uint32_t height, bool shadowBuf = false);
 		
 		virtual ~OpenGLFramebuffer() override;
 

@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Lamp/Core/Time/Timestep.h"
+#include "Lamp/Rendering/Renderer3D.h"
 
 namespace Lamp
 {
@@ -68,10 +69,17 @@ namespace Lamp
 	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent() {}
+		AppRenderEvent(const RenderPassInfo& passInfo) 
+			: m_RenderPassInfo(passInfo)
+		{}
+
+		inline const RenderPassInfo& GetPassInfo() { return m_RenderPassInfo; }
 
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+
+	private:
+		RenderPassInfo m_RenderPassInfo;
 	};
 
 	class AppLogEvent : public Event

@@ -14,6 +14,9 @@ namespace Lamp
 		virtual inline const uint32_t GetColorAttachment() const = 0;
 		virtual inline const uint32_t GetDepthAttachment() const = 0;
 
+	protected:
+		bool m_IsShadowBuffer = false;
+
 	public:
 		static Ref<FrameBuffer> Create(const uint32_t width, const uint32_t height);
 	};

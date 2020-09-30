@@ -29,6 +29,8 @@ namespace Sandbox3D
 		m_SandboxController = CreateRef<SandboxController>();
 		m_pGame = CreateScope<Game>();	
 		m_pGame->OnStart();
+
+		g_pEnv->ShouldRenderBB = true;
 	}
 
 	bool Sandbox3D::OnUpdate(Lamp::AppUpdateEvent& e)
@@ -36,20 +38,58 @@ namespace Sandbox3D
 		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
-		Lamp::RenderCommand::SetClearColor(m_ClearColor);
-		Lamp::RenderCommand::Clear();
+		glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
+		glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 lightViewProj = proj * view;
 
-		Lamp::Renderer3D::Begin(m_SandboxController->GetCameraController()->GetCamera());
+		{
+			//Shadow testing
+			Lamp::Renderer3D::GetShadowBuffer()->Bind();
+			Lamp::RenderCommand::ClearDepth();
 
-		Lamp::AppRenderEvent renderEvent;
-		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
-		OnEvent(renderEvent);
+			//Creating the render pass info
+			Lamp::RenderPassInfo passInfo;
+			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passInfo.IsShadowPass = true;
 
-		RenderGrid();
+			passInfo.ViewProjection = lightViewProj;
 
-		Lamp::Renderer3D::DrawSkybox();
-		//Lamp::Renderer3D::DrawGrid();
-		Lamp::Renderer3D::End();
+			Lamp::Renderer3D::Begin(passInfo);
+
+			Lamp::AppRenderEvent renderEvent(passInfo);
+			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
+			OnEvent(renderEvent);
+
+			Lamp::Renderer3D::End();
+			Lamp::Renderer3D::GetShadowBuffer()->Unbind();
+		}
+
+		{
+			Lamp::RenderCommand::SetClearColor(m_ClearColor);
+			Lamp::RenderCommand::Clear();
+
+			Lamp::Renderer3D::GetFrameBuffer()->Bind();
+			Lamp::RenderCommand::Clear();
+
+			//Creating the render pass info
+			Lamp::RenderPassInfo passInfo;
+			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passInfo.IsShadowPass = false;
+			passInfo.ViewProjection = m_SandboxController->GetCameraController()->GetCamera()->GetViewProjectionMatrix();
+			passInfo.LightViewProjection = lightViewProj;
+
+			Lamp::Renderer3D::Begin(passInfo);
+
+			Lamp::AppRenderEvent renderEvent(passInfo);
+			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
+			OnEvent(renderEvent);
+
+			RenderGrid();
+
+			Lamp::Renderer3D::DrawSkybox();
+			Lamp::Renderer3D::End();
+			Lamp::Renderer3D::GetFrameBuffer()->Unbind();
+		}
 
 		return true;
 	}

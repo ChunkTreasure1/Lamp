@@ -5,9 +5,10 @@
 
 namespace Lamp
 {
-	OpenGLFramebuffer::OpenGLFramebuffer(const uint32_t width, const uint32_t height)
+	OpenGLFramebuffer::OpenGLFramebuffer(const uint32_t width, const uint32_t height, bool shadowBuf)
 		: m_WindowWidth(width), m_WindowHeight(height)
 	{
+		m_IsShadowBuffer = shadowBuf;
 		Invalidate();
 	}
 
@@ -20,8 +21,8 @@ namespace Lamp
 
 	void OpenGLFramebuffer::Bind()
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_WindowWidth, m_WindowHeight);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 	}
 
 	void OpenGLFramebuffer::Unbind()
@@ -63,5 +64,14 @@ namespace Lamp
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthID, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		if (m_IsShadowBuffer)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthID, 0);
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
 	}
 }

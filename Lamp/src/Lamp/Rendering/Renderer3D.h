@@ -7,13 +7,23 @@
 
 namespace Lamp
 {
+	struct RenderPassInfo
+	{
+		Ref<CameraBase> Camera;
+
+		glm::mat4 ViewProjection = glm::mat4(1.f);
+		glm::mat4 LightViewProjection = glm::mat4(1.f);
+
+		bool IsShadowPass;
+	};
+	
 	class Renderer3D
 	{
 	public:
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const Ref<CameraBase>& camera, bool isMain = true);
+		static void Begin(const RenderPassInfo& passInfo);
 		static void End();
 		static void Flush();
 
@@ -24,9 +34,11 @@ namespace Lamp
 		static void DrawGrid();
 
 		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
+		static Ref<FrameBuffer>& GetShadowBuffer() { return m_pShadowBuffer; }
 
 	private:
 		static Ref<FrameBuffer> m_pFrameBuffer;
+		static Ref<FrameBuffer> m_pShadowBuffer;
 
 		static void StartNewBatch();
 		static void ResetBatchData();

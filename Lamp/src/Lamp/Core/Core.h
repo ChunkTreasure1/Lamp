@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include "GlobalEnvironment.h"
 
 #define BIT(x) (1 << x)
 
@@ -45,3 +46,7 @@ constexpr Ref<T> CreateRef(Args&& ... args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+/////Global environment/////
+extern GlobalEnvironment* g_pEnv;
+////////////////////////////

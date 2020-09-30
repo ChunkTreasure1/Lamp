@@ -16,7 +16,7 @@ namespace Sandbox2D
 
 	bool Sandbox2D::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		m_CameraController->Update(e.GetTimestep());
+		/*m_CameraController->Update(e.GetTimestep());
 		GetInput();
 
 		Lamp::RenderCommand::SetClearColor(m_ClearColor);
@@ -29,7 +29,7 @@ namespace Sandbox2D
 		Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
 		m_CameraController->OnEvent(renderEvent);
 
-		Lamp::Renderer2D::End();
+		Lamp::Renderer2D::End();*/
 
 		return true;
 	}
