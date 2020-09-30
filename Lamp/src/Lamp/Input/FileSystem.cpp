@@ -58,6 +58,21 @@ namespace Lamp
 		return files;
 	}
 
+	std::vector<std::string> FileSystem::GetBrushFiles(std::string& path)
+	{
+		std::vector<std::string> files;
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			std::string s = entry.path().string();
+			if (s.find(".lgf") != std::string::npos)
+			{
+				files.push_back(s);
+			}
+		}
+
+		return files;
+	}
+
 	//Gets the folders in a specified folder
 	std::vector<std::string> FileSystem::GetFolders(std::string & path)
 	{
@@ -256,6 +271,42 @@ namespace Lamp
 			}
 
 			PrintLevelFiles(GetFolders(folders[i]), startID);
+		}
+	}
+
+	void FileSystem::PrintBrushes(std::vector<std::string>& files, int startID)
+	{
+		if (files.size() == 0)
+		{
+			return;
+		}
+
+		for (int i = 0; i < files.size(); i++)
+		{
+			std::string s = files[i];
+			std::size_t pos = s.find_last_of("/\\");
+			s = s.substr(pos + 1);
+
+			std::vector<std::string> files = Lamp::FileSystem::GetBrushFiles(files[i]);
+
+			for (int j = 0; j < files.size(); j++)
+			{
+				startID++;
+				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+				std::string p = files[j];
+				std::size_t posp = p.find_last_of("/\\");
+				p = p.substr(posp + 1);
+
+				ImGui::TreeNodeEx((void*)(intptr_t)startID, nodeFlags, p.c_str());
+				if (ImGui::IsItemClicked())
+				{
+					File f(files[j]);
+					AppItemClickedEvent e(f);
+					Application::Get().OnEvent(e);
+				}
+			}
+			PrintBrushes(files, startID);
 		}
 	}
 }

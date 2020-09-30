@@ -20,6 +20,7 @@
 #include <Lamp/Core/Game.h>
 
 #include <Lamp/Rendering/RenderCommand.h>
+#include <Lamp/Rendering/RenderPass.h>
 
 namespace Sandbox3D
 {
@@ -31,6 +32,7 @@ namespace Sandbox3D
 		m_pGame->OnStart();
 
 		g_pEnv->ShouldRenderBB = true;
+		CreateRenderPasses();
 	}
 
 	bool Sandbox3D::OnUpdate(Lamp::AppUpdateEvent& e)
@@ -38,58 +40,7 @@ namespace Sandbox3D
 		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
-		glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
-		glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
-		glm::mat4 lightViewProj = proj * view;
-
-		{
-			//Shadow testing
-			Lamp::Renderer3D::GetShadowBuffer()->Bind();
-			Lamp::RenderCommand::ClearDepth();
-
-			//Creating the render pass info
-			Lamp::RenderPassInfo passInfo;
-			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passInfo.IsShadowPass = true;
-
-			passInfo.ViewProjection = lightViewProj;
-
-			Lamp::Renderer3D::Begin(passInfo);
-
-			Lamp::AppRenderEvent renderEvent(passInfo);
-			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
-			OnEvent(renderEvent);
-
-			Lamp::Renderer3D::End();
-			Lamp::Renderer3D::GetShadowBuffer()->Unbind();
-		}
-
-		{
-			Lamp::RenderCommand::SetClearColor(m_ClearColor);
-			Lamp::RenderCommand::Clear();
-
-			Lamp::Renderer3D::GetFrameBuffer()->Bind();
-			Lamp::RenderCommand::Clear();
-
-			//Creating the render pass info
-			Lamp::RenderPassInfo passInfo;
-			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passInfo.IsShadowPass = false;
-			passInfo.ViewProjection = m_SandboxController->GetCameraController()->GetCamera()->GetViewProjectionMatrix();
-			passInfo.LightViewProjection = lightViewProj;
-
-			Lamp::Renderer3D::Begin(passInfo);
-
-			Lamp::AppRenderEvent renderEvent(passInfo);
-			Lamp::ObjectLayerManager::Get()->OnEvent(renderEvent);
-			OnEvent(renderEvent);
-
-			RenderGrid();
-
-			Lamp::Renderer3D::DrawSkybox();
-			Lamp::Renderer3D::End();
-			Lamp::Renderer3D::GetFrameBuffer()->Unbind();
-		}
+		Lamp::RenderPassManager::Get()->RenderPasses();
 
 		return true;
 	}
@@ -116,11 +67,13 @@ namespace Sandbox3D
 		Lamp::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
 		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
+		dispatcher.Dispatch<Lamp::AppItemClickedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnItemClicked));
 	}
 
-	void Sandbox3D::OnItemClicked(Lamp::File& file)
+	bool Sandbox3D::OnItemClicked(Lamp::AppItemClickedEvent& e)
 	{
-		m_SelectedFile = file;
+		m_SelectedFile = e.GetFile();
+		return true;
 	}
 
 	void Sandbox3D::GetInput()
@@ -182,6 +135,39 @@ namespace Sandbox3D
 		for (size_t z = 1; z <= 10; z++)
 		{
 			Lamp::Renderer3D::DrawLine(glm::vec3(-0.5f * (float)z, 0.f, -5.f), glm::vec3(-0.5f * (float)z, 0.f, 5.f), 1.f);
+		}
+	}
+
+	void Sandbox3D::CreateRenderPasses()
+	{
+		glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
+		glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 lightViewProj = proj * view;
+
+		{
+			Lamp::RenderPassInfo passInfo;
+			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passInfo.IsShadowPass = true;
+			passInfo.ViewProjection = lightViewProj;
+			passInfo.ClearColor = m_ClearColor;
+
+			Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
+
+			Lamp::RenderPassManager::Get()->AddPass(renderPass);
+		}
+
+		{
+			//Creating the render pass info
+			Lamp::RenderPassInfo passInfo;
+			passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passInfo.IsShadowPass = false;
+			passInfo.ViewProjection = m_SandboxController->GetCameraController()->GetCamera()->GetViewProjectionMatrix();
+			passInfo.LightViewProjection = lightViewProj;
+			passInfo.ClearColor = m_ClearColor;
+
+			Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo);
+			
+			Lamp::RenderPassManager::Get()->AddPass(renderPass);
 		}
 	}
 }
