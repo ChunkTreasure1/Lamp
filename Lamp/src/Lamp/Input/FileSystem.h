@@ -7,7 +7,8 @@ namespace Lamp
 		Empty = 0,
 		Texture,
 		Text,
-		Level
+		Level,
+		Brush
 	};
 
 	class File
@@ -33,13 +34,17 @@ namespace Lamp
 			{
 				m_FileType = FileType::Level;
 			}
+			else if (s == "lgf" || s == "LGF")
+			{
+				m_FileType = FileType::Brush;
+			}
 			else
 			{
 				m_FileType = FileType::Empty;
 			}
 		}
 
-		inline const std::string GetPath() const { return m_Path; }
+		inline const std::string& GetPath() const { return m_Path; }
 		inline const FileType GetFileType() const { return m_FileType; }
 
 	private:
@@ -54,6 +59,7 @@ namespace Lamp
 		static std::vector<std::string> GetFiles(std::string& path);
 		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetLevelFiles(std::string& path);
+		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetFolders(std::string& path);
 		static std::string GetFileFromDialogue();
 		static std::string SaveFileInDialogue();

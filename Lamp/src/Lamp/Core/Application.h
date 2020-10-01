@@ -25,8 +25,6 @@ namespace Lamp
 		void PushLayer(Layer* pLayer);
 		void PushOverlay(Layer* pLayer);
 
-		void OnItemClicked(File& file);
-
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }
 		inline const FrameTime& GetFrameTime() { return m_FrameTime; }

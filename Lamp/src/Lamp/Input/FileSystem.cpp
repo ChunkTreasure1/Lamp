@@ -5,6 +5,7 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Level/LevelSystem.h"
+#include "Lamp/Event/ApplicationEvent.h"
 #include <ShObjIdl.h>
 #include <locale>
 #include <codecvt>
@@ -28,7 +29,7 @@ namespace Lamp
 	}
 
 	//Gets the files in a specified folder
-	std::vector<std::string> FileSystem::GetFiles(std::string & path)
+	std::vector<std::string> FileSystem::GetFiles(std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -74,7 +75,7 @@ namespace Lamp
 	}
 
 	//Gets the folders in a specified folder
-	std::vector<std::string> FileSystem::GetFolders(std::string & path)
+	std::vector<std::string> FileSystem::GetFolders(std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
@@ -108,7 +109,7 @@ namespace Lamp
 					hr = pFileOpen->GetResult(&pItem);
 					if (SUCCEEDED(hr))
 					{
-						
+
 						hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &path);
 						pItem->Release();
 					}
@@ -121,7 +122,7 @@ namespace Lamp
 		{
 			std::wstringstream ss;
 			ss << path;
-		
+
 			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
 
 			return converter.to_bytes(ss.str());
@@ -172,7 +173,7 @@ namespace Lamp
 	}
 
 	//Returns whether or not a folder contains folders
-	bool FileSystem::ContainsFolder(std::string & path)
+	bool FileSystem::ContainsFolder(std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -250,7 +251,7 @@ namespace Lamp
 
 			for (int j = 0; j < files.size(); j++)
 			{
-				//startId++;
+				startID++;
 				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 				std::string p = files[j];

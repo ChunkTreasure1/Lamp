@@ -126,7 +126,6 @@ namespace Lamp
 
 		EVENT_CLASS_TYPE(AppItemClicked);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
-
 	private:
 		File m_File;
 	};
