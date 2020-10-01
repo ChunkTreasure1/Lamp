@@ -5,16 +5,18 @@
 #include "RenderCommand.h"
 #include "Renderer3D.h"
 
-#define LP_EXTRA_RENDER(fn, obj) std::bind(&fn, &obj, std::placeholders::_1)
+#define LP_EXTRA_RENDER(fn) std::bind(&fn, this)
 
 namespace Lamp
 {
 	class RenderPass
 	{
 	public:
+		using RenderFunc = std::function<void()>;
+
 		friend class RenderPassManager;
 
-		RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::initializer_list<std::function<void()>> extraRenders = {});
+		RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::vector<RenderFunc> extraRenders = {});
 		~RenderPass()
 		{
 			m_ExtraRenders.clear();
@@ -29,7 +31,7 @@ namespace Lamp
 
 	private:
 		Ref<FrameBuffer> m_FrameBuffer;
-		std::vector<std::function<void()>> m_ExtraRenders;
+		std::vector<RenderFunc> m_ExtraRenders;
 
 		uint32_t m_ID;
 		RenderPassInfo m_PassInfo;

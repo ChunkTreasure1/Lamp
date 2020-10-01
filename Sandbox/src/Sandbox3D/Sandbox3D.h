@@ -30,6 +30,7 @@ namespace Sandbox3D
 		void CreateDockspace();
 		void GetInput();
 		void RenderGrid();
+		void RenderSkybox();
 		void CreateRenderPasses();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);

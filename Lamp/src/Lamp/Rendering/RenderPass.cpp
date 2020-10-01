@@ -8,7 +8,7 @@ namespace Lamp
 {
 	Ref<RenderPassManager> RenderPassManager::s_Instance = nullptr;
 
-	RenderPass::RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::initializer_list<std::function<void()>> extraRenders)
+	RenderPass::RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::vector<RenderFunc> extraRenders)
 		: m_FrameBuffer(frameBuffer), m_PassInfo(passInfo), m_ExtraRenders(extraRenders)
 	{
 	}
@@ -17,11 +17,13 @@ namespace Lamp
 	{
 		if (m_PassInfo.IsShadowPass)
 		{
-			m_PassInfo.ViewProjection = m_PassInfo.LightViewProjection;
+			m_PassInfo.ViewProjection = g_pEnv->DirLight.ViewProjection;
+			m_PassInfo.LightViewProjection = g_pEnv->DirLight.ViewProjection;
 		}
-		else 
+		else
 		{
 			m_PassInfo.ViewProjection = m_PassInfo.Camera->GetViewProjectionMatrix();
+			m_PassInfo.LightViewProjection = g_pEnv->DirLight.ViewProjection;
 		}
 
 		RenderCommand::SetClearColor(m_PassInfo.ClearColor);
@@ -38,7 +40,7 @@ namespace Lamp
 
 		for (auto& f : m_ExtraRenders)
 		{
-			f;
+			f();
 		}
 
 		Renderer3D::DrawSkybox();
@@ -54,18 +56,10 @@ namespace Lamp
 
 	bool RenderPassManager::RemovePass(uint32_t id)
 	{
-		for (auto& pass : m_RenderPasses)
-		{
-			if (pass->GetID() == id)
-			{
-				auto it = std::find(m_RenderPasses.begin(), m_RenderPasses.end(), pass);
-				m_RenderPasses.erase(it);
+		auto it = std::remove_if(m_RenderPasses.begin(), m_RenderPasses.end(), [id](auto pass) { return pass->GetID() == id; });
+		m_RenderPasses.erase(it);
 
-				return true;
-			}
-		}
-
-		return false;
+		return it != m_RenderPasses.end();
 	}
 
 	void RenderPassManager::RenderPasses()

@@ -138,23 +138,30 @@ namespace Sandbox3D
 		}
 	}
 
+	void Sandbox3D::RenderSkybox()
+	{
+		Lamp::Renderer3D::DrawSkybox();
+	}
+
 	void Sandbox3D::CreateRenderPasses()
 	{
-		glm::mat4 proj = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
-		glm::mat4 view = glm::lookAt(g_pEnv->DirLightInfo.Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
-		glm::mat4 lightViewProj = proj * view;
-
 		Lamp::RenderPassInfo passInfo;
 		passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
 		passInfo.IsShadowPass = true;
-		passInfo.LightViewProjection = lightViewProj;
+		passInfo.DirLight = g_pEnv->DirLight;
 		passInfo.ClearColor = m_ClearColor;
 
 		Ref<Lamp::RenderPass> shadowPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
 		Lamp::RenderPassManager::Get()->AddPass(shadowPass);
 
 		passInfo.IsShadowPass = false;
-		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo);
+
+		std::vector<std::function<void()>> ptrs;
+
+		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
+		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo, ptrs);
 		Lamp::RenderPassManager::Get()->AddPass(renderPass);
 	}
 }
