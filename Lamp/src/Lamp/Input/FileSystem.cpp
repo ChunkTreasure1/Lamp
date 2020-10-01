@@ -70,6 +70,8 @@ namespace Lamp
 				files.push_back(s);
 			}
 		}
+
+		return files;
 	}
 
 	//Gets the folders in a specified folder
@@ -219,8 +221,9 @@ namespace Lamp
 					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, p.c_str());
 					if (ImGui::IsItemClicked())
 					{
-						AppItemClickedEvent event(files[j]);
-						Application::Get().OnEvent(event);
+						File f(files[j]);
+						AppItemClickedEvent e(f);
+						Application::Get().OnEvent(e);
 					}
 				}
 
@@ -301,8 +304,9 @@ namespace Lamp
 				ImGui::TreeNodeEx((void*)(intptr_t)startID, nodeFlags, p.c_str());
 				if (ImGui::IsItemClicked())
 				{
-					AppItemClickedEvent event(File(files[j]));
-					Application::Get().OnEvent()
+					File f(files[j]);
+					AppItemClickedEvent e(f);
+					Application::Get().OnEvent(e);
 				}
 			}
 			PrintBrushes(files, startID);

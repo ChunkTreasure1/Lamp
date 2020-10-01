@@ -244,11 +244,11 @@ namespace Lamp
 		s_pData->SkyBoxVertexArray->Bind();
 
 		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
 
 		if (!s_pData->CurrentRenderPass.IsShadowPass)
 		{
 			glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
+			s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
 			s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
 		}
 

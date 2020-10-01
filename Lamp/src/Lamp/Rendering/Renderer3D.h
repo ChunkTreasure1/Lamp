@@ -4,16 +4,18 @@
 #include "Lamp/Meshes/Material.h"
 
 #include "Lamp/Rendering/Vertices/FrameBuffer.h"
+#include "Lamp/Core/GlobalEnvironment.h"
 
 namespace Lamp
 {
 	struct RenderPassInfo
 	{
 		Ref<CameraBase> Camera;
-
+		DirectionalLight DirLight;
 		glm::mat4 ViewProjection = glm::mat4(1.f);
 		glm::mat4 LightViewProjection = glm::mat4(1.f);
 
+		glm::vec4 ClearColor;
 		bool IsShadowPass;
 	};
 	

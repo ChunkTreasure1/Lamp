@@ -57,6 +57,7 @@ namespace Lamp
 	public:
 		static std::vector<std::string> GetAssetFolders();
 		static std::vector<std::string> GetFiles(std::string& path);
+		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetLevelFiles(std::string& path);
 		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetFolders(std::string& path);

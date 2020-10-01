@@ -1497,6 +1497,7 @@
     <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
     <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
     <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1688,5 +1689,6 @@
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
   </ItemGroup>
 </Project>

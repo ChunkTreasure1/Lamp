@@ -13,11 +13,11 @@ namespace Lamp
 		if (m_pShader->GetType() == ShaderType::Illum)
 		{
 			/////Lighting/////
-			m_pShader->UploadFloat3("u_DirectionalLight.ambient", g_pEnv->DirLightInfo.Ambient);
-			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLightInfo.Diffuse);
-			m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLightInfo.Specular);
-			m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLightInfo.Direction);
-			m_pShader->UploadFloat3("u_DirectionalLight.position", g_pEnv->DirLightInfo.Position);
+			m_pShader->UploadFloat3("u_DirectionalLight.ambient", g_pEnv->DirLight.Ambient);
+			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLight.Diffuse);
+			m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLight.Specular);
+			m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Direction);
+			m_pShader->UploadFloat3("u_DirectionalLight.position", g_pEnv->DirLight.Position);
 			
 			m_pShader->UploadFloat3("u_Environment.globalAmbient", g_pEnv->GlobalLevelEnvironment.GlobalAmbient);
 

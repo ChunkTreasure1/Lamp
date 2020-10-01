@@ -130,12 +130,4 @@ namespace Lamp
 		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
 		return false;
 	}
-	
-	void Application::OnItemClicked(File & file)
-	{
-		for (Layer* pLayer : m_LayerStack)
-		{
-			pLayer->OnItemClicked(file);
-		}
-	}
 }

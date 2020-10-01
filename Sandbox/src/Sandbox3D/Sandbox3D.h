@@ -22,6 +22,7 @@ namespace Sandbox3D
 		Sandbox3D();
 
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
+
 		virtual void OnImGuiRender(Lamp::Timestep ts) override;
 		virtual void OnEvent(Lamp::Event& e) override;
 
@@ -29,8 +30,11 @@ namespace Sandbox3D
 		void CreateDockspace();
 		void GetInput();
 		void RenderGrid();
+		void RenderSkybox();
+		void CreateRenderPasses();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
+		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
