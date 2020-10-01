@@ -59,7 +59,6 @@ namespace Lamp
 		static std::vector<std::string> GetFiles(std::string& path);
 		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetLevelFiles(std::string& path);
-		static std::vector<std::string> GetBrushFiles(std::string& path);
 		static std::vector<std::string> GetFolders(std::string& path);
 		static std::string GetFileFromDialogue();
 		static std::string SaveFileInDialogue();

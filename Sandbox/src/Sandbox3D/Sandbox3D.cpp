@@ -19,7 +19,6 @@
 #include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Core/Game.h>
 
-#include <Lamp/Rendering/RenderCommand.h>
 #include <Lamp/Rendering/RenderPass.h>
 
 namespace Sandbox3D

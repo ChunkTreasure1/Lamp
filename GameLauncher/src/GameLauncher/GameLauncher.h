@@ -16,6 +16,9 @@ namespace GameLauncher
 		virtual void OnEvent(Lamp::Event& e) override;
 
 	private:
+		void CreateRenderPasses();
+
+	private:
 		Scope<Game> m_pGame;
 		Ref<Lamp::CameraBase> m_Camera;
 	};
