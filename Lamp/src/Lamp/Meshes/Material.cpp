@@ -13,7 +13,6 @@ namespace Lamp
 		if (m_pShader->GetType() == ShaderType::Illum)
 		{
 			/////Lighting/////
-			m_pShader->UploadFloat3("u_DirectionalLight.ambient", g_pEnv->DirLight.Ambient);
 			m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLight.Diffuse);
 			m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLight.Specular);
 			m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Direction);
@@ -40,7 +39,6 @@ namespace Lamp
 					m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].quadratic", light->GetQuadraticConstant());
 
 					m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].position", light->GetOwner()->GetPosition());
-					m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].ambient", light->GetAmbient());
 					m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].diffuse", light->GetDiffuse());
 					m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].specular", light->GetSpecular());
 					i++;

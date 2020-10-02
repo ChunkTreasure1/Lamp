@@ -17,7 +17,7 @@ struct DirectionalLight
 {
 	vec3 direction;
 	vec3 position;
-	vec3 ambient;
+
 	vec3 diffuse;
 	vec3 specular;
 };
@@ -35,7 +35,6 @@ struct PointLight
 	float linear;
 	float quadratic;
 
-	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
 };
@@ -57,7 +56,7 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
 
-	vec3 ambient = light.ambient * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 ambient = u_Environment.globalAmbient * vec3(texture(u_Material.diffuse, v_TexCoord));
 	vec3 diffuse = light.diffuse * diff * vec3(texture(u_Material.diffuse, v_TexCoord));
 	vec3 specular = light.specular * spec * vec3(texture(u_Material.specular, v_TexCoord));
 
@@ -75,7 +74,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	float distance = length(light.position - fragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-	vec3 ambient = light.ambient * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 ambient = u_Environment.globalAmbient * vec3(texture(u_Material.diffuse, v_TexCoord));
 	vec3 diffuse = light.diffuse * diff * vec3(texture(u_Material.diffuse, v_TexCoord));
 	vec3 specular = light.specular * spec * vec3(texture(u_Material.specular, v_TexCoord));
 
