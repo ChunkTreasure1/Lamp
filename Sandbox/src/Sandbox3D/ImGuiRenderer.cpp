@@ -16,6 +16,11 @@ namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
 	{
+		if (!m_PerspectiveOpen)
+		{
+			return;
+		}
+
 		glm::vec2 perspectivePos;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -329,7 +334,7 @@ namespace Sandbox3D
 
 		if (m_pShader == nullptr)
 		{
-			m_pShader = Lamp::Shader::Create("engine/shaders/shader_vs.glsl", "engine/shaders/shader_fs.glsl");
+			m_pShader = Lamp::Shader::Create("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
 		}
 
 		ImGui::Begin("Model importer", &m_ModelImporterOpen);
@@ -514,6 +519,8 @@ namespace Sandbox3D
 
 				m_pSelectedObject = pEnt;
 			}
+			
+			ImGui::SameLine();
 
 			if (ImGui::Button("Brush"))
 			{
@@ -532,6 +539,10 @@ namespace Sandbox3D
 
 			if (ImGui::Button("Create"))
 			{
+				if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
+				{
+					m_pSelectedObject = Lamp::Brush::Create(m_SelectedFile.GetPath());
+				}
 			}
 
 			if (ImGui::BeginChild("Brushes"))
@@ -539,8 +550,8 @@ namespace Sandbox3D
 				std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
 				Lamp::FileSystem::PrintBrushes(folders);
 
-				ImGui::EndChild();
 			}
+			ImGui::EndChild();
 		}
 
 		ImGui::End();
@@ -665,7 +676,7 @@ namespace Sandbox3D
 			{
 				if (ImGui::MenuItem("Save Level"))
 				{
-					Lamp::LevelSystem::SaveLevel("engine/levels/" + Lamp::LevelSystem::GetCurrentLevel()->GetName() + ".level", Lamp::LevelSystem::GetCurrentLevel());
+					Lamp::LevelSystem::SaveLevel("assets/levels/" + Lamp::LevelSystem::GetCurrentLevel()->GetName() + ".level", Lamp::LevelSystem::GetCurrentLevel());
 				}
 
 				ImGui::EndMenu();

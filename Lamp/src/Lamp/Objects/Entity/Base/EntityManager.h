@@ -11,7 +11,7 @@ namespace Lamp
 	public:
 		EntityManager() {}
 
-		Entity* Create();
+		Entity* Create(bool saveable = true);
 		bool Remove(Entity* pEnt);
 
 		//Getting

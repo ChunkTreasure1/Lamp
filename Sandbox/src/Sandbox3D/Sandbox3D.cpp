@@ -26,9 +26,11 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
-		m_SandboxController = CreateRef<SandboxController>();
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
+
+		//Make sure the sandbox controller is created after level has been loaded
+		m_SandboxController = CreateRef<SandboxController>();
 
 		g_pEnv->ShouldRenderBB = true;
 		CreateRenderPasses();
@@ -67,6 +69,7 @@ namespace Sandbox3D
 		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
 		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
 		dispatcher.Dispatch<Lamp::AppItemClickedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnItemClicked));
+		dispatcher.Dispatch<Lamp::WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
 	}
 
 	bool Sandbox3D::OnItemClicked(Lamp::AppItemClickedEvent& e)
@@ -163,4 +166,5 @@ namespace Sandbox3D
 		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo, ptrs);
 		Lamp::RenderPassManager::Get()->AddPass(renderPass);
 	}
+
 }

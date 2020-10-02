@@ -47,6 +47,7 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\2d\FlatColor.frag">

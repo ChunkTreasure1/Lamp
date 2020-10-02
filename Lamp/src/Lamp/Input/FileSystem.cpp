@@ -16,7 +16,7 @@ namespace Lamp
 	std::vector<std::string> FileSystem::GetAssetFolders()
 	{
 		std::vector<std::string> folders;
-		for (const auto& entry : std::filesystem::directory_iterator("engine"))
+		for (const auto& entry : std::filesystem::directory_iterator("assets"))
 		{
 			std::string s = entry.path().string();
 			if (s.find(".") == std::string::npos)
@@ -233,7 +233,7 @@ namespace Lamp
 		}
 	}
 
-	//Prints all the availible folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
+	//Prints all the available folders and files (CALL ONLY WHEN IMGUI CONTEXT EXISTS OR IT WILL CRASH!)
 	void FileSystem::PrintLevelFiles(std::vector<std::string>& folders, int startID)
 	{
 		if (folders.size() == 0)
@@ -277,20 +277,20 @@ namespace Lamp
 		}
 	}
 
-	void FileSystem::PrintBrushes(std::vector<std::string>& files, int startID)
+	void FileSystem::PrintBrushes(std::vector<std::string>& folders, int startID)
 	{
-		if (files.size() == 0)
+		if (folders.size() == 0)
 		{
 			return;
 		}
 
-		for (int i = 0; i < files.size(); i++)
+		for (int i = 0; i < folders.size(); i++)
 		{
-			std::string s = files[i];
+			std::string s = folders[i];
 			std::size_t pos = s.find_last_of("/\\");
 			s = s.substr(pos + 1);
 
-			std::vector<std::string> files = Lamp::FileSystem::GetBrushFiles(files[i]);
+			std::vector<std::string> files = Lamp::FileSystem::GetBrushFiles(folders[i]);
 
 			for (int j = 0; j < files.size(); j++)
 			{
@@ -298,8 +298,16 @@ namespace Lamp
 				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 				std::string p = files[j];
+				if (p.find(".spec") != std::string::npos)
+				{
+					continue;
+				}
+
 				std::size_t posp = p.find_last_of("/\\");
 				p = p.substr(posp + 1);
+
+				std::size_t lgfPos = p.find_last_of(".");
+				p = p.substr(0, lgfPos);
 
 				ImGui::TreeNodeEx((void*)(intptr_t)startID, nodeFlags, p.c_str());
 				if (ImGui::IsItemClicked())
@@ -309,7 +317,7 @@ namespace Lamp
 					Application::Get().OnEvent(e);
 				}
 			}
-			PrintBrushes(files, startID);
+			PrintBrushes(GetFolders(folders[i]), startID);
 		}
 	}
 }

@@ -18,14 +18,14 @@ namespace Lamp
 		inline const glm::vec3& GetUp() const { return m_Up; }
 		inline const glm::vec3& GetRight() const { return m_Right; }
 
-		inline const float GetYaw() const { return m_Yaw; }
-		inline const float GetPitch() const { return m_Pitch; }
+		inline const float GetYaw() const { return m_Rotation.x; }
+		inline const float GetPitch() const { return m_Rotation.y; }
 		inline const glm::mat4& GetTM() { return m_TransformMatrix; }
 		inline float& GetFOV() { return m_FOV; }
 
 		//Setting
-		inline void SetYaw(float yaw) { m_Yaw = yaw; }
-		inline void SetPitch(float pitch) { m_Pitch = pitch; }
+		inline void SetYaw(float yaw) { m_Rotation.x = yaw; }
+		inline void SetPitch(float pitch) { m_Rotation.y = pitch; }
 		inline void SetFront(const glm::vec3& front) { m_Front = front; }
 
 		void UpdateVectors();
@@ -41,8 +41,7 @@ namespace Lamp
 		glm::vec3 m_Up = { 0.f, 1.f, 0.f };
 		glm::vec3 m_Right = { 1.f, 0.f, 0.f };
 
-		float m_Yaw = -90.0f;
-		float m_Pitch = 0.f;
 		float m_FOV;
+		bool m_FirstTime = false;
 	};
 }

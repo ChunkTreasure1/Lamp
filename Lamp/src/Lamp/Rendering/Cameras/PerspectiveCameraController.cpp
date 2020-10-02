@@ -15,9 +15,6 @@ namespace Lamp
 		: m_FOV(fov), m_NearPlane(nearPlane), m_FarPlane(farPlane)
 	{
 		m_Camera = CreateRef<PerspectiveCamera>(fov, nearPlane, farPlane);
-
-		m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
-		m_Camera->SetRotation(glm::vec3(0.f, 0.f, 0.f));
 	}
 
 	PerspectiveCameraController::~PerspectiveCameraController()

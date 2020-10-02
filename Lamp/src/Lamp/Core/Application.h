@@ -29,6 +29,14 @@ namespace Lamp
 		inline Window& GetWindow() { return *m_pWindow; }
 		inline const FrameTime& GetFrameTime() { return m_FrameTime; }
 
+		inline void SetWindowSize(const glm::vec2& size) 
+		{ 
+			m_pWindow->SetSize(size); 
+			
+			WindowResizeEvent e((uint32_t)size.x, (uint32_t)size.y);
+			OnEvent(e);
+		}
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);

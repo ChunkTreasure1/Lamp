@@ -31,6 +31,9 @@ namespace Lamp
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
 
+		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
+		inline bool GetSaveable() { return m_ShouldBeSaved; }
+
 		//Getting
 		inline std::vector<Ref<EntityComponent>> GetComponents() const { return m_pComponents; }
 
@@ -109,6 +112,8 @@ namespace Lamp
 		static Entity* Create();
 
 	private:
+		bool m_ShouldBeSaved = false;
+
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;
 	};

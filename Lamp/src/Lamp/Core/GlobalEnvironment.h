@@ -4,15 +4,8 @@
 
 #include "Lamp/Rendering/LightBase.h"
 
-struct LevelEnvironment
-{
-	glm::vec3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
-};
-
 struct GlobalEnvironment
 {
-	LevelEnvironment GlobalLevelEnvironment;
-
 	Lamp::DirectionalLight DirLight;
 	bool ShouldRenderBB = false;
 };

@@ -13,7 +13,8 @@ namespace Lamp
 		static bool SaveLevel(const std::string& path, Ref<Level>& level);
 
 		static Ref<Level>& GetCurrentLevel() { return m_CurrentLevel; }
-		
+		static LevelEnvironment& GetEnvironment() { return m_CurrentLevel->GetEnvironment(); }
+
 	private:
 		LevelSystem() = delete;
 		static std::vector<Brush*> LoadBrushes(rapidxml::xml_node<>* pNode, Ref<BrushManager>& brushManager);

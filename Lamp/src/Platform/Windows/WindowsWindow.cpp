@@ -186,4 +186,8 @@ namespace Lamp
 			}
 		}
 	}
+	void WindowsWindow::SetSize(const glm::vec2& size)
+	{
+		glfwSetWindowSize(m_pWindow, size.x, size.y);
+	}
 }

@@ -10,6 +10,15 @@
 
 namespace Lamp
 {
+	struct LevelEnvironment
+	{
+		glm::vec3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
+		glm::vec3 CameraPosition{ 0.f, 0.f, 0.f };
+		glm::vec3 CameraRotation{ 0.f, 0.f, 0.f };
+
+		float CameraFOV = 60.f;
+	};
+
 	class Level
 	{
 	public:
@@ -32,13 +41,16 @@ namespace Lamp
 		inline Ref<ObjectLayerManager>& GetObjectLayerManager() { return m_ObjectLayerManager; }
 		inline Ref<PhysicsEngine>& GetPhysicsEngine() { return m_PhysicsEngine; }
 
+		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
 
 	private:
 		std::string m_Name;
 		Ref<BrushManager> m_BrushManager;
 		Ref<EntityManager> m_EntityManager;
+
 		Ref<ObjectLayerManager> m_ObjectLayerManager;
 		Ref<PhysicsEngine> m_PhysicsEngine;
+		LevelEnvironment m_Environment;
 	};
 }

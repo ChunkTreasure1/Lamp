@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp" />
     <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp" />
+    <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />

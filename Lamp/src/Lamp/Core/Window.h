@@ -41,6 +41,7 @@ namespace Lamp
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetIsVSync(bool state) = 0;
 		virtual void ShowCursor(bool state) = 0;
+		virtual void SetSize(const glm::vec2& size) = 0;
 
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};

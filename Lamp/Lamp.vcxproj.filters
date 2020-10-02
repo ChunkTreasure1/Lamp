@@ -1498,6 +1498,7 @@
     <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
     <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
+    <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">

@@ -24,6 +24,7 @@ namespace Lamp
 		virtual void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		virtual void SetIsVSync(bool state) override;
 		virtual void ShowCursor(bool state) override;
+		virtual void SetSize(const glm::vec2& size) override;
 
 	private:
 		virtual void Init(const WindowProps& props);

@@ -232,7 +232,7 @@ namespace Lamp
 		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
 
 		mesh->GetVertexArray()->Bind();
-		RenderCommand::DrawIndexed(mesh->GetVertexArray(), 0);
+		RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::DrawSkybox()
@@ -252,7 +252,7 @@ namespace Lamp
 			s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
 		}
 
-		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, 0);
+		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, s_pData->SkyBoxVertexArray->GetIndexBuffer()->GetCount());
 		glDepthMask(GL_TRUE);
 	}
 

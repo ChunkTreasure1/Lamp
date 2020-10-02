@@ -26,7 +26,8 @@ namespace Lamp
 
 		//Setting
 		inline void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; }
+		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; m_Camera->SetPosition(pos); }
+		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; m_Camera->SetRotation(rot); }
 		inline void SetControlsEnabled(bool state) { m_ControlsEnabled = state; }
 
 	protected:

@@ -12,22 +12,6 @@
 void Game::OnStart()
 {
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
-	{
-		Lamp::Entity* ent = Lamp::Entity::Create();
-		ent->SetPosition({ 0, 0, 0 });
-
-		auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
-		auto mesh = ent->GetOrCreateComponent<Lamp::MeshComponent>();
-		mesh->SetModel(Lamp::GeometrySystem::LoadFromFile("assets/models/lightModel.lgf"));
-		auto audio = ent->GetOrCreateComponent<Lamp::AudioComponent>();
-
-		//audio->SetEvent("test");
-		//audio->Play();
-	}
-
-	{
-		auto brush = Lamp::Brush::Create("assets/models/sofa.lgf");
-	}
 
 	{
 		Lamp::Entity* ent = Lamp::Entity::Create();

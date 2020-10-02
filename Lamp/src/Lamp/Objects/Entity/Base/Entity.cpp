@@ -29,6 +29,6 @@ namespace Lamp
 
 	Entity* Entity::Create()
 	{
-		return EntityManager::Get()->Create();
+		return EntityManager::Get()->Create(false);
 	}
 }

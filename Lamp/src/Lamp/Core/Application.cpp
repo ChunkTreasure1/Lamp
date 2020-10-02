@@ -112,7 +112,7 @@ namespace Lamp
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
-		return true;
+		return false;
 	}
 
 	bool Application::OnWindowResize(WindowResizeEvent & e)

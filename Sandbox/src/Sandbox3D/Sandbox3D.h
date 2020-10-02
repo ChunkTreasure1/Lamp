@@ -32,9 +32,11 @@ namespace Sandbox3D
 		void RenderGrid();
 		void RenderSkybox();
 		void CreateRenderPasses();
+		void SetupFromConfig();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
+		bool OnWindowClose(Lamp::WindowCloseEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
@@ -56,6 +58,7 @@ namespace Sandbox3D
 		ImGuiID m_DockspaceID;
 
 		//Perspective
+		bool m_PerspectiveOpen = true;
 		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;

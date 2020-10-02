@@ -43,7 +43,10 @@ namespace Lamp
 		ObjectLayerManager()
 		{}
 
-		~ObjectLayerManager() = default;
+		~ObjectLayerManager() 
+		{
+			m_Layers.clear();
+		}
 
 		void OnEvent(Event& e);
 		void Destroy();

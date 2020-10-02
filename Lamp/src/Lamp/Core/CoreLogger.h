@@ -68,6 +68,11 @@ namespace Lamp
 			auto v = d.find_first_of("Ì");
 			d = d.substr(0, v);
 
+			if (m_Messages.size() > 1000)
+			{
+				m_Messages.clear();
+			}
+
 			m_Messages.push_back(Message(prefix + " " + d, level));
 		}
 

@@ -8,10 +8,11 @@ namespace Lamp
 {
 	Ref<EntityManager> EntityManager::s_CurrentManager;
 
-	Entity* EntityManager::Create()
+	Entity* EntityManager::Create(bool saveable)
 	{
 		Entity* pEnt = new Entity();
 		pEnt->SetLayerID(0);
+		pEnt->SetSaveable(saveable);
 
 		m_pEntites.emplace_back(pEnt);
 

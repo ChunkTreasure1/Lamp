@@ -21,6 +21,7 @@ namespace Lamp
 		virtual glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
 
 		bool OnMouseMoved(MouseMovedEvent& e);
+		inline float GetFOV() { return m_FOV; }
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
