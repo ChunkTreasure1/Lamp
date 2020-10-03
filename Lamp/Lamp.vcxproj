@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>xaudio2.lib;opengl32.lib;assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xaudio2.lib;opengl32.lib;assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\assimp;vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -113,7 +113,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>xaudio2.lib;opengl32.lib;assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xaudio2.lib;opengl32.lib;assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\assimp;vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -138,7 +138,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>xaudio2.lib;opengl32.lib;assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xaudio2.lib;opengl32.lib;assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\assimp;vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -210,11 +210,11 @@
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
@@ -226,6 +226,8 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h" />
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11RendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -600,7 +602,6 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
-    <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
@@ -645,11 +646,11 @@
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
@@ -659,6 +660,8 @@
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11Context.cpp" />
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11RendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />

@@ -31,8 +31,8 @@ namespace Lamp
 		AudioEngine::Initialize();
 
 		//Setup the GUI system
-		m_pImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_pImGuiLayer);
+		//m_pImGuiLayer = new ImGuiLayer();
+		//PushOverlay(m_pImGuiLayer);
 	}
 
 	Application::~Application()
@@ -53,12 +53,12 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			PhysicsEngine::Get()->Simulate(timestep);
-			PhysicsEngine::Get()->HandleCollisions();
+			//PhysicsEngine::Get()->Simulate(timestep);
+			//PhysicsEngine::Get()->HandleCollisions();
 			AudioEngine::Update();
 
-			AppUpdateEvent updateEvent(timestep);
-			ObjectLayerManager::Get()->OnEvent(updateEvent);
+			//AppUpdateEvent updateEvent(timestep);
+			//ObjectLayerManager::Get()->OnEvent(updateEvent);
 
 			//Update the application layers
 
@@ -68,14 +68,14 @@ namespace Lamp
 				OnEvent(updateEvent);
 			}
 
-			m_pImGuiLayer->Begin();
+			/*		m_pImGuiLayer->Begin();
 
-			for (Layer* pLayer : m_LayerStack)
-			{
-				pLayer->OnImGuiRender(timestep);
-			}
+					for (Layer* pLayer : m_LayerStack)
+					{
+						pLayer->OnImGuiRender(timestep);
+					}
 
-			m_pImGuiLayer->End();
+					m_pImGuiLayer->End();*/
 			m_pWindow->Update(timestep);
 		
 			m_FrameTime.End();

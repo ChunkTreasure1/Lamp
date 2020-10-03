@@ -30,6 +30,7 @@
     <ClInclude Include="src\Sandbox3D\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
+    <ClInclude Include="src\DXTesting\DXTesting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp">
@@ -37,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp">
       <Filter>src\Sandbox2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp">
+      <Filter>src\Sandbox3D</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp">
       <Filter>src\Sandbox3D</Filter>
@@ -47,7 +51,7 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
+    <ClCompile Include="src\DXTesting\DXTesting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\2d\FlatColor.frag">
@@ -62,33 +66,5 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
-    <None Include="engine\shaders\3d\lightShader_fs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\lightShader_vs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\lineShader_fs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\lineShader_vs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shader_fs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shader_vs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\skyboxShader_fs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\skyboxShader_vs.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\3d\gridShader_vs.glsl" />
-    <None Include="engine\shaders\3d\gridShader_fs.glsl" />
-    <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl" />
-    <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl" />
   </ItemGroup>
 </Project>

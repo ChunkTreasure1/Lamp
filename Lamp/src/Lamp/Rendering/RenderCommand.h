@@ -26,11 +26,6 @@ namespace Lamp
 		{
 			s_RendererAPI->Clear();
 		}
-		
-		static void ClearDepth()
-		{
-			s_RendererAPI->ClearDepth();
-		}
 
 		static void DrawIndexed(const Ref<VertexArray>& VertexArray, uint32_t count = 0)
 		{

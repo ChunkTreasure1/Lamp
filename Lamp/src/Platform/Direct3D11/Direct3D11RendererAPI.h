@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Lamp/Rendering//RendererAPI.h"
+#include "Lamp/Rendering/RendererAPI.h"
 
 namespace Lamp
 {
-	class OpenGLRendererAPI : public RendererAPI
+	class Direct3D11RendererAPI : public RendererAPI
 	{
 	public:
-		virtual ~OpenGLRendererAPI() override = default;
-
+		virtual ~Direct3D11RendererAPI() override = default;
 
 		virtual void Initialize() override;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;

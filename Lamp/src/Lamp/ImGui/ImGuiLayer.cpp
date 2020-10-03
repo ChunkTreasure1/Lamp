@@ -3,6 +3,7 @@
 
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
+#include "examples/imgui_impl_dx11.h"
 
 #include "Lamp/Core/Application.h"
 #include <ImGuizmo/ImGuizmo.h>
@@ -116,7 +117,15 @@ namespace Lamp
 
 		//Setup platform/renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+
+		if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
+		{
+			ImGui_ImplOpenGL3_Init("#version 410");
+		}
+		else if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+		{
+			//ImGui_ImplDX11_Init()
+		}
 	}
 
 	void ImGuiLayer::OnDetach()

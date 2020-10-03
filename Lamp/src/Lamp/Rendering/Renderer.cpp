@@ -13,8 +13,8 @@ namespace Lamp
 	void Renderer::Initialize()
 	{
 		RenderCommand::Initialize();
-		Renderer2D::Initialize();
-		Renderer3D::Initialize();
+		//Renderer2D::Initialize();
+		//Renderer3D::Initialize();
 	}
 
 	void Renderer::Shutdown()

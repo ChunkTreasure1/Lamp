@@ -9,7 +9,7 @@ namespace Lamp
 	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
 		: m_pWindowHandle(windowHandle)
 	{
-#ifdef LP_ENABLE_ASSERT
+#ifdef LP_ENABLE_ASSERTS
 		LP_CORE_ASSERT(windowHandle, "Window handle is null!");
 #endif
 	}
