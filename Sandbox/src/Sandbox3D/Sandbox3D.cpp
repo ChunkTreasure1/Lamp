@@ -31,8 +31,9 @@ namespace Sandbox3D
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
-
 		g_pEnv->ShouldRenderBB = true;
+
+		SetupFromConfig();
 		CreateRenderPasses();
 	}
 
@@ -166,5 +167,4 @@ namespace Sandbox3D
 		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo, ptrs);
 		Lamp::RenderPassManager::Get()->AddPass(renderPass);
 	}
-
 }

@@ -111,7 +111,18 @@ namespace Sandbox3D
 		{
 			glm::vec2 wS;
 			GetValue(pWindowSize->first_attribute("size")->value(), wS);
-			Lamp::Application::Get().SetWindowSize(wS);
+			Lamp::Application::Get().GetWindow().SetSize(wS);
+		}
+
+		if (xml_node<>* pWindowsOpen = pRootNode->first_node("WindowsOpen"))
+		{
+			GetValue(pWindowsOpen->first_attribute("Perspective")->value(), m_PerspectiveOpen);
+			GetValue(pWindowsOpen->first_attribute("AssetBrowser")->value(), m_AssetBrowserOpen);
+			GetValue(pWindowsOpen->first_attribute("Inspector")->value(), m_InspectiorOpen);
+			GetValue(pWindowsOpen->first_attribute("ModelImporter")->value(), m_ModelImporterOpen);
+			GetValue(pWindowsOpen->first_attribute("LayerView")->value(), m_LayerViewOpen);
+			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_CreateToolOpen);
+			GetValue(pWindowsOpen->first_attribute("LogTool")->value(), m_LogToolOpen);
 		}
 	}
 }
