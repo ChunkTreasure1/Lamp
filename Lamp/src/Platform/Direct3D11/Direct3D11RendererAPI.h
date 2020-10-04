@@ -16,5 +16,8 @@ namespace Lamp
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) override;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) override;
+
+	private:
+		glm::vec4 m_ClearColor = {1.f, 1.f, 1.f, 1.f};
 	};
 }

@@ -5,11 +5,13 @@
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 
+namespace wrl = Microsoft::WRL;
+
 namespace Lamp
 {
 	Direct3D11Context::Direct3D11Context(GLFWwindow* windowHandle)
 		: m_pWindowHandle(windowHandle), m_pContext(nullptr), m_pDevice(nullptr), m_pSwapChain(nullptr),
-		m_WindowsHandle(glfwGetWin32Window(windowHandle))
+		m_pRenderTarget(nullptr), m_WindowsHandle(glfwGetWin32Window(windowHandle))
 	{
 #ifdef LP_ENABLE_ASSERTS
 		LP_CORE_ASSERT(windowHandle, "WindowHandle is null!");
@@ -18,20 +20,6 @@ namespace Lamp
 
 	Direct3D11Context::~Direct3D11Context()
 	{
-		if (m_pDevice)
-		{
-			m_pDevice->Release();
-		}
-
-		if (m_pContext)
-		{
-			m_pContext->Release();
-		}
-
-		if (m_pSwapChain)
-		{
-			m_pSwapChain->Release();
-		}
 	}
 
 	void Direct3D11Context::Initialize()
@@ -53,10 +41,18 @@ namespace Lamp
 		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		sd.Flags = 0;
 
+		//Create device and fron/back buffers, also creates swap chain and render context
 		D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &sd, &m_pSwapChain, &m_pDevice, nullptr, &m_pContext);
+
+		//Gain access to texture subresource in swap chain
+		
+		wrl::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer);
+		m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &m_pRenderTarget);
 	}
 
 	void Direct3D11Context::SwapBuffers()
 	{
+		m_pSwapChain->Present(1u, 0u);
 	}
 }

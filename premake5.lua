@@ -76,7 +76,8 @@ project "Lamp"
 		"assimp-vc142-mt.lib",
 		"fmodstudio_vc.lib",
 		"fmod_vc.lib",
-		"d3d11.lib"
+		"d3d11.lib",
+		"d3dcompiler.lib"
 	}
 
 	filter "system:windows"

@@ -11,5 +11,8 @@ namespace DXTesting
 
 		virtual void OnImGuiRender(Lamp::Timestep ts) override;
 		virtual void OnEvent(Lamp::Event& e) override;
+
+	private:
+		bool OnUpdate(Lamp::AppUpdateEvent& e);
 	};
 }
