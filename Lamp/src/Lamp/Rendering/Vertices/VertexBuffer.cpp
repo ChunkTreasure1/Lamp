@@ -2,6 +2,7 @@
 #include "VertexBuffer.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
+#include "Platform/Direct3D11/Direct3D11Buffer.h"
 
 namespace Lamp
 {
@@ -11,6 +12,7 @@ namespace Lamp
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(pVertices, size);
+			case RendererAPI::API::DX11: return CreateRef<Direct3D11VertexBuffer>(pVertices, size);
 		}
 
 		return nullptr;
@@ -21,6 +23,8 @@ namespace Lamp
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(size);
+			case RendererAPI::API::DX11: return CreateRef<Direct3D11VertexBuffer>(size);
+
 		}
 
 		return nullptr;
@@ -31,6 +35,7 @@ namespace Lamp
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(vertices, size);
+			case RendererAPI::API::DX11: return CreateRef<Direct3D11VertexBuffer>(vertices, size);
 		}
 
 		return nullptr;

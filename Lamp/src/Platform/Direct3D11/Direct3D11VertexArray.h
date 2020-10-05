@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Lamp/Rendering/Vertices/VertexArray.h"
+#include <wrl.h>
+#include <d3d11.h>
 
 namespace Lamp
 {
@@ -18,10 +20,14 @@ namespace Lamp
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
 		
 		virtual Ref<IndexBuffer>& GetIndexBuffer() override { return m_IndexBuffer; }
+
+		inline void SetBlob(Microsoft::WRL::ComPtr<ID3DBlob>& blob) { m_pBlob = blob; }
 	
 	private:
 		uint32_t m_NumAttributes;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		Ref<IndexBuffer> m_IndexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pInputLayout;
+		Microsoft::WRL::ComPtr<ID3DBlob> m_pBlob;
 	};
 }

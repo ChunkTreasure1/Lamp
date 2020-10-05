@@ -384,10 +384,16 @@
     <ClInclude Include="src\Lamp\Utility\Random.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h">
+      <Filter>src\Platform\Direct3D11</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11RendererAPI.h">
+      <Filter>src\Platform\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11VertexArray.h">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
@@ -1515,7 +1521,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1683,10 +1688,16 @@
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11Buffer.cpp">
+      <Filter>src\Platform\Direct3D11</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11Context.cpp">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11RendererAPI.cpp">
+      <Filter>src\Platform\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11VertexArray.cpp">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1722,6 +1733,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Direct3D11\Direct3D11Buffer.cpp" />
   </ItemGroup>
 </Project>

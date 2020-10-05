@@ -6,6 +6,7 @@
 #include "Lamp/Core/Application.h"
 
 #include <d3dcompiler.h>
+#include "Platform/Direct3D11/Direct3D11VertexArray.h"
 
 namespace Lamp
 {
@@ -55,40 +56,12 @@ namespace Lamp
 			{
 				namespace wrl = Microsoft::WRL;
 
-				struct Vertex
+				std::vector<float> vertices =
 				{
-					float x;
-					float y;
+					 0.f,   0.5f,
+					 0.5f, -0.5f,
+					-0.5f, -0.5f
 				};
-
-				const Vertex vertices[] =
-				{
-					{ 0.f, 0.5f },
-					{ 0.5f, -0.5f },
-					{ -0.5f, -0.5f }
-				};
-
-				wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-
-				D3D11_BUFFER_DESC bd = {};
-				bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-				bd.Usage = D3D11_USAGE_DEFAULT;
-				bd.CPUAccessFlags = 0u;
-				bd.MiscFlags = 0u;
-				bd.ByteWidth = sizeof(vertices);
-				bd.StructureByteStride = sizeof(Vertex);
-
-				D3D11_SUBRESOURCE_DATA sd = {};
-				sd.pSysMem = vertices;
-
-				//Creates the vertex buffer using the descriptors
-				pContext->GetDevice()->CreateBuffer(&bd, &sd, &pVertexBuffer);
-
-				const uint32_t stride = sizeof(Vertex);
-				const uint32_t offset = 0u;
-
-				//Bind the vertex buffer
-				pContext->GetDeviceContext()->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 				wrl::ComPtr<ID3D11VertexShader> pVS;
 				wrl::ComPtr<ID3D11PixelShader> pPS;
@@ -102,15 +75,19 @@ namespace Lamp
 				pContext->GetDevice()->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVS);
 				pContext->GetDeviceContext()->VSSetShader(pVS.Get(), nullptr, 0u);
 
-				//Create input layout
-				wrl::ComPtr<ID3D11InputLayout> pInputLayout;
-				const D3D11_INPUT_ELEMENT_DESC ied[] =
-				{
-					{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				};
+				Ref<VertexArray> vertexArray = VertexArray::Create();
+				Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, (uint32_t)sizeof(float) * vertices.size());
+				vertexBuffer->SetBufferLayout
+				({
+					{ ElementType::Float2, "POSITION" }
+				});
 
-				pContext->GetDevice()->CreateInputLayout(ied, (uint32_t)std::size(ied), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout);
-				pContext->GetDeviceContext()->IASetInputLayout(pInputLayout.Get());
+				if (auto dVB = std::dynamic_pointer_cast<Direct3D11VertexArray>(vertexArray))
+				{
+					dVB->SetBlob(pBlob);
+				}
+				vertexArray->AddVertexBuffer(vertexBuffer);
+				vertexArray->Bind();
 
 				pContext->GetDeviceContext()->OMSetRenderTargets(1u, pContext->GetRenderTarget().GetAddressOf(), nullptr);
 				pContext->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -124,7 +101,7 @@ namespace Lamp
 				vp.TopLeftY = 0;
 				pContext->GetDeviceContext()->RSSetViewports(1u, &vp);
 
-				pContext->GetDeviceContext()->Draw((uint32_t)std::size(vertices), 0u);
+				pContext->GetDeviceContext()->Draw(3, 0u);
 			}
 		}
 	}

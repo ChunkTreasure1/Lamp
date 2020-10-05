@@ -19,7 +19,29 @@ namespace Lamp
 				bd.Usage = D3D11_USAGE_DEFAULT;
 				bd.CPUAccessFlags = 0u;
 				bd.MiscFlags = 0u;
-				bd.ByteWidth = sizeof(Vertex) * vertices.size();
+				bd.ByteWidth = size;
+				bd.StructureByteStride = sizeof(Vertex);
+
+				D3D11_SUBRESOURCE_DATA sd = {};
+				sd.pSysMem = &vertices[0];
+
+				pContext->GetDevice()->CreateBuffer(&bd, &sd, &m_pBuffer);
+			}
+		}
+	}
+
+	Direct3D11VertexBuffer::Direct3D11VertexBuffer(std::vector<float>& vertices, uint32_t size)
+	{
+		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
+		{
+			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
+			{
+				D3D11_BUFFER_DESC bd = {};
+				bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+				bd.Usage = D3D11_USAGE_DEFAULT;
+				bd.CPUAccessFlags = 0u;
+				bd.MiscFlags = 0u;
+				bd.ByteWidth = size;
 				bd.StructureByteStride = sizeof(Vertex);
 
 				D3D11_SUBRESOURCE_DATA sd = {};
@@ -32,6 +54,24 @@ namespace Lamp
 
 	Direct3D11VertexBuffer::Direct3D11VertexBuffer(uint32_t size)
 	{
+		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
+		{
+			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
+			{
+				D3D11_BUFFER_DESC bd = {};
+				bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+				bd.Usage = D3D11_USAGE_DEFAULT;
+				bd.CPUAccessFlags = 0u;
+				bd.MiscFlags = 0u;
+				bd.ByteWidth = size;
+				bd.StructureByteStride = sizeof(Vertex);
+
+				D3D11_SUBRESOURCE_DATA sd = {};
+				sd.pSysMem = nullptr;
+
+				pContext->GetDevice()->CreateBuffer(&bd, &sd, &m_pBuffer);
+			}
+		}
 	}
 
 	Direct3D11VertexBuffer::~Direct3D11VertexBuffer()
@@ -40,6 +80,15 @@ namespace Lamp
 
 	void Direct3D11VertexBuffer::Bind() const
 	{
+		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
+		{
+			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
+			{
+				const uint32_t stride = sizeof(float) * 2;
+				const uint32_t offset = 0u;
+				pContext->GetDeviceContext()->IASetVertexBuffers(0u, 1u, m_pBuffer.GetAddressOf(), &stride, &offset);
+			}
+		}
 	}
 
 	void Direct3D11VertexBuffer::Unbind() const
@@ -48,10 +97,29 @@ namespace Lamp
 
 	void Direct3D11VertexBuffer::SetVertices(std::vector<Vertex>& pVertices, uint32_t size)
 	{
+
 	}
 
 	void Direct3D11VertexBuffer::SetData(const void* data, uint32_t size)
 	{
+		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
+		{
+			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
+			{
+				D3D11_BUFFER_DESC bd = {};
+				bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+				bd.Usage = D3D11_USAGE_DEFAULT;
+				bd.CPUAccessFlags = 0u;
+				bd.MiscFlags = 0u;
+				bd.ByteWidth = size;
+				bd.StructureByteStride = sizeof(Vertex);
+
+				D3D11_SUBRESOURCE_DATA sd = {};
+				sd.pSysMem = data;
+
+				pContext->GetDevice()->CreateBuffer(&bd, &sd, &m_pBuffer);
+			}
+		}
 	}
 
 	/////Index buffer/////

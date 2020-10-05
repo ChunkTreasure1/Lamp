@@ -229,6 +229,7 @@
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11RendererAPI.h" />
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11VertexArray.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -664,6 +665,7 @@
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11Buffer.cpp" />
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11Context.cpp" />
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11RendererAPI.cpp" />
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
