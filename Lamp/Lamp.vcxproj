@@ -226,6 +226,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11RendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
@@ -660,6 +661,7 @@
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11Buffer.cpp" />
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11Context.cpp" />
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11RendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
