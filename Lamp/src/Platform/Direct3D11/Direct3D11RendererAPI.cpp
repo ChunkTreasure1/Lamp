@@ -77,6 +77,7 @@ namespace Lamp
 				pContext->GetDeviceContext()->IASetVertexBuffers(0u, 1u, &pVertexBuffer, &stride, &offset);
 
 				wrl::ComPtr<ID3D11VertexShader> pVS;
+				wrl::ComPtr<ID3D11PixelShader> pPS;
 				wrl::ComPtr<ID3DBlob> pBlob;
 
 				D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
@@ -84,6 +85,10 @@ namespace Lamp
 				pContext->GetDeviceContext()->VSSetShader(pVS.Get(), nullptr, 0u);
 
 				pContext->GetDeviceContext()->Draw((uint32_t)std::size(vertices), 0u);
+
+				D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
+				pContext->GetDevice()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPS);
+				pContext->GetDeviceContext()->PSSetShader(pPS.Get(), nullptr, 0u);
 			}
 		}
 	}

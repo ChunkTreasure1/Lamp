@@ -19,7 +19,8 @@ namespace Lamp
 
 	void Renderer::Shutdown()
 	{
-		Renderer2D::Shutdown();
+		//Renderer2D::Shutdown();
+		//Renderer3D::Shutdown();
 	}
 
 	void Renderer::Begin(OrthographicCamera & camera)
