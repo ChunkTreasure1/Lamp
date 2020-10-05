@@ -41,12 +41,13 @@ namespace Lamp
 		return nullptr;
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(std::vector<uint32_t>& pIndices, uint32_t size)
+	Ref<IndexBuffer> IndexBuffer::Create(std::vector<uint32_t>& pIndices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLIndexBuffer>(pIndices, size);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLIndexBuffer>(pIndices, count);
+			case RendererAPI::API::DX11: return CreateRef<Direct3D11IndexBuffer>(pIndices, count);
 		}
 
 		return nullptr;
@@ -57,6 +58,7 @@ namespace Lamp
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLIndexBuffer>(pIndices, count);
+			case RendererAPI::API::DX11: return CreateRef<Direct3D11IndexBuffer>(pIndices, count);
 		}
 
 		return nullptr;

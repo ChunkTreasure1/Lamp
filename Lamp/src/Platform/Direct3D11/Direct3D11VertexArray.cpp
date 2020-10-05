@@ -23,6 +23,7 @@ namespace Lamp
 	}
 
 	Direct3D11VertexArray::Direct3D11VertexArray()
+		: m_NumAttributes(0), m_IndexBuffer(nullptr), m_pBlob(nullptr), m_pInputLayout(nullptr)
 	{
 	}
 
@@ -50,7 +51,7 @@ namespace Lamp
 
 		for (auto& element : pVertexBuffer->GetBufferLayout().GetElements())
 		{
-			ied.push_back({ element.Name.c_str(), 0, ElementTypeToDXEnum(element.ElementType), m_NumAttributes, (uint32_t)element.Offset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+			ied.push_back({ element.Name.c_str(), 0, ElementTypeToDXEnum(element.ElementType), 0, (uint32_t)element.Offset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 			m_NumAttributes++;
 		}
 
@@ -58,7 +59,7 @@ namespace Lamp
 		{
 			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 			{
-				//LP_ASSERT(!m_pBlob, "No vertex shader blob set!");
+				//LP_ASSERT(!m_pBlob.Get(), "No vertex shader blob set!");
 
 				pContext->GetDevice()->CreateInputLayout(&ied[0], m_NumAttributes, m_pBlob->GetBufferPointer(), m_pBlob->GetBufferSize(), &m_pInputLayout);
 				pContext->GetDeviceContext()->IASetInputLayout(m_pInputLayout.Get());
@@ -70,5 +71,7 @@ namespace Lamp
 
 	void Direct3D11VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& pIndexBuffer)
 	{
+		pIndexBuffer->Bind();
+		m_IndexBuffer = pIndexBuffer;
 	}
 }

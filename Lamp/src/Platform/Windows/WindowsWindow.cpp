@@ -188,9 +188,9 @@ namespace Lamp
 	}
 	void WindowsWindow::SetSize(const glm::vec2& size)
 	{
-		glfwSetWindowSize(m_pWindow, size.x, size.y);
+		glfwSetWindowSize(m_pWindow, (int)size.x, (int)size.y);
 
-		WindowResizeEvent resize(size.x, size.y);
+		WindowResizeEvent resize((uint32_t)size.x, (uint32_t)size.y);
 		Lamp::Application::Get().OnEvent(resize);
 	}
 }

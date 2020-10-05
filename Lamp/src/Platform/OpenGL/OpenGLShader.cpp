@@ -3,18 +3,18 @@
 
 namespace Lamp
 {
-	OpenGLShader::OpenGLShader(const std::string& vertexPath, const std::string& fragmentPath)
-		: m_RendererID(0), m_FragmentPath(fragmentPath), m_VertexPath(vertexPath)
+	OpenGLShader::OpenGLShader(std::initializer_list<std::string> paths)
+		: m_Paths(paths), m_RendererID(0), m_FragmentPath(m_Paths[1]), m_VertexPath(m_Paths[0])
 	{
 		std::string vertexCode;
 		std::string fragmentCode;
 
 		//Read the vertex shader
-		std::ifstream fragmentFile(fragmentPath);
+		std::ifstream fragmentFile(m_Paths[1]);
 		if (fragmentFile.fail())
 		{
-			perror(fragmentPath.c_str());
-			LP_CORE_ERROR("Failed to open" + fragmentPath + "!");
+			perror(m_Paths[1].c_str());
+			LP_CORE_ERROR("Failed to open" + m_Paths[1] + "!");
 		}
 
 		std::string line;
@@ -27,11 +27,11 @@ namespace Lamp
 		fragmentFile.close();
 
 		//Read the vertex shader
-		std::ifstream vertexFile(vertexPath);
+		std::ifstream vertexFile(m_Paths[0]);
 		if (vertexFile.fail())
 		{
-			perror(vertexPath.c_str());
-			LP_CORE_ERROR("Failed to open" + vertexPath + "!");
+			perror(m_Paths[0].c_str());
+			LP_CORE_ERROR("Failed to open" + m_Paths[0] + "!");
 		}
 
 		std::getline(vertexFile, line);
@@ -59,7 +59,7 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + vertexPath);
+			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[0]);
 		}
 
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -70,7 +70,7 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + fragmentPath);
+			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[1]);
 		}
 
 		m_RendererID = glCreateProgram();

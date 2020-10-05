@@ -334,7 +334,7 @@ namespace Sandbox3D
 
 		if (m_pShader == nullptr)
 		{
-			m_pShader = Lamp::Shader::Create("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
+			m_pShader = Lamp::Shader::Create({ {"engine/shaders/3d/shader_vs.glsl"}, {"engine/shaders/3d/shader_fs.glsl"} });
 		}
 
 		ImGui::Begin("Model importer", &m_ModelImporterOpen);
@@ -454,7 +454,7 @@ namespace Sandbox3D
 		}
 
 		ImGui::Begin("Add Component", &m_AddComponentOpen);
-		
+
 		static std::string selected = "";
 
 		for (auto& key : Lamp::ComponentRegistry::s_Methods())
@@ -509,7 +509,7 @@ namespace Sandbox3D
 		ImGui::Begin("Create", &m_CreateToolOpen);
 
 		static bool brushListOpen = false;
-		
+
 		if (!brushListOpen)
 		{
 			if (ImGui::Button("Entity"))
@@ -519,7 +519,7 @@ namespace Sandbox3D
 
 				m_pSelectedObject = pEnt;
 			}
-			
+
 			ImGui::SameLine();
 
 			if (ImGui::Button("Brush"))
@@ -567,7 +567,7 @@ namespace Sandbox3D
 		}
 
 		ImGui::Begin("Log", &m_LogToolOpen);
-		
+
 		if (ImGui::BeginPopup("Options"))
 		{
 			ImGui::Checkbox("Auto-scroll", &autoScroll);

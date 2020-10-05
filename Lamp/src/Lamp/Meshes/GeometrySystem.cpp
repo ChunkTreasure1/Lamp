@@ -68,7 +68,7 @@ namespace Lamp
 		std::ifstream modelFile(path + ".spec");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(modelFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
-	
+
 		file.parse<0>(&buffer[0]);
 		pRootNode = file.first_node("Geometry");
 
@@ -100,7 +100,7 @@ namespace Lamp
 				{
 					GetValue(pICount->first_attribute("count")->value(), indiceCount);
 				}
-			
+
 				std::ifstream in(path, std::ios::in | std::ios::binary);
 				for (size_t i = 0; i < vertCount; i++)
 				{
@@ -155,7 +155,7 @@ namespace Lamp
 
 				mat.SetDiffuse(Texture2D::Create(diffPath));
 				mat.SetSpecular(Texture2D::Create(specPath));
-				mat.SetShader(Shader::Create(vertexPath, fragmentPath));
+				mat.SetShader(Shader::Create({ { vertexPath }, {fragmentPath} }));
 				mat.SetShininess(shininess);
 			}
 		}
@@ -180,7 +180,7 @@ namespace Lamp
 		std::ofstream out(path, std::ios::out | std::ios::binary);
 		out.write((char*)&model->GetMeshes()[0]->GetVertices()[0], model->GetMeshes()[0]->GetVertices().size() * sizeof(Vertex));
 		out.write((char*)&model->GetMeshes()[0]->GetIndices()[0], model->GetMeshes()[0]->GetIndices().size() * sizeof(uint32_t));
-		out.close(); 
+		out.close();
 
 		using namespace rapidxml;
 
@@ -240,13 +240,13 @@ namespace Lamp
 		pShader->append_attribute(doc.allocate_attribute("vertex", model->GetMaterial().GetShader()->GetVertexPath().c_str()));
 		pShader->append_attribute(doc.allocate_attribute("fragment", model->GetMaterial().GetShader()->GetFragmentPath().c_str()));
 		pMaterial->append_node(pShader);
-		
+
 		pMaterials->append_node(pMaterial);
 		////////////////
 
 		/////Bounding box//////
 		xml_node<>* pBB = doc.allocate_node(node_element, "BoundingBox");
-		
+
 		xml_node<>* pMax = doc.allocate_node(node_element, "Max");
 		char* pPos1 = doc.allocate_string(ToString(model->GetBoundingBox().Max).c_str());
 		pMax->append_attribute(doc.allocate_attribute("position", pPos1));

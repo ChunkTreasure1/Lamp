@@ -47,7 +47,7 @@ namespace Lamp
 		//////////////
 
 		Renderer3DStorage()
-			: LineMaterial(Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl"), 0)
+			: LineMaterial(Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Shader::Create({ {"engine/shaders/3d/lineShader_vs.glsl"}, {"engine/shaders/3d/lineShader_fs.glsl"} }), 0)
 		{}
 
 		~Renderer3DStorage()
@@ -80,8 +80,8 @@ namespace Lamp
 			"assets/textures/skybox/back.jpg",
 		};
 		s_pData->CubeMap = TextureCube::Create(paths);
-		s_pData->SkyboxShader = Shader::Create("engine/shaders/3d/skyboxShader_vs.glsl", "engine/shaders/3d/skyboxShader_fs.glsl");
-		s_pData->GridShader = Shader::Create("engine/shaders/3d/gridShader_vs.glsl", "engine/shaders/3d/gridShader_fs.glsl");
+		s_pData->SkyboxShader = Shader::Create({ {"engine/shaders/3d/skyboxShader_vs.glsl"}, {"engine/shaders/3d/skyboxShader_fs.glsl"} });
+		s_pData->GridShader = Shader::Create({ {"engine/shaders/3d/gridShader_vs.glsl"}, {"engine/shaders/3d/gridShader_fs.glsl"} });
 
 		///////Line///////
 		s_pData->LineVertexArray = VertexArray::Create();

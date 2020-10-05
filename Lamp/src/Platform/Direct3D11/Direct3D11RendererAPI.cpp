@@ -7,6 +7,7 @@
 
 #include <d3dcompiler.h>
 #include "Platform/Direct3D11/Direct3D11VertexArray.h"
+#include "Platform/Direct3D11/Direct3D11Shader.h"
 
 namespace Lamp
 {
@@ -20,14 +21,14 @@ namespace Lamp
 		{
 			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 			{
-				//D3D11_VIEWPORT vp;
-				//vp.Width = width;
-				//vp.Height = height;
-				//vp.MinDepth = 0;
-				//vp.MaxDepth = 1;
-				//vp.TopLeftX = x;
-				//vp.TopLeftY = y;
-				//pContext->GetDeviceContext()->RSSetViewports(1u, &vp);
+				D3D11_VIEWPORT vp;
+				vp.Width = width;
+				vp.Height = height;
+				vp.MinDepth = 0;
+				vp.MaxDepth = 1;
+				vp.TopLeftX = x;
+				vp.TopLeftY = y;
+				pContext->GetDeviceContext()->RSSetViewports(1u, &vp);
 			}
 		}
 	}
@@ -48,7 +49,7 @@ namespace Lamp
 		}
 	}
 
-	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t)
+	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size)
 	{
 		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
 		{
@@ -58,33 +59,34 @@ namespace Lamp
 
 				std::vector<float> vertices =
 				{
-					 0.f,   0.5f,
-					 0.5f, -0.5f,
-					-0.5f, -0.5f
+					 0.f,   0.5f, 1.f, 0.f, 0.f,
+					 0.5f, -0.5f, 0.f, 1.f, 0.f,
+					-0.5f, -0.5f, 0.f, 0.f, 1.f
 				};
 
-				wrl::ComPtr<ID3D11VertexShader> pVS;
-				wrl::ComPtr<ID3D11PixelShader> pPS;
-				wrl::ComPtr<ID3DBlob> pBlob;
-
-				D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
-				pContext->GetDevice()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPS);
-				pContext->GetDeviceContext()->PSSetShader(pPS.Get(), nullptr, 0u);
-
-				D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
-				pContext->GetDevice()->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVS);
-				pContext->GetDeviceContext()->VSSetShader(pVS.Get(), nullptr, 0u);
+				Ref<Shader> pShader = Shader::Create({ {"VertexShader.cso"}, {"PixelShader.cso"} });
 
 				Ref<VertexArray> vertexArray = VertexArray::Create();
 				Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, (uint32_t)sizeof(float) * vertices.size());
 				vertexBuffer->SetBufferLayout
 				({
-					{ ElementType::Float2, "POSITION" }
+					{ ElementType::Float2, "POSITION" },
+					{ ElementType::Float3, "COLOR" }
 				});
+
+				std::vector<uint32_t> indices =
+				{
+					0, 1, 2
+				};
+				Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
+				vertexArray->SetIndexBuffer(indexBuffer);
 
 				if (auto dVB = std::dynamic_pointer_cast<Direct3D11VertexArray>(vertexArray))
 				{
-					dVB->SetBlob(pBlob);
+					if (auto shader = std::dynamic_pointer_cast<Direct3D11Shader>(pShader))
+					{
+						dVB->SetBlob(shader->GetVertexBlob());
+					}
 				}
 				vertexArray->AddVertexBuffer(vertexBuffer);
 				vertexArray->Bind();
@@ -92,16 +94,7 @@ namespace Lamp
 				pContext->GetDeviceContext()->OMSetRenderTargets(1u, pContext->GetRenderTarget().GetAddressOf(), nullptr);
 				pContext->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-				D3D11_VIEWPORT vp;
-				vp.Width = 1280;
-				vp.Height = 720;
-				vp.MinDepth = 0;
-				vp.MaxDepth = 1;
-				vp.TopLeftX = 0;
-				vp.TopLeftY = 0;
-				pContext->GetDeviceContext()->RSSetViewports(1u, &vp);
-
-				pContext->GetDeviceContext()->Draw(3, 0u);
+				pContext->GetDeviceContext()->DrawIndexed((uint32_t)std::size(indices), 0u, 0u);
 			}
 		}
 	}

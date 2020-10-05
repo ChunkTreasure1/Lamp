@@ -44,5 +44,6 @@ namespace Lamp
 
 	private:
 		uint32_t m_Count;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_pBuffer;
 	};
 }
