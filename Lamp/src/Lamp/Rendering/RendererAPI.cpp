@@ -10,6 +10,8 @@ namespace Lamp
 #ifdef LP_PLATFORM_WINDOWS
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::DX11;
 #pragma pack_matrix( row_major )
+#define	GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define	GLM_FORCE_LEFT_HANDED
 #else
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 #endif

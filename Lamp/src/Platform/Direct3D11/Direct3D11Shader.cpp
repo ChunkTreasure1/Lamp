@@ -10,6 +10,8 @@
 #include "Lamp/Core/Application.h"
 #include "Direct3D11DebugLayer.h"
 
+#include <DirectXMath.h>
+
 namespace Lamp
 {
 	Direct3D11Shader::Direct3D11Shader(std::initializer_list<std::string> paths)
@@ -49,15 +51,19 @@ namespace Lamp
 	void Direct3D11Shader::UploadData(const ShaderData& data)
 	{
 		namespace wrl = Microsoft::WRL;
+		namespace dx = DirectX;
 
 		struct Buff
 		{
-			glm::mat4 transformation;
+			dx::XMMATRIX transformation;
 		};
 
 		const Buff b
 		{
-			glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f))
+			dx::XMMatrixRotationZ(glm::radians(45.f)) *
+			dx::XMMatrixRotationX(glm::radians(45.f)) *
+			dx::XMMatrixTranslation(0.f, 0.f, 4.f) *
+			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f)
 		};
 
 		wrl::ComPtr<ID3D11Buffer> pBuf;
@@ -68,25 +74,25 @@ namespace Lamp
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
 
-		uint32_t size = 0;
-		for (auto& uniform : data.Data)
-		{
-			size += uniform.Size;
-		}
+		//uint32_t size = 0;
+		//for (auto& uniform : data.Data)
+		//{
+		//	size += uniform.Size;
+		//}
 
-		void* base = malloc(size);
-		void* ptr = base;
-		for (auto& uniform : data.Data)
-		{
-			uint32_t s = uniform.Size;
-			memmove(ptr, uniform.Data, s);
-			ptr = static_cast<char*>(ptr) + s;
-		}
+		//void* base = malloc(size);
+		//void* ptr = base;
+		//for (auto& uniform : data.Data)
+		//{
+		//	uint32_t s = uniform.Size;
+		//	memmove(ptr, uniform.Data, s);
+		//	ptr = static_cast<char*>(ptr) + s;
+		//}
 
-		bd.ByteWidth = size;
+		bd.ByteWidth = sizeof(b);
 		bd.StructureByteStride = 0u;
 		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = base;
+		sd.pSysMem = &b;
 
 		if (!pBuf.Get())
 		{

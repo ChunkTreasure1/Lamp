@@ -9,6 +9,8 @@
 #include "Platform/Direct3D11/Direct3D11VertexArray.h"
 #include "Platform/Direct3D11/Direct3D11Shader.h"
 
+#include <DirectXMath.h>
+
 namespace Lamp
 {
 	void Direct3D11RendererAPI::Initialize()
@@ -59,9 +61,16 @@ namespace Lamp
 
 				std::vector<float> vertices =
 				{
-					 0.f,   0.5f, 1.f, 0.f, 0.f,
-					 0.5f, -0.5f, 0.f, 1.f, 0.f,
-					-0.5f, -0.5f, 0.f, 0.f, 1.f
+					-1.f, -1.f, -1.f,  1.f, 0.f, 0.f,
+					 1.f, -1.f, -1.f,  0.f, 1.f, 0.f,
+					-1.f,  1.f, -1.f,  0.f, 0.f, 1.f,
+
+					 1.f,  1.f, -1.f,  1.f, 0.f, 0.f,
+					-1.f, -1.f,  1.f,  0.f, 1.f, 0.f,
+					 1.f, -1.f,  1.f,  0.f, 0.f, 1.f,
+
+					-1.f,  1.f,  1.f,  1.f, 0.f, 0.f,
+					 1.f,  1.f,  1.f,  0.f, 1.f, 1.f
 				};
 
 				Ref<Shader> pShader = Shader::Create({ {"VertexShader.cso"}, {"PixelShader.cso"} });
@@ -70,13 +79,18 @@ namespace Lamp
 				Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, (uint32_t)sizeof(float) * vertices.size());
 				vertexBuffer->SetBufferLayout
 				({
-					{ ElementType::Float2, "POSITION" },
+					{ ElementType::Float3, "POSITION" },
 					{ ElementType::Float3, "COLOR" }
 				});
 
 				std::vector<uint32_t> indices =
 				{
-					0, 1, 2
+					0, 1, 2,  2, 3, 1,
+					1, 3, 5,  3, 7, 5,
+					2, 6, 3,  3, 6, 7,
+					4, 5, 6,  4, 7, 6,
+					0, 4, 2,  2, 4, 6,
+					0, 1, 4,  1, 5, 4
 				};
 				Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
 				vertexArray->SetIndexBuffer(indexBuffer);
@@ -88,12 +102,19 @@ namespace Lamp
 						dVB->SetBlob(shader->GetVertexBlob());
 					}
 				}
-				glm::mat4 trans = glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f));
+				//glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f)) *
+				//	glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(1.f, 0.f, 0.f)) *
+				//	glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
 
-				pShader->UploadData(ShaderData
-				({
-					{ "Test", ShaderDataType::Mat4, glm::value_ptr(trans) }
-				}));
+				//glm::mat4 proj = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+
+				//pShader->UploadData(ShaderData
+				//({
+				//	{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(model) },
+				//	{ "u_Projection", ShaderDataType::Mat4, glm::value_ptr(proj) }
+				//}));
+
+				pShader->UploadData(ShaderData({}));
 				vertexArray->AddVertexBuffer(vertexBuffer);
 				vertexArray->Bind();
 
