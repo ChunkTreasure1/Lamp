@@ -9,6 +9,7 @@ namespace Lamp
 {
 #ifdef LP_PLATFORM_WINDOWS
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::DX11;
+#pragma pack_matrix( row_major )
 #else
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 #endif

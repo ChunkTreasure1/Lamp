@@ -88,6 +88,12 @@ namespace Lamp
 						dVB->SetBlob(shader->GetVertexBlob());
 					}
 				}
+				glm::mat4 trans = glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f));
+
+				pShader->UploadData(ShaderData
+				({
+					{ "Test", ShaderDataType::Mat4, glm::value_ptr(trans) }
+				}));
 				vertexArray->AddVertexBuffer(vertexBuffer);
 				vertexArray->Bind();
 

@@ -151,7 +151,7 @@ namespace Lamp
 
 		s_pData->pTextureShader = Shader::Create({ {"engine/shaders/2d/Texture.vert"}, {"engine/shaders/2d/Texture.frag"} });
 		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
+		//s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 
 		s_pData->TextureSlots[0] = s_pData->pWhiteTexture;
 
@@ -174,7 +174,7 @@ namespace Lamp
 		RenderCommand::Clear();
 
 		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
+		//s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
 
 		ResetBatchData();
 	}

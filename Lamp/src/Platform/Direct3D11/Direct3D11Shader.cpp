@@ -45,35 +45,41 @@ namespace Lamp
 	{
 	}
 
-	void Direct3D11Shader::UploadBool(const std::string& name, bool value) const
+	void Direct3D11Shader::UploadData(const ShaderData& data)
 	{
-	}
+		namespace wrl = Microsoft::WRL;
 
-	void Direct3D11Shader::UploadInt(const std::string& name, int value) const
-	{
-	}
+		wrl::ComPtr<ID3D11Buffer> pBuf;
 
-	void Direct3D11Shader::UploadFloat(const std::string& name, float value) const
-	{
-	}
+		D3D11_BUFFER_DESC bd;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.Usage = D3D11_USAGE_DYNAMIC;
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bd.MiscFlags = 0u;
 
-	void Direct3D11Shader::UploadFloat3(const std::string& name, const glm::vec3& value) const
-	{
-	}
+		uint32_t size = 0;
+		std::vector<void*> ptrs;
+		for (auto& uniform : data.Data)
+		{
+			size += sizeof(uniform.pData);
+			ptrs.push_back(uniform.pData);
+		}
 
-	void Direct3D11Shader::UploadFloat4(const std::string& name, const glm::vec4& value) const
-	{
-	}
+		bd.ByteWidth = size;
+		bd.StructureByteStride = 0u;
+		D3D11_SUBRESOURCE_DATA sd = {};
+		sd.pSysMem = &ptrs[0];
 
-	void Direct3D11Shader::UploadMat4(const std::string& name, const glm::mat4& mat)
-	{
-	}
-
-	void Direct3D11Shader::UploadMat3(const std::string& name, const glm::mat3& mat)
-	{
-	}
-
-	void Direct3D11Shader::UploadIntArray(const std::string& name, int* values, uint32_t count) const
-	{
+		if (!pBuf.Get())
+		{
+			if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
+			{
+				if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
+				{
+					pContext->GetDevice()->CreateBuffer(&bd, &sd, &pBuf);
+					pContext->GetDeviceContext()->VSGetConstantBuffers(0u, 1u, pBuf.GetAddressOf());
+				}
+			}
+		}
 	}
 }

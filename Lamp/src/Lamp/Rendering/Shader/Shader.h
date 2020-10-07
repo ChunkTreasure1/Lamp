@@ -23,6 +23,35 @@ namespace Lamp
 		Unknown
 	};
 
+	enum class ShaderDataType
+	{
+		Bool,
+		Int,
+		Float,
+		Float2,
+		Float3,
+		Float4,
+		Mat3,
+		Mat4,
+		IntArray
+	};
+
+	struct ShaderUniform
+	{
+		std::string Name;
+		ShaderDataType Type;
+		void* pData = nullptr;
+	};
+
+	struct ShaderData
+	{
+		ShaderData(std::initializer_list<ShaderUniform> data)
+			: Data(data)
+		{}
+
+		std::vector<ShaderUniform> Data;
+	};
+
 	class Shader
 	{
 	public:
@@ -31,15 +60,7 @@ namespace Lamp
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void UploadBool(const std::string& name, bool value) const = 0;
-		virtual void UploadInt(const std::string& name, int value) const = 0;
-		virtual void UploadFloat(const std::string& name, float value) const = 0;
-		virtual void UploadFloat3(const std::string& name, const glm::vec3& value) const = 0;
-		virtual void UploadFloat4(const std::string& name, const glm::vec4& value) const = 0;
-		
-		virtual void UploadMat4(const std::string& name, const glm::mat4& mat) = 0;
-		virtual void UploadMat3(const std::string& name, const glm::mat3& mat) = 0;
-		virtual void UploadIntArray(const std::string& name, int* values, uint32_t count) const = 0;
+		virtual void UploadData(const ShaderData& data) = 0;
 
 		virtual const std::string& GetName() = 0;
 		virtual std::string& GetFragmentPath() = 0;
