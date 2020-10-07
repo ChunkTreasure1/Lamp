@@ -57,7 +57,8 @@ project "Lamp"
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/ImGuizmo/include"
+		"%{prj.name}/vendor/ImGuizmo/include",
+		"%{prj.name}/vendor/dxerr"
 	}
 	
 	libdirs

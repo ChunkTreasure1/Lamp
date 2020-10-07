@@ -105,25 +105,25 @@ namespace Lamp
 			{
 			case Lamp::ShaderDataType::Bool:
 			{
-				glUniform1i(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<int*>(uniform.pData));
+				glUniform1i(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<int*>(uniform.Data));
 				break;
 			}
 
 			case Lamp::ShaderDataType::Int:
 			{
-				glUniform1i(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<int*>(uniform.pData));
+				glUniform1i(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<int*>(uniform.Data));
 				break;
 			}
 
 			case Lamp::ShaderDataType::Float:
 			{
-				glUniform1f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<float*>(uniform.pData));
+				glUniform1f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<float*>(uniform.Data));
 				break;
 			}
 
 			case Lamp::ShaderDataType::Float2:
 			{
-				glm::vec2* p = static_cast<glm::vec2*>(uniform.pData);
+				glm::vec2* p = static_cast<glm::vec2*>(uniform.Data);
 
 				glUniform2f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), p->x, p->y);
 				break;
@@ -131,14 +131,14 @@ namespace Lamp
 
 			case Lamp::ShaderDataType::Float3:
 			{
-				glm::vec3* p = static_cast<glm::vec3*>(uniform.pData);
+				glm::vec3* p = static_cast<glm::vec3*>(uniform.Data);
 				glUniform3f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), p->x, p->y, p->z);
 				break;
 			}
 
 			case Lamp::ShaderDataType::Float4:
 			{
-				glm::vec4* p = static_cast<glm::vec4*>(uniform.pData);
+				glm::vec4* p = static_cast<glm::vec4*>(uniform.Data);
 				glUniform4f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), p->x, p->y, p->z, p->w);
 				break;
 			}
@@ -146,19 +146,19 @@ namespace Lamp
 			case Lamp::ShaderDataType::Mat3:
 			{
 				uint32_t transfromLoc = glGetUniformLocation(m_RendererID, uniform.Name.c_str());
-				glUniformMatrix3fv(transfromLoc, 1, GL_FALSE, (float*)uniform.pData);
+				glUniformMatrix3fv(transfromLoc, 1, GL_FALSE, (float*)uniform.Data);
 				break;
 			}
 
 			case Lamp::ShaderDataType::Mat4:
 			{
 				uint32_t transfromLoc = glGetUniformLocation(m_RendererID, uniform.Name.c_str());
-				glUniformMatrix4fv(transfromLoc, 1, GL_FALSE, (float*)uniform.pData);
+				glUniformMatrix4fv(transfromLoc, 1, GL_FALSE, (float*)uniform.Data);
 				break;
 			}
 			case Lamp::ShaderDataType::IntArray:
 
-				glUniform1iv(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), sizeof(uniform.pData) / sizeof(int), (int*)uniform.pData);
+				glUniform1iv(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), uniform.Size / sizeof(int), (int*)uniform.Data);
 				break;
 			}
 		}

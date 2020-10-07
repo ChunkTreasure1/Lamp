@@ -36,11 +36,34 @@ namespace Lamp
 		IntArray
 	};
 
+	static uint32_t GetSizeFromType(ShaderDataType elementType)
+	{
+		switch (elementType)
+		{
+			case Lamp::ShaderDataType::Bool: return 1;
+			case Lamp::ShaderDataType::Int: return 4;
+			case Lamp::ShaderDataType::Float: return 4;
+			case Lamp::ShaderDataType::Float2: return 4 * 2;
+			case Lamp::ShaderDataType::Float3: return 4 * 3;
+			case Lamp::ShaderDataType::Float4: return 4 * 4;
+			case Lamp::ShaderDataType::Mat3: return 4 * 3 * 3;
+			case Lamp::ShaderDataType::Mat4: return 4 * 4 * 4;
+		}
+
+		return 0;
+	}
+
 	struct ShaderUniform
 	{
+		ShaderUniform(const std::string& name, ShaderDataType type, void* pData)
+			: Name(name), Type(type), Data(pData)
+		{
+			Size = GetSizeFromType(type);
+		}
 		std::string Name;
 		ShaderDataType Type;
-		void* pData = nullptr;
+		uint32_t Size;
+		void* Data = nullptr;
 	};
 
 	struct ShaderData

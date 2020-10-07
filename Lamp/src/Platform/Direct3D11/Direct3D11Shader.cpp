@@ -8,6 +8,7 @@
 #include "Platform/Windows/WindowsWindow.h"
 #include "Platform/Direct3D11/Direct3D11Context.h"
 #include "Lamp/Core/Application.h"
+#include "Direct3D11DebugLayer.h"
 
 namespace Lamp
 {
@@ -49,26 +50,43 @@ namespace Lamp
 	{
 		namespace wrl = Microsoft::WRL;
 
+		struct Buff
+		{
+			glm::mat4 transformation;
+		};
+
+		const Buff b
+		{
+			glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f))
+		};
+
 		wrl::ComPtr<ID3D11Buffer> pBuf;
 
-		D3D11_BUFFER_DESC bd;
+		D3D11_BUFFER_DESC bd = {};
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		bd.Usage = D3D11_USAGE_DYNAMIC;
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
 
 		uint32_t size = 0;
-		std::vector<void*> ptrs;
 		for (auto& uniform : data.Data)
 		{
-			size += sizeof(uniform.pData);
-			ptrs.push_back(uniform.pData);
+			size += uniform.Size;
+		}
+
+		void* base = malloc(size);
+		void* ptr = base;
+		for (auto& uniform : data.Data)
+		{
+			uint32_t s = uniform.Size;
+			memmove(ptr, uniform.Data, s);
+			ptr = static_cast<char*>(ptr) + s;
 		}
 
 		bd.ByteWidth = size;
 		bd.StructureByteStride = 0u;
 		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = &ptrs[0];
+		sd.pSysMem = base;
 
 		if (!pBuf.Get())
 		{
@@ -77,9 +95,11 @@ namespace Lamp
 				if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 				{
 					pContext->GetDevice()->CreateBuffer(&bd, &sd, &pBuf);
-					pContext->GetDeviceContext()->VSGetConstantBuffers(0u, 1u, pBuf.GetAddressOf());
+
+					pContext->GetDeviceContext()->VSSetConstantBuffers(0u, 1u, pBuf.GetAddressOf());
 				}
 			}
 		}
+
 	}
 }
