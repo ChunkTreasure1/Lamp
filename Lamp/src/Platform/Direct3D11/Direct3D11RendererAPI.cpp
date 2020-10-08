@@ -61,16 +61,10 @@ namespace Lamp
 
 				std::vector<float> vertices =
 				{
-					-1.f, -1.f, -1.f,  1.f, 0.f, 0.f,
-					 1.f, -1.f, -1.f,  0.f, 1.f, 0.f,
-					-1.f,  1.f, -1.f,  0.f, 0.f, 1.f,
-
-					 1.f,  1.f, -1.f,  1.f, 0.f, 0.f,
-					-1.f, -1.f,  1.f,  0.f, 1.f, 0.f,
-					 1.f, -1.f,  1.f,  0.f, 0.f, 1.f,
-
-					-1.f,  1.f,  1.f,  1.f, 0.f, 0.f,
-					 1.f,  1.f,  1.f,  0.f, 1.f, 1.f
+					0.5f, 0.5f,  1.f, 0.f, 0.f,
+					0.5f, -0.5f,  0.f, 1.f, 0.f,
+					-0.5f,-0.5f,  0.f, 0.f, 1.f,
+				   -0.5f, 0.5f,  1.f, 0.f, 0.f,
 				};
 
 				Ref<Shader> pShader = Shader::Create({ {"VertexShader.cso"}, {"PixelShader.cso"} });
@@ -81,16 +75,12 @@ namespace Lamp
 				({
 					{ ElementType::Float3, "POSITION" },
 					{ ElementType::Float3, "COLOR" }
-				});
+					});
 
 				std::vector<uint32_t> indices =
 				{
-					0, 1, 2,  2, 3, 1,
-					1, 3, 5,  3, 7, 5,
-					2, 6, 3,  3, 6, 7,
-					4, 5, 6,  4, 7, 6,
-					0, 4, 2,  2, 4, 6,
-					0, 1, 4,  1, 5, 4
+					0, 1, 2, 
+					0, 2, 3, 
 				};
 				Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
 				vertexArray->SetIndexBuffer(indexBuffer);

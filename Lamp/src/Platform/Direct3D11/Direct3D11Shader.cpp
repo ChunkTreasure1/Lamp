@@ -58,13 +58,16 @@ namespace Lamp
 			dx::XMMATRIX transformation;
 		};
 
+		static float angle = 0.f;
+
 		const Buff b
 		{
-			dx::XMMatrixRotationZ(glm::radians(45.f)) *
-			dx::XMMatrixRotationX(glm::radians(45.f)) *
+			dx::XMMatrixTranspose(dx::XMMatrixRotationZ(glm::radians(angle)) *
+			dx::XMMatrixRotationX(glm::radians(angle)) * 
 			dx::XMMatrixTranslation(0.f, 0.f, 4.f) *
-			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f)
+			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f))
 		};
+		angle++;
 
 		wrl::ComPtr<ID3D11Buffer> pBuf;
 

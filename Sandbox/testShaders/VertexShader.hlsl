@@ -13,7 +13,7 @@ cbuffer CBuffer
 VSOut main(float3 pos : POSITION, float3 color : COLOR)
 {
 	VSOut vso;
-	vso.pos = mul(u_Model, float4(pos, 1.f));
+	vso.pos = mul(float4(pos, 1.f), u_Model);
 	vso.color = color;
 
 	return vso;

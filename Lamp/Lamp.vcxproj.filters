@@ -390,6 +390,9 @@
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Direct3D11\Direct3D11DebugLayer.h">
+      <Filter>src\Platform\Direct3D11</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11RendererAPI.h">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClInclude>
@@ -1524,7 +1527,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Direct3D11\Direct3D11DebugLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1698,6 +1700,9 @@
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11Context.cpp">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Direct3D11\Direct3D11DebugLayer.cpp">
+      <Filter>src\Platform\Direct3D11</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Direct3D11\Direct3D11RendererAPI.cpp">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClCompile>
@@ -1740,6 +1745,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Direct3D11\Direct3D11DebugLayer.cpp" />
   </ItemGroup>
 </Project>
