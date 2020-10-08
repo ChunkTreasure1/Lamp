@@ -6,14 +6,14 @@ struct VSOut
 
 cbuffer CBuffer
 {
-	matrix u_Model;
-	//matrix u_Projection;
+	column_major matrix u_Model;
+	column_major matrix u_Projection;
 };
 
 VSOut main(float3 pos : POSITION, float3 color : COLOR)
 {
 	VSOut vso;
-	vso.pos = mul(float4(pos, 1.f), u_Model);
+	vso.pos = mul(mul(float4(pos, 1.f), u_Model), u_Projection);
 	vso.color = color;
 
 	return vso;

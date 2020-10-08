@@ -34,6 +34,7 @@ namespace Lamp
 
 		static void DrawSkybox();
 		static void DrawGrid();
+		static void TestDraw();
 
 		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
 		static Ref<FrameBuffer>& GetShadowBuffer() { return m_pShadowBuffer; }
