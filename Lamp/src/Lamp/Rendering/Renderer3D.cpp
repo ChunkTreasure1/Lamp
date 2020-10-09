@@ -11,11 +11,6 @@
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 #include "Lamp/Rendering/TextureCube/TextureCube.h"
 
-//TEMPORARY
-#include "Platform/Direct3D11/Direct3D11VertexArray.h"
-#include "Platform/Direct3D11/Direct3D11Shader.h"
-#include <DirectXMath.h>
-
 #include "RenderCommand.h"
 
 namespace Lamp
@@ -51,11 +46,6 @@ namespace Lamp
 		Ref<Shader> GridShader;
 		//////////////
 
-		/////Testing/////
-		Ref<VertexArray> TestVertexArray;
-		Ref<Shader> TestShader;
-		/////////////////
-
 		Renderer3DStorage()
 			: LineMaterial(Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Shader::Create({ {"engine/shaders/3d/lineShader_vs.glsl"}, {"engine/shaders/3d/lineShader_fs.glsl"} }), 0)
 		{}
@@ -89,7 +79,7 @@ namespace Lamp
 			"assets/textures/skybox/front.jpg",
 			"assets/textures/skybox/back.jpg",
 		};
-		//s_pData->CubeMap = TextureCube::Create(paths);
+		s_pData->CubeMap = TextureCube::Create(paths);
 		s_pData->SkyboxShader = Shader::Create({ {"engine/shaders/3d/skyboxShader_vs.glsl"}, {"engine/shaders/3d/skyboxShader_fs.glsl"} });
 		s_pData->GridShader = Shader::Create({ {"engine/shaders/3d/gridShader_vs.glsl"}, {"engine/shaders/3d/gridShader_fs.glsl"} });
 
@@ -101,7 +91,7 @@ namespace Lamp
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
 		});
-		//s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
+		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
 		uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
@@ -150,7 +140,7 @@ namespace Lamp
 			{ ElementType::Float3, "a_Position" }
 		});
 
-		//s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
+		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
 
 
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
@@ -173,67 +163,20 @@ namespace Lamp
 			0, 1, 3,
 			1, 2, 3
 		};
-
+		
 		s_pData->GridVertexArray = VertexArray::Create();
 		Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
 		buffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
-			});
-		//s_pData->GridVertexArray->AddVertexBuffer(buffer);
+		});
+		s_pData->GridVertexArray->AddVertexBuffer(buffer);
 
 		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
 		s_pData->GridVertexArray->SetIndexBuffer(indexBuffer);
 
 		s_pData->GridVertexArray->Unbind();
 		//////////////
-
-		/////Testing/////
-		std::vector<float> vertices =
-		{
-			 -1.0f, -1.0f, -1.0f,  1.f, 0.f, 0.f,
-			  1.0f, -1.0f, -1.0f,  0.f, 1.f, 0.f,
-			 -1.0f,  1.0f, -1.0f,  0.f, 0.f, 1.f,
-			  1.0f,  1.0f, -1.0f,  1.f, 0.f, 0.f,
-
-			 -1.0f, -1.0f,  1.0f,  1.f, 0.f, 0.f,
-			  1.0f, -1.0f,  1.0f,  0.f, 1.f, 0.f,
-			 -1.0f,  1.0f,  1.0f,  0.f, 0.f, 1.f,
-			  1.0f,  1.0f,  1.0f,  1.f, 0.f, 0.f
-		};
-
-		std::vector<uint32_t> indices =
-		{
-			0, 2, 1,  2, 3, 1,
-			1, 3, 5,  3, 7, 5,
-			2, 6, 3,  3, 6, 7,
-			4, 5, 7,  4, 7, 6,
-			0, 4, 2,  2, 4, 6,
-			0, 1, 4,  1, 5, 4
-		};
-
-		s_pData->TestShader = Shader::Create({ { "VertexShader.cso" }, { "PixelShader.cso" } });
-
-		s_pData->TestVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> testBuffer = VertexBuffer::Create(vertices, (uint32_t)(sizeof(float) * vertices.size()));
-		if (auto dVB = std::dynamic_pointer_cast<Direct3D11VertexArray>(s_pData->TestVertexArray))
-		{
-			if (auto shader = std::dynamic_pointer_cast<Direct3D11Shader>(s_pData->TestShader))
-			{
-				dVB->SetBlob(shader->GetVertexBlob());
-			}
-		}
-
-		testBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "POSITION" },
-			{ ElementType::Float3, "COLOR" }
-			});
-		s_pData->TestVertexArray->AddVertexBuffer(testBuffer);
-
-		Ref<IndexBuffer> testIndex = IndexBuffer::Create(indices, (uint32_t)indices.size());
-		s_pData->TestVertexArray->SetIndexBuffer(indexBuffer);
-		/////////////////
 
 		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 		m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024);
@@ -265,8 +208,8 @@ namespace Lamp
 		s_pData->LineMaterial.GetShader()->UploadData(ShaderData
 		({
 			{ "u_ViewProjection", ShaderDataType::Mat4, glm::value_ptr(s_pData->CurrentRenderPass.ViewProjection) }
-			}));
-
+		}));
+			
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
@@ -285,9 +228,9 @@ namespace Lamp
 				{ "u_Model", ShaderDataType::Mat4, (void*)glm::value_ptr(modelMatrix) },
 				{ "u_ViewProjection", ShaderDataType::Mat4, glm::value_ptr(s_pData->CurrentRenderPass.ViewProjection) },
 				{ "u_NormalMatrix", ShaderDataType::Mat3, glm::value_ptr(normalMat) }
-				}));
+			}));
 		}
-		else
+		else 
 		{
 			glBindTextureUnit(2, m_pShadowBuffer->GetDepthAttachment());
 
@@ -299,9 +242,9 @@ namespace Lamp
 				{ "u_CameraPosition", ShaderDataType::Float3, (void*)glm::value_ptr(s_pData->CurrentRenderPass.Camera->GetPosition()) },
 				{ "u_LightViewProjection", ShaderDataType::Mat4, glm::value_ptr(s_pData->CurrentRenderPass.LightViewProjection) },
 				{ "u_NormalMatrix", ShaderDataType::Mat3, glm::value_ptr(normalMat) }
-				}));
+			}));
 		}
-
+		
 		mesh->GetVertexArray()->Bind();
 		RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 	}
@@ -319,7 +262,7 @@ namespace Lamp
 			s_pData->SkyboxShader->UploadData(ShaderData
 			({
 				{ "u_Skybox", ShaderDataType::Int, (void*)0 }
-				}));
+			}));
 
 		}
 		else
@@ -330,7 +273,7 @@ namespace Lamp
 				{ "u_Skybox", ShaderDataType::Int, (void*)0 },
 				{ "u_Projection", ShaderDataType::Mat4, (void*)glm::value_ptr(s_pData->CurrentRenderPass.Camera->GetProjectionMatrix()) },
 				{ "u_View", ShaderDataType::Mat4, (void*)glm::value_ptr(viewMat) }
-				}));
+			}));
 		}
 
 		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, s_pData->SkyBoxVertexArray->GetIndexBuffer()->GetCount());
@@ -352,35 +295,6 @@ namespace Lamp
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}
 
-	void Renderer3D::TestDraw()
-	{
-		namespace dx = DirectX;
-		static float angle = 0.f;
-
-		glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(0.f, 0.f, 1.f)) *
-			glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(1.f, 0.f, 0.f)) *
-			glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 4.f));
-
-		angle++;
-
-		glm::mat4 proj = glm::perspective(glm::radians(45.f), 1280.f / 720.f, 0.1f, 100.f);
-
-		dx::XMMATRIX m = dx::XMMatrixTranspose(dx::XMMatrixRotationZ(glm::radians(angle)) *
-			dx::XMMatrixRotationX(glm::radians(angle)) *
-			dx::XMMatrixTranslation(0.f, 0.f, 4.f) *
-			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f));
-
-		glm::mat4 persMode = proj * model;
-
-		s_pData->TestShader->UploadData(ShaderData
-		({
-			{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(model) },
-			{ "u_Projection", ShaderDataType::Mat4, glm::value_ptr(proj) }
-		}));
-
-		RenderCommand::DrawIndexed(s_pData->TestVertexArray, s_pData->TestVertexArray->GetIndexBuffer()->GetCount());
-	}
-
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
 	{
 		glLineWidth(width);
@@ -400,13 +314,13 @@ namespace Lamp
 
 		s_pData->LineIndexCount += 2;
 	}
-
+	
 	void Renderer3D::StartNewBatch()
 	{
 		End();
 		ResetBatchData();
 	}
-
+	
 	void Renderer3D::ResetBatchData()
 	{
 		s_pData->LineIndexCount = 0;

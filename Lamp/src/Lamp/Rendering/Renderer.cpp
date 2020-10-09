@@ -14,13 +14,13 @@ namespace Lamp
 	{
 		RenderCommand::Initialize();
 		//Renderer2D::Initialize();
-		Renderer3D::Initialize();
+		//Renderer3D::Initialize();
 	}
 
 	void Renderer::Shutdown()
 	{
 		//Renderer2D::Shutdown();
-		Renderer3D::Shutdown();
+		//Renderer3D::Shutdown();
 	}
 
 	void Renderer::Begin(OrthographicCamera & camera)

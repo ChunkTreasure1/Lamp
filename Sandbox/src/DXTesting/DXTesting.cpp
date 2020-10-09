@@ -24,7 +24,7 @@ namespace DXTesting
 		Lamp::RenderCommand::SetClearColor({ 0.3f, 0.3f, 0.3f, 1.f });
 		Lamp::RenderCommand::Clear();
 
-		Lamp::Renderer3D::TestDraw();
+		Lamp::RenderCommand::DrawIndexed(nullptr, 0u);
 
 		return false;
 	}

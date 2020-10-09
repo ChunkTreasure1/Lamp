@@ -47,20 +47,71 @@ namespace Lamp
 			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 			{
 				pContext->GetDeviceContext()->ClearRenderTargetView(pContext->GetRenderTarget().Get(), glm::value_ptr(m_ClearColor));
-				pContext->GetDeviceContext()->ClearDepthStencilView(pContext->GetDepthView().Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 			}
 		}
 	}
 
-	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
+	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size)
 	{
 		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
 		{
 			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 			{
+				namespace wrl = Microsoft::WRL;
+
+				std::vector<float> vertices =
+				{
+					0.5f, 0.5f,  1.f, 0.f, 0.f,
+					0.5f, -0.5f,  0.f, 1.f, 0.f,
+					-0.5f,-0.5f,  0.f, 0.f, 1.f,
+				   -0.5f, 0.5f,  1.f, 0.f, 0.f,
+				};
+
+				Ref<Shader> pShader = Shader::Create({ {"VertexShader.cso"}, {"PixelShader.cso"} });
+
+				Ref<VertexArray> vertexArray = VertexArray::Create();
+				Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, (uint32_t)sizeof(float) * vertices.size());
+				vertexBuffer->SetBufferLayout
+				({
+					{ ElementType::Float3, "POSITION" },
+					{ ElementType::Float3, "COLOR" }
+					});
+
+				std::vector<uint32_t> indices =
+				{
+					0, 1, 2, 
+					0, 2, 3, 
+				};
+				Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
+				vertexArray->SetIndexBuffer(indexBuffer);
+
+				if (auto dVB = std::dynamic_pointer_cast<Direct3D11VertexArray>(vertexArray))
+				{
+					if (auto shader = std::dynamic_pointer_cast<Direct3D11Shader>(pShader))
+					{
+						dVB->SetBlob(shader->GetVertexBlob());
+					}
+				}
+				//glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f)) *
+				//	glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(1.f, 0.f, 0.f)) *
+				//	glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
+
+				//glm::mat4 proj = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+
+				//pShader->UploadData(ShaderData
+				//({
+				//	{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(model) },
+				//	{ "u_Projection", ShaderDataType::Mat4, glm::value_ptr(proj) }
+				//}));
+
+				pShader->UploadData(ShaderData({}));
+				vertexArray->AddVertexBuffer(vertexBuffer);
 				vertexArray->Bind();
+
+				pContext->GetDeviceContext()->OMSetRenderTargets(1u, pContext->GetRenderTarget().GetAddressOf(), nullptr);
 				pContext->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				pContext->GetDeviceContext()->DrawIndexed(count, 0u, 0u);
+
+				pContext->GetDeviceContext()->DrawIndexed((uint32_t)std::size(indices), 0u, 0u);
 			}
 		}
 	}

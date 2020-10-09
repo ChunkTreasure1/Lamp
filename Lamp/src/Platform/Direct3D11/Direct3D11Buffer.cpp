@@ -42,7 +42,7 @@ namespace Lamp
 				bd.CPUAccessFlags = 0u;
 				bd.MiscFlags = 0u;
 				bd.ByteWidth = size;
-				bd.StructureByteStride = sizeof(float) * 6;
+				bd.StructureByteStride = sizeof(float) * 5;
 
 				D3D11_SUBRESOURCE_DATA sd = {};
 				sd.pSysMem = &vertices[0];
@@ -84,7 +84,7 @@ namespace Lamp
 		{
 			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 			{
-				const uint32_t stride = sizeof(float) * 6;
+				const uint32_t stride = sizeof(float) * 5;
 				const uint32_t offset = 0u;
 				pContext->GetDeviceContext()->IASetVertexBuffers(0u, 1u, m_pBuffer.GetAddressOf(), &stride, &offset);
 			}

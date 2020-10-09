@@ -51,6 +51,23 @@ namespace Lamp
 	void Direct3D11Shader::UploadData(const ShaderData& data)
 	{
 		namespace wrl = Microsoft::WRL;
+		namespace dx = DirectX;
+
+		struct Buff
+		{
+			dx::XMMATRIX transformation;
+		};
+
+		static float angle = 0.f;
+
+		const Buff b
+		{
+			dx::XMMatrixTranspose(dx::XMMatrixRotationZ(glm::radians(angle)) *
+			dx::XMMatrixRotationX(glm::radians(angle)) * 
+			dx::XMMatrixTranslation(0.f, 0.f, 4.f) *
+			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f))
+		};
+		angle++;
 
 		wrl::ComPtr<ID3D11Buffer> pBuf;
 
@@ -60,25 +77,25 @@ namespace Lamp
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
 
-		uint32_t size = 0;
-		for (auto& uniform : data.Data)
-		{
-			size += uniform.Size;
-		}
+		//uint32_t size = 0;
+		//for (auto& uniform : data.Data)
+		//{
+		//	size += uniform.Size;
+		//}
 
-		void* base = malloc(size);
-		void* ptr = base;
-		for (auto& uniform : data.Data)
-		{
-			uint32_t s = uniform.Size;
-			memmove(ptr, uniform.Data, s);
-			ptr = static_cast<char*>(ptr) + s;
-		}
+		//void* base = malloc(size);
+		//void* ptr = base;
+		//for (auto& uniform : data.Data)
+		//{
+		//	uint32_t s = uniform.Size;
+		//	memmove(ptr, uniform.Data, s);
+		//	ptr = static_cast<char*>(ptr) + s;
+		//}
 
-		bd.ByteWidth = size;
+		bd.ByteWidth = sizeof(b);
 		bd.StructureByteStride = 0u;
 		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = base;
+		sd.pSysMem = &b;
 
 		if (!pBuf.Get())
 		{
