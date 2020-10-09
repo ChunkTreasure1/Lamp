@@ -225,6 +225,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Utility\Math.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h" />
@@ -698,4 +699,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

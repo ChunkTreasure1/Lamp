@@ -11,6 +11,7 @@
 #include "Direct3D11DebugLayer.h"
 
 #include <DirectXMath.h>
+#include "Lamp/Utility/Math.h"
 
 namespace Lamp
 {
@@ -55,26 +56,20 @@ namespace Lamp
 
 		struct Buff
 		{
-			dx::XMMATRIX trans;
+			Math::mat4 trans;
+			Math::mat4 proj;
 		};
 
 		static float angle = 0.f;
 
 		const Buff b
 		{
-			/*dx::XMMatrixRotationZ(glm::radians(angle))*
-			dx::XMMatrixRotationX(glm::radians(angle))**/
-
-			dx::XMMatrixTranspose( 
-			dx::XMMatrixTranslation(0.f, 0.f, 4.f) *
-			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f))
+			Math::buildMatrix({0.f, 0.f, 4.f}, {1.f, 1.f, 1.f}, {glm::radians(angle), 0.f, glm::radians(angle)}),
+			Math::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f)
 		};
 
-		glm::mat4 m = glm::perspectiveFovLH_ZO(glm::radians(45.f), 1280.f, 720.f, 0.1f, 100.f) * 
+		glm::mat4 m = glm::perspectiveFovLH_ZO(glm::radians(45.f), 1280.f, 720.f, 0.1f, 100.f) *
 			glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 4.f));
-
-		/*glm::rotate(glm::mat4(1.f), angle, glm::vec3(1.f, 0.f, 0.f))*
-			glm::rotate(glm::mat4(1.f), angle, glm::vec3(0.f, 0.f, 1.f))*/
 
 		angle++;
 
