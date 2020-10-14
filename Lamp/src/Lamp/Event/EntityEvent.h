@@ -24,8 +24,8 @@ namespace Lamp
 			return ss.str();
 		}
 
-		EVENT_CLASS_CATEGORY(EventCategoryEntityEvent);
-		EVENT_CLASS_TYPE(EntityCollisionEvent);
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(EntityCollision);
 	private:
 		float m_Overlap;
 		Entity* m_pCollidedWith;
@@ -50,8 +50,8 @@ namespace Lamp
 			return ss.str();
 		}
 
-		EVENT_CLASS_CATEGORY(EventCategoryEntityEvent);
-		EVENT_CLASS_TYPE(EntityStoppedCollisionEvent);
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(EntityStoppedCollision);
 	private:
 		Entity* m_pCollidedWith;
 		std::string m_Tag;
@@ -70,7 +70,7 @@ namespace Lamp
 			return ss.str();
 		}
 
-		EVENT_CLASS_CATEGORY(EventCategoryEntityEvent);
-		EVENT_CLASS_TYPE(EntityPositionChangedEvent);
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(EntityPositionChanged);
 	};
 }

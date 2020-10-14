@@ -22,6 +22,7 @@ namespace Lamp
 		/////Base/////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
+		virtual uint64_t GetEventMask() override { return EventType::None; }
 		//////////////
 
 		//Setting

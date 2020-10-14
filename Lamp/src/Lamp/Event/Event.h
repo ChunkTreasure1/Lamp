@@ -9,25 +9,33 @@ namespace Lamp
 	// For the future, a better strategy might be to buffer events in an event
 	// bus and process them during the "event" part of the update stage.
 
-	enum class EventType
+
+	enum EventType : uint64_t
 	{
 		None = 0,
-		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		AppTick, AppUpdate, AppRender, AppLog, AppItemClicked,
-		KeyPressed, KeyReleased, KeyTyped,
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
-		EntityCollisionEvent, EntityStoppedCollisionEvent, EntityPositionChangedEvent
+		WindowClose = 0b00000001, WindowResize = 0b00000010, WindowFocus = 0b00000011, WindowLostFocus = 0b00000100, WindowMoved = 0b00000101,
+		AppTick = 0b00000110, AppUpdate = 0b00000111, AppRender = 0b00001000, AppLog = 0b00001001, AppItemClicked = 0b00001010,
+		KeyPressed = 0b00001100, KeyReleased = 0b00001101, KeyTyped = 0b00001110,
+		MouseButtonPressed = 0b00001111, MouseButtonReleased = 0b00010000, MouseMoved = 0b00010001, MouseScrolled = 0b00010010,
+		EntityCollision = 0b00010011, EntityStoppedCollision = 0b00010100, EntityPositionChanged = 0b00010101,
+
+		All = WindowClose | WindowResize | WindowFocus | WindowLostFocus | WindowMoved |
+		AppTick | AppUpdate | AppRender | AppLog | AppItemClicked |
+		KeyPressed | KeyReleased | KeyTyped |
+		MouseButtonPressed | MouseButtonReleased | MouseMoved | MouseScrolled |
+		EntityCollision | EntityStoppedCollision | EntityPositionChanged
 	};
+
 
 	enum EventCategory
 	{
-		None = 0,
+		EventCategoryNone = 0,
 		EventCategoryApplication = BIT(0),
 		EventCategoryInput = BIT(1),
 		EventCategoryKeyboard = BIT(2),
 		EventCategoryMouse = BIT(3),
 		EventCategoryMouseButton = BIT(4),
-		EventCategoryEntityEvent = BIT(5)
+		EventCategoryEntity = BIT(5)
 
 	};
 

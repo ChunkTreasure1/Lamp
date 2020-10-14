@@ -26,6 +26,7 @@ namespace Lamp
 		//Base
 		virtual void Initialize() {}
 		virtual void OnEvent(Event& e) {}
+		virtual uint64_t GetEventMask() = 0;
 
 	protected:
 		EntityComponent(std::string name)

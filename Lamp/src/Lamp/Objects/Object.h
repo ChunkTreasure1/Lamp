@@ -73,6 +73,7 @@ namespace Lamp
 		inline bool GetIsActive() { return m_IsActive; }
 
 		virtual void OnEvent(Event& e) {}
+		virtual uint64_t GetEventMask() = 0;
 		virtual void Destroy() = 0;
 
 	protected:

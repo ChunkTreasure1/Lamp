@@ -26,6 +26,12 @@ namespace Lamp
 			});
 		}
 
+		//////Base//////
+		virtual void Initialize() override;
+		virtual void OnEvent(Event& e) override;
+		virtual uint64_t GetEventMask() override { return EventType::None; }
+		////////////////
+
 		//Getting
 		inline const float GetLightConstant() { return m_PointLight.LightConstant; }
 		inline const float GetLinearConstant() { return m_PointLight.LinearConstant; }
@@ -41,11 +47,6 @@ namespace Lamp
 
 		inline void SetDiffuse(const glm::vec3& val) { m_PointLight.Diffuse = val; }
 		inline void SetSpecular(const glm::vec3& val) { m_PointLight.Specular = val; }
-
-		//////Base//////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
-		////////////////
 
 	private:
 		bool OnRender(AppRenderEvent& e);

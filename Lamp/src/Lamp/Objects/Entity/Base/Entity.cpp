@@ -8,14 +8,17 @@ namespace Lamp
 {
 	void Entity::OnEvent(Event& e)
 	{
-		for (auto& pComp : m_pComponents)
+		for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
 		{
 			if (m_pComponents.size() == 0)
 			{
 				return;
 			}
 
-			pComp->OnEvent(e);
+			if (it->get()->GetEventMask() & e.GetEventType())
+			{
+				it->get()->OnEvent(e);
+			}
 		}
 	}
 

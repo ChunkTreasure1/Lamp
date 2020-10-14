@@ -53,12 +53,9 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			PhysicsEngine::Get()->Simulate(timestep);
-			PhysicsEngine::Get()->HandleCollisions();
+			//PhysicsEngine::Get()->Simulate(timestep);
+			//PhysicsEngine::Get()->HandleCollisions();
 			AudioEngine::Update();
-
-			AppUpdateEvent updateEvent(timestep);
-			ObjectLayerManager::Get()->OnEvent(updateEvent);
 
 			//Update the application layers
 
@@ -66,6 +63,7 @@ namespace Lamp
 			{
 				AppUpdateEvent updateEvent(timestep);
 				OnEvent(updateEvent);
+				ObjectLayerManager::Get()->OnEvent(updateEvent);
 			}
 
 			m_pImGuiLayer->Begin();
@@ -88,7 +86,7 @@ namespace Lamp
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-		//Handle rest of events
+		////Handle rest of events
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);

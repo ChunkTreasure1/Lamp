@@ -17,6 +17,7 @@ namespace Lamp
 
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
+		virtual uint64_t GetEventMask() override { return EventType::AppRender; }
 
 	public:
 		static Brush2D* Create(const std::string& path);

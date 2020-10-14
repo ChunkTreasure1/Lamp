@@ -16,6 +16,7 @@ namespace Lamp
 		////////Base////////
 		virtual void Initialize() override;
 		virtual void OnEvent(Lamp::Event& e) override {}
+		virtual uint64_t GetEventMask() override { return EventType::AppRender | EventType::AppUpdate; }
 		////////////////////
 		
 		//Getting

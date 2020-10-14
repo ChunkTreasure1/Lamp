@@ -7,21 +7,28 @@ namespace Lamp
 	
 	void ObjectLayerManager::OnEvent(Event& e)
 	{
-		for (auto& l : m_Layers)
+		for (auto it = m_Layers.begin(); it != m_Layers.end(); it++)
 		{
-			if (!l.IsActive)
+			if (!it->IsActive)
 			{
 				continue;
 			}
 
-			for (int i = 0; i < l.Objects.size(); i++)
+			for (auto& obj : it->Objects)
 			{
-				if (!l.Objects[i]->GetIsActive())
+				if (e.GetEventType() & obj->GetEventMask())
+				{
+					if (!obj->GetIsActive())
+					{
+						continue;
+					}
+
+					obj->OnEvent(e);
+				}
+				else
 				{
 					continue;
 				}
-
-				l.Objects[i]->OnEvent(e);
 			}
 		}
 	}
@@ -44,13 +51,12 @@ namespace Lamp
 
 	void ObjectLayerManager::AddToLayer(Object* obj, uint32_t layerId)
 	{
-		for (int i = 0; i < m_Layers.size(); i++)
+		auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [&layerId](const ObjectLayer& layer) { return layer.ID == layerId; });
+
+		if (it != m_Layers.end())
 		{
-			if (m_Layers[i].ID == layerId)
-			{
-				m_Layers[i].Objects.push_back(obj);
-				return;
-			}
+			it->Objects.push_back(obj);
+			return;
 		}
 
 		//Layer not found, set it to main layer
@@ -59,12 +65,12 @@ namespace Lamp
 
 	void ObjectLayerManager::AddToLayer(Object* obj, const std::string& name)
 	{
-		for (int i = 0; i < m_Layers.size(); i++)
+		auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [&name](const ObjectLayer& layer) { return layer.Name == name; });
+
+		if (it != m_Layers.end())
 		{
-			if (m_Layers[i].Name == name)
-			{
-				m_Layers[i].Objects.push_back(obj);
-			}
+			it->Objects.push_back(obj);
+			return;
 		}
 
 		//Layer not found, set it to main layer
@@ -73,19 +79,18 @@ namespace Lamp
 
 	void ObjectLayerManager::RemoveFromLayer(Object* obj, uint32_t layerId)
 	{
-		for (auto& layer : m_Layers)
-		{
-			if (layer.ID == layerId)
-			{
-				auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
-				if (it != layer.Objects.end())
-				{
-					layer.Objects.erase(it);
-				}
+		auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [&layerId](const ObjectLayer& layer) { return layer.ID == layerId; });
 
-				delete obj;
-				obj = nullptr;
+		if (it != m_Layers.end())
+		{
+			auto ob = std::find(it->Objects.begin(), it->Objects.end(), obj);
+			if (ob != it->Objects.end())
+			{
+				it->Objects.erase(ob);
 			}
+
+			delete obj;
+			obj = nullptr;
 		}
 	}
 
