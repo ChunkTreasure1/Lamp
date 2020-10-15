@@ -24,7 +24,13 @@ namespace Lamp
 		g_pEnv = new GlobalEnvironment();
 
 		//Create the window
-		m_pWindow = Window::Create();
+		WindowProps props;
+		props.Height = 720;
+		props.Width = 1280;
+		props.IsVSync = false;
+		props.Title = "Lamp";
+
+		m_pWindow = Window::Create(props);
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Initialize();

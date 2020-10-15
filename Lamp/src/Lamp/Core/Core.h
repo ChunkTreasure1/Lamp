@@ -21,8 +21,8 @@
 	#define LP_ASSERT(x, ...) { if(!(x)) { LP_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
 	#define LP_CORE_ASSERT(x, ...) { if(!(x)) { LP_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
 #else
-	#define LP_ASSERT()
-	#define LP_CORE_ASSERT()
+	#define LP_ASSERT(x, ...)
+	#define LP_CORE_ASSERT(x, ...)
 #endif
 
 #define RegisterData(x) static_cast<void*>(x)

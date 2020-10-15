@@ -52,7 +52,7 @@ namespace Lamp
 		m_pContext->Initialize();
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
-		SetIsVSync(true);
+		SetIsVSync(m_Data.VSync);
 
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
