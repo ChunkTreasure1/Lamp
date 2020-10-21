@@ -135,6 +135,14 @@ namespace Sandbox3D
 			}
 
 			DrawComponent();
+
+			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+			{
+				if (ImGui::Button("Add Component"))
+				{
+					ImGui::OpenPopup("AddComponent");
+				}
+			}
 		}
 		ImGui::End();
 	}
@@ -262,55 +270,33 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateAddComponent()
 	{
-		if (!m_AddComponentOpen)
+		if (ImGui::BeginPopup("AddComponnet"))
 		{
-			return;
-		}
-
-		ImGui::Begin("Add Component", &m_AddComponentOpen);
-		
-		static std::string selected = "";
-
-		for (auto& key : Lamp::ComponentRegistry::s_Methods())
-		{
-			if (ImGui::Selectable(key.first.c_str()))
+			for (auto& key : Lamp::ComponentRegistry::s_Methods())
 			{
-				selected = key.first;
-			}
-		}
-
-		if (ImGui::Button("Close"))
-		{
-			m_AddComponentOpen = false;
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Add"))
-		{
-			if (selected != "")
-			{
-				if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+				if (ImGui::MenuItem(key.first.c_str()))
 				{
-					if (pEnt->HasComponent(selected))
+					if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 					{
-						m_AddComponentOpen = false;
-						LP_ERROR("Entity already has component!");
-					}
-
-					Ref<Lamp::EntityComponent> comp = Lamp::ComponentRegistry::Create(selected);
-					if (comp != nullptr)
-					{
-						if (pEnt->AddComponent(comp))
+						if (pEnt->HasComponent(key.first.c_str()))
 						{
 							m_AddComponentOpen = false;
+							LP_WARN("Entity already has component!");
+						}
+
+						Ref<Lamp::EntityComponent> comp = Lamp::ComponentRegistry::Create(key.first.c_str());
+						if (comp != nullptr)
+						{
+							pEnt->AddComponent(comp);
 						}
 					}
+
+					ImGui::CloseCurrentPopup();
 				}
 			}
-		}
 
-		ImGui::End();
+			ImGui::EndPopup();
+		}
 	}
 
 	void Sandbox3D::UpdateCreateTool()
@@ -576,11 +562,6 @@ namespace Sandbox3D
 						}
 					}
 				}
-			}
-
-			if (ImGui::Button("Add Component"))
-			{
-				m_AddComponentOpen = !m_AddComponentOpen;
 			}
 		}
 		else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
