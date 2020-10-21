@@ -144,10 +144,16 @@
     <ClInclude Include="src\Lamp\Core\Core.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\CoreLogger.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\EntryPoint.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Game.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Log.h">
@@ -321,7 +327,13 @@
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\LightBase.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Renderer.h">
@@ -1494,11 +1506,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
-    <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
-    <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
-    <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1549,10 +1556,19 @@
     <ClCompile Include="src\Lamp\Meshes\Model.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
+      <Filter>src\Lamp\Objects\Brushes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp">
+      <Filter>src\Lamp\Objects\Brushes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp">
+      <Filter>src\Lamp\Objects\Entity\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp">
@@ -1613,6 +1629,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp">
@@ -1687,9 +1706,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
   </ItemGroup>
 </Project>

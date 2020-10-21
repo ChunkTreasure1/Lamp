@@ -47,6 +47,7 @@ namespace Sandbox3D
 		void UpdateAddComponent();
 		void UpdateCreateTool();
 		void UpdateLogTool();
+		void DrawComponent();
 
 	private:
 		Scope<Game> m_pGame;

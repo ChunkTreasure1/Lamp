@@ -151,18 +151,6 @@
     <None Include="engine\shaders\2d\FlatColor.vert" />
     <None Include="engine\shaders\2d\Texture.frag" />
     <None Include="engine\shaders\2d\Texture.vert" />
-    <None Include="engine\shaders\3d\gridShader_fs.glsl" />
-    <None Include="engine\shaders\3d\gridShader_vs.glsl" />
-    <None Include="engine\shaders\3d\lightShader_fs.glsl" />
-    <None Include="engine\shaders\3d\lightShader_vs.glsl" />
-    <None Include="engine\shaders\3d\lineShader_fs.glsl" />
-    <None Include="engine\shaders\3d\lineShader_vs.glsl" />
-    <None Include="engine\shaders\3d\shader_fs.glsl" />
-    <None Include="engine\shaders\3d\shader_vs.glsl" />
-    <None Include="engine\shaders\3d\skyboxShader_fs.glsl" />
-    <None Include="engine\shaders\3d\skyboxShader_vs.glsl" />
-    <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl" />
-    <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

@@ -134,193 +134,7 @@ namespace Sandbox3D
 				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_SandboxController->GetCameraController()->GetPosition());
 			}
 
-			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
-			{
-				ImGui::Text("Entity");
-
-				std::string name = pEnt->GetName();
-				//ImGui::InputText("Name", &name);
-				pEnt->SetName(name);
-
-				if (ImGui::CollapsingHeader("Transform"))
-				{
-					glm::vec3 pos = pEnt->GetPosition();
-					float f[3] = { pos.x, pos.y, pos.z };
-
-					ImGui::InputFloat3("Position", f);
-					pEnt->SetPosition(glm::make_vec3(f));
-
-					glm::vec3 rot = pEnt->GetRotation();
-					float r[3] = { rot.x, rot.y, rot.z };
-
-					ImGui::InputFloat3("Rotation", r);
-					pEnt->SetRotation(glm::make_vec3(r));
-
-					glm::vec3 scale = pEnt->GetScale();
-					float s[3] = { scale.x, scale.y, scale.z };
-
-					ImGui::InputFloat3("Scale", s);
-					pEnt->SetScale(glm::make_vec3(s));
-				}
-
-				for (auto& pComp : pEnt->GetComponents())
-				{
-					if (ImGui::CollapsingHeader(pComp->GetName().c_str()))
-					{
-						for (auto& pProp : pComp->GetComponentProperties().GetProperties())
-						{
-							switch (pProp.PropertyType)
-							{
-							case Lamp::PropertyType::Int:
-							{
-								int* p = static_cast<int*>(pProp.Value);
-								ImGui::InputInt(pProp.Name.c_str(), p);
-								break;
-							}
-
-							case Lamp::PropertyType::Bool:
-							{
-								bool* p = static_cast<bool*>(pProp.Value);
-								ImGui::Checkbox(pProp.Name.c_str(), p);
-								break;
-							}
-
-							case Lamp::PropertyType::Float:
-							{
-								float* p = static_cast<float*>(pProp.Value);
-								ImGui::InputFloat(pProp.Name.c_str(), p);
-								break;
-							}
-
-							case Lamp::PropertyType::Float2:
-							{
-								glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-
-								float f[2] = { p->x, p->y };
-								ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
-
-								*p = glm::make_vec2(f);
-								break;
-							}
-
-							case Lamp::PropertyType::Float3:
-							{
-								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-
-								float f[3] = { p->x, p->y, p->z };
-								ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
-
-								*p = glm::make_vec3(f);
-								break;
-							}
-
-							case Lamp::PropertyType::Float4:
-							{
-								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-
-								float f[4] = { p->x, p->y, p->z, p->w };
-								ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
-
-								*p = glm::make_vec4(f);
-								break;
-							}
-
-							case Lamp::PropertyType::String:
-							{
-								std::string* s = static_cast<std::string*>(pProp.Value);
-								//ImGui::InputText(pProp.Name.c_str(), s);
-								break;
-							}
-
-							case Lamp::PropertyType::Path:
-							{
-								std::string* s = static_cast<std::string*>(pProp.Value);
-								//ImGui::InputText(pProp.Name.c_str(), s);
-								ImGui::SameLine();
-								if (ImGui::Button("Open"))
-								{
-									std::string path = Lamp::FileSystem::GetFileFromDialogue();
-									if (path != "" && std::filesystem::exists(path))
-									{
-										*s = path;
-									}
-								}
-								break;
-							}
-
-							case Lamp::PropertyType::Color3:
-							{
-								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-
-								float f[3] = { p->x, p->y, p->z };
-								ImGui::ColorEdit3(pProp.Name.c_str(), f);
-
-								*p = glm::make_vec3(f);
-								break;
-							}
-
-							case Lamp::PropertyType::Color4:
-							{
-								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-
-								float f[4] = { p->x, p->y, p->z, p->w };
-								ImGui::ColorEdit4(pProp.Name.c_str(), f);
-
-								*p = glm::make_vec4(f);
-								break;
-							}
-							}
-						}
-					}
-				}
-
-				if (ImGui::Button("Add Component"))
-				{
-					m_AddComponentOpen = !m_AddComponentOpen;
-				}
-			}
-			else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
-			{
-				ImGui::Text("Brush");
-
-				std::string name = pBrush->GetName();
-				//ImGui::InputText("Name", &name);
-				pBrush->SetName(name);
-
-				if (ImGui::CollapsingHeader("Transform"))
-				{
-					glm::vec3 pos = pBrush->GetPosition();
-					float f[3] = { pos.x, pos.y, pos.z };
-
-					ImGui::InputFloat3("Position", f);
-					pBrush->SetPosition(glm::make_vec3(f));
-
-					glm::vec3 rot = pBrush->GetRotation();
-					float r[3] = { rot.x, rot.y, rot.z };
-
-					ImGui::InputFloat3("Rotation", r);
-					pBrush->SetRotation(glm::make_vec3(r));
-
-					glm::vec3 scale = pBrush->GetScale();
-					float s[3] = { scale.x, scale.y, scale.z };
-
-					ImGui::InputFloat3("Scale", s);
-					pBrush->SetScale(glm::make_vec3(s));
-				}
-
-				if (ImGui::CollapsingHeader("Physics"))
-				{
-					glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
-					float f[3] = { vel.x, vel.y, vel.z };
-
-					ImGui::InputFloat3("Velocity", f);
-					pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
-
-					float m = pBrush->GetPhysicalEntity()->GetMass();
-					ImGui::InputFloat("Mass", &m);
-					pBrush->GetPhysicalEntity()->SetMass(m);
-				}
-			}
+			DrawComponent();
 		}
 		ImGui::End();
 	}
@@ -620,6 +434,197 @@ namespace Sandbox3D
 		}
 		ImGui::EndChild();
 		ImGui::End();
+	}
+
+	void Sandbox3D::DrawComponent()
+	{
+		if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+		{
+			ImGui::Text("Entity");
+
+			std::string name = pEnt->GetName();
+			//ImGui::InputText("Name", &name);
+			pEnt->SetName(name);
+
+			if (ImGui::CollapsingHeader("Transform"))
+			{
+				glm::vec3 pos = pEnt->GetPosition();
+				float f[3] = { pos.x, pos.y, pos.z };
+
+				ImGui::InputFloat3("Position", f);
+				pEnt->SetPosition(glm::make_vec3(f));
+
+				glm::vec3 rot = pEnt->GetRotation();
+				float r[3] = { rot.x, rot.y, rot.z };
+
+				ImGui::InputFloat3("Rotation", r);
+				pEnt->SetRotation(glm::make_vec3(r));
+
+				glm::vec3 scale = pEnt->GetScale();
+				float s[3] = { scale.x, scale.y, scale.z };
+
+				ImGui::InputFloat3("Scale", s);
+				pEnt->SetScale(glm::make_vec3(s));
+			}
+
+			for (auto& pComp : pEnt->GetComponents())
+			{
+				if (ImGui::CollapsingHeader(pComp->GetName().c_str()))
+				{
+					for (auto& pProp : pComp->GetComponentProperties().GetProperties())
+					{
+						switch (pProp.PropertyType)
+						{
+						case Lamp::PropertyType::Int:
+						{
+							int* p = static_cast<int*>(pProp.Value);
+							ImGui::InputInt(pProp.Name.c_str(), p);
+							break;
+						}
+
+						case Lamp::PropertyType::Bool:
+						{
+							bool* p = static_cast<bool*>(pProp.Value);
+							ImGui::Checkbox(pProp.Name.c_str(), p);
+							break;
+						}
+
+						case Lamp::PropertyType::Float:
+						{
+							float* p = static_cast<float*>(pProp.Value);
+							ImGui::InputFloat(pProp.Name.c_str(), p);
+							break;
+						}
+
+						case Lamp::PropertyType::Float2:
+						{
+							glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+
+							float f[2] = { p->x, p->y };
+							ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
+
+							*p = glm::make_vec2(f);
+							break;
+						}
+
+						case Lamp::PropertyType::Float3:
+						{
+							glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+
+							float f[3] = { p->x, p->y, p->z };
+							ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
+
+							*p = glm::make_vec3(f);
+							break;
+						}
+
+						case Lamp::PropertyType::Float4:
+						{
+							glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+
+							float f[4] = { p->x, p->y, p->z, p->w };
+							ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
+
+							*p = glm::make_vec4(f);
+							break;
+						}
+
+						case Lamp::PropertyType::String:
+						{
+							std::string* s = static_cast<std::string*>(pProp.Value);
+							//ImGui::InputText(pProp.Name.c_str(), s);
+							break;
+						}
+
+						case Lamp::PropertyType::Path:
+						{
+							std::string* s = static_cast<std::string*>(pProp.Value);
+							//ImGui::InputText(pProp.Name.c_str(), s);
+							ImGui::SameLine();
+							if (ImGui::Button("Open"))
+							{
+								std::string path = Lamp::FileSystem::GetFileFromDialogue();
+								if (path != "" && std::filesystem::exists(path))
+								{
+									*s = path;
+								}
+							}
+							break;
+						}
+
+						case Lamp::PropertyType::Color3:
+						{
+							glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+
+							float f[3] = { p->x, p->y, p->z };
+							ImGui::ColorEdit3(pProp.Name.c_str(), f);
+
+							*p = glm::make_vec3(f);
+							break;
+						}
+
+						case Lamp::PropertyType::Color4:
+						{
+							glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+
+							float f[4] = { p->x, p->y, p->z, p->w };
+							ImGui::ColorEdit4(pProp.Name.c_str(), f);
+
+							*p = glm::make_vec4(f);
+							break;
+						}
+						}
+					}
+				}
+			}
+
+			if (ImGui::Button("Add Component"))
+			{
+				m_AddComponentOpen = !m_AddComponentOpen;
+			}
+		}
+		else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
+		{
+			ImGui::Text("Brush");
+
+			std::string name = pBrush->GetName();
+			//ImGui::InputText("Name", &name);
+			pBrush->SetName(name);
+
+			if (ImGui::CollapsingHeader("Transform"))
+			{
+				glm::vec3 pos = pBrush->GetPosition();
+				float f[3] = { pos.x, pos.y, pos.z };
+
+				ImGui::InputFloat3("Position", f);
+				pBrush->SetPosition(glm::make_vec3(f));
+
+				glm::vec3 rot = pBrush->GetRotation();
+				float r[3] = { rot.x, rot.y, rot.z };
+
+				ImGui::InputFloat3("Rotation", r);
+				pBrush->SetRotation(glm::make_vec3(r));
+
+				glm::vec3 scale = pBrush->GetScale();
+				float s[3] = { scale.x, scale.y, scale.z };
+
+				ImGui::InputFloat3("Scale", s);
+				pBrush->SetScale(glm::make_vec3(s));
+			}
+
+			if (ImGui::CollapsingHeader("Physics"))
+			{
+				glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
+				float f[3] = { vel.x, vel.y, vel.z };
+
+				ImGui::InputFloat3("Velocity", f);
+				pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
+
+				float m = pBrush->GetPhysicalEntity()->GetMass();
+				ImGui::InputFloat("Mass", &m);
+				pBrush->GetPhysicalEntity()->SetMass(m);
+			}
+		}
 	}
 
 	void Sandbox3D::CreateDockspace()

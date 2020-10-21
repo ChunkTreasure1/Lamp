@@ -210,11 +210,11 @@
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
@@ -600,7 +600,6 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
-    <ClInclude Include="vendor\imgui\imgui_stdlib.h" />
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
@@ -645,11 +644,11 @@
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
