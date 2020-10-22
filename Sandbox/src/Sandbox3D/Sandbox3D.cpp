@@ -56,7 +56,6 @@ namespace Sandbox3D
 		UpdateAssetBrowser();
 		UpdateModelImporter();
 		UpdateLayerView();
-		UpdateAddComponent();
 		UpdateCreateTool();
 		UpdateLogTool();
 	}

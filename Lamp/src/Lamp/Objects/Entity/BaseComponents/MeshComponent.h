@@ -42,9 +42,7 @@ namespace Lamp
 		static std::string GetFactoryName() { return "MeshComponent"; }
 
 	private:
-		static bool s_Registered;
-
-	private:
 		Ref<Model> m_Model;
 	};
+
 }

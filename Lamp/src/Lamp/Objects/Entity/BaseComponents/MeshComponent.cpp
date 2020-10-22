@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-	bool MeshComponent::s_Registered = LP_REGISTER_COMPONENT(MeshComponent);
+	LP_REGISTER_COMPONENT(MeshComponent);
 
 	void MeshComponent::Initialize()
 	{

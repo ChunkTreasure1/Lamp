@@ -3,7 +3,7 @@
 
 namespace Lamp
 {
-	bool AudioListenerComponent::s_Registered = LP_REGISTER_COMPONENT(AudioListenerComponent);
+	LP_REGISTER_COMPONENT(AudioListenerComponent);
 
 	void AudioListenerComponent::Initialize()
 	{

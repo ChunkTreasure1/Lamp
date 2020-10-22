@@ -3,7 +3,7 @@
 
 namespace Lamp
 {
-	bool LightComponent::s_Registered = LP_REGISTER_COMPONENT(LightComponent);
+	LP_REGISTER_COMPONENT(LightComponent);
 
 	void LightComponent::Initialize()
 	{

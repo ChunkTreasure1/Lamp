@@ -143,6 +143,8 @@ namespace Sandbox3D
 					ImGui::OpenPopup("AddComponent");
 				}
 			}
+
+			UpdateAddComponent();
 		}
 		ImGui::End();
 	}
@@ -270,7 +272,7 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateAddComponent()
 	{
-		if (ImGui::BeginPopup("AddComponnet"))
+		if (ImGui::BeginPopup("AddComponent"))
 		{
 			for (auto& key : Lamp::ComponentRegistry::s_Methods())
 			{
@@ -281,7 +283,7 @@ namespace Sandbox3D
 						if (pEnt->HasComponent(key.first.c_str()))
 						{
 							m_AddComponentOpen = false;
-							LP_WARN("Entity already has component!");
+							LP_CORE_WARN("Entity already has component!");
 						}
 
 						Ref<Lamp::EntityComponent> comp = Lamp::ComponentRegistry::Create(key.first.c_str());

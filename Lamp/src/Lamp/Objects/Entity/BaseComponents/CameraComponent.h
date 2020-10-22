@@ -40,9 +40,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "CameraComponent"; }
 
 	private:
-		static bool s_Registered;
-
-	private:
 		bool m_IsPerspective = true;
 		bool m_IsMain = false;
 

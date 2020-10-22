@@ -39,9 +39,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "AudioComponent"; }
 
 	private:
-		static bool s_Registered;
-
-	private:
 		std::string m_EventName;
 		bool m_PlayOnStart;
 	};

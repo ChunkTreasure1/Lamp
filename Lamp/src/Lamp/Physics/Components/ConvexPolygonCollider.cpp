@@ -8,8 +8,6 @@
 
 namespace Lamp
 {
-	bool ConvexPolygonColliderComponent::s_Registered = LP_REGISTER_COMPONENT(ConvexPolygonColliderComponent);
-
 	void ConvexPolygonColliderComponent::Initialize()
 	{
 	}

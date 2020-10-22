@@ -30,9 +30,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "AudioListenerComponent"; }
 
 	private:
-		static bool s_Registered;
-
-	private:
 		glm::vec3 m_Forward;
 		glm::vec3 m_Up;
 	

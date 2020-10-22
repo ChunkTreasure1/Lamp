@@ -2,7 +2,7 @@
 
 #include "BaseComponent.h"
 
-#define LP_REGISTER_COMPONENT(x) Lamp::ComponentRegistry::Register(x::GetFactoryName(), x::Create);
+#define LP_REGISTER_COMPONENT(x) bool x ## _entry = Lamp::ComponentRegistry::Register(x::GetFactoryName(), x::Create);
 
 namespace Lamp
 {

@@ -5,7 +5,7 @@
 
 namespace Lamp
 {
-	bool AudioComponent::s_Registered = LP_REGISTER_COMPONENT(AudioComponent);
+	LP_REGISTER_COMPONENT(AudioComponent);
 
 	void AudioComponent::Initialize()
 	{

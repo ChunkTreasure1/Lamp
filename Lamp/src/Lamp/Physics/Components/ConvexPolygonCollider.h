@@ -56,9 +56,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "ConvexPolygonColliderComponent"; }
 
 	private:
-		static bool s_Registered;
-
-	private:
 		uint32_t m_VerticeCount;
 		std::string m_Tag;
 
@@ -71,4 +68,6 @@ namespace Lamp
 		std::vector<glm::vec2> m_VerticesWorld;
 		std::vector<Ref<ConvexPolygonColliderComponent>> m_CurrentColliders;
 	};
+
+	//LP_REGISTER_COMPONENT(ConvexPolygonColliderComponent);
 }

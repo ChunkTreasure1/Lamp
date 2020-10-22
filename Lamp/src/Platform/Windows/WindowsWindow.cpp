@@ -34,6 +34,8 @@ namespace Lamp
 
 		glfwSetErrorCallback(GLFWErrorCallback);
 		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 #if defined(LP_DEBUG)
 		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)

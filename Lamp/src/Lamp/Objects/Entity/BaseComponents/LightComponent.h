@@ -57,9 +57,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "LightComponent"; }
 
 	private:
-		static bool s_Registered;
-
-	private:
 		PointLight m_PointLight;
 	};
 }
