@@ -23,8 +23,10 @@
 
 namespace Sandbox3D
 {
+	using namespace Lamp;
+
 	Sandbox3D::Sandbox3D()
-		: Lamp::Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
+		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
@@ -37,17 +39,17 @@ namespace Sandbox3D
 		CreateRenderPasses();
 	}
 
-	bool Sandbox3D::OnUpdate(Lamp::AppUpdateEvent& e)
+	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
 		m_SandboxController->Update(e.GetTimestep());
 		GetInput();
 
-		Lamp::RenderPassManager::Get()->RenderPasses();
+		RenderPassManager::Get()->RenderPasses();
 
 		return true;
 	}
 
-	void Sandbox3D::OnImGuiRender(Lamp::Timestep ts)
+	void Sandbox3D::OnImGuiRender(Timestep ts)
 	{
 		CreateDockspace();
 
@@ -58,53 +60,113 @@ namespace Sandbox3D
 		UpdateLayerView();
 		UpdateCreateTool();
 		UpdateLogTool();
+		UpdateLevelSettings();
 	}
 
-	void Sandbox3D::OnEvent(Lamp::Event& e)
+	void Sandbox3D::OnEvent(Event& e)
 	{
 		m_pGame->OnEvent(e);
 		m_SandboxController->OnEvent(e);
 
-		Lamp::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Lamp::MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
-		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
-		dispatcher.Dispatch<Lamp::AppItemClickedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnItemClicked));
-		dispatcher.Dispatch<Lamp::WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
+		dispatcher.Dispatch<AppItemClickedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnItemClicked));
+		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
+		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnKeyPressed));
 	}
 
-	bool Sandbox3D::OnItemClicked(Lamp::AppItemClickedEvent& e)
+	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
 	{
 		m_SelectedFile = e.GetFile();
 		return true;
 	}
 
+	bool Sandbox3D::OnKeyPressed(KeyPressedEvent& e)
+	{
+		//Shortcuts
+		if (e.GetRepeatCount() > 0)
+		{
+			return false;
+		}
+
+		switch (e.GetKeyCode())
+		{
+			case LP_KEY_S:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+
+				if (control && shift)
+				{
+					SaveLevelAs();
+				}
+				else if (control && !shift)
+				{
+					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+					{
+						SaveLevelAs();
+						break;
+					}
+					else 
+					{
+						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+					}
+				}
+				break;
+			}
+
+			case LP_KEY_N:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+
+				if (control)
+				{
+					NewLevel();
+				}
+				break;
+			}
+
+			case LP_KEY_O:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					OpenLevel();
+				}
+			}
+		}
+
+		return false;
+	}
+
 	void Sandbox3D::GetInput()
 	{
-		if (Lamp::Input::IsMouseButtonPressed(0))
+		if (Input::IsMouseButtonPressed(0))
 		{
 			m_MousePressed = true;
 		}
-		else if (Lamp::Input::IsMouseButtonReleased(0))
+		else if (Input::IsMouseButtonReleased(0))
 		{
 			m_MousePressed = false;
 		}
 
-		if (Lamp::Input::IsKeyPressed(LP_KEY_1))
+		if (Input::IsKeyPressed(LP_KEY_1))
 		{
 			m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
 		}
 
-		if (Lamp::Input::IsKeyPressed(LP_KEY_2))
+		if (Input::IsKeyPressed(LP_KEY_2))
 		{
 			m_ImGuizmoOperation = ImGuizmo::ROTATE;
 		}
 
-		if (Lamp::Input::IsKeyPressed(LP_KEY_3))
+		if (Input::IsKeyPressed(LP_KEY_3))
 		{
 			m_ImGuizmoOperation = ImGuizmo::SCALE;
 		}
 
-		if (Lamp::Input::IsKeyPressed(LP_KEY_DELETE))
+		if (Input::IsKeyPressed(LP_KEY_DELETE))
 		{
 			if (m_pSelectedObject)
 			{
@@ -116,45 +178,45 @@ namespace Sandbox3D
 
 	void Sandbox3D::RenderGrid()
 	{
-		Lamp::Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.f), glm::vec3(5.f, 0.f, 0.f), 1.f);
-		Lamp::Renderer3D::DrawLine(glm::vec3(0.f, 0.f, -5.f), glm::vec3(0.f, 0.f, 5.f), 1.f);
+		Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.f), glm::vec3(5.f, 0.f, 0.f), 1.f);
+		Renderer3D::DrawLine(glm::vec3(0.f, 0.f, -5.f), glm::vec3(0.f, 0.f, 5.f), 1.f);
 
 		for (size_t x = 1; x <= 10; x++)
 		{
-			Lamp::Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.5f * (float)x), glm::vec3(5.f, 0.f, 0.5f * (float)x), 1.f);
+			Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.5f * (float)x), glm::vec3(5.f, 0.f, 0.5f * (float)x), 1.f);
 		}
 
 		for (size_t x = 1; x <= 10; x++)
 		{
-			Lamp::Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, -0.5f * (float)x), glm::vec3(5.f, 0.f, -0.5f * (float)x), 1.f);
+			Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, -0.5f * (float)x), glm::vec3(5.f, 0.f, -0.5f * (float)x), 1.f);
 		}
 
 		for (size_t z = 1; z <= 10; z++)
 		{
-			Lamp::Renderer3D::DrawLine(glm::vec3(0.5f * (float)z, 0.f, -5.f), glm::vec3(0.5f * (float)z, 0.f, 5.f), 1.f);
+			Renderer3D::DrawLine(glm::vec3(0.5f * (float)z, 0.f, -5.f), glm::vec3(0.5f * (float)z, 0.f, 5.f), 1.f);
 		}
 
 		for (size_t z = 1; z <= 10; z++)
 		{
-			Lamp::Renderer3D::DrawLine(glm::vec3(-0.5f * (float)z, 0.f, -5.f), glm::vec3(-0.5f * (float)z, 0.f, 5.f), 1.f);
+			Renderer3D::DrawLine(glm::vec3(-0.5f * (float)z, 0.f, -5.f), glm::vec3(-0.5f * (float)z, 0.f, 5.f), 1.f);
 		}
 	}
 
 	void Sandbox3D::RenderSkybox()
 	{
-		Lamp::Renderer3D::DrawSkybox();
+		Renderer3D::DrawSkybox();
 	}
 
 	void Sandbox3D::CreateRenderPasses()
 	{
-		Lamp::RenderPassInfo passInfo;
+		RenderPassInfo passInfo;
 		passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
 		passInfo.IsShadowPass = true;
 		passInfo.DirLight = g_pEnv->DirLight;
 		passInfo.ClearColor = m_ClearColor;
 
-		Ref<Lamp::RenderPass> shadowPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
-		Lamp::RenderPassManager::Get()->AddPass(shadowPass);
+		Ref<RenderPass> shadowPass = CreateRef<RenderPass>(Renderer3D::GetShadowBuffer(), passInfo);
+		RenderPassManager::Get()->AddPass(shadowPass);
 
 		passInfo.IsShadowPass = false;
 
@@ -163,7 +225,7 @@ namespace Sandbox3D
 		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
 		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
 
-		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo, ptrs);
-		Lamp::RenderPassManager::Get()->AddPass(renderPass);
+		Ref<RenderPass> renderPass = CreateRef<RenderPass>(Renderer3D::GetFrameBuffer(), passInfo, ptrs);
+		RenderPassManager::Get()->AddPass(renderPass);
 	}
 }

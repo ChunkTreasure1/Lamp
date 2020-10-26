@@ -36,7 +36,7 @@ namespace Lamp
 		inline bool GetSaveable() { return m_ShouldBeSaved; }
 
 		//Getting
-		inline std::vector<Ref<EntityComponent>> GetComponents() const { return m_pComponents; }
+		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
 
 		template<typename T>
 		Ref<T> GetComponent()
@@ -90,7 +90,6 @@ namespace Lamp
 
 			return false;
 		}
-
 		bool AddComponent(Ref<EntityComponent> comp)
 		{
 			std::string str = comp->GetName();
@@ -104,6 +103,22 @@ namespace Lamp
 				m_pComponents.push_back(comp);
 				m_pComponentMap[str] = comp;
 				return true;
+			}
+
+			return false;
+		}
+		bool RemoveComponent(Ref<EntityComponent> comp)
+		{
+			auto it = std::find(m_pComponents.begin(), m_pComponents.end(), comp);
+			if (it != m_pComponents.end())
+			{
+				m_pComponents.erase(it);
+
+				if (auto t = m_pComponentMap.find(comp->GetName()); t != m_pComponentMap.end())
+				{
+					m_pComponentMap.erase(t);
+					return true;
+				}
 			}
 
 			return false;

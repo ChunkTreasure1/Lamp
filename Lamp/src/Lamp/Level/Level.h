@@ -22,13 +22,16 @@ namespace Lamp
 	class Level
 	{
 	public:
-		Level(const std::string& name)
-			: m_Name(name)
+		Level(const std::string& name, const std::string& path)
+			: m_Name(name), m_Path(path)
 		{
 			m_ObjectLayerManager = CreateRef<ObjectLayerManager>();
 			m_BrushManager = CreateRef<BrushManager>();
 			m_EntityManager = CreateRef<EntityManager>();
 			m_PhysicsEngine = CreateRef<PhysicsEngine>();
+
+			ObjectLayer layer(0, "Main", false);
+			m_ObjectLayerManager->AddLayer(layer);
 		}
 
 		~Level()
@@ -43,9 +46,12 @@ namespace Lamp
 
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
+		inline const std::string& GetPath() { return m_Path; }
+		inline void SetPath(const std::string& path) { m_Path = path; }
 
 	private:
 		std::string m_Name;
+		std::string m_Path;
 		Ref<BrushManager> m_BrushManager;
 		Ref<EntityManager> m_EntityManager;
 

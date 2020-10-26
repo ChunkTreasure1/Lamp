@@ -23,6 +23,15 @@ namespace Lamp
 
 	void PerspectiveCameraController::Update(Timestep ts)
 	{
+		if (!m_ControlsEnabled)
+		{
+			m_RightMouseButtonPressed = false;
+			Application::Get().GetWindow().ShowCursor(true);
+			m_HasControl = false;
+
+			return;
+		}
+
 		if (Input::IsMouseButtonPressed(1))
 		{
 			m_RightMouseButtonPressed = true;

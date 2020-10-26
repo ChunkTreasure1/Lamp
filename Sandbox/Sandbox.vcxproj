@@ -144,6 +144,7 @@
     <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp" />
+    <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>

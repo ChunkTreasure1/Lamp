@@ -225,6 +225,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
@@ -665,6 +666,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\lppch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

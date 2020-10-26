@@ -11,9 +11,11 @@ namespace Lamp
 	public:
 		static Ref<Level> LoadLevel(const std::string& path);
 		static bool SaveLevel(const std::string& path, Ref<Level>& level);
+		static bool SaveLevel(Ref<Level>& level);
 
 		static Ref<Level>& GetCurrentLevel() { return m_CurrentLevel; }
 		static LevelEnvironment& GetEnvironment() { return m_CurrentLevel->GetEnvironment(); }
+		static void SetCurrentLevel(Ref<Level> level) { m_CurrentLevel = level; }
 
 	private:
 		LevelSystem() = delete;

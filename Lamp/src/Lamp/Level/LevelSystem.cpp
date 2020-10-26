@@ -26,7 +26,7 @@ namespace Lamp
 		file.parse<0>(&buffer[0]);
 		pRootNode = file.first_node("Level");
 
-		pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value());
+		pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value(), path);
 		ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
 		PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
 
@@ -286,6 +286,11 @@ namespace Lamp
 		LP_CORE_INFO("Saved level!");
 
 		return true;
+	}
+
+	bool LevelSystem::SaveLevel(Ref<Level>& level)
+	{
+		return SaveLevel(level->GetPath(), level);
 	}
 
 	std::vector<ObjectLayer> LevelSystem::LoadLayers(rapidxml::xml_node<>* pNode, Ref<ObjectLayerManager>& objLayerManager)

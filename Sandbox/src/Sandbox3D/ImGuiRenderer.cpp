@@ -11,6 +11,7 @@
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <Lamp/Core/CoreLogger.h>
+#include "Lamp/Utility/PlatformUtility.h"
 
 namespace Sandbox3D
 {
@@ -168,7 +169,7 @@ namespace Sandbox3D
 
 		if (ImGui::Button("Load##fbx"))
 		{
-			path = Lamp::FileSystem::GetFileFromDialogue();
+			path = Lamp::FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
 			if (path != "" && std::filesystem::exists(path))
 			{
 				m_pModelToImport = Lamp::GeometrySystem::ImportModel(path);
@@ -185,7 +186,7 @@ namespace Sandbox3D
 		ImGui::SameLine();
 		if (ImGui::Button("Save"))
 		{
-			savePath = Lamp::FileSystem::SaveFileInDialogue();
+			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
 			Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath);
 			path = "";
 			savePath = "";
@@ -201,7 +202,7 @@ namespace Sandbox3D
 			ImGui::SameLine();
 			if (ImGui::Button("Load##diff"))
 			{
-				diffPath = Lamp::FileSystem::GetFileFromDialogue();
+				diffPath = Lamp::FileDialogs::OpenFile("Diffuse Map (*.png ...)\0*.png\0*.jpg\0");
 			}
 			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
 
@@ -210,7 +211,7 @@ namespace Sandbox3D
 			ImGui::SameLine();
 			if (ImGui::Button("Load##spec"))
 			{
-				specPath = Lamp::FileSystem::GetFileFromDialogue();
+				specPath = Lamp::FileDialogs::OpenFile("Specular Map (*.png ...)\0*.png\0*.jpg\0");
 			}
 			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
 
@@ -316,10 +317,8 @@ namespace Sandbox3D
 		{
 			if (ImGui::Button("Entity"))
 			{
-				Lamp::Entity* pEnt = Lamp::EntityManager::Get()->Create();
-				pEnt->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-
-				m_pSelectedObject = pEnt;
+				m_pSelectedObject = Lamp::EntityManager::Get()->Create();
+				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
 			}
 			
 			ImGui::SameLine();
@@ -455,11 +454,32 @@ namespace Sandbox3D
 				pEnt->SetScale(glm::make_vec3(s));
 			}
 
-			for (auto& pComp : pEnt->GetComponents())
+			for (auto it = pEnt->GetComponents().begin(); it != pEnt->GetComponents().end(); it++)
 			{
-				if (ImGui::CollapsingHeader(pComp->GetName().c_str()))
+				auto ptr = it->get();
+
+				bool open = ImGui::CollapsingHeader(ptr->GetName().c_str());
+				bool removeComponent = false;
+				ImGui::SameLine();
+
+				if (ImGui::Button("..."))
 				{
-					for (auto& pProp : pComp->GetComponentProperties().GetProperties())
+					ImGui::OpenPopup("ComponentSettings");
+				}
+
+				if (ImGui::BeginPopup("ComponentSettings"))
+				{
+					if (ImGui::MenuItem("Remove Component"))
+					{
+						removeComponent = true;
+					}
+
+					ImGui::EndPopup();
+				}
+
+				if (open)
+				{
+					for (auto& pProp : ptr->GetComponentProperties().GetProperties())
 					{
 						switch (pProp.PropertyType)
 						{
@@ -487,33 +507,21 @@ namespace Sandbox3D
 						case Lamp::PropertyType::Float2:
 						{
 							glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-
-							float f[2] = { p->x, p->y };
-							ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
-
-							*p = glm::make_vec2(f);
+							ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(*p), 3);
 							break;
 						}
 
 						case Lamp::PropertyType::Float3:
 						{
 							glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-
-							float f[3] = { p->x, p->y, p->z };
-							ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
-
-							*p = glm::make_vec3(f);
+							ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(*p), 3);
 							break;
 						}
 
 						case Lamp::PropertyType::Float4:
 						{
 							glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-
-							float f[4] = { p->x, p->y, p->z, p->w };
-							ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
-
-							*p = glm::make_vec4(f);
+							ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
 							break;
 						}
 
@@ -529,10 +537,10 @@ namespace Sandbox3D
 							std::string* s = static_cast<std::string*>(pProp.Value);
 							//ImGui::InputText(pProp.Name.c_str(), s);
 							ImGui::SameLine();
-							if (ImGui::Button("Open"))
+							if (ImGui::Button("Open..."))
 							{
-								std::string path = Lamp::FileSystem::GetFileFromDialogue();
-								if (path != "" && std::filesystem::exists(path))
+								std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+								if (!path.empty())
 								{
 									*s = path;
 								}
@@ -543,26 +551,24 @@ namespace Sandbox3D
 						case Lamp::PropertyType::Color3:
 						{
 							glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-
-							float f[3] = { p->x, p->y, p->z };
-							ImGui::ColorEdit3(pProp.Name.c_str(), f);
-
-							*p = glm::make_vec3(f);
+							ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(*p));
 							break;
 						}
 
 						case Lamp::PropertyType::Color4:
 						{
 							glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-
-							float f[4] = { p->x, p->y, p->z, p->w };
-							ImGui::ColorEdit4(pProp.Name.c_str(), f);
-
-							*p = glm::make_vec4(f);
+							ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(*p));
 							break;
 						}
 						}
 					}
+				}
+
+				if (removeComponent)
+				{
+					pEnt->RemoveComponent(*it);
+					it--;
 				}
 			}
 		}
@@ -608,6 +614,20 @@ namespace Sandbox3D
 				pBrush->GetPhysicalEntity()->SetMass(m);
 			}
 		}
+	}
+
+	void Sandbox3D::UpdateLevelSettings()
+	{
+		if (!m_LevelSettingsOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
+
+		ImGui::ColorEdit3("Global Ambient", glm::value_ptr(Lamp::LevelSystem::GetEnvironment().GlobalAmbient));
+
+		ImGui::End();
 	}
 
 	void Sandbox3D::CreateDockspace()
@@ -662,9 +682,31 @@ namespace Sandbox3D
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Save Level"))
+				if (ImGui::MenuItem("New", "Ctrl + N"))
 				{
-					Lamp::LevelSystem::SaveLevel("assets/levels/" + Lamp::LevelSystem::GetCurrentLevel()->GetName() + ".level", Lamp::LevelSystem::GetCurrentLevel());
+					NewLevel();
+				}
+
+				if (ImGui::MenuItem("Open...", "Ctrl + O"))
+				{
+					OpenLevel();
+				}
+
+				if (ImGui::MenuItem("Save As...", "Ctrl + Shift + S"))
+				{
+					SaveLevelAs();
+				}
+
+				if (ImGui::MenuItem("Save", "Ctrl + S"))
+				{
+					if (Lamp::LevelSystem::GetCurrentLevel()->GetPath().empty())
+					{
+						SaveLevelAs();
+					}
+					else
+					{
+						Lamp::LevelSystem::SaveLevel(Lamp::LevelSystem::GetCurrentLevel());
+					}
 				}
 
 				ImGui::EndMenu();
@@ -677,13 +719,14 @@ namespace Sandbox3D
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
+				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
 
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::BeginMenu("Play"))
 			{
-				ImGui::MenuItem("Play", "CTRL + G", &m_ShouldPlay);
+				ImGui::MenuItem("Play", "Ctrl + G", &m_ShouldPlay);
 				ImGui::MenuItem("Play physics", NULL, &m_ShouldPlayPhysics);
 
 				ImGui::EndMenu();

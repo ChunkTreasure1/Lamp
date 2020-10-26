@@ -37,6 +37,7 @@ namespace Sandbox3D
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
 		bool OnWindowClose(Lamp::WindowCloseEvent& e);
+		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
@@ -48,6 +49,12 @@ namespace Sandbox3D
 		void UpdateCreateTool();
 		void UpdateLogTool();
 		void DrawComponent();
+		void UpdateLevelSettings();
+
+		//Shortcuts
+		void SaveLevelAs();
+		void OpenLevel();
+		void NewLevel();
 
 	private:
 		Scope<Game> m_pGame;
@@ -97,8 +104,11 @@ namespace Sandbox3D
 		//Create
 		bool m_CreateToolOpen = true;
 
-		//Logginh
+		//Logging
 		bool m_LogToolOpen = false;
+
+		//Level settings
+		bool m_LevelSettingsOpen = false;
 		//--------------------------------------
 	};
 }
