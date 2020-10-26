@@ -11,8 +11,10 @@
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
 #include "SandboxController.h"
+#include "CommandQueue.h"
 
 #include <Game/Game.h>
+#include <stack>
 
 namespace Sandbox3D
 {
@@ -48,13 +50,14 @@ namespace Sandbox3D
 		void UpdateAddComponent();
 		void UpdateCreateTool();
 		void UpdateLogTool();
-		void DrawComponent();
+		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 
 		//Shortcuts
 		void SaveLevelAs();
 		void OpenLevel();
 		void NewLevel();
+		void Undo();
 
 	private:
 		Scope<Game> m_pGame;
@@ -70,6 +73,7 @@ namespace Sandbox3D
 		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
+		std::stack<Command> m_PerspecticeCommands;
 		
 		//Asset browser
 		Lamp::File m_SelectedFile;

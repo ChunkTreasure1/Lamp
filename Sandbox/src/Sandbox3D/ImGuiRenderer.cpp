@@ -64,12 +64,25 @@ namespace Sandbox3D
 		if (m_pSelectedObject)
 		{
 			transform = m_pSelectedObject->GetModelMatrix();
+
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
 				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
 
+			if (m_pSelectedObject->GetModelMatrix() != transform && !ImGuizmo::IsUsing())
+			{
+				Command cmd;
+				cmd.cmd = Cmd::Transform;
+				cmd.lastData = (void*)glm::value_ptr(glm::mat4(transform));
+				cmd.object = m_pSelectedObject;
+
+				m_PerspecticeCommands.push(cmd);
+			}
+
 			m_pSelectedObject->SetModelMatrix(transform);
+
+			transform = glm::mat4(1.f);
 		}
 	}
 
@@ -132,10 +145,109 @@ namespace Sandbox3D
 			if (m_MousePressed && m_PerspectiveHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
+
+				Command cmd;
+				cmd.cmd = Cmd::Selection;
+				cmd.lastData = m_pSelectedObject;
+				cmd.object = nullptr;
+
 				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, m_PerspectiveSize), m_SandboxController->GetCameraController()->GetPosition());
+			
+				if (cmd.lastData != m_pSelectedObject)
+				{
+					m_PerspecticeCommands.push(cmd);
+				}
 			}
 
-			DrawComponent();
+			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+			{
+				ImGui::Text("Entity");
+
+				std::string name = pEnt->GetName();
+				//ImGui::InputText("Name", &name);
+				pEnt->SetName(name);
+
+				if (ImGui::CollapsingHeader("Transform"))
+				{
+					glm::vec3 pos = pEnt->GetPosition();
+					float f[3] = { pos.x, pos.y, pos.z };
+
+					ImGui::InputFloat3("Position", f);
+					pEnt->SetPosition(glm::make_vec3(f));
+
+					if (pos != pEnt->GetPosition())
+					{
+						Command cmd;
+						cmd.cmd = Cmd::Position;
+						//cmd.lastData = 
+					}
+
+					glm::vec3 rot = pEnt->GetRotation();
+					float r[3] = { rot.x, rot.y, rot.z };
+
+					ImGui::InputFloat3("Rotation", r);
+					pEnt->SetRotation(glm::make_vec3(r));
+
+					glm::vec3 scale = pEnt->GetScale();
+					float s[3] = { scale.x, scale.y, scale.z };
+
+					ImGui::InputFloat3("Scale", s);
+					pEnt->SetScale(glm::make_vec3(s));
+				}
+
+				for (auto it = pEnt->GetComponents().begin(); it != pEnt->GetComponents().end(); it++)
+				{
+					auto ptr = it->get();
+
+					if (DrawComponent(ptr))
+					{
+						pEnt->RemoveComponent(*it);
+						it--;
+					}
+				}
+			}
+			else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
+			{
+				ImGui::Text("Brush");
+
+				std::string name = pBrush->GetName();
+				//ImGui::InputText("Name", &name);
+				pBrush->SetName(name);
+
+				if (ImGui::CollapsingHeader("Transform"))
+				{
+					glm::vec3 pos = pBrush->GetPosition();
+					float f[3] = { pos.x, pos.y, pos.z };
+
+					ImGui::InputFloat3("Position", f);
+					pBrush->SetPosition(glm::make_vec3(f));
+
+					glm::vec3 rot = pBrush->GetRotation();
+					float r[3] = { rot.x, rot.y, rot.z };
+
+					ImGui::InputFloat3("Rotation", r);
+					pBrush->SetRotation(glm::make_vec3(r));
+
+					glm::vec3 scale = pBrush->GetScale();
+					float s[3] = { scale.x, scale.y, scale.z };
+
+					ImGui::InputFloat3("Scale", s);
+					pBrush->SetScale(glm::make_vec3(s));
+				}
+
+				if (ImGui::CollapsingHeader("Physics"))
+				{
+					glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
+					float f[3] = { vel.x, vel.y, vel.z };
+
+					ImGui::InputFloat3("Velocity", f);
+					pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
+
+					float m = pBrush->GetPhysicalEntity()->GetMass();
+					ImGui::InputFloat("Mass", &m);
+					pBrush->GetPhysicalEntity()->SetMass(m);
+				}
+			}
 
 			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 			{
@@ -423,197 +535,116 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::DrawComponent()
+	bool Sandbox3D::DrawComponent(Lamp::EntityComponent* ptr)
 	{
-		if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+		bool open = ImGui::CollapsingHeader(ptr->GetName().c_str());
+		bool removeComponent = false;
+		ImGui::SameLine();
+
+		if (ImGui::Button("..."))
 		{
-			ImGui::Text("Entity");
+			ImGui::OpenPopup("ComponentSettings");
+		}
 
-			std::string name = pEnt->GetName();
-			//ImGui::InputText("Name", &name);
-			pEnt->SetName(name);
-
-			if (ImGui::CollapsingHeader("Transform"))
+		if (ImGui::BeginPopup("ComponentSettings"))
+		{
+			if (ImGui::MenuItem("Remove Component"))
 			{
-				glm::vec3 pos = pEnt->GetPosition();
-				float f[3] = { pos.x, pos.y, pos.z };
-
-				ImGui::InputFloat3("Position", f);
-				pEnt->SetPosition(glm::make_vec3(f));
-
-				glm::vec3 rot = pEnt->GetRotation();
-				float r[3] = { rot.x, rot.y, rot.z };
-
-				ImGui::InputFloat3("Rotation", r);
-				pEnt->SetRotation(glm::make_vec3(r));
-
-				glm::vec3 scale = pEnt->GetScale();
-				float s[3] = { scale.x, scale.y, scale.z };
-
-				ImGui::InputFloat3("Scale", s);
-				pEnt->SetScale(glm::make_vec3(s));
+				removeComponent = true;
 			}
 
-			for (auto it = pEnt->GetComponents().begin(); it != pEnt->GetComponents().end(); it++)
+			ImGui::EndPopup();
+		}
+
+		if (open)
+		{
+			for (auto& pProp : ptr->GetComponentProperties().GetProperties())
 			{
-				auto ptr = it->get();
-
-				bool open = ImGui::CollapsingHeader(ptr->GetName().c_str());
-				bool removeComponent = false;
-				ImGui::SameLine();
-
-				if (ImGui::Button("..."))
+				switch (pProp.PropertyType)
 				{
-					ImGui::OpenPopup("ComponentSettings");
+				case Lamp::PropertyType::Int:
+				{
+					int* p = static_cast<int*>(pProp.Value);
+					ImGui::InputInt(pProp.Name.c_str(), p);
+					break;
 				}
 
-				if (ImGui::BeginPopup("ComponentSettings"))
+				case Lamp::PropertyType::Bool:
 				{
-					if (ImGui::MenuItem("Remove Component"))
-					{
-						removeComponent = true;
-					}
-
-					ImGui::EndPopup();
+					bool* p = static_cast<bool*>(pProp.Value);
+					ImGui::Checkbox(pProp.Name.c_str(), p);
+					break;
 				}
 
-				if (open)
+				case Lamp::PropertyType::Float:
 				{
-					for (auto& pProp : ptr->GetComponentProperties().GetProperties())
+					float* p = static_cast<float*>(pProp.Value);
+					ImGui::InputFloat(pProp.Name.c_str(), p);
+					break;
+				}
+
+				case Lamp::PropertyType::Float2:
+				{
+					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+					ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+					break;
+				}
+
+				case Lamp::PropertyType::Float3:
+				{
+					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+					break;
+				}
+
+				case Lamp::PropertyType::Float4:
+				{
+					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+					break;
+				}
+
+				case Lamp::PropertyType::String:
+				{
+					std::string* s = static_cast<std::string*>(pProp.Value);
+					//ImGui::InputText(pProp.Name.c_str(), s);
+					break;
+				}
+
+				case Lamp::PropertyType::Path:
+				{
+					std::string* s = static_cast<std::string*>(pProp.Value);
+					//ImGui::InputText(pProp.Name.c_str(), s);
+					ImGui::SameLine();
+					if (ImGui::Button("Open..."))
 					{
-						switch (pProp.PropertyType)
+						std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+						if (!path.empty())
 						{
-						case Lamp::PropertyType::Int:
-						{
-							int* p = static_cast<int*>(pProp.Value);
-							ImGui::InputInt(pProp.Name.c_str(), p);
-							break;
-						}
-
-						case Lamp::PropertyType::Bool:
-						{
-							bool* p = static_cast<bool*>(pProp.Value);
-							ImGui::Checkbox(pProp.Name.c_str(), p);
-							break;
-						}
-
-						case Lamp::PropertyType::Float:
-						{
-							float* p = static_cast<float*>(pProp.Value);
-							ImGui::InputFloat(pProp.Name.c_str(), p);
-							break;
-						}
-
-						case Lamp::PropertyType::Float2:
-						{
-							glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-							ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(*p), 3);
-							break;
-						}
-
-						case Lamp::PropertyType::Float3:
-						{
-							glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-							ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(*p), 3);
-							break;
-						}
-
-						case Lamp::PropertyType::Float4:
-						{
-							glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-							ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
-							break;
-						}
-
-						case Lamp::PropertyType::String:
-						{
-							std::string* s = static_cast<std::string*>(pProp.Value);
-							//ImGui::InputText(pProp.Name.c_str(), s);
-							break;
-						}
-
-						case Lamp::PropertyType::Path:
-						{
-							std::string* s = static_cast<std::string*>(pProp.Value);
-							//ImGui::InputText(pProp.Name.c_str(), s);
-							ImGui::SameLine();
-							if (ImGui::Button("Open..."))
-							{
-								std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-								if (!path.empty())
-								{
-									*s = path;
-								}
-							}
-							break;
-						}
-
-						case Lamp::PropertyType::Color3:
-						{
-							glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-							ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(*p));
-							break;
-						}
-
-						case Lamp::PropertyType::Color4:
-						{
-							glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-							ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(*p));
-							break;
-						}
+							*s = path;
 						}
 					}
+					break;
 				}
 
-				if (removeComponent)
+				case Lamp::PropertyType::Color3:
 				{
-					pEnt->RemoveComponent(*it);
-					it--;
+					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(*p));
+					break;
+				}
+
+				case Lamp::PropertyType::Color4:
+				{
+					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(*p));
+					break;
+				}
 				}
 			}
 		}
-		else if (auto pBrush = dynamic_cast<Lamp::Brush*>(m_pSelectedObject))
-		{
-			ImGui::Text("Brush");
 
-			std::string name = pBrush->GetName();
-			//ImGui::InputText("Name", &name);
-			pBrush->SetName(name);
-
-			if (ImGui::CollapsingHeader("Transform"))
-			{
-				glm::vec3 pos = pBrush->GetPosition();
-				float f[3] = { pos.x, pos.y, pos.z };
-
-				ImGui::InputFloat3("Position", f);
-				pBrush->SetPosition(glm::make_vec3(f));
-
-				glm::vec3 rot = pBrush->GetRotation();
-				float r[3] = { rot.x, rot.y, rot.z };
-
-				ImGui::InputFloat3("Rotation", r);
-				pBrush->SetRotation(glm::make_vec3(r));
-
-				glm::vec3 scale = pBrush->GetScale();
-				float s[3] = { scale.x, scale.y, scale.z };
-
-				ImGui::InputFloat3("Scale", s);
-				pBrush->SetScale(glm::make_vec3(s));
-			}
-
-			if (ImGui::CollapsingHeader("Physics"))
-			{
-				glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
-				float f[3] = { vel.x, vel.y, vel.z };
-
-				ImGui::InputFloat3("Velocity", f);
-				pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
-
-				float m = pBrush->GetPhysicalEntity()->GetMass();
-				ImGui::InputFloat("Mass", &m);
-				pBrush->GetPhysicalEntity()->SetMass(m);
-			}
-		}
+		return removeComponent;
 	}
 
 	void Sandbox3D::UpdateLevelSettings()

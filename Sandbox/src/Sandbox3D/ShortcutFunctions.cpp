@@ -42,4 +42,27 @@ namespace Sandbox3D
 		m_pSelectedObject = nullptr;
 	}
 
+	void Sandbox3D::Undo()
+	{
+		//Currently only perspective undo
+		switch (m_PerspecticeCommands.top().cmd)
+		{
+			case Cmd::Transform:
+			{
+				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.top().object))
+				{
+					pObj->SetModelMatrix(glm::make_mat4((float*)m_PerspecticeCommands.top().lastData));
+					m_PerspecticeCommands.pop();
+				}
+				break;
+			}
+
+			case Cmd::Selection:
+			{
+				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.top().lastData;
+				m_PerspecticeCommands.pop();
+				break;
+			}
+		}
+	}
 }
