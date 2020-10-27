@@ -64,7 +64,7 @@ namespace Lamp
 		inline const glm::vec3& GetRotation() { return m_Rotation; }
 		inline const glm::vec3& GetScale() { return m_Scale; }
 
-		inline glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
+		inline const glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_PhysicalEntity; }
 		inline const std::string& GetName() { return m_Name; }
 		

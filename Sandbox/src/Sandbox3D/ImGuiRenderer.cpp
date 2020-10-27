@@ -60,29 +60,59 @@ namespace Sandbox3D
 		ImGui::PopStyleVar();
 
 		static glm::mat4 transform = glm::mat4(1.f);
+		static glm::mat4 lastTrans = glm::mat4(1.f);
+		static bool beginMove = false;
+		static bool hasStarted = false;
+		static bool firstTime = true;
 
 		if (m_pSelectedObject)
 		{
 			transform = m_pSelectedObject->GetModelMatrix();
+
+			// TODO: improve this first part.
+			if (firstTime)
+			{
+				lastTrans = transform;
+				firstTime = false;
+			}
+
+			if (ImGuizmo::IsDragging() && !beginMove)
+			{
+				beginMove = true;
+			}
+
+			if (!ImGuizmo::IsDragging())
+			{
+				hasStarted = false;
+			}
+
+			if (beginMove && !hasStarted)
+			{
+				lastTrans = m_pSelectedObject->GetModelMatrix();
+				beginMove = false;
+				hasStarted = true;
+
+				LP_CORE_INFO("Start X: {0}, Y: {1}", lastTrans[3][0], lastTrans[3][1]);
+			}
 
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
 				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
 
-			if (m_pSelectedObject->GetModelMatrix() != transform && !ImGuizmo::IsUsing())
+			m_pSelectedObject->SetModelMatrix(transform);
+
+			bool isDrag = ImGuizmo::IsDragging();
+
+			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !isDrag)
 			{
 				Command cmd;
 				cmd.cmd = Cmd::Transform;
-				cmd.lastData = (void*)glm::value_ptr(glm::mat4(transform));
+				cmd.lastData = new glm::mat4(lastTrans);
 				cmd.object = m_pSelectedObject;
 
-				m_PerspecticeCommands.push(cmd);
+				m_PerspecticeCommands.push_front(cmd);
 			}
-
-			m_pSelectedObject->SetModelMatrix(transform);
-
-			transform = glm::mat4(1.f);
 		}
 	}
 
@@ -155,7 +185,7 @@ namespace Sandbox3D
 			
 				if (cmd.lastData != m_pSelectedObject)
 				{
-					m_PerspecticeCommands.push(cmd);
+					m_PerspecticeCommands.push_front(cmd);
 				}
 			}
 
@@ -738,6 +768,16 @@ namespace Sandbox3D
 					{
 						Lamp::LevelSystem::SaveLevel(Lamp::LevelSystem::GetCurrentLevel());
 					}
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", "Ctrl + Z"))
+				{
+					Undo();
 				}
 
 				ImGui::EndMenu();

@@ -26,7 +26,7 @@ namespace Sandbox3D
 	using namespace Lamp;
 
 	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
+		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr), m_PerspecticeCommands(100)
 	{
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
