@@ -145,6 +145,16 @@ namespace Sandbox3D
 				}
 				break;
 			}
+
+			case LP_KEY_Y:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Redo();
+				}
+				break;
+			}
 		}
 
 		return false;

@@ -72,4 +72,34 @@ namespace Sandbox3D
 			}
 		}
 	}
+	void Sandbox3D::Redo()
+	{
+		if (m_PerspecticeCommands.redo_empty())
+		{
+			return;
+		}
+
+		//Currently only perspective undo
+		switch (m_PerspecticeCommands.redo_top().cmd)
+		{
+			case Cmd::Transform:
+			{
+				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.redo_top().object))
+				{
+					pObj->SetModelMatrix(glm::make_mat4((float*)m_PerspecticeCommands.redo_top().lastData));
+
+					delete m_PerspecticeCommands.redo_top().lastData;
+					m_PerspecticeCommands.redo_pop();
+				}
+				break;
+			}
+
+			case Cmd::Selection:
+			{
+				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.redo_top().lastData;
+				m_PerspecticeCommands.redo_pop();
+				break;
+			}
+		}
+	}
 }

@@ -57,6 +57,7 @@ namespace Sandbox3D
 		void OpenLevel();
 		void NewLevel();
 		void Undo();
+		void Redo();
 
 	private:
 		Scope<Game> m_pGame;

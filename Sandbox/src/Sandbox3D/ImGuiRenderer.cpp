@@ -780,6 +780,11 @@ namespace Sandbox3D
 					Undo();
 				}
 
+				if (ImGui::MenuItem("Redo", "Ctrl + Y"))
+				{
+					Redo();
+				}
+
 				ImGui::EndMenu();
 			}
 
