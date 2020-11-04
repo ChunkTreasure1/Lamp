@@ -6,7 +6,6 @@
 
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
 #include <Lamp/Audio/AudioEngine.h>
-#include <Lamp/Objects/Entity/BaseComponents/AudioComponent.h>
 #include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
 
 void Game::OnStart()

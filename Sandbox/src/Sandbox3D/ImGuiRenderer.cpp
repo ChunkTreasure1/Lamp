@@ -91,8 +91,6 @@ namespace Sandbox3D
 				lastTrans = m_pSelectedObject->GetModelMatrix();
 				beginMove = false;
 				hasStarted = true;
-
-				LP_CORE_INFO("Start X: {0}, Y: {1}", lastTrans[3][0], lastTrans[3][1]);
 			}
 
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
@@ -102,9 +100,7 @@ namespace Sandbox3D
 
 			m_pSelectedObject->SetModelMatrix(transform);
 
-			bool isDrag = ImGuizmo::IsDragging();
-
-			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !isDrag)
+			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
 				Command cmd;
 				cmd.cmd = Cmd::Transform;

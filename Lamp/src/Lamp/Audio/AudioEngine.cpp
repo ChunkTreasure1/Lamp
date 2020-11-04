@@ -316,7 +316,6 @@ namespace Lamp
 		curr++;
 
 		g_AudioImplementation->StudioSystem->setNumListeners(curr);
-		g_AudioImplementation->StudioSystem->getNumListeners(&curr);
 
 		return Listener(curr);
 	}
