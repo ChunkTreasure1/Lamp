@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Lamp">
+      <UniqueIdentifier>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor">
+      <UniqueIdentifier>{EC6A4D3D-5820-C632-E114-C0094DC9BC36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor\ImGuizmo">
+      <UniqueIdentifier>{CCE60BD4-B875-959D-6194-A9984D02A643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor\ImGuizmo\include">
+      <UniqueIdentifier>{3F1A494A-2BD5-38F6-D48C-B140C0268386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lamp\vendor\ImGuizmo\include\ImGuizmo">
+      <UniqueIdentifier>{7F830934-EB47-0824-B4AD-38EE2031A459}</UniqueIdentifier>
+    </Filter>
     <Filter Include="engine">
       <UniqueIdentifier>{FBDB78FB-E77D-A3D1-D038-B725BC792A22}</UniqueIdentifier>
     </Filter>
@@ -21,8 +36,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
+      <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h">
       <Filter>src\Sandbox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox3D\CommandStack.h">
+      <Filter>src\Sandbox3D</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h">
       <Filter>src\Sandbox3D</Filter>
@@ -30,9 +51,11 @@
     <ClInclude Include="src\Sandbox3D\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\CommandStack.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp">
       <Filter>src\Sandbox2D</Filter>
     </ClCompile>
@@ -48,10 +71,12 @@
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp">
+      <Filter>src\Sandbox3D</Filter>
+    </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\2d\FlatColor.frag">
