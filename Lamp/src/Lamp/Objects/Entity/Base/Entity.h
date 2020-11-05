@@ -12,6 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Lamp/Objects/Object.h"
+#include <string>
 
 class EntityManager;
 
@@ -90,6 +91,7 @@ namespace Lamp
 
 			return false;
 		}
+
 		bool AddComponent(Ref<EntityComponent> comp)
 		{
 			std::string str = comp->GetName();
@@ -107,6 +109,7 @@ namespace Lamp
 
 			return false;
 		}
+
 		bool RemoveComponent(Ref<EntityComponent> comp)
 		{
 			auto it = std::find(m_pComponents.begin(), m_pComponents.end(), comp);
@@ -117,6 +120,28 @@ namespace Lamp
 				if (auto t = m_pComponentMap.find(comp->GetName()); t != m_pComponentMap.end())
 				{
 					m_pComponentMap.erase(t);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		template<typename T>
+		bool RemoveComponent()
+		{
+			for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+			{
+				if (it->get()->GetName() == T::GetFactoryName())
+				{
+					m_pComponents.erase(it);
+
+					if (auto t = m_pComponentMap.find(T::GetFactoryName()); t != m_pComponentMap.end())
+					{
+						m_pComponentMap.erase(t);
+						return true;
+					}
+
 					return true;
 				}
 			}
