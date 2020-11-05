@@ -20,6 +20,7 @@
 #include <Lamp/Core/Game.h>
 
 #include <Lamp/Rendering/RenderPass.h>
+#include <ImGuizmo/ImGuizmo.h>
 
 namespace Sandbox3D
 {
@@ -74,6 +75,7 @@ namespace Sandbox3D
 		dispatcher.Dispatch<AppItemClickedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnItemClicked));
 		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
 		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnKeyPressed));
+		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnImGuiBegin));
 	}
 
 	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
@@ -158,6 +160,13 @@ namespace Sandbox3D
 		}
 
 		return false;
+	}
+
+	bool Sandbox3D::OnImGuiBegin(ImGuiBeginEvent& e)
+	{
+		ImGuizmo::BeginFrame();
+
+		return true;
 	}
 
 	void Sandbox3D::GetInput()

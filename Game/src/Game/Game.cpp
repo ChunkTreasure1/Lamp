@@ -15,6 +15,7 @@ void Game::OnStart()
 	{
 		Lamp::Entity* ent = Lamp::Entity::Create();
 		ent->GetOrCreateComponent<Lamp::AudioListenerComponent>();
+
 		ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
 	}
 }

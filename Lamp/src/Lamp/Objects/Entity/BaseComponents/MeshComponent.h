@@ -26,7 +26,6 @@ namespace Lamp
 		inline void SetModel(Ref<Model> model) 
 		{ 
 			m_Model = model; 
-			//TODO: change to file dialog instead
 			SetComponentProperties
 			({
 				{ PropertyType::Path, "Path", RegisterData(&m_Model->GetLGFPath())}
