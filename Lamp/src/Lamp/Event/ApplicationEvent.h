@@ -129,4 +129,21 @@ namespace Lamp
 	private:
 		File m_File;
 	};
+
+	class ImGuiBeginEvent : public Event
+	{
+	public:
+		ImGuiBeginEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "ImGui Begin Frame" << std::endl;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(ImGuiBegin);
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+	};
 }

@@ -221,14 +221,12 @@ namespace Sandbox3D
 					pEnt->SetScale(glm::make_vec3(s));
 				}
 
-				for (auto it = pEnt->GetComponents().begin(); it != pEnt->GetComponents().end(); it++)
+				for (size_t i = 0; i < pEnt->GetComponents().size(); i++)
 				{
-					auto ptr = it->get();
-
-					if (DrawComponent(ptr))
+					if (DrawComponent(pEnt->GetComponents()[i].get()))
 					{
-						pEnt->RemoveComponent(*it);
-						it--;
+						pEnt->RemoveComponent(pEnt->GetComponents()[i]);
+						i--;
 					}
 				}
 			}
@@ -457,6 +455,7 @@ namespace Sandbox3D
 			{
 				m_pSelectedObject = Lamp::EntityManager::Get()->Create();
 				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
 			}
 			
 			ImGui::SameLine();
@@ -563,114 +562,102 @@ namespace Sandbox3D
 
 	bool Sandbox3D::DrawComponent(Lamp::EntityComponent* ptr)
 	{
-		bool open = ImGui::CollapsingHeader(ptr->GetName().c_str());
-		bool removeComponent = false;
-		ImGui::SameLine();
+		bool removeComp = false;
 
-		if (ImGui::Button("..."))
+		if (ImGui::CollapsingHeader(ptr->GetName().c_str()))
 		{
-			ImGui::OpenPopup("ComponentSettings");
-		}
-
-		if (ImGui::BeginPopup("ComponentSettings"))
-		{
-			if (ImGui::MenuItem("Remove Component"))
+			if (ImGui::Button("Remove"))
 			{
-				removeComponent = true;
+				removeComp = true;
 			}
 
-			ImGui::EndPopup();
-		}
-
-		if (open)
-		{
 			for (auto& pProp : ptr->GetComponentProperties().GetProperties())
 			{
 				switch (pProp.PropertyType)
 				{
-				case Lamp::PropertyType::Int:
-				{
-					int* p = static_cast<int*>(pProp.Value);
-					ImGui::InputInt(pProp.Name.c_str(), p);
-					break;
-				}
-
-				case Lamp::PropertyType::Bool:
-				{
-					bool* p = static_cast<bool*>(pProp.Value);
-					ImGui::Checkbox(pProp.Name.c_str(), p);
-					break;
-				}
-
-				case Lamp::PropertyType::Float:
-				{
-					float* p = static_cast<float*>(pProp.Value);
-					ImGui::InputFloat(pProp.Name.c_str(), p);
-					break;
-				}
-
-				case Lamp::PropertyType::Float2:
-				{
-					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-					ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(*p), 3);
-					break;
-				}
-
-				case Lamp::PropertyType::Float3:
-				{
-					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-					ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(*p), 3);
-					break;
-				}
-
-				case Lamp::PropertyType::Float4:
-				{
-					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-					ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
-					break;
-				}
-
-				case Lamp::PropertyType::String:
-				{
-					std::string* s = static_cast<std::string*>(pProp.Value);
-					//ImGui::InputText(pProp.Name.c_str(), s);
-					break;
-				}
-
-				case Lamp::PropertyType::Path:
-				{
-					std::string* s = static_cast<std::string*>(pProp.Value);
-					//ImGui::InputText(pProp.Name.c_str(), s);
-					ImGui::SameLine();
-					if (ImGui::Button("Open..."))
+					case Lamp::PropertyType::Int:
 					{
-						std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-						if (!path.empty())
-						{
-							*s = path;
-						}
+						int* p = static_cast<int*>(pProp.Value);
+						ImGui::InputInt(pProp.Name.c_str(), p);
+						break;
 					}
-					break;
-				}
 
-				case Lamp::PropertyType::Color3:
-				{
-					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-					ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(*p));
-					break;
-				}
+					case Lamp::PropertyType::Bool:
+					{
+						bool* p = static_cast<bool*>(pProp.Value);
+						ImGui::Checkbox(pProp.Name.c_str(), p);
+						break;
+					}
 
-				case Lamp::PropertyType::Color4:
-				{
-					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-					ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(*p));
-					break;
-				}
+					case Lamp::PropertyType::Float:
+					{
+						float* p = static_cast<float*>(pProp.Value);
+						ImGui::InputFloat(pProp.Name.c_str(), p);
+						break;
+					}
+
+					case Lamp::PropertyType::Float2:
+					{
+						glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						break;
+					}
+
+					case Lamp::PropertyType::Float3:
+					{
+						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						break;
+					}
+
+					case Lamp::PropertyType::Float4:
+					{
+						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+						ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						break;
+					}
+
+					case Lamp::PropertyType::String:
+					{
+						std::string* s = static_cast<std::string*>(pProp.Value);
+						//ImGui::InputText(pProp.Name.c_str(), s);
+						break;
+					}
+
+					case Lamp::PropertyType::Path:
+					{
+						std::string* s = static_cast<std::string*>(pProp.Value);
+						//ImGui::InputText(pProp.Name.c_str(), s);
+						//ImGui::SameLine();
+						if (ImGui::Button("Open..."))
+						{
+							std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+							if (!path.empty())
+							{
+								*s = path;
+							}
+						}
+						break;
+					}
+
+					case Lamp::PropertyType::Color3:
+					{
+						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+						ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(*p));
+						break;
+					}
+
+					case Lamp::PropertyType::Color4:
+					{
+						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+						ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(*p));
+						break;
+					}
 				}
 			}
 		}
 
-		return removeComponent;
+		return removeComp;
 	}
 
 	void Sandbox3D::UpdateLevelSettings()

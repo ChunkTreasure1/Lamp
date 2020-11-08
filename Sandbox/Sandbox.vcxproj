@@ -88,7 +88,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;..\bin\Debug-windows-x86_64\Game;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Debug-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/WHOLEARCHIVE:Game /WHOLEARCHIVE:Lamp %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -109,7 +111,9 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;..\bin\Release-windows-x86_64\Game;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Release-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/WHOLEARCHIVE:Game /WHOLEARCHIVE:Lamp %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -130,16 +134,20 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;..\bin\Dist-windows-x86_64\Game;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Dist-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/WHOLEARCHIVE:Game /WHOLEARCHIVE:Lamp %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h" />
     <ClInclude Include="src\Sandbox3D\CommandStack.h" />
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h" />
     <ClInclude Include="src\Sandbox3D\SandboxController.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp" />
     <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
@@ -155,11 +163,11 @@
     <None Include="engine\shaders\2d\Texture.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lamp\Lamp.vcxproj">
-      <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Game\Game.vcxproj">
       <Project>{7FA9857C-6BE0-860D-14CD-6C1000E3020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Lamp\Lamp.vcxproj">
+      <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

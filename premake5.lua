@@ -34,9 +34,7 @@ project "Lamp"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/stb/**.h",
-		"%{prj.name}/vendor/stb_image/stb/**.cpp",
-		"%{prj.name}/vendor/ImGuizmo/include/**.h",
-		"%{prj.name}/vendor/ImGuizmo/include/**.cpp"
+		"%{prj.name}/vendor/stb_image/stb/**.cpp"
 	}
 
 	defines 
@@ -57,25 +55,13 @@ project "Lamp"
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/ImGuizmo/include"
-	}
-	
-	libdirs
-	{
-		"%{prj.name}/vendor/assimp",
-		"%{prj.name}/vendor/fmod"
 	}
 	
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",
-		"xaudio2.lib",
-		"opengl32.lib",
-		"assimp-vc142-mt.lib",
-		"fmodstudio_vc.lib",
-		"fmod_vc.lib"
+		"Glad"
 	}
 
 	filter "system:windows"
@@ -119,7 +105,8 @@ project "Sandbox"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/engine/**.vert",
 		"%{prj.name}/engine/**.frag",
-
+		"Lamp/vendor/ImGuizmo/include/**.h",
+		"Lamp/vendor/ImGuizmo/include/**.cpp"
 	}
 
 	includedirs
@@ -141,15 +128,24 @@ project "Sandbox"
 
 	libdirs
 	{
+		gamedir,
 		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod",
-		gamedir
+		"Lamp/vendor/fmod"
 	}
 
 	links
 	{
+		"Game",
 		"Lamp",
-		"Game"
+		"assimp-vc142-mt.lib",
+		"fmodstudio_vc.lib",
+		"fmod_vc.lib"
+	}
+	
+	linkoptions
+	{
+		"/WHOLEARCHIVE:Game",
+		"/WHOLEARCHIVE:Lamp"
 	}
 
 	filter "system:windows"
@@ -189,8 +185,6 @@ project "Game"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"Lamp/vendor/ImGuizmo/include/**.h",
-		"Lamp/vendor/ImGuizmo/include/**.cpp"
 	}
 
 	includedirs
@@ -206,18 +200,6 @@ project "Game"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
-		"Lamp/vendor/ImGuizmo/include"
-	}
-
-	libdirs
-	{
-		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod"
-	}
-
-	links
-	{
-		"Lamp"
 	}
 	
 	filter "system:windows"
@@ -257,9 +239,7 @@ project "GameLauncher"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"Lamp/vendor/ImGuizmo/include/**.h",
-		"Lamp/vendor/ImGuizmo/include/**.cpp"
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
@@ -275,21 +255,23 @@ project "GameLauncher"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
-		"Game/src",
-		"Lamp/vendor/ImGuizmo/include"
+		"Game/src"
 	}
 
 	libdirs
 	{
+		gamedir,
 		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod",
-		gamedir
+		"Lamp/vendor/fmod"
 	}
 
 	links
 	{
 		"Lamp",
-		"Game"
+		"Game",
+		"assimp-vc142-mt.lib",
+		"fmodstudio_vc.lib",
+		"fmod_vc.lib"
 	}
 
 	filter "system:windows"
