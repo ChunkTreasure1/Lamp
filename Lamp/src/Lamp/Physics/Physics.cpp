@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "Physics.h"
 
-#include "Lamp/Core/Math.h"
+#include "Lamp/Math/Math.h"
 
 namespace Lamp
 {

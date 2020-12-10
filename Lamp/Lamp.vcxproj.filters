@@ -150,9 +150,6 @@
     <ClInclude Include="src\Lamp\Core\Log.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Core\Math.h">
-      <Filter>src\Lamp\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h">
       <Filter>src\Lamp\Core\Time</Filter>
     </ClInclude>
@@ -340,6 +337,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
+      <Filter>src\Lamp\Rendering\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h">
@@ -1497,6 +1497,7 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Math\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1697,5 +1698,7 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
+    <ClCompile Include="src\Lamp\Math\Math.cpp" />
   </ItemGroup>
 </Project>

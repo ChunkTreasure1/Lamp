@@ -5,6 +5,7 @@
 #include "Renderer3D.h"
 
 #include "RenderCommand.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 namespace Lamp
 {
@@ -12,6 +13,7 @@ namespace Lamp
 
 	void Renderer::Initialize()
 	{
+		ShaderLibrary::LoadShaders();
 		RenderCommand::Initialize();
 		Renderer2D::Initialize();
 		Renderer3D::Initialize();

@@ -3,7 +3,8 @@
 
 #include "Lamp/Rendering/Renderer3D.h"
 #include "glm/glm.hpp"
-#include "glm/gtx/matrix_decompose.hpp"
+
+#include "Lamp/Math/Math.h"
 
 namespace Lamp
 {
@@ -20,12 +21,10 @@ namespace Lamp
 	void Model::RenderBoundingBox()
 	{
 		glm::vec3 scale;
-		glm::quat rotation;
+		glm::vec3 rotation;
 		glm::vec3 position;
-		glm::vec3 skew;
-		glm::vec4 perspective;
 
-		glm::decompose(m_ModelMatrix, scale, rotation, position, skew, perspective);
+		Math::DecomposeTransform(m_ModelMatrix, position, rotation, scale);
 
 		Renderer3D::DrawLine(position + m_BoundingBox.Max, position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), 1.f);
 		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), 1.f);

@@ -10,7 +10,7 @@
 			<Diffuse path="engine/textures/default/defaultTexture.png"/>
 			<Specular path="engine/textures/default/defaultTexture.png"/>
 			<Shininess value="1.000000"/>
-			<Shader vertex="engine/shaders/3d/lightShader_vs.glsl" fragment="engine/shaders/3d/lightShader_fs.glsl"/>
+			<Shader name="Line" vertex="engine/shaders/3d/lightShader_vs.glsl" fragment="engine/shaders/3d/lightShader_fs.glsl"/>
 		</Material>
 	</Materials>
 	<BoundingBox>

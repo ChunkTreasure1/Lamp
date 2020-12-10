@@ -144,7 +144,7 @@ namespace Lamp
 		s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		int* samplers{ new int[RenderCommand::GetCapabilities().MaxTextureSlots] };
-		for (int i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
+		for (uint32_t i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
 		{
 			samplers[i] = i;
 		}

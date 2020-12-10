@@ -12,6 +12,9 @@
 
 #include <Lamp/Core/CoreLogger.h>
 #include "Lamp/Utility/PlatformUtility.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+
+#include "Lamp/Math/Math.h"
 
 namespace Sandbox3D
 {
@@ -56,9 +59,8 @@ namespace Sandbox3D
 			ImGui::SetCursorPos(ImVec2(20, 40));
 			ImGui::Text(frameInfo.c_str());
 		}
-		ImGui::End();
-		ImGui::PopStyleVar();
 
+		//Guizmos
 		static glm::mat4 transform = glm::mat4(1.f);
 		static glm::mat4 lastTrans = glm::mat4(1.f);
 		static bool beginMove = false;
@@ -92,13 +94,23 @@ namespace Sandbox3D
 				beginMove = false;
 				hasStarted = true;
 			}
-
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
 				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
 
-			m_pSelectedObject->SetModelMatrix(transform);
+
+			glm::vec3 p, r, s;
+			Lamp::Math::DecomposeTransform(transform, p, r, s);
+
+			r = r - m_pSelectedObject->GetRotation();
+
+			m_pSelectedObject->SetPosition(p);
+			m_pSelectedObject->AddRotation(glm::degrees(r));
+			m_pSelectedObject->SetScale(s);
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
@@ -110,6 +122,9 @@ namespace Sandbox3D
 				m_PerspecticeCommands.push_front(cmd);
 			}
 		}
+
+		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void Sandbox3D::UpdateAssetBrowser()
@@ -295,7 +310,7 @@ namespace Sandbox3D
 
 		if (m_pShader == nullptr)
 		{
-			m_pShader = Lamp::Shader::Create("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
+			m_pShader = Lamp::ShaderLibrary::GetShader("Illumn");
 		}
 
 		ImGui::Begin("Model importer", &m_ModelImporterOpen);
@@ -315,8 +330,10 @@ namespace Sandbox3D
 
 				m_pModelToImport->GetMaterial().SetShader(m_pShader);
 
-				m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
-				m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+				for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
+				{
+					tex.second = Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png");
+				}
 			}
 		}
 		ImGui::SameLine();
@@ -333,23 +350,22 @@ namespace Sandbox3D
 
 		if (m_pModelToImport != nullptr)
 		{
-			static std::string diffPath = m_pModelToImport->GetMaterial().GetDiffuse()->GetPath();
+			static std::unordered_map<std::string, std::string> paths;
+			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
+			{
+				paths.emplace(tex.first, "");
+			}
 			//ImGui::InputText("Diffuse path:", &diffPath);
 			ImGui::SameLine();
-			if (ImGui::Button("Load##diff"))
+			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
 			{
-				diffPath = Lamp::FileDialogs::OpenFile("Diffuse Map (*.png ...)\0*.png\0*.jpg\0");
+				if (ImGui::Button((std::string("Load##") + tex.first).c_str()))
+				{
+					paths[tex.first] = Lamp::FileDialogs::OpenFile((tex.first + std::string(" Map (*.png ...)\0*.png\0*.jpg\0")).c_str());
+				}
+				m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create(paths[tex.first]));
 			}
-			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
-
-			static std::string specPath = m_pModelToImport->GetMaterial().GetSpecular()->GetPath();
 			//ImGui::InputText("Specular path:", &specPath);
-			ImGui::SameLine();
-			if (ImGui::Button("Load##spec"))
-			{
-				specPath = Lamp::FileDialogs::OpenFile("Specular Map (*.png ...)\0*.png\0*.jpg\0");
-			}
-			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
 
 			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
 		}

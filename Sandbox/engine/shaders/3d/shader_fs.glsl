@@ -1,3 +1,11 @@
+#ShaderSpec
+Name: Illumn;
+TextureCount: 2;
+TextureNames
+{
+Diffuse
+Specular
+}
 #version 440 core
 out vec4 FragColor;
 

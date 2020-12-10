@@ -50,7 +50,7 @@ namespace Lamp
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)
 	{
-		pass->SetID(m_RenderPasses.size());
+		pass->SetID((uint32_t)m_RenderPasses.size());
 		m_RenderPasses.push_back(pass);
 	}
 

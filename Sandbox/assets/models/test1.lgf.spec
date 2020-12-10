@@ -10,7 +10,7 @@
 			<Diffuse path="engine/textures/default/defaultTexture.png"/>
 			<Specular path="engine/textures/default/defaultTexture.png"/>
 			<Shininess value="32.000000"/>
-			<Shader vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
+			<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
 		</Material>
 	</Materials>
 	<BoundingBox>

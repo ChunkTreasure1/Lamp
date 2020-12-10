@@ -7,23 +7,24 @@ namespace Lamp
 	class Material
 	{
 	public:
-		Material(Ref<Texture2D> diff, Ref<Texture2D> spec, Ref<Shader> shader, uint32_t matIndex)
-			: m_pDiffuse(diff), m_pSpecular(spec), m_pShader(shader), m_Shininess(32.f), m_Index(matIndex)
-		{}
+		Material(Ref<Shader> shader, uint32_t id)
+			: m_pShader(shader), m_Index(id)
+		{
+
+		}
 
 		Material(uint32_t index)
 			: m_Index(index), m_Shininess(32.f)
 		{}
 		//Setting
-		inline void SetDiffuse(Ref<Texture2D> diff) { m_pDiffuse = diff; }
-		inline void SetSpecular(Ref<Texture2D> spec) { m_pSpecular = spec; }
-		inline void SetShader(Ref<Shader> shader) { m_pShader = shader; }
+		inline void SetTextures(std::unordered_map<std::string, Ref<Texture2D>>& map) { m_pTextures = map; }
+		void SetTexture(const std::string& name, Ref<Texture2D>& texture);
+		void SetShader(Ref<Shader> shader);
 		inline void SetShininess(float val) { m_Shininess = val; }
 		inline void SetName(const std::string& name) { m_Name = name; }
 
 		//Getting
-		inline const Ref<Texture2D>& GetDiffuse() { return m_pDiffuse; }
-		inline const Ref<Texture2D>& GetSpecular() { return m_pSpecular; }
+		inline std::unordered_map<std::string, Ref<Texture2D>>& GetTextures() { return m_pTextures; }
 		inline const uint32_t GetIndex() { return m_Index; }
 		inline const Ref<Shader>& GetShader() { return m_pShader; }
 		inline const std::string& GetName() { return m_Name; }
@@ -32,8 +33,7 @@ namespace Lamp
 		void UploadData();
 
 	private:
-		Ref<Texture2D> m_pDiffuse;
-		Ref<Texture2D> m_pSpecular;
+		std::unordered_map<std::string, Ref<Texture2D>> m_pTextures;
 		float m_Shininess;
 
 		Ref<Shader> m_pShader;

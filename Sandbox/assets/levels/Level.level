@@ -1,7 +1,7 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\sofa.lgf" position="0.000000,0.000000,0.000000" rotation="-0.000000,0.000000,-0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,3.264295,-1.972128" rotation="-0.000000,0.000000,-0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sofa.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,0.999999,0.999999" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,3.264295,0.725794" rotation="0.000000,0.000000,0.000000" scale="0.634391,0.634387,0.634396" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
@@ -22,7 +22,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.300000,0.300000,0.300000"/>
-		<CameraValues position="-7.277734,5.292914,6.960034" rotation="-30.900105,-24.300039,0.000000" fov="60.000000"/>
+		<CameraValues position="-5.052805,5.830451,0.059123" rotation="356.700165,-28.650097,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

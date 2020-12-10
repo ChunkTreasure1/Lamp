@@ -8,6 +8,24 @@
 
 namespace Lamp
 {
+	void Material::SetTexture(const std::string& name, Ref<Texture2D>& texture)
+	{
+		if (m_pTextures.find(name) != m_pTextures.end())
+		{
+			m_pTextures[name] = texture;
+		}
+	}
+
+	void Material::SetShader(Ref<Shader> shader)
+	{
+		for (auto& name : shader->GetSpecifications().TextureNames)
+		{
+			m_pTextures.emplace(std::pair<std::string, Ref<Texture2D>>(name, nullptr));
+		}
+
+		m_pShader = shader;
+	}
+
 	void Material::UploadData()
 	{
 		m_pShader->Bind();
