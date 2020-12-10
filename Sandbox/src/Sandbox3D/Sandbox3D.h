@@ -17,10 +17,13 @@
 
 namespace Sandbox3D
 {
+	class ModelImporter;
+
 	class Sandbox3D : public Lamp::Layer
 	{
 	public:
 		Sandbox3D();
+		~Sandbox3D();
 
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
 
@@ -45,7 +48,6 @@ namespace Sandbox3D
 		void UpdatePerspective();
 		void UpdateAssetBrowser();
 		void UpdateProperties();
-		void UpdateModelImporter();
 		void UpdateLayerView();
 		void UpdateAddComponent();
 		void UpdateCreateTool();
@@ -59,6 +61,10 @@ namespace Sandbox3D
 		void NewLevel();
 		void Undo();
 		void Redo();
+
+		//Model importer
+		void RenderImporter();
+
 
 	private:
 		Scope<Game> m_pGame;
@@ -94,8 +100,7 @@ namespace Sandbox3D
 		Ref<Lamp::Shader> m_pShader;
 
 		//Model importer
-		bool m_ModelImporterOpen = false;
-		Ref<Lamp::Model> m_pModelToImport;
+		ModelImporter* m_ModelImporter;
 
 		//Layers
 		bool m_LayerViewOpen = true;

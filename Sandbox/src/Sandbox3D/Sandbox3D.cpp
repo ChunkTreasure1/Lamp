@@ -22,6 +22,8 @@
 #include <Lamp/Rendering/RenderPass.h>
 #include <ImGuizmo/ImGuizmo.h>
 
+#include "ModelImporter.h"
+
 namespace Sandbox3D
 {
 	using namespace Lamp;
@@ -36,16 +38,25 @@ namespace Sandbox3D
 		m_SandboxController = CreateRef<SandboxController>();
 		g_pEnv->ShouldRenderBB = true;
 
+		m_ModelImporter = new ModelImporter();
+
 		SetupFromConfig();
 		CreateRenderPasses();
+	}
+
+	Sandbox3D::~Sandbox3D()
+	{
+		delete m_ModelImporter;
 	}
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
 		m_SandboxController->Update(e.GetTimestep());
+		m_ModelImporter->UpdateCamera(e.GetTimestep());
 		GetInput();
 
 		RenderPassManager::Get()->RenderPasses();
+		m_ModelImporter->Render();
 
 		return true;
 	}
@@ -57,11 +68,12 @@ namespace Sandbox3D
 		UpdateProperties();
 		UpdatePerspective();
 		UpdateAssetBrowser();
-		UpdateModelImporter();
 		UpdateLayerView();
 		UpdateCreateTool();
 		UpdateLogTool();
 		UpdateLevelSettings();
+
+		m_ModelImporter->Update();
 	}
 
 	void Sandbox3D::OnEvent(Event& e)

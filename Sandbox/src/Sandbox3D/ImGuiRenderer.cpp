@@ -15,6 +15,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 #include "Lamp/Math/Math.h"
+#include "ModelImporter.h"
 
 namespace Sandbox3D
 {
@@ -298,78 +299,6 @@ namespace Sandbox3D
 
 			UpdateAddComponent();
 		}
-		ImGui::End();
-	}
-
-	void Sandbox3D::UpdateModelImporter()
-	{
-		if (!m_ModelImporterOpen)
-		{
-			return;
-		}
-
-		if (m_pShader == nullptr)
-		{
-			m_pShader = Lamp::ShaderLibrary::GetShader("Illumn");
-		}
-
-		ImGui::Begin("Model importer", &m_ModelImporterOpen);
-
-		static std::string path = "";
-		static std::string savePath = "";
-
-		if (ImGui::Button("Load##fbx"))
-		{
-			path = Lamp::FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
-			if (path != "" && std::filesystem::exists(path))
-			{
-				m_pModelToImport = Lamp::GeometrySystem::ImportModel(path);
-
-				savePath = path.substr(0, path.find_last_of('.'));
-				savePath += ".lgf";
-
-				m_pModelToImport->GetMaterial().SetShader(m_pShader);
-
-				for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-				{
-					tex.second = Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png");
-				}
-			}
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Save"))
-		{
-			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-			Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath);
-			path = "";
-			savePath = "";
-			m_pModelToImport = nullptr;
-		}
-		ImGui::Text(("Source path: " + path).c_str());
-		ImGui::Text(("Destination path: " + savePath).c_str());
-
-		if (m_pModelToImport != nullptr)
-		{
-			static std::unordered_map<std::string, std::string> paths;
-			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-			{
-				paths.emplace(tex.first, "");
-			}
-			//ImGui::InputText("Diffuse path:", &diffPath);
-			ImGui::SameLine();
-			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-			{
-				if (ImGui::Button((std::string("Load##") + tex.first).c_str()))
-				{
-					paths[tex.first] = Lamp::FileDialogs::OpenFile((tex.first + std::string(" Map (*.png ...)\0*.png\0*.jpg\0")).c_str());
-				}
-				m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create(paths[tex.first]));
-			}
-			//ImGui::InputText("Specular path:", &specPath);
-
-			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
-		}
-
 		ImGui::End();
 	}
 
@@ -691,6 +620,7 @@ namespace Sandbox3D
 	}
 
 	void Sandbox3D::CreateDockspace()
+
 	{
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
@@ -789,7 +719,7 @@ namespace Sandbox3D
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Import Model", NULL, &m_ModelImporterOpen);
+				ImGui::MenuItem("Import Model", NULL, &m_ModelImporter->GetIsOpen());
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
