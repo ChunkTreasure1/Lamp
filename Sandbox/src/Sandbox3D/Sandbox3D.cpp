@@ -51,8 +51,20 @@ namespace Sandbox3D
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
-		m_SandboxController->Update(e.GetTimestep());
-		m_ModelImporter->UpdateCamera(e.GetTimestep());
+		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		{
+			m_SandboxController->Update(e.GetTimestep());
+		}
+		else if (m_ModelImporter->GetCamera()->GetRightPressed())
+		{
+			m_ModelImporter->UpdateCamera(e.GetTimestep());
+		}
+		else
+		{
+			m_SandboxController->Update(e.GetTimestep());
+			m_ModelImporter->UpdateCamera(e.GetTimestep());
+		}
+
 		GetInput();
 
 		RenderPassManager::Get()->RenderPasses();
@@ -79,7 +91,20 @@ namespace Sandbox3D
 	void Sandbox3D::OnEvent(Event& e)
 	{
 		m_pGame->OnEvent(e);
-		m_SandboxController->OnEvent(e);
+
+		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		{
+			m_SandboxController->OnEvent(e);
+		}
+		else if (m_ModelImporter->GetCamera()->GetRightPressed())
+		{
+			m_ModelImporter->OnEvent(e);
+		}
+		else
+		{
+			m_SandboxController->OnEvent(e);
+			m_ModelImporter->OnEvent(e);
+		}
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
@@ -106,69 +131,69 @@ namespace Sandbox3D
 
 		switch (e.GetKeyCode())
 		{
-			case LP_KEY_S:
-			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+		case LP_KEY_S:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
 
-				if (control && shift)
+			if (control && shift)
+			{
+				SaveLevelAs();
+			}
+			else if (control && !shift)
+			{
+				if (LevelSystem::GetCurrentLevel()->GetPath().empty())
 				{
 					SaveLevelAs();
+					break;
 				}
-				else if (control && !shift)
+				else
 				{
-					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
-					{
-						SaveLevelAs();
-						break;
-					}
-					else 
-					{
-						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
-					}
+					LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
 				}
-				break;
 			}
+			break;
+		}
 
-			case LP_KEY_N:
+		case LP_KEY_N:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-
-				if (control)
-				{
-					NewLevel();
-				}
-				break;
+				NewLevel();
 			}
+			break;
+		}
 
-			case LP_KEY_O:
+		case LP_KEY_O:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					OpenLevel();
-				}
+				OpenLevel();
 			}
+		}
 
-			case LP_KEY_Z:
+		case LP_KEY_Z:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					Undo();
-				}
-				break;
+				Undo();
 			}
+			break;
+		}
 
-			case LP_KEY_Y:
+		case LP_KEY_Y:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					Redo();
-				}
-				break;
+				Redo();
 			}
+			break;
+		}
 		}
 
 		return false;

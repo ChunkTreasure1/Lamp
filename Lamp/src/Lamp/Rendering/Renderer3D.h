@@ -1,7 +1,7 @@
 #pragma once
 #include "Cameras/PerspectiveCamera.h"
 #include "Lamp/Meshes/Mesh.h"
-#include "Lamp/Meshes/Material.h"
+#include "Lamp/Meshes/Materials/Material.h"
 
 #include "Lamp/Rendering/Vertices/FrameBuffer.h"
 #include "Lamp/Core/GlobalEnvironment.h"

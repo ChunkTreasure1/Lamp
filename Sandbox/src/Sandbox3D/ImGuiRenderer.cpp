@@ -32,7 +32,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered();
+			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
@@ -176,15 +176,17 @@ namespace Sandbox3D
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 			glm::vec2 windowPos;
 			glm::vec2 windowSize;
+			bool perspHover = false;
 
 			ImGui::Begin("Perspective");
 			{
 				windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
 				windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+				perspHover = ImGui::IsWindowHovered();
 			}
 			ImGui::End();
 
-			if (m_MousePressed && m_PerspectiveHover && !ImGuizmo::IsOver())
+			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
 

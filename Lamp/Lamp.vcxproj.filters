@@ -207,9 +207,6 @@
     <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h">
       <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Material.h">
-      <Filter>src\Lamp\Meshes</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\Mesh.h">
       <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
@@ -1498,6 +1495,10 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Math\Math.h" />
+    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1537,9 +1538,6 @@
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Material.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
@@ -1700,5 +1698,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
+      <Filter>src\Lamp\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
   </ItemGroup>
 </Project>

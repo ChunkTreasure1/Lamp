@@ -213,8 +213,15 @@ namespace Lamp
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
 	{
-		mat.GetTextures()["Diffuse"]->Bind(0);
-		mat.GetTextures()["Specular"]->Bind(1);
+		int i = 0;
+		for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+		{
+			if (mat.GetTextures()[name].get() != nullptr)
+			{
+				mat.GetTextures()[name]->Bind(i);
+				i++;
+			}
+		}
 
 		mat.GetShader()->Bind();
 		mat.GetShader()->UploadMat4("u_Model", modelMatrix);

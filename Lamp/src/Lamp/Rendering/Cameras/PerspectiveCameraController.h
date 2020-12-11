@@ -22,6 +22,7 @@ namespace Lamp
 
 		bool OnMouseMoved(MouseMovedEvent& e);
 		inline float GetFOV() { return m_FOV; }
+		inline bool GetRightPressed() { return m_RightMouseButtonPressed; }
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);

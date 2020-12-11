@@ -10,12 +10,7 @@
 		</Mesh>
 	</Meshes>
 	<Materials>
-		<Material name="">
-			<Diffuse path=""/>
-			<Specular path=""/>
-			<Shininess value="32.000000"/>
-			<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
-		</Material>
+		<Material name="pillBottle"/>
 	</Materials>
 	<BoundingBox>
 		<Max position="0.050000,0.049240,0.200000"/>

@@ -4,6 +4,7 @@
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_print.hpp>
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Meshes/Materials/MaterialLibrary.h"
 
 namespace Lamp
 {
@@ -127,39 +128,9 @@ namespace Lamp
 			for (rapidxml::xml_node<>* pMaterial = pMaterials->first_node("Material"); pMaterial; pMaterial = pMaterial->next_sibling())
 			{
 				std::string name;
-				std::string diffPath;
-				std::string specPath;
-
-				float shininess = 0;
-				std::string vertexPath;
-				std::string fragmentPath;
-				std::string shaderName;
 
 				name = pMaterial->first_attribute("name")->value();
-
-				if (rapidxml::xml_node<>* pDiff = pMaterial->first_node("Diffuse"))
-				{
-					diffPath = pDiff->first_attribute("path")->value();
-				}
-				if (rapidxml::xml_node<>* pSpec = pMaterial->first_node("Specular"))
-				{
-					specPath = pSpec->first_attribute("path")->value();
-				}
-				if (rapidxml::xml_node<>* pShine = pMaterial->first_node("Shininess"))
-				{
-					GetValue(pShine->first_attribute("value")->value(), shininess);
-				}
-				if (rapidxml::xml_node<>* pShader = pMaterial->first_node("Shader"))
-				{
-					vertexPath = pShader->first_attribute("vertex")->value();
-					fragmentPath = pShader->first_attribute("fragment")->value();
-					shaderName = pShader->first_attribute("name")->value();
-				}
-
-				mat.SetShader(ShaderLibrary::GetShader(shaderName));
-				mat.SetTexture("Diffuse", Texture2D::Create(diffPath));
-				mat.SetTexture("Specular", Texture2D::Create(specPath));
-				mat.SetShininess(shininess);
+				mat = MaterialLibrary::GetMaterial(name);
 			}
 		}
 
@@ -225,24 +196,6 @@ namespace Lamp
 
 		xml_node<>* pMaterial = doc.allocate_node(node_element, "Material");
 		pMaterial->append_attribute(doc.allocate_attribute("name", model->GetMaterial().GetName().c_str()));
-
-		for (auto& tex : model->GetMaterial().GetTextures())
-		{
-			xml_node<>* pTex = doc.allocate_node(node_element, tex.first.c_str());
-			pTex->append_attribute(doc.allocate_attribute("path", tex.second->GetPath().c_str()));
-			pMaterial->append_node(pTex);
-		}
-
-		xml_node<>* pShine = doc.allocate_node(node_element, "Shininess");
-		char* pS = doc.allocate_string(ToString(model->GetMaterial().GetShininess()).c_str());
-		pShine->append_attribute(doc.allocate_attribute("value", pS));
-		pMaterial->append_node(pShine);
-
-		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
-		pShader->append_attribute(doc.allocate_attribute("name", model->GetMaterial().GetShader()->GetName().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("vertex", model->GetMaterial().GetShader()->GetVertexPath().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("fragment", model->GetMaterial().GetShader()->GetFragmentPath().c_str()));
-		pMaterial->append_node(pShader);
 		
 		pMaterials->append_node(pMaterial);
 		////////////////

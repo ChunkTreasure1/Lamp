@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 
 #include "Mesh.h"
-#include "Material.h"
+#include "Materials/Material.h"
 #include "Lamp/Event/Event.h"
 #include "Lamp/Event/ApplicationEvent.h"
 

@@ -30,7 +30,7 @@ namespace Sandbox3D
 		if (val)
 		{
 			float x, y;
-			if (sscanf(val, "%f,%f", &x, &y) == 2)
+			if (sscanf_s(val, "%f,%f", &x, &y) == 2)
 			{
 				var = glm::vec2(x, y);
 				return true;

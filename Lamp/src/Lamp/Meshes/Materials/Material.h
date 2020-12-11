@@ -2,15 +2,17 @@
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 #include "Lamp/Rendering/Shader/Shader.h"
 
+#include <unordered_map>
+
 namespace Lamp
 {
 	class Material
 	{
 	public:
 		Material(Ref<Shader> shader, uint32_t id)
-			: m_pShader(shader), m_Index(id)
+			: m_Index(id)
 		{
-
+			SetShader(shader);
 		}
 
 		Material(uint32_t index)

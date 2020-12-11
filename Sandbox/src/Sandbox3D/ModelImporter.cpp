@@ -44,6 +44,7 @@ namespace Sandbox3D
 
 		UpdatePerspective();
 		UpdateProperties();
+		UpdateMaterial();
 	}
 
 	void ModelImporter::UpdateCamera(Lamp::Timestep ts)
@@ -67,6 +68,7 @@ namespace Sandbox3D
 		pass.IsShadowPass = false;
 		pass.DirLight = g_pEnv->DirLight;
 		pass.ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f);
+		pass.ViewProjection = m_Camera->GetCamera()->GetViewProjectionMatrix();
 
 		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));
 		RenderCommand::Clear();
@@ -82,6 +84,15 @@ namespace Sandbox3D
 		RenderGrid();
 		Renderer3D::End();
 		m_FrameBuffer->Unbind();
+	}
+
+	void ModelImporter::OnEvent(Lamp::Event& e)
+	{
+		if (!m_Open)
+		{
+			return;
+		}
+		m_Camera->OnEvent(e);
 	}
 
 	void ModelImporter::RenderGrid()
@@ -116,7 +127,7 @@ namespace Sandbox3D
 		ImGui::Begin("Import Perspective");
 		{
 			glm::vec2 windowPos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_HoveringPerspective = ImGui::IsWindowHovered();
+			m_HoveringPerspective = ImGui::IsWindowHovered() && ImGui::IsWindowFocused();
 			m_Camera->SetControlsEnabled(m_HoveringPerspective);
 
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
@@ -129,7 +140,7 @@ namespace Sandbox3D
 			}
 
 			uint32_t textureID = m_FrameBuffer->GetColorAttachment();
-			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -164,34 +175,87 @@ namespace Sandbox3D
 		if (ImGui::Button("Save"))
 		{
 			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-			Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath);
-			path = "";
-			savePath = "";
-			m_pModelToImport = nullptr;
+
+			if (savePath != "")
+			{
+				Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath + ".lgf");
+				path = "";
+				savePath = "";
+				m_pModelToImport = nullptr;
+			}
 		}
 		ImGui::Text(("Source path: " + path).c_str());
 		ImGui::Text(("Destination path: " + savePath).c_str());
 
+		ImGui::End();
+	}
+
+	void ModelImporter::UpdateMaterial()
+	{
+		ImGui::Begin("Importer Material");
+
+		static std::vector<const char*> shaders;
+		static std::unordered_map<std::string, std::string> paths;
+
+		static int selectedItem = 0;
+
+		shaders.clear();
+		for(auto& shader : ShaderLibrary::GetShaders())
+		{
+			shaders.push_back(shader->GetName().c_str());
+		}
+
+		if (m_pModelToImport.get() != nullptr)
+		{
+			for (int i = 0; i < shaders.size(); i++)
+			{
+				if (m_pModelToImport->GetMaterial().GetShader()->GetName() == shaders[i])
+				{
+					selectedItem = i;
+				}
+			}
+		}
+
+		ImGui::Combo("Shader", &selectedItem, shaders.data(), shaders.size());
+		if (m_pModelToImport.get() != nullptr)
+		{
+			if (m_pModelToImport->GetMaterial().GetShader() != ShaderLibrary::GetShader(shaders[selectedItem]))
+			{
+				paths.clear();
+
+				m_pModelToImport->GetMaterial().SetShader(ShaderLibrary::GetShader(shaders[selectedItem]));
+				
+				for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
+				{
+					tex.second = Texture2D::Create("engine/textures/default/defaultTexture.png");
+				}
+			}
+		}
+
 		if (m_pModelToImport != nullptr)
 		{
-			static std::unordered_map<std::string, std::string> paths;
 			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
 			{
 				paths.emplace(tex.first, "");
 			}
-			//ImGui::InputText("Diffuse path:", &diffPath);
-			ImGui::SameLine();
 			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
 			{
 				if (ImGui::Button((std::string("Load##") + tex.first).c_str()))
 				{
-					paths[tex.first] = Lamp::FileDialogs::OpenFile((tex.first + std::string(" Map (*.png ...)\0*.png\0*.jpg\0")).c_str());
+					paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0");
 				}
-				m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create(paths[tex.first]));
-			}
-			//ImGui::InputText("Specular path:", &specPath);
+				if (paths[tex.first] != "")
+				{
+					m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create(paths[tex.first]));
+				}
+				else
+				{
+					m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
+				}
 
-			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
+				ImGui::SameLine();
+				ImGui::Text(tex.first.c_str());
+			}
 		}
 
 		ImGui::End();

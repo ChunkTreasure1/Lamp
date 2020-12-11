@@ -14,11 +14,14 @@ namespace Sandbox3D
 		void Render();
 		
 		inline bool& GetIsOpen() { return m_Open; }
+		void OnEvent(Lamp::Event& e);
+		inline const Ref<Lamp::PerspectiveCameraController>& GetCamera() { return m_Camera; }
 
 	private:
 		void RenderGrid();
 		void UpdatePerspective();
 		void UpdateProperties();
+		void UpdateMaterial();
 
 	private:
 		bool m_Open = false;

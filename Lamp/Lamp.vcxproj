@@ -160,7 +160,8 @@
     <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />
     <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h" />
-    <ClInclude Include="src\Lamp\Meshes\Material.h" />
+    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h" />
+    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
@@ -606,7 +607,8 @@
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
