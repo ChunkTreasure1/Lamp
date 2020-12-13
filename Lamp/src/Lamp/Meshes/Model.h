@@ -31,6 +31,8 @@ namespace Lamp
 		//Setting
 		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 		inline void SetLGFPath(const std::string& path) { m_LGFPath = path; }
+		inline void SetName(const std::string& name) { m_Name = name; }
+		inline void SetMaterial(const Material& mat) { m_Material = mat; }
 
 		//Getting
 		inline Material& GetMaterial() { return m_Material; }

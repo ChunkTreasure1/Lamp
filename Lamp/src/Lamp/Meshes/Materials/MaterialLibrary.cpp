@@ -122,5 +122,7 @@ namespace Lamp
 				return mat;
 			}
 		}
+
+		return Material(-1);
 	}
 }

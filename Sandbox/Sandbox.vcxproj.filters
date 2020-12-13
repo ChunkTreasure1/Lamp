@@ -51,7 +51,9 @@
     <ClInclude Include="src\Sandbox3D\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\ModelImporter.h" />
+    <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h">
+      <Filter>src\Sandbox3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -78,7 +80,9 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\ModelImporter.cpp" />
+    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp">
+      <Filter>src\Sandbox3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\2d\FlatColor.frag">

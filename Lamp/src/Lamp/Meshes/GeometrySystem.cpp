@@ -15,7 +15,7 @@ namespace Lamp
 		SAABB boundingBox;
 
 		std::string t = path;
-		t = t.substr(t.find_last_of('/') + 1, t.find_last_of('.'));
+		t = t.substr(t.find_last_of('\\') + 1, t.find_last_of('.'));
 		t = t.substr(0, t.find_last_of('.'));
 
 		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;

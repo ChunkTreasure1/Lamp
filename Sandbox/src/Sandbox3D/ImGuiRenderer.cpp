@@ -11,11 +11,13 @@
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <Lamp/Core/CoreLogger.h>
-#include "Lamp/Utility/PlatformUtility.h"
-#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include <Lamp/Utility/PlatformUtility.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 
-#include "Lamp/Math/Math.h"
-#include "ModelImporter.h"
+#include <Lamp/Math/Math.h>
+#include "Windows/ModelImporter.h"
+#include <imgui/misc/cpp/imgui_stdlib.h>
+#include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 namespace Sandbox3D
 {
@@ -288,6 +290,20 @@ namespace Sandbox3D
 					float m = pBrush->GetPhysicalEntity()->GetMass();
 					ImGui::InputFloat("Mass", &m);
 					pBrush->GetPhysicalEntity()->SetMass(m);
+				}
+
+				if (ImGui::CollapsingHeader("Material"))
+				{
+					std::string n = pBrush->GetModel()->GetMaterial().GetName();
+					ImGui::InputText("Name", &n);
+
+					if (n != pBrush->GetModel()->GetMaterial().GetName())
+					{
+						if (auto mat = Lamp::MaterialLibrary::GetMaterial(n); mat.GetIndex() != -1)
+						{
+							pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(name));
+						}
+					}
 				}
 			}
 

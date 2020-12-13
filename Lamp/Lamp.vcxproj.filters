@@ -31,8 +31,14 @@
     <Filter Include="src\Lamp\Level">
       <UniqueIdentifier>{EDBCBB7B-D98A-AF81-C21E-20A8AE8B8BE6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Math">
+      <UniqueIdentifier>{7F2B061B-EBEB-8151-B426-CBCE20A6C62D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Meshes">
       <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Meshes\Materials">
+      <UniqueIdentifier>{AB25E2D6-17E8-1561-6098-A4EDCC99EE3E}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Objects">
       <UniqueIdentifier>{9FABB438-8BA4-D38A-B4D6-B80FA02EB396}</UniqueIdentifier>
@@ -204,8 +210,17 @@
     <ClInclude Include="src\Lamp\Level\LevelSystem.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Math\Math.h">
+      <Filter>src\Lamp\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h">
       <Filter>src\Lamp\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
+      <Filter>src\Lamp\Meshes\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h">
+      <Filter>src\Lamp\Meshes\Materials</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\Mesh.h">
       <Filter>src\Lamp\Meshes</Filter>
@@ -1494,11 +1509,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Math\Math.h" />
-    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
-      <Filter>src\Lamp\Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1537,8 +1547,17 @@
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Math\Math.cpp">
+      <Filter>src\Lamp\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
       <Filter>src\Lamp\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
+      <Filter>src\Lamp\Meshes\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp">
+      <Filter>src\Lamp\Meshes\Materials</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
       <Filter>src\Lamp\Meshes</Filter>
@@ -1639,6 +1658,9 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp">
+      <Filter>src\Lamp\Rendering\Shader</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp">
       <Filter>src\Lamp\Rendering\Shadows</Filter>
     </ClCompile>
@@ -1696,11 +1718,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
-    <ClCompile Include="src\Lamp\Math\Math.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
   </ItemGroup>
 </Project>

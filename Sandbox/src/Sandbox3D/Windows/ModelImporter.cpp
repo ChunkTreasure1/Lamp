@@ -5,6 +5,7 @@
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Meshes/GeometrySystem.h>
+#include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 namespace Sandbox3D
 {
@@ -148,10 +149,11 @@ namespace Sandbox3D
 
 	void ModelImporter::UpdateProperties()
 	{
-		ImGui::Begin("Import Properties", &m_Open);
+		ImGui::Begin("Import Settings", &m_Open);
 
 		static std::string path = "";
 		static std::string savePath = "";
+		static std::string matName = "";
 
 		if (ImGui::Button("Load##fbx"))
 		{
@@ -175,13 +177,23 @@ namespace Sandbox3D
 		if (ImGui::Button("Save"))
 		{
 			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-
+			std::string name = savePath.substr(savePath.find_last_of('\\') + 1, savePath.size() - 1);
+			
 			if (savePath != "")
 			{
+				m_pModelToImport->SetName(name);
+				m_pModelToImport->GetMaterial().SetName(name);
+
+				if (MaterialLibrary::GetMaterial(m_pModelToImport->GetMaterial().GetName()).GetIndex() == -1)
+				{
+					//Add material to library
+					MaterialLibrary::SaveMaterial(savePath + ".mtl", m_pModelToImport->GetMaterial());
+					MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial());
+				}
+
 				Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath + ".lgf");
 				path = "";
 				savePath = "";
-				m_pModelToImport = nullptr;
 			}
 		}
 		ImGui::Text(("Source path: " + path).c_str());

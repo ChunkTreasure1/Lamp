@@ -22,7 +22,7 @@
 #include <Lamp/Rendering/RenderPass.h>
 #include <ImGuizmo/ImGuizmo.h>
 
-#include "ModelImporter.h"
+#include "Windows/ModelImporter.h"
 
 namespace Sandbox3D
 {

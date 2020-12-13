@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sandbox3D.h"
+#include "Sandbox3D/Sandbox3D.h"
 
 namespace Sandbox3D
 {
