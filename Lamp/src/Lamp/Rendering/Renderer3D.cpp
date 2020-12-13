@@ -16,298 +16,298 @@
 
 namespace Lamp
 {
-	struct LineVertex
-	{
-		glm::vec3 Position;
-		glm::vec4 Color;
-	};
+struct LineVertex
+{
+    glm::vec3 Position;
+    glm::vec4 Color;
+};
 
-	struct Renderer3DStorage
-	{
-		static const uint32_t MaxLines = 10000;
-		static const uint32_t MaxLineVerts = MaxLines * 2;
-		static const uint32_t MaxLineIndices = MaxLines * 2;
+struct Renderer3DStorage
+{
+    static const uint32_t MaxLines = 10000;
+    static const uint32_t MaxLineVerts = MaxLines * 2;
+    static const uint32_t MaxLineIndices = MaxLines * 2;
 
-		//////Lines//////
-		Ref<VertexArray> LineVertexArray;
-		Ref<VertexBuffer> LineVertexBuffer;
-		uint32_t LineIndexCount = 1;
+    //////Lines//////
+    Ref<VertexArray> LineVertexArray;
+    Ref<VertexBuffer> LineVertexBuffer;
+    uint32_t LineIndexCount = 1;
 
-		LineVertex* LineVertexBufferBase = nullptr;
-		LineVertex* LineVertexBufferPtr = nullptr;
-		/////////////////
+    LineVertex* LineVertexBufferBase = nullptr;
+    LineVertex* LineVertexBufferPtr = nullptr;
+    /////////////////
 
-		/////Skybox/////
-		Ref<VertexArray> SkyBoxVertexArray;
-		Ref<Shader> SkyboxShader;
-		////////////////
+    /////Skybox/////
+    Ref<VertexArray> SkyBoxVertexArray;
+    Ref<Shader> SkyboxShader;
+    ////////////////
 
-		/////Grid/////
-		Ref<VertexArray> GridVertexArray;
-		Ref<Shader> GridShader;
-		//////////////
+    /////Grid/////
+    Ref<VertexArray> GridVertexArray;
+    Ref<Shader> GridShader;
+    //////////////
 
-		Renderer3DStorage()
-			: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
-		{}
+    Renderer3DStorage()
+        : LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
+    {}
 
-		~Renderer3DStorage()
-		{
-			delete[] LineVertexBufferBase;
-		}
+    ~Renderer3DStorage()
+    {
+        delete[] LineVertexBufferBase;
+    }
 
-		RenderPassInfo CurrentRenderPass;
-		Ref<VertexArray> SphereArray;
+    RenderPassInfo CurrentRenderPass;
+    Ref<VertexArray> SphereArray;
 
-		Material LineMaterial;
-		Ref<TextureCube> CubeMap;
-	};
+    Material LineMaterial;
+    Ref<TextureCube> CubeMap;
+};
 
-	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
-	Ref<FrameBuffer> Renderer3D::m_pShadowBuffer = nullptr;
-	static Renderer3DStorage* s_pData;
+Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
+Ref<FrameBuffer> Renderer3D::m_pShadowBuffer = nullptr;
+static Renderer3DStorage* s_pData;
 
-	void Renderer3D::Initialize()
-	{
-		s_pData = new Renderer3DStorage();
+void Renderer3D::Initialize()
+{
+    s_pData = new Renderer3DStorage();
 
-		std::vector<std::string> paths =
-		{
-			"assets/textures/skybox/right.jpg",
-			"assets/textures/skybox/left.jpg",
-			"assets/textures/skybox/top.jpg",
-			"assets/textures/skybox/bottom.jpg",
-			"assets/textures/skybox/front.jpg",
-			"assets/textures/skybox/back.jpg",
-		};
-		s_pData->CubeMap = TextureCube::Create(paths);
-		s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-		s_pData->GridShader = ShaderLibrary::GetShader("Grid");
+    std::vector<std::string> paths =
+    {
+        "assets/textures/skybox/right.jpg",
+        "assets/textures/skybox/left.jpg",
+        "assets/textures/skybox/top.jpg",
+        "assets/textures/skybox/bottom.jpg",
+        "assets/textures/skybox/front.jpg",
+        "assets/textures/skybox/back.jpg",
+    };
+    s_pData->CubeMap = TextureCube::Create(paths);
+    s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
+    s_pData->GridShader = ShaderLibrary::GetShader("Grid");
 
-		///////Line///////
-		s_pData->LineVertexArray = VertexArray::Create();
-		s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
-		s_pData->LineVertexBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float4, "a_Color" }
-		});
-		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
-		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
+    ///////Line///////
+    s_pData->LineVertexArray = VertexArray::Create();
+    s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
+    s_pData->LineVertexBuffer->SetBufferLayout
+    ({
+        { ElementType::Float3, "a_Position" },
+        { ElementType::Float4, "a_Color" }
+    });
+    s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
+    s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
-		uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
-		uint32_t offset = 0;
-		for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
-		{
-			pLineIndices[i + 0] = offset + 0;
-			pLineIndices[i + 1] = offset + 1;
+    uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
+    uint32_t offset = 0;
+    for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
+    {
+        pLineIndices[i + 0] = offset + 0;
+        pLineIndices[i + 1] = offset + 1;
 
-			offset += 2;
-		}
+        offset += 2;
+    }
 
-		Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
-		s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
+    Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
+    s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
 
-		delete[] pLineIndices;
-		//////////////////
+    delete[] pLineIndices;
+    //////////////////
 
-		//////Skybox//////
-		std::vector<float> boxPositions =
-		{
-			-1, -1, -1,
-			 1, -1, -1,
-			 1,  1, -1,
-			-1,  1, -1,
-			-1, -1,  1,
-			 1, -1,  1,
-			 1,  1,  1,
-			-1,  1,  1
-		};
+    //////Skybox//////
+    std::vector<float> boxPositions =
+    {
+        -1, -1, -1,
+            1, -1, -1,
+            1,  1, -1,
+            -1,  1, -1,
+            -1, -1,  1,
+            1, -1,  1,
+            1,  1,  1,
+            -1,  1,  1
+        };
 
-		std::vector<uint32_t> boxIndicies =
-		{
-			0, 1, 3, 3, 1, 2,
-			1, 5, 2, 2, 5, 6,
-			5, 4, 6, 6, 4, 7,
-			4, 0, 7, 7, 0, 3,
-			3, 2, 7, 7, 2, 6,
-			4, 5, 0, 0, 5, 1
-		};
+    std::vector<uint32_t> boxIndicies =
+    {
+        0, 1, 3, 3, 1, 2,
+        1, 5, 2, 2, 5, 6,
+        5, 4, 6, 6, 4, 7,
+        4, 0, 7, 7, 0, 3,
+        3, 2, 7, 7, 2, 6,
+        4, 5, 0, 0, 5, 1
+    };
 
-		s_pData->SkyBoxVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
-		pBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" }
-		});
+    s_pData->SkyBoxVertexArray = VertexArray::Create();
+    Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
+    pBuffer->SetBufferLayout
+    ({
+        { ElementType::Float3, "a_Position" }
+    });
 
-		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
+    s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
 
 
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-		s_pData->SkyBoxVertexArray->SetIndexBuffer(indexBuffer);
+    Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
+    s_pData->SkyBoxVertexArray->SetIndexBuffer(indexBuffer);
 
-		s_pData->SkyBoxVertexArray->Unbind();
-		//////////////////
+    s_pData->SkyBoxVertexArray->Unbind();
+    //////////////////
 
-		/////Grid/////
-		std::vector<float> gridPos =
-		{
-			-1, -1, 0,
-			 1, -1, 0,
-			 1,  1, 0,
-			-1, 1, 0,
-		};
+    /////Grid/////
+    std::vector<float> gridPos =
+    {
+        -1, -1, 0,
+            1, -1, 0,
+            1,  1, 0,
+            -1, 1, 0,
+        };
 
-		std::vector<uint32_t> gridIndices =
-		{
-			0, 1, 3,
-			1, 2, 3
-		};
-		
-		s_pData->GridVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
-		buffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" }
-		});
-		s_pData->GridVertexArray->AddVertexBuffer(buffer);
+    std::vector<uint32_t> gridIndices =
+    {
+        0, 1, 3,
+        1, 2, 3
+    };
 
-		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
-		s_pData->GridVertexArray->SetIndexBuffer(indexBuffer);
+    s_pData->GridVertexArray = VertexArray::Create();
+    Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
+    buffer->SetBufferLayout
+    ({
+        { ElementType::Float3, "a_Position" }
+    });
+    s_pData->GridVertexArray->AddVertexBuffer(buffer);
 
-		s_pData->GridVertexArray->Unbind();
-		//////////////
+    Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
+    s_pData->GridVertexArray->SetIndexBuffer(indexBuffer);
 
-		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
-		m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024);
-	}
+    s_pData->GridVertexArray->Unbind();
+    //////////////
 
-	void Renderer3D::Shutdown()
-	{
-		delete s_pData;
-	}
+    m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+    m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024);
+}
 
-	void Renderer3D::Begin(const RenderPassInfo& passInfo)
-	{
-		s_pData->CurrentRenderPass = passInfo;
+void Renderer3D::Shutdown()
+{
+    delete s_pData;
+}
 
-		ResetBatchData();
-	}
+void Renderer3D::Begin(const RenderPassInfo& passInfo)
+{
+    s_pData->CurrentRenderPass = passInfo;
 
-	void Renderer3D::End()
-	{
-		uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
-		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
+    ResetBatchData();
+}
 
-		Flush();
-	}
+void Renderer3D::End()
+{
+    uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
+    s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
-	void Renderer3D::Flush()
-	{
-		s_pData->LineMaterial.GetShader()->Bind();
-		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
+    Flush();
+}
 
-		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
-	}
+void Renderer3D::Flush()
+{
+    s_pData->LineMaterial.GetShader()->Bind();
+    s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
-	{
-		int i = 0;
-		for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
-		{
-			if (mat.GetTextures()[name].get() != nullptr)
-			{
-				mat.GetTextures()[name]->Bind(i);
-				i++;
-			}
-		}
+    RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
+}
 
-		mat.GetShader()->Bind();
-		mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
+void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
+{
+    int i = 0;
+    for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+    {
+        if (mat.GetTextures()[name].get() != nullptr)
+        {
+            mat.GetTextures()[name]->Bind(i);
+            i++;
+        }
+    }
 
-		if (!s_pData->CurrentRenderPass.IsShadowPass)
-		{
-			glBindTextureUnit(2, m_pShadowBuffer->GetDepthAttachment());
+    mat.GetShader()->Bind();
+    mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+    mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
 
-			mat.GetShader()->UploadInt("u_ShadowMap", 2);
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
-			mat.GetShader()->UploadMat4("u_LightViewProjection", s_pData->CurrentRenderPass.LightViewProjection);
-		}
-		
-		glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
-		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
+    if (!s_pData->CurrentRenderPass.IsShadowPass)
+    {
+        glBindTextureUnit(2, m_pShadowBuffer->GetDepthAttachment());
 
-		mesh->GetVertexArray()->Bind();
-		RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-	}
+        mat.GetShader()->UploadInt("u_ShadowMap", 2);
+        mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
+        mat.GetShader()->UploadMat4("u_LightViewProjection", s_pData->CurrentRenderPass.LightViewProjection);
+    }
 
-	void Renderer3D::DrawSkybox()
-	{
-		glDepthMask(GL_FALSE);
-		s_pData->CubeMap->Bind();
-		s_pData->SkyboxShader->Bind();
+    glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
+    mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
 
-		s_pData->SkyBoxVertexArray->Bind();
+    mesh->GetVertexArray()->Bind();
+    RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+}
 
-		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
+void Renderer3D::DrawSkybox()
+{
+    glDepthMask(GL_FALSE);
+    s_pData->CubeMap->Bind();
+    s_pData->SkyboxShader->Bind();
 
-		if (!s_pData->CurrentRenderPass.IsShadowPass)
-		{
-			glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
-			s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
-			s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
-		}
+    s_pData->SkyBoxVertexArray->Bind();
 
-		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, s_pData->SkyBoxVertexArray->GetIndexBuffer()->GetCount());
-		glDepthMask(GL_TRUE);
-	}
+    s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
 
-	void Renderer3D::DrawGrid()
-	{
-		s_pData->GridShader->Bind();
-		s_pData->GridVertexArray->Bind();
+    if (!s_pData->CurrentRenderPass.IsShadowPass)
+    {
+        glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
+        s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
+        s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
+    }
 
-		if (!s_pData->CurrentRenderPass.IsShadowPass)
-		{
-			glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
-			s_pData->GridShader->UploadMat4("u_View", viewMat);
-		}
+    RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, s_pData->SkyBoxVertexArray->GetIndexBuffer()->GetCount());
+    glDepthMask(GL_TRUE);
+}
 
-		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.ViewProjection);
-		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
-	}
+void Renderer3D::DrawGrid()
+{
+    s_pData->GridShader->Bind();
+    s_pData->GridVertexArray->Bind();
 
-	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
-	{
-		glLineWidth(width);
+    if (!s_pData->CurrentRenderPass.IsShadowPass)
+    {
+        glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
+        s_pData->GridShader->UploadMat4("u_View", viewMat);
+    }
 
-		if (s_pData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
-		{
-			StartNewBatch();
-		}
+    s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.ViewProjection);
+    RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
+}
 
-		s_pData->LineVertexBufferPtr->Position = posA;
-		s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->LineVertexBufferPtr++;
+void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
+{
+    glLineWidth(width);
 
-		s_pData->LineVertexBufferPtr->Position = posB;
-		s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->LineVertexBufferPtr++;
+    if (s_pData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
+    {
+        StartNewBatch();
+    }
 
-		s_pData->LineIndexCount += 2;
-	}
-	
-	void Renderer3D::StartNewBatch()
-	{
-		End();
-		ResetBatchData();
-	}
-	
-	void Renderer3D::ResetBatchData()
-	{
-		s_pData->LineIndexCount = 0;
-		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
-	}
+    s_pData->LineVertexBufferPtr->Position = posA;
+    s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+    s_pData->LineVertexBufferPtr++;
+
+    s_pData->LineVertexBufferPtr->Position = posB;
+    s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+    s_pData->LineVertexBufferPtr++;
+
+    s_pData->LineIndexCount += 2;
+}
+
+void Renderer3D::StartNewBatch()
+{
+    End();
+    ResetBatchData();
+}
+
+void Renderer3D::ResetBatchData()
+{
+    s_pData->LineIndexCount = 0;
+    s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
+}
 }

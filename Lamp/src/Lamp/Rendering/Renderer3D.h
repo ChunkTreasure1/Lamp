@@ -8,41 +8,45 @@
 
 namespace Lamp
 {
-	struct RenderPassInfo
-	{
-		Ref<CameraBase> Camera;
-		DirectionalLight DirLight;
-		glm::mat4 ViewProjection = glm::mat4(1.f);
-		glm::mat4 LightViewProjection = glm::mat4(1.f);
+struct RenderPassInfo
+{
+    Ref<CameraBase> Camera;
+    DirectionalLight DirLight;
+    glm::mat4 ViewProjection = glm::mat4(1.f);
+    glm::mat4 LightViewProjection = glm::mat4(1.f);
 
-		glm::vec4 ClearColor;
-		bool IsShadowPass;
-	};
-	
-	class Renderer3D
-	{
-	public:
-		static void Initialize();
-		static void Shutdown();
+    glm::vec4 ClearColor;
+    bool IsShadowPass;
+};
 
-		static void Begin(const RenderPassInfo& passInfo);
-		static void End();
-		static void Flush();
+class Renderer3D
+{
+public:
+    static void Initialize();
+    static void Shutdown();
 
-		static void DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat);
-		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
+    static void Begin(const RenderPassInfo& passInfo);
+    static void End();
+    static void Flush();
 
-		static void DrawSkybox();
-		static void DrawGrid();
+    static void DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat);
+    static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
 
-		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
-		static Ref<FrameBuffer>& GetShadowBuffer() { return m_pShadowBuffer; }
+    static void DrawSkybox();
+    static void DrawGrid();
 
-	private:
-		static Ref<FrameBuffer> m_pFrameBuffer;
-		static Ref<FrameBuffer> m_pShadowBuffer;
+    static Ref<FrameBuffer>& GetFrameBuffer() {
+        return m_pFrameBuffer;
+    }
+    static Ref<FrameBuffer>& GetShadowBuffer() {
+        return m_pShadowBuffer;
+    }
 
-		static void StartNewBatch();
-		static void ResetBatchData();
-	};
+private:
+    static Ref<FrameBuffer> m_pFrameBuffer;
+    static Ref<FrameBuffer> m_pShadowBuffer;
+
+    static void StartNewBatch();
+    static void ResetBatchData();
+};
 }

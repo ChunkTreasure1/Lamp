@@ -10,29 +10,29 @@
 
 namespace Lamp
 {
-	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
+Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
 
-	void Renderer::Initialize()
-	{
-		ShaderLibrary::LoadShaders();
-		MaterialLibrary::LoadMaterials();
+void Renderer::Initialize()
+{
+    ShaderLibrary::LoadShaders();
+    MaterialLibrary::LoadMaterials();
 
-		RenderCommand::Initialize();
-		Renderer2D::Initialize();
-		Renderer3D::Initialize();
-	}
+    RenderCommand::Initialize();
+    Renderer2D::Initialize();
+    Renderer3D::Initialize();
+}
 
-	void Renderer::Shutdown()
-	{
-		Renderer2D::Shutdown();
-	}
+void Renderer::Shutdown()
+{
+    Renderer2D::Shutdown();
+}
 
-	void Renderer::Begin(OrthographicCamera & camera)
-	{
-		s_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
-	}
+void Renderer::Begin(OrthographicCamera & camera)
+{
+    s_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+}
 
-	void Renderer::End()
-	{
-	}
+void Renderer::End()
+{
+}
 }
