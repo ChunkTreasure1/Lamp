@@ -15,7 +15,7 @@ vec4 grid(vec3 r, float scale)
 	vec2 coords = r.xz * scale;
 	vec2 derivative = fwidth(coords);
 	vec2 grid = abs(fract(coords - 0.5) - 0.5) / derivative;
-	
+
 	float line = min(grid.x, grid.y);
 	float minimumz = min(derivative.y, 1);
 	float minimumx = min(derivative.x, 1);

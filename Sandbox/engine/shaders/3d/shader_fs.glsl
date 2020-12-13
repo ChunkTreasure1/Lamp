@@ -100,7 +100,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(u_ShadowMap, projCoords.xy).r; 
+    float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
@@ -116,16 +116,16 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-        }    
+            float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+        }
     }
     shadow /= 9.0;
-    
+
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
         shadow = 0.0;
-        
+
     return shadow;
 }
 
@@ -135,7 +135,7 @@ void main()
 	vec3 viewDir = normalize(u_CameraPosition - v_FragPos);
 
 	vec3 result = vec3(0, 0, 0);
-	
+
 	for(int i = 0; i < u_LightCount; i++)
 	{
 		result += CalculatePointLight(u_PointLight[i], norm, v_FragPos, viewDir);
@@ -162,9 +162,9 @@ void main()
 //    vec3 viewDir = normalize(u_CameraPosition - v_FragPos);
 //    vec3 reflectDir = reflect(-lightDir, normal);
 //    float spec = 0.0;
-//    vec3 halfwayDir = normalize(lightDir + viewDir);  
+//    vec3 halfwayDir = normalize(lightDir + viewDir);
 //    spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-//    vec3 specular = spec * lightColor; 
+//    vec3 specular = spec * lightColor;
 //
 //	float shadow = ShadowCalculation(v_FragPosLight);
 //	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;

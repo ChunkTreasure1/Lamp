@@ -4,4 +4,3 @@
 	<Shininess value="32.000000"/>
 	<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
 </Material>
-

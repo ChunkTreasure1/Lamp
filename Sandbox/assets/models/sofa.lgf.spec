@@ -21,4 +21,3 @@
 		<Min position="-2.344646,0.000118,-0.824010"/>
 	</BoundingBox>
 </Geometry>
-

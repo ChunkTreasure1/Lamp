@@ -13,4 +13,3 @@
 		<Min position="-1,-1,0"/>
 	</BoundingBox>
 </Geometry>
-
