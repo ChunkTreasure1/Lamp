@@ -11,7 +11,13 @@
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <Lamp/Core/CoreLogger.h>
-#include "Lamp/Utility/PlatformUtility.h"
+#include <Lamp/Utility/PlatformUtility.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
+
+#include <Lamp/Math/Math.h>
+#include "Windows/ModelImporter.h"
+#include <imgui/misc/cpp/imgui_stdlib.h>
+#include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 namespace Sandbox3D
 {
@@ -28,7 +34,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered();
+			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused() || !m_ModelImporter->GetIsOpen() && ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
@@ -56,9 +62,8 @@ namespace Sandbox3D
 			ImGui::SetCursorPos(ImVec2(20, 40));
 			ImGui::Text(frameInfo.c_str());
 		}
-		ImGui::End();
-		ImGui::PopStyleVar();
 
+		//Guizmos
 		static glm::mat4 transform = glm::mat4(1.f);
 		static glm::mat4 lastTrans = glm::mat4(1.f);
 		static bool beginMove = false;
@@ -92,13 +97,23 @@ namespace Sandbox3D
 				beginMove = false;
 				hasStarted = true;
 			}
-
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
 				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
 
-			m_pSelectedObject->SetModelMatrix(transform);
+
+			glm::vec3 p, r, s;
+			Lamp::Math::DecomposeTransform(transform, p, r, s);
+
+			r = r - m_pSelectedObject->GetRotation();
+
+			m_pSelectedObject->SetPosition(p);
+			m_pSelectedObject->AddRotation(glm::degrees(r));
+			m_pSelectedObject->SetScale(s);
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
@@ -110,6 +125,9 @@ namespace Sandbox3D
 				m_PerspecticeCommands.push_front(cmd);
 			}
 		}
+
+		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void Sandbox3D::UpdateAssetBrowser()
@@ -160,15 +178,17 @@ namespace Sandbox3D
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 			glm::vec2 windowPos;
 			glm::vec2 windowSize;
+			bool perspHover = false;
 
 			ImGui::Begin("Perspective");
 			{
 				windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
 				windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+				perspHover = ImGui::IsWindowHovered();
 			}
 			ImGui::End();
 
-			if (m_MousePressed && m_PerspectiveHover && !ImGuizmo::IsOver())
+			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
 
@@ -190,7 +210,7 @@ namespace Sandbox3D
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -235,7 +255,7 @@ namespace Sandbox3D
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -271,6 +291,20 @@ namespace Sandbox3D
 					ImGui::InputFloat("Mass", &m);
 					pBrush->GetPhysicalEntity()->SetMass(m);
 				}
+
+				if (ImGui::CollapsingHeader("Material"))
+				{
+					std::string n = pBrush->GetModel()->GetMaterial().GetName();
+					ImGui::InputText("Name##mat", &n);
+
+					if (n != pBrush->GetModel()->GetMaterial().GetName())
+					{
+						if (auto mat = Lamp::MaterialLibrary::GetMaterial(n); mat.GetIndex() != -1)
+						{
+							pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(n));
+						}
+					}
+				}
 			}
 
 			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
@@ -283,77 +317,6 @@ namespace Sandbox3D
 
 			UpdateAddComponent();
 		}
-		ImGui::End();
-	}
-
-	void Sandbox3D::UpdateModelImporter()
-	{
-		if (!m_ModelImporterOpen)
-		{
-			return;
-		}
-
-		if (m_pShader == nullptr)
-		{
-			m_pShader = Lamp::Shader::Create("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
-		}
-
-		ImGui::Begin("Model importer", &m_ModelImporterOpen);
-
-		static std::string path = "";
-		static std::string savePath = "";
-
-		if (ImGui::Button("Load##fbx"))
-		{
-			path = Lamp::FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
-			if (path != "" && std::filesystem::exists(path))
-			{
-				m_pModelToImport = Lamp::GeometrySystem::ImportModel(path);
-
-				savePath = path.substr(0, path.find_last_of('.'));
-				savePath += ".lgf";
-
-				m_pModelToImport->GetMaterial().SetShader(m_pShader);
-
-				m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
-				m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
-			}
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Save"))
-		{
-			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-			Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath);
-			path = "";
-			savePath = "";
-			m_pModelToImport = nullptr;
-		}
-		ImGui::Text(("Source path: " + path).c_str());
-		ImGui::Text(("Destination path: " + savePath).c_str());
-
-		if (m_pModelToImport != nullptr)
-		{
-			static std::string diffPath = m_pModelToImport->GetMaterial().GetDiffuse()->GetPath();
-			//ImGui::InputText("Diffuse path:", &diffPath);
-			ImGui::SameLine();
-			if (ImGui::Button("Load##diff"))
-			{
-				diffPath = Lamp::FileDialogs::OpenFile("Diffuse Map (*.png ...)\0*.png\0*.jpg\0");
-			}
-			m_pModelToImport->GetMaterial().SetDiffuse(Lamp::Texture2D::Create(diffPath));
-
-			static std::string specPath = m_pModelToImport->GetMaterial().GetSpecular()->GetPath();
-			//ImGui::InputText("Specular path:", &specPath);
-			ImGui::SameLine();
-			if (ImGui::Button("Load##spec"))
-			{
-				specPath = Lamp::FileDialogs::OpenFile("Specular Map (*.png ...)\0*.png\0*.jpg\0");
-			}
-			m_pModelToImport->GetMaterial().SetSpecular(Lamp::Texture2D::Create(specPath));
-
-			//ImGui::InputText("Shader path:", &m_pModelToImport->GetMaterial().GetShader()->GetVertexPath());
-		}
-
 		ImGui::End();
 	}
 
@@ -620,15 +583,15 @@ namespace Sandbox3D
 					case Lamp::PropertyType::String:
 					{
 						std::string* s = static_cast<std::string*>(pProp.Value);
-						//ImGui::InputText(pProp.Name.c_str(), s);
+						ImGui::InputText(pProp.Name.c_str(), s);
 						break;
 					}
 
 					case Lamp::PropertyType::Path:
 					{
 						std::string* s = static_cast<std::string*>(pProp.Value);
-						//ImGui::InputText(pProp.Name.c_str(), s);
-						//ImGui::SameLine();
+						ImGui::InputText(pProp.Name.c_str(), s);
+						ImGui::SameLine();
 						if (ImGui::Button("Open..."))
 						{
 							std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
@@ -675,6 +638,7 @@ namespace Sandbox3D
 	}
 
 	void Sandbox3D::CreateDockspace()
+
 	{
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
@@ -773,7 +737,7 @@ namespace Sandbox3D
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Import Model", NULL, &m_ModelImporterOpen);
+				ImGui::MenuItem("Import Model", NULL, &m_ModelImporter->GetIsOpen());
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);

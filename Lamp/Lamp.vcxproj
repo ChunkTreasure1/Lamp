@@ -140,7 +140,6 @@
     <ClInclude Include="src\Lamp\Core\Game.h" />
     <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
-    <ClInclude Include="src\Lamp\Core\Math.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
@@ -159,8 +158,10 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
     <ClInclude Include="src\Lamp\Level\Level.h" />
     <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
+    <ClInclude Include="src\Lamp\Math\Math.h" />
     <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h" />
-    <ClInclude Include="src\Lamp\Meshes\Material.h" />
+    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h" />
+    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
@@ -204,6 +205,7 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
@@ -603,8 +605,10 @@
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
+    <ClCompile Include="src\Lamp\Math\Math.cpp" />
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
@@ -638,6 +642,7 @@
     <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />

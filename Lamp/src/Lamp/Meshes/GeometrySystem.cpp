@@ -3,6 +3,8 @@
 
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_print.hpp>
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Meshes/Materials/MaterialLibrary.h"
 
 namespace Lamp
 {
@@ -13,7 +15,7 @@ namespace Lamp
 		SAABB boundingBox;
 
 		std::string t = path;
-		t = t.substr(t.find_last_of('/') + 1, t.find_last_of('.'));
+		t = t.substr(t.find_last_of('\\') + 1, t.find_last_of('.'));
 		t = t.substr(0, t.find_last_of('.'));
 
 		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
@@ -126,37 +128,9 @@ namespace Lamp
 			for (rapidxml::xml_node<>* pMaterial = pMaterials->first_node("Material"); pMaterial; pMaterial = pMaterial->next_sibling())
 			{
 				std::string name;
-				std::string diffPath;
-				std::string specPath;
-
-				float shininess = 0;
-				std::string vertexPath;
-				std::string fragmentPath;
 
 				name = pMaterial->first_attribute("name")->value();
-
-				if (rapidxml::xml_node<>* pDiff = pMaterial->first_node("Diffuse"))
-				{
-					diffPath = pDiff->first_attribute("path")->value();
-				}
-				if (rapidxml::xml_node<>* pSpec = pMaterial->first_node("Specular"))
-				{
-					specPath = pSpec->first_attribute("path")->value();
-				}
-				if (rapidxml::xml_node<>* pShine = pMaterial->first_node("Shininess"))
-				{
-					GetValue(pShine->first_attribute("value")->value(), shininess);
-				}
-				if (rapidxml::xml_node<>* pShader = pMaterial->first_node("Shader"))
-				{
-					vertexPath = pShader->first_attribute("vertex")->value();
-					fragmentPath = pShader->first_attribute("fragment")->value();
-				}
-
-				mat.SetDiffuse(Texture2D::Create(diffPath));
-				mat.SetSpecular(Texture2D::Create(specPath));
-				mat.SetShader(Shader::Create(vertexPath, fragmentPath));
-				mat.SetShininess(shininess);
+				mat = MaterialLibrary::GetMaterial(name);
 			}
 		}
 
@@ -222,24 +196,6 @@ namespace Lamp
 
 		xml_node<>* pMaterial = doc.allocate_node(node_element, "Material");
 		pMaterial->append_attribute(doc.allocate_attribute("name", model->GetMaterial().GetName().c_str()));
-
-		xml_node<>* pDiff = doc.allocate_node(node_element, "Diffuse");
-		pDiff->append_attribute(doc.allocate_attribute("path", model->GetMaterial().GetDiffuse()->GetPath().c_str()));
-		pMaterial->append_node(pDiff);
-
-		xml_node<>* pSpec = doc.allocate_node(node_element, "Specular");
-		pSpec->append_attribute(doc.allocate_attribute("path", model->GetMaterial().GetSpecular()->GetPath().c_str()));
-		pMaterial->append_node(pSpec);
-
-		xml_node<>* pShine = doc.allocate_node(node_element, "Shininess");
-		char* pS = doc.allocate_string(ToString(model->GetMaterial().GetShininess()).c_str());
-		pShine->append_attribute(doc.allocate_attribute("value", pS));
-		pMaterial->append_node(pShine);
-
-		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
-		pShader->append_attribute(doc.allocate_attribute("vertex", model->GetMaterial().GetShader()->GetVertexPath().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("fragment", model->GetMaterial().GetShader()->GetFragmentPath().c_str()));
-		pMaterial->append_node(pShader);
 		
 		pMaterials->append_node(pMaterial);
 		////////////////

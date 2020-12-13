@@ -22,6 +22,8 @@
 #include <Lamp/Rendering/RenderPass.h>
 #include <ImGuizmo/ImGuizmo.h>
 
+#include "Windows/ModelImporter.h"
+
 namespace Sandbox3D
 {
 	using namespace Lamp;
@@ -36,16 +38,37 @@ namespace Sandbox3D
 		m_SandboxController = CreateRef<SandboxController>();
 		g_pEnv->ShouldRenderBB = true;
 
+		m_ModelImporter = new ModelImporter();
+
 		SetupFromConfig();
 		CreateRenderPasses();
 	}
 
+	Sandbox3D::~Sandbox3D()
+	{
+		delete m_ModelImporter;
+	}
+
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
-		m_SandboxController->Update(e.GetTimestep());
+		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		{
+			m_SandboxController->Update(e.GetTimestep());
+		}
+		else if (m_ModelImporter->GetCamera()->GetRightPressed())
+		{
+			m_ModelImporter->UpdateCamera(e.GetTimestep());
+		}
+		else
+		{
+			m_SandboxController->Update(e.GetTimestep());
+			m_ModelImporter->UpdateCamera(e.GetTimestep());
+		}
+
 		GetInput();
 
 		RenderPassManager::Get()->RenderPasses();
+		m_ModelImporter->Render();
 
 		return true;
 	}
@@ -57,17 +80,31 @@ namespace Sandbox3D
 		UpdateProperties();
 		UpdatePerspective();
 		UpdateAssetBrowser();
-		UpdateModelImporter();
 		UpdateLayerView();
 		UpdateCreateTool();
 		UpdateLogTool();
 		UpdateLevelSettings();
+
+		m_ModelImporter->Update();
 	}
 
 	void Sandbox3D::OnEvent(Event& e)
 	{
 		m_pGame->OnEvent(e);
-		m_SandboxController->OnEvent(e);
+
+		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		{
+			m_SandboxController->OnEvent(e);
+		}
+		else if (m_ModelImporter->GetCamera()->GetRightPressed())
+		{
+			m_ModelImporter->OnEvent(e);
+		}
+		else
+		{
+			m_SandboxController->OnEvent(e);
+			m_ModelImporter->OnEvent(e);
+		}
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
@@ -110,7 +147,7 @@ namespace Sandbox3D
 						SaveLevelAs();
 						break;
 					}
-					else 
+					else
 					{
 						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
 					}
@@ -136,6 +173,7 @@ namespace Sandbox3D
 				{
 					OpenLevel();
 				}
+				break;
 			}
 
 			case LP_KEY_Z:

@@ -29,7 +29,7 @@ namespace Lamp
 	}
 
 	//Gets the files in a specified folder
-	std::vector<std::string> FileSystem::GetFiles(std::string& path)
+	std::vector<std::string> FileSystem::GetFiles(const std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -44,7 +44,7 @@ namespace Lamp
 		return files;
 	}
 
-	std::vector<std::string> FileSystem::GetLevelFiles(std::string& path)
+	std::vector<std::string> FileSystem::GetLevelFiles(const std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -59,7 +59,7 @@ namespace Lamp
 		return files;
 	}
 
-	std::vector<std::string> FileSystem::GetBrushFiles(std::string& path)
+	std::vector<std::string> FileSystem::GetBrushFiles(const std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -74,8 +74,23 @@ namespace Lamp
 		return files;
 	}
 
+	std::vector<std::string> FileSystem::GetMaterialFiles(const std::string& path)
+	{
+		std::vector<std::string> files;
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			std::string s = entry.path().string();
+			if (s.find(".mtl") != std::string::npos)
+			{
+				files.push_back(s);
+			}
+		}
+
+		return files;
+	}
+
 	//Gets the folders in a specified folder
-	std::vector<std::string> FileSystem::GetFolders(std::string& path)
+	std::vector<std::string> FileSystem::GetFolders(const std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
@@ -90,8 +105,27 @@ namespace Lamp
 		return folders;
 	}
 
+	void FileSystem::GetAllMaterialFiles(std::vector<std::string>& folders, std::vector<std::string>& files)
+	{
+		if (folders.size() == 0)
+		{
+			return;
+		}
+
+		for (int i = 0; i < folders.size(); i++)
+		{
+			std::vector<std::string> f = Lamp::FileSystem::GetMaterialFiles(folders[i]);
+
+			for (int j = 0; j < f.size(); j++)
+			{
+				files.push_back(f[j]);
+			}
+			GetAllMaterialFiles(GetFolders(folders[i]), files);
+		}
+	}
+
 	//Returns whether or not a folder contains folders
-	bool FileSystem::ContainsFolder(std::string& path)
+	bool FileSystem::ContainsFolder(const std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::directory_iterator(path))

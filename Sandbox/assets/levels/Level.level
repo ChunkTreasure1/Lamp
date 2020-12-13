@@ -1,11 +1,12 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\sofa.lgf" position="0.000000,0.000000,0.000000" rotation="-0.000000,0.000000,-0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,3.264295,-1.972128" rotation="-0.000000,0.000000,-0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sofa.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,0.999999,0.999999" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,3.264295,0.725794" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\pillBottle.lgf" position="0.000000,0.226338,2.542616" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
-		<Entity name="Entity" position="0.088999,1.804726,4.241358" rotation="-0.000000,0.000000,-0.000000" scale="1.000000,1.000000,1.000000">
+		<Entity name="Entity" position="0.088999,1.804726,4.293140" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
 			<Component name="CameraComponent">
 				<Param name="Is Perspective" type="Bool" value="1"/>
 				<Param name="Is Main" type="Bool" value="0"/>
@@ -22,7 +23,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.300000,0.300000,0.300000"/>
-		<CameraValues position="-7.277734,5.292914,6.960034" rotation="-30.900105,-24.300039,0.000000" fov="60.000000"/>
+		<CameraValues position="-5.526955,3.709553,4.199809" rotation="328.650757,-3.150100,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

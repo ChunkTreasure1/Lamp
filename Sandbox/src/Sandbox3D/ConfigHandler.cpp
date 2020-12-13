@@ -1,6 +1,8 @@
 #include "Sandbox3D.h"
 #include <rapidxml/rapidxml_print.hpp>
 
+#include "Windows/ModelImporter.h"
+
 namespace Sandbox3D
 {
 	static std::string ToString(const bool& var)
@@ -28,7 +30,7 @@ namespace Sandbox3D
 		if (val)
 		{
 			float x, y;
-			if (sscanf(val, "%f,%f", &x, &y) == 2)
+			if (sscanf_s(val, "%f,%f", &x, &y) == 2)
 			{
 				var = glm::vec2(x, y);
 				return true;
@@ -71,7 +73,7 @@ namespace Sandbox3D
 		char* pProps = doc.allocate_string(ToString(m_InspectiorOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("Inspector", pProps));
 
-		char* pModelImp = doc.allocate_string(ToString(m_ModelImporterOpen).c_str());
+		char* pModelImp = doc.allocate_string(ToString(m_ModelImporter->GetIsOpen()).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("ModelImporter", pModelImp));
 
 		char* pLayers = doc.allocate_string(ToString(m_LayerViewOpen).c_str());
@@ -119,7 +121,7 @@ namespace Sandbox3D
 			GetValue(pWindowsOpen->first_attribute("Perspective")->value(), m_PerspectiveOpen);
 			GetValue(pWindowsOpen->first_attribute("AssetBrowser")->value(), m_AssetBrowserOpen);
 			GetValue(pWindowsOpen->first_attribute("Inspector")->value(), m_InspectiorOpen);
-			GetValue(pWindowsOpen->first_attribute("ModelImporter")->value(), m_ModelImporterOpen);
+			GetValue(pWindowsOpen->first_attribute("ModelImporter")->value(), m_ModelImporter->GetIsOpen());
 			GetValue(pWindowsOpen->first_attribute("LayerView")->value(), m_LayerViewOpen);
 			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_CreateToolOpen);
 			GetValue(pWindowsOpen->first_attribute("LogTool")->value(), m_LogToolOpen);

@@ -12,6 +12,7 @@
 #include "Lamp/Rendering/TextureCube/TextureCube.h"
 
 #include "RenderCommand.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 namespace Lamp
 {
@@ -47,7 +48,7 @@ namespace Lamp
 		//////////////
 
 		Renderer3DStorage()
-			: LineMaterial(Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Texture2D::Create("assets/textures/default/defaultTexture.png"), Lamp::Shader::Create("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl"), 0)
+			: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
 		{}
 
 		~Renderer3DStorage()
@@ -80,8 +81,8 @@ namespace Lamp
 			"assets/textures/skybox/back.jpg",
 		};
 		s_pData->CubeMap = TextureCube::Create(paths);
-		s_pData->SkyboxShader = Shader::Create("engine/shaders/3d/skyboxShader_vs.glsl", "engine/shaders/3d/skyboxShader_fs.glsl");
-		s_pData->GridShader = Shader::Create("engine/shaders/3d/gridShader_vs.glsl", "engine/shaders/3d/gridShader_fs.glsl");
+		s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
+		s_pData->GridShader = ShaderLibrary::GetShader("Grid");
 
 		///////Line///////
 		s_pData->LineVertexArray = VertexArray::Create();
@@ -212,8 +213,15 @@ namespace Lamp
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
 	{
-		mat.GetDiffuse()->Bind(0);
-		mat.GetSpecular()->Bind(1);
+		int i = 0;
+		for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+		{
+			if (mat.GetTextures()[name].get() != nullptr)
+			{
+				mat.GetTextures()[name]->Bind(i);
+				i++;
+			}
+		}
 
 		mat.GetShader()->Bind();
 		mat.GetShader()->UploadMat4("u_Model", modelMatrix);

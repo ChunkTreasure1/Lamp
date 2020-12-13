@@ -23,13 +23,12 @@ namespace Lamp
 		virtual void UploadMat3(const std::string& name, const glm::mat3& mat) override;
 		virtual void UploadIntArray(const std::string& name, int* values, uint32_t count) const override;
 
-		virtual const std::string& GetName() override { return m_Name; }
+		virtual const std::string& GetName() override { return m_Specifications.Name; }
 		virtual std::string& GetFragmentPath() override { return m_FragmentPath; }
 		virtual std::string& GetVertexPath() override { return m_VertexPath; }
 
 	private:
 		uint32_t m_RendererID;
-		std::string m_Name;
 		std::string m_FragmentPath;
 		std::string m_VertexPath;
 	};

@@ -2,9 +2,10 @@
 
 #include "Entity/Base/Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
 #include "Lamp/Event/Event.h"
 #include "Lamp/Event/EntityEvent.h"
+
+#include "Lamp/Math/Math.h"
 
 namespace Lamp
 {
@@ -28,6 +29,7 @@ namespace Lamp
 		}
 		inline void SetPhysicsPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
+		inline void AddRotation(const glm::vec3& rot) { m_Rotation += rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }
 
 		void SetModelMatrix(const glm::mat4& mat) 
@@ -35,19 +37,14 @@ namespace Lamp
 			m_ModelMatrix = mat;
 
 			glm::vec3 scale;
-			glm::quat rotation;
+			glm::vec3 rotation;
 			glm::vec3 position;
-			glm::vec3 skew;
-			glm::vec4 perspective;
 
-			glm::decompose(m_ModelMatrix, scale, rotation, position, skew, perspective);
-			rotation = glm::conjugate(rotation);
-			
-			m_Rotation = glm::eulerAngles(rotation);
-			m_Rotation.x = -glm::degrees(m_Rotation.x);
-			m_Rotation.y = -glm::degrees(m_Rotation.y);
-			m_Rotation.z = -glm::degrees(m_Rotation.z);
+			Math::DecomposeTransform(m_ModelMatrix, position, rotation, scale);
 
+			rotation = rotation - m_Rotation;
+
+			m_Rotation += rotation;
 			m_Position = position;
 			m_PhysicalEntity->GetCollider()->SetTranslation(position);
 

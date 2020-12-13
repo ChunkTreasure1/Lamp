@@ -18,9 +18,59 @@ namespace Lamp
 		}
 
 		std::string line;
+		bool textureNamesStarted = false;
 
 		while (std::getline(fragmentFile, line))
 		{
+			if (line.find("#ShaderSpec") != std::string::npos)
+			{
+				continue;
+			}
+
+			if (line.find("Name") != std::string::npos && line.find("Texture") == std::string::npos)
+			{
+				std::string s = line.substr(line.find_first_of(":") + 1, line.size() - line.find_first_of(":"));
+				s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
+				s.erase(std::remove(s.begin(), s.end(), ';'), s.end());
+
+				m_Specifications.Name = s;
+				continue;
+			}
+
+			if (line.find("TextureCount") != std::string::npos)
+			{
+				//If this fails, check for a typo in the shader spec
+				std::string s = line.substr(line.find_first_of(':') + 1, line.size() - line.find_first_of(':'));
+				s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
+				s.erase(std::remove(s.begin(), s.end(), ';'), s.end());
+				
+				m_Specifications.TextureCount = std::atoi(s.c_str());
+				continue;
+			}
+
+			if (line.find("TextureNames") != std::string::npos)
+			{
+				textureNamesStarted = true;
+				continue;
+			}
+
+			if (textureNamesStarted && line.find("{") == std::string::npos)
+			{
+				if (line.find("}") != std::string::npos)
+				{
+					textureNamesStarted = false;
+					continue;
+				}
+
+				m_Specifications.TextureNames.push_back(line);
+				continue;
+			}
+
+			if (line.find("{") != std::string::npos && textureNamesStarted)
+			{
+				continue;
+			}
+
 			fragmentCode += line + "\n";
 		}
 

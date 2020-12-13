@@ -25,7 +25,8 @@
 #endif
 
 #define RegisterData(x) static_cast<void*>(x)
-#define DefaultBankPath "assets\\audio\\banks"
+#define DEFAULT_BANK_PATH "assets\\audio\\banks"
+#define DEFAULT_SHADER_PATH "engine\\shaders\\3d"
 
 template<typename T>
 using Scope = std::unique_ptr<T>;

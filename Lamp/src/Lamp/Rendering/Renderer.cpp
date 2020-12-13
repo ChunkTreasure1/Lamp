@@ -5,6 +5,8 @@
 #include "Renderer3D.h"
 
 #include "RenderCommand.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Meshes/Materials/MaterialLibrary.h"
 
 namespace Lamp
 {
@@ -12,6 +14,9 @@ namespace Lamp
 
 	void Renderer::Initialize()
 	{
+		ShaderLibrary::LoadShaders();
+		MaterialLibrary::LoadMaterials();
+
 		RenderCommand::Initialize();
 		Renderer2D::Initialize();
 		Renderer3D::Initialize();

@@ -23,6 +23,13 @@ namespace Lamp
 		Unknown
 	};
 
+	struct ShaderSpec
+	{
+		std::string Name;
+		int TextureCount;
+		std::vector<std::string> TextureNames;
+	};
+
 	class Shader
 	{
 	public:
@@ -46,6 +53,7 @@ namespace Lamp
 		virtual std::string& GetVertexPath() = 0;
 
 		inline const ShaderType GetType() { return m_Type; }
+		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
 
 	public:
 		static Ref<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
@@ -55,5 +63,6 @@ namespace Lamp
 
 	protected:
 		ShaderType m_Type;
+		ShaderSpec m_Specifications;
 	};
 }
