@@ -34,6 +34,9 @@
     <Filter Include="src\Sandbox3D">
       <UniqueIdentifier>{A277177F-0E38-93B5-D772-DC3243F2D791}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Sandbox3D\Windows">
+      <UniqueIdentifier>{DCA36BBB-4810-27B6-1104-BF137D2F491E}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
@@ -52,8 +55,9 @@
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -77,11 +81,11 @@
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp">
+      <Filter>src\Sandbox3D\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp">
-      <Filter>src\Sandbox3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,5 +101,11 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Sandbox.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="engine\LampIcon.ico" />
   </ItemGroup>
 </Project>

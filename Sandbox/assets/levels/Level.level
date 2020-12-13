@@ -6,7 +6,7 @@
 	</Brushes>
 	<Layers/>
 	<Entities>
-		<Entity name="Entity" position="0.088999,1.804726,4.241358" rotation="-0.000000,0.000000,-0.000000" scale="1.000000,1.000000,1.000000">
+		<Entity name="Entity" position="0.088999,1.804726,4.293140" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
 			<Component name="CameraComponent">
 				<Param name="Is Perspective" type="Bool" value="1"/>
 				<Param name="Is Main" type="Bool" value="0"/>
@@ -23,7 +23,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.300000,0.300000,0.300000"/>
-		<CameraValues position="-4.513087,4.097024,2.985321" rotation="320.250610,-35.100117,0.000000" fov="60.000000"/>
+		<CameraValues position="-5.526955,3.709553,4.199809" rotation="328.650757,-3.150100,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

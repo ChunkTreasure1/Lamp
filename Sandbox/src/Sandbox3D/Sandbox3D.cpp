@@ -131,69 +131,70 @@ namespace Sandbox3D
 
 		switch (e.GetKeyCode())
 		{
-		case LP_KEY_S:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+			case LP_KEY_S:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
 
-			if (control && shift)
-			{
-				SaveLevelAs();
-			}
-			else if (control && !shift)
-			{
-				if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+				if (control && shift)
 				{
 					SaveLevelAs();
-					break;
 				}
-				else
+				else if (control && !shift)
 				{
-					LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+					{
+						SaveLevelAs();
+						break;
+					}
+					else
+					{
+						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+					}
 				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_N:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-
-			if (control)
+			case LP_KEY_N:
 			{
-				NewLevel();
-			}
-			break;
-		}
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
 
-		case LP_KEY_O:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
-			{
-				OpenLevel();
+				if (control)
+				{
+					NewLevel();
+				}
+				break;
 			}
-		}
 
-		case LP_KEY_Z:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
+			case LP_KEY_O:
 			{
-				Undo();
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					OpenLevel();
+				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_Y:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
+			case LP_KEY_Z:
 			{
-				Redo();
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Undo();
+				}
+				break;
 			}
-			break;
-		}
+
+			case LP_KEY_Y:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Redo();
+				}
+				break;
+			}
 		}
 
 		return false;

@@ -141,11 +141,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h" />
     <ClInclude Include="src\Sandbox3D\CommandStack.h" />
-    <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h" />
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h" />
     <ClInclude Include="src\Sandbox3D\SandboxController.h" />
+    <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp" />
@@ -153,9 +154,9 @@
     <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp" />
-    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp" />
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp" />
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp" />
+    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,12 @@
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">
       <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Sandbox.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="engine\LampIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

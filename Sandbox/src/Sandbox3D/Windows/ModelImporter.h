@@ -27,6 +27,7 @@ namespace Sandbox3D
 		bool m_Open = false;
 		bool m_HoveringPerspective = false;
 		glm::vec2 m_PerspectiveSize;
+		std::string m_MaterialName = "";
 
 		Ref<Lamp::FrameBuffer> m_FrameBuffer;
 		Ref<Lamp::Model> m_pModelToImport;

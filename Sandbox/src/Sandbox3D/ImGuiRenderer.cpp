@@ -34,7 +34,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused();
+			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused() || !m_ModelImporter->GetIsOpen() && ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
 			if (ImGui::BeginMenuBar())
@@ -210,7 +210,7 @@ namespace Sandbox3D
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -255,7 +255,7 @@ namespace Sandbox3D
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				//ImGui::InputText("Name", &name);
+				ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
 				if (ImGui::CollapsingHeader("Transform"))
@@ -295,13 +295,13 @@ namespace Sandbox3D
 				if (ImGui::CollapsingHeader("Material"))
 				{
 					std::string n = pBrush->GetModel()->GetMaterial().GetName();
-					ImGui::InputText("Name", &n);
+					ImGui::InputText("Name##mat", &n);
 
 					if (n != pBrush->GetModel()->GetMaterial().GetName())
 					{
 						if (auto mat = Lamp::MaterialLibrary::GetMaterial(n); mat.GetIndex() != -1)
 						{
-							pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(name));
+							pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(n));
 						}
 					}
 				}
@@ -583,15 +583,15 @@ namespace Sandbox3D
 					case Lamp::PropertyType::String:
 					{
 						std::string* s = static_cast<std::string*>(pProp.Value);
-						//ImGui::InputText(pProp.Name.c_str(), s);
+						ImGui::InputText(pProp.Name.c_str(), s);
 						break;
 					}
 
 					case Lamp::PropertyType::Path:
 					{
 						std::string* s = static_cast<std::string*>(pProp.Value);
-						//ImGui::InputText(pProp.Name.c_str(), s);
-						//ImGui::SameLine();
+						ImGui::InputText(pProp.Name.c_str(), s);
+						ImGui::SameLine();
 						if (ImGui::Button("Open..."))
 						{
 							std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");

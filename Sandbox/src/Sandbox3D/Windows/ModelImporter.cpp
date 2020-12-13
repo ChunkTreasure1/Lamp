@@ -6,6 +6,7 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
+#include <imgui/imgui_stdlib.h>
 
 namespace Sandbox3D
 {
@@ -177,17 +178,23 @@ namespace Sandbox3D
 		if (ImGui::Button("Save"))
 		{
 			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-			std::string name = savePath.substr(savePath.find_last_of('\\') + 1, savePath.size() - 1);
-			
+
+			if (m_MaterialName.empty())
+			{
+				m_MaterialName = savePath.substr(savePath.find_last_of('\\') + 1, savePath.size() - 1);
+			}
+
 			if (savePath != "")
 			{
-				m_pModelToImport->SetName(name);
-				m_pModelToImport->GetMaterial().SetName(name);
+				m_pModelToImport->SetName(m_MaterialName);
+				m_pModelToImport->GetMaterial().SetName(m_MaterialName);
 
 				if (MaterialLibrary::GetMaterial(m_pModelToImport->GetMaterial().GetName()).GetIndex() == -1)
 				{
+					std::string matPath = savePath.substr(0, savePath.find_last_of('\\'));
+					matPath += m_MaterialName + ".mtl";
 					//Add material to library
-					MaterialLibrary::SaveMaterial(savePath + ".mtl", m_pModelToImport->GetMaterial());
+					MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial());
 					MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial());
 				}
 
@@ -227,6 +234,8 @@ namespace Sandbox3D
 				}
 			}
 		}
+
+		ImGui::InputText("Name", &m_MaterialName);
 
 		ImGui::Combo("Shader", &selectedItem, shaders.data(), shaders.size());
 		if (m_pModelToImport.get() != nullptr)
