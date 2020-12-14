@@ -11,7 +11,6 @@
 #include "Direct3D11DebugLayer.h"
 
 #include <DirectXMath.h>
-#include "Lamp/Utility/Math.h"
 
 namespace Lamp
 {
@@ -54,22 +53,26 @@ namespace Lamp
 		namespace wrl = Microsoft::WRL;
 		namespace dx = DirectX;
 
-		struct Buff
+		uint32_t typeCounts[9];
+		for (int i = 0; i < 9; i++)
 		{
-			Math::mat4 trans;
-			Math::mat4 proj;
-		};
+			typeCounts[i] = 0;
+		}
+
+		//for (auto& uniform : data.Data)
+		//{
+		//	typeCounts[uniform.Type]++;
+		//}
+
+		typeCounts[7] = 2;
 
 		static float angle = 0.f;
 
-		const Buff b
-		{
-			Math::buildMatrix({0.f, 0.f, 4.f}, {1.f, 1.f, 1.f}, {glm::radians(angle), 0.f, glm::radians(angle)}),
-			Math::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f)
-		};
+		ShaderBuffer b;
+		AllocateUniforms(b, typeCounts);
 
-		glm::mat4 m = glm::perspectiveFovLH_ZO(glm::radians(45.f), 1280.f, 720.f, 0.1f, 100.f) *
-			glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 4.f));
+		b.mat4s[0] = Math::buildMatrix({ 0.f, 0.f, 4.f }, { 1.f, 1.f, 1.f }, { glm::radians(angle), 0.f, glm::radians(angle) });
+		b.mat4s[1] = Math::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
 
 		angle++;
 
@@ -81,20 +84,20 @@ namespace Lamp
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
 
-		//uint32_t size = 0;
-		//for (auto& uniform : data.Data)
-		//{
-		//	size += uniform.Size;
-		//}
+		uint32_t size = 0;
+		for (auto& uniform : data.Data)
+		{
+			size += uniform.Size;
+		}
 
-		//void* base = malloc(size);
-		//void* ptr = base;
-		//for (auto& uniform : data.Data)
-		//{
-		//	uint32_t s = uniform.Size;
-		//	memmove(ptr, uniform.Data, s);
-		//	ptr = static_cast<char*>(ptr) + s;
-		//}
+		void* base = malloc(size);
+		void* ptr = base;
+		for (auto& uniform : data.Data)
+		{
+			uint32_t s = uniform.Size;
+			memmove(ptr, uniform.Data, s);
+			ptr = static_cast<char*>(ptr) + s;
+		}
 
 		bd.ByteWidth = sizeof(b);
 		bd.StructureByteStride = 0u;
@@ -113,6 +116,16 @@ namespace Lamp
 				}
 			}
 		}
+	}
 
+	void Direct3D11Shader::AllocateUniforms(ShaderBuffer& b, const uint32_t* values)
+	{
+		if (values[0] > 0) b.bools = new bool[values[0]];
+		if (values[1] > 0) b.ints = new int[values[1]];
+		if (values[2] > 0) b.floats = new float[values[2]];
+		if (values[3] > 0) b.vec2s = new glm::vec2[values[3]];
+		if (values[4] > 0) b.vec3s = new glm::vec3[values[4]];
+		if (values[5] > 0) b.vec4s = new glm::vec4[values[5]];
+		if (values[7] > 0) b.mat4s = new Math::mat4[values[7]];
 	}
 }

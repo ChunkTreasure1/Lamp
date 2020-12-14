@@ -10,6 +10,7 @@
 #include "Platform/Direct3D11/Direct3D11Shader.h"
 
 #include <DirectXMath.h>
+#include "Lamp/Math/Matrix.h"
 
 namespace Lamp
 {
@@ -79,7 +80,7 @@ namespace Lamp
 				({
 					{ ElementType::Float3, "POSITION" },
 					{ ElementType::Float3, "COLOR" }
-					});
+				});
 
 				std::vector<uint32_t> indices =
 				{
@@ -106,11 +107,14 @@ namespace Lamp
 
 				//glm::mat4 proj = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
 
-				//pShader->UploadData(ShaderData
-				//({
-				//	{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(model) },
-				//	{ "u_Projection", ShaderDataType::Mat4, glm::value_ptr(proj) }
-				//}));
+				Math::mat4 trans = Math::buildMatrix({ 0.f, 0.f, 4.f }, { 1.f, 1.f, 1.f }, { glm::radians(45.f), 0.f, glm::radians(45.f) });
+				Math::mat4 proj = Math::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+
+				pShader->UploadData(ShaderData
+				({
+					{ "u_Model", ShaderDataType::Mat4, Math::valuePtr(trans) },
+					{ "u_Projection", ShaderDataType::Mat4, Math::valuePtr(proj) }
+				}));
 
 				pShader->UploadData(ShaderData({}));
 				vertexArray->AddVertexBuffer(vertexBuffer);

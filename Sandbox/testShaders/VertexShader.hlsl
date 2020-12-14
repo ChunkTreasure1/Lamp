@@ -6,7 +6,7 @@ struct VSOut
 
 cbuffer CBuffer
 {
-	matrix u_Model;
+	matrix u_ModelProjection;
 	matrix u_Projection;
 };
 

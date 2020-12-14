@@ -23,9 +23,9 @@ namespace Lamp
 		Unknown
 	};
 
-	enum class ShaderDataType
+	enum ShaderDataType : uint16_t
 	{
-		Bool,
+		Bool = 0,
 		Int,
 		Float,
 		Float2,
