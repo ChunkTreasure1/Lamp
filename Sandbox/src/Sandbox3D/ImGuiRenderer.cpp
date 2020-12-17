@@ -37,15 +37,6 @@ namespace Sandbox3D
 			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused() || !m_ModelImporter->GetIsOpen() && ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
-			if (ImGui::BeginMenuBar())
-			{
-				if (ImGui::BeginMenu("Aspect ratio"))
-				{
-
-				}
-				ImGui::EndMenuBar();
-			}
-
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
 			{
@@ -103,8 +94,7 @@ namespace Sandbox3D
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
-
+				m_ImGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transform));
 
 			glm::vec3 p, r, s;
 			Lamp::Math::DecomposeTransform(transform, p, r, s);
@@ -112,7 +102,7 @@ namespace Sandbox3D
 			r = r - m_pSelectedObject->GetRotation();
 
 			m_pSelectedObject->SetPosition(p);
-			m_pSelectedObject->AddRotation(glm::degrees(r));
+			m_pSelectedObject->AddRotation(r);
 			m_pSelectedObject->SetScale(s);
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
