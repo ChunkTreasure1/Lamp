@@ -9,8 +9,8 @@
 		<Material name="test1"/>
 	</Materials>
 	<BoundingBox>
-		<Max position="1,1,2"/>
-		<Min position="-1,-1,0"/>
+		<Max position="1.000000,1.000000,2.000000"/>
+		<Min position="-1.000000,-1.000000,0.000000"/>
 	</BoundingBox>
 </Geometry>
 

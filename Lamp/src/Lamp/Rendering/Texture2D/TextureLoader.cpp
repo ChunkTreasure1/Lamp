@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-	std::tuple<uint32_t, uint32_t, uint32_t> TextureLoader::LoadTexture(const std::string& path)
+	std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> TextureLoader::LoadTexture(const std::string& path)
 	{
 		uint32_t texture;
 
@@ -37,6 +37,11 @@ namespace Lamp
 			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
 		}
+		else if (channels == 1)
+		{
+			internalFormat = GL_R8;
+			dataFormat = GL_RED;
+		}
 
 		if (data)
 		{
@@ -49,6 +54,6 @@ namespace Lamp
 		}
 		stbi_image_free(data);
 
-		return std::tuple(texture, width, height);
+		return std::tuple(texture, width, height, internalFormat, dataFormat);
 	}
 }

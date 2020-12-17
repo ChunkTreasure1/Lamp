@@ -725,12 +725,20 @@ namespace Sandbox3D
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Editor"))
+			{
+				ImGui::MenuItem("Render Bounding Box", NULL, &g_pEnv->ShouldRenderBB);
+
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Tools"))
 			{
 				ImGui::MenuItem("Import Model", NULL, &m_ModelImporter->GetIsOpen());
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
+				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
 

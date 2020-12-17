@@ -101,6 +101,8 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
+    <None Include="engine\shaders\3d\pbr_vs.glsl" />
+    <None Include="engine\shaders\3d\pbr_fs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Sandbox.rc" />

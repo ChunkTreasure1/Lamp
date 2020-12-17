@@ -65,9 +65,21 @@ namespace Lamp
 		}
 		/////////////////
 
-		m_pShader->UploadInt("u_Material.diffuse", 0);
-		m_pShader->UploadInt("u_Material.specular", 1);
+		for (int i = 0; i < m_pShader->GetSpecifications().TextureCount; i++)
+		{
+			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i], i);
+		}
+
+		m_pShader->UploadFloat("u_Material.depthScale", m_DepthScale);
 		m_pShader->UploadFloat("u_Material.shininess", m_Shininess);
 		m_pShader->UploadInt("u_LightCount", i);
+
+		if (m_pTextures.find("Depth") != m_pTextures.end())
+		{
+			if (m_pTextures["Depth"].get())
+			{
+				m_pShader->UploadInt("u_UsingParallax", 1);
+			}
+		}
 	}
 }

@@ -1,0 +1,8 @@
+<Material name="test1">
+	<Diffuse path="C:\Programing\Lamp\Sandbox\assets\textures\brickwall\brickwall.jpg"/>
+	<Specular path="C:\Programing\Lamp\Sandbox\assets\textures\brickwall\brickwall.jpg"/>
+	<Normal path="C:\Programing\Lamp\Sandbox\assets\textures\brickwall\brickwall_normal.jpg"/>
+	<Shininess value="32.000000"/>
+	<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
+</Material>
+

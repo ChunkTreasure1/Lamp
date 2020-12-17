@@ -263,7 +263,7 @@ namespace Sandbox3D
 			{
 				if (ImGui::Button((std::string("Load##") + tex.first).c_str()))
 				{
-					paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0");
+					paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0");
 				}
 				if (paths[tex.first] != "")
 				{

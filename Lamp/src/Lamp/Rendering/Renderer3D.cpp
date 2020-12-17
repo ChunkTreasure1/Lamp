@@ -91,7 +91,7 @@ namespace Lamp
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
-		});
+			});
 		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -139,7 +139,7 @@ namespace Lamp
 		pBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
-		});
+			});
 
 		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
 
@@ -164,13 +164,13 @@ namespace Lamp
 			0, 1, 3,
 			1, 2, 3
 		};
-		
+
 		s_pData->GridVertexArray = VertexArray::Create();
 		Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
 		buffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
-		});
+			});
 		s_pData->GridVertexArray->AddVertexBuffer(buffer);
 
 		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
@@ -227,18 +227,6 @@ namespace Lamp
 		mat.GetShader()->UploadMat4("u_Model", modelMatrix);
 		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
 
-		if (!s_pData->CurrentRenderPass.IsShadowPass)
-		{
-			glBindTextureUnit(2, m_pShadowBuffer->GetDepthAttachment());
-
-			mat.GetShader()->UploadInt("u_ShadowMap", 2);
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
-			mat.GetShader()->UploadMat4("u_LightViewProjection", s_pData->CurrentRenderPass.LightViewProjection);
-		}
-		
-		glm::mat3 normalMat = glm::transpose(glm::inverse(modelMatrix));
-		mat.GetShader()->UploadMat3("u_NormalMatrix", normalMat);
-
 		mesh->GetVertexArray()->Bind();
 		RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 	}
@@ -248,17 +236,12 @@ namespace Lamp
 		glDepthMask(GL_FALSE);
 		s_pData->CubeMap->Bind();
 		s_pData->SkyboxShader->Bind();
-
 		s_pData->SkyBoxVertexArray->Bind();
-
 		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
 
-		if (!s_pData->CurrentRenderPass.IsShadowPass)
-		{
-			glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
-			s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
-			s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
-		}
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
+		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
+		s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
 
 		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, s_pData->SkyBoxVertexArray->GetIndexBuffer()->GetCount());
 		glDepthMask(GL_TRUE);
@@ -269,11 +252,8 @@ namespace Lamp
 		s_pData->GridShader->Bind();
 		s_pData->GridVertexArray->Bind();
 
-		if (!s_pData->CurrentRenderPass.IsShadowPass)
-		{
-			glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
-			s_pData->GridShader->UploadMat4("u_View", viewMat);
-		}
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
+		s_pData->GridShader->UploadMat4("u_View", viewMat);
 
 		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.ViewProjection);
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
@@ -298,13 +278,13 @@ namespace Lamp
 
 		s_pData->LineIndexCount += 2;
 	}
-	
+
 	void Renderer3D::StartNewBatch()
 	{
 		End();
 		ResetBatchData();
 	}
-	
+
 	void Renderer3D::ResetBatchData()
 	{
 		s_pData->LineIndexCount = 0;

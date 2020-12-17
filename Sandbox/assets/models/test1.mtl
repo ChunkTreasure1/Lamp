@@ -1,6 +1,8 @@
 <Material name="test1">
-	<Diffuse path="engine/textures/default/defaultTexture.png"/>
-	<Specular path="engine/textures/default/defaultTexture.png"/>
+	<diffuse path="assets/textures/bricks/bricks2.jpg"/>
+	<specular path="assets/textures/bricks/bricks2.jpg"/>
+	<normal path="assets/textures/bricks/bricks2_normal.jpg"/>
+	<depth path="assets/textures/bricks/bricks2_disp.jpg"/>
 	<Shininess value="32.000000"/>
 	<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
 </Material>

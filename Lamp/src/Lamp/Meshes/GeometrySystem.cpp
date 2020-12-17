@@ -233,7 +233,7 @@ namespace Lamp
 		Assimp::Importer importer;
 		std::vector<Ref<Mesh>> meshes;
 
-		const aiScene* pScene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* pScene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		if (!pScene)
 		{
 			return meshes;
@@ -277,16 +277,26 @@ namespace Lamp
 
 			glm::vec3 pos;
 			glm::vec3 normal;
+			glm::vec3 tangent;
+			glm::vec3 bitangent;
 			glm::vec2 texCoords;
 
 			//'50' is the downscaling, might need some changes
-			pos.x = pMesh->mVertices[i].x / 50;
-			pos.y = pMesh->mVertices[i].y / 50;
-			pos.z = pMesh->mVertices[i].z / 50;
+			pos.x = pMesh->mVertices[i].x / 50.f;
+			pos.y = pMesh->mVertices[i].y / 50.f;
+			pos.z = pMesh->mVertices[i].z / 50.f;
 
 			normal.x = pMesh->mNormals[i].x;
 			normal.y = pMesh->mNormals[i].y;
 			normal.z = pMesh->mNormals[i].z;
+
+			tangent.x = pMesh->mTangents[i].x;
+			tangent.y = pMesh->mTangents[i].y;
+			tangent.z = pMesh->mTangents[i].z;
+
+			bitangent.x = pMesh->mBitangents[i].x;
+			bitangent.y = pMesh->mBitangents[i].y;
+			bitangent.z = pMesh->mBitangents[i].z;
 
 			if (pMesh->mTextureCoords[0])
 			{
@@ -300,6 +310,8 @@ namespace Lamp
 
 			vert.position = pos;
 			vert.normal = normal;
+			vert.tangent = tangent;
+			vert.bitangent = bitangent;
 			vert.textureCoords = texCoords;
 
 			vertices.push_back(vert);

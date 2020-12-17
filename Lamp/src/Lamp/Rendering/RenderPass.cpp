@@ -43,7 +43,6 @@ namespace Lamp
 			f();
 		}
 
-		Renderer3D::DrawSkybox();
 		Renderer3D::End();
 		m_FrameBuffer->Unbind();
 	}
