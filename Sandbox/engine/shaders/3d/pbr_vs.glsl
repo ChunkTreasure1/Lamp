@@ -16,7 +16,6 @@ out Out
 uniform mat4 u_Model;
 uniform mat4 u_ViewProjection;
 uniform mat4 u_LightViewProjection;
-uniform vec3 u_CameraPosition;
 
 void main()
 {

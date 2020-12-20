@@ -35,7 +35,7 @@ namespace Lamp
 		glDepthFunc(GL_LEQUAL);
 
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_MULTISAMPLE);
+		glDisable(GL_MULTISAMPLE);
 
 		GLint maxTextures;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextures);

@@ -20,6 +20,7 @@ namespace Lamp
 		AddShader("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
 		AddShader("engine/shaders/3d/skyboxShader_vs.glsl", "engine/shaders/3d/skyboxShader_fs.glsl");
 		AddShader("engine/shaders/3d/pbr_vs.glsl", "engine/shaders/3d/pbr_fs.glsl");
+		AddShader("engine/shaders/3d/hdrMap_vs.glsl", "engine/shaders/3d/hdrMap_fs.glsl");
 	}
 
 	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)

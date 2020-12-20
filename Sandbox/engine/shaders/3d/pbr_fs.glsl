@@ -121,26 +121,30 @@ void main()
 	vec3 N = CalculateNormal();
 	vec3 V = normalize(u_CameraPosition - v_In.FragPos);
 
+	vec3 F0 = vec3(0.04);
+	F0 = mix(F0, albedo, metallic);
+
 	vec3 Lo = vec3(0.0);
 	for(int i = 0; i < u_LightCount; ++i)
 	{
+		/////Per light radiance/////
 		vec3 L = normalize(u_PointLight[i].position - v_In.FragPos);
 		vec3 H = normalize(V + L);
 
 		float dist = length(u_PointLight[i].position - v_In.FragPos);
 		float attenuation = 1.0 / (dist * dist);
 		vec3 radiance = u_PointLight[i].diffuse * attenuation;
+		////////////////////////////
 
-		vec3 F0 = vec3(0.04);
-		F0 = mix(F0, albedo, metallic);
-		vec3 F = FreshnelSchlick(max(dot(H, V), 0.0), F0);
-
+		/////Cook-Torrance BRDF/////
 		float NDF = DistributionGGX(N, H, roughness);
 		float G = GeometrySmith(N, V, L, roughness);
+		vec3 F = FreshnelSchlick(max(dot(H, V), 0.0), F0);
 
 		vec3 numerator = NDF * G * F;
-		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
-		vec3 specular = numerator / max(denominator, 0.001);
+		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
+		vec3 specular = numerator / denominator;
+		////////////////////////////
 
 		vec3 kS = F;
 		vec3 kD = vec3(1.0) - kS;
@@ -154,7 +158,10 @@ void main()
 	vec3 ambient = vec3(0.03) * albedo * ao;
 	vec3 color = ambient + Lo;
 
+	//HDR tonemapping
 	color = color / (color + vec3(1.0));
+
+	//gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
 
 	FragColor = vec4(color, 1.0);

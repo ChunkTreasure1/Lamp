@@ -1,10 +1,11 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\test1.lgf" position="0.101960,1.519750,-0.646475" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="2.371370,1.519750,-0.910424" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sphere.lgf" position="-2.394830,1.455529,0.678175" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
-		<Entity name="Light" position="-1.555765,1.842121,2.141121" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+		<Entity name="Light" position="-0.994095,2.075584,-1.239038" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
 			<Component name="CameraComponent">
 				<Param name="Is Perspective" type="Bool" value="1"/>
 				<Param name="Is Main" type="Bool" value="0"/>
@@ -21,7 +22,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-3.161258,2.948295,3.844028" rotation="304.801147,-14.100067,0.000000" fov="60.000000"/>
+		<CameraValues position="-0.378817,3.940603,-4.690886" rotation="450.151215,-16.800079,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

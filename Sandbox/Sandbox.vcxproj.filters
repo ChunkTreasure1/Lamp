@@ -103,6 +103,8 @@
     </None>
     <None Include="engine\shaders\3d\pbr_vs.glsl" />
     <None Include="engine\shaders\3d\pbr_fs.glsl" />
+    <None Include="engine\shaders\3d\hdrMap_fs.glsl" />
+    <None Include="engine\shaders\3d\hdrMap_vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Sandbox.rc" />
