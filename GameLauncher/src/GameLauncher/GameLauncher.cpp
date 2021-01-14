@@ -39,7 +39,7 @@ namespace GameLauncher
 
 		Lamp::RenderPassManager::Get()->RenderPasses();
 
-		return true;
+		return false;
 	}
 
 	void GameLauncher::OnImGuiRender(Lamp::Timestep ts)

@@ -8,7 +8,6 @@
 #include "Lamp/Event/Event.h"
 
 #include <algorithm>
-#include "Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Lamp/Objects/Object.h"
@@ -23,8 +22,6 @@ namespace Lamp
 	public:
 		Entity()
 		{
-			m_PhysicalEntity = CreateRef<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(CreateRef<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Entity";
 		}
 		~Entity() {}

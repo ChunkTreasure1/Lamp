@@ -5,7 +5,6 @@
 #include "Lamp/Rendering/Renderer2D.h"
 
 #include "Lamp/Objects/Object.h"
-#include "Lamp/Physics/Colliders/AABB.h"
 #include "Lamp/Event/ApplicationEvent.h"
 
 namespace Lamp

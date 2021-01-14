@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
+include "Lamp/vendor/Bullet/src"
 
 project "Lamp"
 	location "Lamp"
@@ -55,13 +56,15 @@ project "Lamp"
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
+		"%{prj.name}/vendor/bullet/src"
 	}
 	
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"Glad"
+		"Glad",
+		"Bullet"
 	}
 
 	filter "system:windows"
@@ -123,14 +126,16 @@ project "Sandbox"
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
 		"Game/src",
-		"Lamp/vendor/ImGuizmo/include"
+		"Lamp/vendor/ImGuizmo/include",
+		"Lamp/vendor/bullet/src"
 	}
 
 	libdirs
 	{
 		gamedir,
 		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod"
+		"Lamp/vendor/fmod",
+		"Lamp/vendor/bullet"
 	}
 
 	links
@@ -200,6 +205,7 @@ project "Game"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
+		"Lamp/vendor/bullet/src"
 	}
 	
 	filter "system:windows"
@@ -255,7 +261,8 @@ project "GameLauncher"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
-		"Game/src"
+		"Game/src",
+		"Lamp/vendor/bullet/src"
 	}
 
 	libdirs

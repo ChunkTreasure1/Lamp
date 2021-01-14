@@ -40,7 +40,7 @@ namespace Lamp
 		inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
 		inline std::string& GetLGFPath() { return m_LGFPath; }
 		inline const glm::mat4& GetMatrix() { return m_ModelMatrix; }
-		inline const SAABB& GetBoundingBox() { return m_BoundingBox; }
+		inline SAABB& GetBoundingBox() { return m_BoundingBox; }
 		
 	private:
 		Material m_Material;

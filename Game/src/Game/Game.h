@@ -1,6 +1,5 @@
 #include <Lamp/Core/Game.h>
 
-#include <Lamp/Physics/Collision.h>
 #include <Lamp/Objects/Brushes/BrushManager.h>
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>

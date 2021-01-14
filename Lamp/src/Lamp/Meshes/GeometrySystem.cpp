@@ -5,6 +5,7 @@
 #include <rapidxml/rapidxml_print.hpp>
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Meshes/Materials/MaterialLibrary.h"
+#include <sys/stat.h>
 
 namespace Lamp
 {
@@ -64,6 +65,12 @@ namespace Lamp
 
 	Ref<Model> GeometrySystem::LoadFromFile(const std::string& path)
 	{
+		struct stat b;
+		if (!(stat(path.c_str(), &b) == 0))
+		{
+			return nullptr;
+		}
+
 		rapidxml::xml_document<> file;
 		rapidxml::xml_node<>* pRootNode;
 

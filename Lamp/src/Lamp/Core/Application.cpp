@@ -36,6 +36,9 @@ namespace Lamp
 		Renderer::Initialize();
 		AudioEngine::Initialize();
 
+		m_pPhysicsEngine = new PhysicsEngine();
+		m_pPhysicsEngine->Initialize();
+
 		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_pImGuiLayer);
@@ -43,6 +46,7 @@ namespace Lamp
 
 	Application::~Application()
 	{
+		m_pPhysicsEngine->Shutdown();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
@@ -59,8 +63,10 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			//PhysicsEngine::Get()->Simulate(timestep);
-			//PhysicsEngine::Get()->HandleCollisions();
+			if (m_IsSimulating)
+			{
+				m_pPhysicsEngine->Simulate();
+			}
 			AudioEngine::Update();
 
 			//Update the application layers

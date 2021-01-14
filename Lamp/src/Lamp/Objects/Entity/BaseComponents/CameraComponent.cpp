@@ -26,7 +26,7 @@ namespace Lamp
 		m_PerspectiveCamera->SetPosition(m_pEntity->GetPosition());
 		m_PerspectiveCamera->SetRotation(m_pEntity->GetRotation());
 
-		return true;
+		return false;
 	}
 
 }

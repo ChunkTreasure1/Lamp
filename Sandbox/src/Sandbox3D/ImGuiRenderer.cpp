@@ -19,6 +19,8 @@
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
+#include <Lamp/Core/Application.h>
+
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
@@ -267,19 +269,6 @@ namespace Sandbox3D
 
 					ImGui::InputFloat3("Scale", s);
 					pBrush->SetScale(glm::make_vec3(s));
-				}
-
-				if (ImGui::CollapsingHeader("Physics"))
-				{
-					glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
-					float f[3] = { vel.x, vel.y, vel.z };
-
-					ImGui::InputFloat3("Velocity", f);
-					pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
-
-					float m = pBrush->GetPhysicalEntity()->GetMass();
-					ImGui::InputFloat("Mass", &m);
-					pBrush->GetPhysicalEntity()->SetMass(m);
 				}
 
 				if (ImGui::CollapsingHeader("Material"))
@@ -531,64 +520,139 @@ namespace Sandbox3D
 					case Lamp::PropertyType::Int:
 					{
 						int* p = static_cast<int*>(pProp.Value);
-						ImGui::InputInt(pProp.Name.c_str(), p);
+						int v = *p;
+						
+						ImGui::InputInt(pProp.Name.c_str(), &v);
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
+
 						break;
 					}
 
 					case Lamp::PropertyType::Bool:
 					{
 						bool* p = static_cast<bool*>(pProp.Value);
-						ImGui::Checkbox(pProp.Name.c_str(), p);
+						bool v = *p;
+
+						ImGui::Checkbox(pProp.Name.c_str(), &v);
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
+						
 						break;
 					}
 
 					case Lamp::PropertyType::Float:
 					{
 						float* p = static_cast<float*>(pProp.Value);
-						ImGui::InputFloat(pProp.Name.c_str(), p);
+						float v = *p;
+
+						ImGui::InputFloat(pProp.Name.c_str(), &v);
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float2:
 					{
 						glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						glm::vec2 v = *p;
+						
+						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v), 3);
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float3:
 					{
 						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						glm::vec3 v = *p;
+
+						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v), 3);
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float4:
 					{
 						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+						glm::vec4 v = *p;
+
 						ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::String:
 					{
 						std::string* s = static_cast<std::string*>(pProp.Value);
-						ImGui::InputText(pProp.Name.c_str(), s);
+						std::string v = *s;
+
+						ImGui::InputText(pProp.Name.c_str(), &v);
+						if (v != *s)
+						{
+							*s = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Path:
 					{
 						std::string* s = static_cast<std::string*>(pProp.Value);
-						ImGui::InputText(pProp.Name.c_str(), s);
+						std::string v = *s;
+
+						ImGui::InputText(pProp.Name.c_str(), &v);
 						ImGui::SameLine();
 						if (ImGui::Button("Open..."))
 						{
 							std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
 							if (!path.empty())
 							{
-								*s = path;
+								v = path;
 							}
+						}
+
+						if (v != *s)
+						{
+							*s = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
 						}
 						break;
 					}
@@ -596,14 +660,32 @@ namespace Sandbox3D
 					case Lamp::PropertyType::Color3:
 					{
 						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-						ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(*p));
+						glm::vec3 v = *p;
+
+						ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Color4:
 					{
 						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-						ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(*p));
+						glm::vec4 v = *p;
+
+						ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
+						if (v != *p)
+						{
+							*p = v;
+
+							Lamp::EntityPropertyChangedEvent e;
+							ptr->GetOwner()->OnEvent(e);
+						}
 						break;
 					}
 				}
@@ -740,7 +822,7 @@ namespace Sandbox3D
 			if (ImGui::BeginMenu("Play"))
 			{
 				ImGui::MenuItem("Play", "Ctrl + G", &m_ShouldPlay);
-				ImGui::MenuItem("Play physics", NULL, &m_ShouldPlayPhysics);
+				ImGui::MenuItem("Play physics", NULL, &Lamp::Application::Get().GetIsSimulating());
 
 				ImGui::EndMenu();
 			}

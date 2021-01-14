@@ -17,7 +17,6 @@ namespace Lamp
 		m_pEntites.emplace_back(pEnt);
 
 		ObjectLayerManager::Get()->AddToLayer(pEnt, 0);
-		PhysicsEngine::Get()->AddEntity(pEnt->GetPhysicalEntity());
 
 		return pEnt;
 	}
@@ -34,21 +33,7 @@ namespace Lamp
 			return false;
 		}
 
-		PhysicsEngine::Get()->RemoveEntity(pEnt->GetPhysicalEntity());
 		return true;
-	}
-
-	Entity* EntityManager::GetEntityFromPhysicalEntity(PhysicalEntity* pEnt)
-	{
-		for (auto& ent : m_pEntites)
-		{
-			if (ent->GetPhysicalEntity().get() == pEnt)
-			{
-				return ent;
-			}
-		}
-
-		return nullptr;
 	}
 
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)

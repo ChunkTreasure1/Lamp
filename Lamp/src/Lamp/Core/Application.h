@@ -13,6 +13,8 @@
 
 namespace Lamp
 {
+	class PhysicsEngine;
+
 	class Application
 	{
 	public:
@@ -28,6 +30,7 @@ namespace Lamp
 		inline static Application& Get() { return *s_pInstance; }
 		inline Window& GetWindow() { return *m_pWindow; }
 		inline const FrameTime& GetFrameTime() { return m_FrameTime; }
+		inline bool& GetIsSimulating() { return m_IsSimulating; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
@@ -40,9 +43,11 @@ namespace Lamp
 		std::unique_ptr<Window> m_pWindow;
 		ImGuiLayer* m_pImGuiLayer;
 		LayerStack m_LayerStack;
+		PhysicsEngine* m_pPhysicsEngine = nullptr;
 
 		bool m_Running = true;
 		bool m_Minimized = false;
+		bool m_IsSimulating = false;
 		float m_LastFrameTime = 0.f;
 
 		FrameTime m_FrameTime;

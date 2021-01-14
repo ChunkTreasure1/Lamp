@@ -11,30 +11,27 @@ namespace Lamp
 	class MeshComponent final : public EntityComponent
 	{
 	public:
-
 		MeshComponent()
 			: EntityComponent("MeshComponent")
-		{}
+		{
+			SetComponentProperties
+			({
+				{ PropertyType::Path, "Path", RegisterData(&m_Path) }
+			});
+		}
 
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint64_t GetEventMask() override { return EventType::AppRender | EventType::AppUpdate; }
+		virtual uint64_t GetEventMask() override { return EventType::AppRender 
+			| EventType::AppUpdate 
+			| EventType::EntityPropertyChanged; }
 		////////////////
-
-		//Setting
-		inline void SetModel(Ref<Model> model) 
-		{ 
-			m_Model = model; 
-			SetComponentProperties
-			({
-				{ PropertyType::Path, "Path", RegisterData(&m_Model->GetLGFPath())}
-			});
-		}
 
 	private:
 		bool OnRender(AppRenderEvent& e);
 		bool OnUpdate(AppUpdateEvent& e);
+		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<MeshComponent>(); }
@@ -42,6 +39,7 @@ namespace Lamp
 
 	private:
 		Ref<Model> m_Model;
+		std::string m_Path;
 	};
 
 }

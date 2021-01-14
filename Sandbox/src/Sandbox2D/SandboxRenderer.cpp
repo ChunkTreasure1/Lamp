@@ -350,19 +350,6 @@ namespace Sandbox2D
 					ImGui::InputFloat3("Scale", s);
 					pBrush->SetScale(glm::make_vec3(s));
 				}
-
-				if (ImGui::CollapsingHeader("Physics"))
-				{
-					glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
-					float f[3] = { vel.x, vel.y, vel.z };
-
-					ImGui::InputFloat3("Velocity", f);
-					pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
-
-					float m = pBrush->GetPhysicalEntity()->GetMass();
-					ImGui::InputFloat("Mass", &m);
-					pBrush->GetPhysicalEntity()->SetMass(m);
-				}
 			}
 		}
 		ImGui::End();

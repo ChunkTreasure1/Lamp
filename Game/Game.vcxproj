@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Lamp\vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -92,7 +92,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Lamp\vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -112,7 +112,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Lamp\vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

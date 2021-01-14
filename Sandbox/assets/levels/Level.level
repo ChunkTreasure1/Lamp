@@ -1,8 +1,9 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\sofa.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,0.999999,0.999999" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,3.786901,0.687011" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\pillBottle.lgf" position="0.000000,0.226338,2.542616" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sofa.lgf" position="0.048528,1.599958,2.741434" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,6.837665,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\pillBottle.lgf" position="0.088857,1.038881,3.190001" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,0.000000,10.274428" rotation="0.000000,0.000000,0.000000" scale="10.000000,0.300000,10.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
@@ -23,7 +24,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.300000,0.300000,0.300000"/>
-		<CameraValues position="-7.536924,3.878431,6.863674" rotation="340.950989,-9.150099,0.000000" fov="60.000000"/>
+		<CameraValues position="-14.503219,5.993921,-5.241328" rotation="372.602417,-8.400489,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

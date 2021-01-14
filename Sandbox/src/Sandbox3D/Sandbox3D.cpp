@@ -3,15 +3,11 @@
 
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
-#include <Lamp/Physics/Collision.h>
 #include <Lamp/Objects/Brushes/BrushManager.h>
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
-#include <Lamp/Physics/Colliders/BoundingSphere.h>
-#include <Lamp/Physics/Colliders/AABB.h>
 #include <Lamp/Physics/PhysicsEngine.h>
-#include <Lamp/Physics/Physics.h>
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 #include <Lamp/Meshes/GeometrySystem.h>
 
@@ -70,7 +66,7 @@ namespace Sandbox3D
 		RenderPassManager::Get()->RenderPasses();
 		m_ModelImporter->Render();
 
-		return true;
+		return false;
 	}
 
 	void Sandbox3D::OnImGuiRender(Timestep ts)

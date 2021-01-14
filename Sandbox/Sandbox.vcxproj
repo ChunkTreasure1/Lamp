@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;..\Lamp\vendor\ImGuizmo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;..\Lamp\vendor\ImGuizmo\include;..\Lamp\vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -89,7 +89,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;..\Lamp\vendor\bullet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:Game /WHOLEARCHIVE:Lamp %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -98,7 +98,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;..\Lamp\vendor\ImGuizmo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;..\Lamp\vendor\ImGuizmo\include;..\Lamp\vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -112,7 +112,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;..\Lamp\vendor\bullet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:Game /WHOLEARCHIVE:Lamp %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -121,7 +121,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;..\Lamp\vendor\ImGuizmo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;..\Lamp\vendor\ImGuizmo\include;..\Lamp\vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -135,13 +135,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Dist-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Dist-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;..\Lamp\vendor\bullet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:Game /WHOLEARCHIVE:Lamp %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h" />
     <ClInclude Include="src\Sandbox3D\CommandStack.h" />
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h" />
@@ -172,12 +171,6 @@
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">
       <Project>{6F67887C-5B9E-890D-048B-6F10F0A0050F}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Sandbox.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="engine\LampIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

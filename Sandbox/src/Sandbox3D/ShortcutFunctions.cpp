@@ -37,7 +37,6 @@ namespace Sandbox3D
 		Lamp::ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
 		Lamp::EntityManager::SetCurrentManager(pLevel->GetEntityManager());
 		Lamp::BrushManager::SetCurrentManager(pLevel->GetBrushManager());
-		Lamp::PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
 
 		m_pSelectedObject = nullptr;
 	}

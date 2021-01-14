@@ -7,6 +7,7 @@
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
 #include <Lamp/Audio/AudioEngine.h>
 #include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
+#include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 void Game::OnStart()
 {

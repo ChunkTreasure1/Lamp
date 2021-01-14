@@ -3,9 +3,21 @@
 
 #include "BrushManager.h"
 #include "Lamp/Objects/ObjectLayer.h"
+#include <btBulletDynamicsCommon.h>
+#include "Lamp/Physics/PhysicsEngine.h"
 
 namespace Lamp
 {
+	Brush::Brush(Ref<Model> model)
+		: m_Model(model)
+	{
+		m_pRigidBody = PhysicsEngine::Get()->CreateRigidBody(this);
+		m_pRigidBody->GetRigidbody()->setUserPointer(this);
+		m_pRigidBody->GetCollisionShape()->setUserPointer(this);
+		m_pRigidBody->SetStatic(true);
+		m_Name = "Brush";
+	}
+
 	void Brush::UpdatedMatrix()
 	{
 		m_Model->SetModelMatrix(m_ModelMatrix);
@@ -15,6 +27,7 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Brush::OnRender));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Brush::OnUpdate));
 	}
 
 	void Brush::Destroy()
@@ -23,6 +36,12 @@ namespace Lamp
 		ObjectLayerManager::Get()->Remove(this);
 
 		delete this;
+	}
+
+	void Brush::ScaleChanged()
+	{
+		m_Model->GetBoundingBox().Max *= m_Scale;
+		m_Model->GetBoundingBox().Min *= m_Scale;
 	}
 
 	Brush* Brush::Create(const std::string& path)
@@ -40,5 +59,13 @@ namespace Lamp
 		}
 
 		return true;
+	}
+
+	bool Brush::OnUpdate(AppUpdateEvent& e)
+	{
+		btTransform& tr = m_pRigidBody->GetTransform();
+		SetPhysicsPosition({ tr.getOrigin().getX(), tr.getOrigin().getY(), tr.getOrigin().getZ() });
+
+		return false;
 	}
 }

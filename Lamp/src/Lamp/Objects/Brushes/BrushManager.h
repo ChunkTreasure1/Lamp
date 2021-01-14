@@ -31,10 +31,7 @@ namespace Lamp
 		inline std::vector<Brush2D*>& Get2DBrushes() { return m_2DBrushes; }
 
 		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);
-		Brush* GetBrushFromPhysicalEntity(Ref<PhysicalEntity>& pEnt);
-
 		Brush2D* GetBrush2DFromPoint(const glm::vec3& pos, const glm::vec3& origin);
-		Brush2D* GetBrush2DFromPhysicalEntity(Ref<PhysicalEntity>& pEnt);
 
 	public:
 		static void SetCurrentManager(Ref<BrushManager> manager) { s_Manager = manager; }

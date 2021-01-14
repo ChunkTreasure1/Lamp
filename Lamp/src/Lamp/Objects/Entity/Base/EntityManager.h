@@ -16,7 +16,6 @@ namespace Lamp
 
 		//Getting
 		inline const std::vector<Entity*>& GetEntities() { return m_pEntites; }
-		Entity* GetEntityFromPhysicalEntity(PhysicalEntity* pEnt);
 
 		//Setting
 		inline void SetEntities(std::vector<Entity*> entities) { m_pEntites = entities; }

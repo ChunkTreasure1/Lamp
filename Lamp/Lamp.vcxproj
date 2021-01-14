@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -94,7 +94,7 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -115,7 +115,7 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -172,7 +172,6 @@
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
@@ -180,15 +179,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h" />
-    <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h" />
-    <ClInclude Include="src\Lamp\Physics\Collision.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h" />
-    <ClInclude Include="src\Lamp\Physics\Physics.h" />
+    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
-    <ClInclude Include="src\Lamp\Physics\Ray.h" />
+    <ClInclude Include="src\Lamp\Physics\Rigidbody.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
@@ -617,19 +610,16 @@
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
@@ -674,6 +664,9 @@
     </ProjectReference>
     <ProjectReference Include="vendor\glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\Bullet\src\Bullet.vcxproj">
+      <Project>{0DC355AA-F964-8080-E21F-94D4CE6007D1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

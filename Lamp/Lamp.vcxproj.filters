@@ -52,20 +52,11 @@
     <Filter Include="src\Lamp\Objects\Entity\Base">
       <UniqueIdentifier>{750AC907-61C5-B8B3-0A7D-31FEF6160344}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Objects\Entity\Base\Physical">
-      <UniqueIdentifier>{E10D19BC-4DD2-17AC-1638-487682BBB3E1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Objects\Entity\BaseComponents">
       <UniqueIdentifier>{DBFEA38A-C750-7B7A-B06F-B88A9C609463}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Physics">
       <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Physics\Colliders">
-      <UniqueIdentifier>{284968DA-1459-14AB-7D12-79C969410344}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Physics\Components">
-      <UniqueIdentifier>{6D0E5056-D91B-7E3C-6202-7A27CE0E4AF3}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
@@ -252,9 +243,6 @@
     <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.h">
-      <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
@@ -276,31 +264,10 @@
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h">
       <Filter>src\Lamp\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Colliders\AABB.h">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Colliders\BoundingSphere.h">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Colliders\Collider.h">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Colliders\Plane.h">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Collision.h">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\ConvexPolygonCollider.h">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Physics.h">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Ray.h">
+    <ClInclude Include="src\Lamp\Physics\Rigidbody.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffer.h">
@@ -1509,6 +1476,7 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1583,9 +1551,6 @@
     <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Physical\PhysicalEntity.cpp">
-      <Filter>src\Lamp\Objects\Entity\Base\Physical</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
@@ -1604,22 +1569,10 @@
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp">
       <Filter>src\Lamp\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Colliders\AABB.cpp">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Colliders\BoundingSphere.cpp">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Colliders\Plane.cpp">
-      <Filter>src\Lamp\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\ConvexPolygonCollider.cpp">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Physics.cpp">
+    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp">
+    <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
@@ -1718,5 +1671,7 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Object.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
   </ItemGroup>
 </Project>

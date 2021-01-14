@@ -6,7 +6,7 @@
 #include "Lamp/Objects/Brushes/BrushManager.h"
 #include "Lamp/Objects/Entity/Base/EntityManager.h"
 #include "Lamp/Objects/ObjectLayer.h"
-#include "Lamp/Physics/PhysicsEngine.h"
+#include <btBulletDynamicsCommon.h>
 
 namespace Lamp
 {
@@ -28,7 +28,6 @@ namespace Lamp
 			m_ObjectLayerManager = CreateRef<ObjectLayerManager>();
 			m_BrushManager = CreateRef<BrushManager>();
 			m_EntityManager = CreateRef<EntityManager>();
-			m_PhysicsEngine = CreateRef<PhysicsEngine>();
 
 			ObjectLayer layer(0, "Main", false);
 			m_ObjectLayerManager->AddLayer(layer);
@@ -42,7 +41,6 @@ namespace Lamp
 		inline Ref<BrushManager>& GetBrushManager() { return m_BrushManager; }
 		inline Ref<EntityManager>& GetEntityManager() { return m_EntityManager; }
 		inline Ref<ObjectLayerManager>& GetObjectLayerManager() { return m_ObjectLayerManager; }
-		inline Ref<PhysicsEngine>& GetPhysicsEngine() { return m_PhysicsEngine; }
 
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
@@ -56,7 +54,6 @@ namespace Lamp
 		Ref<EntityManager> m_EntityManager;
 
 		Ref<ObjectLayerManager> m_ObjectLayerManager;
-		Ref<PhysicsEngine> m_PhysicsEngine;
 		LevelEnvironment m_Environment;
 	};
 }

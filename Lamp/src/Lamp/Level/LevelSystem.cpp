@@ -28,7 +28,6 @@ namespace Lamp
 
 		pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value(), path);
 		ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
-		PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
 
 		if (rapidxml::xml_node<>* pLevelEnv = pRootNode->first_node("LevelEnvironment"))
 		{
