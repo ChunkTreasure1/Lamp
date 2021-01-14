@@ -186,7 +186,7 @@ namespace Sandbox2D
 
 				glm::vec3 pos = m_CameraController->ScreenToWorldCoords(mousePos, m_PerspectiveSize);
 
-				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera()->GetPosition());
+				//m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera()->GetPosition());
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))

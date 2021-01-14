@@ -11,10 +11,21 @@ namespace Lamp
 
 	Rigidbody::~Rigidbody()
 	{
+		if (m_pCollisionShape)
+		{
+			delete m_pCollisionShape;
+			m_pCollisionShape = nullptr;
+		}
 	}
 
 	void Rigidbody::SetCollisionShape(btCollisionShape* shape, void* pUser)
 	{
+		if (m_pCollisionShape != nullptr)
+		{
+			delete m_pCollisionShape;
+			m_pCollisionShape = nullptr;
+		}
+
 		m_pCollisionShape = shape;
 		m_pBody->setCollisionShape(shape);
 
@@ -35,6 +46,8 @@ namespace Lamp
 
 	void Rigidbody::SetStatic(bool b)
 	{
+		m_pBody->setLinearVelocity(btVector3(0.f, 0.f, 0.f));
+		m_pBody->setAngularVelocity(btVector3(0.f, 0.f, 0.f));
 		m_IsStatic = b;
 		if (b)
 		{
@@ -66,9 +79,17 @@ namespace Lamp
 
 	void Rigidbody::SetPosition(const glm::vec3& pos)
 	{
+		if (!m_pBody)
+		{
+			return;
+		}
+
 		btTransform& tr = GetTransform();
 		tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
 		GetMotionState()->setWorldTransform(tr);
+
+		m_pBody->setLinearVelocity(btVector3(0.f, 0.f, 0.f));
+		m_pBody->activate();
 	}
 
 	void Rigidbody::SetRotation(const glm::vec3& rot)

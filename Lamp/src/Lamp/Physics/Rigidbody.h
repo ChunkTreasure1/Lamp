@@ -34,8 +34,8 @@ namespace Lamp
 		inline btMotionState* GetMotionState() { return m_pBody->getMotionState(); }
 
 	private:
-		btCollisionShape* m_pCollisionShape;
-		btRigidBody* m_pBody;
+		btCollisionShape* m_pCollisionShape = nullptr;
+		btRigidBody* m_pBody = nullptr;
 		glm::vec3 m_Inertia = glm::vec3(0.f, 0.f, 0.f);
 		
 		bool m_IsStatic = true;

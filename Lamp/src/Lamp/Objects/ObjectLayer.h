@@ -4,6 +4,7 @@
 #include "Lamp/Event/Event.h"
 
 #include <string>
+#include "Lamp/Rendering/Cameras/PerspectiveCameraController.h"
 
 namespace Lamp
 {
@@ -64,7 +65,7 @@ namespace Lamp
 
 		void MoveToLayer(Object* obj, uint32_t layerId);
 
-		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
+		Object* GetObjectFromPoint(const glm::vec2& mousePos, const glm::vec2& screenSize, Ref<PerspectiveCameraController>& camera);
 
 	public:
 		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }

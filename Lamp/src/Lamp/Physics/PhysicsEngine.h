@@ -30,7 +30,6 @@ namespace Lamp
 
 		//Rigidbodies
 		Rigidbody* CreateRigidBody(Object* obj);
-		void AddRigidBody(Object* obj);
 		void RemoveRigidBody(Object* obj);
 
 		//Rays

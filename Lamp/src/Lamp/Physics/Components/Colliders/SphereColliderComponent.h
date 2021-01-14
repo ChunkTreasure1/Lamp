@@ -20,7 +20,7 @@ namespace Lamp
 		{
 			return EventType::AppUpdate
 				| EventType::EntityPropertyChanged
-				| EventType::EntityComponentAdded;;
+				| EventType::EntityComponentAdded;
 		}
 		////////////////
 

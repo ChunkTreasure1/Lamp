@@ -92,22 +92,22 @@ namespace Lamp
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		Brush* brush = dynamic_cast<Brush*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		if (brush)
-		{
-			return brush;
-		}
+		//Brush* brush = dynamic_cast<Brush*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		//if (brush)
+		//{
+		//	return brush;
+		//}
 
 		return nullptr;
 	}
 
 	Brush2D* BrushManager::GetBrush2DFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		Brush2D* brush = dynamic_cast<Brush2D*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		if (brush)
-		{
-			return brush;
-		}
+		//Brush2D* brush = dynamic_cast<Brush2D*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		//if (brush)
+		//{
+		//	return brush;
+		//}
 
 		return nullptr;
 	}

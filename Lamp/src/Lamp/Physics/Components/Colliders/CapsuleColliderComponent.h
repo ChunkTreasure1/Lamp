@@ -8,15 +8,15 @@
 
 namespace Lamp
 {
-	class BoxColliderComponent final : public EntityComponent
+	class CapsuleColliderComponent final : public EntityComponent
 	{
 	public:
-		BoxColliderComponent();
+		CapsuleColliderComponent();
 
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint64_t GetEventMask() override 
+		virtual uint64_t GetEventMask() override
 		{
 			return EventType::AppUpdate
 				| EventType::EntityPropertyChanged
@@ -29,12 +29,14 @@ namespace Lamp
 		bool OnComponentAdded(EntityComponentAddedEvent& e);
 
 	public:
-		static Ref<EntityComponent> Create() { return CreateRef<BoxColliderComponent>(); }
-		static std::string GetFactoryName() { return "BoxColliderComponent"; }
+		static Ref<EntityComponent> Create() { return CreateRef<CapsuleColliderComponent>(); }
+		static std::string GetFactoryName() { return "CapsuleColliderComponent"; }
 
 	private:
-		btBoxShape* m_pShape = nullptr;
-		glm::vec3 m_Scale = { 1.f, 1.f, 1.f };
+		btCapsuleShape* m_pShape = nullptr;
+
 		bool m_RigidbodyFound = false;
+		float m_Radius = 0.5f;
+		float m_Height = 1.f;
 	};
 }

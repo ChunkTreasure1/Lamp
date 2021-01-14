@@ -36,7 +36,11 @@ namespace Lamp
 
 	bool BoxColliderComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
 	{
-		m_pShape->setLocalScaling(btVector3(m_Scale.x, m_Scale.y, m_Scale.z));
+		m_pShape = new btBoxShape(btVector3(m_Scale.x / 2, m_Scale.y / 2, m_Scale.z / 2));
+		if (auto& comp = m_pEntity->GetComponent<RigidbodyComponent>())
+		{
+			comp->GetRigidbody()->SetCollisionShape(m_pShape, m_pEntity);
+		}
 		return false;
 	}
 

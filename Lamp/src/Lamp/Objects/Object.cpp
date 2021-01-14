@@ -1,12 +1,22 @@
 #include "lppch.h"
 #include "Object.h"
 #include "Lamp/Physics/Rigidbody.h"
+#include "Lamp/Physics/PhysicsEngine.h"
 
 namespace Lamp
 {
 	Object::Object()
 		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
 	{}
+
+	Object::~Object()
+	{
+		PhysicsEngine::Get()->RemoveRigidBody(this);
+		if (m_pRigidBody)
+		{
+			delete m_pRigidBody;
+		}
+	}
 
 	void Object::SetPosition(const glm::vec3& pos)
 	{

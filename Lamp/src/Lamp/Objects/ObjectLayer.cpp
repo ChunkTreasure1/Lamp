@@ -143,8 +143,13 @@ namespace Lamp
 		}
 	}
 
-	Object* ObjectLayerManager::GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin)
+	Object* ObjectLayerManager::GetObjectFromPoint(const glm::vec2& mousePos, const glm::vec2& screenSize, Ref<PerspectiveCameraController>& camera)
 	{
-		return PhysicsEngine::Get()->RaycastRef(pos, origin, 10000.f);
+		glm::vec3 dir;
+		glm::vec3 origin;
+
+		PhysicsEngine::Get()->ScreenPosToWorldRay(mousePos, screenSize, camera->GetCamera()->GetViewMatrix(), camera->GetCamera()->GetProjectionMatrix(), origin, dir);
+
+		return PhysicsEngine::Get()->RaycastRef(origin, dir, 10000.f);
 	}
 }

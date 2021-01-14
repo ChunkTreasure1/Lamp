@@ -86,12 +86,12 @@ namespace Lamp
 		return rb;
 	}
 
-	void PhysicsEngine::AddRigidBody(Object* obj)
-	{
-	}
-
 	void PhysicsEngine::RemoveRigidBody(Object* obj)
 	{
+		if (auto it = std::find(m_pBodies.begin(), m_pBodies.end(), obj->GetRigidbody()); it != m_pBodies.end())
+		{
+			m_pBodies.erase(it);
+		}
 	}
 
 	bool PhysicsEngine::RayTest(const glm::vec3& origin, const glm::vec3& dir, float range)

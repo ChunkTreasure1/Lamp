@@ -38,11 +38,11 @@ namespace Lamp
 
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		if (entity)
-		{
-			return entity;
-		}
+		//Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		//if (entity)
+		//{
+		//	return entity;
+		//}
 
 		return nullptr;
 	}

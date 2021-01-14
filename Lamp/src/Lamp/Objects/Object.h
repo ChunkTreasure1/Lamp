@@ -14,6 +14,7 @@ namespace Lamp
 	{
 	public:
 		Object();
+		~Object();
 
 		//Setting
 		void SetPosition(const glm::vec3& pos);
@@ -36,7 +37,8 @@ namespace Lamp
 
 		inline const glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline const std::string& GetName() { return m_Name; }
-		
+		inline Rigidbody* GetRigidbody() { return m_pRigidBody; }
+
 		inline uint32_t GetLayerID() { return m_LayerID; }
 		inline bool GetIsFrozen() { return m_IsFrozen; }
 		inline bool GetIsActive() { return m_IsActive; }

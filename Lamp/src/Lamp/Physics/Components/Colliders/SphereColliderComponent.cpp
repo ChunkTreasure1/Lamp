@@ -6,6 +6,8 @@
 
 namespace Lamp
 {
+	LP_REGISTER_COMPONENT(SphereColliderComponent);
+
 	SphereColliderComponent::SphereColliderComponent()
 		: EntityComponent("SphereColliderComponent")
 	{
