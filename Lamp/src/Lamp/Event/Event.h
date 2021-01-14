@@ -18,12 +18,13 @@ namespace Lamp
 		KeyPressed = 0b00001100, KeyReleased = 0b00001101, KeyTyped = 0b00001110,
 		MouseButtonPressed = 0b00001111, MouseButtonReleased = 0b00010000, MouseMoved = 0b00010001, MouseScrolled = 0b00010010,
 		EntityCollision = 0b00010011, EntityStoppedCollision = 0b00010100, EntityPositionChanged = 0b00010101, ImGuiBegin = 0b0010110, EntityPropertyChanged = 0b0011000,
+		EntityComponentAdded = 0b0011001,
 
 		All = WindowClose | WindowResize | WindowFocus | WindowLostFocus | WindowMoved |
 		AppTick | AppUpdate | AppRender | AppLog | AppItemClicked |
 		KeyPressed | KeyReleased | KeyTyped |
 		MouseButtonPressed | MouseButtonReleased | MouseMoved | MouseScrolled |
-		EntityCollision | EntityStoppedCollision | EntityPositionChanged | ImGuiBegin | EntityPropertyChanged
+		EntityCollision | EntityStoppedCollision | EntityPositionChanged | ImGuiBegin | EntityPropertyChanged | EntityComponentAdded
 	};
 
 

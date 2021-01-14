@@ -369,6 +369,9 @@ namespace Sandbox3D
 						if (comp != nullptr)
 						{
 							pEnt->AddComponent(comp);
+							
+							Lamp::EntityComponentAddedEvent e;
+							pEnt->OnEvent(e);
 						}
 					}
 

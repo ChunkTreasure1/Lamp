@@ -38,4 +38,21 @@ namespace Lamp
 		EVENT_CLASS_CATEGORY(EventCategoryEntity);
 		EVENT_CLASS_TYPE(EntityPropertyChanged);
 	};
+
+	class EntityComponentAddedEvent : public Event
+	{
+	public:
+		EntityComponentAddedEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "EntityComponentAdded";
+			return ss.str();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(EntityComponentAdded);
+	};
 }

@@ -1477,6 +1477,8 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
+    <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1673,5 +1675,7 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
   </ItemGroup>
 </Project>

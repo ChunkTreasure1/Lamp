@@ -18,9 +18,14 @@ namespace Lamp
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint64_t GetEventMask() override { return EventType::AppUpdate
-			| EventType::EntityPropertyChanged; }
+		virtual uint64_t GetEventMask() override 
+		{ 
+			return EventType::AppUpdate
+				| EventType::EntityPropertyChanged; 
+		}
 		////////////////
+
+		inline Rigidbody* GetRigidbody() { return m_pRigidbody; }
 
 	private:
 		bool OnUpdate(AppUpdateEvent& e);

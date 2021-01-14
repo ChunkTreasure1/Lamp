@@ -179,6 +179,8 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
+    <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\Lamp\Physics\Rigidbody.h" />
@@ -617,6 +619,8 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp" />
