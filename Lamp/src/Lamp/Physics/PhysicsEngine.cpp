@@ -69,8 +69,7 @@ namespace Lamp
 		Rigidbody* rb = new Rigidbody();
 		glm::quat q(obj->GetRotation());
 
-		btCollisionShape* shape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f));
-
+		btCollisionShape* shape = new btBoxShape(btVector3(1.f, 1.f, 1.f));
 		btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(q.x, q.y, q.z, q.w), ToBtVector3(obj->GetPosition())));
 		btRigidBody::btRigidBodyConstructionInfo cI(1.f, motionState, shape, btVector3(1.f, 1.f, 1.f));
 
