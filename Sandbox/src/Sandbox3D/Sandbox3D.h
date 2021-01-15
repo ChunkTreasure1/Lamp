@@ -37,6 +37,7 @@ namespace Sandbox3D
 		void RenderSkybox();
 		void CreateRenderPasses();
 		void SetupFromConfig();
+		void RenderLines();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
@@ -62,13 +63,13 @@ namespace Sandbox3D
 		void Undo();
 		void Redo();
 
-		//Model importer
-		void RenderImporter();
-
 
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
+
+		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
+
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);

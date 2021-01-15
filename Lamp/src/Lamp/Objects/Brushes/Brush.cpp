@@ -11,6 +11,8 @@ namespace Lamp
 	Brush::Brush(Ref<Model> model)
 		: m_Model(model)
 	{
+		m_PickingCollider = PickingCollider(m_Model->GetBoundingBox().Min, m_Model->GetBoundingBox().Max, m_Position);
+
 		m_pRigidBody = PhysicsEngine::Get()->CreateRigidBody(this);
 		m_pRigidBody->GetRigidbody()->setUserPointer(this);
 		m_pRigidBody->GetCollisionShape()->setUserPointer(this);
@@ -40,8 +42,10 @@ namespace Lamp
 
 	void Brush::ScaleChanged()
 	{
-		m_Model->GetBoundingBox().Max *= m_Scale;
-		m_Model->GetBoundingBox().Min *= m_Scale;
+		m_Model->GetBoundingBox().Max = m_Scale * m_Model->GetBoundingBox().StartMax;
+		m_Model->GetBoundingBox().Min = m_Scale * m_Model->GetBoundingBox().StartMin;
+		
+		m_PickingCollider = PickingCollider(m_Model->GetBoundingBox().Min, m_Model->GetBoundingBox().Max, m_Position);
 	}
 
 	Brush* Brush::Create(const std::string& path)

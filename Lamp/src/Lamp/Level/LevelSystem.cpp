@@ -230,6 +230,12 @@ namespace Lamp
 						param->append_attribute(doc.allocate_attribute("value", pValue));
 						break;
 					}
+					case Lamp::PropertyType::Path:
+					{
+						char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
+						param->append_attribute(doc.allocate_attribute("value", pValue));
+						break;
+					}
 					case Lamp::PropertyType::Color3:
 					{
 						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
@@ -373,7 +379,7 @@ namespace Lamp
 				pComp->MakeOwner(pEnt);
 				pComp->Initialize();
 
-				for (rapidxml::xml_node<>* pParam = pComponent->first_node("param"); pParam; pParam = pParam->next_sibling())
+				for (rapidxml::xml_node<>* pParam = pComponent->first_node("Param"); pParam; pParam = pParam->next_sibling())
 				{
 					auto paramName = pParam->first_attribute("name")->value();
 					auto type = ComponentProperties::GetTypeFromString(pParam->first_attribute("type")->value());
@@ -388,6 +394,9 @@ namespace Lamp
 							{
 								std::string* p = static_cast<std::string*>(prop.Value);
 								*p = std::string(pParam->first_attribute("value")->value());
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 
@@ -401,6 +410,9 @@ namespace Lamp
 							{
 								bool* p = static_cast<bool*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;
@@ -413,6 +425,9 @@ namespace Lamp
 							{
 								int* p = static_cast<int*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;
@@ -425,6 +440,9 @@ namespace Lamp
 							{
 								float* p = static_cast<float*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;
@@ -437,6 +455,9 @@ namespace Lamp
 							{
 								glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;
@@ -449,6 +470,9 @@ namespace Lamp
 							{
 								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;
@@ -461,8 +485,27 @@ namespace Lamp
 							{
 								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
+						break;
+					}
+					case Lamp::PropertyType::Path:
+					{
+						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == paramName)
+							{
+								std::string* p = static_cast<std::string*>(prop.Value);
+								*p = std::string(pParam->first_attribute("value")->value());
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
+							}
+						}
+
 						break;
 					}
 					case Lamp::PropertyType::Color3:
@@ -473,6 +516,9 @@ namespace Lamp
 							{
 								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;
@@ -485,6 +531,9 @@ namespace Lamp
 							{
 								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
 								GetValue(pParam->first_attribute("value")->value(), *p);
+
+								EntityPropertyChangedEvent e;
+								pComp->OnEvent(e);
 							}
 						}
 						break;

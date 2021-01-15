@@ -189,8 +189,9 @@ namespace Sandbox3D
 				cmd.lastData = m_pSelectedObject;
 				cmd.object = nullptr;
 
-				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(mousePos, m_PerspectiveSize, m_SandboxController->GetCameraController());
-			
+				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_SandboxController->GetCameraController()->GetPosition(), m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, windowSize));
+				m_Lines.push_back(std::make_pair<>(m_SandboxController->GetCameraController()->GetPosition(), m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, windowSize)));
+				
 				if (cmd.lastData != m_pSelectedObject)
 				{
 					m_PerspecticeCommands.push_front(cmd);

@@ -145,12 +145,15 @@ namespace Lamp
 		{
 			if (rapidxml::xml_node<>* pMax = pBB->first_node("Max"))
 			{
-				GetValue(pMax->first_attribute("position")->value(), boundingBox.Max);
+				GetValue(pMax->first_attribute("position")->value(), boundingBox.StartMax);
 			}
 			if (rapidxml::xml_node<>* pMin = pBB->first_node("Min"))
 			{
-				GetValue(pMin->first_attribute("position")->value(), boundingBox.Min);
+				GetValue(pMin->first_attribute("position")->value(), boundingBox.StartMin);
 			}
+
+			boundingBox.Max = boundingBox.StartMax;
+			boundingBox.Min = boundingBox.StartMin;
 		}
 
 		return CreateRef<Model>(meshes, mat, name, boundingBox, path);

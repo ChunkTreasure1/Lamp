@@ -4,7 +4,6 @@
 #include <Lamp/Core/Application.h>
 
 #include <Lamp/Input/FileSystem.h>
-#include <Lamp/Rendering/Renderer2D.h>
 #include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Rendering/Texture2D/Texture2D.h>
 		 
@@ -17,7 +16,6 @@
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <Lamp/Objects/Entity/Base/BaseComponent.h>
 #include <Lamp/Objects/Brushes/Brush.h>
-#include <Lamp/Objects/Brushes/Brush2D.h>
 
 #include <Lamp/Physics/PhysicsEngine.h>
 #include <Lamp/Objects/ObjectLayer.h>

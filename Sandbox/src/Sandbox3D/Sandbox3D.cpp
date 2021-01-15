@@ -270,6 +270,14 @@ namespace Sandbox3D
 		Renderer3D::DrawSkybox();
 	}
 
+	void Sandbox3D::RenderLines()
+	{
+		for (auto& p : m_Lines)
+		{
+			Renderer3D::DrawLine(p.first, p.second, 1.f);
+		}
+	}
+
 	void Sandbox3D::CreateRenderPasses()
 	{
 		RenderPassInfo passInfo;

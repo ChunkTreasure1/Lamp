@@ -1492,6 +1492,7 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1699,5 +1700,6 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp" />
   </ItemGroup>
 </Project>

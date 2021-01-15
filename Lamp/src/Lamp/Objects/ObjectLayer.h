@@ -65,7 +65,7 @@ namespace Lamp
 
 		void MoveToLayer(Object* obj, uint32_t layerId);
 
-		Object* GetObjectFromPoint(const glm::vec2& mousePos, const glm::vec2& screenSize, Ref<PerspectiveCameraController>& camera);
+		Object* GetObjectFromPoint(const glm::vec3& origin, const glm::vec3& dir);
 
 	public:
 		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }

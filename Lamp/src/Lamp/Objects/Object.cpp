@@ -6,8 +6,10 @@
 namespace Lamp
 {
 	Object::Object()
-		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
-	{}
+		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0),
+		m_PickingCollider({ -0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, m_Position)
+	{
+	}
 
 	Object::~Object()
 	{
@@ -20,6 +22,7 @@ namespace Lamp
 
 	void Object::SetPosition(const glm::vec3& pos)
 	{
+		m_PickingCollider.Transform(pos - m_Position);
 		m_Position = pos;
 		if (m_pRigidBody)
 		{
@@ -33,12 +36,20 @@ namespace Lamp
 		OnEvent(e);
 	}
 
-	void Object::SetScale(const glm::vec3& scale)
+	void Object::SetPhysicsPosition(const glm::vec3& pos)
 	{
-		m_Scale = scale; 
+		m_Position = pos; 
 		CalculateModelMatrix(); 
 		UpdatedMatrix(); 
-		ScaleChanged(); 
+		//m_PickingCollider.Transform(pos);
+	}
+
+	void Object::SetScale(const glm::vec3& scale)
+	{
+		m_Scale = scale;
+		CalculateModelMatrix();
+		UpdatedMatrix();
+		ScaleChanged();
 
 		if (m_pRigidBody)
 		{

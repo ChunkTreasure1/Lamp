@@ -5,6 +5,7 @@
 #include "Lamp/Event/EntityEvent.h"
 
 #include "Lamp/Math/Math.h"
+#include "Lamp/Physics/Internal/Picking.h"
 
 namespace Lamp
 {
@@ -18,7 +19,7 @@ namespace Lamp
 
 		//Setting
 		void SetPosition(const glm::vec3& pos);
-		inline void SetPhysicsPosition(const glm::vec3& pos) { m_Position = pos; CalculateModelMatrix(); UpdatedMatrix(); }
+		void SetPhysicsPosition(const glm::vec3& pos);
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void AddRotation(const glm::vec3& rot) { m_Rotation += rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		void SetScale(const glm::vec3& scale);
@@ -42,6 +43,7 @@ namespace Lamp
 		inline uint32_t GetLayerID() { return m_LayerID; }
 		inline bool GetIsFrozen() { return m_IsFrozen; }
 		inline bool GetIsActive() { return m_IsActive; }
+		inline const PickingCollider& GetPickingCollider() { return m_PickingCollider; }
 
 		virtual void OnEvent(Event& e) {}
 		virtual uint64_t GetEventMask() = 0;
@@ -65,5 +67,6 @@ namespace Lamp
 		uint32_t m_LayerID;
 
 		Rigidbody* m_pRigidBody = nullptr;
+		PickingCollider m_PickingCollider;
 	};
 }

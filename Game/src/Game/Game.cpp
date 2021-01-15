@@ -9,17 +9,11 @@
 #include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
+#include <Lamp.h>
+
 void Game::OnStart()
 {
 	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
-
-	{
-		Lamp::Entity* ent = Lamp::Entity::Create();
-		ent->GetOrCreateComponent<Lamp::AudioListenerComponent>();
-		ent->RemoveComponent<Lamp::AudioListenerComponent>();
-
-		ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
-	}
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
