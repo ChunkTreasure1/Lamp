@@ -363,9 +363,6 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureHDR.h">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
@@ -1512,6 +1509,7 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1673,9 +1671,6 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureHDR.cpp">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
@@ -1724,5 +1719,6 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.cpp" />
   </ItemGroup>
 </Project>

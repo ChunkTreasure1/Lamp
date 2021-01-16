@@ -33,11 +33,10 @@ namespace Lamp
 
 		/////Lighting/////
 		m_pShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-		m_pShader->UploadFloat("u_DirectionalLight.bias", g_pEnv->DirLight.Bias);
 		m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Direction);
 		m_pShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 
-		m_pShader->UploadFloat3("u_Environment.globalAmbient", LevelSystem::GetEnvironment().GlobalAmbient);
+		//m_pShader->UploadFloat3("u_Environment.globalAmbient", LevelSystem::GetEnvironment().GlobalAmbient);
 
 		int i = 0;
 		//Point lights
@@ -51,12 +50,12 @@ namespace Lamp
 
 			if (auto& light = ent->GetComponent<LightComponent>())
 			{
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].intensity", light->GetIntensity());
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].radius", light->GetRadius());
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].bias", light->GetBias());
+				m_pShader->UploadFloat("u_PointLights[" + std::to_string(i) + "].intensity", light->GetIntensity());
+				m_pShader->UploadFloat("u_PointLights[" + std::to_string(i) + "].radius", light->GetRadius());
+				m_pShader->UploadFloat("u_PointLights[" + std::to_string(i) + "].falloff", light->GetFalloff());
 
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].position", light->GetOwner()->GetPosition());
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].color", light->GetColor());
+				m_pShader->UploadFloat3("u_PointLights[" + std::to_string(i) + "].position", light->GetOwner()->GetPosition());
+				m_pShader->UploadFloat3("u_PointLights[" + std::to_string(i) + "].color", light->GetColor());
 				i++;
 			}
 		}
@@ -67,16 +66,15 @@ namespace Lamp
 			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i], i);
 		}
 
-		m_pShader->UploadFloat("u_Material.depthScale", m_DepthScale);
-		m_pShader->UploadFloat("u_Material.shininess", m_Shininess);
+			//m_pShader->UploadFloat("u_Material.depthScale", m_DepthScale);
 		m_pShader->UploadInt("u_LightCount", i);
 
-		if (m_pTextures.find("Depth") != m_pTextures.end())
-		{
-			if (m_pTextures["Depth"].get())
-			{
-				m_pShader->UploadInt("u_UsingParallax", 1);
-			}
-		}
+			//if (m_pTextures.find("Depth") != m_pTextures.end())
+			//{
+			//	if (m_pTextures["Depth"].get())
+			//	{
+			//		m_pShader->UploadInt("u_UsingParallax", 1);
+			//	}
+			//}
 	}
 }

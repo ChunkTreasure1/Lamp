@@ -13,6 +13,7 @@
 
 #include "RenderCommand.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/Texture2D/SkyboxDraw.h"
 
 namespace Lamp
 {
@@ -28,6 +29,8 @@ namespace Lamp
 		static const uint32_t MaxLineVerts = MaxLines * 2;
 		static const uint32_t MaxLineIndices = MaxLines * 2;
 
+		Ref<SkyboxDraw> TestSky;
+
 		//////Lines//////
 		Ref<VertexArray> LineVertexArray;
 		Ref<VertexBuffer> LineVertexBuffer;
@@ -36,11 +39,6 @@ namespace Lamp
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
 		/////////////////
-
-		/////Skybox/////
-		Ref<VertexArray> SkyBoxVertexArray;
-		Ref<Shader> SkyboxShader;
-		////////////////
 
 		/////Grid/////
 		Ref<VertexArray> GridVertexArray;
@@ -60,7 +58,6 @@ namespace Lamp
 		Ref<VertexArray> SphereArray;
 
 		Material LineMaterial;
-		Ref<TextureCube> CubeMap;
 	};
 
 	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
@@ -71,18 +68,7 @@ namespace Lamp
 	{
 		s_pData = new Renderer3DStorage();
 
-		std::vector<std::string> paths =
-		{
-			"assets/textures/skybox/right.jpg",
-			"assets/textures/skybox/left.jpg",
-			"assets/textures/skybox/top.jpg",
-			"assets/textures/skybox/bottom.jpg",
-			"assets/textures/skybox/front.jpg",
-			"assets/textures/skybox/back.jpg",
-		};
-		s_pData->CubeMap = TextureCube::Create(paths);
-		s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-		s_pData->GridShader = ShaderLibrary::GetShader("Grid");
+		s_pData->TestSky = CreateRef<SkyboxDraw>("assets/textures/newport_loft.hdr");
 
 		///////Line///////
 		s_pData->LineVertexArray = VertexArray::Create();
@@ -91,7 +77,7 @@ namespace Lamp
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
-			});
+		});
 		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -109,45 +95,6 @@ namespace Lamp
 		s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
 
 		delete[] pLineIndices;
-		//////////////////
-
-		//////Skybox//////
-		std::vector<float> boxPositions =
-		{
-			-1, -1, -1,
-			 1, -1, -1,
-			 1,  1, -1,
-			-1,  1, -1,
-			-1, -1,  1,
-			 1, -1,  1,
-			 1,  1,  1,
-			-1,  1,  1
-		};
-
-		std::vector<uint32_t> boxIndicies =
-		{
-			0, 1, 3, 3, 1, 2,
-			1, 5, 2, 2, 5, 6,
-			5, 4, 6, 6, 4, 7,
-			4, 0, 7, 7, 0, 3,
-			3, 2, 7, 7, 2, 6,
-			4, 5, 0, 0, 5, 1
-		};
-
-		s_pData->SkyBoxVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
-		pBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" }
-			});
-
-		s_pData->SkyBoxVertexArray->AddVertexBuffer(pBuffer);
-
-
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-		s_pData->SkyBoxVertexArray->SetIndexBuffer(indexBuffer);
-
-		s_pData->SkyBoxVertexArray->Unbind();
 		//////////////////
 
 		/////Grid/////
@@ -170,11 +117,11 @@ namespace Lamp
 		buffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
-			});
+		});
 		s_pData->GridVertexArray->AddVertexBuffer(buffer);
 
 		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
-		s_pData->GridVertexArray->SetIndexBuffer(indexBuffer);
+		s_pData->GridVertexArray->SetIndexBuffer(gridIndexBuffer);
 
 		s_pData->GridVertexArray->Unbind();
 		//////////////
@@ -224,7 +171,8 @@ namespace Lamp
 		}
 
 		mat.GetShader()->Bind();
-		mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+		mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
+		mat.GetShader()->UploadMat4("u_Model", modelMatrix);	
 		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
 
 		mesh->GetVertexArray()->Bind();
@@ -233,18 +181,7 @@ namespace Lamp
 
 	void Renderer3D::DrawSkybox()
 	{
-		glDepthMask(GL_FALSE);
-		s_pData->CubeMap->Bind();
-		s_pData->SkyboxShader->Bind();
-		s_pData->SkyBoxVertexArray->Bind();
-		s_pData->SkyboxShader->UploadInt("u_Skybox", 0);
-
-		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
-		s_pData->SkyboxShader->UploadMat4("u_View", viewMat);
-
-		RenderCommand::DrawIndexed(s_pData->SkyBoxVertexArray, s_pData->SkyBoxVertexArray->GetIndexBuffer()->GetCount());
-		glDepthMask(GL_TRUE);
+		//s_pData->TestSky->Draw(s_pData->CurrentRenderPass.Camera->GetViewMatrix());
 	}
 
 	void Renderer3D::DrawGrid()

@@ -100,5 +100,15 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
+    <None Include="engine\shaders\3d\lineShader_fs.glsl" />
+    <None Include="engine\shaders\3d\lineShader_vs.glsl" />
+    <None Include="engine\shaders\3d\shader_fs.glsl" />
+    <None Include="engine\shaders\3d\shader_vs.glsl" />
+    <None Include="engine\shaders\3d\eqCube_fs.glsl" />
+    <None Include="engine\shaders\3d\eqCube_vs.glsl" />
+    <None Include="engine\shaders\3d\skybox_fs.glsl" />
+    <None Include="engine\shaders\3d\skybox_vs.glsl" />
+    <None Include="engine\shaders\3d\testPbr_fs.glsl" />
+    <None Include="engine\shaders\3d\testPbr_vs.glsl" />
   </ItemGroup>
 </Project>

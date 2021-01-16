@@ -285,7 +285,7 @@ namespace Sandbox3D
 		std::vector<std::function<void()>> ptrs;
 
 		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-		//ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
 
 		Ref<RenderPass> renderPass = CreateRef<RenderPass>(Renderer3D::GetFrameBuffer(), passInfo, ptrs);
 		RenderPassManager::Get()->AddPass(renderPass);

@@ -17,7 +17,7 @@ namespace Lamp
 
 		glm::mat4 ViewProjection = glm::mat4(1.f);
 
-		glm::vec3 Color{ 255 ,255, 255 };
+		glm::vec3 Color{ 1.f, 1.f, 1.f };
 		float Intensity = 1.f;
 		float Bias = 0.5f;
 
@@ -27,7 +27,9 @@ namespace Lamp
 
 		inline void SetPosition(const glm::vec3& pos)
 		{
-			Position = pos; Direction = glm::vec3(0.f) - Position;
+			Position = pos; 
+			Direction = glm::vec3(0.f) - Position;
+			Direction = glm::normalize(Direction);
 
 			View = glm::lookAt(Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 			ViewProjection = Projection * View;
@@ -36,10 +38,10 @@ namespace Lamp
 
 	struct PointLight
 	{
-		glm::vec3 Color{ 255, 255, 255 };
+		glm::vec3 Color{ 1.f, 1.f, 1.f };
 
 		float Intensity = 1.f;
 		float Radius = 1.f;
-		float Bias = 0.5f;
+		float Falloff = 0.f;
 	};
 }

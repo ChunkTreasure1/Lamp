@@ -207,9 +207,9 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureHDR.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h" />
     <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
@@ -645,9 +645,9 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureHDR.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />

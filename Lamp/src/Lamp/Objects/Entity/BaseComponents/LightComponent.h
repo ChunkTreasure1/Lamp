@@ -20,8 +20,8 @@ namespace Lamp
 			({
 				{ PropertyType::Float, "Intensity", RegisterData(&m_PointLight.Intensity) },
 				{ PropertyType::Float, "Radius", RegisterData(&m_PointLight.Radius) },
-				{ PropertyType::Float, "Bias", RegisterData(&m_PointLight.Bias) },
-				{ PropertyType::Float3, "Color", RegisterData(&m_PointLight.Color) }
+				{ PropertyType::Float, "Falloff", RegisterData(&m_PointLight.Falloff) },
+				{ PropertyType::Color3, "Color", RegisterData(&m_PointLight.Color) }
 			});
 		}
 
@@ -34,13 +34,12 @@ namespace Lamp
 		//Getting
 		inline const float GetIntensity() { return m_PointLight.Intensity; }
 		inline const float GetRadius() { return m_PointLight.Radius; }
-		inline const float GetBias() { return m_PointLight.Bias; }
+		inline const float GetFalloff() { return m_PointLight.Falloff; }
 
 		inline const glm::vec3& GetColor() { return m_PointLight.Color; }
 
 		//Setting
 		inline void SetIntensity(float val) { m_PointLight.Intensity = val; }
-		inline void SetBias(float val) { m_PointLight.Bias = val; }
 
 		inline void SetColor(const glm::vec3& val) { m_PointLight.Color = val; }
 
