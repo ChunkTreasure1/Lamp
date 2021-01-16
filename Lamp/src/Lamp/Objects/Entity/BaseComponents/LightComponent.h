@@ -18,11 +18,10 @@ namespace Lamp
 		{
 			SetComponentProperties
 			({
-				{ PropertyType::Float, "Light constant", RegisterData(&m_PointLight.LightConstant) },
-				{ PropertyType::Float, "Linear constant", RegisterData(&m_PointLight.LinearConstant) },
-				{ PropertyType::Float, "Quadratic constant", RegisterData(&m_PointLight.QuadraticConstant) },
-				{ PropertyType::Float3, "Diffuse", RegisterData(&m_PointLight.Diffuse) },
-				{ PropertyType::Float3, "Specular", RegisterData(&m_PointLight.Specular) }
+				{ PropertyType::Float, "Intensity", RegisterData(&m_PointLight.Intensity) },
+				{ PropertyType::Float, "Radius", RegisterData(&m_PointLight.Radius) },
+				{ PropertyType::Float, "Bias", RegisterData(&m_PointLight.Bias) },
+				{ PropertyType::Float3, "Color", RegisterData(&m_PointLight.Color) }
 			});
 		}
 
@@ -33,20 +32,17 @@ namespace Lamp
 		////////////////
 
 		//Getting
-		inline const float GetLightConstant() { return m_PointLight.LightConstant; }
-		inline const float GetLinearConstant() { return m_PointLight.LinearConstant; }
-		inline const float GetQuadraticConstant() { return m_PointLight.QuadraticConstant; }
+		inline const float GetIntensity() { return m_PointLight.Intensity; }
+		inline const float GetRadius() { return m_PointLight.Radius; }
+		inline const float GetBias() { return m_PointLight.Bias; }
 
-		inline const glm::vec3& GetDiffuse() { return m_PointLight.Diffuse; }
-		inline const glm::vec3& GetSpecular() { return m_PointLight.Specular; }
+		inline const glm::vec3& GetColor() { return m_PointLight.Color; }
 
 		//Setting
-		inline void SetLightConstant(float val) { m_PointLight.LightConstant = val; }
-		inline void SetLinearConstant(float val) { m_PointLight.LinearConstant = val; }
-		inline void SetQuadraticConstant(float val) { m_PointLight.QuadraticConstant = val; }
+		inline void SetIntensity(float val) { m_PointLight.Intensity = val; }
+		inline void SetBias(float val) { m_PointLight.Bias = val; }
 
-		inline void SetDiffuse(const glm::vec3& val) { m_PointLight.Diffuse = val; }
-		inline void SetSpecular(const glm::vec3& val) { m_PointLight.Specular = val; }
+		inline void SetColor(const glm::vec3& val) { m_PointLight.Color = val; }
 
 	private:
 		bool OnRender(AppRenderEvent& e);

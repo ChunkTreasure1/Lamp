@@ -1,6 +1,6 @@
+#include "lppch.h"
 #include "TextureHDR.h"
 
-#include <glad/glad.h>
 #include "Lamp/Rendering/Texture2D/TextureCache.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

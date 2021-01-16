@@ -15,17 +15,17 @@ namespace Lamp
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		if (fileEnd.find("hdr"))
-		{
-			//Set texture wrapping
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		//if (fileEnd.find("hdr"))
+		//{
+		//	//Set texture wrapping
+		//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-			//Set filtering
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else
+		//	//Set filtering
+		//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//}
+		//else
 		{
 			//Set texture wrapping
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -42,13 +42,13 @@ namespace Lamp
 
 		GLenum dataFormat = 0, internalFormat = 0, type = 0;
 
-		if (fileEnd.find("hdr"))
-		{
-			internalFormat = GL_RGB16F;
-			dataFormat = GL_RGB;
-			type = GL_FLOAT;
-		}
-		else if (channels == 4)
+		//if (fileEnd.find("hdr"))
+		//{
+		//	internalFormat = GL_RGB16F;
+		//	dataFormat = GL_RGB;
+		//	type = GL_FLOAT;
+		//}
+		if (channels == 4)
 		{
 			internalFormat = GL_RGBA8;
 			dataFormat = GL_RGBA;

@@ -32,10 +32,10 @@ namespace Lamp
 		m_pShader->Bind();
 
 		/////Lighting/////
-		m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLight.Diffuse);
-		m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLight.Specular);
+		m_pShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+		m_pShader->UploadFloat("u_DirectionalLight.bias", g_pEnv->DirLight.Bias);
 		m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Direction);
-		m_pShader->UploadFloat3("u_DirectionalLight.position", g_pEnv->DirLight.Position);
+		m_pShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 
 		m_pShader->UploadFloat3("u_Environment.globalAmbient", LevelSystem::GetEnvironment().GlobalAmbient);
 
@@ -51,15 +51,12 @@ namespace Lamp
 
 			if (auto& light = ent->GetComponent<LightComponent>())
 			{
-				std::string val = "u_PointLight[" + std::to_string(i) + "].constant";
-
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].constant", light->GetLightConstant());
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].linear", light->GetLinearConstant());
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].quadratic", light->GetQuadraticConstant());
+				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].intensity", light->GetIntensity());
+				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].radius", light->GetRadius());
+				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].bias", light->GetBias());
 
 				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].position", light->GetOwner()->GetPosition());
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].diffuse", light->GetDiffuse());
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].specular", light->GetSpecular());
+				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].color", light->GetColor());
 				i++;
 			}
 		}

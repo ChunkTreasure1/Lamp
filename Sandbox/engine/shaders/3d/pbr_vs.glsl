@@ -23,9 +23,9 @@ void main()
 	v_Out.TexCoord = a_TexCoords;
 	
 	//TBN creation
-    vec3 T = normalize(mat3(u_Model) * a_Tangent);
-	vec3 B = normalize(mat3(u_Model) * a_Bitangent);
-    vec3 N = normalize(mat3(u_Model) * a_Normal);
+    vec3 T = normalize(vec3(u_Model * vec4(a_Tangent, 0.0)));
+	vec3 B = normalize(vec3(u_Model * vec4(a_Bitangent, 0.0)));
+    vec3 N = normalize(vec3(u_Model * vec4(a_Normal, 0.0)));
 
 	v_Out.TBN = mat3(T, B, N);
 
