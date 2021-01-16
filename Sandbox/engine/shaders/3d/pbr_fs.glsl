@@ -135,41 +135,37 @@ vec3 CalcDirLight(DirectionalLight light, vec3 V, vec3 N, vec3 F0, vec3 albedo_c
 	return ((1.0 - shadow) * (kD * albedo_color / PI + specular) * vec3(1.0) * NdotL) * light.intensity * 5 * light.color;
 }
 
-vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 F0, vec3 albedo_color, float metallic_color, float roughness_color)
+vec3 CalcPointLight(PointLight light, vec3 V, vec3 N, vec3 F0, vec3 albedo, float metallic, float roughness)
 {
-	float shadow = 0.0;
+	float dist = length(light.position - v_In.FragPos);
 
-	float distance = length(light.position - v_In.FragPos);
+	if (dist > light.radius) return vec3(0);
 
-	if (distance > light.radius) return vec3(0);
-
+	/////Per light radiance/////
 	vec3 L = normalize(light.position - v_In.FragPos);
 	vec3 H = normalize(V + L);
 
-	//float attenuation = 1 * ((distance + light.quadratic/light.linear) * (distance * distance)) / (light.linear * distance);
-
-	float attenuation;// = smoothstep(light.raduis, 0, distance);//1.0 - (distance / (light.raduis));
-	attenuation = clamp(1.0 - distance / light.radius, 0.0, 1.0); attenuation *= attenuation;
-	//attenuation = clamp(1.0 - distance*distance/(light.raduis*light.raduis), 0.0, 1.0); attenuation *= attenuation;
-	//if(attenuation < 0) attenuation = 0;
-	//if(attenuation > 1) attenuation = 1;
-
+	float attenuation = clamp(1.0 - dist / light.radius, 0.0, 1.0); attenuation *= attenuation;
 	vec3 radiance = vec3(1.0) * attenuation * light.intensity;
+	////////////////////////////
 
-	// Cook-Torrance BRDF direction
-	float NDF = DistributionGGX(N, H, roughness_color);
-	float G = GeometrySmith(N, V, L, roughness_color);
-	vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+	/////Cook-Torrance BRDF/////
+	float NDF = DistributionGGX(N, H, roughness);
+	float G = GeometrySmith(N, V, L, roughness);
+	vec3 F = FreshnelSchlick(max(dot(H, V), 0.0), F0);
 
-	vec3 nominator = NDF * G * F;
-	float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
-	vec3 specular = nominator / max(denominator, 0.001);
+	vec3 numerator = NDF * G * F;
+	float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
+	vec3 specular = numerator / denominator;
+	////////////////////////////
 
-	vec3 kD = vec3(1.0) - F;
-	kD *= 1.0 - metallic_color;
+	vec3 kS = F;
+	vec3 kD = vec3(1.0) - kS;
+
+	kD *= 1.0 - metallic;
+
 	float NdotL = max(dot(N, L), 0.0);
-
-	return ((1.0 - shadow) * (kD * albedo_color / PI + specular)) * radiance * NdotL * light.color;
+	return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
 void main()
