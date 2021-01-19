@@ -1,7 +1,9 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\sphere.lgf" position="-4.549179,3.131826,0.196260" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\test1.lgf" position="-7.504333,2.884111,-0.641839" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sphere.lgf" position="2.340409,3.131826,0.196260" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,0.000000,-8.198693" rotation="0.000000,0.000000,0.000000" scale="30.000000,1.000000,30.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="3.252418,5.348779,6.493999" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,5.040463,16.783781" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
@@ -21,7 +23,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-3.015071,6.027610,-5.527574" rotation="807.457214,-23.400078,0.000000" fov="60.000000"/>
+		<CameraValues position="-16.120543,16.135160,6.343785" rotation="741.152222,-30.749866,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

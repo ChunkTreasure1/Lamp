@@ -12,7 +12,7 @@ namespace Lamp
 			ViewProjection = Projection * View;
 		}
 
-		glm::vec3 Position{ 50.f, 10.f, 0.f };
+		glm::vec3 Position{ 50.f, 50.f, 0.f };
 
 		glm::mat4 ViewProjection = glm::mat4(1.f);
 
@@ -26,7 +26,7 @@ namespace Lamp
 		}
 
 	private:
-		glm::mat4 Projection = glm::ortho(-10.f, 10.f, -10.f, 10.f, 0.1f, 100.f);
+		glm::mat4 Projection = glm::ortho(-25.f, 25.f, -25.f, 25.f, 0.1f, 1000.f);
 		glm::mat4 View = glm::lookAt(Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 
 		inline void SetPosition(const glm::vec3& pos)

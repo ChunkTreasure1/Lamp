@@ -165,7 +165,24 @@ float ShadowCalculation(vec4 pos)
 
 	vec3 normal = normalize(v_In.Normal);
 
-	float shadow = currentDepth - 0.005 > closestDepth ? 1.0 : 0.0;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth > closestDepth ? 1.0 : 0.0;
+		}
+	}
+
+	shadow /= 9.0;
+
+	if (projCoords.z > 1.0)
+	{
+		shadow = 0.0;
+	}
+
 	return shadow;
 }
 
@@ -183,10 +200,8 @@ void main()
 	vec3 Lo = vec3(0.0);
 
 	float shadow = ShadowCalculation(v_In.ShadowCoord);
-	if(shadow < 1.0)
-	{
-		Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
-	}
+
+	Lo += (1.0 - shadow) * CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
 
 	for(int i= 0; i < u_LightCount; ++i)
 	{

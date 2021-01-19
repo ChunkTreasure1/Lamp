@@ -134,7 +134,7 @@ namespace Lamp
 		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 
 		/////Shadows/////
-		m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024, true);
+		m_pShadowBuffer = Lamp::FrameBuffer::Create(4096, 4096, true);
 		s_pData->ShadowShader = ShaderLibrary::GetShader("shadow");
 
 		m_ShadowBiasMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.5f)) * glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
@@ -173,6 +173,7 @@ namespace Lamp
 	{
 		if (s_pData->CurrentRenderPass.IsShadowPass)
 		{
+			glCullFace(GL_FRONT);
 			s_pData->ShadowShader->Bind();
 
 			//Upload the shadows MVP
@@ -181,6 +182,7 @@ namespace Lamp
 		}
 		else
 		{
+			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadowmap
 			int i = 1;
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
