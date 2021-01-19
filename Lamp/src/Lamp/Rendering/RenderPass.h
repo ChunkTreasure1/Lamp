@@ -9,6 +9,17 @@
 
 namespace Lamp
 {
+	struct RenderPassInfo
+	{
+		Ref<CameraBase> Camera;
+		glm::vec4 ClearColor;
+
+		glm::mat4 ViewProjection = glm::mat4(1.f);
+		glm::mat4 LightViewProjection = glm::mat4(1.f);
+
+		bool IsShadowPass;
+	};
+
 	class RenderPass
 	{
 	public:

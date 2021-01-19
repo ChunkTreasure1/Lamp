@@ -354,9 +354,6 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h">
-      <Filter>src\Lamp\Rendering\Shadows</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
@@ -1510,6 +1507,7 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1662,9 +1660,6 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp">
-      <Filter>src\Lamp\Rendering\Shadows</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
@@ -1720,5 +1715,6 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
   </ItemGroup>
 </Project>

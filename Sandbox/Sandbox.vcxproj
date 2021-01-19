@@ -169,6 +169,9 @@
     <None Include="engine\shaders\3d\lineShader_vs.glsl" />
     <None Include="engine\shaders\3d\shader_fs.glsl" />
     <None Include="engine\shaders\3d\shader_vs.glsl" />
+    <None Include="engine\shaders\3d\shadows\pointShadow_fs.glsl" />
+    <None Include="engine\shaders\3d\shadows\pointShadow_gs.glsl" />
+    <None Include="engine\shaders\3d\shadows\pointShadow_vs.glsl" />
     <None Include="engine\shaders\3d\shadow_fs.glsl" />
     <None Include="engine\shaders\3d\skybox_fs.glsl" />
     <None Include="engine\shaders\3d\skybox_vs.glsl" />
