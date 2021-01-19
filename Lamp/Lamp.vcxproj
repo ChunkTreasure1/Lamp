@@ -673,7 +673,7 @@
     <ProjectReference Include="vendor\glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
-    <ProjectReference Include="vendor\Bullet\src\Bullet.vcxproj">
+    <ProjectReference Include="vendor\bullet\Bullet\Bullet.vcxproj">
       <Project>{0DC355AA-F964-8080-E21F-94D4CE6007D1}</Project>
     </ProjectReference>
   </ItemGroup>

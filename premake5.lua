@@ -13,7 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
-include "Lamp/vendor/Bullet/src"
+include "Lamp/vendor/bullet"
 
 project "Lamp"
 	location "Lamp"

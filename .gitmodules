@@ -7,3 +7,6 @@
 [submodule "Lamp/vendor/imgui"]
 	path = Lamp/vendor/imgui
 	url = https://github.com/TheCherno/imgui
+[submodule "Lamp/vendor/bullet"]
+	path = Lamp/vendor/bullet
+	url = https://github.com/ChunkTreasure1/bullet3
