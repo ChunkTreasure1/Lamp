@@ -50,28 +50,41 @@ namespace Lamp
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorID);
-		glBindTexture(GL_TEXTURE_2D, m_ColorID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_WindowWidth, m_WindowHeight, 0, GL_RGBA, GL_UNSIGNED_INT, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorID, 0);
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthID);
-		glBindTexture(GL_TEXTURE_2D, m_DepthID);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_WindowWidth, m_WindowHeight);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthID, 0);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		if (m_IsShadowBuffer)
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+			glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthID);
+			glBindTexture(GL_TEXTURE_2D, m_DepthID);
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_WindowWidth, m_WindowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthID, 0);
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
+		else
+		{
+			glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorID);
+			glBindTexture(GL_TEXTURE_2D, m_ColorID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_WindowWidth, m_WindowHeight, 0, GL_RGBA, GL_UNSIGNED_INT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorID, 0);
+
+			glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthID);
+			glBindTexture(GL_TEXTURE_2D, m_DepthID);
+			glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_WindowWidth, m_WindowHeight);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthID, 0);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glDrawBuffer(GL_FRONT);
+		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }

@@ -17,6 +17,8 @@
 
 namespace Lamp
 {
+	glm::mat4 Renderer3D::m_ShadowBiasMatrix = glm::mat4(1.f);
+
 	struct LineVertex
 	{
 		glm::vec3 Position;
@@ -38,6 +40,7 @@ namespace Lamp
 
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
+		Material LineMaterial;
 		/////////////////
 
 		/////Grid/////
@@ -57,7 +60,9 @@ namespace Lamp
 		RenderPassInfo CurrentRenderPass;
 		Ref<VertexArray> SphereArray;
 
-		Material LineMaterial;
+		/////Shadows/////
+		Ref<Shader> ShadowShader;
+		/////////////////
 	};
 
 	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
@@ -127,7 +132,13 @@ namespace Lamp
 		//////////////
 
 		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
-		m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024);
+
+		/////Shadows/////
+		m_pShadowBuffer = Lamp::FrameBuffer::Create(1024, 1024, true);
+		s_pData->ShadowShader = ShaderLibrary::GetShader("shadow");
+
+		m_ShadowBiasMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.5f)) * glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
+		/////////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -160,20 +171,36 @@ namespace Lamp
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
 	{
-		int i = 0;
-		for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+		if (s_pData->CurrentRenderPass.IsShadowPass)
 		{
-			if (mat.GetTextures()[name].get() != nullptr)
-			{
-				mat.GetTextures()[name]->Bind(i);
-				i++;
-			}
-		}
+			s_pData->ShadowShader->Bind();
 
-		mat.GetShader()->Bind();
-		mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
-		mat.GetShader()->UploadMat4("u_Model", modelMatrix);	
-		mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
+			//Upload the shadows MVP
+			glm::mat4 shadowMVP =  s_pData->CurrentRenderPass.ViewProjection * modelMatrix;
+			s_pData->ShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+		}
+		else
+		{
+			//Reserve spot 0 for shadowmap
+			int i = 1;
+			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			{
+				if (mat.GetTextures()[name].get() != nullptr)
+				{
+					mat.GetTextures()[name]->Bind(i);
+					i++;
+				}
+			}
+
+			mat.GetShader()->Bind();
+			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
+			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
+			mat.GetShader()->UploadMat4("u_ShadowMVP", s_pData->CurrentRenderPass.LightViewProjection * modelMatrix);
+
+			mat.GetShader()->UploadInt("u_ShadowMap", 0);
+			glBindTextureUnit(0, m_pShadowBuffer->GetDepthAttachment());
+		}
 
 		mesh->GetVertexArray()->Bind();
 		RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());

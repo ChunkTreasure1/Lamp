@@ -44,5 +44,8 @@ namespace Lamp
 
 		static void StartNewBatch();
 		static void ResetBatchData();
+
+	private:
+		static glm::mat4 m_ShadowBiasMatrix;
 	};
 }

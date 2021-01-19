@@ -18,6 +18,6 @@ namespace Lamp
 		bool m_IsShadowBuffer = false;
 
 	public:
-		static Ref<FrameBuffer> Create(const uint32_t width, const uint32_t height);
+		static Ref<FrameBuffer> Create(const uint32_t width, const uint32_t height, bool state = false);
 	};
 }

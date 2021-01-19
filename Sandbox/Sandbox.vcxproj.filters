@@ -110,5 +110,9 @@
     <None Include="engine\shaders\3d\skybox_vs.glsl" />
     <None Include="engine\shaders\3d\testPbr_fs.glsl" />
     <None Include="engine\shaders\3d\testPbr_vs.glsl" />
+    <None Include="engine\shaders\3d\shadow_fs.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="engine\shaders\3d\shadow_vs.glsl" />
   </ItemGroup>
 </Project>

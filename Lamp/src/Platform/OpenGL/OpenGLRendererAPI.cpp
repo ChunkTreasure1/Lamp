@@ -63,6 +63,19 @@ namespace Lamp
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
+	void OpenGLRendererAPI::OffsetPolygon(float factor, float unit)
+	{
+		if (factor == 0 || unit == 0)
+		{
+			glDisable(GL_POLYGON_OFFSET_FILL);
+		}
+		else
+		{
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(factor, unit);
+		}
+	}
+
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
 	{
 		if (count == 0)

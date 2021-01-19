@@ -280,12 +280,16 @@ namespace Sandbox3D
 		passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
 		passInfo.DirLight = g_pEnv->DirLight;
 		passInfo.ClearColor = m_ClearColor;
-		passInfo.IsShadowPass = false;
+		passInfo.IsShadowPass = true;
+
+		Ref<RenderPass> shadowPass = CreateRef<RenderPass>(Renderer3D::GetShadowBuffer(), passInfo);
+		RenderPassManager::Get()->AddPass(shadowPass);
 
 		std::vector<std::function<void()>> ptrs;
-
 		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
 		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
+		passInfo.IsShadowPass = false;
 
 		Ref<RenderPass> renderPass = CreateRef<RenderPass>(Renderer3D::GetFrameBuffer(), passInfo, ptrs);
 		RenderPassManager::Get()->AddPass(renderPass);

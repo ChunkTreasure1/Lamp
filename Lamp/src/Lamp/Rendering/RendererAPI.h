@@ -28,6 +28,7 @@ namespace Lamp
 		virtual void SetClearColor(const glm::vec4& color) = 0;
 		virtual void Clear() = 0;
 		virtual void ClearDepth() = 0;
+		virtual void OffsetPolygon(float factor, float unit) = 0;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) = 0;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;

@@ -1,18 +1,19 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\sphere.lgf" position="-2.394830,1.543655,0.678175" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sphere.lgf" position="-4.549179,3.131826,0.196260" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="-7.504333,2.884111,-0.641839" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
-		<Entity name="Light" position="-0.368320,1.717401,-2.101830" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+		<Entity name="Light" position="-0.368320,1.717401,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
 			<Component name="CameraComponent">
 				<Param name="Is Perspective" type="Bool" value="1"/>
 				<Param name="Is Main" type="Bool" value="0"/>
 				<Param name="Field Of View" type="Float" value="60.000000"/>
 			</Component>
 			<Component name="LightComponent">
-				<Param name="Intensity" type="Float" value="2.000000"/>
-				<Param name="Radius" type="Float" value="10.000000"/>
+				<Param name="Intensity" type="Float" value="1.000000"/>
+				<Param name="Radius" type="Float" value="1.000000"/>
 				<Param name="Falloff" type="Float" value="0.000000"/>
 				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
 			</Component>
@@ -20,7 +21,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="1.596922,8.371052,5.374062" rotation="596.251465,-41.850140,0.000000" fov="60.000000"/>
+		<CameraValues position="-3.015071,6.027610,-5.527574" rotation="807.457214,-23.400078,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

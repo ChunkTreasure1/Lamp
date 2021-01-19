@@ -1,6 +1,6 @@
 #ShaderSpec
-Name : testPbr;
-TextureCount : 3;
+Name: testPbr;
+TextureCount: 3;
 TextureNames
 {
 albedo
@@ -14,6 +14,8 @@ in Out
 {
 	vec3 FragPos;
 	vec2 TexCoord;
+	vec4 ShadowCoord;
+	vec3 Normal;
 	mat3 TBN;
 } v_In;
 
@@ -50,6 +52,9 @@ uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
 uniform samplerCube u_IrradianceMap;
+
+//Bind the shadowmap to slot 0
+uniform sampler2D u_ShadowMap;
 
 const float PI = 3.14159265359;
 
@@ -150,6 +155,20 @@ vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity
 	return lightStrength;
 }
 
+float ShadowCalculation(vec4 pos)
+{
+	vec3 projCoords = pos.xyz / pos.w;
+	projCoords = projCoords * 0.5 + 0.5;
+
+	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	vec3 normal = normalize(v_In.Normal);
+
+	float shadow = currentDepth - 0.005 > closestDepth ? 1.0 : 0.0;
+	return shadow;
+}
+
 void main()
 {
 	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(2.2));
@@ -163,7 +182,11 @@ void main()
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
 
-	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
+	float shadow = ShadowCalculation(v_In.ShadowCoord);
+	if(shadow < 1.0)
+	{
+		Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
+	}
 
 	for(int i= 0; i < u_LightCount; ++i)
 	{
@@ -178,7 +201,6 @@ void main()
 	
 	vec3 ambient = vec3(0.04) * albedo;
 	vec3 color = ambient + Lo;
-
 
 	//HDR tonemapping
 	color = color / (color + vec3(1.0));

@@ -32,6 +32,11 @@ namespace Lamp
 			s_RendererAPI->ClearDepth();
 		}
 
+		static void OffsetPolygon(float factor = 0, float unit = 0)
+		{
+			s_RendererAPI->OffsetPolygon(factor, unit);
+		}
+
 		static void DrawIndexed(const Ref<VertexArray>& VertexArray, uint32_t count = 0)
 		{
 			s_RendererAPI->DrawIndexed(VertexArray, count);

@@ -623,7 +623,10 @@ namespace Sandbox3D
 		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
 
 		ImGui::ColorEdit3("Global Ambient", glm::value_ptr(Lamp::LevelSystem::GetEnvironment().GlobalAmbient));
-		ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Direction));
+
+		
+		ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
+		g_pEnv->DirLight.UpdateProjection();
 
 		ImGui::End();
 	}
