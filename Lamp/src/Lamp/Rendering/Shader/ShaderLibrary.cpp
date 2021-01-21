@@ -5,9 +5,9 @@ namespace Lamp
 {
 	std::vector<Ref<Shader>> ShaderLibrary::m_Shaders;
 
-	void ShaderLibrary::AddShader(const std::string& vertexPath, const std::string& fragmentPath)
+	void ShaderLibrary::AddShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath)
 	{
-		Ref<Shader> shader = Shader::Create(vertexPath, fragmentPath);
+		Ref<Shader> shader = Shader::Create(vertexPath, fragmentPath, geoPath);
 
 		m_Shaders.push_back(shader);
 	}
@@ -19,7 +19,8 @@ namespace Lamp
 		AddShader("engine/shaders/3d/testPbr_vs.glsl", "engine/shaders/3d/testPbr_fs.glsl");
 		AddShader("engine/shaders/3d/eqCube_vs.glsl", "engine/shaders/3d/eqCube_fs.glsl");
 		AddShader("engine/shaders/3d/skybox_vs.glsl", "engine/shaders/3d/skybox_fs.glsl");
-		AddShader("engine/shaders/3d/shadow_vs.glsl", "engine/shaders/3d/shadow_fs.glsl");
+		AddShader("engine/shaders/3d/shadows/dirShadow_vs.glsl", "engine/shaders/3d/shadows/dirShadow_fs.glsl");
+		AddShader("engine/shaders/3d/shadows/pointShadow_vs.glsl", "engine/shaders/3d/shadows/pointShadow_fs.glsl", "engine/shaders/3d/shadows/pointShadow_gs.glsl");
 	}
 
 	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)

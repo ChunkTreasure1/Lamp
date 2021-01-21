@@ -51,6 +51,19 @@ namespace Lamp
 		return nullptr;
 	}
 
+	Entity* EntityManager::GetEntityFromId(uint32_t id)
+	{
+		for (int i = 0; i < m_pEntites.size(); i++)
+		{
+			if (m_pEntites[i]->GetId() == id)
+			{
+				return m_pEntites[i];
+			}
+		}
+
+		return nullptr;
+	}
+
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
 		Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
@@ -61,4 +74,5 @@ namespace Lamp
 
 		return nullptr;
 	}
+
 }

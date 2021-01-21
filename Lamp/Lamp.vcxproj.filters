@@ -1724,5 +1724,6 @@
     <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
   </ItemGroup>
 </Project>

@@ -80,7 +80,6 @@ namespace Sandbox3D
 
 		RenderPassSpecification pass;
 		pass.Camera = m_Camera->GetCamera();
-		pass.IsShadowPass = false;
 		pass.TargetFramebuffer = m_Framebuffer;
 
 		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));

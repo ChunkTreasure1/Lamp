@@ -15,6 +15,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Texture2D/SkyboxDraw.h"
 #include "Lamp/Rendering/RenderPass.h"
+#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 
 namespace Lamp
 {
@@ -60,8 +61,9 @@ namespace Lamp
 		Ref<VertexArray> SphereArray;
 
 		/////Shadows/////
-		Ref<Shader> ShadowShader;
+		Ref<Shader> DirShadowShader;
 		Ref<Framebuffer> ShadowBuffer;
+		Ref<Shader> PointShadowShader;
 		/////////////////
 	};
 
@@ -80,7 +82,7 @@ namespace Lamp
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" }
-		});
+			});
 		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -120,7 +122,7 @@ namespace Lamp
 		buffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" }
-		});
+			});
 		s_pData->GridVertexArray->AddVertexBuffer(buffer);
 
 		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
@@ -131,7 +133,8 @@ namespace Lamp
 
 
 		/////Shadows/////
-		s_pData->ShadowShader = ShaderLibrary::GetShader("shadow");
+		s_pData->DirShadowShader = ShaderLibrary::GetShader("dirShadow");
+		s_pData->PointShadowShader = ShaderLibrary::GetShader("pointShadow");
 		/////////////////
 	}
 
@@ -167,19 +170,44 @@ namespace Lamp
 	{
 		if (s_pData->CurrentRenderPass.IsShadowPass)
 		{
+			/////Directional light shadows/////
 			glCullFace(GL_FRONT);
-			s_pData->ShadowShader->Bind();
+			s_pData->DirShadowShader->Bind();
 
-			//Directional light shadows
 			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
-			s_pData->ShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
 			s_pData->ShadowBuffer = s_pData->CurrentRenderPass.TargetFramebuffer;
+
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			////////////////////////////////////
+		}
+		else if (s_pData->CurrentRenderPass.IsPointShadowPass)
+		{
+			/////Point light shadows/////
+			glCullFace(GL_BACK);
+			s_pData->PointShadowShader->Bind();
+
+			uint32_t j = s_pData->CurrentRenderPass.LightIndex;
+			const PointLight& light = g_pEnv->pRenderUtils->GetPointLights()[j];
+
+			for (int i = 0; i < light.ShadowBuffer->GetTransforms().size(); i++)
+			{
+				s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light.ShadowBuffer->GetTransforms()[i]);
+			}
+
+			s_pData->PointShadowShader->UploadFloat("u_FarPlane", light.FarPlane);
+			s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light.ShadowBuffer->GetPosition());
+			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
+
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			/////////////////////////////
 		}
 		else
 		{
 			glCullFace(GL_BACK);
-			//Reserve spot 0 for shadowmap
-			int i = 1;
+			//Reserve spot 0 for shadow map
+			int i = 2;
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
 				if (mat.GetTextures()[name].get() != nullptr)
@@ -197,10 +225,13 @@ namespace Lamp
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
 			glBindTextureUnit(0, s_pData->ShadowBuffer->GetDepthAttachment());
-		}
 
-		mesh->GetVertexArray()->Bind();
-		RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			mat.GetShader()->UploadInt("u_TestPointMap", 1);
+			glBindTextureUnit(1, g_pEnv->pRenderUtils->GetPointLights()[0].ShadowBuffer->GetDepthAttachment());
+
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+		}
 	}
 
 	void Renderer3D::DrawSkybox()

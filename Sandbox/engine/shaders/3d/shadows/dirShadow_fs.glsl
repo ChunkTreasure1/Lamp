@@ -1,5 +1,5 @@
 #ShaderSpec
-Name: shadow;
+Name: dirShadow;
 TextureCount: 3;
 TextureNames
 {

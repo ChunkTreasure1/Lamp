@@ -163,6 +163,8 @@
     <None Include="engine\shaders\2d\FlatColor.vert" />
     <None Include="engine\shaders\2d\Texture.frag" />
     <None Include="engine\shaders\2d\Texture.vert" />
+    <None Include="engine\shaders\3d\testPbr_fs.glsl" />
+    <None Include="engine\shaders\3d\testPbr_vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Game\Game.vcxproj">

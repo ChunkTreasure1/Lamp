@@ -22,6 +22,7 @@ namespace Lamp
 	{
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
+		g_pEnv->pRenderUtils = new RenderUtils();
 
 		//Create the window
 		WindowProps props;
@@ -46,6 +47,7 @@ namespace Lamp
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
+		delete g_pEnv->pRenderUtils;
 		delete g_pEnv;
 	}
 

@@ -5,6 +5,9 @@
 
 namespace Lamp
 {
+	static int s_PointLightId = 0;
+	class PointShadowBuffer;
+
 	struct DirectionalLight
 	{
 		DirectionalLight()
@@ -40,10 +43,20 @@ namespace Lamp
 
 	struct PointLight
 	{
+		PointLight()
+		{
+			Id = s_PointLightId++;
+		}
+
 		glm::vec3 Color{ 1.f, 1.f, 1.f };
 
 		float Intensity = 1.f;
 		float Radius = 1.f;
 		float Falloff = 0.f;
+		float FarPlane = 100.f;
+		float NearPlane = 0.01f;
+
+		uint32_t Id;
+		std::shared_ptr<PointShadowBuffer> ShadowBuffer;
 	};
 }

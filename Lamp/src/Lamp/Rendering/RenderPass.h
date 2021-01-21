@@ -18,6 +18,8 @@ namespace Lamp
 		Ref<Framebuffer> TargetFramebuffer;
 
 		bool IsShadowPass = false;
+		bool IsPointShadowPass = false;
+		uint32_t LightIndex = 0;
 	};
 
 	class RenderPass

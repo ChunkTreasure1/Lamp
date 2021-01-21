@@ -13,22 +13,13 @@ namespace Lamp
 	{
 	public:
 
-		LightComponent()
-			: EntityComponent("LightComponent")
-		{
-			SetComponentProperties
-			({
-				{ PropertyType::Float, "Intensity", RegisterData(&m_PointLight.Intensity) },
-				{ PropertyType::Float, "Radius", RegisterData(&m_PointLight.Radius) },
-				{ PropertyType::Float, "Falloff", RegisterData(&m_PointLight.Falloff) },
-				{ PropertyType::Color3, "Color", RegisterData(&m_PointLight.Color) }
-			});
-		}
+		LightComponent();
+		~LightComponent();
 
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint64_t GetEventMask() override { return EventType::None; }
+		virtual uint64_t GetEventMask() override { return EventType::EntityPositionChanged; }
 		////////////////
 
 		//Getting
@@ -40,12 +31,12 @@ namespace Lamp
 
 		//Setting
 		inline void SetIntensity(float val) { m_PointLight.Intensity = val; }
-
 		inline void SetColor(const glm::vec3& val) { m_PointLight.Color = val; }
 
 	private:
 		bool OnRender(AppRenderEvent& e);
 		bool OnUpdate(AppUpdateEvent& e);
+		bool OnPositionChanged(EntityPositionChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<LightComponent>(); }

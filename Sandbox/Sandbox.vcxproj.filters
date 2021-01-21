@@ -100,5 +100,7 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
+    <None Include="engine\shaders\3d\testPbr_vs.glsl" />
+    <None Include="engine\shaders\3d\testPbr_fs.glsl" />
   </ItemGroup>
 </Project>

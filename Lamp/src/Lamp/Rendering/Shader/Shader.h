@@ -51,12 +51,13 @@ namespace Lamp
 		virtual const std::string& GetName() = 0;
 		virtual std::string& GetFragmentPath() = 0;
 		virtual std::string& GetVertexPath() = 0;
+		virtual std::string& GetGeoPath() = 0;
 
 		inline const ShaderType GetType() { return m_Type; }
 		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
 
 	public:
-		static Ref<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath);
+		static Ref<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath = "");
 
 	protected:
 		ShaderType ShaderTypeFromString(const std::string& s);

@@ -2,15 +2,29 @@
 
 #include <functional>
 
+#include "Lamp/Rendering/Vertices/Framebuffer.h"
+
 namespace Lamp
 {
-	class PointShadowBuffer
+	class PointShadowBuffer : Framebuffer
 	{
 	public:
-		PointShadowBuffer(uint32_t width, uint32_t height, const glm::vec3& pos);
+		PointShadowBuffer(const FramebufferSpecification& spec);
+		virtual ~PointShadowBuffer() override;
 
-		void Bind();
-		void Update(uint32_t width, uint32_t height);
+		virtual void Bind() override;
+		virtual void Unbind() override;
+		virtual void Update(uint32_t width, uint32_t height) override;
+
+		inline const std::vector<glm::mat4>& GetTransforms() { return m_Transforms; }
+
+		virtual inline const uint32_t GetColorAttachment() const { return 0; }
+		virtual inline const uint32_t GetDepthAttachment() const { return m_TextureID; }
+
+		virtual const FramebufferSpecification& GetSpecification() const { return FramebufferSpecification(); }
+
+		void SetPosition(const glm::vec3& pos);
+		inline const glm::vec3& GetPosition() { return m_Position; }
 
 	private:
 		void Invalidate();
@@ -19,12 +33,11 @@ namespace Lamp
 		std::vector<glm::mat4> m_Transforms;
 		glm::mat4 m_Projection = glm::mat4(1.f);
 
-		glm::vec3 m_Position;
+		glm::vec3 m_Position = { 0.f, 0.f, 0.f };
 
 		uint32_t m_RendererID;
 		uint32_t m_TextureID;
 
-		uint32_t m_Width;
-		uint32_t m_Height;
+		FramebufferSpecification m_Specification;
 	};
 }

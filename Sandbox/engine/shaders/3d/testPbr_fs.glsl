@@ -34,6 +34,7 @@ struct PointLight
 	float radius;
 	float intensity;
 	float falloff;
+	float farPlane;
 };
 
 struct DirectionalLight
@@ -55,6 +56,7 @@ uniform samplerCube u_IrradianceMap;
 
 //Bind the shadowmap to slot 0
 uniform sampler2D u_ShadowMap;
+uniform samplerCube u_TestPointMap;
 
 const float PI = 3.14159265359;
 
@@ -89,8 +91,55 @@ vec3 CalculateNormal()
 	return normalize(v_In.TBN * tangentNormal);
 }
 
+float DirectionalShadowCalculation(vec4 pos)
+{
+	vec3 projCoords = pos.xyz / pos.w;
+	projCoords = projCoords * 0.5 + 0.5;
+
+	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	vec3 normal = normalize(v_In.Normal);
+
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth > closestDepth ? 1.0 : 0.0;
+		}
+	}
+
+	shadow /= 9.0;
+
+	if (projCoords.z > 1.0)
+	{
+		shadow = 0.0;
+	}
+
+	return shadow;
+}
+
+float PointShadowCalculation(vec3 fragPos, PointLight light)
+{
+	vec3 fragToLight = fragPos - light.position;
+	float closestDepth = texture(u_TestPointMap, fragToLight).r;
+	closestDepth *= light.farPlane;
+
+	float currentDepth = length(fragToLight);
+
+	float bias = 0.05;
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+	return shadow;
+}
+
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 N, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
+	float shadow = DirectionalShadowCalculation(v_In.ShadowCoord);
+
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);
 
@@ -111,12 +160,13 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 N, vec3 base
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-	vec3 lightStrength = (kD * albedo / PI + specular) * vec3(1.0) * NdotL * light.intensity * light.color;
+	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.intensity * light.color;
 	return lightStrength;
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo)
 {
+	float shadow = PointShadowCalculation(v_In.FragPos, light);
 	float distance = length(light.position - v_In.FragPos);
 	if(distance > light.radius)
 	{
@@ -150,40 +200,9 @@ vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-	vec3 lightStrength = (kD * albedo / PI + specular) * radiance * NdotL;
+	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular)) * radiance * NdotL;
 
 	return lightStrength;
-}
-
-float ShadowCalculation(vec4 pos)
-{
-	vec3 projCoords = pos.xyz / pos.w;
-	projCoords = projCoords * 0.5 + 0.5;
-
-	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
-	float currentDepth = projCoords.z;
-
-	vec3 normal = normalize(v_In.Normal);
-
-	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
-	for (int x = -1; x <= 1; x++)
-	{
-		for (int y = -1; y <= 1; y++)
-		{
-			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth > closestDepth ? 1.0 : 0.0;
-		}
-	}
-
-	shadow /= 9.0;
-
-	if (projCoords.z > 1.0)
-	{
-		shadow = 0.0;
-	}
-
-	return shadow;
 }
 
 void main()
@@ -199,11 +218,9 @@ void main()
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
 
-	float shadow = ShadowCalculation(v_In.ShadowCoord);
+	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
 
-	Lo += (1.0 - shadow) * CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
-
-	for(int i= 0; i < u_LightCount; ++i)
+	for(int i = 0; i < u_LightCount; ++i)
 	{
 		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
 	}

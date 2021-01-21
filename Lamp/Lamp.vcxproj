@@ -596,6 +596,7 @@
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
+    <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />

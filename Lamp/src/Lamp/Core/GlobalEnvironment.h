@@ -4,10 +4,27 @@
 
 #include "Lamp/Rendering/LightBase.h"
 
+class RenderUtils
+{
+public:
+	RenderUtils() {}
+	~RenderUtils();
+
+	void RegisterPointLight(const Lamp::PointLight& light);
+	bool UnregisterPointLight(const Lamp::PointLight& light);
+
+	inline const std::vector<Lamp::PointLight>& GetPointLights() { return m_PointLights; }
+
+private:
+	std::vector<Lamp::PointLight> m_PointLights;
+};
+
 struct GlobalEnvironment
 {
 	Lamp::DirectionalLight DirLight;
 	bool ShouldRenderBB = false;
+
+	RenderUtils* pRenderUtils = nullptr;
 };
 
 struct SAABB

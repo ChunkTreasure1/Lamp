@@ -23,6 +23,7 @@
 #include <ImGuizmo/ImGuizmo.h>
 
 #include "Windows/ModelImporter.h"
+#include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 
 namespace Sandbox3D
 {
@@ -296,6 +297,17 @@ namespace Sandbox3D
 			RenderPassManager::Get()->AddPass(shadowPass);
 		}
 		/////////////////////
+
+		/////Point shadow pass/////
+		{
+			RenderPassSpecification shadowSpec;
+			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			shadowSpec.IsPointShadowPass = true;
+
+			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+			RenderPassManager::Get()->AddPass(shadowPass);
+		}
+		///////////////////////////
 
 		/////Main//////
 		{

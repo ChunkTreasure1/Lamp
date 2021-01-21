@@ -4,6 +4,8 @@
 #include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/Core/Application.h"
 
+#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+
 namespace Lamp
 {
 	Ref<RenderPassManager> RenderPassManager::s_Instance = nullptr;
@@ -15,25 +17,47 @@ namespace Lamp
 
 	void RenderPass::Render()
 	{
-		RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-		RenderCommand::Clear();
-
-		m_PassSpec.TargetFramebuffer->Bind();
-		RenderCommand::Clear();
-
-		Renderer3D::Begin(m_PassSpec);
-
-		AppRenderEvent renderEvent(m_PassSpec);
-		ObjectLayerManager::Get()->OnEvent(renderEvent);
-		Application::Get().OnEvent(renderEvent);
-
-		for (auto& f : m_PassSpec.ExtraRenders)
+		if (m_PassSpec.IsPointShadowPass)
 		{
-			f();
-		}
+			m_PassSpec.LightIndex = 0;
+			for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+			{
+				light.ShadowBuffer->Bind();
+				RenderCommand::Clear();
 
-		Renderer3D::End();
-		m_PassSpec.TargetFramebuffer->Unbind();
+				Renderer3D::Begin(m_PassSpec);
+
+				AppRenderEvent renderEvent(m_PassSpec);
+				ObjectLayerManager::Get()->OnEvent(renderEvent);
+				Application::Get().OnEvent(renderEvent);
+
+				Renderer3D::End();
+				light.ShadowBuffer->Unbind();
+				m_PassSpec.LightIndex++;
+			}
+		}
+		else
+		{
+			RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
+			RenderCommand::Clear();
+
+			m_PassSpec.TargetFramebuffer->Bind();
+			RenderCommand::Clear();
+
+			Renderer3D::Begin(m_PassSpec);
+
+			AppRenderEvent renderEvent(m_PassSpec);
+			ObjectLayerManager::Get()->OnEvent(renderEvent);
+			Application::Get().OnEvent(renderEvent);
+
+			for (auto& f : m_PassSpec.ExtraRenders)
+			{
+				f();
+			}
+
+			Renderer3D::End();
+			m_PassSpec.TargetFramebuffer->Unbind();
+		}
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)
