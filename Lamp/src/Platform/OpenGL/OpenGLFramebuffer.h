@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Lamp/Rendering/Vertices/FrameBuffer.h"
+#include "Lamp/Rendering/Vertices/Framebuffer.h"
 
 #include <functional>
 
 namespace Lamp
 {
-	class OpenGLFramebuffer : public FrameBuffer
+	class OpenGLFramebuffer : public Framebuffer
 	{
 	public:
-		OpenGLFramebuffer(const uint32_t width, const uint32_t height, bool shadowBuf = false);
+		OpenGLFramebuffer(const FramebufferSpecification& spec);
 		
 		virtual ~OpenGLFramebuffer() override;
 
@@ -17,18 +17,37 @@ namespace Lamp
 		virtual void Unbind() override;
 		virtual void Update(const uint32_t width, const uint32_t height) override;
 
-		virtual inline const uint32_t GetColorAttachment() const override { return m_ColorID; }
-		virtual inline const uint32_t GetDepthAttachment() const override { return m_DepthID; }
+		virtual const uint32_t GetColorAttachment() const override 
+		{ 
+			// TODO: Fix
+			if (m_HasColorAttachment)
+			{
+				return m_AttachmentIDs[0];
+			}
+		}
+		virtual const uint32_t GetDepthAttachment() const override 
+		{ 
+			// TODO: Fix
+			if (m_HasColorAttachment)
+			{
+				return m_AttachmentIDs[1];
+			}
+			else
+			{
+				return m_AttachmentIDs[0];
+			}
+		}
+
+		virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification; }
 
 	private:
 		void Invalidate();
 
 	private:
 		uint32_t m_RendererID;
-		uint32_t m_DepthID;
-		uint32_t m_ColorID;
+		bool m_HasColorAttachment = false;
 
-		uint32_t m_WindowWidth;
-		uint32_t m_WindowHeight;
+		std::vector<uint32_t> m_AttachmentIDs;
+		FramebufferSpecification m_Specification;
 	};
 }

@@ -5,6 +5,8 @@
 
 namespace GameLauncher
 {
+	using namespace Lamp;
+
 	GameLauncher::GameLauncher()
 	{
 		m_pGame = CreateScope<Game>();
@@ -56,17 +58,46 @@ namespace GameLauncher
 
 	void GameLauncher::CreateRenderPasses()
 	{
-		Lamp::RenderPassInfo passInfo;
-		passInfo.Camera = m_Camera;
-		passInfo.IsShadowPass = true;
-		passInfo.DirLight = g_pEnv->DirLight;
-		passInfo.ClearColor = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		/////Shadow pass/////
+		{
+			FramebufferSpecification shadowBuffer;
+			shadowBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
+			};
+			shadowBuffer.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+			shadowBuffer.Height = 4096;
+			shadowBuffer.Width = 4096;
 
-		Ref<Lamp::RenderPass> shadowPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
-		Lamp::RenderPassManager::Get()->AddPass(shadowPass);
+			RenderPassSpecification shadowSpec;
+			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
+			shadowSpec.Camera = m_Camera;
+			shadowSpec.IsShadowPass = true;
 
-		passInfo.IsShadowPass = false;
-		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo);
-		Lamp::RenderPassManager::Get()->AddPass(renderPass);
+			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+			RenderPassManager::Get()->AddPass(shadowPass);
+		}
+		/////////////////////
+
+		/////Main//////
+		{
+			FramebufferSpecification mainBuffer;
+			mainBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
+				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+			};
+			mainBuffer.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+			mainBuffer.Height = 1280;
+			mainBuffer.Width = 720;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_Camera;
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+
+			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(renderPass);
+		}
+		///////////////
 	}
 }

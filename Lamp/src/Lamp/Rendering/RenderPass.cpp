@@ -8,43 +8,32 @@ namespace Lamp
 {
 	Ref<RenderPassManager> RenderPassManager::s_Instance = nullptr;
 
-	RenderPass::RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::vector<RenderFunc> extraRenders)
-		: m_FrameBuffer(frameBuffer), m_PassInfo(passInfo), m_ExtraRenders(extraRenders)
+	RenderPass::RenderPass(const RenderPassSpecification& spec)
+		: m_PassSpec(spec)
 	{
 	}
 
 	void RenderPass::Render()
 	{
-		if (m_PassInfo.IsShadowPass)
-		{
-			m_PassInfo.ViewProjection = g_pEnv->DirLight.ViewProjection;
-			m_PassInfo.LightViewProjection = g_pEnv->DirLight.ViewProjection;
-		}
-		else
-		{
-			m_PassInfo.ViewProjection = m_PassInfo.Camera->GetViewProjectionMatrix();
-			m_PassInfo.LightViewProjection = g_pEnv->DirLight.ViewProjection;
-		}
-
-		RenderCommand::SetClearColor(m_PassInfo.ClearColor);
+		RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
 		RenderCommand::Clear();
 
-		m_FrameBuffer->Bind();
+		m_PassSpec.TargetFramebuffer->Bind();
 		RenderCommand::Clear();
 
-		Renderer3D::Begin(m_PassInfo);
+		Renderer3D::Begin(m_PassSpec);
 
-		AppRenderEvent renderEvent(m_PassInfo);
+		AppRenderEvent renderEvent(m_PassSpec);
 		ObjectLayerManager::Get()->OnEvent(renderEvent);
 		Application::Get().OnEvent(renderEvent);
 
-		for (auto& f : m_ExtraRenders)
+		for (auto& f : m_PassSpec.ExtraRenders)
 		{
 			f();
 		}
 
 		Renderer3D::End();
-		m_FrameBuffer->Unbind();
+		m_PassSpec.TargetFramebuffer->Unbind();
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)

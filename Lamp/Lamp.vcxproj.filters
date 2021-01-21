@@ -354,6 +354,12 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h">
+      <Filter>src\Lamp\Rendering\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
@@ -367,9 +373,6 @@
       <Filter>src\Lamp\Rendering\TextureCube</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
@@ -1506,8 +1509,9 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\Framebuffer.h">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1660,6 +1664,12 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Shadows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
@@ -1671,9 +1681,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp">
       <Filter>src\Lamp\Rendering\TextureCube</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
@@ -1714,7 +1721,8 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\SkyboxDraw.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
 #include <Lamp/Rendering/Texture2D/Texture2D.h>
 		 
 #include <Lamp/Objects/Entity/Base/EntityManager.h>
-#include <Lamp/Rendering/Vertices/FrameBuffer.h>
+#include <Lamp/Rendering/Vertices/Framebuffer.h>
 #include <Lamp/Core/Core.h>
 
 #include <Lamp/Input/Input.h>

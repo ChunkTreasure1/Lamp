@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vertices/FrameBuffer.h"
+#include "Vertices/Framebuffer.h"
 #include "Lamp/Core/Core.h"
 #include "RenderCommand.h"
 #include "Renderer3D.h"
@@ -9,31 +9,27 @@
 
 namespace Lamp
 {
-	struct RenderPassInfo
+	struct RenderPassSpecification
 	{
+		using RenderFunc = std::function<void()>;
+		std::vector<RenderFunc> ExtraRenders;
+
 		Ref<CameraBase> Camera;
-		glm::vec4 ClearColor;
+		Ref<Framebuffer> TargetFramebuffer;
 
-		glm::mat4 ViewProjection = glm::mat4(1.f);
-		glm::mat4 LightViewProjection = glm::mat4(1.f);
-
-		bool IsShadowPass;
+		bool IsShadowPass = false;
 	};
 
 	class RenderPass
 	{
 	public:
-		using RenderFunc = std::function<void()>;
-
 		friend class RenderPassManager;
 
-		RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::vector<RenderFunc> extraRenders = {});
-		~RenderPass()
-		{
-			m_ExtraRenders.clear();
-		}
+		RenderPass(const RenderPassSpecification& spec);
+		~RenderPass() {}
 
 		inline uint32_t GetID() { return m_ID; }
+		inline const RenderPassSpecification& GetSpecification() const { return m_PassSpec; }
 
 		void Render();
 
@@ -41,11 +37,8 @@ namespace Lamp
 		inline void SetID(uint32_t id) { m_ID = id; }
 
 	private:
-		Ref<FrameBuffer> m_FrameBuffer;
-		std::vector<RenderFunc> m_ExtraRenders;
-
 		uint32_t m_ID;
-		RenderPassInfo m_PassInfo;
+		RenderPassSpecification m_PassSpec;
 	};
 
 	class RenderPassManager

@@ -3,18 +3,20 @@
 #include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Meshes/Materials/Material.h"
 
-#include "Lamp/Rendering/Vertices/FrameBuffer.h"
+#include "Lamp/Rendering/Vertices/Framebuffer.h"
 #include "Lamp/Core/GlobalEnvironment.h"
+
 
 namespace Lamp
 {	
+	struct RenderPassSpecification;
 	class Renderer3D
 	{
 	public:
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const RenderPassInfo& passInfo);
+		static void Begin(const RenderPassSpecification& passSpec);
 		static void End();
 		static void Flush();
 
@@ -24,17 +26,8 @@ namespace Lamp
 		static void DrawSkybox();
 		static void DrawGrid();
 
-		static Ref<FrameBuffer>& GetFrameBuffer() { return m_pFrameBuffer; }
-		static Ref<FrameBuffer>& GetShadowBuffer() { return m_pShadowBuffer; }
-
 	private:
-		static Ref<FrameBuffer> m_pFrameBuffer;
-		static Ref<FrameBuffer> m_pShadowBuffer;
-
 		static void StartNewBatch();
 		static void ResetBatchData();
-
-	private:
-		static glm::mat4 m_ShadowBiasMatrix;
 	};
 }

@@ -14,11 +14,10 @@
 #include "RenderCommand.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Texture2D/SkyboxDraw.h"
+#include "Lamp/Rendering/RenderPass.h"
 
 namespace Lamp
 {
-	glm::mat4 Renderer3D::m_ShadowBiasMatrix = glm::mat4(1.f);
-
 	struct LineVertex
 	{
 		glm::vec3 Position;
@@ -57,16 +56,15 @@ namespace Lamp
 			delete[] LineVertexBufferBase;
 		}
 
-		RenderPassInfo CurrentRenderPass;
+		RenderPassSpecification CurrentRenderPass;
 		Ref<VertexArray> SphereArray;
 
 		/////Shadows/////
 		Ref<Shader> ShadowShader;
+		Ref<Framebuffer> ShadowBuffer;
 		/////////////////
 	};
 
-	Ref<FrameBuffer> Renderer3D::m_pFrameBuffer = nullptr;
-	Ref<FrameBuffer> Renderer3D::m_pShadowBuffer = nullptr;
 	static Renderer3DStorage* s_pData;
 
 	void Renderer3D::Initialize()
@@ -131,13 +129,9 @@ namespace Lamp
 		s_pData->GridVertexArray->Unbind();
 		//////////////
 
-		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
 
 		/////Shadows/////
-		m_pShadowBuffer = Lamp::FrameBuffer::Create(4096, 4096, true);
 		s_pData->ShadowShader = ShaderLibrary::GetShader("shadow");
-
-		m_ShadowBiasMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.5f)) * glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 		/////////////////
 	}
 
@@ -146,9 +140,9 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer3D::Begin(const RenderPassInfo& passInfo)
+	void Renderer3D::Begin(const RenderPassSpecification& passSpec)
 	{
-		s_pData->CurrentRenderPass = passInfo;
+		s_pData->CurrentRenderPass = passSpec;
 
 		ResetBatchData();
 	}
@@ -164,7 +158,7 @@ namespace Lamp
 	void Renderer3D::Flush()
 	{
 		s_pData->LineMaterial.GetShader()->Bind();
-		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
+		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
 
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
@@ -176,9 +170,10 @@ namespace Lamp
 			glCullFace(GL_FRONT);
 			s_pData->ShadowShader->Bind();
 
-			//Upload the shadows MVP
-			glm::mat4 shadowMVP =  s_pData->CurrentRenderPass.ViewProjection * modelMatrix;
+			//Directional light shadows
+			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
 			s_pData->ShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+			s_pData->ShadowBuffer = s_pData->CurrentRenderPass.TargetFramebuffer;
 		}
 		else
 		{
@@ -197,11 +192,11 @@ namespace Lamp
 			mat.GetShader()->Bind();
 			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
 			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.ViewProjection);
-			mat.GetShader()->UploadMat4("u_ShadowMVP", s_pData->CurrentRenderPass.LightViewProjection * modelMatrix);
+			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
+			mat.GetShader()->UploadMat4("u_ShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			glBindTextureUnit(0, m_pShadowBuffer->GetDepthAttachment());
+			glBindTextureUnit(0, s_pData->ShadowBuffer->GetDepthAttachment());
 		}
 
 		mesh->GetVertexArray()->Bind();
@@ -221,7 +216,7 @@ namespace Lamp
 		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
 		s_pData->GridShader->UploadMat4("u_View", viewMat);
 
-		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.ViewProjection);
+		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}
 

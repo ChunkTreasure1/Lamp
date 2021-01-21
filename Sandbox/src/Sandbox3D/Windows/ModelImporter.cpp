@@ -15,7 +15,20 @@ namespace Sandbox3D
 	ModelImporter::ModelImporter()
 	{
 		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
-		m_FrameBuffer = FrameBuffer::Create(1280, 720);
+
+		{
+			FramebufferSpecification mainBuffer;
+			mainBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
+				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+			};
+			mainBuffer.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+			mainBuffer.Height = 1280;
+			mainBuffer.Width = 720;
+
+			m_Framebuffer = Framebuffer::Create(mainBuffer);
+		}
 	}
 
 	void ModelImporter::Update()
@@ -65,17 +78,15 @@ namespace Sandbox3D
 			return;
 		}
 
-		RenderPassInfo pass;
+		RenderPassSpecification pass;
 		pass.Camera = m_Camera->GetCamera();
 		pass.IsShadowPass = false;
-		pass.DirLight = g_pEnv->DirLight;
-		pass.ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 0.1f);
-		pass.ViewProjection = m_Camera->GetCamera()->GetViewProjectionMatrix();
+		pass.TargetFramebuffer = m_Framebuffer;
 
 		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));
 		RenderCommand::Clear();
 
-		m_FrameBuffer->Bind();
+		m_Framebuffer->Bind();
 		RenderCommand::Clear();
 
 		Renderer3D::Begin(pass);
@@ -85,7 +96,7 @@ namespace Sandbox3D
 		}
 		RenderGrid();
 		Renderer3D::End();
-		m_FrameBuffer->Unbind();
+		m_Framebuffer->Unbind();
 	}
 
 	void ModelImporter::OnEvent(Lamp::Event& e)
@@ -133,15 +144,15 @@ namespace Sandbox3D
 			m_Camera->SetControlsEnabled(m_HoveringPerspective);
 
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
-			if (m_PerspectiveSize != *((glm::vec2*)& panelSize))
+			if (m_PerspectiveSize != *((glm::vec2*)&panelSize))
 			{
-				m_FrameBuffer->Update((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				m_Framebuffer->Update((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 				m_PerspectiveSize = { panelSize.x, panelSize.y };
 
 				m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
 
-			uint32_t textureID = m_FrameBuffer->GetColorAttachment();
+			uint32_t textureID = m_Framebuffer->GetColorAttachment();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 		ImGui::End();
@@ -219,7 +230,7 @@ namespace Sandbox3D
 		static int selectedItem = 0;
 
 		shaders.clear();
-		for(auto& shader : ShaderLibrary::GetShaders())
+		for (auto& shader : ShaderLibrary::GetShaders())
 		{
 			shaders.push_back(shader->GetName().c_str());
 		}
@@ -245,7 +256,7 @@ namespace Sandbox3D
 				paths.clear();
 
 				m_pModelToImport->GetMaterial().SetShader(ShaderLibrary::GetShader(shaders[selectedItem]));
-				
+
 				for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
 				{
 					tex.second = Texture2D::Create("engine/textures/default/defaultTexture.png");

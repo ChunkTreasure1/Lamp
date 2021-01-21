@@ -60,7 +60,7 @@ namespace Lamp
 		Renderer2D::Statistics Stats;
 	};
 
-	Ref<FrameBuffer> Renderer2D::m_pFrameBuffer = nullptr;
+	Ref<Framebuffer> Renderer2D::m_pFrameBuffer = nullptr;
 	static Renderer2DStorage* s_pData;
 
 	void Renderer2D::Initialize()
@@ -158,7 +158,7 @@ namespace Lamp
 		delete[] samplers;
 		////////////////////////
 
-		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		//m_pFrameBuffer = Lamp::Framebuffer::Create(1280, 720);
 	}
 
 	void Renderer2D::Shutdown()

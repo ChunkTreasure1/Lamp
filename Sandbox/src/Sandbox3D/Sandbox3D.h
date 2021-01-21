@@ -62,13 +62,11 @@ namespace Sandbox3D
 		void Undo();
 		void Redo();
 
-		//Model importer
-		void RenderImporter();
-
 
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
+		Ref<Lamp::Framebuffer> m_SandboxBuffer;
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);

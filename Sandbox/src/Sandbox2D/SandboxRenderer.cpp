@@ -107,7 +107,7 @@ namespace Sandbox2D
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
 			{
-				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+			//	Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
 				m_CameraController->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
