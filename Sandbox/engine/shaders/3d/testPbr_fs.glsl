@@ -53,7 +53,7 @@ uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
 
-//Bind the shadowmap to slot 0, 1, 3
+//Bind the shadowmap to slot 0, 1, 2
 uniform sampler2D u_ShadowMap;
 uniform samplerCube u_TestPointMap;
 uniform samplerCube u_IrradianceMap;
@@ -83,6 +83,11 @@ float geometrySmith(float NdotV, float NdotL, float roughness)
 vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity)
 {
 	return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 baseReflectivity, float roughness)
+{
+	return baseReflectivity + (max(vec3(1.0 - roughness), baseReflectivity) - baseReflectivity) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
 vec3 CalculateNormal()
@@ -224,14 +229,15 @@ void main()
 	{
 		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
 	}
-
-	//IBL
-//	float NdotV = max(dot(N, V), 0.0000001);
-//	vec3 F = fresnelSchlick(NdotV, baseReflectivity);
-//	vec3 kD = (1.0 - F) * (1.0 - metallic);
-//	vec3 diffuse = texture(u_IrradianceMap, N).rgb * albedo * kD;
 	
-	vec3 ambient = vec3(0.04) * albedo;
+	vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), baseReflectivity, roughness);
+	vec3 kD = 1.0 - kS;
+	kD *= 1.0 - metallic;
+	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
+	vec3 diffuse = irradiance * albedo;
+	vec3 ambient = (kD * diffuse) * ao;
+	//vec3 ambient = vec3(0.04) * albedo;
+
 	vec3 color = ambient + Lo;
 
 	//HDR tonemapping

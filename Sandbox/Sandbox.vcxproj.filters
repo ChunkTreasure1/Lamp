@@ -100,5 +100,6 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
+    <None Include="engine\shaders\3d\ibl\convolution_fs.glsl" />
   </ItemGroup>
 </Project>

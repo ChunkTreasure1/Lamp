@@ -12,6 +12,7 @@ namespace Lamp
 	IBLBuffer::IBLBuffer(const std::string& path)
 	{
 		m_EqCubeShader = ShaderLibrary::GetShader("EqCube");
+		m_ConvolutionShader = ShaderLibrary::GetShader("Convolution");
 
 		stbi_set_flip_vertically_on_load(true);
 		int width, height, nrComponents;
@@ -77,11 +78,43 @@ namespace Lamp
 			Renderer3D::DrawCube();
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		//Convolute map
+		glGenTextures(1, &m_IrradianceId);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceId);
+		for (int i = 0; i < 6; i++)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
+		}
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
+
+		m_ConvolutionShader->Bind();
+		m_ConvolutionShader->UploadInt("u_EnvironmentMap", 0);
+		m_ConvolutionShader->UploadMat4("u_Projection", m_CaptureProjection);
+		glBindTextureUnit(0, m_CubeMapId);
+
+		glViewport(0, 0, 32, 32);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
+		for (int i = 0; i < 6; i++)
+		{
+			m_ConvolutionShader->UploadMat4("u_View", m_CaptureViews[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_IrradianceId, 0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			Renderer3D::DrawCube();
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void IBLBuffer::Bind()
 	{
 		glDepthFunc(GL_LEQUAL);
-		glBindTextureUnit(0, m_CubeMapId);
+		glBindTextureUnit(0, m_IrradianceId);
 	}
 }

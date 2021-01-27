@@ -168,6 +168,12 @@ namespace Lamp
 		}
 
 		glLinkProgram(m_RendererID);
+		glGetProgramiv(m_RendererID, GL_LINK_STATUS, &success);
+		if (!success)
+		{
+			glGetProgramInfoLog(m_RendererID, 512, NULL, infoLog);
+			LP_ERROR("Shader link failed: " + std::string(infoLog) + ". At: " + m_Specifications.Name);
+		}
 
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);

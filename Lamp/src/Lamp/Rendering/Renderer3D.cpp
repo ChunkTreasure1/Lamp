@@ -245,7 +245,7 @@ namespace Lamp
 		{
 			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadow map
-			int i = 2;
+			int i = 3;
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
 				if (mat.GetTextures()[name].get() != nullptr)
@@ -266,6 +266,9 @@ namespace Lamp
 
 			mat.GetShader()->UploadInt("u_TestPointMap", 1);
 			glBindTextureUnit(1, g_pEnv->pRenderUtils->GetPointLights()[0].ShadowBuffer->GetDepthAttachment());
+
+			mat.GetShader()->UploadInt("u_IrradianceMap", 2);
+			glBindTextureUnit(2, s_pData->SkyboxBuffer->GetTextureID());
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
