@@ -9,11 +9,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Lamp/Core/Application.h"
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
-#include "Lamp/Rendering/TextureCube/TextureCube.h"
 
 #include "RenderCommand.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
-#include "Lamp/Rendering/Texture2D/SkyboxDraw.h"
+#include "Lamp/Rendering/Texture2D/IBLBuffer.h"
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 
@@ -31,7 +30,11 @@ namespace Lamp
 		static const uint32_t MaxLineVerts = MaxLines * 2;
 		static const uint32_t MaxLineIndices = MaxLines * 2;
 
-		Ref<SkyboxDraw> TestSky;
+		/////Skybox//////
+		Ref<Shader> SkyboxShader;
+		Ref<VertexArray> SkyboxVertexArray;
+		Ref<IBLBuffer> SkyboxBuffer;
+		/////////////////
 
 		//////Lines//////
 		Ref<VertexArray> LineVertexArray;
@@ -73,7 +76,42 @@ namespace Lamp
 	{
 		s_pData = new Renderer3DStorage();
 
-		s_pData->TestSky = CreateRef<SkyboxDraw>("assets/textures/newport_loft.hdr");
+		/////Skybox/////
+		std::vector<float> boxPositions =
+		{
+			-1, -1, -1,
+			 1, -1, -1,
+			 1,  1, -1,
+			-1,  1, -1,
+			-1, -1,  1,
+			 1, -1,  1,
+			 1,  1,  1,
+			-1,  1,  1
+		};
+
+		std::vector<uint32_t> boxIndicies =
+		{
+			0, 1, 3, 3, 1, 2,
+			1, 5, 2, 2, 5, 6,
+			5, 4, 6, 6, 4, 7,
+			4, 0, 7, 7, 0, 3,
+			3, 2, 7, 7, 2, 6,
+			4, 5, 0, 0, 5, 1
+		};
+
+		s_pData->SkyboxVertexArray = VertexArray::Create();
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
+		pBuffer->SetBufferLayout
+		({
+			{ ElementType::Float3, "a_Position" }
+		});
+		s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
+
+		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
+		s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
+		s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
+		s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/newport_loft.hdr");
+		////////////////
 
 		///////Line///////
 		s_pData->LineVertexArray = VertexArray::Create();
@@ -236,7 +274,20 @@ namespace Lamp
 
 	void Renderer3D::DrawSkybox()
 	{
-		//s_pData->TestSky->Draw(s_pData->CurrentRenderPass.Camera->GetViewMatrix());
+		s_pData->SkyboxShader->Bind();
+		s_pData->SkyboxShader->UploadMat4("u_View", s_pData->CurrentRenderPass.Camera->GetViewMatrix());
+		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
+		s_pData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
+
+		s_pData->SkyboxBuffer->Bind();
+
+		DrawCube();
+	}
+
+	void Renderer3D::DrawCube()
+	{
+		s_pData->SkyboxVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pData->SkyboxVertexArray, s_pData->SkyboxVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::DrawGrid()

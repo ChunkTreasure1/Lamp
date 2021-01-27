@@ -6,13 +6,14 @@ TextureNames:
 }
 #version 440 core
 out vec4 FragColor;
-in vec3 WorldPos;
 
-uniform samplerCube environmentMap;
+in vec3 v_LocalPos;
+
+uniform samplerCube u_EnvironmentMap;
 
 void main()
 {		
-    vec3 envColor = texture(environmentMap, WorldPos).rgb;
+    vec3 envColor = texture(u_EnvironmentMap, v_LocalPos).rgb;
     
     // HDR tonemap and gamma correct
     envColor = envColor / (envColor + vec3(1.0));

@@ -28,6 +28,7 @@ namespace Lamp
 		inline const float GetFalloff() { return m_PointLight.Falloff; }
 
 		inline const glm::vec3& GetColor() { return m_PointLight.Color; }
+		inline const float GetFarPlane() { return m_PointLight.FarPlane; }
 
 		//Setting
 		inline void SetIntensity(float val) { m_PointLight.Intensity = val; }

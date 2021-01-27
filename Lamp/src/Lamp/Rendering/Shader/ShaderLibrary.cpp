@@ -17,8 +17,8 @@ namespace Lamp
 		AddShader("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl");
 		AddShader("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
 		AddShader("engine/shaders/3d/testPbr_vs.glsl", "engine/shaders/3d/testPbr_fs.glsl");
-		AddShader("engine/shaders/3d/eqCube_vs.glsl", "engine/shaders/3d/eqCube_fs.glsl");
-		AddShader("engine/shaders/3d/skybox_vs.glsl", "engine/shaders/3d/skybox_fs.glsl");
+		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/eqCube_fs.glsl");
+		AddShader("engine/shaders/3d/ibl/skybox_vs.glsl", "engine/shaders/3d/ibl/skybox_fs.glsl");
 		AddShader("engine/shaders/3d/shadows/dirShadow_vs.glsl", "engine/shaders/3d/shadows/dirShadow_fs.glsl");
 		AddShader("engine/shaders/3d/shadows/pointShadow_vs.glsl", "engine/shaders/3d/shadows/pointShadow_fs.glsl", "engine/shaders/3d/shadows/pointShadow_gs.glsl");
 	}

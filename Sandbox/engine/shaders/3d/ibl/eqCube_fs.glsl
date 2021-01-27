@@ -6,9 +6,9 @@ TextureNames:
 }
 #version 440 core
 out vec4 FragColor;
-in vec3 WorldPos;
+in vec3 v_WorldPos;
 
-uniform sampler2D equirectangularMap;
+uniform sampler2D u_EquirectangularMap;
 
 const vec2 invAtan = vec2(0.1591, 0.3183);
 vec2 SampleSphericalMap(vec3 v)
@@ -21,8 +21,8 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {		
-    vec2 uv = SampleSphericalMap(normalize(WorldPos));
-    vec3 color = texture(equirectangularMap, uv).rgb;
+    vec2 uv = SampleSphericalMap(normalize(v_WorldPos));
+    vec3 color = texture(u_EquirectangularMap, uv).rgb;
     
     FragColor = vec4(color, 1.0);
 }

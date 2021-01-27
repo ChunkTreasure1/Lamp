@@ -52,11 +52,11 @@ uniform int u_LightCount;
 uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
-uniform samplerCube u_IrradianceMap;
 
-//Bind the shadowmap to slot 0
+//Bind the shadowmap to slot 0, 1, 3
 uniform sampler2D u_ShadowMap;
 uniform samplerCube u_TestPointMap;
+uniform samplerCube u_IrradianceMap;
 
 const float PI = 3.14159265359;
 

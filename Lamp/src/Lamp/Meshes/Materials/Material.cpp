@@ -36,8 +36,6 @@ namespace Lamp
 		m_pShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
 		m_pShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 
-		//m_pShader->UploadFloat3("u_Environment.globalAmbient", LevelSystem::GetEnvironment().GlobalAmbient);
-
 		int lightCount = 0;
 		//Point lights
 		for (auto& ent : EntityManager::Get()->GetEntities())
@@ -50,12 +48,16 @@ namespace Lamp
 
 			if (auto& light = ent->GetComponent<LightComponent>())
 			{
-				m_pShader->UploadFloat("u_PointLights[" + std::to_string(lightCount) + "].intensity", light->GetIntensity());
-				m_pShader->UploadFloat("u_PointLights[" + std::to_string(lightCount) + "].radius", light->GetRadius());
-				m_pShader->UploadFloat("u_PointLights[" + std::to_string(lightCount) + "].falloff", light->GetFalloff());
+				std::string v = std::to_string(lightCount);
 
-				m_pShader->UploadFloat3("u_PointLights[" + std::to_string(lightCount) + "].position", light->GetOwner()->GetPosition());
-				m_pShader->UploadFloat3("u_PointLights[" + std::to_string(lightCount) + "].color", light->GetColor());
+				m_pShader->UploadFloat("u_PointLights[" + v + "].intensity", light->GetIntensity());
+				m_pShader->UploadFloat("u_PointLights[" + v + "].radius", light->GetRadius());
+				m_pShader->UploadFloat("u_PointLights[" + v + "].falloff", light->GetFalloff());
+				m_pShader->UploadFloat("u_PointLights[" + v + "].farPlane", light->GetFarPlane());
+
+				m_pShader->UploadFloat3("u_PointLights[" + v + "].position", light->GetOwner()->GetPosition());
+				m_pShader->UploadFloat3("u_PointLights[" + v + "].color", light->GetColor());
+
 				lightCount++;
 			}
 		}

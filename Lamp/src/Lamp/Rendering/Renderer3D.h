@@ -24,6 +24,7 @@ namespace Lamp
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
 
 		static void DrawSkybox();
+		static void DrawCube();
 		static void DrawGrid();
 
 	private:
