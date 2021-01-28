@@ -17,11 +17,15 @@ namespace Lamp
 	private:
 		Ref<Shader> m_EqCubeShader;
 		Ref<Shader> m_ConvolutionShader;
+		Ref<Shader> m_PrefilterShader;
+		Ref<Shader> m_BRDFShader;
 
 		uint32_t m_CubeMapId = 0;
 		uint32_t m_HdrTextureId = 0;
 		uint32_t m_IrradianceId = 0;
 		uint32_t m_RendererId = 0;
+		uint32_t m_PrefilterMap = 0;
+		uint32_t m_BRDFLUTMap = 0;
 
 		glm::mat4 m_CaptureProjection;
 		std::vector<glm::mat4> m_CaptureViews;
