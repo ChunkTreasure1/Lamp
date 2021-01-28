@@ -84,7 +84,7 @@ void main()
             float D = DistributionGGX(N, H, u_Roughness);
             float NdotH = max(dot(N, H), 0.0);
             float NdotV = max(dot(H, V), 0.0);
-            float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
+            float pdf = D * NdotH / (4.0 * NdotV) + 0.0001;
 
             float resolution = 512.0;
             float saTexel = 4.0 * PI / (6.0 * resolution * resolution);

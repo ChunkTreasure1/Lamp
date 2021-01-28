@@ -53,10 +53,13 @@ uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
 
-//Bind the shadowmap to slot 0, 1, 2
+//Bind the shadowmap to slot 0, 1, 2, 3, 4
 uniform sampler2D u_ShadowMap;
 uniform samplerCube u_TestPointMap;
+
 uniform samplerCube u_IrradianceMap;
+uniform samplerCube u_PrefilterMap;
+uniform sampler2D u_BRDFLUT;
 
 const float PI = 3.14159265359;
 
@@ -230,12 +233,20 @@ void main()
 		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
 	}
 	
+	vec3 R = reflect(-V, N);
+	
+	const float maxReflectionLOD = 4.0;
+	vec3 prefilterColor = textureLod(u_PrefilterMap, R, roughness * maxReflectionLOD).rgb;
+	vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), baseReflectivity, roughness);
+	vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+	vec3 specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
+
 	vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), baseReflectivity, roughness);
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse) * ao;
+	vec3 ambient = (kD * diffuse + specular) * ao;
 	//vec3 ambient = vec3(0.04) * albedo;
 
 	vec3 color = ambient + Lo;

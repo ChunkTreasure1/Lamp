@@ -12,7 +12,10 @@ namespace Lamp
 		IBLBuffer(const std::string& path);
 
 		void Bind();
-		inline const uint32_t GetTextureID() { return m_IrradianceId; }
+		inline const uint32_t GetTextureID() { return m_CubeMapId; }
+		inline const uint32_t GetPrefilterID() { return m_PrefilterMap; }
+		inline const uint32_t GetBRDFLUTID() { return m_BRDFLUTMap; }
+		inline const uint32_t GetIrradianceID() { return m_IrradianceId; }
 
 	private:
 		Ref<Shader> m_EqCubeShader;

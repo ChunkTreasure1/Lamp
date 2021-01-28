@@ -178,6 +178,8 @@ namespace Lamp
 		m_BRDFShader->Bind();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		Renderer3D::DrawQuad();
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//////////////////
 	}
@@ -185,6 +187,6 @@ namespace Lamp
 	void IBLBuffer::Bind()
 	{
 		glDepthFunc(GL_LEQUAL);
-		glBindTextureUnit(0, m_IrradianceId);
+		glBindTextureUnit(0, m_CubeMapId);
 	}
 }

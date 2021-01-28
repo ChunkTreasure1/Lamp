@@ -163,6 +163,8 @@
     <None Include="engine\shaders\2d\FlatColor.vert" />
     <None Include="engine\shaders\2d\Texture.frag" />
     <None Include="engine\shaders\2d\Texture.vert" />
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate_vs.glsl" />
     <None Include="engine\shaders\3d\ibl\convolution_fs.glsl" />
     <None Include="engine\shaders\3d\ibl\prefilter_fs.glsl" />
   </ItemGroup>

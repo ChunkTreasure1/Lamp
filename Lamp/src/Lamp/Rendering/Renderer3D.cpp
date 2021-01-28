@@ -36,6 +36,10 @@ namespace Lamp
 		Ref<IBLBuffer> SkyboxBuffer;
 		/////////////////
 
+		/////Quad/////	
+		Ref<VertexArray> QuadVertexArray;
+		//////////////
+
 		//////Lines//////
 		Ref<VertexArray> LineVertexArray;
 		Ref<VertexBuffer> LineVertexBuffer;
@@ -76,97 +80,94 @@ namespace Lamp
 	{
 		s_pData = new Renderer3DStorage();
 
-		/////Skybox/////
-		std::vector<float> boxPositions =
+		/////Quad/////
 		{
-			-1, -1, -1,
-			 1, -1, -1,
-			 1,  1, -1,
-			-1,  1, -1,
-			-1, -1,  1,
-			 1, -1,  1,
-			 1,  1,  1,
-			-1,  1,  1
-		};
+			std::vector<float> quadPositions =
+			{
+				// positions         // texture Coords
+				-1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+				-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+				 1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+				 1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+			};
 
-		std::vector<uint32_t> boxIndicies =
-		{
-			0, 1, 3, 3, 1, 2,
-			1, 5, 2, 2, 5, 6,
-			5, 4, 6, 6, 4, 7,
-			4, 0, 7, 7, 0, 3,
-			3, 2, 7, 7, 2, 6,
-			4, 5, 0, 0, 5, 1
-		};
+			std::vector<uint32_t> quadIndices =
+			{
+				0, 1, 2,
+				0, 2, 3
+			};
 
-		s_pData->SkyboxVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
-		pBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" }
-		});
-		s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
-
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-		s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
-		s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-		s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/newport_loft.hdr");
-		////////////////
+			s_pData->QuadVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadPositions, (uint32_t)sizeof(float) * quadPositions.size());
+			pBuffer->SetBufferLayout
+			({
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float2, "a_TexCoords" }
+			});
+			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
+			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
+		}
+		//////////////
 
 		///////Line///////
-		s_pData->LineVertexArray = VertexArray::Create();
-		s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
-		s_pData->LineVertexBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float4, "a_Color" }
-			});
-		s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
-		s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
-
-		uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
-		uint32_t offset = 0;
-		for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
 		{
-			pLineIndices[i + 0] = offset + 0;
-			pLineIndices[i + 1] = offset + 1;
+			s_pData->LineVertexArray = VertexArray::Create();
+			s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
+			s_pData->LineVertexBuffer->SetBufferLayout
+			({
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float4, "a_Color" }
+				});
+			s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
+			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
-			offset += 2;
+			uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
+			uint32_t offset = 0;
+			for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
+			{
+				pLineIndices[i + 0] = offset + 0;
+				pLineIndices[i + 1] = offset + 1;
+
+				offset += 2;
+			}
+
+			Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
+			s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
+
+			delete[] pLineIndices;
 		}
-
-		Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
-		s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
-
-		delete[] pLineIndices;
 		//////////////////
 
 		/////Grid/////
-		std::vector<float> gridPos =
 		{
-			-1, -1, 0,
-			 1, -1, 0,
-			 1,  1, 0,
-			-1, 1, 0,
-		};
+			std::vector<float> gridPos =
+			{
+				-1, -1, 0,
+				 1, -1, 0,
+				 1,  1, 0,
+				-1, 1, 0,
+			};
 
-		std::vector<uint32_t> gridIndices =
-		{
-			0, 1, 3,
-			1, 2, 3
-		};
+			std::vector<uint32_t> gridIndices =
+			{
+				0, 1, 3,
+				1, 2, 3
+			};
 
-		s_pData->GridVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
-		buffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" }
-			});
-		s_pData->GridVertexArray->AddVertexBuffer(buffer);
+			s_pData->GridVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
+			buffer->SetBufferLayout
+			({
+				{ ElementType::Float3, "a_Position" }
+				});
+			s_pData->GridVertexArray->AddVertexBuffer(buffer);
 
-		Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
-		s_pData->GridVertexArray->SetIndexBuffer(gridIndexBuffer);
+			Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
+			s_pData->GridVertexArray->SetIndexBuffer(gridIndexBuffer);
 
-		s_pData->GridVertexArray->Unbind();
+			s_pData->GridVertexArray->Unbind();
+		}
 		//////////////
 
 
@@ -174,6 +175,45 @@ namespace Lamp
 		s_pData->DirShadowShader = ShaderLibrary::GetShader("dirShadow");
 		s_pData->PointShadowShader = ShaderLibrary::GetShader("pointShadow");
 		/////////////////
+
+				/////Skybox/////
+		{
+			std::vector<float> boxPositions =
+			{
+				-1, -1, -1,
+				 1, -1, -1,
+				 1,  1, -1,
+				-1,  1, -1,
+				-1, -1,  1,
+				 1, -1,  1,
+				 1,  1,  1,
+				-1,  1,  1
+			};
+
+			std::vector<uint32_t> boxIndicies =
+			{
+				0, 1, 3, 3, 1, 2,
+				1, 5, 2, 2, 5, 6,
+				5, 4, 6, 6, 4, 7,
+				4, 0, 7, 7, 0, 3,
+				3, 2, 7, 7, 2, 6,
+				4, 5, 0, 0, 5, 1
+			};
+
+			s_pData->SkyboxVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
+			pBuffer->SetBufferLayout
+			({
+				{ ElementType::Float3, "a_Position" }
+				});
+			s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
+
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
+			s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
+			s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
+			s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/newport_loft.hdr");
+		}
+		////////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -245,7 +285,7 @@ namespace Lamp
 		{
 			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadow map
-			int i = 3;
+			int i = 5;
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
 				if (mat.GetTextures()[name].get() != nullptr)
@@ -268,7 +308,13 @@ namespace Lamp
 			glBindTextureUnit(1, g_pEnv->pRenderUtils->GetPointLights()[0].ShadowBuffer->GetDepthAttachment());
 
 			mat.GetShader()->UploadInt("u_IrradianceMap", 2);
-			glBindTextureUnit(2, s_pData->SkyboxBuffer->GetTextureID());
+			glBindTextureUnit(2, s_pData->SkyboxBuffer->GetIrradianceID());
+
+			mat.GetShader()->UploadInt("u_PrefilterMap", 3);
+			glBindTextureUnit(3, s_pData->SkyboxBuffer->GetPrefilterID());
+
+			mat.GetShader()->UploadInt("u_BRDFLUT", 4);
+			glBindTextureUnit(4, s_pData->SkyboxBuffer->GetBRDFLUTID());
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
@@ -291,6 +337,12 @@ namespace Lamp
 	{
 		s_pData->SkyboxVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_pData->SkyboxVertexArray, s_pData->SkyboxVertexArray->GetIndexBuffer()->GetCount());
+	}
+
+	void Renderer3D::DrawQuad()
+	{
+		s_pData->QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pData->QuadVertexArray, s_pData->QuadVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::DrawGrid()

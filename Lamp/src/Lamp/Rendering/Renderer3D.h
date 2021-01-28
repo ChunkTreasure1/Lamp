@@ -25,6 +25,7 @@ namespace Lamp
 
 		static void DrawSkybox();
 		static void DrawCube();
+		static void DrawQuad();
 		static void DrawGrid();
 
 	private:

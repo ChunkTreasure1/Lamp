@@ -64,9 +64,9 @@ namespace Lamp
 		/////////////////
 
 		//Reserve spot 0 for shadow map
-		for (int i = 3; i <= m_pShader->GetSpecifications().TextureCount + 2; i++)
+		for (int i = 5; i < m_pShader->GetSpecifications().TextureCount + 5; i++)
 		{
-			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i - 3], i);
+			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i - 5], i);
 		}
 
 			//m_pShader->UploadFloat("u_Material.depthScale", m_DepthScale);

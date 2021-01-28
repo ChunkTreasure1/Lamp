@@ -102,5 +102,7 @@
     </None>
     <None Include="engine\shaders\3d\ibl\convolution_fs.glsl" />
     <None Include="engine\shaders\3d\ibl\prefilter_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate_vs.glsl" />
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate_fs.glsl" />
   </ItemGroup>
 </Project>
