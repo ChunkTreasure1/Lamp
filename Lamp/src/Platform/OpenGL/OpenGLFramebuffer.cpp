@@ -27,13 +27,14 @@ namespace Lamp
 		{
 			switch (format)
 			{
-			case Lamp::FramebufferTextureFormat::None: return GL_NONE;
-			case Lamp::FramebufferTextureFormat::RGBA8: return GL_RGBA8;
-			case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA16F;
-			case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;
-			case Lamp::FramebufferTextureFormat::RG32F: return GL_RG32F;
-			case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
-			case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+				case Lamp::FramebufferTextureFormat::None: return GL_NONE;
+				case Lamp::FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA16F;
+				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;
+				case Lamp::FramebufferTextureFormat::RG32F: return GL_RG32F;
+				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
+				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_R32I;
 			}
 		}
 
@@ -41,13 +42,14 @@ namespace Lamp
 		{
 			switch (format)
 			{
-			case Lamp::FramebufferTextureFormat::None: return GL_NONE;
-			case Lamp::FramebufferTextureFormat::RGBA8: return GL_RGBA;
-			case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA;
-			case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA;
-			case Lamp::FramebufferTextureFormat::RG32F: return GL_RG;
-			case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
-			case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
+				case Lamp::FramebufferTextureFormat::None: return GL_NONE;
+				case Lamp::FramebufferTextureFormat::RGBA8: return GL_RGBA;
+				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA;
+				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA;
+				case Lamp::FramebufferTextureFormat::RG32F: return GL_RG;
+				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
+				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			}
 		}
 
@@ -55,13 +57,14 @@ namespace Lamp
 		{
 			switch (format)
 			{
-			case Lamp::FramebufferTextureFormat::None: return GL_UNSIGNED_INT;
-			case Lamp::FramebufferTextureFormat::RGBA8: return GL_UNSIGNED_INT;
+			case Lamp::FramebufferTextureFormat::None: return GL_UNSIGNED_BYTE;
+			case Lamp::FramebufferTextureFormat::RGBA8: return GL_UNSIGNED_BYTE;
 			case Lamp::FramebufferTextureFormat::RGBA16F: return GL_FLOAT;
 			case Lamp::FramebufferTextureFormat::RGBA32F: return GL_FLOAT;
 			case Lamp::FramebufferTextureFormat::RG32F: return GL_FLOAT;
 			case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_FLOAT;
-			case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_INT;
+			case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
+			case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_UNSIGNED_BYTE;
 			}
 		}
 
@@ -190,6 +193,17 @@ namespace Lamp
 		m_Specification.Height = height;
 
 		Invalidate();
+	}
+
+	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	{
+		LP_CORE_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Index out of range!");
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+
+		int pixelData;
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+	
+		return pixelData;
 	}
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)

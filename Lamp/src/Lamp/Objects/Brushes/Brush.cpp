@@ -32,7 +32,7 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{
-		m_Model->Render();
+		m_Model->Render(m_Id);
 
 		if (g_pEnv->ShouldRenderBB && !e.GetPassInfo().IsShadowPass && !e.GetPassInfo().IsPointShadowPass)
 		{

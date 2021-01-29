@@ -65,6 +65,7 @@ namespace Lamp
 		void MoveToLayer(Object* obj, uint32_t layerId);
 
 		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
+		Object* GetObjectFromId(uint32_t id);
 
 	public:
 		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }

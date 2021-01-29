@@ -25,7 +25,7 @@ namespace Lamp
 		{
 		}
 
-		void Render();
+		void Render(size_t id = -1);
 		void RenderBoundingBox();
 
 		//Setting

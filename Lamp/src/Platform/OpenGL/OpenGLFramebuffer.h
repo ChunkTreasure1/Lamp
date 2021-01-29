@@ -16,6 +16,7 @@ namespace Lamp
 		virtual void Bind() override;
 		virtual void Unbind() override;
 		virtual void Resize(const uint32_t width, const uint32_t height) override;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
 		virtual inline const uint32_t GetDepthAttachmentID() override;

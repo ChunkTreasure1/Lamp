@@ -244,7 +244,7 @@ namespace Lamp
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
 	{
 		if (s_pData->CurrentRenderPass.IsShadowPass)
 		{
@@ -300,6 +300,7 @@ namespace Lamp
 			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
 			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
 			mat.GetShader()->UploadMat4("u_ShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+			mat.GetShader()->UploadInt("u_ObjectId", id);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
 			glBindTextureUnit(0, s_pData->ShadowBuffer->GetDepthAttachmentID());

@@ -5,12 +5,17 @@ namespace Lamp
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
+
+		//Color
 		RGBA8 = 1,
 		RGBA16F = 2,
 		RGBA32F = 3,
 		RG32F = 4,
-		DEPTH32F = 5,
-		DEPTH24STENCIL8 = 6,
+		RED_INTEGER = 5,
+
+		//Depth
+		DEPTH32F = 6,
+		DEPTH24STENCIL8 = 7,
 		Depth = DEPTH24STENCIL8
 	};
 
@@ -76,6 +81,7 @@ namespace Lamp
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
 		virtual inline const uint32_t GetDepthAttachmentID() = 0;

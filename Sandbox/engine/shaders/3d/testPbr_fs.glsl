@@ -8,8 +8,8 @@ normal
 mro
 }
 #version 440 core
-out layout(location = 0) vec4 FragColor;
-out layout(location = 1) vec4 Color2;
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int Color2;
 
 in Out
 {
@@ -53,6 +53,7 @@ uniform int u_LightCount;
 uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
+uniform int u_ObjectId;
 
 //Bind the shadowmap to slot 0, 1, 2, 3, 4
 uniform sampler2D u_ShadowMap;
@@ -258,5 +259,6 @@ void main()
 	//Gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
 	FragColor = vec4(color, 1.0);
-	Color2 = vec4(1.0, 0.0, 0.0, 1.0);
+
+	Color2 = u_ObjectId; //ObjectId;
 }

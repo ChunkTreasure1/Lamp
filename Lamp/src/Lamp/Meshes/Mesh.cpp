@@ -23,7 +23,7 @@ namespace Lamp
 			{ ElementType::Float3, "a_Normal" },
 			{ ElementType::Float3, "a_Tangent" },
 			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
+			{ ElementType::Float2, "a_TexCoords" },
 		});
 
 		m_pVertexArray->AddVertexBuffer(pBuffer);

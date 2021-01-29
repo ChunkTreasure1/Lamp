@@ -160,4 +160,19 @@ namespace Lamp
 
 		return nullptr;
 	}
+
+	Object* ObjectLayerManager::GetObjectFromId(uint32_t id)
+	{
+		for (auto& layer : m_Layers)
+		{
+			for (auto& obj : layer.Objects)
+			{
+				if (obj->GetID() == id)
+				{
+					return obj;
+				}
+			}
+		}
+		return nullptr;
+	}
 }
