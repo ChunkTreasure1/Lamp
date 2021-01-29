@@ -369,9 +369,6 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
@@ -1675,9 +1672,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>

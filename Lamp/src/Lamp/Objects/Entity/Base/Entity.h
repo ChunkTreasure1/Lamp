@@ -18,8 +18,6 @@ class EntityManager;
 
 namespace Lamp
 {
-	static uint32_t s_EntityIds = 0;
-
 	class Entity : public Object
 	{
 	public:
@@ -29,7 +27,6 @@ namespace Lamp
 			m_PhysicalEntity->SetCollider(CreateRef<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Entity";
 
-			m_Id = s_EntityIds++;
 		}
 		~Entity() {}
 
@@ -158,7 +155,6 @@ namespace Lamp
 		static Entity* Create();
 
 	private:
-		uint32_t m_Id;
 		bool m_ShouldBeSaved = false;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;

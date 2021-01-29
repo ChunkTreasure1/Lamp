@@ -3,27 +3,22 @@
 
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
-#include <Lamp/Physics/Collision.h>
-#include <Lamp/Objects/Brushes/BrushManager.h>
+
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
-#include <Lamp/Physics/Colliders/BoundingSphere.h>
-#include <Lamp/Physics/Colliders/AABB.h>
 #include <Lamp/Physics/PhysicsEngine.h>
 #include <Lamp/Physics/Physics.h>
-#include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
-#include <Lamp/Meshes/GeometrySystem.h>
 
 #include <Lamp/Objects/ObjectLayer.h>
-#include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Core/Game.h>
 
 #include <Lamp/Rendering/RenderPass.h>
-#include <ImGuizmo/ImGuizmo.h>
 
 #include "Windows/ModelImporter.h"
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
+
+#include <Platform/OpenGL/OpenGLFramebuffer.h>
 
 namespace Sandbox3D
 {
@@ -289,7 +284,7 @@ namespace Sandbox3D
 			shadowBuffer.Width = 4096;
 
 			RenderPassSpecification shadowSpec;
-			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
+			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.IsShadowPass = true;
 
@@ -315,6 +310,7 @@ namespace Sandbox3D
 			mainBuffer.Attachments =
 			{
 				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
 				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 			};
 			mainBuffer.ClearColor = m_ClearColor;
@@ -328,7 +324,9 @@ namespace Sandbox3D
 			RenderPassSpecification passSpec;
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.ExtraRenders = ptrs;
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+
+			// TODO: Fix issue with not being able to use Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(mainBuffer);
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 

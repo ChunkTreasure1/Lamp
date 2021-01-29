@@ -8,6 +8,8 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 #include <imgui/imgui_stdlib.h>
 
+#include <Platform/OpenGL/OpenGLFramebuffer.h>
+
 namespace Sandbox3D
 {
 	using namespace Lamp;
@@ -27,7 +29,7 @@ namespace Sandbox3D
 			mainBuffer.Height = 1280;
 			mainBuffer.Width = 720;
 
-			m_Framebuffer = Framebuffer::Create(mainBuffer);
+			m_Framebuffer = CreateRef<OpenGLFramebuffer>(mainBuffer);
 		}
 	}
 
@@ -145,13 +147,13 @@ namespace Sandbox3D
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*)&panelSize))
 			{
-				m_Framebuffer->Update((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				m_Framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 				m_PerspectiveSize = { panelSize.x, panelSize.y };
 
 				m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
 
-			uint32_t textureID = m_Framebuffer->GetColorAttachment();
+			uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 		ImGui::End();

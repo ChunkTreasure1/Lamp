@@ -8,7 +8,8 @@ normal
 mro
 }
 #version 440 core
-out vec4 FragColor;
+out layout(location = 0) vec4 FragColor;
+out layout(location = 1) vec4 Color2;
 
 in Out
 {
@@ -257,4 +258,5 @@ void main()
 	//Gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
 	FragColor = vec4(color, 1.0);
+	Color2 = vec4(1.0, 0.0, 0.0, 1.0);
 }

@@ -9,20 +9,24 @@
 
 namespace Lamp
 {
+	static uint32_t s_ObjectId = 0;
+
 	class Object
 	{
 	public:
 		Object()
 			: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
-		{}
+		{
+			m_Id = s_ObjectId++;
+		}
 
 		//Setting
-		void SetPosition(const glm::vec3& pos) 
-		{ 
-			m_Position = pos; 
-			m_PhysicalEntity->GetCollider()->SetTranslation(pos); 
-			CalculateModelMatrix(); 
-			UpdatedMatrix(); 
+		void SetPosition(const glm::vec3& pos)
+		{
+			m_Position = pos;
+			m_PhysicalEntity->GetCollider()->SetTranslation(pos);
+			CalculateModelMatrix();
+			UpdatedMatrix();
 
 			EntityPositionChangedEvent e;
 			OnEvent(e);
@@ -32,8 +36,8 @@ namespace Lamp
 		inline void AddRotation(const glm::vec3& rot) { m_Rotation += rot; CalculateModelMatrix(); UpdatedMatrix(); }
 		inline void SetScale(const glm::vec3& scale) { m_Scale = scale; CalculateModelMatrix(); UpdatedMatrix(); }
 
-		void SetModelMatrix(const glm::mat4& mat) 
-		{ 
+		void SetModelMatrix(const glm::mat4& mat)
+		{
 			m_ModelMatrix = mat;
 
 			glm::vec3 scale;
@@ -52,7 +56,7 @@ namespace Lamp
 		}
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetLayerID(uint32_t id) { m_LayerID = id; }
-		
+
 		inline void SetIsFrozen(bool state) { m_IsFrozen = state; }
 		inline void SetIsActive(bool state) { m_IsActive = state; m_PhysicalEntity->SetIsActive(state); }
 
@@ -64,10 +68,11 @@ namespace Lamp
 		inline const glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline Ref<PhysicalEntity>& GetPhysicalEntity() { return m_PhysicalEntity; }
 		inline const std::string& GetName() { return m_Name; }
-		
+
 		inline uint32_t GetLayerID() { return m_LayerID; }
 		inline bool GetIsFrozen() { return m_IsFrozen; }
 		inline bool GetIsActive() { return m_IsActive; }
+		inline const uint32_t GetID() { return m_Id; }
 
 		virtual void OnEvent(Event& e) {}
 		virtual uint64_t GetEventMask() = 0;
@@ -90,12 +95,13 @@ namespace Lamp
 		bool m_IsFrozen = false;
 		Ref<PhysicalEntity> m_PhysicalEntity;
 
-		glm::vec3 m_Position;
-		glm::vec3 m_Rotation;
-		glm::vec3 m_Scale;
+		glm::vec3 m_Position = { 0.f, 0.f, 0.f };
+		glm::vec3 m_Rotation = { 0.f, 0.f, 0.f };
+		glm::vec3 m_Scale = { 0.f, 0.f, 0.f };
 
-		glm::mat4 m_ModelMatrix;
+		glm::mat4 m_ModelMatrix = glm::mat4(1.f);
 		std::string m_Name;
-		uint32_t m_LayerID;
+		uint32_t m_LayerID = 0;
+		uint32_t m_Id = 0;
 	};
 }

@@ -3,6 +3,8 @@
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
 #include <Lamp/Rendering/RenderPass.h>
 
+#include <Platform/OpenGL/OpenGLFramebuffer.h>
+
 namespace GameLauncher
 {
 	using namespace Lamp;
@@ -70,7 +72,7 @@ namespace GameLauncher
 			shadowBuffer.Width = 4096;
 
 			RenderPassSpecification shadowSpec;
-			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
+			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
 			shadowSpec.Camera = m_Camera;
 			shadowSpec.IsShadowPass = true;
 
@@ -93,7 +95,7 @@ namespace GameLauncher
 
 			RenderPassSpecification passSpec;
 			passSpec.Camera = m_Camera;
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(mainBuffer);
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);

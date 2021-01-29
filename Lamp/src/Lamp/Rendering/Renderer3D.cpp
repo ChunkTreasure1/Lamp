@@ -302,10 +302,10 @@ namespace Lamp
 			mat.GetShader()->UploadMat4("u_ShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			glBindTextureUnit(0, s_pData->ShadowBuffer->GetDepthAttachment());
+			glBindTextureUnit(0, s_pData->ShadowBuffer->GetDepthAttachmentID());
 
 			mat.GetShader()->UploadInt("u_TestPointMap", 1);
-			glBindTextureUnit(1, g_pEnv->pRenderUtils->GetPointLights()[0].ShadowBuffer->GetDepthAttachment());
+			glBindTextureUnit(1, g_pEnv->pRenderUtils->GetPointLights()[0].ShadowBuffer->GetDepthAttachmentID());
 
 			mat.GetShader()->UploadInt("u_IrradianceMap", 2);
 			glBindTextureUnit(2, s_pData->SkyboxBuffer->GetIrradianceID());

@@ -36,11 +36,12 @@ namespace Lamp
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() = default;
-		FramebufferTextureSpecification(FramebufferTextureFormat format, FramebufferTexureFiltering filtering, FramebufferTextureWrap wrap, const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f })
+		FramebufferTextureSpecification(FramebufferTextureFormat format, FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear, 
+			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat, const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f })
 			: TextureFormat(format), TextureFiltering(filtering), TextureWrap(wrap), BorderColor(borderColor)
 		{}
 
-		FramebufferTextureFormat TextureFormat;
+		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
 		FramebufferTexureFiltering TextureFiltering;
 		FramebufferTextureWrap TextureWrap;
 
@@ -62,8 +63,8 @@ namespace Lamp
 		uint32_t Width = 1280;
 		uint32_t Height = 720;
 
-		glm::vec4 ClearColor;
-		uint32_t Samples;
+		glm::vec4 ClearColor = { 1.f, 1.f, 1.f, 1.f };
+		uint32_t Samples = 1;
 		FramebufferAttachmentSpecification Attachments;
 	};
 
@@ -74,10 +75,10 @@ namespace Lamp
 
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
-		virtual void Update(const uint32_t width, const uint32_t height) = 0;
+		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
 
-		virtual inline const uint32_t GetColorAttachment() const = 0;
-		virtual inline const uint32_t GetDepthAttachment() const = 0;
+		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
+		virtual inline const uint32_t GetDepthAttachmentID() = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 

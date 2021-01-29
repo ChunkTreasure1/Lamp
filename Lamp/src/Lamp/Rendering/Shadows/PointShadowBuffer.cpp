@@ -39,7 +39,7 @@ namespace Lamp
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void PointShadowBuffer::Update(uint32_t width, uint32_t height)
+	void PointShadowBuffer::Resize(uint32_t width, uint32_t height)
 	{
 		m_Specification.Width = width;
 		m_Specification.Height = height;

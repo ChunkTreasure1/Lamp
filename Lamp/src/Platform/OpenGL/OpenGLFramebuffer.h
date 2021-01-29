@@ -15,28 +15,10 @@ namespace Lamp
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
-		virtual void Update(const uint32_t width, const uint32_t height) override;
+		virtual void Resize(const uint32_t width, const uint32_t height) override;
 
-		virtual const uint32_t GetColorAttachment() const override 
-		{ 
-			// TODO: Fix
-			if (m_HasColorAttachment)
-			{
-				return m_AttachmentIDs[0];
-			}
-		}
-		virtual const uint32_t GetDepthAttachment() const override 
-		{ 
-			// TODO: Fix
-			if (m_HasColorAttachment)
-			{
-				return m_AttachmentIDs[1];
-			}
-			else
-			{
-				return m_AttachmentIDs[0];
-			}
-		}
+		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
+		virtual inline const uint32_t GetDepthAttachmentID() override;
 
 		virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification; }
 
@@ -45,9 +27,12 @@ namespace Lamp
 
 	private:
 		uint32_t m_RendererID;
-		bool m_HasColorAttachment = false;
 
-		std::vector<uint32_t> m_AttachmentIDs;
+		std::vector<uint32_t> m_ColorAttachmentIDs;
+		uint32_t m_DepthAttachmentID;
+
 		FramebufferSpecification m_Specification;
+		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecs;
+		FramebufferTextureSpecification m_DepthAttachmentFormatSpec = FramebufferTextureFormat::None;
 	};
 }
