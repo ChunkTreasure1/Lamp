@@ -85,10 +85,10 @@ namespace Lamp
 			std::vector<float> quadPositions =
 			{
 				// positions         // texture Coords
-				-1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-				-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
-				 1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-				 1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+				-1.f, -1.f, 0.0f,  0.0f, 0.0f,
+				 1.f, -1.f, 0.0f,  1.0f, 0.0f,
+				 1.f,  1.f, 0.0f,  1.0f, 1.0f,
+				-1.f,  1.f, 0.0f,  0.0f, 1.0f,
 			};
 
 			std::vector<uint32_t> quadIndices =
@@ -138,38 +138,6 @@ namespace Lamp
 			delete[] pLineIndices;
 		}
 		//////////////////
-
-		/////Grid/////
-		{
-			std::vector<float> gridPos =
-			{
-				-1, -1, 0,
-				 1, -1, 0,
-				 1,  1, 0,
-				-1, 1, 0,
-			};
-
-			std::vector<uint32_t> gridIndices =
-			{
-				0, 1, 3,
-				1, 2, 3
-			};
-
-			s_pData->GridVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> buffer = VertexBuffer::Create(gridPos, (uint32_t)(sizeof(float) * gridPos.size()));
-			buffer->SetBufferLayout
-			({
-				{ ElementType::Float3, "a_Position" }
-				});
-			s_pData->GridVertexArray->AddVertexBuffer(buffer);
-
-			Ref<IndexBuffer> gridIndexBuffer = IndexBuffer::Create(gridIndices, (uint32_t)(gridIndices.size()));
-			s_pData->GridVertexArray->SetIndexBuffer(gridIndexBuffer);
-
-			s_pData->GridVertexArray->Unbind();
-		}
-		//////////////
-
 
 		/////Shadows/////
 		s_pData->DirShadowShader = ShaderLibrary::GetShader("dirShadow");

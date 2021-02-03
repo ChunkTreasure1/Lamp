@@ -81,8 +81,6 @@ namespace Sandbox3D
 		CommandStack<Command> m_PerspecticeCommands;
 		bool m_HaveUndone = false;
 
-		glm::vec2 m_ViewportBounds[2];
-		
 		//Asset browser
 		Lamp::File m_SelectedFile;
 		int m_CurrSample = -1;

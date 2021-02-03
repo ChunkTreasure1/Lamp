@@ -14,6 +14,8 @@
 #include "Lamp/Objects/Object.h"
 #include <string>
 
+#include "Lamp/Event/ApplicationEvent.h"
+
 class EntityManager;
 
 namespace Lamp
@@ -27,6 +29,7 @@ namespace Lamp
 			m_PhysicalEntity->SetCollider(CreateRef<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Entity";
 
+			m_GizmoTexure = Texture2D::Create("engine/gizmos/gizmoEntity.png");
 		}
 		~Entity() {}
 
@@ -155,7 +158,13 @@ namespace Lamp
 		static Entity* Create();
 
 	private:
+		bool OnRenderEvent(AppRenderEvent& e);
+
+	private:
 		bool m_ShouldBeSaved = false;
+
+		Ref<Texture2D> m_GizmoTexure = nullptr;
+		Ref<Shader> m_GizmoShader = nullptr;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

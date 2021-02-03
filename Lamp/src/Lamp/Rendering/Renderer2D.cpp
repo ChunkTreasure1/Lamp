@@ -170,7 +170,6 @@ namespace Lamp
 
 	void Renderer2D::Begin(const Ref<CameraBase>& camera)
 	{
-		m_pFrameBuffer->Bind();
 		RenderCommand::Clear();
 
 		s_pData->pTextureShader->Bind();
@@ -188,7 +187,6 @@ namespace Lamp
 		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
 
 		Flush();
-		m_pFrameBuffer->Unbind();
 	}
 
 	void Renderer2D::Flush()

@@ -51,17 +51,6 @@ namespace Sandbox3D
 			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-			/////Object picking/////
-			auto windowSize = ImGui::GetWindowSize();
-			ImVec2 minBound = ImGui::GetWindowPos();
-			minBound.x += viewportOffset.x;
-			minBound.y += viewportOffset.y;
-
-			ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
-			m_ViewportBounds[0] = { minBound.x, minBound.y };
-			m_ViewportBounds[1] = { maxBound.x, maxBound.y };
-			////////////////////////
-
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
 			ImGui::SetCursorPos(ImVec2(20, 40));
 			ImGui::Text(frameInfo.c_str());
@@ -194,6 +183,7 @@ namespace Sandbox3D
 			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
+				mousePos.y = m_PerspectiveSize.y - mousePos.y;
 
 				Command cmd;
 				cmd.cmd = Cmd::Selection;
@@ -203,23 +193,23 @@ namespace Sandbox3D
 				/////Mouse picking/////
 				m_SandboxBuffer->Bind();
 
-				auto [mx, my] = ImGui::GetMousePos();
-				mx -= m_ViewportBounds[0].x;
-				my -= m_ViewportBounds[0].y;
+				int mouseX = (int)mousePos.x;
+				int mouseY = (int)mousePos.y;
 
-				glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-
-				my = viewportSize.y - my;
-
-				int mouseX = (int)mx;
-				int mouseY = (int)my;
-
-				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
 				{
 					int pixelData = m_SandboxBuffer->ReadPixel(1, mouseX, mouseY);
 
+					if (m_pSelectedObject)
+					{
+						m_pSelectedObject->SetIsSelected(false);
+					}
+
 					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
-					LP_CORE_INFO("Pixel data: {0}", pixelData);
+					if (m_pSelectedObject)
+					{
+						m_pSelectedObject->SetIsSelected(true);
+					}
 				}
 
 				m_SandboxBuffer->Unbind();
@@ -385,7 +375,17 @@ namespace Sandbox3D
 
 					if (ImGui::IsItemClicked())
 					{
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(false);
+						}
+
 						m_pSelectedObject = layer.Objects[i];
+					
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(true);
+						}
 					}
 				}
 
@@ -769,6 +769,7 @@ namespace Sandbox3D
 			if (ImGui::BeginMenu("Editor"))
 			{
 				ImGui::MenuItem("Render Bounding Box", NULL, &g_pEnv->ShouldRenderBB);
+				ImGui::MenuItem("Render Gizmos", NULL, &g_pEnv->ShouldRenderGizmos);
 
 				ImGui::EndMenu();
 			}

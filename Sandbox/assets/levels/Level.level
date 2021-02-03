@@ -23,7 +23,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="12.180448,7.435431,9.280564" rotation="541.052734,-16.499901,0.000000" fov="60.000000"/>
+		<CameraValues position="7.186356,4.525152,-12.553097" rotation="816.455444,-17.249846,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

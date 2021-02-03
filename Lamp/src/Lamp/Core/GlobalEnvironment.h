@@ -23,6 +23,7 @@ struct GlobalEnvironment
 {
 	Lamp::DirectionalLight DirLight;
 	bool ShouldRenderBB = false;
+	bool ShouldRenderGizmos = true;
 
 	RenderUtils* pRenderUtils = nullptr;
 };

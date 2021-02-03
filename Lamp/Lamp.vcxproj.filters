@@ -82,9 +82,6 @@
     <Filter Include="src\Lamp\Rendering\Texture2D">
       <UniqueIdentifier>{8927768A-75E2-6536-1E9A-DE800A34B0C6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\TextureCube">
-      <UniqueIdentifier>{B25DA800-9E83-7267-87C9-F732738E9733}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Rendering\Vertices">
       <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
     </Filter>
@@ -357,6 +354,9 @@
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h">
       <Filter>src\Lamp\Rendering\Shadows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
@@ -367,6 +367,9 @@
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
@@ -1503,9 +1506,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1664,6 +1664,9 @@
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp">
       <Filter>src\Lamp\Rendering\Shadows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
@@ -1672,6 +1675,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
@@ -1711,9 +1717,6 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

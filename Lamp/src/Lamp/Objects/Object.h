@@ -59,6 +59,7 @@ namespace Lamp
 
 		inline void SetIsFrozen(bool state) { m_IsFrozen = state; }
 		inline void SetIsActive(bool state) { m_IsActive = state; m_PhysicalEntity->SetIsActive(state); }
+		inline void SetIsSelected(bool state) { m_IsSelected = state; }
 
 		//Getting
 		inline const glm::vec3& GetPosition() { return m_Position; }
@@ -72,7 +73,9 @@ namespace Lamp
 		inline uint32_t GetLayerID() { return m_LayerID; }
 		inline bool GetIsFrozen() { return m_IsFrozen; }
 		inline bool GetIsActive() { return m_IsActive; }
+		
 		inline const uint32_t GetID() { return m_Id; }
+		inline const bool GetIsSelected() { return m_IsSelected; }
 
 		virtual void OnEvent(Event& e) {}
 		virtual uint64_t GetEventMask() = 0;
@@ -93,6 +96,7 @@ namespace Lamp
 	protected:
 		bool m_IsActive = true;
 		bool m_IsFrozen = false;
+		bool m_IsSelected = false;
 		Ref<PhysicalEntity> m_PhysicalEntity;
 
 		glm::vec3 m_Position = { 0.f, 0.f, 0.f };
