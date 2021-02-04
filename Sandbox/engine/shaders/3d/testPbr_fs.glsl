@@ -36,6 +36,8 @@ struct PointLight
 	float intensity;
 	float falloff;
 	float farPlane;
+
+	samplerCube shadowMap;
 };
 
 struct DirectionalLight
@@ -48,7 +50,7 @@ struct DirectionalLight
 
 uniform Material u_Material;
 
-uniform PointLight u_PointLights[1];
+uniform PointLight u_PointLights[2];
 uniform int u_LightCount;
 uniform DirectionalLight u_DirectionalLight;
 
@@ -57,7 +59,6 @@ uniform int u_ObjectId;
 
 //Bind the shadowmap to slot 0, 1, 2, 3, 4
 uniform sampler2D u_ShadowMap;
-uniform samplerCube u_TestPointMap;
 
 uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
@@ -135,7 +136,7 @@ float DirectionalShadowCalculation(vec4 pos)
 float PointShadowCalculation(vec3 fragPos, PointLight light)
 {
 	vec3 fragToLight = fragPos - light.position;
-	float closestDepth = texture(u_TestPointMap, fragToLight).r;
+	float closestDepth = texture(light.shadowMap, fragToLight).r;
 	closestDepth *= light.farPlane;
 
 	float currentDepth = length(fragToLight);

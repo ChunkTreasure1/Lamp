@@ -192,4 +192,11 @@ namespace Lamp
 		glDepthFunc(GL_LEQUAL);
 		glBindTextureUnit(0, m_CubeMapId);
 	}
+
+	void IBLBuffer::BindTextures(uint32_t startId)
+	{
+		glBindTextureUnit(startId, m_IrradianceId);
+		glBindTextureUnit(startId + 1, m_PrefilterMap);
+		glBindTextureUnit(startId + 2, m_TestTexture->GetID());
+	}
 }

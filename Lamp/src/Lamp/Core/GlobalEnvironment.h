@@ -17,13 +17,13 @@ public:
 	RenderUtils() {}
 	~RenderUtils();
 
-	void RegisterPointLight(const Lamp::PointLight& light);
-	bool UnregisterPointLight(const Lamp::PointLight& light);
+	void RegisterPointLight(Lamp::PointLight* light);
+	bool UnregisterPointLight(Lamp::PointLight* light);
 
-	inline const std::vector<Lamp::PointLight>& GetPointLights() { return m_PointLights; }
+	inline const std::vector<Lamp::PointLight*>& GetPointLights() { return m_PointLights; }
 
 private:
-	std::vector<Lamp::PointLight> m_PointLights;
+	std::vector<Lamp::PointLight*> m_PointLights;
 };
 
 struct GlobalEnvironment

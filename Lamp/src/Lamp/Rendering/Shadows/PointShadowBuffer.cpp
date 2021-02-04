@@ -45,6 +45,16 @@ namespace Lamp
 		m_Specification.Height = height;
 	}
 
+	void PointShadowBuffer::BindColorAttachment(uint32_t id, uint32_t i)
+	{
+
+	}
+
+	void PointShadowBuffer::BindDepthAttachment(uint32_t id)
+	{
+		glBindTextureUnit(id, m_TextureID);
+	}
+
 	void PointShadowBuffer::SetPosition(const glm::vec3& pos)
 	{
 		m_Position = pos;

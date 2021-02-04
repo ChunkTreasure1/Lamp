@@ -15,28 +15,32 @@ namespace Lamp
 			spec.Height = 512;
 			spec.Width = 512;
 
-			m_PointLight.ShadowBuffer = std::make_shared<PointShadowBuffer>(spec);
-			g_pEnv->pRenderUtils->RegisterPointLight(m_PointLight);
+			m_pPointLight = new PointLight();
+
+			m_pPointLight->ShadowBuffer = std::make_shared<PointShadowBuffer>(spec);
+			g_pEnv->pRenderUtils->RegisterPointLight(m_pPointLight);
 		}
 
 
 		SetComponentProperties
 		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_PointLight.Intensity) },
-			{ PropertyType::Float, "Radius", RegisterData(&m_PointLight.Radius) },
-			{ PropertyType::Float, "Falloff", RegisterData(&m_PointLight.Falloff) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_PointLight.Color) }
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->Intensity) },
+			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->Radius) },
+			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->Falloff) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->Color) }
 		});
 	}
 
 	LightComponent::~LightComponent()
 	{
-		g_pEnv->pRenderUtils->UnregisterPointLight(m_PointLight);
+		g_pEnv->pRenderUtils->UnregisterPointLight(m_pPointLight);
+
+		delete m_pPointLight;
 	}
 
 	void LightComponent::Initialize()
 	{
-		m_PointLight.ShadowBuffer->SetPosition(m_pEntity->GetPosition());
+		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
 	}
 
 	void LightComponent::OnEvent(Event& e)
@@ -57,7 +61,7 @@ namespace Lamp
 
 	bool LightComponent::OnPositionChanged(EntityPositionChangedEvent& e)
 	{
-		m_PointLight.ShadowBuffer->SetPosition(m_pEntity->GetPosition());
+		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
 
 		return false;
 	}

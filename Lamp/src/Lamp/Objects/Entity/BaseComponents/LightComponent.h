@@ -23,16 +23,16 @@ namespace Lamp
 		////////////////
 
 		//Getting
-		inline const float GetIntensity() { return m_PointLight.Intensity; }
-		inline const float GetRadius() { return m_PointLight.Radius; }
-		inline const float GetFalloff() { return m_PointLight.Falloff; }
+		inline const float GetIntensity() { return m_pPointLight->Intensity; }
+		inline const float GetRadius() { return m_pPointLight->Radius; }
+		inline const float GetFalloff() { return m_pPointLight->Falloff; }
 
-		inline const glm::vec3& GetColor() { return m_PointLight.Color; }
-		inline const float GetFarPlane() { return m_PointLight.FarPlane; }
+		inline const glm::vec3& GetColor() { return m_pPointLight->Color; }
+		inline const float GetFarPlane() { return m_pPointLight->FarPlane; }
 
 		//Setting
-		inline void SetIntensity(float val) { m_PointLight.Intensity = val; }
-		inline void SetColor(const glm::vec3& val) { m_PointLight.Color = val; }
+		inline void SetIntensity(float val) { m_pPointLight->Intensity = val; }
+		inline void SetColor(const glm::vec3& val) { m_pPointLight->Color = val; }
 
 	private:
 		bool OnRender(AppRenderEvent& e);
@@ -44,6 +44,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "LightComponent"; }
 
 	private:
-		PointLight m_PointLight;
+		PointLight* m_pPointLight;
 	};
 }

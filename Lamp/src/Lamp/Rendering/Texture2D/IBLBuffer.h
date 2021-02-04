@@ -19,6 +19,8 @@ namespace Lamp
 		inline const uint32_t GetBRDFLUTID() { return m_TestTexture->GetID(); }
 		inline const uint32_t GetIrradianceID() { return m_IrradianceId; }
 
+		void BindTextures(uint32_t startId);
+
 	private:
 		Ref<Shader> m_EqCubeShader;
 		Ref<Shader> m_ConvolutionShader;

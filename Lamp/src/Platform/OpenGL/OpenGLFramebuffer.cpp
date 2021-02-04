@@ -220,6 +220,16 @@ namespace Lamp
 		return m_DepthAttachmentID;
 	}
 
+	void OpenGLFramebuffer::BindColorAttachment(uint32_t id, uint32_t i)
+	{
+		glBindTextureUnit(id, m_ColorAttachmentIDs[i]);
+	}
+
+	void OpenGLFramebuffer::BindDepthAttachment(uint32_t id)
+	{
+		glBindTextureUnit(id, m_DepthAttachmentID);
+	}
+
 	void OpenGLFramebuffer::Invalidate()
 	{
 		if (m_RendererID)

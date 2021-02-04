@@ -23,6 +23,9 @@ namespace Lamp
 		virtual inline const uint32_t GetDepthAttachmentID() override { return m_TextureID; }
 		virtual inline const uint32_t GetRendererID() override { return m_RendererID; }
 
+		virtual void BindColorAttachment(uint32_t id /* = 0 */, uint32_t i /* = 0 */);
+		virtual void BindDepthAttachment(uint32_t id /* = 0 */);
+
 		virtual const FramebufferSpecification& GetSpecification() const { return FramebufferSpecification(); }
 
 		void SetPosition(const glm::vec3& pos);
