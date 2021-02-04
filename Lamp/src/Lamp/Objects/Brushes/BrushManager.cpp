@@ -9,14 +9,16 @@
 
 namespace Lamp
 {
-	Ref<BrushManager> BrushManager::s_Manager = nullptr;
+	BrushManager* BrushManager::s_Manager = nullptr;
 
 	BrushManager::BrushManager()
 	{
+		s_Manager = this;
 	}
 
 	BrushManager::~BrushManager()
 	{
+		m_Brushes.clear();
 	}
 
 	Brush2D* BrushManager::Create2D(const std::string& path)

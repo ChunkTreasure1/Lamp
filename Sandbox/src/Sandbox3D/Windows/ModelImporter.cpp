@@ -26,8 +26,8 @@ namespace Sandbox3D
 				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 			};
 			mainBuffer.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
-			mainBuffer.Height = 1280;
-			mainBuffer.Width = 720;
+			mainBuffer.Height = 720;
+			mainBuffer.Width = 1280;
 
 			m_Framebuffer = CreateRef<OpenGLFramebuffer>(mainBuffer);
 		}

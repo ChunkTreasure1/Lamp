@@ -4,6 +4,13 @@
 
 #include "Lamp/Rendering/LightBase.h"
 
+namespace Lamp
+{
+	class ObjectLayerManager;
+	class EntityManager;
+	class BrushManager;
+}
+
 class RenderUtils
 {
 public:
@@ -26,6 +33,10 @@ struct GlobalEnvironment
 	bool ShouldRenderGizmos = true;
 
 	RenderUtils* pRenderUtils = nullptr;
+
+	Lamp::ObjectLayerManager* pObjectLayerManager;
+	Lamp::EntityManager* pEntityManager;
+	Lamp::BrushManager* pBrushManager;
 };
 
 struct SAABB

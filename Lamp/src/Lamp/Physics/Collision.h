@@ -76,7 +76,7 @@ namespace Lamp
 
 		static void CheckCollisions()
 		{
-			for (size_t m = 0; m < LevelSystem::GetCurrentLevel()->GetEntityManager()->GetEntities().size(); m++)
+			/*for (size_t m = 0; m < LevelSystem::GetCurrentLevel()->GetEntityManager()->GetEntities().size(); m++)
 			{
 				for (size_t n = m + 1; n < LevelSystem::GetCurrentLevel()->GetEntityManager()->GetEntities().size(); n++)
 				{
@@ -158,7 +158,7 @@ namespace Lamp
 						}
 					}
 				}
-			}
+			}*/
 		}
 	};
 }

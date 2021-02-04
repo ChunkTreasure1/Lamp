@@ -10,6 +10,9 @@
 
 #include "CoreLogger.h"
 
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/Brushes/BrushManager.h"
+
 GlobalEnvironment* g_pEnv;
 
 namespace Lamp
@@ -23,6 +26,10 @@ namespace Lamp
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
 		g_pEnv->pRenderUtils = new RenderUtils();
+		
+		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
+		g_pEnv->pEntityManager = new EntityManager();
+		g_pEnv->pBrushManager = new BrushManager();
 
 		//Create the window
 		WindowProps props;
@@ -47,6 +54,9 @@ namespace Lamp
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
+		delete g_pEnv->pObjectLayerManager;
+		delete g_pEnv->pBrushManager;
+		delete g_pEnv->pEntityManager;
 		delete g_pEnv->pRenderUtils;
 		delete g_pEnv;
 	}

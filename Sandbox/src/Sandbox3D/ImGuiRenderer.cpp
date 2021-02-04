@@ -46,8 +46,6 @@ namespace Sandbox3D
 				m_SandboxController->GetCameraController()->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
-			auto viewportOffset = ImGui::GetCursorPos(); //includes tab bar
-
 			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
@@ -56,7 +54,7 @@ namespace Sandbox3D
 			ImGui::Text(frameInfo.c_str());
 		}
 
-		//Guizmos
+		//Guizmo
 		static glm::mat4 transform = glm::mat4(1.f);
 		static glm::mat4 lastTrans = glm::mat4(1.f);
 		static bool beginMove = false;

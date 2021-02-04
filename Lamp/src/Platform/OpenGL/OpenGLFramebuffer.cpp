@@ -107,13 +107,16 @@ namespace Lamp
 					Utils::FormatToGL(textureSpec.TextureFormat), Utils::FormatToType(textureSpec.TextureFormat), nullptr);
 			}
 
-			glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MIN_FILTER, Utils::FilteringToGL(textureSpec.TextureFiltering));
-			glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MAG_FILTER, Utils::FilteringToGL(textureSpec.TextureFiltering));
+			if (!multisample)
+			{
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MIN_FILTER, Utils::FilteringToGL(textureSpec.TextureFiltering));
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MAG_FILTER, Utils::FilteringToGL(textureSpec.TextureFiltering));
 
-			glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_S, Utils::WrapToGL(textureSpec.TextureWrap));
-			glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_T, Utils::WrapToGL(textureSpec.TextureWrap));
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_S, Utils::WrapToGL(textureSpec.TextureWrap));
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_T, Utils::WrapToGL(textureSpec.TextureWrap));
 
-			glTexParameterfv(Utils::TextureTarget(multisample), GL_TEXTURE_BORDER_COLOR, glm::value_ptr(textureSpec.BorderColor));
+				glTexParameterfv(Utils::TextureTarget(multisample), GL_TEXTURE_BORDER_COLOR, glm::value_ptr(textureSpec.BorderColor));
+			}
 		}
 
 		static bool IsDepthFormat(FramebufferTextureFormat format)

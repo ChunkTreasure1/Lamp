@@ -27,7 +27,6 @@ namespace Lamp
 		pRootNode = file.first_node("Level");
 
 		pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value(), path);
-		ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
 		PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
 
 		if (rapidxml::xml_node<>* pLevelEnv = pRootNode->first_node("LevelEnvironment"))
@@ -58,25 +57,22 @@ namespace Lamp
 
 		if (rapidxml::xml_node<>* pLayers = pRootNode->first_node("Layers"))
 		{
-			pLevel->GetObjectLayerManager()->SetLayers(LoadLayers(pLayers, pLevel->GetObjectLayerManager()));
+			ObjectLayerManager::Get()->SetLayers(LoadLayers(pLayers, ObjectLayerManager::Get()));
 		}
 
 		if (rapidxml::xml_node<>* pBrushes = pRootNode->first_node("Brushes"))
 		{
-			pLevel->GetBrushManager()->SetBrushes(LoadBrushes(pBrushes, pLevel->GetBrushManager()));
+			BrushManager::Get()->SetBrushes(LoadBrushes(pBrushes, BrushManager::Get()));
 		}
 
 		if (rapidxml::xml_node<>* pEntities = pRootNode->first_node("Entities"))
 		{
-			pLevel->GetEntityManager()->SetEntities(LoadEntities(pEntities, pLevel->GetEntityManager()));
+			EntityManager::Get()->SetEntities(LoadEntities(pEntities, EntityManager::Get()));
 		}
 
 		m_CurrentLevel = pLevel;
 
 		LP_CORE_INFO("Level loaded!");
-
-		EntityManager::SetCurrentManager(pLevel->GetEntityManager());
-		BrushManager::SetCurrentManager(pLevel->GetBrushManager());
 
 		return pLevel;
 	}
@@ -94,7 +90,7 @@ namespace Lamp
 
 		/////Brushes/////
 		rapidxml::xml_node<>* pBrushes = doc.allocate_node(rapidxml::node_element, "Brushes");
-		for (auto& brush : level->GetBrushManager()->GetBrushes())
+		for (auto& brush : BrushManager::Get()->GetBrushes())
 		{
 			rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "Brush");
 
@@ -146,7 +142,7 @@ namespace Lamp
 
 		////Entities/////
 		rapidxml::xml_node<>* pEntities = doc.allocate_node(rapidxml::node_element, "Entities");
-		for (auto& entity : level->GetEntityManager()->GetEntities())
+		for (auto& entity : EntityManager::Get()->GetEntities())
 		{
 			if (!entity->GetSaveable())
 			{
@@ -293,7 +289,7 @@ namespace Lamp
 		return SaveLevel(level->GetPath(), level);
 	}
 
-	std::vector<ObjectLayer> LevelSystem::LoadLayers(rapidxml::xml_node<>* pNode, Ref<ObjectLayerManager>& objLayerManager)
+	std::vector<ObjectLayer> LevelSystem::LoadLayers(rapidxml::xml_node<>* pNode, ObjectLayerManager* objLayerManager)
 	{
 		std::vector<ObjectLayer> layers;
 
@@ -315,7 +311,7 @@ namespace Lamp
 		return layers;
 	}
 
-	std::vector<Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, Ref<BrushManager>& brushManager)
+	std::vector<Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, BrushManager* brushManager)
 	{
 		std::vector<Brush*> pBrushes;
 
@@ -343,7 +339,7 @@ namespace Lamp
 		return pBrushes;
 	}
 
-	std::vector<Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, Ref<EntityManager>& entityManager)
+	std::vector<Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, EntityManager* entityManager)
 	{
 		std::vector<Entity*> pEntities;
 

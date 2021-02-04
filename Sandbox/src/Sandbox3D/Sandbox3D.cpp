@@ -316,7 +316,7 @@ namespace Sandbox3D
 			mainBuffer.ClearColor = m_ClearColor;
 			mainBuffer.Height = 1280;
 			mainBuffer.Width = 720;
-			mainBuffer.Samples = 2;
+			mainBuffer.Samples = 1;
 
 			std::vector<std::function<void()>> ptrs;
 			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));

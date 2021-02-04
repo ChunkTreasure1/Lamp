@@ -85,6 +85,7 @@ namespace Lamp
 
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
 		virtual inline const uint32_t GetDepthAttachmentID() = 0;
+		virtual inline const uint32_t GetRendererID() = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 

@@ -20,6 +20,7 @@ namespace Lamp
 
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
 		virtual inline const uint32_t GetDepthAttachmentID() override;
+		virtual inline const uint32_t GetRendererID() override { return m_RendererID; }
 
 		virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification; }
 

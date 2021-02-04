@@ -34,11 +34,6 @@ namespace Sandbox3D
 		Ref<Lamp::Level> pLevel = CreateRef<Lamp::Level>("New Level", "");
 		Lamp::LevelSystem::SetCurrentLevel(pLevel);
 
-		Lamp::ObjectLayerManager::SetCurrentManager(pLevel->GetObjectLayerManager());
-		Lamp::EntityManager::SetCurrentManager(pLevel->GetEntityManager());
-		Lamp::BrushManager::SetCurrentManager(pLevel->GetBrushManager());
-		Lamp::PhysicsEngine::SetCurrentEngine(pLevel->GetPhysicsEngine());
-
 		m_pSelectedObject = nullptr;
 	}
 

@@ -40,8 +40,7 @@ namespace Lamp
 	class ObjectLayerManager
 	{
 	public:
-		ObjectLayerManager()
-		{}
+		ObjectLayerManager();
 
 		~ObjectLayerManager() 
 		{
@@ -68,8 +67,7 @@ namespace Lamp
 		Object* GetObjectFromId(uint32_t id);
 
 	public:
-		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }
-		static Ref<ObjectLayerManager>& Get() { return s_ObjectLayerManager; }
+		static ObjectLayerManager* Get() { return s_ObjectLayerManager; }
 	private:
 		bool Exists(uint32_t layerId)
 		{
@@ -85,7 +83,7 @@ namespace Lamp
 		}
 
 	private:
-		static Ref<ObjectLayerManager> s_ObjectLayerManager;
+		static ObjectLayerManager* s_ObjectLayerManager;
 
 	private:
 		std::vector<ObjectLayer> m_Layers;

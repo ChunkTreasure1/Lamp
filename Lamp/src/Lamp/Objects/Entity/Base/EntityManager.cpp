@@ -6,7 +6,17 @@
 
 namespace Lamp
 {
-	Ref<EntityManager> EntityManager::s_CurrentManager;
+	EntityManager* EntityManager::s_CurrentManager;
+
+	EntityManager::EntityManager()
+	{
+		s_CurrentManager = this;
+	}
+
+	EntityManager::~EntityManager()
+	{
+		m_pEntites.clear();
+	}
 
 	Entity* EntityManager::Create(bool saveable)
 	{

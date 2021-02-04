@@ -9,7 +9,8 @@ namespace Lamp
 	class EntityManager
 	{
 	public:
-		EntityManager() {}
+		EntityManager();
+		~EntityManager();
 
 		Entity* Create(bool saveable = true);
 		bool Remove(Entity* pEnt);
@@ -24,13 +25,12 @@ namespace Lamp
 		inline void SetEntities(std::vector<Entity*> entities) { m_pEntites = entities; }
 
 	public:
-		static void SetCurrentManager(Ref<EntityManager> manager) { s_CurrentManager = manager; }
-		static Ref<EntityManager>& Get() { return s_CurrentManager; }
+		static EntityManager* Get() { return s_CurrentManager; }
 
 	private:
 		std::vector<Entity*> m_pEntites;
 
 	private:
-		static Ref<EntityManager> s_CurrentManager;
+		static EntityManager* s_CurrentManager;
 	};
 }
