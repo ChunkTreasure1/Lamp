@@ -186,6 +186,16 @@ namespace Lamp
 		m_TestTexture = Texture2D::Create("engine/textures/testBRDF.png");
 	}
 
+	IBLBuffer::~IBLBuffer()
+	{
+		glDeleteTextures(1, &m_CubeMapId);
+		glDeleteTextures(1, &m_HdrTextureId);
+		glDeleteTextures(1, &m_IrradianceId);
+		glDeleteTextures(1, &m_PrefilterMap);
+
+		glDeleteFramebuffers(1, &m_RendererId);
+	}
+
 	void IBLBuffer::Bind()
 	{
 

@@ -22,6 +22,8 @@ namespace Lamp
 		virtual inline const uint32_t GetDepthAttachmentID() override;
 		virtual inline const uint32_t GetRendererID() override { return m_RendererID; }
 
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+
 		virtual void BindColorAttachment(uint32_t id, uint32_t i);
 		virtual void BindDepthAttachment(uint32_t id);
 

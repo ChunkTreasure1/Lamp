@@ -57,14 +57,14 @@ namespace Lamp
 		{
 			switch (format)
 			{
-			case Lamp::FramebufferTextureFormat::None: return GL_UNSIGNED_BYTE;
-			case Lamp::FramebufferTextureFormat::RGBA8: return GL_UNSIGNED_BYTE;
-			case Lamp::FramebufferTextureFormat::RGBA16F: return GL_FLOAT;
-			case Lamp::FramebufferTextureFormat::RGBA32F: return GL_FLOAT;
-			case Lamp::FramebufferTextureFormat::RG32F: return GL_FLOAT;
-			case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_FLOAT;
-			case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
-			case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_UNSIGNED_BYTE;
+				case Lamp::FramebufferTextureFormat::None: return GL_UNSIGNED_BYTE;
+				case Lamp::FramebufferTextureFormat::RGBA8: return GL_UNSIGNED_BYTE;
+				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_FLOAT;
+				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_FLOAT;
+				case Lamp::FramebufferTextureFormat::RG32F: return GL_FLOAT;
+				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_FLOAT;
+				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_INT;
 			}
 		}
 
@@ -218,6 +218,13 @@ namespace Lamp
 	inline const uint32_t OpenGLFramebuffer::GetDepthAttachmentID()
 	{
 		return m_DepthAttachmentID;
+	}
+
+	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		auto& att = m_ColorAttachmentSpecs[attachmentIndex];
+
+		glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0, Utils::FormatToGL(att.TextureFormat), GL_INT, &value);
 	}
 
 	void OpenGLFramebuffer::BindColorAttachment(uint32_t id, uint32_t i)

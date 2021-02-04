@@ -12,6 +12,7 @@ namespace Lamp
 	{
 	public:
 		IBLBuffer(const std::string& path);
+		~IBLBuffer();
 
 		void Bind();
 		inline const uint32_t GetTextureID() { return m_CubeMapId; }

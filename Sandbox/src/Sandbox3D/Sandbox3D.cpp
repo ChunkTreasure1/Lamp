@@ -63,6 +63,8 @@ namespace Sandbox3D
 
 		GetInput();
 
+		m_SandboxBuffer->ClearAttachment(1, -1);
+
 		RenderPassManager::Get()->RenderPasses();
 		m_ModelImporter->Render();
 

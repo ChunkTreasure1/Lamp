@@ -83,6 +83,8 @@ namespace Lamp
 		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
+
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
 		virtual inline const uint32_t GetDepthAttachmentID() = 0;
 		virtual inline const uint32_t GetRendererID() = 0;
