@@ -657,11 +657,23 @@ namespace Sandbox3D
 
 		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
 
-		ImGui::ColorEdit3("Global Ambient", glm::value_ptr(Lamp::LevelSystem::GetEnvironment().GlobalAmbient));
+		if (ImGui::CollapsingHeader("Environment"))
+		{
+			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
+			g_pEnv->DirLight.UpdateProjection();
 
-		
-		ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
-		g_pEnv->DirLight.UpdateProjection();
+			static std::string path;
+			ImGui::InputText("HDR environment", &path);
+			ImGui::SameLine();
+			if (ImGui::Button("Open..."))
+			{
+				path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+				if (!path.empty())
+				{
+					Lamp::Renderer3D::SetEnvironment(path);
+				}
+			}
+		}
 
 		ImGui::End();
 	}

@@ -326,6 +326,11 @@ namespace Lamp
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}
 
+	void Renderer3D::SetEnvironment(const std::string& path)
+	{
+		s_pData->SkyboxBuffer = CreateRef<IBLBuffer>(path);
+	}
+
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
 	{
 		glLineWidth(width);

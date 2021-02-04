@@ -44,7 +44,7 @@ namespace Lamp
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMapId);
 		for (unsigned int i = 0; i < 6; ++i)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 1024, 1024, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -70,7 +70,7 @@ namespace Lamp
 		m_EqCubeShader->UploadMat4("u_Projection", m_CaptureProjection);
 		glBindTextureUnit(0, m_HdrTextureId);
 
-		glViewport(0, 0, 512, 512);
+		glViewport(0, 0, 1024, 1024);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
 		for (unsigned int i = 0; i < 6; ++i)
 		{
@@ -117,7 +117,7 @@ namespace Lamp
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		////////////////////////////
 
-		/////Prefilter Map/////
+				/////Prefilter Map/////
 		glGenTextures(1, &m_PrefilterMap);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
 		for (int i = 0; i < 6; i++)
@@ -139,7 +139,7 @@ namespace Lamp
 
 		glBindTextureUnit(0, m_CubeMapId);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
-		
+
 		uint32_t maxMips = 5;
 		for (uint32_t i = 0; i < maxMips; i++)
 		{
@@ -150,10 +150,10 @@ namespace Lamp
 			float roughness = (float)i / (float)(maxMips - 1);
 			m_PrefilterShader->UploadFloat("u_Roughness", roughness);
 
-			for (uint32_t i = 0; i < 6; i++)
+			for (uint32_t j = 0; j < 6; j++)
 			{
-				m_PrefilterShader->UploadMat4("u_View", m_CaptureViews[i]);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_PrefilterMap, i);
+				m_PrefilterShader->UploadMat4("u_View", m_CaptureViews[j]);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, m_PrefilterMap, i);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				Renderer3D::DrawCube();
 			}
@@ -182,10 +182,13 @@ namespace Lamp
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//////////////////
+
+		m_TestTexture = Texture2D::Create("engine/textures/testBRDF.png");
 	}
 
 	void IBLBuffer::Bind()
 	{
+
 		glDepthFunc(GL_LEQUAL);
 		glBindTextureUnit(0, m_CubeMapId);
 	}
