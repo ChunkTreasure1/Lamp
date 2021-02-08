@@ -12,43 +12,63 @@
 
 namespace Lamp
 {
-	class Model
-	{
-	public:
-		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb)
-			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb)
-		{
-		}
+class Model
+{
+public:
+    Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb)
+        : m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb)
+    {
+    }
 
-		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb, const std::string& path)
-			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb), m_LGFPath(path)
-		{
-		}
+    Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb, const std::string& path)
+        : m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb), m_LGFPath(path)
+    {
+    }
 
-		void Render(size_t id = -1);
-		void RenderBoundingBox();
+    void Render(size_t id = -1);
+    void RenderBoundingBox();
 
-		//Setting
-		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
-		inline void SetLGFPath(const std::string& path) { m_LGFPath = path; }
-		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetMaterial(const Material& mat) { m_Material = mat; }
+    //Setting
+    inline void SetModelMatrix(const glm::mat4& mat) {
+        m_ModelMatrix = mat;
+    }
+    inline void SetLGFPath(const std::string& path) {
+        m_LGFPath = path;
+    }
+    inline void SetName(const std::string& name) {
+        m_Name = name;
+    }
+    inline void SetMaterial(const Material& mat) {
+        m_Material = mat;
+    }
 
-		//Getting
-		inline Material& GetMaterial() { return m_Material; }
-		inline const std::string& GetName() { return m_Name; }
-		inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
-		inline std::string& GetLGFPath() { return m_LGFPath; }
-		inline const glm::mat4& GetMatrix() { return m_ModelMatrix; }
-		inline const SAABB& GetBoundingBox() { return m_BoundingBox; }
-		
-	private:
-		Material m_Material;
-		std::vector<Ref<Mesh>> m_Meshes;
-		std::string m_Name;
-		std::string m_LGFPath;
+    //Getting
+    inline Material& GetMaterial() {
+        return m_Material;
+    }
+    inline const std::string& GetName() {
+        return m_Name;
+    }
+    inline std::vector<Ref<Mesh>>& GetMeshes() {
+        return m_Meshes;
+    }
+    inline std::string& GetLGFPath() {
+        return m_LGFPath;
+    }
+    inline const glm::mat4& GetMatrix() {
+        return m_ModelMatrix;
+    }
+    inline const SAABB& GetBoundingBox() {
+        return m_BoundingBox;
+    }
 
-		glm::mat4 m_ModelMatrix;
-		SAABB m_BoundingBox;
-	};
+private:
+    Material m_Material;
+    std::vector<Ref<Mesh>> m_Meshes;
+    std::string m_Name;
+    std::string m_LGFPath;
+
+    glm::mat4 m_ModelMatrix;
+    SAABB m_BoundingBox;
+};
 }

@@ -19,131 +19,131 @@ namespace Lamp
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
-	Application* Application::s_pInstance = nullptr;
+Application* Application::s_pInstance = nullptr;
 
-	Application::Application()
-	{
-		s_pInstance = this;
-		g_pEnv = new GlobalEnvironment();
-		g_pEnv->pRenderUtils = new RenderUtils();
-		
-		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
-		g_pEnv->pEntityManager = new EntityManager();
-		g_pEnv->pBrushManager = new BrushManager();
+Application::Application()
+{
+    s_pInstance = this;
+    g_pEnv = new GlobalEnvironment();
+    g_pEnv->pRenderUtils = new RenderUtils();
 
-		//Create the window
-		WindowProps props;
-		props.Height = 720;
-		props.Width = 1280;
-		props.IsVSync = false;
-		props.Title = "Lamp";
+    g_pEnv->pObjectLayerManager = new ObjectLayerManager();
+    g_pEnv->pEntityManager = new EntityManager();
+    g_pEnv->pBrushManager = new BrushManager();
 
-		m_pWindow = Window::Create(props);
-		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+    //Create the window
+    WindowProps props;
+    props.Height = 720;
+    props.Width = 1280;
+    props.IsVSync = false;
+    props.Title = "Lamp";
 
-		Renderer::Initialize();
-		AudioEngine::Initialize();
+    m_pWindow = Window::Create(props);
+    m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		//Setup the GUI system
-		m_pImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_pImGuiLayer);
-	}
+    Renderer::Initialize();
+    AudioEngine::Initialize();
 
-	Application::~Application()
-	{
-		AudioEngine::Shutdown();
-		Renderer::Shutdown();
+    //Setup the GUI system
+    m_pImGuiLayer = new ImGuiLayer();
+    PushOverlay(m_pImGuiLayer);
+}
 
-		delete g_pEnv->pObjectLayerManager;
-		delete g_pEnv->pBrushManager;
-		delete g_pEnv->pEntityManager;
-		delete g_pEnv->pRenderUtils;
-		delete g_pEnv;
-	}
+Application::~Application()
+{
+    AudioEngine::Shutdown();
+    Renderer::Shutdown();
 
-	void Application::Run()
-	{
-		while (m_Running)
-		{
-			float time = (float)glfwGetTime();
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
+    delete g_pEnv->pObjectLayerManager;
+    delete g_pEnv->pBrushManager;
+    delete g_pEnv->pEntityManager;
+    delete g_pEnv->pRenderUtils;
+    delete g_pEnv;
+}
 
-			m_FrameTime.Begin();
+void Application::Run()
+{
+    while (m_Running)
+    {
+        float time = (float)glfwGetTime();
+        Timestep timestep = time - m_LastFrameTime;
+        m_LastFrameTime = time;
 
-			//PhysicsEngine::Get()->Simulate(timestep);
-			//PhysicsEngine::Get()->HandleCollisions();
-			AudioEngine::Update();
+        m_FrameTime.Begin();
 
-			//Update the application layers
+        //PhysicsEngine::Get()->Simulate(timestep);
+        //PhysicsEngine::Get()->HandleCollisions();
+        AudioEngine::Update();
 
-			if (!m_Minimized)
-			{
-				AppUpdateEvent updateEvent(timestep);
-				OnEvent(updateEvent);
-				ObjectLayerManager::Get()->OnEvent(updateEvent);
-			}
+        //Update the application layers
 
-			m_pImGuiLayer->Begin();
+        if (!m_Minimized)
+        {
+            AppUpdateEvent updateEvent(timestep);
+            OnEvent(updateEvent);
+            ObjectLayerManager::Get()->OnEvent(updateEvent);
+        }
 
-			for (Layer* pLayer : m_LayerStack)
-			{
-				pLayer->OnImGuiRender(timestep);
-			}
+        m_pImGuiLayer->Begin();
 
-			m_pImGuiLayer->End();
-			m_pWindow->Update(timestep);
-		
-			m_FrameTime.End();
-		}
-	}
+        for (Layer* pLayer : m_LayerStack)
+        {
+            pLayer->OnImGuiRender(timestep);
+        }
 
-	void Application::OnEvent(Event & e)
-	{
-		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+        m_pImGuiLayer->End();
+        m_pWindow->Update(timestep);
 
-		////Handle rest of events
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-		{
-			(*--it)->OnEvent(e);
-			if (e.Handled)
-			{
-				break;
-			}
-		}
-	}
+        m_FrameTime.End();
+    }
+}
 
-	void Application::PushLayer(Layer * pLayer)
-	{
-		m_LayerStack.PushLayer(pLayer);
-	}
+void Application::OnEvent(Event & e)
+{
+    EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-	void Application::PushOverlay(Layer * pLayer)
-	{
-		m_LayerStack.PushOverlay(pLayer);
-	}
+    ////Handle rest of events
+    for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+    {
+        (*--it)->OnEvent(e);
+        if (e.Handled)
+        {
+            break;
+        }
+    }
+}
 
-	bool Application::OnWindowClose(WindowCloseEvent& e)
-	{
-		m_Running = false;
-		return false;
-	}
+void Application::PushLayer(Layer * pLayer)
+{
+    m_LayerStack.PushLayer(pLayer);
+}
 
-	bool Application::OnWindowResize(WindowResizeEvent & e)
-	{
-		if (e.GetWidth() == 0 && e.GetHeight() == 0)
-		{
-			m_Minimized = true;
-			return false;
-		}
-		else
-		{
-			m_Minimized = false;
-		}
+void Application::PushOverlay(Layer * pLayer)
+{
+    m_LayerStack.PushOverlay(pLayer);
+}
 
-		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
-		return false;
-	}
+bool Application::OnWindowClose(WindowCloseEvent& e)
+{
+    m_Running = false;
+    return false;
+}
+
+bool Application::OnWindowResize(WindowResizeEvent & e)
+{
+    if (e.GetWidth() == 0 && e.GetHeight() == 0)
+    {
+        m_Minimized = true;
+        return false;
+    }
+    else
+    {
+        m_Minimized = false;
+    }
+
+    RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
+    return false;
+}
 }

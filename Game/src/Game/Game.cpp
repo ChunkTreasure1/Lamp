@@ -10,24 +10,24 @@
 
 void Game::OnStart()
 {
-	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
+    auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 
-	{
-		Lamp::Entity* ent = Lamp::Entity::Create();
-		auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
-		comp->SetIntensity(10.f);
+    {
+        Lamp::Entity* ent = Lamp::Entity::Create();
+        auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
+        comp->SetIntensity(10.f);
 
-		ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
-	}
+        ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
+    }
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
 {
-	return false;
+    return false;
 }
 
 void Game::OnEvent(Lamp::Event& e)
 {
-	Lamp::EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Game::OnUpdate));
+    Lamp::EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Game::OnUpdate));
 }

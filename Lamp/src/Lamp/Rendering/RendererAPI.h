@@ -5,44 +5,48 @@
 
 namespace Lamp
 {
-	struct RendererCapabilities
-	{
-	public:
-		uint32_t MaxTextureSlots = 0;
-	};
+struct RendererCapabilities
+{
+public:
+    uint32_t MaxTextureSlots = 0;
+};
 
-	class RendererAPI
-	{
-	public:
-		enum class API
-		{
-			None = 0,
-			OpenGL = 1,
-			DX11 = 2
-		};
+class RendererAPI
+{
+public:
+    enum class API
+    {
+        None = 0,
+        OpenGL = 1,
+        DX11 = 2
+    };
 
-	public:
-		virtual ~RendererAPI() = default;
-		virtual void Initialize() = 0;
-		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-		virtual void SetClearColor(const glm::vec4& color) = 0;
-		virtual void Clear() = 0;
-		virtual void ClearDepth() = 0;
-		virtual void OffsetPolygon(float factor, float unit) = 0;
+public:
+    virtual ~RendererAPI() = default;
+    virtual void Initialize() = 0;
+    virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+    virtual void SetClearColor(const glm::vec4& color) = 0;
+    virtual void Clear() = 0;
+    virtual void ClearDepth() = 0;
+    virtual void OffsetPolygon(float factor, float unit) = 0;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) = 0;
-		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;
+    virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) = 0;
+    virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;
 
-		const RendererCapabilities& GetRendererCapabilities() { return m_RendererCapabilities; }
+    const RendererCapabilities& GetRendererCapabilities() {
+        return m_RendererCapabilities;
+    }
 
-	protected:
-		RendererCapabilities m_RendererCapabilities;
-	
-	public:
-		static API GetAPI() { return s_API; }
-		static Scope<RendererAPI> Create();
+protected:
+    RendererCapabilities m_RendererCapabilities;
 
-	private:
-		static API s_API;
-	};
+public:
+    static API GetAPI() {
+        return s_API;
+    }
+    static Scope<RendererAPI> Create();
+
+private:
+    static API s_API;
+};
 }

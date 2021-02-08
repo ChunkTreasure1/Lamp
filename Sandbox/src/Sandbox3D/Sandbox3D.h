@@ -17,107 +17,107 @@
 
 namespace Sandbox3D
 {
-	class ModelImporter;
+class ModelImporter;
 
-	class Sandbox3D : public Lamp::Layer
-	{
-	public:
-		Sandbox3D();
-		~Sandbox3D();
+class Sandbox3D : public Lamp::Layer
+{
+public:
+    Sandbox3D();
+    ~Sandbox3D();
 
-		bool OnUpdate(Lamp::AppUpdateEvent& e);
+    bool OnUpdate(Lamp::AppUpdateEvent& e);
 
-		virtual void OnImGuiRender(Lamp::Timestep ts) override;
-		virtual void OnEvent(Lamp::Event& e) override;
+    virtual void OnImGuiRender(Lamp::Timestep ts) override;
+    virtual void OnEvent(Lamp::Event& e) override;
 
-	private:
-		void CreateDockspace();
-		void GetInput();
-		void RenderGrid();
-		void RenderSkybox();
-		void CreateRenderPasses();
-		void SetupFromConfig();
+private:
+    void CreateDockspace();
+    void GetInput();
+    void RenderGrid();
+    void RenderSkybox();
+    void CreateRenderPasses();
+    void SetupFromConfig();
 
-		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
-		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
-		bool OnWindowClose(Lamp::WindowCloseEvent& e);
-		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
-		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
+    bool OnMouseMoved(Lamp::MouseMovedEvent& e);
+    bool OnItemClicked(Lamp::AppItemClickedEvent& e);
+    bool OnWindowClose(Lamp::WindowCloseEvent& e);
+    bool OnKeyPressed(Lamp::KeyPressedEvent& e);
+    bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
 
-		//ImGui
-		void UpdatePerspective();
-		void UpdateAssetBrowser();
-		void UpdateProperties();
-		void UpdateLayerView();
-		void UpdateAddComponent();
-		void UpdateCreateTool();
-		void UpdateLogTool();
-		bool DrawComponent(Lamp::EntityComponent* ptr);
-		void UpdateLevelSettings();
+    //ImGui
+    void UpdatePerspective();
+    void UpdateAssetBrowser();
+    void UpdateProperties();
+    void UpdateLayerView();
+    void UpdateAddComponent();
+    void UpdateCreateTool();
+    void UpdateLogTool();
+    bool DrawComponent(Lamp::EntityComponent* ptr);
+    void UpdateLevelSettings();
 
-		//Shortcuts
-		void SaveLevelAs();
-		void OpenLevel();
-		void NewLevel();
-		void Undo();
-		void Redo();
+    //Shortcuts
+    void SaveLevelAs();
+    void OpenLevel();
+    void NewLevel();
+    void Undo();
+    void Redo();
 
 
-	private:
-		Scope<Game> m_pGame;
-		Ref<SandboxController> m_SandboxController;
-		Ref<Lamp::Framebuffer> m_SandboxBuffer;
-		//---------------Editor-----------------
-		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
-		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
-		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
-		ImGuiID m_DockspaceID;
+private:
+    Scope<Game> m_pGame;
+    Ref<SandboxController> m_SandboxController;
+    Ref<Lamp::Framebuffer> m_SandboxBuffer;
+    //---------------Editor-----------------
+    glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
+    glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
+    glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
+    ImGuiID m_DockspaceID;
 
-		//Perspective
-		bool m_PerspectiveOpen = true;
-		const float m_AspectRatio = 1.7f;
-		bool m_PerspectiveFocused = false;
-		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
-		CommandStack<Command> m_PerspecticeCommands;
-		bool m_HaveUndone = false;
+    //Perspective
+    bool m_PerspectiveOpen = true;
+    const float m_AspectRatio = 1.7f;
+    bool m_PerspectiveFocused = false;
+    ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
+    CommandStack<Command> m_PerspecticeCommands;
+    bool m_HaveUndone = false;
 
-		//Asset browser
-		Lamp::File m_SelectedFile;
-		int m_CurrSample = -1;
-		bool m_AssetBrowserOpen = true;
+    //Asset browser
+    Lamp::File m_SelectedFile;
+    int m_CurrSample = -1;
+    bool m_AssetBrowserOpen = true;
 
-		//Inspector
-		bool m_MousePressed = false;
-		bool m_PerspectiveHover = false;
+    //Inspector
+    bool m_MousePressed = false;
+    bool m_PerspectiveHover = false;
 
-		Lamp::Object* m_pSelectedObject = nullptr;
-		bool m_InspectiorOpen = true;
+    Lamp::Object* m_pSelectedObject = nullptr;
+    bool m_InspectiorOpen = true;
 
-		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
-		glm::vec2 m_WindowSize = glm::vec2(0, 0);
-		Ref<Lamp::Shader> m_pShader;
+    glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
+    glm::vec2 m_WindowSize = glm::vec2(0, 0);
+    Ref<Lamp::Shader> m_pShader;
 
-		//Model importer
-		ModelImporter* m_ModelImporter;
+    //Model importer
+    ModelImporter* m_ModelImporter;
 
-		//Layers
-		bool m_LayerViewOpen = true;
+    //Layers
+    bool m_LayerViewOpen = true;
 
-		//Play
-		bool m_ShouldPlay = false;
-		bool m_ShouldPlayPhysics = false;
+    //Play
+    bool m_ShouldPlay = false;
+    bool m_ShouldPlayPhysics = false;
 
-		//Components
-		bool m_AddComponentOpen = false;
+    //Components
+    bool m_AddComponentOpen = false;
 
-		//Create
-		bool m_CreateToolOpen = true;
+    //Create
+    bool m_CreateToolOpen = true;
 
-		//Logging
-		bool m_LogToolOpen = false;
+    //Logging
+    bool m_LogToolOpen = false;
 
-		//Level settings
-		bool m_LevelSettingsOpen = false;
-		//--------------------------------------
-	};
+    //Level settings
+    bool m_LevelSettingsOpen = false;
+    //--------------------------------------
+};
 }
