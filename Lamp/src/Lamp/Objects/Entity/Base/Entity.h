@@ -13,6 +13,8 @@
 #include "Lamp/Objects/Object.h"
 #include <string>
 
+#include "Lamp/Event/ApplicationEvent.h"
+
 class EntityManager;
 
 namespace Lamp
@@ -23,6 +25,8 @@ namespace Lamp
 		Entity()
 		{
 			m_Name = "Entity";
+
+			m_GizmoTexure = Texture2D::Create("engine/gizmos/gizmoEntity.png");
 		}
 		~Entity() {}
 
@@ -32,6 +36,7 @@ namespace Lamp
 
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
 		inline bool GetSaveable() { return m_ShouldBeSaved; }
+		inline uint32_t GetId() { return m_Id; }
 
 		//Getting
 		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
@@ -150,7 +155,13 @@ namespace Lamp
 		static Entity* Create();
 
 	private:
+		bool OnRenderEvent(AppRenderEvent& e);
+
+	private:
 		bool m_ShouldBeSaved = false;
+
+		Ref<Texture2D> m_GizmoTexure = nullptr;
+		Ref<Shader> m_GizmoShader = nullptr;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

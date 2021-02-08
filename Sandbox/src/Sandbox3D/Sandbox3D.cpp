@@ -3,22 +3,31 @@
 
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
+<<<<<<< HEAD
 #include <Lamp/Objects/Brushes/BrushManager.h>
+=======
+
+>>>>>>> renderer
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
 #include <Lamp/Physics/PhysicsEngine.h>
+<<<<<<< HEAD
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 #include <Lamp/Meshes/GeometrySystem.h>
+=======
+#include <Lamp/Physics/Physics.h>
+>>>>>>> renderer
 
 #include <Lamp/Objects/ObjectLayer.h>
-#include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Core/Game.h>
 
 #include <Lamp/Rendering/RenderPass.h>
-#include <ImGuizmo/ImGuizmo.h>
 
 #include "Windows/ModelImporter.h"
+#include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
+
+#include <Platform/OpenGL/OpenGLFramebuffer.h>
 
 namespace Sandbox3D
 {
@@ -62,6 +71,8 @@ namespace Sandbox3D
 		}
 
 		GetInput();
+
+		m_SandboxBuffer->ClearAttachment(1, -1);
 
 		RenderPassManager::Get()->RenderPasses();
 		m_ModelImporter->Render();
@@ -127,70 +138,70 @@ namespace Sandbox3D
 
 		switch (e.GetKeyCode())
 		{
-			case LP_KEY_S:
-			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+		case LP_KEY_S:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
 
-				if (control && shift)
+			if (control && shift)
+			{
+				SaveLevelAs();
+			}
+			else if (control && !shift)
+			{
+				if (LevelSystem::GetCurrentLevel()->GetPath().empty())
 				{
 					SaveLevelAs();
+					break;
 				}
-				else if (control && !shift)
+				else
 				{
-					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
-					{
-						SaveLevelAs();
-						break;
-					}
-					else
-					{
-						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
-					}
+					LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
 				}
-				break;
 			}
+			break;
+		}
 
-			case LP_KEY_N:
+		case LP_KEY_N:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-
-				if (control)
-				{
-					NewLevel();
-				}
-				break;
+				NewLevel();
 			}
+			break;
+		}
 
-			case LP_KEY_O:
+		case LP_KEY_O:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					OpenLevel();
-				}
-				break;
+				OpenLevel();
 			}
+			break;
+		}
 
-			case LP_KEY_Z:
+		case LP_KEY_Z:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					Undo();
-				}
-				break;
+				Undo();
 			}
+			break;
+		}
 
-			case LP_KEY_Y:
+		case LP_KEY_Y:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					Redo();
-				}
-				break;
+				Redo();
 			}
+			break;
+		}
 		}
 
 		return false;
@@ -280,23 +291,68 @@ namespace Sandbox3D
 
 	void Sandbox3D::CreateRenderPasses()
 	{
-		RenderPassInfo passInfo;
-		passInfo.Camera = m_SandboxController->GetCameraController()->GetCamera();
-		passInfo.IsShadowPass = true;
-		passInfo.DirLight = g_pEnv->DirLight;
-		passInfo.ClearColor = m_ClearColor;
+		/////Shadow pass/////
+		{
+			FramebufferSpecification shadowBuffer;
+			shadowBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
+			};
+			shadowBuffer.ClearColor = m_ClearColor;
+			shadowBuffer.Height = 4096;
+			shadowBuffer.Width = 4096;
 
-		Ref<RenderPass> shadowPass = CreateRef<RenderPass>(Renderer3D::GetShadowBuffer(), passInfo);
-		RenderPassManager::Get()->AddPass(shadowPass);
+			RenderPassSpecification shadowSpec;
+			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
+			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			shadowSpec.IsShadowPass = true;
 
-		passInfo.IsShadowPass = false;
+			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+			RenderPassManager::Get()->AddPass(shadowPass);
+		}
+		/////////////////////
 
-		std::vector<std::function<void()>> ptrs;
+		/////Point shadow pass/////
+		{
+			RenderPassSpecification shadowSpec;
+			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			shadowSpec.IsPointShadowPass = true;
 
-		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-		ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+			RenderPassManager::Get()->AddPass(shadowPass);
+		}
+		///////////////////////////
 
-		Ref<RenderPass> renderPass = CreateRef<RenderPass>(Renderer3D::GetFrameBuffer(), passInfo, ptrs);
-		RenderPassManager::Get()->AddPass(renderPass);
+		/////Main//////
+		{
+			FramebufferSpecification mainBuffer;
+			mainBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
+				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+			};
+			mainBuffer.ClearColor = m_ClearColor;
+			mainBuffer.Height = 1280;
+			mainBuffer.Width = 720;
+			mainBuffer.Samples = 1;
+
+			std::vector<std::function<void()>> ptrs;
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.ExtraRenders = ptrs;
+
+			// TODO: Fix issue with not being able to use Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(mainBuffer);
+
+			m_SandboxBuffer = passSpec.TargetFramebuffer;
+
+			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(renderPass);
+		}
+		///////////////
 	}
 }

@@ -41,8 +41,7 @@ namespace Lamp
 	class ObjectLayerManager
 	{
 	public:
-		ObjectLayerManager()
-		{}
+		ObjectLayerManager();
 
 		~ObjectLayerManager() 
 		{
@@ -65,11 +64,15 @@ namespace Lamp
 
 		void MoveToLayer(Object* obj, uint32_t layerId);
 
+<<<<<<< HEAD
 		Object* GetObjectFromPoint(const glm::vec3& origin, const glm::vec3& dir);
+=======
+		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
+		Object* GetObjectFromId(uint32_t id);
+>>>>>>> renderer
 
 	public:
-		static void SetCurrentManager(Ref<ObjectLayerManager>& manager) { s_ObjectLayerManager = manager; }
-		static Ref<ObjectLayerManager>& Get() { return s_ObjectLayerManager; }
+		static ObjectLayerManager* Get() { return s_ObjectLayerManager; }
 	private:
 		bool Exists(uint32_t layerId)
 		{
@@ -85,7 +88,7 @@ namespace Lamp
 		}
 
 	private:
-		static Ref<ObjectLayerManager> s_ObjectLayerManager;
+		static ObjectLayerManager* s_ObjectLayerManager;
 
 	private:
 		std::vector<ObjectLayer> m_Layers;

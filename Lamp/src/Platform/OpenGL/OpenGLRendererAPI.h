@@ -15,6 +15,7 @@ namespace Lamp
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 		virtual void ClearDepth() override;
+		virtual void OffsetPolygon(float factor, float unit) override;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) override;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) override;

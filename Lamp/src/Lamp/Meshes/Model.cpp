@@ -8,13 +8,13 @@
 
 namespace Lamp
 {
-	void Model::Render()
+	void Model::Render(size_t id)
 	{
 		for (size_t i = 0; i < m_Meshes.size(); i++)
 		{
 			m_Material.UploadData();
 
-			Renderer3D::DrawMesh(m_ModelMatrix, m_Meshes[i], m_Material);
+			Renderer3D::DrawMesh(m_ModelMatrix, m_Meshes[i], m_Material, id);
 		}
 	}
 

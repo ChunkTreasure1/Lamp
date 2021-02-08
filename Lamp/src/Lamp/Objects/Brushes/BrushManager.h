@@ -34,14 +34,13 @@ namespace Lamp
 		Brush2D* GetBrush2DFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 	public:
-		static void SetCurrentManager(Ref<BrushManager> manager) { s_Manager = manager; }
-		static Ref<BrushManager>& Get() { return s_Manager; }
+		static BrushManager* Get() { return s_Manager; }
 
 	private:
 		std::vector<Brush*> m_Brushes;
 		std::vector<Brush2D*> m_2DBrushes;
 
 	private:
-		static Ref<BrushManager> s_Manager;
+		static BrushManager* s_Manager;
 	};
 }

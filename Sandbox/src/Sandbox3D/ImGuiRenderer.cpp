@@ -42,13 +42,13 @@ namespace Sandbox3D
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
 			{
-				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
 				m_SandboxController->GetCameraController()->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
-			uint32_t textureID = Lamp::Renderer3D::GetFrameBuffer()->GetColorAttachment();
+			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
@@ -56,7 +56,7 @@ namespace Sandbox3D
 			ImGui::Text(frameInfo.c_str());
 		}
 
-		//Guizmos
+		//Guizmo
 		static glm::mat4 transform = glm::mat4(1.f);
 		static glm::mat4 lastTrans = glm::mat4(1.f);
 		static bool beginMove = false;
@@ -183,15 +183,45 @@ namespace Sandbox3D
 			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
+				mousePos.y = m_PerspectiveSize.y - mousePos.y;
 
 				Command cmd;
 				cmd.cmd = Cmd::Selection;
 				cmd.lastData = m_pSelectedObject;
 				cmd.object = nullptr;
 
+<<<<<<< HEAD
 				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(m_SandboxController->GetCameraController()->GetPosition(), m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, windowSize));
 				m_Lines.push_back(std::make_pair<>(m_SandboxController->GetCameraController()->GetPosition(), m_SandboxController->GetCameraController()->ScreenToWorldCoords(mousePos, windowSize)));
 				
+=======
+				/////Mouse picking/////
+				m_SandboxBuffer->Bind();
+
+				int mouseX = (int)mousePos.x;
+				int mouseY = (int)mousePos.y;
+
+				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
+				{
+					int pixelData = m_SandboxBuffer->ReadPixel(1, mouseX, mouseY);
+
+					if (m_pSelectedObject)
+					{
+						m_pSelectedObject->SetIsSelected(false);
+					}
+
+					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
+					if (m_pSelectedObject)
+					{
+						m_pSelectedObject->SetIsSelected(true);
+					}
+				}
+
+				m_SandboxBuffer->Unbind();
+				////////////////////////
+
+
+>>>>>>> renderer
 				if (cmd.lastData != m_pSelectedObject)
 				{
 					m_PerspecticeCommands.push_front(cmd);
@@ -338,7 +368,17 @@ namespace Sandbox3D
 
 					if (ImGui::IsItemClicked())
 					{
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(false);
+						}
+
 						m_pSelectedObject = layer.Objects[i];
+					
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(true);
+						}
 					}
 				}
 
@@ -708,7 +748,23 @@ namespace Sandbox3D
 
 		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
 
-		ImGui::ColorEdit3("Global Ambient", glm::value_ptr(Lamp::LevelSystem::GetEnvironment().GlobalAmbient));
+		if (ImGui::CollapsingHeader("Environment"))
+		{
+			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
+			g_pEnv->DirLight.UpdateProjection();
+
+			static std::string path;
+			ImGui::InputText("HDR environment", &path);
+			ImGui::SameLine();
+			if (ImGui::Button("Open..."))
+			{
+				path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+				if (!path.empty())
+				{
+					Lamp::Renderer3D::SetEnvironment(path);
+				}
+			}
+		}
 
 		ImGui::End();
 	}
@@ -811,12 +867,21 @@ namespace Sandbox3D
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Editor"))
+			{
+				ImGui::MenuItem("Render Bounding Box", NULL, &g_pEnv->ShouldRenderBB);
+				ImGui::MenuItem("Render Gizmos", NULL, &g_pEnv->ShouldRenderGizmos);
+
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Tools"))
 			{
 				ImGui::MenuItem("Import Model", NULL, &m_ModelImporter->GetIsOpen());
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
+				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
 

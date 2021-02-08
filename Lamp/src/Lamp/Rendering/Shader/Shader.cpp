@@ -6,12 +6,12 @@
 
 namespace Lamp
 {
-	Ref<Shader> Shader::Create(const std::string& vertexPath, const std::string& fragmentPath)
+	Ref<Shader> Shader::Create(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(vertexPath, fragmentPath);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(vertexPath, fragmentPath, geoPath);
 		}
 
 		return nullptr;

@@ -37,6 +37,7 @@ namespace Lamp
 	private:
 		std::unordered_map<std::string, Ref<Texture2D>> m_pTextures;
 		float m_Shininess;
+		float m_DepthScale = 0.1f;
 
 		Ref<Shader> m_pShader;
 		uint32_t m_Index;

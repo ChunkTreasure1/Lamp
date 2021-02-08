@@ -6,6 +6,8 @@
 
 #include "Lamp/Level/LevelSystem.h"
 
+#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+
 namespace Lamp
 {
 	void Material::SetTexture(const std::string& name, Ref<Texture2D>& texture)
@@ -32,42 +34,50 @@ namespace Lamp
 		m_pShader->Bind();
 
 		/////Lighting/////
-		m_pShader->UploadFloat3("u_DirectionalLight.diffuse", g_pEnv->DirLight.Diffuse);
-		m_pShader->UploadFloat3("u_DirectionalLight.specular", g_pEnv->DirLight.Specular);
-		m_pShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Direction);
-		m_pShader->UploadFloat3("u_DirectionalLight.position", g_pEnv->DirLight.Position);
+		m_pShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+		m_pShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
+		m_pShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 
-		m_pShader->UploadFloat3("u_Environment.globalAmbient", LevelSystem::GetEnvironment().GlobalAmbient);
-
-		int i = 0;
-		//Point lights
-		for (auto& ent : EntityManager::Get()->GetEntities())
+		int lightCount = 0;
+		/////Point lights/////
+		for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
 		{
-			if (i > 11)
+			if (lightCount > 11)
 			{
 				LP_CORE_WARN("There are more lights in scene than able to render! Will skip some lights.");
 				break;
 			}
 
-			if (auto& light = ent->GetComponent<LightComponent>())
-			{
-				std::string val = "u_PointLight[" + std::to_string(i) + "].constant";
+			std::string v = std::to_string(lightCount);
 
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].constant", light->GetLightConstant());
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].linear", light->GetLinearConstant());
-				m_pShader->UploadFloat("u_PointLight[" + std::to_string(i) + "].quadratic", light->GetQuadraticConstant());
+			m_pShader->UploadFloat("u_PointLights[" + v + "].intensity", light->Intensity);
+			m_pShader->UploadFloat("u_PointLights[" + v + "].radius", light->Radius);
+			m_pShader->UploadFloat("u_PointLights[" + v + "].falloff", light->Falloff);
+			m_pShader->UploadFloat("u_PointLights[" + v + "].farPlane", light->FarPlane);
 
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].position", light->GetOwner()->GetPosition());
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].diffuse", light->GetDiffuse());
-				m_pShader->UploadFloat3("u_PointLight[" + std::to_string(i) + "].specular", light->GetSpecular());
-				i++;
-			}
+			m_pShader->UploadFloat3("u_PointLights[" + v + "].position", light->ShadowBuffer->GetPosition());
+			m_pShader->UploadFloat3("u_PointLights[" + v + "].color", light->Color);
+			m_pShader->UploadInt("u_PointLights[" + v + "].shadowMap", 4 + lightCount);
+				
+			lightCount++;
 		}
 		/////////////////
 
-		m_pShader->UploadInt("u_Material.diffuse", 0);
-		m_pShader->UploadInt("u_Material.specular", 1);
-		m_pShader->UploadFloat("u_Material.shininess", m_Shininess);
-		m_pShader->UploadInt("u_LightCount", i);
+		//Reserve spot 0 for shadow map
+		for (int i = 4 + lightCount; i < m_pShader->GetSpecifications().TextureCount + (4 + lightCount); i++)
+		{
+			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i - (4 + lightCount)], i);
+		}
+
+			//m_pShader->UploadFloat("u_Material.depthScale", m_DepthScale);
+		m_pShader->UploadInt("u_LightCount", lightCount);
+
+			//if (m_pTextures.find("Depth") != m_pTextures.end())
+			//{
+			//	if (m_pTextures["Depth"].get())
+			//	{
+			//		m_pShader->UploadInt("u_UsingParallax", 1);
+			//	}
+			//}
 	}
 }

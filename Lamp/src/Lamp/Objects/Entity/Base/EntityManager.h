@@ -9,28 +9,31 @@ namespace Lamp
 	class EntityManager
 	{
 	public:
-		EntityManager() {}
+		EntityManager();
+		~EntityManager();
 
 		Entity* Create(bool saveable = true);
 		bool Remove(Entity* pEnt);
 
 		//Getting
 		inline const std::vector<Entity*>& GetEntities() { return m_pEntites; }
+<<<<<<< HEAD
+=======
+		Entity* GetEntityFromPhysicalEntity(PhysicalEntity* pEnt);
+		Entity* GetEntityFromId(uint32_t id);
+		Entity* GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin);
+>>>>>>> renderer
 
 		//Setting
 		inline void SetEntities(std::vector<Entity*> entities) { m_pEntites = entities; }
 
 	public:
-		Entity* GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin);
-
-	public:
-		static void SetCurrentManager(Ref<EntityManager> manager) { s_CurrentManager = manager; }
-		static Ref<EntityManager>& Get() { return s_CurrentManager; }
+		static EntityManager* Get() { return s_CurrentManager; }
 
 	private:
 		std::vector<Entity*> m_pEntites;
 
 	private:
-		static Ref<EntityManager> s_CurrentManager;
+		static EntityManager* s_CurrentManager;
 	};
 }

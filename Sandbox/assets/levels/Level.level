@@ -1,5 +1,6 @@
 <Level name="Level">
 	<Brushes>
+<<<<<<< HEAD
 		<Brush lgfPath="assets\models\sofa.lgf" position="1.151830,2.656614,4.803663" rotation="0.000000,0.000000,0.000000" scale="0.822164,0.818400,0.818400" layerID="0" name="Brush"/>
 		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,6.837665,0.000000" rotation="0.000000,0.000000,0.000000" scale="0.990560,0.990560,0.990560" layerID="0" name="Brush"/>
 		<Brush lgfPath="assets\models\pillBottle.lgf" position="0.088857,1.038881,3.190001" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
@@ -14,6 +15,26 @@
 				<Param name="Quadratic constant" type="Float" value="0.032000"/>
 				<Param name="Diffuse" type="Float3" value="1.000000,1.000000,1.000000"/>
 				<Param name="Specular" type="Float3" value="0.000000,0.000000,0.000000"/>
+=======
+		<Brush lgfPath="assets\models\sphere.lgf" position="2.340409,3.131826,0.196260" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,-0.696744,-8.198693" rotation="0.000000,0.000000,0.000000" scale="30.000000,1.000000,30.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="3.252418,5.348779,6.493999" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,5.040463,16.783781" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+	</Brushes>
+	<Layers/>
+	<Entities>
+		<Entity name="Light" position="-0.274824,2.807997,0.622465" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+			<Component name="CameraComponent">
+				<Param name="Is Perspective" type="Bool" value="1"/>
+				<Param name="Is Main" type="Bool" value="0"/>
+				<Param name="Field Of View" type="Float" value="60.000000"/>
+			</Component>
+			<Component name="LightComponent">
+				<Param name="Intensity" type="Float" value="1.000000"/>
+				<Param name="Radius" type="Float" value="1.000000"/>
+				<Param name="Falloff" type="Float" value="0.000000"/>
+				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
+>>>>>>> renderer
 			</Component>
 		</Entity>
 		<Entity name="PhysicsTest" position="-0.935721,1.340000,-5.063420" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
@@ -31,8 +52,13 @@
 		</Entity>
 	</Entities>
 	<LevelEnvironment>
+<<<<<<< HEAD
 		<GlobalAmbient value="0.300000,0.300000,0.300000"/>
 		<CameraValues position="29.045483,10.450736,-18.404819" rotation="516.603088,-11.900041,0.000000" fov="60.000000"/>
+=======
+		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
+		<CameraValues position="-4.564189,6.213546,-12.642010" rotation="789.904846,-28.949841,0.000000" fov="60.000000"/>
+>>>>>>> renderer
 	</LevelEnvironment>
 </Level>
 

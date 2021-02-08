@@ -1,0 +1,8 @@
+<Material name="sphere">
+	<albedo path="C:\Programing\Lamp\Sandbox\assets\textures\rusted_iron\albedo.png"/>
+	<normal path="C:\Programing\Lamp\Sandbox\assets\textures\rusted_iron\normal.png"/>
+	<mro path="C:\Programing\Lamp\Sandbox\assets\textures\rusted_iron\mro.png"/>
+	<Shininess value="32.000000"/>
+	<Shader name="Pbr" vertex="engine/shaders/3d/pbr_vs.glsl" fragment="engine/shaders/3d/pbr_fs.glsl"/>
+</Material>
+

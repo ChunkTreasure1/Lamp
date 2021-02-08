@@ -67,9 +67,13 @@ namespace Sandbox3D
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
+<<<<<<< HEAD
 
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 
+=======
+		Ref<Lamp::Framebuffer> m_SandboxBuffer;
+>>>>>>> renderer
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -83,7 +87,7 @@ namespace Sandbox3D
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
 		CommandStack<Command> m_PerspecticeCommands;
 		bool m_HaveUndone = false;
-		
+
 		//Asset browser
 		Lamp::File m_SelectedFile;
 		int m_CurrSample = -1;

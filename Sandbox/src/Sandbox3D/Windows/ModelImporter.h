@@ -29,7 +29,7 @@ namespace Sandbox3D
 		glm::vec2 m_PerspectiveSize;
 		std::string m_MaterialName = "";
 
-		Ref<Lamp::FrameBuffer> m_FrameBuffer;
+		Ref<Lamp::Framebuffer> m_Framebuffer;
 		Ref<Lamp::Model> m_pModelToImport;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;
 		Ref<Lamp::Shader> m_DefaultShader;

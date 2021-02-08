@@ -30,6 +30,8 @@ namespace Lamp
 		m_RendererID = std::get<0>(tex);
 		m_Width = std::get<1>(tex);
 		m_Height = std::get<2>(tex);
+		m_InternalFormat = std::get<3>(tex);
+		m_DataFormat = std::get<4>(tex);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const

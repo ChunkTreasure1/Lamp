@@ -5,8 +5,13 @@
 
 namespace Lamp
 {
-	Ref<ObjectLayerManager> ObjectLayerManager::s_ObjectLayerManager = nullptr;
+	ObjectLayerManager* ObjectLayerManager::s_ObjectLayerManager = nullptr;
 	
+	ObjectLayerManager::ObjectLayerManager()
+	{
+		s_ObjectLayerManager = this;
+	}
+
 	void ObjectLayerManager::OnEvent(Event& e)
 	{
 		for (auto it = m_Layers.begin(); it != m_Layers.end(); it++)
@@ -160,6 +165,21 @@ namespace Lamp
 			}
 		}
 
+		return nullptr;
+	}
+
+	Object* ObjectLayerManager::GetObjectFromId(uint32_t id)
+	{
+		for (auto& layer : m_Layers)
+		{
+			for (auto& obj : layer.Objects)
+			{
+				if (obj->GetID() == id)
+				{
+					return obj;
+				}
+			}
+		}
 		return nullptr;
 	}
 }
