@@ -1,189 +1,150 @@
-#include "lppch.h"
 #include "ObjectLayer.h"
+#include "lppch.h"
 
-namespace Lamp
-{
-ObjectLayerManager* ObjectLayerManager::s_ObjectLayerManager = nullptr;
+namespace Lamp {
+ObjectLayerManager *ObjectLayerManager::s_ObjectLayerManager = nullptr;
 
-ObjectLayerManager::ObjectLayerManager()
-{
-    s_ObjectLayerManager = this;
-}
+ObjectLayerManager::ObjectLayerManager() { s_ObjectLayerManager = this; }
 
-void ObjectLayerManager::OnEvent(Event& e)
-{
-    for (auto it = m_Layers.begin(); it != m_Layers.end(); it++)
-    {
-        if (!it->IsActive)
-        {
-            continue;
+void ObjectLayerManager::OnEvent(Event &e) {
+  for (auto it = m_Layers.begin(); it != m_Layers.end(); it++) {
+    if (!it->IsActive) {
+      continue;
+    }
+
+    for (auto &obj : it->Objects) {
+      if (e.GetEventType() & obj->GetEventMask()) {
+        if (!obj->GetIsActive()) {
+          continue;
         }
 
-        for (auto& obj : it->Objects)
-        {
-            if (e.GetEventType() & obj->GetEventMask())
-            {
-                if (!obj->GetIsActive())
-                {
-                    continue;
-                }
-
-                obj->OnEvent(e);
-            }
-            else
-            {
-                continue;
-            }
-        }
+        obj->OnEvent(e);
+      } else {
+        continue;
+      }
     }
+  }
 }
 
-void ObjectLayerManager::Destroy()
-{
-    m_Layers.clear();
+void ObjectLayerManager::Destroy() { m_Layers.clear(); }
+
+inline bool ObjectLayerManager::RemoveLayer(uint32_t id) {
+  for (int i = 0; i < m_Layers.size(); i++) {
+    if (m_Layers[i].ID == id) {
+      m_Layers.erase(m_Layers.begin() + i);
+    }
+  }
 }
 
-inline bool ObjectLayerManager::RemoveLayer(uint32_t id)
-{
-    for (int i = 0; i < m_Layers.size(); i++)
-    {
-        if (m_Layers[i].ID == id)
-        {
-            m_Layers.erase(m_Layers.begin() + i);
-        }
-    }
+void ObjectLayerManager::AddToLayer(Object *obj, uint32_t layerId) {
+  auto it = std::find_if(
+      m_Layers.begin(), m_Layers.end(),
+      [&layerId](const ObjectLayer &layer) { return layer.ID == layerId; });
+
+  if (it != m_Layers.end()) {
+    it->Objects.push_back(obj);
+    return;
+  }
+
+  // Layer not found, set it to main layer
+  m_Layers[0].Objects.push_back(obj);
 }
 
-void ObjectLayerManager::AddToLayer(Object* obj, uint32_t layerId)
-{
-    auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [&layerId](const ObjectLayer& layer) {
-        return layer.ID == layerId;
-    });
+void ObjectLayerManager::AddToLayer(Object *obj, const std::string &name) {
+  auto it = std::find_if(
+      m_Layers.begin(), m_Layers.end(),
+      [&name](const ObjectLayer &layer) { return layer.Name == name; });
 
-    if (it != m_Layers.end())
-    {
-        it->Objects.push_back(obj);
-        return;
-    }
+  if (it != m_Layers.end()) {
+    it->Objects.push_back(obj);
+    return;
+  }
 
-    //Layer not found, set it to main layer
-    m_Layers[0].Objects.push_back(obj);
+  // Layer not found, set it to main layer
+  m_Layers[0].Objects.push_back(obj);
 }
 
-void ObjectLayerManager::AddToLayer(Object* obj, const std::string& name)
-{
-    auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [&name](const ObjectLayer& layer) {
-        return layer.Name == name;
-    });
+void ObjectLayerManager::RemoveFromLayer(Object *obj, uint32_t layerId) {
+  auto it = std::find_if(
+      m_Layers.begin(), m_Layers.end(),
+      [&layerId](const ObjectLayer &layer) { return layer.ID == layerId; });
 
-    if (it != m_Layers.end())
-    {
-        it->Objects.push_back(obj);
-        return;
+  if (it != m_Layers.end()) {
+    auto ob = std::find(it->Objects.begin(), it->Objects.end(), obj);
+    if (ob != it->Objects.end()) {
+      it->Objects.erase(ob);
     }
 
-    //Layer not found, set it to main layer
-    m_Layers[0].Objects.push_back(obj);
+    delete obj;
+    obj = nullptr;
+  }
 }
 
-void ObjectLayerManager::RemoveFromLayer(Object* obj, uint32_t layerId)
-{
-    auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [&layerId](const ObjectLayer& layer) {
-        return layer.ID == layerId;
-    });
-
-    if (it != m_Layers.end())
-    {
-        auto ob = std::find(it->Objects.begin(), it->Objects.end(), obj);
-        if (ob != it->Objects.end())
-        {
-            it->Objects.erase(ob);
-        }
-
-        delete obj;
-        obj = nullptr;
+bool ObjectLayerManager::Remove(Object *obj) {
+  for (auto &layer : m_Layers) {
+    auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
+    if (it != layer.Objects.end()) {
+      layer.Objects.erase(it);
+      return true;
     }
+  }
+
+  return false;
 }
 
-bool ObjectLayerManager::Remove(Object* obj)
-{
-    for (auto& layer : m_Layers)
-    {
-        auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
-        if (it != layer.Objects.end())
-        {
-            layer.Objects.erase(it);
-            return true;
-        }
-    }
+void ObjectLayerManager::MoveToLayer(Object *obj, uint32_t layerId) {
+  if (!Exists(layerId)) {
+    LP_CORE_WARN("Layer does not exist!");
+    return;
+  }
 
-    return false;
+  for (auto &layer : m_Layers) {
+    if (layer.ID == obj->GetLayerID()) {
+      auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
+      if (it != layer.Objects.end()) {
+        layer.Objects.erase(it);
+      }
+    }
+  }
+
+  for (auto &layer : m_Layers) {
+    if (layer.ID == layerId) {
+      layer.Objects.push_back(obj);
+      obj->SetLayerID(layerId);
+
+      return;
+    }
+  }
 }
 
-void ObjectLayerManager::MoveToLayer(Object* obj, uint32_t layerId)
-{
-    if (!Exists(layerId))
-    {
-        LP_CORE_WARN("Layer does not exist!");
-        return;
-    }
+Object *ObjectLayerManager::GetObjectFromPoint(const glm::vec3 &pos,
+                                               const glm::vec3 &origin) {
+  Ray ray;
+  ray.origin = origin;
+  ray.direction = pos;
 
-    for (auto& layer : m_Layers)
-    {
-        if (layer.ID == obj->GetLayerID())
-        {
-            auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj);
-            if (it != layer.Objects.end())
-            {
-                layer.Objects.erase(it);
-            }
-        }
+  for (auto &layer : m_Layers) {
+    for (auto &obj : layer.Objects) {
+      if (obj->GetPhysicalEntity()
+              ->GetCollider()
+              ->IntersectRay(ray)
+              .IsIntersecting) {
+        return obj;
+      }
     }
+  }
 
-    for (auto& layer : m_Layers)
-    {
-        if (layer.ID == layerId)
-        {
-            layer.Objects.push_back(obj);
-            obj->SetLayerID(layerId);
-
-            return;
-        }
-    }
+  return nullptr;
 }
 
-Object* ObjectLayerManager::GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin)
-{
-    Ray ray;
-    ray.origin = origin;
-    ray.direction = pos;
-
-    for (auto& layer : m_Layers)
-    {
-        for (auto& obj : layer.Objects)
-        {
-            if (obj->GetPhysicalEntity()->GetCollider()->IntersectRay(ray).IsIntersecting)
-            {
-                return obj;
-            }
-        }
+Object *ObjectLayerManager::GetObjectFromId(uint32_t id) {
+  for (auto &layer : m_Layers) {
+    for (auto &obj : layer.Objects) {
+      if (obj->GetID() == id) {
+        return obj;
+      }
     }
-
-    return nullptr;
+  }
+  return nullptr;
 }
-
-Object* ObjectLayerManager::GetObjectFromId(uint32_t id)
-{
-    for (auto& layer : m_Layers)
-    {
-        for (auto& obj : layer.Objects)
-        {
-            if (obj->GetID() == id)
-            {
-                return obj;
-            }
-        }
-    }
-    return nullptr;
-}
-}
+} // namespace Lamp

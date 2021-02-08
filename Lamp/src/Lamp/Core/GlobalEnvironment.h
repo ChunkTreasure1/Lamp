@@ -4,45 +4,41 @@
 
 #include "Lamp/Rendering/LightBase.h"
 
-namespace Lamp
-{
+namespace Lamp {
 class ObjectLayerManager;
 class EntityManager;
 class BrushManager;
-}
+} // namespace Lamp
 
-class RenderUtils
-{
+class RenderUtils {
 public:
-    RenderUtils() {}
-    ~RenderUtils();
+  RenderUtils() {}
+  ~RenderUtils();
 
-    void RegisterPointLight(Lamp::PointLight* light);
-    bool UnregisterPointLight(Lamp::PointLight* light);
+  void RegisterPointLight(Lamp::PointLight *light);
+  bool UnregisterPointLight(Lamp::PointLight *light);
 
-    inline const std::vector<Lamp::PointLight*>& GetPointLights() {
-        return m_PointLights;
-    }
+  inline const std::vector<Lamp::PointLight *> &GetPointLights() {
+    return m_PointLights;
+  }
 
 private:
-    std::vector<Lamp::PointLight*> m_PointLights;
+  std::vector<Lamp::PointLight *> m_PointLights;
 };
 
-struct GlobalEnvironment
-{
-    Lamp::DirectionalLight DirLight;
-    bool ShouldRenderBB = false;
-    bool ShouldRenderGizmos = true;
+struct GlobalEnvironment {
+  Lamp::DirectionalLight DirLight;
+  bool ShouldRenderBB = false;
+  bool ShouldRenderGizmos = true;
 
-    RenderUtils* pRenderUtils = nullptr;
+  RenderUtils *pRenderUtils = nullptr;
 
-    Lamp::ObjectLayerManager* pObjectLayerManager;
-    Lamp::EntityManager* pEntityManager;
-    Lamp::BrushManager* pBrushManager;
+  Lamp::ObjectLayerManager *pObjectLayerManager;
+  Lamp::EntityManager *pEntityManager;
+  Lamp::BrushManager *pBrushManager;
 };
 
-struct SAABB
-{
-    glm::vec3 Max = glm::vec3(0.f);
-    glm::vec3 Min = glm::vec3(0.f);
+struct SAABB {
+  glm::vec3 Max = glm::vec3(0.f);
+  glm::vec3 Min = glm::vec3(0.f);
 };

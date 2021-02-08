@@ -4,30 +4,25 @@
 #include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 
-#include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
 #include <Lamp/Audio/AudioEngine.h>
 #include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
+#include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
 
-void Game::OnStart()
-{
-    auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
+void Game::OnStart() {
+  auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 
-    {
-        Lamp::Entity* ent = Lamp::Entity::Create();
-        auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
-        comp->SetIntensity(10.f);
+  {
+    Lamp::Entity *ent = Lamp::Entity::Create();
+    auto comp = ent->GetOrCreateComponent<Lamp::LightComponent>();
+    comp->SetIntensity(10.f);
 
-        ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
-    }
+    ent->SetPosition(glm::vec3(10.f, 0.f, 0.f));
+  }
 }
 
-bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
-{
-    return false;
-}
+bool Game::OnUpdate(Lamp::AppUpdateEvent &e) { return false; }
 
-void Game::OnEvent(Lamp::Event& e)
-{
-    Lamp::EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Game::OnUpdate));
+void Game::OnEvent(Lamp::Event &e) {
+  Lamp::EventDispatcher dispatcher(e);
+  dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(Game::OnUpdate));
 }
