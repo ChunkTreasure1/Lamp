@@ -100,10 +100,5 @@
     <None Include="engine\shaders\2d\Texture.vert">
       <Filter>engine\shaders\2d</Filter>
     </None>
-<<<<<<< HEAD
-=======
-    <None Include="engine\shaders\3d\sprite_vs.glsl" />
-    <None Include="engine\shaders\3d\sprite_fs.glsl" />
->>>>>>> renderer
   </ItemGroup>
 </Project>

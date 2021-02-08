@@ -10,6 +10,9 @@ namespace Lamp
 	ObjectLayerManager::ObjectLayerManager()
 	{
 		s_ObjectLayerManager = this;
+	
+		ObjectLayer layer(0, "Main", false);
+		AddLayer(layer);
 	}
 
 	void ObjectLayerManager::OnEvent(Event& e)
@@ -158,10 +161,6 @@ namespace Lamp
 		{
 			for (auto& obj : layer.Objects)
 			{
-				if (obj->GetPickingCollider().Intersect(r))
-				{
-					return obj;
-				}
 			}
 		}
 

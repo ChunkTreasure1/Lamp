@@ -8,6 +8,9 @@
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 
+#include "Lamp/Objects/Brushes/BrushManager.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
+
 #include "CoreLogger.h"
 
 GlobalEnvironment* g_pEnv;
@@ -22,6 +25,11 @@ namespace Lamp
 	{
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
+		g_pEnv->pRenderUtils = new RenderUtils();
+
+		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
+		g_pEnv->pEntityManager = new EntityManager();
+		g_pEnv->pBrushManager = new BrushManager();
 
 		//Create the window
 		WindowProps props;

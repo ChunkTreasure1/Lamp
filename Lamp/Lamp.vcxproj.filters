@@ -73,6 +73,9 @@
     <Filter Include="src\Lamp\Rendering\Cameras">
       <UniqueIdentifier>{9ECEFFAB-8ADE-AB7C-F397-109BDFC69A15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\Reflections">
+      <UniqueIdentifier>{A05AA371-8C80-6DD8-75C6-F2A3618B92A4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
@@ -81,9 +84,6 @@
     </Filter>
     <Filter Include="src\Lamp\Rendering\Texture2D">
       <UniqueIdentifier>{8927768A-75E2-6536-1E9A-DE800A34B0C6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Rendering\TextureCube">
-      <UniqueIdentifier>{B25DA800-9E83-7267-87C9-F732738E9733}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering\Vertices">
       <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
@@ -273,6 +273,9 @@
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h">
       <Filter>src\Lamp\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Collision.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h">
       <Filter>src\Lamp\Physics\Components\Colliders</Filter>
     </ClInclude>
@@ -321,6 +324,9 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h">
+      <Filter>src\Lamp\Rendering\Reflections</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -345,8 +351,11 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h">
+    <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h">
       <Filter>src\Lamp\Rendering\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -356,9 +365,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h">
-      <Filter>src\Lamp\Rendering\TextureCube</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
@@ -1508,6 +1514,9 @@
     <ClCompile Include="src\Lamp\Core\Application.cpp">
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp">
+      <Filter>src\Lamp\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Core\Log.cpp">
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
@@ -1631,6 +1640,9 @@
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Reflections</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
@@ -1655,8 +1667,11 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp">
       <Filter>src\Lamp\Rendering\Shadows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
@@ -1666,9 +1681,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp">
-      <Filter>src\Lamp\Rendering\TextureCube</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>

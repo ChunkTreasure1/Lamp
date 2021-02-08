@@ -64,12 +64,8 @@ namespace Lamp
 
 		void MoveToLayer(Object* obj, uint32_t layerId);
 
-<<<<<<< HEAD
-		Object* GetObjectFromPoint(const glm::vec3& origin, const glm::vec3& dir);
-=======
 		Object* GetObjectFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 		Object* GetObjectFromId(uint32_t id);
->>>>>>> renderer
 
 	public:
 		static ObjectLayerManager* Get() { return s_ObjectLayerManager; }

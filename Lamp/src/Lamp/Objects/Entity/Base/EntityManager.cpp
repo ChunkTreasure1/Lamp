@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-	EntityManager* EntityManager::s_CurrentManager;
+	EntityManager* EntityManager::s_CurrentManager = nullptr;
 
 	EntityManager::EntityManager()
 	{
@@ -46,21 +46,6 @@ namespace Lamp
 		return true;
 	}
 
-<<<<<<< HEAD
-=======
-	Entity* EntityManager::GetEntityFromPhysicalEntity(PhysicalEntity* pEnt)
-	{
-		for (auto& ent : m_pEntites)
-		{
-			if (ent->GetPhysicalEntity().get() == pEnt)
-			{
-				return ent;
-			}
-		}
-
-		return nullptr;
-	}
-
 	Entity* EntityManager::GetEntityFromId(uint32_t id)
 	{
 		for (int i = 0; i < m_pEntites.size(); i++)
@@ -74,7 +59,6 @@ namespace Lamp
 		return nullptr;
 	}
 
->>>>>>> renderer
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
 		//Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));

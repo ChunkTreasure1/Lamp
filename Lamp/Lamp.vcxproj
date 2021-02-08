@@ -179,6 +179,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
+    <ClInclude Include="src\Lamp\Physics\Collision.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
+    <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
@@ -203,11 +205,11 @@
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
-    <ClInclude Include="src\Lamp\Rendering\Shadows\ShadowMap.h" />
+    <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h" />
-    <ClInclude Include="src\Lamp\Rendering\TextureCube\TextureCube.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
@@ -592,6 +594,7 @@
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
+    <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
@@ -633,6 +636,7 @@
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
@@ -641,11 +645,11 @@
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Shadows\ShadowMap.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\TextureCube\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />

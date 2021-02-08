@@ -60,12 +60,12 @@ namespace Lamp
 			for (uint32_t j = 0; j < 6; j++)
 			{
 				RenderPassSpecification spec;
-				spec.TargetFramebuffer = Ref<ReflectionBuffer>(this);
+				//spec.TargetFramebuffer = Ref<ReflectionBuffer>(this);
 
 				AppRenderEvent e(spec);
 
 				//m_PrefilterShader->UploadMat4("u_View", m_CaptureViews[j]);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, m_PrefilterMap, i);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, m_TextureId, i);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				Renderer3D::DrawCube();
 			}

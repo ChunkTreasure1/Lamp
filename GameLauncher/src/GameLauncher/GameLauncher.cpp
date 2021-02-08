@@ -56,17 +56,70 @@ namespace GameLauncher
 
 	void GameLauncher::CreateRenderPasses()
 	{
-		Lamp::RenderPassInfo passInfo;
-		passInfo.Camera = m_Camera;
-		passInfo.IsShadowPass = true;
-		passInfo.DirLight = g_pEnv->DirLight;
-		passInfo.ClearColor = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		using namespace Lamp;
 
-		Ref<Lamp::RenderPass> shadowPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetShadowBuffer(), passInfo);
-		Lamp::RenderPassManager::Get()->AddPass(shadowPass);
+		///////Shadow pass/////
+		//{
+		//	FramebufferSpecification shadowBuffer;
+		//	shadowBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
+		//	};
+		//	shadowBuffer.ClearColor = m_ClearColor;
+		//	shadowBuffer.Height = 4096;
+		//	shadowBuffer.Width = 4096;
 
-		passInfo.IsShadowPass = false;
-		Ref<Lamp::RenderPass> renderPass = CreateRef<Lamp::RenderPass>(Lamp::Renderer3D::GetFrameBuffer(), passInfo);
-		Lamp::RenderPassManager::Get()->AddPass(renderPass);
+		//	RenderPassSpecification shadowSpec;
+		//	shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
+		//	shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		//	shadowSpec.IsShadowPass = true;
+
+		//	Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+		//	RenderPassManager::Get()->AddPass(shadowPass);
+		//}
+		///////////////////////
+
+		///////Point shadow pass/////
+		//{
+		//	RenderPassSpecification shadowSpec;
+		//	shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		//	shadowSpec.IsPointShadowPass = true;
+
+		//	Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+		//	RenderPassManager::Get()->AddPass(shadowPass);
+		//}
+		/////////////////////////////
+
+		///////Main//////
+		//{
+		//	FramebufferSpecification mainBuffer;
+		//	mainBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
+		//		{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
+		//		{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+		//	};
+		//	mainBuffer.ClearColor = m_ClearColor;
+		//	mainBuffer.Height = 1280;
+		//	mainBuffer.Width = 720;
+		//	mainBuffer.Samples = 1;
+
+		//	std::vector<std::function<void()>> ptrs;
+		//	ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+		//	ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
+		//	RenderPassSpecification passSpec;
+		//	passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		//	passSpec.ExtraRenders = ptrs;
+
+		//	// TODO: Fix issue with not being able to use Lamp::Framebuffer::Create(mainBuffer);
+		//	passSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(mainBuffer);
+
+		//	m_SandboxBuffer = passSpec.TargetFramebuffer;
+
+		//	Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(renderPass);
+		//}
+		/////////////////
 	}
 }

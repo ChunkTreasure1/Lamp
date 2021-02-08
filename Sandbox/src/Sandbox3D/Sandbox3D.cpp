@@ -3,21 +3,11 @@
 
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
-<<<<<<< HEAD
-#include <Lamp/Objects/Brushes/BrushManager.h>
-=======
 
->>>>>>> renderer
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
 #include <Lamp/Physics/PhysicsEngine.h>
-<<<<<<< HEAD
-#include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
-#include <Lamp/Meshes/GeometrySystem.h>
-=======
-#include <Lamp/Physics/Physics.h>
->>>>>>> renderer
 
 #include <Lamp/Objects/ObjectLayer.h>
 #include <Lamp/Core/Game.h>
