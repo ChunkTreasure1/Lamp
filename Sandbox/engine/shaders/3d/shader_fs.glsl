@@ -106,8 +106,8 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
-    float height =  texture(u_Material.depth, texCoords).r;     
-    return texCoords - viewDir.xy * (height * u_Material.depthScale); 
+    float height =  texture(u_Material.depth, texCoords).r;
+    return texCoords - viewDir.xy * (height * u_Material.depthScale);
 }
 
 void main()

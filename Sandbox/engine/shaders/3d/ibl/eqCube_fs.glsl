@@ -20,9 +20,9 @@ vec2 SampleSphericalMap(vec3 v)
 }
 
 void main()
-{		
+{
     vec2 uv = SampleSphericalMap(normalize(v_WorldPos));
     vec3 color = texture(u_EquirectangularMap, uv).rgb;
-    
+
     FragColor = vec4(color, 1.0);
 }

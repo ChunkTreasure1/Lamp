@@ -31,7 +31,7 @@ struct PointLight
 {
 	vec3 position;
 	vec3 color;
-	
+
 	float radius;
 	float intensity;
 	float falloff;
@@ -235,9 +235,9 @@ void main()
 	{
 		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
 	}
-	
+
 	vec3 R = reflect(-V, N);
-	
+
 	const float maxReflectionLOD = 4.0;
 	vec3 prefilterColor = textureLod(u_PrefilterMap, R, roughness * maxReflectionLOD).rgb;
 	vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), baseReflectivity, roughness);
