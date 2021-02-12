@@ -43,12 +43,15 @@ namespace Sandbox3D
 			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
 			{
 				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_SecondaryBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
 				m_SandboxController->GetCameraController()->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
-			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID();
+			uint32_t textureID = m_SecondaryBuffer->GetColorAttachmentID(0);
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
@@ -198,7 +201,7 @@ namespace Sandbox3D
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
 				{
-					int pixelData = m_SandboxBuffer->ReadPixel(1, mouseX, mouseY);
+					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
@@ -609,7 +612,7 @@ namespace Sandbox3D
 						glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 						glm::vec2 v = *p;
 						
-						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v), 3);
+						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
 						if (v != *p)
 						{
 							*p = v;
@@ -625,7 +628,7 @@ namespace Sandbox3D
 						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 						glm::vec3 v = *p;
 
-						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v), 3);
+						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
 						if (v != *p)
 						{
 							*p = v;
@@ -641,7 +644,7 @@ namespace Sandbox3D
 						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 						glm::vec4 v = *p;
 
-						ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p), 3);
+						ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
 						if (v != *p)
 						{
 							*p = v;

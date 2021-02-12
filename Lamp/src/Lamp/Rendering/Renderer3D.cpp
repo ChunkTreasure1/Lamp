@@ -84,7 +84,7 @@ namespace Lamp
 		{
 			std::vector<float> quadPositions =
 			{
-				// positions         // texture Coords
+				// positions       // texture Coords
 				-1.f, -1.f, 0.0f,  0.0f, 0.0f,
 				 1.f, -1.f, 0.0f,  1.0f, 0.0f,
 				 1.f,  1.f, 0.0f,  1.0f, 1.0f,
@@ -253,15 +253,15 @@ namespace Lamp
 		{
 			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadow map
-			//int i = 4 + g_pEnv->pRenderUtils->GetPointLights().size();
-			//for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
-			//{
-			//	if (mat.GetTextures()[name].get() != nullptr)
-			//	{
-			//		mat.GetTextures()[name]->Bind(i);
-			//		i++;
-			//	}
-			//}
+			int i = 4 + g_pEnv->pRenderUtils->GetPointLights().size();
+			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			{
+				if (mat.GetTextures()[name].get() != nullptr)
+				{
+					mat.GetTextures()[name]->Bind(i);
+					i++;
+				}
+			}
 
 			mat.GetShader()->Bind();
 			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());

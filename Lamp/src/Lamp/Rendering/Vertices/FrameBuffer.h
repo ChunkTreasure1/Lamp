@@ -41,8 +41,12 @@ namespace Lamp
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() = default;
-		FramebufferTextureSpecification(FramebufferTextureFormat format, FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear, 
-			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat, const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f })
+		FramebufferTextureSpecification(
+			FramebufferTextureFormat format, 
+			FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear, 
+			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat, 
+			const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f },
+			bool sampled = false)
 			: TextureFormat(format), TextureFiltering(filtering), TextureWrap(wrap), BorderColor(borderColor)
 		{}
 
@@ -50,6 +54,7 @@ namespace Lamp
 		FramebufferTexureFiltering TextureFiltering;
 		FramebufferTextureWrap TextureWrap;
 
+		bool MultiSampled = false;
 		glm::vec4 BorderColor = { 1.f, 1.f, 1.f, 1.f };
 	};
 

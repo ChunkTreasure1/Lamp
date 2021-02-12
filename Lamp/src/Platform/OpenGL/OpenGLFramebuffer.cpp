@@ -266,7 +266,11 @@ namespace Lamp
 		if (m_ColorAttachmentSpecs.size())
 		{
 			m_ColorAttachmentIDs.resize(m_ColorAttachmentSpecs.size());
-			Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), m_ColorAttachmentIDs.size());
+
+			for (int i = 0; i < m_ColorAttachmentSpecs.size(); i++)
+			{
+				Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), m_ColorAttachmentIDs.size());
+			}
 
 			for (size_t i = 0; i < m_ColorAttachmentIDs.size(); i++)
 			{

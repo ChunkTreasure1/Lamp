@@ -149,7 +149,7 @@ float PointShadowCalculation(vec3 fragPos, PointLight light)
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 N, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
-	float shadow = DirectionalShadowCalculation(v_In.ShadowCoord);
+	float shadow = 0.5;//DirectionalShadowCalculation(v_In.ShadowCoord);
 
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);
@@ -243,7 +243,7 @@ void main()
 	vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), baseReflectivity, roughness);
 	vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
 	vec3 specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
-
+	
 	vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), baseReflectivity, roughness);
 	vec3 kD = 1.0 - kS;
 	kD *= 1.0 - metallic;

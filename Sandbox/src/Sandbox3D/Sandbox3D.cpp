@@ -35,6 +35,17 @@ namespace Sandbox3D
 
 		m_ModelImporter = new ModelImporter();
 
+		FramebufferSpecification spec;
+		spec.Attachments =
+		{
+			{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+		};
+
+		spec.Height = 720;
+		spec.Width = 1280;
+		spec.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+
+		m_SecondaryBuffer = Lamp::Framebuffer::Create(spec);
 		SetupFromConfig();
 		CreateRenderPasses();
 	}
@@ -46,6 +57,8 @@ namespace Sandbox3D
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
+		m_SecondaryBuffer->ClearAttachment(0, 0);
+
 		if (m_SandboxController->GetCameraController()->GetRightPressed())
 		{
 			m_SandboxController->Update(e.GetTimestep());
@@ -62,10 +75,14 @@ namespace Sandbox3D
 
 		GetInput();
 
-		m_SandboxBuffer->ClearAttachment(1, -1);
+		m_SelectionBuffer->ClearAttachment(0, -1);
 
 		RenderPassManager::Get()->RenderPasses();
 		m_ModelImporter->Render();
+
+		glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
+
+		glBlitNamedFramebuffer(m_SandboxBuffer->GetRendererID(), m_SecondaryBuffer->GetRendererID(), 0, 0, srcSize.x, srcSize.y, 0, 0, srcSize.x, srcSize.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		return false;
 	}
@@ -302,7 +319,7 @@ namespace Sandbox3D
 		}
 		/////////////////////
 
-		/////Point shadow pass/////
+		///////Point shadow pass/////
 		{
 			RenderPassSpecification shadowSpec;
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
@@ -311,21 +328,41 @@ namespace Sandbox3D
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
 			RenderPassManager::Get()->AddPass(shadowPass);
 		}
-		///////////////////////////
+		/////////////////////////////
+
+		/////Selection/////
+		{
+			FramebufferSpecification spec;
+			spec.Attachments =
+			{
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+			};
+			spec.Height = 1280;
+			spec.Width = 720;
+			spec.Samples = 1;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
+			m_SelectionBuffer = passSpec.TargetFramebuffer;
+
+			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(pass);
+		}
+		///////////////////
 
 		/////Main//////
 		{
 			FramebufferSpecification mainBuffer;
 			mainBuffer.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, true },
 				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 			};
 			mainBuffer.ClearColor = m_ClearColor;
 			mainBuffer.Height = 1280;
 			mainBuffer.Width = 720;
-			mainBuffer.Samples = 1;
+			mainBuffer.Samples = 2;
 
 			std::vector<std::function<void()>> ptrs;
 			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
@@ -335,8 +372,7 @@ namespace Sandbox3D
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.ExtraRenders = ptrs;
 
-			// TODO: Fix issue with not being able to use Lamp::Framebuffer::Create(mainBuffer);
-			passSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(mainBuffer);
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 
