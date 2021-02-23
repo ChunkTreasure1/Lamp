@@ -109,7 +109,9 @@ project "Sandbox"
 		"%{prj.name}/engine/**.vert",
 		"%{prj.name}/engine/**.frag",
 		"Lamp/vendor/ImGuizmo/include/**.h",
-		"Lamp/vendor/ImGuizmo/include/**.cpp"
+		"Lamp/vendor/ImGuizmo/include/**.cpp",
+		"Lamp/vendor/imnodes/**.h",
+		"Lamp/vendor/imnodes/**.cpp"
 	}
 
 	includedirs
@@ -127,7 +129,8 @@ project "Sandbox"
 		"Lamp/vendor/fmod/include",
 		"Game/src",
 		"Lamp/vendor/ImGuizmo/include",
-		"Lamp/vendor/bullet/src"
+		"Lamp/vendor/bullet/src",
+		"Lamp/vendor/imnodes/"
 	}
 
 	libdirs

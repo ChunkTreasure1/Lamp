@@ -14,9 +14,12 @@ namespace Sandbox3D
 {
 	using namespace Lamp;
 
-	ModelImporter::ModelImporter()
+	ModelImporter::ModelImporter(std::string_view name)
+		: BaseWindow(name)
 	{
 		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
+
+		m_RenderFuncs.push_back(LP_EXTRA_RENDER(ModelImporter::Render));
 
 		{
 			FramebufferSpecification mainBuffer;
@@ -33,28 +36,23 @@ namespace Sandbox3D
 		}
 	}
 
-	void ModelImporter::Update()
+	bool ModelImporter::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
-		if (!m_Open)
+		if (!m_IsOpen)
 		{
-			return;
-		}
-
-		if (m_DefaultShader == nullptr)
-		{
-			m_DefaultShader = Lamp::ShaderLibrary::GetShader("Illumn");
+			return false;
 		}
 
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("Model Importer", &m_Open);
+		ImGui::Begin(m_Name.c_str(), &m_IsOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
-			ImGuiID dockspace_id = ImGui::GetID("modelimporter");
+			ImGuiID dockspace_id = ImGui::GetID(m_Name.c_str());
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 		ImGui::End();
@@ -62,11 +60,24 @@ namespace Sandbox3D
 		UpdatePerspective();
 		UpdateProperties();
 		UpdateMaterial();
+
+		return false;
+	}
+
+	bool ModelImporter::Update(Lamp::AppUpdateEvent& e)
+	{
+		if (m_DefaultShader == nullptr)
+		{
+			m_DefaultShader = Lamp::ShaderLibrary::GetShader("Illumn");
+		}
+		UpdateCamera(e.GetTimestep());
+
+		return false;
 	}
 
 	void ModelImporter::UpdateCamera(Lamp::Timestep ts)
 	{
-		if (!m_Open)
+		if (!m_IsOpen)
 		{
 			return;
 		}
@@ -75,7 +86,7 @@ namespace Sandbox3D
 
 	void ModelImporter::Render()
 	{
-		if (!m_Open)
+		if (!m_IsOpen)
 		{
 			return;
 		}
@@ -102,11 +113,15 @@ namespace Sandbox3D
 
 	void ModelImporter::OnEvent(Lamp::Event& e)
 	{
-		if (!m_Open)
+		if (!m_IsOpen)
 		{
 			return;
 		}
 		m_Camera->OnEvent(e);
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(ModelImporter::UpdateImGui));
+		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(ModelImporter::Update));
 	}
 
 	void ModelImporter::RenderGrid()
@@ -162,7 +177,7 @@ namespace Sandbox3D
 
 	void ModelImporter::UpdateProperties()
 	{
-		ImGui::Begin("Import Settings", &m_Open);
+		ImGui::Begin("Import Settings", &m_IsOpen);
 
 		static std::string path = "";
 		static std::string savePath = "";

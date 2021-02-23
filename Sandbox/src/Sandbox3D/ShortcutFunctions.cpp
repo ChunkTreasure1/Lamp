@@ -44,9 +44,9 @@ namespace Sandbox3D
 		}
 
 		//Currently only perspective undo
-		switch (m_PerspecticeCommands.front().cmd)
+		switch (m_PerspecticeCommands.front().commandType)
 		{
-			case Cmd::Transform:
+			case CommandType::Transform:
 			{
 				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.front().object))
 				{
@@ -58,7 +58,7 @@ namespace Sandbox3D
 				break;
 			}
 
-			case Cmd::Selection:
+			case CommandType::Selection:
 			{
 				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.front().lastData;
 				m_PerspecticeCommands.pop_front();
@@ -74,9 +74,9 @@ namespace Sandbox3D
 		}
 
 		//Currently only perspective undo
-		switch (m_PerspecticeCommands.redo_top().cmd)
+		switch (m_PerspecticeCommands.redo_top().commandType)
 		{
-			case Cmd::Transform:
+			case CommandType::Transform:
 			{
 				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.redo_top().object))
 				{
@@ -88,7 +88,7 @@ namespace Sandbox3D
 				break;
 			}
 
-			case Cmd::Selection:
+			case CommandType::Selection:
 			{
 				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.redo_top().lastData;
 				m_PerspecticeCommands.redo_pop();

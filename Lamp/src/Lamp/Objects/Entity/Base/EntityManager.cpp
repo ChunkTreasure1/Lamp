@@ -48,15 +48,19 @@ namespace Lamp
 
 	Entity* EntityManager::GetEntityFromId(uint32_t id)
 	{
-		for (int i = 0; i < m_pEntites.size(); i++)
-		{
-			if (m_pEntites[i]->GetId() == id)
-			{
-				return m_pEntites[i];
-			}
-		}
+		Entity* ent = nullptr;
 
-		return nullptr;
+		auto func = [&id, &ent](Entity* pEnt)
+		{
+			if (pEnt->GetID() == id)
+			{
+				ent = pEnt;
+			}
+		};
+
+		std::for_each(std::execution::par_unseq, m_pEntites.begin(), m_pEntites.end(), func);
+
+		return ent;
 	}
 
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)

@@ -15,10 +15,11 @@
 #include <Lamp/Rendering/RenderPass.h>
 
 #include "Windows/ModelImporter.h"
+#include "Windows/VisualScripting.h"
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
-
+#include <imnodes.h>
 namespace Sandbox3D
 {
 	using namespace Lamp;
@@ -33,7 +34,8 @@ namespace Sandbox3D
 		m_SandboxController = CreateRef<SandboxController>();
 		g_pEnv->ShouldRenderBB = true;
 
-		m_ModelImporter = new ModelImporter();
+		m_pWindows.push_back(new ModelImporter("Model Importer"));
+		m_pWindows.push_back(new VisualScripting("Visual Scripting"));
 
 		FramebufferSpecification spec;
 		spec.Attachments =
@@ -48,11 +50,19 @@ namespace Sandbox3D
 		m_SecondaryBuffer = Lamp::Framebuffer::Create(spec);
 		SetupFromConfig();
 		CreateRenderPasses();
+
+		imnodes::Initialize();
 	}
 
 	Sandbox3D::~Sandbox3D()
 	{
-		delete m_ModelImporter;
+		for (auto p : m_pWindows)
+		{
+			delete p;
+		}
+
+		m_pWindows.clear();
+		imnodes::Shutdown();
 	}
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
@@ -63,14 +73,9 @@ namespace Sandbox3D
 		{
 			m_SandboxController->Update(e.GetTimestep());
 		}
-		else if (m_ModelImporter->GetCamera()->GetRightPressed())
-		{
-			m_ModelImporter->UpdateCamera(e.GetTimestep());
-		}
 		else
 		{
 			m_SandboxController->Update(e.GetTimestep());
-			m_ModelImporter->UpdateCamera(e.GetTimestep());
 		}
 
 		GetInput();
@@ -78,7 +83,13 @@ namespace Sandbox3D
 		m_SelectionBuffer->ClearAttachment(0, -1);
 
 		RenderPassManager::Get()->RenderPasses();
-		m_ModelImporter->Render();
+		for (auto pWindow : m_pWindows)
+		{
+			for (auto pFunc : pWindow->GetRenderFuncs())
+			{
+				pFunc();
+			}
+		}
 
 		glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
 
@@ -99,25 +110,26 @@ namespace Sandbox3D
 		UpdateLogTool();
 		UpdateLevelSettings();
 
-		m_ModelImporter->Update();
+		ImGuiUpdateEvent e;
+		OnEvent(e);
 	}
 
 	void Sandbox3D::OnEvent(Event& e)
 	{
 		m_pGame->OnEvent(e);
 
+		for (auto pWindow : m_pWindows)
+		{
+			pWindow->OnEvent(e);
+		}
+
 		if (m_SandboxController->GetCameraController()->GetRightPressed())
 		{
 			m_SandboxController->OnEvent(e);
 		}
-		else if (m_ModelImporter->GetCamera()->GetRightPressed())
-		{
-			m_ModelImporter->OnEvent(e);
-		}
 		else
 		{
 			m_SandboxController->OnEvent(e);
-			m_ModelImporter->OnEvent(e);
 		}
 
 		EventDispatcher dispatcher(e);
@@ -217,6 +229,7 @@ namespace Sandbox3D
 	bool Sandbox3D::OnImGuiBegin(ImGuiBeginEvent& e)
 	{
 		ImGuizmo::BeginFrame();
+
 
 		return true;
 	}

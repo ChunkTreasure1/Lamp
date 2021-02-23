@@ -17,7 +17,7 @@
 
 namespace Sandbox3D
 {
-	class ModelImporter;
+	class BaseWindow;
 
 	class Sandbox3D : public Lamp::Layer
 	{
@@ -103,8 +103,8 @@ namespace Sandbox3D
 		glm::vec2 m_WindowSize = glm::vec2(0, 0);
 		Ref<Lamp::Shader> m_pShader;
 
-		//Model importer
-		ModelImporter* m_ModelImporter;
+		//Windows
+		std::vector<BaseWindow*> m_pWindows;
 
 		//Layers
 		bool m_LayerViewOpen = true;

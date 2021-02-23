@@ -36,7 +36,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused() || !m_ModelImporter->GetIsOpen() && ImGui::IsWindowHovered();
+			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
@@ -113,7 +113,7 @@ namespace Sandbox3D
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
 				Command cmd;
-				cmd.cmd = Cmd::Transform;
+				cmd.commandType = CommandType::Transform;
 				cmd.lastData = new glm::mat4(lastTrans);
 				cmd.object = m_pSelectedObject;
 
@@ -189,7 +189,7 @@ namespace Sandbox3D
 				mousePos.y = m_PerspectiveSize.y - mousePos.y;
 
 				Command cmd;
-				cmd.cmd = Cmd::Selection;
+				cmd.commandType = CommandType::Selection;
 				cmd.lastData = m_pSelectedObject;
 				cmd.object = nullptr;
 
@@ -243,7 +243,7 @@ namespace Sandbox3D
 					if (pos != pEnt->GetPosition())
 					{
 						Command cmd;
-						cmd.cmd = Cmd::Position;
+						cmd.commandType = CommandType::Position;
 						//cmd.lastData = 
 					}
 
@@ -873,13 +873,17 @@ namespace Sandbox3D
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Import Model", NULL, &m_ModelImporter->GetIsOpen());
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
 				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
 				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
+
+				for (auto pWindow : m_pWindows)
+				{
+					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
+				}
 
 				ImGui::EndMenu();
 			}

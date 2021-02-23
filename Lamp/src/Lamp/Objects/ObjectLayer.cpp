@@ -17,14 +17,14 @@ namespace Lamp
 
 	void ObjectLayerManager::OnEvent(Event& e)
 	{
-		for (auto it = m_Layers.begin(); it != m_Layers.end(); it++)
+		auto layerFunc = [&e](ObjectLayer& layer)
 		{
-			if (!it->IsActive)
+			if (!layer.IsActive)
 			{
-				continue;
+				return;
 			}
 
-			for (auto& obj : it->Objects)
+			for (auto& obj : layer.Objects)
 			{
 				if (e.GetEventType() & obj->GetEventMask())
 				{
@@ -40,7 +40,9 @@ namespace Lamp
 					continue;
 				}
 			}
-		}
+		};
+
+		std::for_each(std::execution::par_unseq, m_Layers.begin(), m_Layers.end(), layerFunc);
 	}
 
 	void ObjectLayerManager::Destroy()

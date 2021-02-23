@@ -4,7 +4,7 @@
 
 namespace Sandbox3D
 {
-	enum class Cmd
+	enum class CommandType
 	{
 		Position,
 		Rotation,
@@ -15,7 +15,7 @@ namespace Sandbox3D
 
 	struct Command
 	{
-		Cmd cmd;
+		CommandType commandType;
 		void* lastData = nullptr;
 		void* object = nullptr;
 	};

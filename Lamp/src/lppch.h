@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <map>
 #include <filesystem>
+#include <execution>
 
 #include "Lamp/Core/Log.h"
 

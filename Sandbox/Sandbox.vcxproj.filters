@@ -16,6 +16,9 @@
     <Filter Include="Lamp\vendor\ImGuizmo\include\ImGuizmo">
       <UniqueIdentifier>{7F830934-EB47-0824-B4AD-38EE2031A459}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lamp\vendor\imnodes">
+      <UniqueIdentifier>{4A00D01C-B661-AD2A-3FCF-F3DCAB2FE4E9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="engine">
       <UniqueIdentifier>{FBDB78FB-E77D-A3D1-D038-B725BC792A22}</UniqueIdentifier>
     </Filter>
@@ -42,6 +45,9 @@
     <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
       <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Lamp\vendor\imnodes\imnodes.h">
+      <Filter>Lamp\vendor\imnodes</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h">
       <Filter>src\Sandbox2D</Filter>
     </ClInclude>
@@ -54,13 +60,20 @@
     <ClInclude Include="src\Sandbox3D\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Windows\BaseWindow.h">
+      <Filter>src\Sandbox3D\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Windows\VisualScripting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
       <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lamp\vendor\imnodes\imnodes.cpp">
+      <Filter>Lamp\vendor\imnodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp">
       <Filter>src\Sandbox2D</Filter>
@@ -86,6 +99,7 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\Windows\VisualScripting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\2d\FlatColor.frag">
