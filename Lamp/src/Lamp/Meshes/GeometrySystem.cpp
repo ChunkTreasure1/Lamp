@@ -292,9 +292,9 @@ namespace Lamp
 			glm::vec2 texCoords;
 
 			//'50' is the downscaling, might need some changes
-			pos.x = pMesh->mVertices[i].x / 50.f;
-			pos.y = pMesh->mVertices[i].y / 50.f;
-			pos.z = pMesh->mVertices[i].z / 50.f;
+			pos.x = pMesh->mVertices[i].x;
+			pos.y = pMesh->mVertices[i].y;
+			pos.z = pMesh->mVertices[i].z;
 
 			normal.x = pMesh->mNormals[i].x;
 			normal.y = pMesh->mNormals[i].y;
