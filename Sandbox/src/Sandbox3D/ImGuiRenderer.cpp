@@ -570,7 +570,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 
 						break;
@@ -587,7 +587,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						
 						break;
@@ -604,7 +604,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -620,7 +620,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -636,7 +636,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -652,7 +652,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -668,7 +668,7 @@ namespace Sandbox3D
 							*s = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -694,7 +694,7 @@ namespace Sandbox3D
 							*s = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -710,7 +710,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}
@@ -726,7 +726,7 @@ namespace Sandbox3D
 							*p = v;
 
 							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							ptr->GetEntity()->OnEvent(e);
 						}
 						break;
 					}

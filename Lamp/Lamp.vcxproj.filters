@@ -1506,6 +1506,9 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\Node.h" />
+    <ClInclude Include="src\Lamp\GraphKey\Link.h" />
+    <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1724,5 +1727,8 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\Node.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
   </ItemGroup>
 </Project>

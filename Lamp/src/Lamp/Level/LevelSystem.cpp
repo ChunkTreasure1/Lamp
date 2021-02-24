@@ -372,7 +372,7 @@ namespace Lamp
 			{
 				auto name = pComponent->first_attribute("name")->value();
 				Ref<EntityComponent> pComp = ComponentRegistry::Create(name);
-				pComp->MakeOwner(pEnt);
+				pComp->m_pEntity = pEnt;
 				pComp->Initialize();
 
 				for (rapidxml::xml_node<>* pParam = pComponent->first_node("Param"); pParam; pParam = pParam->next_sibling())

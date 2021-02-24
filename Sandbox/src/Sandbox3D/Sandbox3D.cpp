@@ -15,7 +15,7 @@
 #include <Lamp/Rendering/RenderPass.h>
 
 #include "Windows/ModelImporter.h"
-#include "Windows/VisualScripting.h"
+#include "Windows/GraphKey.h"
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
@@ -35,7 +35,7 @@ namespace Sandbox3D
 		g_pEnv->ShouldRenderBB = true;
 
 		m_pWindows.push_back(new ModelImporter("Model Importer"));
-		m_pWindows.push_back(new VisualScripting("Visual Scripting"));
+		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 
 		FramebufferSpecification spec;
 		spec.Attachments =
@@ -85,9 +85,12 @@ namespace Sandbox3D
 		RenderPassManager::Get()->RenderPasses();
 		for (auto pWindow : m_pWindows)
 		{
-			for (auto pFunc : pWindow->GetRenderFuncs())
+			if (pWindow->GetIsOpen())
 			{
-				pFunc();
+				for (auto pFunc : pWindow->GetRenderFuncs())
+				{
+					pFunc();
+				}
 			}
 		}
 
@@ -120,7 +123,10 @@ namespace Sandbox3D
 
 		for (auto pWindow : m_pWindows)
 		{
-			pWindow->OnEvent(e);
+			if (pWindow->GetIsOpen())
+			{
+				pWindow->OnEvent(e);
+			}
 		}
 
 		if (m_SandboxController->GetCameraController()->GetRightPressed())
@@ -229,8 +235,6 @@ namespace Sandbox3D
 	bool Sandbox3D::OnImGuiBegin(ImGuiBeginEvent& e)
 	{
 		ImGuizmo::BeginFrame();
-
-
 		return true;
 	}
 

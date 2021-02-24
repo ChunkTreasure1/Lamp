@@ -29,6 +29,9 @@ namespace Lamp
 			: PropertyType(propertyType), Name(name), Value(value)
 		{}
 
+		ComponentProperty() 
+		{}
+
 		std::string Name;
 		void* Value;
 		PropertyType PropertyType;
@@ -39,6 +42,9 @@ namespace Lamp
 	public:
 		ComponentProperties(std::initializer_list<ComponentProperty> properties)
 			: m_Properties(properties)
+		{}
+
+		ComponentProperties()
 		{}
 
 		inline std::vector<ComponentProperty>& GetProperties() { return m_Properties; }
