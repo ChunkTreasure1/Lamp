@@ -69,6 +69,7 @@ namespace Sandbox3D
 		if (m_pSelectedObject)
 		{
 			transform = m_pSelectedObject->GetModelMatrix();
+			ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(m_pSelectedObject->GetPosition()), glm::value_ptr(m_pSelectedObject->GetRotation()), glm::value_ptr(m_pSelectedObject->GetScale()), glm::value_ptr(transform));
 
 			// TODO: improve this first part.
 			if (firstTime)
@@ -99,15 +100,16 @@ namespace Sandbox3D
 			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
 			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
+				m_ImGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transform));
+
 
 			glm::vec3 p, r, s;
-			Lamp::Math::DecomposeTransform(transform, p, r, s);
-
+			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
+			
 			r = r - m_pSelectedObject->GetRotation();
 
 			m_pSelectedObject->SetPosition(p);
-			m_pSelectedObject->SetRotation(r);
+			m_pSelectedObject->AddRotation(r);
 			m_pSelectedObject->SetScale(s);
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
