@@ -19,6 +19,12 @@
     <Filter Include="src\Lamp\Event">
       <UniqueIdentifier>{B71C467B-A3EA-3981-8C7E-AAA778EB15E6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\GraphKey">
+      <UniqueIdentifier>{90F2A9A8-FC08-A83E-4580-3360B1D578C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\GraphKey\BaseNodes">
+      <UniqueIdentifier>{933522C8-FF42-50AE-8829-4C99F4351C65}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\ImGui">
       <UniqueIdentifier>{9010897B-7CDE-7C81-6572-EDA751DF58E6}</UniqueIdentifier>
     </Filter>
@@ -179,6 +185,15 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\MouseEvent.h">
       <Filter>src\Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\Link.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\Node.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h">
+      <Filter>src\Lamp\GraphKey</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h">
       <Filter>src\Lamp\ImGui</Filter>
@@ -1506,9 +1521,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\GraphKey\Node.h" />
-    <ClInclude Include="src\Lamp\GraphKey\Link.h" />
-    <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1528,6 +1540,15 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\Node.cpp">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp">
+      <Filter>src\Lamp\GraphKey</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp">
       <Filter>src\Lamp\ImGui</Filter>
@@ -1685,7 +1706,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
@@ -1727,8 +1748,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\GraphKey\Node.cpp" />
-    <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp" />
-    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
   </ItemGroup>
 </Project>

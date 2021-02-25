@@ -656,7 +656,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />

@@ -147,8 +147,8 @@
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h" />
     <ClInclude Include="src\Sandbox3D\SandboxController.h" />
     <ClInclude Include="src\Sandbox3D\Windows\BaseWindow.h" />
-    <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h" />
     <ClInclude Include="src\Sandbox3D\Windows\GraphKey.h" />
+    <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp" />
@@ -159,8 +159,8 @@
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp" />
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp" />
-    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\GraphKey.cpp" />
+    <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>

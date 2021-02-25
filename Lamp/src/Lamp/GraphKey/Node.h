@@ -14,8 +14,8 @@ namespace Lamp
 	struct NodeProperty
 	{
 		PropertyType type;
-		std::string Name;
-		void* Value;
+		std::string name;
+		void* value;
 	};
 
 	struct Attribute
@@ -25,9 +25,9 @@ namespace Lamp
 		Attribute(PropertyType t, const std::string& name, void* value, AttributeType type)
 			: type(type)
 		{
-			property.Name = name;
+			property.name = name;
 			property.type = t;
-			property.Value = value;
+			property.value = value;
 		}
 
 		NodeProperty property;
