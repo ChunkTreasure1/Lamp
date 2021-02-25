@@ -86,6 +86,7 @@ namespace Sandbox3D
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
 		CommandStack<Command> m_PerspecticeCommands;
 		bool m_HaveUndone = false;
+		bool m_IsPlaying = false;
 
 		//Asset browser
 		Lamp::File m_SelectedFile;

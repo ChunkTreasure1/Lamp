@@ -601,6 +601,7 @@
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\Node.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp" />

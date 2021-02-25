@@ -3,6 +3,8 @@
 #include "Lamp/Objects/Entity/Base/Entity.h"
 #include "Link.h"
 
+#define LP_BIND_NODE_FUNCTION(x) std::bind(&x, this)
+
 namespace Lamp
 {
 	enum class AttributeType
@@ -20,6 +22,8 @@ namespace Lamp
 
 	struct Attribute
 	{
+		using Func = std::function<void()>;
+
 		Attribute() {}
 
 		Attribute(PropertyType t, const std::string& name, void* value, AttributeType type)
@@ -34,12 +38,11 @@ namespace Lamp
 		AttributeType type;
 		uint32_t id;
 		Ref<Link> pLink = nullptr;
+		Func func = NULL;
 	};
 
 	struct Node
 	{
-		using Func = std::function<void()>;
-
 		Node()
 			: pEntity(nullptr), name("")
 		{}
@@ -53,13 +56,13 @@ namespace Lamp
 			links = node->links;
 		}
 
+		void ActivateOutput(Attribute& attr);
+
 		Entity* pEntity;
 		std::string name;
 		uint32_t id;
 
 		std::vector<Attribute> attributes;
 		std::vector<Ref<Link>> links;
-		std::vector<Func> inputFuncs;
-		std::vector<Func> outputFuncs;
 	};
 }

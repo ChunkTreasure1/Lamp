@@ -13,6 +13,8 @@ namespace Sandbox3D
 
 		virtual void OnEvent(Lamp::Event& e) override;
 
+		std::vector<Ref<Lamp::Node>>& GetNodes() { return m_ExistingNodes; }
+
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool OnUpdate(Lamp::AppUpdateEvent& e);

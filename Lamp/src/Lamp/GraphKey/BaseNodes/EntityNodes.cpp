@@ -11,6 +11,7 @@ namespace Lamp
 		{
 			{
 				Attribute attr(PropertyType::Void, "Create", nullptr, AttributeType::Input);
+				attr.func = LP_BIND_NODE_FUNCTION(CreateEntity::Test);
 				attributes.push_back(attr);
 			}
 
@@ -20,11 +21,16 @@ namespace Lamp
 			}
 
 			{
-				Attribute attr(PropertyType::Float, "Created", &v, AttributeType::Output);
+				Attribute attr(PropertyType::Void, "Created", nullptr, AttributeType::Output);
 				attributes.push_back(attr);
 			}
 
 			name = "CreateEntity";
+		}
+
+		void Test()
+		{
+			ActivateOutput(attributes[2]);
 		}
 
 	public:
@@ -32,9 +38,7 @@ namespace Lamp
 		static Ref<Node> Create() { return CreateRef<CreateEntity>(); }
 
 	private:
-		uint32_t m_Int = 0;
-		float v = 1.f;
-		glm::vec3 m_Position;
+		glm::vec3 m_Position{0.f};
 	};
 
 	LP_REGISTER_NODE(CreateEntity);

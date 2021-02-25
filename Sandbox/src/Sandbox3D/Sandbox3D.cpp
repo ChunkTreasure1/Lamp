@@ -67,6 +67,20 @@ namespace Sandbox3D
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
+		if (!m_IsPlaying && m_IsPlaying != m_ShouldPlay)
+		{
+			m_IsPlaying = m_ShouldPlay;
+			m_pGame->OnStart();
+
+			for (auto& node : static_cast<GraphKey*>(m_pWindows[1])->GetNodes())
+			{
+				if (node->name == "Start")
+				{
+					node->ActivateOutput(node->attributes[0]);
+				}
+			}
+		}
+
 		m_SecondaryBuffer->ClearAttachment(0, 0);
 
 		if (m_SandboxController->GetCameraController()->GetRightPressed())
@@ -119,7 +133,10 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnEvent(Event& e)
 	{
-		m_pGame->OnEvent(e);
+		if (m_IsPlaying)
+		{
+			m_pGame->OnEvent(e);
+		}
 
 		for (auto pWindow : m_pWindows)
 		{
