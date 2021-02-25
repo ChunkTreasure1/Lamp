@@ -10,20 +10,17 @@ namespace Lamp
 		CreateEntity()
 		{
 			{
-				ComponentProperty prop(PropertyType::Int, "Create", &m_Int);
-				Attribute attr(prop, AttributeType::Input);
+				Attribute attr(PropertyType::Void, "Create", nullptr, AttributeType::Input);
 				attributes.push_back(attr);
 			}
 
 			{
-				ComponentProperty prop(PropertyType::Float3, "Position", &m_Position);
-				Attribute attr(prop, AttributeType::Input);
+				Attribute attr(PropertyType::Float3, "Position", &m_Position, AttributeType::Input);
 				attributes.push_back(attr);
 			}
 
 			{
-				ComponentProperty prop(PropertyType::Int, "Created", &m_Int);
-				Attribute attr(prop, AttributeType::Output);
+				Attribute attr(PropertyType::Float, "Created", &v, AttributeType::Output);
 				attributes.push_back(attr);
 			}
 
@@ -36,6 +33,7 @@ namespace Lamp
 
 	private:
 		uint32_t m_Int = 0;
+		float v = 1.f;
 		glm::vec3 m_Position;
 	};
 

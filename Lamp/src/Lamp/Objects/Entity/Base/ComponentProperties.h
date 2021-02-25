@@ -20,7 +20,8 @@ namespace Lamp
 		Float3,
 		Float4,
 		Color3,
-		Color4
+		Color4,
+		Void
 	};
 
 	struct ComponentProperty

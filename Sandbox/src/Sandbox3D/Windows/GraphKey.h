@@ -25,13 +25,15 @@ namespace Sandbox3D
 		void RemoveNode(uint32_t id);
 
 		void DrawNode(Ref<Lamp::Node>& node);
+		void DrawInput(Lamp::Attribute& attr, Ref<Lamp::Node>& node);
+		void DrawOutput(Lamp::Attribute& attr, Ref<Lamp::Node>& node);
 
 	private:
 		std::vector<Ref<Lamp::Node>> m_ComponentNodes;
 		std::vector<Ref<Lamp::EntityComponent>> m_BaseComponents;
 	
 		std::vector<Ref<Lamp::Node>> m_ExistingNodes;
-		std::vector<Lamp::Link> m_Links;
+		std::vector<Ref<Lamp::Link>> m_Links;
 
 		bool m_NodeWindowFocused;
 	};

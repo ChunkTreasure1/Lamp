@@ -2,12 +2,15 @@
 
 #include <functional>
 
+
 namespace Lamp
 {
+	struct Attribute;
+
 	struct Link
 	{
-		uint32_t start;
-		uint32_t end;
+		Attribute* output = nullptr;
+		Attribute* input = nullptr;
 
 		uint32_t id;
 	};

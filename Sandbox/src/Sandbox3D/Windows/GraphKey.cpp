@@ -15,6 +15,16 @@ namespace Sandbox3D
 
 	static uint64_t s_Ids = 0;
 
+	static NodeProperty ToNodeProperty(ComponentProperty& prop)
+	{
+		NodeProperty n;
+		n.Name = prop.Name;
+		n.type = prop.PropertyType;
+		n.Value = prop.Value;
+
+		return n;
+	}
+
 	GraphKey::GraphKey(std::string_view name)
 		: BaseWindow(name)
 	{
@@ -94,7 +104,7 @@ namespace Sandbox3D
 		//Draw Links
 		for (auto& link : m_Links)
 		{
-			imnodes::Link(link.id, link.start, link.end);
+			imnodes::Link(link->id, link->output->id, link->input->id);
 		}
 
 		imnodes::EndNodeEditor();
@@ -129,18 +139,24 @@ namespace Sandbox3D
 				}
 			}
 
-			Link l{ s_Ids++, startAttr, endAttr };
+			Ref<Link> pL = CreateRef<Link>();
+			pL->id = s_Ids++;
+			pL->input = pEndAttr;
+			pL->output = pStartAttr;
 
 			if (pStartAttr && pEndAttr)
 			{
-				if (pStartAttr->property.PropertyType == pEndAttr->property.PropertyType)
+				if (pStartAttr->property.type == pEndAttr->property.type)
 				{
-					pStartNode->links.push_back(l);
-					pEndNode->links.push_back(l);
+					pStartNode->links.push_back(pL);
+					pEndNode->links.push_back(pL);
 
+					pStartAttr->pLink = pL;
+					pEndAttr->pLink = pL;
+
+					m_Links.push_back(pL);
 				}
 			}
-			m_Links.push_back(l);
 		}
 
 		ImGui::End();
@@ -200,7 +216,7 @@ namespace Sandbox3D
 			{
 				Attribute attr;
 				attr.type = Lamp::AttributeType::Input;
-				attr.property = prop;
+				attr.property = ToNodeProperty(prop);
 
 				node->attributes.push_back(attr);
 
@@ -245,7 +261,7 @@ namespace Sandbox3D
 
 		for (auto attr : node->attributes)
 		{
-			auto pProp = attr.property;
+			auto prop = attr.property;
 
 			if (attr.type == Lamp::AttributeType::Input)
 			{
@@ -258,23 +274,54 @@ namespace Sandbox3D
 
 
 			float nodeWidth = 100.f;
-			if (pProp.PropertyType == Lamp::PropertyType::Float3 || pProp.PropertyType == Lamp::PropertyType::Float4
-				|| pProp.PropertyType == Lamp::PropertyType::Color3 || pProp.PropertyType == Lamp::PropertyType::Color4)
+			if (prop.type == Lamp::PropertyType::Float3 || prop.type == Lamp::PropertyType::Float4
+				|| prop.type == Lamp::PropertyType::Color3 || prop.type == Lamp::PropertyType::Color4)
 			{
 				nodeWidth = 200.f;
 			}
-			float labelWidth = ImGui::CalcTextSize(pProp.Name.c_str()).x;
+			float labelWidth = ImGui::CalcTextSize(prop.Name.c_str()).x;
 
 			ImGui::PushItemWidth(nodeWidth - labelWidth);
 
-			switch (pProp.PropertyType)
+			if (attr.type == Lamp::AttributeType::Input)
 			{
-				case Lamp::PropertyType::Int:
+				DrawInput(attr, node);
+			}
+			else if (attr.type == Lamp::AttributeType::Output)
+			{
+				DrawOutput(attr, node);
+			}
+
+			ImGui::PopItemWidth();
+
+			if (attr.type == Lamp::AttributeType::Input)
+			{
+				imnodes::EndInputAttribute();
+			}
+			else if (attr.type == Lamp::AttributeType::Output)
+			{
+				imnodes::EndOutputAttribute();
+			}
+		}
+
+		imnodes::EndNode();
+	}
+
+	void GraphKey::DrawInput(Lamp::Attribute& attr, Ref<Lamp::Node>& node)
+	{
+		auto& prop = attr.property;
+
+		switch (prop.type)
+		{
+			case Lamp::PropertyType::Int:
+			{
+				int* p = static_cast<int*>(prop.Value);
+
+				if (!attr.pLink)
 				{
-					int* p = static_cast<int*>(pProp.Value);
 					int v = *p;
 
-					ImGui::DragInt(pProp.Name.c_str(), &v);
+					ImGui::DragInt(prop.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -285,16 +332,26 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-
-					break;
+				}
+				else
+				{
+					ImGui::Text(std::string("(" + std::to_string(*p) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
 				}
 
-				case Lamp::PropertyType::Bool:
+				break;
+			}
+
+			case Lamp::PropertyType::Bool:
+			{
+				bool* p = static_cast<bool*>(prop.Value);
+
+				if (!attr.pLink)
 				{
-					bool* p = static_cast<bool*>(pProp.Value);
 					bool v = *p;
 
-					ImGui::Checkbox(pProp.Name.c_str(), &v);
+					ImGui::Checkbox(prop.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -305,16 +362,26 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-
-					break;
+				}
+				else
+				{
+					ImGui::Text(std::string("(" + std::to_string(*p) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
 				}
 
-				case Lamp::PropertyType::Float:
+				break;
+			}
+
+			case Lamp::PropertyType::Float:
+			{
+				float* p = static_cast<float*>(prop.Value);
+
+				if (!attr.pLink)
 				{
-					float* p = static_cast<float*>(pProp.Value);
 					float v = *p;
 
-					ImGui::DragFloat(pProp.Name.c_str(), &v);
+					ImGui::DragFloat(prop.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -325,15 +392,24 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
 				}
-
-				case Lamp::PropertyType::Float2:
+				else
 				{
-					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+					ImGui::Text(std::string("(" + std::to_string(*p) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Float2:
+			{
+				glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
+
+				if (attr.pLink)
+				{
 					glm::vec2 v = *p;
-
-					ImGui::DragFloat2(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::DragFloat2(prop.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -344,15 +420,26 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
+				}
+				else
+				{
+					ImGui::Text(std::string("(" + std::to_string(p->x) + ", " + std::to_string(p->y) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
 				}
 
-				case Lamp::PropertyType::Float3:
+				break;
+			}
+
+			case Lamp::PropertyType::Float3:
+			{
+				glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+
+				if (!attr.pLink)
 				{
-					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 					glm::vec3 v = *p;
 
-					ImGui::DragFloat3(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::DragFloat3(prop.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -363,15 +450,26 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
+				}
+				else
+				{
+					ImGui::Text(std::string("(" + std::to_string(p->x) + ", " + std::to_string(p->y) + ", " + std::to_string(p->z) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
 				}
 
-				case Lamp::PropertyType::Float4:
+				break;
+			}
+
+			case Lamp::PropertyType::Float4:
+			{
+				glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+
+				if (!attr.pLink)
 				{
-					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 					glm::vec4 v = *p;
 
-					ImGui::DragFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
+					ImGui::DragFloat4(prop.Name.c_str(), glm::value_ptr(*p));
 					if (v != *p)
 					{
 						*p = v;
@@ -382,15 +480,25 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
 				}
-
-				case Lamp::PropertyType::String:
+				else
 				{
-					std::string* s = static_cast<std::string*>(pProp.Value);
+					ImGui::Text(std::string("(" + std::to_string(p->x) + ", " + std::to_string(p->y) + ", " + std::to_string(p->z) + ", " + std::to_string(p->w) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::String:
+			{
+				std::string* s = static_cast<std::string*>(prop.Value);
+
+				if (!attr.pLink)
+				{
 					std::string v = *s;
 
-					ImGui::InputText(pProp.Name.c_str(), &v);
+					ImGui::InputText(prop.Name.c_str(), &v);
 					if (v != *s)
 					{
 						*s = v;
@@ -401,15 +509,25 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
 				}
-
-				case Lamp::PropertyType::Path:
+				else
 				{
-					std::string* s = static_cast<std::string*>(pProp.Value);
+					ImGui::Text(std::string("(" + *s + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Path:
+			{
+				std::string* s = static_cast<std::string*>(prop.Value);
+
+				if (!attr.pLink)
+				{
 					std::string v = *s;
 
-					ImGui::InputText(pProp.Name.c_str(), &v);
+					ImGui::InputText(prop.Name.c_str(), &v);
 					ImGui::SameLine();
 					if (ImGui::Button("Open..."))
 					{
@@ -430,15 +548,25 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
 				}
-
-				case Lamp::PropertyType::Color3:
+				else
 				{
-					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					ImGui::Text(std::string("(" + *s + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Color3:
+			{
+				glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+
+				if (!attr.pLink)
+				{
 					glm::vec3 v = *p;
 
-					ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::ColorEdit3(prop.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -449,15 +577,25 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
 				}
-
-				case Lamp::PropertyType::Color4:
+				else
 				{
-					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					ImGui::Text(std::string("(" + std::to_string(p->x) + ", " + std::to_string(p->y) + ", " + std::to_string(p->z) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Color4:
+			{
+				glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+
+				if (!attr.pLink)
+				{
 					glm::vec4 v = *p;
 
-					ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::ColorEdit4(prop.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -468,22 +606,260 @@ namespace Sandbox3D
 							node->pEntity->OnEvent(e);
 						}
 					}
-					break;
 				}
+				else
+				{
+					ImGui::Text(std::string("(" + std::to_string(p->x) + ", " + std::to_string(p->y) + ", " + std::to_string(p->z) + ", " + std::to_string(p->w) + ")").c_str());
+					ImGui::SameLine();
+					ImGui::Text(prop.Name.c_str());
+				}
+
+				break;
 			}
 
-			ImGui::PopItemWidth();
+			case Lamp::PropertyType::Void:
+			{
+				ImGui::Text(prop.Name.c_str());
 
-			if (attr.type == Lamp::AttributeType::Input)
-			{
-				imnodes::EndInputAttribute();
-			}
-			else if (attr.type == Lamp::AttributeType::Output)
-			{
-				imnodes::EndOutputAttribute();
+				break;
 			}
 		}
+	}
 
-		imnodes::EndNode();
+	void GraphKey::DrawOutput(Lamp::Attribute& attr, Ref<Lamp::Node>& node)
+	{
+		auto& prop = attr.property;
+
+		switch (prop.type)
+		{
+			case Lamp::PropertyType::Int:
+			{
+				int* p = static_cast<int*>(prop.Value);
+				int v = *p;
+
+				ImGui::DragInt(prop.Name.c_str(), &v);
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+
+				if (attr.pLink)
+				{
+					int* s = static_cast<int*>(attr.pLink->input->property.Value);
+					*s = v;
+				}
+
+				break;
+			}
+
+			case Lamp::PropertyType::Bool:
+			{
+				bool* p = static_cast<bool*>(prop.Value);
+				bool v = *p;
+
+				ImGui::Checkbox(prop.Name.c_str(), &v);
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+
+				break;
+			}
+
+			case Lamp::PropertyType::Float:
+			{
+				float* p = static_cast<float*>(prop.Value);
+				float v = *p;
+
+				ImGui::DragFloat(prop.Name.c_str(), &v);
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+
+				if (attr.pLink)
+				{
+					float* s = static_cast<float*>(attr.pLink->input->property.Value);
+					*s = v;
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Float2:
+			{
+				glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
+				glm::vec2 v = *p;
+
+				ImGui::DragFloat2(prop.Name.c_str(), glm::value_ptr(v));
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Float3:
+			{
+				glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+				glm::vec3 v = *p;
+
+				ImGui::DragFloat3(prop.Name.c_str(), glm::value_ptr(v));
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Float4:
+			{
+				glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+				glm::vec4 v = *p;
+
+				ImGui::DragFloat4(prop.Name.c_str(), glm::value_ptr(*p));
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::String:
+			{
+				std::string* s = static_cast<std::string*>(prop.Value);
+				std::string v = *s;
+
+				ImGui::InputText(prop.Name.c_str(), &v);
+				if (v != *s)
+				{
+					*s = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Path:
+			{
+				std::string* s = static_cast<std::string*>(prop.Value);
+				std::string v = *s;
+
+				ImGui::InputText(prop.Name.c_str(), &v);
+				ImGui::SameLine();
+				if (ImGui::Button("Open..."))
+				{
+					std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+					if (!path.empty())
+					{
+						v = path;
+					}
+				}
+
+				if (v != *s)
+				{
+					*s = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Color3:
+			{
+				glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+				
+				if (!attr.pLink)
+				{
+					glm::vec3 v = *p;
+
+					ImGui::ColorEdit3(prop.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
+					{
+						*p = v;
+
+						if (node->pEntity)
+						{
+							Lamp::EntityPropertyChangedEvent e;
+							node->pEntity->OnEvent(e);
+						}
+					}
+				}
+				else
+				{
+
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Color4:
+			{
+				glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+				glm::vec4 v = *p;
+
+				ImGui::ColorEdit4(prop.Name.c_str(), glm::value_ptr(v));
+				if (v != *p)
+				{
+					*p = v;
+
+					if (node->pEntity)
+					{
+						Lamp::EntityPropertyChangedEvent e;
+						node->pEntity->OnEvent(e);
+					}
+				}
+				break;
+			}
+
+			case Lamp::PropertyType::Void:
+			{
+				ImGui::Text(prop.Name.c_str());
+
+				break;
+			}
+		}
 	}
 }
