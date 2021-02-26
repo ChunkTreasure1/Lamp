@@ -21,7 +21,8 @@ namespace Lamp
 		Float4,
 		Color3,
 		Color4,
-		Void
+		Void,
+		Selectable
 	};
 
 	struct ComponentProperty

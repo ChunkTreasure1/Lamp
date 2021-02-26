@@ -1541,6 +1541,9 @@
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp">
       <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
     </ClCompile>
@@ -1706,7 +1709,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
@@ -1748,6 +1751,6 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp" />
   </ItemGroup>
 </Project>

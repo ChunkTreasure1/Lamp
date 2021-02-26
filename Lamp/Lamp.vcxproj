@@ -603,6 +603,7 @@
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\Node.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
@@ -657,7 +658,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />

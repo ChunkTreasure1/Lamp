@@ -5,12 +5,13 @@
 
 namespace Lamp
 {
-	struct Attribute;
+	struct InputAttribute;
+	struct OutputAttribute;
 
 	struct Link
 	{
-		Attribute* output = nullptr;
-		Attribute* input = nullptr;
+		InputAttribute* pInput = nullptr;
+		OutputAttribute* pOutput = nullptr;
 
 		uint32_t id;
 	};

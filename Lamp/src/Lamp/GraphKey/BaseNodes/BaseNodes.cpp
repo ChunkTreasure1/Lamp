@@ -10,16 +10,18 @@ namespace Lamp
 	public:
 		StartNode()
 		{
+			std::vector<OutputAttribute> outputs =
 			{
-				Attribute attr(PropertyType::Void, "OnStart", nullptr, AttributeType::Output);
-				attributes.push_back(attr);
-			}
+				OutputAttributeConfig_Void("OnStart", PropertyType::Void)
+			};
+
+			outputAttributes = outputs;
 
 			name = "Start";
 		}
 
 	public:
-		static std::string GetFactoryName() { return "Start"; }
+		static std::string GetFactoryName() { return "StartNode"; }
 		static Ref<Node> Create() { return CreateRef<StartNode>(); }
 	};
 

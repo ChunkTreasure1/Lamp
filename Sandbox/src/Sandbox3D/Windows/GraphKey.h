@@ -23,12 +23,11 @@ namespace Sandbox3D
 		void UpdateNodeList();
 
 		void CreateComponentNodes();
-		void CreateRegistryNodes();
 		void RemoveNode(uint32_t id);
 
 		void DrawNode(Ref<Lamp::Node>& node);
-		void DrawInput(Lamp::Attribute& attr, Ref<Lamp::Node>& node);
-		void DrawOutput(Lamp::Attribute& attr, Ref<Lamp::Node>& node);
+		void DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node);
+		void DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node);
 
 	private:
 		std::vector<Ref<Lamp::Node>> m_ComponentNodes;

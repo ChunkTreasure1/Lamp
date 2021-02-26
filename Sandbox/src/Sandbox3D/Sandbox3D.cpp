@@ -76,7 +76,7 @@ namespace Sandbox3D
 			{
 				if (node->name == "Start")
 				{
-					node->ActivateOutput(node->attributes[0]);
+					node->ActivateOutput(0);
 				}
 			}
 		}
