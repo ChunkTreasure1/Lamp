@@ -16,6 +16,8 @@
 
 #include "Windows/ModelImporter.h"
 #include "Windows/GraphKey.h"
+#include "Windows/MaterialEditor.h"
+
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
@@ -36,6 +38,7 @@ namespace Sandbox3D
 
 		m_pWindows.push_back(new ModelImporter("Model Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
+		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 
 		FramebufferSpecification spec;
 		spec.Attachments =

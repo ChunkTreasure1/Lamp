@@ -7,6 +7,7 @@ albedo
 normal
 mro
 }
+
 #version 440 core
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out int Color2;

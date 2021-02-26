@@ -63,7 +63,8 @@ namespace Lamp
 
 			std::vector<OutputAttribute> outputs =
 			{
-				OutputAttributeConfig<int>("Id", PropertyType::Int)
+				OutputAttributeConfig<int>("Id", PropertyType::Int),
+				OutputAttributeConfig<glm::vec3>("Position", PropertyType::Float3)
 			};
 
 			inputAttributes = inputs;

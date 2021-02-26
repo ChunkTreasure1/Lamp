@@ -148,6 +148,7 @@
     <ClInclude Include="src\Sandbox3D\SandboxController.h" />
     <ClInclude Include="src\Sandbox3D\Windows\BaseWindow.h" />
     <ClInclude Include="src\Sandbox3D\Windows\GraphKey.h" />
+    <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h" />
     <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp" />
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\GraphKey.cpp" />
+    <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\ModelImporter.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>

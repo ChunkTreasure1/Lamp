@@ -1752,5 +1752,6 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp" />
   </ItemGroup>
 </Project>
