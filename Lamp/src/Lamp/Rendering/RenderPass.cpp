@@ -19,6 +19,7 @@ namespace Lamp
 	{
 		if (m_PassSpec.IsPointShadowPass)
 		{
+			LP_PROFILE_SCOPE("RenderPass::Render::PointShadow");
 			m_PassSpec.LightIndex = 0;
 			for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
 			{
@@ -38,6 +39,7 @@ namespace Lamp
 		}
 		else
 		{
+			LP_PROFILE_SCOPE("RenderPass::Render::MeshRender");
 			RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
 			RenderCommand::Clear();
 

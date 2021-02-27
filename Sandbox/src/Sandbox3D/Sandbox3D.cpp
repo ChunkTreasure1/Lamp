@@ -70,6 +70,7 @@ namespace Sandbox3D
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
+		LP_PROFILE_FUNCTION();
 		if (!m_IsPlaying && m_IsPlaying != m_ShouldPlay)
 		{
 			m_IsPlaying = m_ShouldPlay;
@@ -98,15 +99,18 @@ namespace Sandbox3D
 		GetInput();
 
 		m_SelectionBuffer->ClearAttachment(0, -1);
-
-		RenderPassManager::Get()->RenderPasses();
-		for (auto pWindow : m_pWindows)
+		
 		{
-			if (pWindow->GetIsOpen())
+			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
+			RenderPassManager::Get()->RenderPasses();
+			for (auto pWindow : m_pWindows)
 			{
-				for (auto pFunc : pWindow->GetRenderFuncs())
+				if (pWindow->GetIsOpen())
 				{
-					pFunc();
+					for (auto pFunc : pWindow->GetRenderFuncs())
+					{
+						pFunc();
+					}
 				}
 			}
 		}

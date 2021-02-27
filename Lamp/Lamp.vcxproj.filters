@@ -16,6 +16,9 @@
     <Filter Include="src\Lamp\Core\Time">
       <UniqueIdentifier>{5CD62326-48BA-E47B-B11A-DFCE9D1DCFFD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Debug">
+      <UniqueIdentifier>{DCA52A7B-C873-1E81-B107-8FA79D74FAE5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Event">
       <UniqueIdentifier>{B71C467B-A3EA-3981-8C7E-AAA778EB15E6}</UniqueIdentifier>
     </Filter>
@@ -170,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Debug\Instrumentor.h">
+      <Filter>src\Lamp\Debug</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
       <Filter>src\Lamp\Event</Filter>
@@ -1547,6 +1553,12 @@
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp">
       <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\GraphKey\Node.cpp">
       <Filter>src\Lamp\GraphKey</Filter>
     </ClCompile>
@@ -1709,7 +1721,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
@@ -1751,7 +1763,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp" />
-    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp" />
   </ItemGroup>
 </Project>

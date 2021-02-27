@@ -65,6 +65,7 @@ namespace Lamp
 	{
 		while (m_Running)
 		{
+			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
@@ -73,6 +74,7 @@ namespace Lamp
 
 			if (m_IsSimulating)
 			{
+				LP_PROFILE_SCOPE("Application::Run::Physics")
 				m_pPhysicsEngine->Simulate();
 			}
 			AudioEngine::Update();
@@ -83,7 +85,11 @@ namespace Lamp
 			{
 				AppUpdateEvent updateEvent(timestep);
 				OnEvent(updateEvent);
-				ObjectLayerManager::Get()->OnEvent(updateEvent);
+
+				{
+					LP_PROFILE_SCOPE("Application::Run::ObjectUpdate");
+					ObjectLayerManager::Get()->OnEvent(updateEvent);
+				}
 			}
 
 			m_pImGuiLayer->Begin();

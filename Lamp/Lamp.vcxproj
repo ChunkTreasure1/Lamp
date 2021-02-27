@@ -143,6 +143,7 @@
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
+    <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
@@ -659,7 +660,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
