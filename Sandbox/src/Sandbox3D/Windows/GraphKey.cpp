@@ -51,6 +51,7 @@ namespace Sandbox3D
 
 		UpdateNodeWindow();
 		UpdateNodeList();
+		UpdatePropertiesWindow();
 
 		return false;
 	}
@@ -72,6 +73,19 @@ namespace Sandbox3D
 					RemoveNode(node);
 				}
 			}
+
+			const int numSelectedLinks = imnodes::NumSelectedLinks();
+			if (numSelectedLinks > 0)
+			{
+				std::vector<int> selectedLinks;
+				selectedLinks.resize(numSelectedLinks);
+
+				imnodes::GetSelectedLinks(selectedLinks.data());
+				for (auto& link : selectedLinks)
+				{
+					RemoveLink(link);
+				}
+			}
 		}
 
 		return true;
@@ -80,6 +94,8 @@ namespace Sandbox3D
 	void GraphKey::UpdateNodeWindow()
 	{
 		ImGui::Begin("Main", &m_IsOpen);
+
+		bool mainHovered = IsHovered({ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, { ImGui::GetWindowSize().x, ImGui::GetWindowSize().y });
 
 		imnodes::BeginNodeEditor();
 
@@ -146,8 +162,6 @@ namespace Sandbox3D
 
 			}
 
-
-
 			if (pStartAttr && pEndAttr)
 			{
 				if (pStartAttr->type == pEndAttr->type)
@@ -183,6 +197,27 @@ namespace Sandbox3D
 				}
 			}
 		}
+		const int numSelectedNodes = imnodes::NumSelectedNodes();
+		if (numSelectedNodes == 1)
+		{
+			int selNode = 0;
+			imnodes::GetSelectedNodes(&selNode);
+
+			for (auto& node : m_ExistingNodes)
+			{
+				if (node->id == selNode)
+				{
+					m_SelectedNode = node;
+				}
+			}
+		}
+
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && mainHovered)
+		{
+			ImGui::OpenPopup("RightClick");
+		}
+
+		UpdateRightClickPopup();
 
 		ImGui::End();
 	}
@@ -258,6 +293,54 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
+	void GraphKey::UpdatePropertiesWindow()
+	{
+		if (!m_IsOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Properties##GraphKey");
+
+		if (m_SelectedNode)
+		{
+			for (auto& input : m_SelectedNode->inputAttributes)
+			{
+				DrawInput(input, m_SelectedNode);
+			}
+			for (auto& output : m_SelectedNode->outputAttributes)
+			{
+				DrawOutput(output, m_SelectedNode);
+			}
+		}
+
+		ImGui::End();
+	}
+
+	void GraphKey::UpdateRightClickPopup()
+	{
+		ImGui::SetNextWindowSize(ImVec2(100.f, 30.f));
+		if (ImGui::BeginPopup("RightClick"))
+		{	
+			int i = -1;
+			imnodes::IsNodeHovered(&i);
+			if (i > -1)
+			{
+				if (ImGui::Selectable("Remove"))
+				{
+					RemoveNode(i);
+				}
+			}
+
+			if (ImGui::Selectable("Test"))
+			{
+
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
 	void GraphKey::CreateComponentNodes()
 	{
 		for (auto pC : Lamp::ComponentRegistry::s_Methods())
@@ -299,12 +382,74 @@ namespace Sandbox3D
 
 	void GraphKey::RemoveNode(uint32_t id)
 	{
-		auto func = [&id](Ref<Node>& node)
+		auto func = [&id, this](Ref<Node>& node)
 		{
-			return id == node->id;
+			if (id == node->id)
+			{
+				for (auto& attr : node->inputAttributes)
+				{
+					if (attr.pLink)
+					{
+						RemoveLink(attr.pLink->id);
+					}
+				}
+
+				for (auto& attr : node->outputAttributes)
+				{
+					if (attr.pLink)
+					{
+						RemoveLink(attr.pLink->id);
+					}
+				}
+
+				return true;
+			}
+
+			return false;
 		};
 
 		m_ExistingNodes.erase(std::remove_if(m_ExistingNodes.begin(), m_ExistingNodes.end(), func), m_ExistingNodes.end());
+	}
+
+	void GraphKey::RemoveLink(uint32_t id)
+	{
+		for (auto& node : m_ExistingNodes)
+		{
+			for (auto& attr : node->inputAttributes)
+			{
+				if (!attr.pLink)
+				{
+					continue;
+				}
+
+				if (attr.pLink->id == id)
+				{
+					attr.pLink = nullptr;
+					break;
+				}
+			}
+
+			for (auto& attr : node->outputAttributes)
+			{
+				if (!attr.pLink)
+				{
+					continue;
+				}
+
+				if (attr.pLink->id == id)
+				{
+					attr.pLink = nullptr;
+					break;
+				}
+			}
+		}
+
+		auto func = [&id](Ref<Link>& link)
+		{
+			return id == link->id;
+		};
+
+		m_Links.erase(std::remove_if(m_Links.begin(), m_Links.end(), func), m_Links.end());
 	}
 
 	void GraphKey::DrawNode(Ref<Lamp::Node>& node)
@@ -373,7 +518,7 @@ namespace Sandbox3D
 		imnodes::EndNode();
 	}
 
-	void GraphKey::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node)
+	void GraphKey::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
 	{
 		auto& prop = attr;
 
@@ -687,6 +832,11 @@ namespace Sandbox3D
 
 			case Lamp::PropertyType::Void:
 			{
+				if (isProperties)
+				{
+					break;
+				}
+
 				ImGui::Text(prop.name.c_str());
 
 				break;
@@ -707,7 +857,6 @@ namespace Sandbox3D
 						if (ImGui::Selectable(vec[i].first.c_str(), vec[i].second))
 						{
 							currentItem = vec[i].first;
-							vec[i].second = true;
 						}
 						if (vec[i].second)
 						{
@@ -723,7 +872,7 @@ namespace Sandbox3D
 		}
 	}
 
-	void GraphKey::DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node)
+	void GraphKey::DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
 	{
 		auto& prop = attr;
 
@@ -980,10 +1129,30 @@ namespace Sandbox3D
 
 			case Lamp::PropertyType::Void:
 			{
+				if (isProperties)
+				{
+					break;
+				}
 				ImGui::Text(prop.name.c_str());
 
 				break;
 			}
 		}
+	}
+
+	bool GraphKey::IsHovered(const glm::vec2& pos, const glm::vec2& size)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		glm::vec2 mousePos = { io.MousePos.x, io.MousePos.y };
+
+		if (mousePos.x > pos.x
+			&& mousePos.x < pos.x + size.x
+			&& mousePos.y > pos.y
+			&& mousePos.y < pos.y + size.y)
+		{
+			return true;
+		}
+
+		return false;
 	}
 }

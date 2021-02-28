@@ -354,6 +354,7 @@ namespace Sandbox3D
 			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.IsShadowPass = true;
+			shadowSpec.Name = "DirShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
 			RenderPassManager::Get()->AddPass(shadowPass);
@@ -365,6 +366,7 @@ namespace Sandbox3D
 			RenderPassSpecification shadowSpec;
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.IsPointShadowPass = true;
+			shadowSpec.Name = "PointShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
 			RenderPassManager::Get()->AddPass(shadowPass);
@@ -386,6 +388,7 @@ namespace Sandbox3D
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
+			passSpec.Name = "SelectionPass";
 
 			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(pass);
@@ -414,6 +417,7 @@ namespace Sandbox3D
 			passSpec.ExtraRenders = ptrs;
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.Name = "MainPass";
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 

@@ -19,6 +19,7 @@ namespace Lamp
 
 	void PhysicsEngine::Initialize()
 	{
+		LP_PROFILE_FUNCTION();
 		m_pCollisionConfig = new btDefaultCollisionConfiguration();
 		m_pCollisionDispatcher = new btCollisionDispatcher(m_pCollisionConfig);
 		m_pOverlappingPairCache = new btDbvtBroadphase();
@@ -31,6 +32,7 @@ namespace Lamp
 
 	void PhysicsEngine::Shutdown()
 	{
+		LP_PROFILE_FUNCTION();
 		for (int i = m_pDynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
 		{
 			btCollisionObject* obj = m_pDynamicsWorld->getCollisionObjectArray()[i];

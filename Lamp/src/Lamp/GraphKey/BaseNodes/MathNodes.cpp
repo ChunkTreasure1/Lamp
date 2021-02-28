@@ -10,32 +10,33 @@ namespace Lamp
 	public:
 		AddNode()
 		{
-			std::vector<InputAttribute> inputs =
+			inputAttributes =
 			{
 				InputAttributeConfig_Void("Add", PropertyType::Void, LP_BIND_NODE_FUNCTION(AddNode::Add)),
 				InputAttributeConfig<float>("A", PropertyType::Float),
 				InputAttributeConfig<float>("B", PropertyType::Float)
 			};
 
-			std::vector<OutputAttribute> outputs =
+			outputAttributes =
 			{
+				OutputAttributeConfig_Void("Done", PropertyType::Void),
 				OutputAttributeConfig<float>("Result", PropertyType::Float),
 			};
 
 			name = "Add";
-			inputAttributes = inputs;
 		}
 
 	private:
 		void Add()
 		{
 			float val = GetInput<float>(1) + GetInput<float>(2);
-			ActivateOutput(0, val);
+			ActivateOutput(1, val);
+			ActivateOutput(0);
 		}
 
 	public:
 		static std::string GetFactoryName() { return "AddNode"; }
-		static Ref<Node> Create() { return CreateRef<Node>(); }
+		static Ref<Node> Create() { return CreateRef<AddNode>(); }
 
 	private:
 	};
@@ -45,32 +46,33 @@ namespace Lamp
 	public:
 		SubtractNode()
 		{
-			std::vector<InputAttribute> inputs =
+			inputAttributes =
 			{
-				InputAttributeConfig_Void("Add", PropertyType::Void, LP_BIND_NODE_FUNCTION(SubtractNode::Subtract)),
+				InputAttributeConfig_Void("Subtract", PropertyType::Void, LP_BIND_NODE_FUNCTION(SubtractNode::Subtract)),
 				InputAttributeConfig<float>("A", PropertyType::Float),
 				InputAttributeConfig<float>("B", PropertyType::Float)
 			};
 
-			std::vector<OutputAttribute> outputs =
+			outputAttributes =
 			{
-				OutputAttributeConfig<float>("Result", PropertyType::Float),
+				OutputAttributeConfig_Void("Done", PropertyType::Void),
+				OutputAttributeConfig<float>("Result", PropertyType::Float)
 			};
 
 			name = "Subtract";
-			inputAttributes = inputs;
 		}
 
 	private:
 		void Subtract()
 		{
 			float val = GetInput<float>(1) - GetInput<float>(2);
-			ActivateOutput(0, val);
+			ActivateOutput(1, val);
+			ActivateOutput(0);
 		}
 
 	public:
 		static std::string GetFactoryName() { return "SubtractNode"; }
-		static Ref<Node> Create() { return CreateRef<Node>(); }
+		static Ref<Node> Create() { return CreateRef<SubtractNode>(); }
 
 	private:
 	};
@@ -89,6 +91,7 @@ namespace Lamp
 
 			outputAttributes =
 			{
+				OutputAttributeConfig_Void("Done", PropertyType::Void),
 				OutputAttributeConfig<float>("Result", PropertyType::Float)
 			};
 
@@ -99,7 +102,8 @@ namespace Lamp
 		void Multiply()
 		{
 			float val = GetInput<float>(1) * GetInput<float>(2);
-			ActivateOutput(0, val);
+			ActivateOutput(1, val);
+			ActivateOutput(0);
 		}
 
 	public:
@@ -121,8 +125,11 @@ namespace Lamp
 
 			outputAttributes =
 			{
+				OutputAttributeConfig_Void("Done", PropertyType::Void),
 				OutputAttributeConfig<float>("Result", PropertyType::Float)
 			};
+
+			name = "Divide";
 		}
 
 	private:
@@ -135,7 +142,8 @@ namespace Lamp
 			}
 
 			float val = GetInput<float>(1) / GetInput<float>(2);
-			ActivateOutput(0, val);
+			ActivateOutput(1, val);
+			ActivateOutput(0);
 		}
 
 	public:

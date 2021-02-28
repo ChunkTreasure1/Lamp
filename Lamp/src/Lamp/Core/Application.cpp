@@ -23,6 +23,7 @@ namespace Lamp
 
 	Application::Application()
 	{
+		LP_PROFILE_FUNCTION();
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
 		g_pEnv->pRenderUtils = new RenderUtils();
@@ -54,6 +55,7 @@ namespace Lamp
 
 	Application::~Application()
 	{
+		LP_PROFILE_FUNCTION();
 		m_pPhysicsEngine->Shutdown();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
@@ -108,6 +110,7 @@ namespace Lamp
 
 	void Application::OnEvent(Event & e)
 	{
+		LP_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));

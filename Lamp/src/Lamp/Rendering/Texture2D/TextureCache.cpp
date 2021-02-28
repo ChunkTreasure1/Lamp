@@ -9,6 +9,7 @@ namespace Lamp
 
 	const std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> TextureCache::GetTexture(const std::string& path)
 	{
+		LP_PROFILE_FUNCTION();
 		auto mit = m_TextureCache.find(path);
 		if (mit == m_TextureCache.end())
 		{

@@ -14,6 +14,7 @@
 #include <string>
 
 #include "Lamp/Event/ApplicationEvent.h"
+#include "Lamp/GraphKey/GraphKeyGraph.h"
 
 class EntityManager;
 
@@ -37,6 +38,7 @@ namespace Lamp
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
 		inline bool GetSaveable() { return m_ShouldBeSaved; }
 		inline uint32_t GetId() { return m_Id; }
+		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }
 
 		//Getting
 		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
@@ -162,6 +164,7 @@ namespace Lamp
 
 		Ref<Texture2D> m_GizmoTexure = nullptr;
 		Ref<Shader> m_GizmoShader = nullptr;
+		Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

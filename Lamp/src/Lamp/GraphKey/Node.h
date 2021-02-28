@@ -150,6 +150,7 @@ namespace Lamp
 		int entityId = -1;
 		std::string name;
 		uint32_t id;
+		glm::vec2 position;
 		bool needsEntity = false;
 
 		std::vector<Ref<Link>> pLinks;

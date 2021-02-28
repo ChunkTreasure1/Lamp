@@ -106,7 +106,7 @@ namespace Lamp
 	class InstrumentationTimer
 	{
 	public:
-		InstrumentationTimer(const char* name)
+		InstrumentationTimer(const std::string& name)
 			: m_Name(name), m_Stopped(false)
 		{
 			m_StartTimepoint = std::chrono::high_resolution_clock::now();
@@ -131,13 +131,13 @@ namespace Lamp
 			m_Stopped = true;
 		}
 	private:
-		const char* m_Name;
+		std::string m_Name;
 		std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTimepoint;
 		bool m_Stopped;
 	};
 }
 
-#ifdef LP_PROFILE
+#ifdef LP_PROFILING
 	#define LP_PROFILE_BEGIN_SESSION(name, filepath) ::Lamp::Instrumentor::Get().BeginSession(name, filepath)
 	#define LP_PROFILE_END_SESSION() ::Lamp::Instrumentor::Get().EndSession();
 	#define LP_PROFILE_SCOPE(name) ::Lamp::InstrumentationTimer timer##__LINE__(name);

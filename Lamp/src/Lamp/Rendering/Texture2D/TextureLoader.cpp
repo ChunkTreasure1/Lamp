@@ -8,6 +8,7 @@ namespace Lamp
 {
 	std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> TextureLoader::LoadTexture(const std::string& path)
 	{
+		LP_PROFILE_FUNCTION();
 		uint32_t texture;
 		std::string fileEnd = path.substr(path.find_last_of("."), path.size() - 1);
 

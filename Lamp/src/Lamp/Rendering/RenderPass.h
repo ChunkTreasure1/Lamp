@@ -20,6 +20,7 @@ namespace Lamp
 		bool IsShadowPass = false;
 		bool IsPointShadowPass = false;
 		uint32_t LightIndex = 0;
+		std::string Name = "";
 	};
 
 	class RenderPass

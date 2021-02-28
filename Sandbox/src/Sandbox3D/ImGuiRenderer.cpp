@@ -262,6 +262,14 @@ namespace Sandbox3D
 					pEnt->SetScale(glm::make_vec3(s));
 				}
 
+				if (ImGui::Button("Open Graph"))
+				{
+
+				}
+				if (pEnt->GetGraphKeyGraph())
+				{
+				}
+
 				for (size_t i = 0; i < pEnt->GetComponents().size(); i++)
 				{
 					if (DrawComponent(pEnt->GetComponents()[i].get()))

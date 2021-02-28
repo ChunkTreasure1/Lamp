@@ -149,6 +149,7 @@
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />
     <ClInclude Include="src\Lamp\Event\MouseEvent.h" />
+    <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h" />
     <ClInclude Include="src\Lamp\GraphKey\Link.h" />
     <ClInclude Include="src\Lamp\GraphKey\Node.h" />
     <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h" />
@@ -606,6 +607,7 @@
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\GraphKeyGraph.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\Node.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />

@@ -2,7 +2,7 @@
 
 #include "BaseWindow.h"
 #include <Lamp/Objects/Entity/Base/BaseComponent.h>
-#include <Lamp/GraphKey/Node.h>
+#include <Lamp/GraphKey/GraphKeyGraph.h>
 
 namespace Sandbox3D
 {
@@ -21,13 +21,18 @@ namespace Sandbox3D
 
 		void UpdateNodeWindow();
 		void UpdateNodeList();
+		void UpdatePropertiesWindow();
+		void UpdateRightClickPopup();
 
 		void CreateComponentNodes();
 		void RemoveNode(uint32_t id);
+		void RemoveLink(uint32_t id);
 
 		void DrawNode(Ref<Lamp::Node>& node);
-		void DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node);
-		void DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node);
+		void DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties = false);
+		void DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties = false);
+
+		bool IsHovered(const glm::vec2& pos, const glm::vec2& size);
 
 	private:
 		std::vector<Ref<Lamp::Node>> m_ComponentNodes;
@@ -35,6 +40,9 @@ namespace Sandbox3D
 	
 		std::vector<Ref<Lamp::Node>> m_ExistingNodes;
 		std::vector<Ref<Lamp::Link>> m_Links;
+
+		Ref<Lamp::Node> m_SelectedNode = nullptr;
+		Ref<Lamp::GraphKeyGraph> m_CurrentlyOpenGraph = nullptr;
 
 		bool m_NodeWindowFocused;
 	};
