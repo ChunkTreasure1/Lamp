@@ -182,6 +182,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\GUID.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />

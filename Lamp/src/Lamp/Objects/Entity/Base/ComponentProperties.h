@@ -22,7 +22,8 @@ namespace Lamp
 		Color3,
 		Color4,
 		Void,
-		Selectable
+		Selectable,
+		EntityId
 	};
 
 	struct ComponentProperty

@@ -20,6 +20,8 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 #include <Lamp/Core/Application.h>
+#include <Lamp/GraphKey/GraphKeyGraph.h>
+#include "Sandbox3D/Windows/GraphKey.h"
 
 namespace Sandbox3D
 {
@@ -262,12 +264,21 @@ namespace Sandbox3D
 					pEnt->SetScale(glm::make_vec3(s));
 				}
 
-				if (ImGui::Button("Open Graph"))
+				if (ImGui::Button("Create Graph"))
 				{
-
-				}
-				if (pEnt->GetGraphKeyGraph())
-				{
+					if (!pEnt->GetGraphKeyGraph())
+					{
+						Lamp::GraphKeyGraphSpecification spec;
+						spec.name = pEnt->GetName();
+						spec.path = "Assets/libs/graphkey/" + spec.name + ".graphkey";
+						pEnt->SetGraphKeyGraph(CreateRef<Lamp::GraphKeyGraph>(spec));
+					
+						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						{
+							vs->SetIsOpen(true);
+							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph());
+						}
+					}
 				}
 
 				for (size_t i = 0; i < pEnt->GetComponents().size(); i++)

@@ -76,13 +76,13 @@ namespace Sandbox3D
 			m_IsPlaying = m_ShouldPlay;
 			m_pGame->OnStart();
 
-			for (auto& node : static_cast<GraphKey*>(m_pWindows[1])->GetNodes())
-			{
-				if (node->name == "Start")
-				{
-					node->ActivateOutput(0);
-				}
-			}
+			//for (auto& node : static_cast<GraphKey*>(m_pWindows[1])->GetNodes())
+			//{
+			//	if (node->name == "Start")
+			//	{
+			//		node->ActivateOutput(0);
+			//	}
+			//}
 		}
 
 		m_SecondaryBuffer->ClearAttachment(0, 0);

@@ -17,6 +17,7 @@ namespace Sandbox3D
 
 		virtual void OnEvent(Lamp::Event& e) = 0;
 
+		inline void SetIsOpen(bool v) { m_IsOpen = v; }
 		inline bool& GetIsOpen() { return m_IsOpen; }
 		inline const std::string& GetLabel() { return m_Name; }
 		inline std::vector<RenderFunc>& GetRenderFuncs() { return m_RenderFuncs; }

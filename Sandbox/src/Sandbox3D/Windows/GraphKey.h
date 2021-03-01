@@ -13,7 +13,8 @@ namespace Sandbox3D
 
 		virtual void OnEvent(Lamp::Event& e) override;
 
-		std::vector<Ref<Lamp::Node>>& GetNodes() { return m_ExistingNodes; }
+		inline void SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph) { m_CurrentlyOpenGraph = graph; }
+		inline Ref<Lamp::GraphKeyGraph>& GetCurrentlyOpenGraph() { return m_CurrentlyOpenGraph; }
 
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
@@ -37,13 +38,11 @@ namespace Sandbox3D
 	private:
 		std::vector<Ref<Lamp::Node>> m_ComponentNodes;
 		std::vector<Ref<Lamp::EntityComponent>> m_BaseComponents;
-	
-		std::vector<Ref<Lamp::Node>> m_ExistingNodes;
-		std::vector<Ref<Lamp::Link>> m_Links;
 
 		Ref<Lamp::Node> m_SelectedNode = nullptr;
 		Ref<Lamp::GraphKeyGraph> m_CurrentlyOpenGraph = nullptr;
 
 		bool m_NodeWindowFocused;
+		int m_CurrentlyHovered = -1;
 	};
 }

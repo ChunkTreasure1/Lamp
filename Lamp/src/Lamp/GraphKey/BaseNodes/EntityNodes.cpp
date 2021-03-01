@@ -20,7 +20,7 @@ namespace Lamp
 
 			std::vector<OutputAttribute> outputs =
 			{
-				OutputAttributeConfig<int>("Id", PropertyType::Int),
+				OutputAttributeConfig<int>("Id", PropertyType::EntityId),
 				OutputAttributeConfig_Void("Created", PropertyType::Void)
 			};
 
@@ -58,12 +58,12 @@ namespace Lamp
 		{
 			std::vector<InputAttribute> inputs =
 			{
-				InputAttributeConfig<int>("Id", PropertyType::Int)
+				InputAttributeConfig<int>("Id", PropertyType::EntityId)
 			};
 
 			std::vector<OutputAttribute> outputs =
 			{
-				OutputAttributeConfig<int>("Id", PropertyType::Int),
+				OutputAttributeConfig<int>("Id", PropertyType::EntityId),
 				OutputAttributeConfig<glm::vec3>("Position", PropertyType::Float3)
 			};
 
@@ -88,7 +88,7 @@ namespace Lamp
 		{
 			std::vector<InputAttribute> inputs =
 			{
-				InputAttributeConfig<int>("EntityId", PropertyType::Int),
+				InputAttributeConfig<int>("EntityId", PropertyType::EntityId),
 				InputAttributeConfig_Void("Add", PropertyType::Void, LP_BIND_NODE_FUNCTION(AddComponentNode::AddComponent)),
 				InputAttributeConfig<std::vector<std::pair<std::string, bool>>>("Component", PropertyType::Selectable)
 			};

@@ -1528,6 +1528,7 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h" />
+    <ClInclude Include="src\Lamp\Objects\GUID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">

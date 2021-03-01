@@ -94,20 +94,28 @@ namespace Sandbox3D
 	void GraphKey::UpdateNodeWindow()
 	{
 		ImGui::Begin("Main", &m_IsOpen);
-
-		bool mainHovered = IsHovered({ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, { ImGui::GetWindowSize().x, ImGui::GetWindowSize().y });
-
-		imnodes::BeginNodeEditor();
-
-		for (auto& node : m_ExistingNodes)
+		if (m_CurrentlyOpenGraph)
 		{
-			DrawNode(node);
+			ImGui::Text(m_CurrentlyOpenGraph->GetSpecification().name.c_str());
 		}
 
-		//Draw Links
-		for (auto& link : m_Links)
+		bool mainHovered = IsHovered({ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, { ImGui::GetWindowSize().x, ImGui::GetWindowSize().y });
+		imnodes::BeginNodeEditor();
+		if (m_CurrentlyOpenGraph)
 		{
-			imnodes::Link(link->id, link->pOutput->id, link->pInput->id);
+			for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
+			{
+				DrawNode(node);
+			}
+		}
+
+		if (m_CurrentlyOpenGraph)
+		{
+			//Draw Links
+			for (auto& link : m_CurrentlyOpenGraph->GetSpecification().links)
+			{
+				imnodes::Link(link->id, link->pOutput->id, link->pInput->id);
+			}
 		}
 
 		imnodes::EndNodeEditor();
@@ -120,100 +128,106 @@ namespace Sandbox3D
 
 			Attribute* pStartAttr = nullptr;
 			Attribute* pEndAttr = nullptr;
-			for (auto& node : m_ExistingNodes)
+
+			if (m_CurrentlyOpenGraph)
 			{
-				for (uint32_t i = 0; i < node->inputAttributes.size(); i++)
+				for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
 				{
-					if (node->inputAttributes[i].id == startAttr)
+					for (uint32_t i = 0; i < node->inputAttributes.size(); i++)
 					{
-						pStartNode = node.get();
-						pStartAttr = &node->inputAttributes[i];
+						if (node->inputAttributes[i].id == startAttr)
+						{
+							pStartNode = node.get();
+							pStartAttr = &node->inputAttributes[i];
 
-						break;
+							break;
+						}
+
+						if (node->inputAttributes[i].id == endAttr)
+						{
+							pEndNode = node.get();
+							pEndAttr = &node->inputAttributes[i];
+
+							break;
+						}
 					}
 
-					if (node->inputAttributes[i].id == endAttr)
+					for (uint32_t i = 0; i < node->outputAttributes.size(); i++)
 					{
-						pEndNode = node.get();
-						pEndAttr = &node->inputAttributes[i];
+						if (node->outputAttributes[i].id == endAttr)
+						{
+							pEndNode = node.get();
+							pEndAttr = &node->outputAttributes[i];
 
-						break;
+							break;
+						}
+
+						if (node->outputAttributes[i].id == startAttr)
+						{
+							pStartNode = node.get();
+							pStartAttr = &node->outputAttributes[i];
+
+							break;
+						}
 					}
+
 				}
 
-				for (uint32_t i = 0; i < node->outputAttributes.size(); i++)
+				if (pStartAttr && pEndAttr)
 				{
-					if (node->outputAttributes[i].id == endAttr)
+					if (pStartAttr->type == pEndAttr->type)
 					{
-						pEndNode = node.get();
-						pEndAttr = &node->outputAttributes[i];
+						Ref<Link> pL = CreateRef<Link>();
+						pL->id = s_Ids++;
 
-						break;
-					}
+						if (auto* p = dynamic_cast<InputAttribute*>(pStartAttr))
+						{
+							pL->pInput = p;
+						}
+						if (auto* p = dynamic_cast<OutputAttribute*>(pStartAttr))
+						{
+							pL->pOutput = p;
+						}
 
-					if (node->outputAttributes[i].id == startAttr)
-					{
-						pStartNode = node.get();
-						pStartAttr = &node->outputAttributes[i];
+						if (auto* p = dynamic_cast<InputAttribute*>(pEndAttr))
+						{
+							pL->pInput = p;
+						}
+						if (auto* p = dynamic_cast<OutputAttribute*>(pEndAttr))
+						{
+							pL->pOutput = p;
+						}
 
-						break;
+						pStartNode->pLinks.push_back(pL);
+						pEndNode->pLinks.push_back(pL);
+
+						pStartAttr->pLink = pL;
+						pEndAttr->pLink = pL;
+
+						m_CurrentlyOpenGraph->GetSpecification().links.push_back(pL);
 					}
 				}
-
 			}
 
-			if (pStartAttr && pEndAttr)
+			const int numSelectedNodes = imnodes::NumSelectedNodes();
+			if (numSelectedNodes == 1)
 			{
-				if (pStartAttr->type == pEndAttr->type)
+				int selNode = 0;
+				imnodes::GetSelectedNodes(&selNode);
+
+				for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
 				{
-					Ref<Link> pL = CreateRef<Link>();
-					pL->id = s_Ids++;
-
-					if (auto* p = dynamic_cast<InputAttribute*>(pStartAttr))
+					if (node->id == selNode)
 					{
-						pL->pInput = p;
+						m_SelectedNode = node;
 					}
-					if (auto* p = dynamic_cast<OutputAttribute*>(pStartAttr))
-					{
-						pL->pOutput = p;
-					}
-
-					if (auto* p = dynamic_cast<InputAttribute*>(pEndAttr))
-					{
-						pL->pInput = p;
-					}
-					if (auto* p = dynamic_cast<OutputAttribute*>(pEndAttr))
-					{
-						pL->pOutput = p;
-					}
-
-					pStartNode->pLinks.push_back(pL);
-					pEndNode->pLinks.push_back(pL);
-
-					pStartAttr->pLink = pL;
-					pEndAttr->pLink = pL;
-
-					m_Links.push_back(pL);
-				}
-			}
-		}
-		const int numSelectedNodes = imnodes::NumSelectedNodes();
-		if (numSelectedNodes == 1)
-		{
-			int selNode = 0;
-			imnodes::GetSelectedNodes(&selNode);
-
-			for (auto& node : m_ExistingNodes)
-			{
-				if (node->id == selNode)
-				{
-					m_SelectedNode = node;
 				}
 			}
 		}
 
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && mainHovered)
 		{
+			imnodes::IsNodeHovered(&m_CurrentlyHovered);
 			ImGui::OpenPopup("RightClick");
 		}
 
@@ -248,13 +262,15 @@ namespace Sandbox3D
 						n->inputAttributes[i].id = s_Ids++;
 					}
 
-
 					for (int i = 0; i < n->outputAttributes.size(); i++)
 					{
 						n->outputAttributes[i].id = s_Ids++;
 					}
 
-					m_ExistingNodes.push_back(n);
+					if (m_CurrentlyOpenGraph)
+					{
+						m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
+					}
 				}
 
 				i++;
@@ -319,16 +335,18 @@ namespace Sandbox3D
 
 	void GraphKey::UpdateRightClickPopup()
 	{
-		ImGui::SetNextWindowSize(ImVec2(100.f, 30.f));
 		if (ImGui::BeginPopup("RightClick"))
-		{	
-			int i = -1;
-			imnodes::IsNodeHovered(&i);
-			if (i > -1)
+		{
+			if (m_CurrentlyHovered > -1)
 			{
+				if (ImGui::Selectable("Assign graph entity"))
+				{
+
+				}
+
 				if (ImGui::Selectable("Remove"))
 				{
-					RemoveNode(i);
+					RemoveNode(m_CurrentlyHovered);
 				}
 			}
 
@@ -382,74 +400,12 @@ namespace Sandbox3D
 
 	void GraphKey::RemoveNode(uint32_t id)
 	{
-		auto func = [&id, this](Ref<Node>& node)
-		{
-			if (id == node->id)
-			{
-				for (auto& attr : node->inputAttributes)
-				{
-					if (attr.pLink)
-					{
-						RemoveLink(attr.pLink->id);
-					}
-				}
-
-				for (auto& attr : node->outputAttributes)
-				{
-					if (attr.pLink)
-					{
-						RemoveLink(attr.pLink->id);
-					}
-				}
-
-				return true;
-			}
-
-			return false;
-		};
-
-		m_ExistingNodes.erase(std::remove_if(m_ExistingNodes.begin(), m_ExistingNodes.end(), func), m_ExistingNodes.end());
+		m_CurrentlyOpenGraph->RemoveNode(id);
 	}
 
 	void GraphKey::RemoveLink(uint32_t id)
 	{
-		for (auto& node : m_ExistingNodes)
-		{
-			for (auto& attr : node->inputAttributes)
-			{
-				if (!attr.pLink)
-				{
-					continue;
-				}
-
-				if (attr.pLink->id == id)
-				{
-					attr.pLink = nullptr;
-					break;
-				}
-			}
-
-			for (auto& attr : node->outputAttributes)
-			{
-				if (!attr.pLink)
-				{
-					continue;
-				}
-
-				if (attr.pLink->id == id)
-				{
-					attr.pLink = nullptr;
-					break;
-				}
-			}
-		}
-
-		auto func = [&id](Ref<Link>& link)
-		{
-			return id == link->id;
-		};
-
-		m_Links.erase(std::remove_if(m_Links.begin(), m_Links.end(), func), m_Links.end());
+		m_CurrentlyOpenGraph->RemoveLink(id);
 	}
 
 	void GraphKey::DrawNode(Ref<Lamp::Node>& node)

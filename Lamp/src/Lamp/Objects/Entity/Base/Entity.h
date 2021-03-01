@@ -14,18 +14,19 @@
 #include <string>
 
 #include "Lamp/Event/ApplicationEvent.h"
-#include "Lamp/GraphKey/GraphKeyGraph.h"
 
-class EntityManager;
 
 namespace Lamp
 {
+	class GraphKeyGraph;
+	class EntityManager;
+
 	class Entity : public Object
 	{
 	public:
 		Entity()
 		{
-			m_Name = "Entity";
+			m_Name = "Entity" + std::to_string(m_Id);
 
 			m_GizmoTexure = Texture2D::Create("engine/gizmos/gizmoEntity.png");
 		}
@@ -38,6 +39,7 @@ namespace Lamp
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
 		inline bool GetSaveable() { return m_ShouldBeSaved; }
 		inline uint32_t GetId() { return m_Id; }
+		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_GraphKeyGraph = graph; }
 		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }
 
 		//Getting
