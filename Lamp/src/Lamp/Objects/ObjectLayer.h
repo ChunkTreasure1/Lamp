@@ -15,7 +15,7 @@ namespace Lamp
 		{}
 
 		ObjectLayer(uint32_t num)
-			: ID(num), Name("Layer"), IsDestroyable(true)
+			: ID(num), Name("Layer"), IsDestroyable(true), IsActive(true)
 		{}
 
 		~ObjectLayer()

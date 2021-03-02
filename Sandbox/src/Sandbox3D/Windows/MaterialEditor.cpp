@@ -5,6 +5,7 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 #include <Lamp/Meshes/GeometrySystem.h>
+#include <Lamp/AssetSystem/AssetManager.h>
 
 namespace Sandbox3D
 {
@@ -30,7 +31,8 @@ namespace Sandbox3D
 			m_Framebuffer = Framebuffer::Create(main);
 		}
 
-		m_MaterialModel = GeometrySystem::LoadFromFile("assets/models/sphere.lgf");
+		m_MaterialModel = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel("assets/models/sphere.lgf", m_MaterialModel.get());
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)

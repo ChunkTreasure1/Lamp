@@ -15,6 +15,9 @@ namespace Lamp
 			SetShader(shader);
 		}
 
+		Material()
+		{}
+
 		Material(uint32_t index)
 			: m_Index(index), m_Shininess(32.f)
 		{}

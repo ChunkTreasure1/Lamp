@@ -33,6 +33,7 @@ namespace Lamp
 		{}
 
 		ComponentProperty() 
+			: PropertyType(PropertyType::Void), Value(nullptr)
 		{}
 
 		std::string Name;

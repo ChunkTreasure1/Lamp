@@ -1529,6 +1529,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h" />
     <ClInclude Include="src\Lamp\Objects\GUID.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
+    <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
+    <ClInclude Include="src\Lamp\Meshes\ModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1766,5 +1769,7 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\GraphKey\GraphKeyGraph.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
+    <ClCompile Include="src\Lamp\Meshes\ModelLoader.cpp" />
   </ItemGroup>
 </Project>

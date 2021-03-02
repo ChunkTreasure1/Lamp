@@ -7,7 +7,9 @@ namespace Lamp
 	class CameraBase
 	{
 	public:
-		CameraBase() {}
+		CameraBase() 
+			: m_ProjectionMatrix(glm::mat4(1.f)), m_ViewMatrix(glm::mat4(1.f)), m_ViewProjectionMatrix(glm::mat4(1.f))
+		{}
 		virtual ~CameraBase() {}
 
 		virtual void SetProjection(float x, float y, float z, float k) {}

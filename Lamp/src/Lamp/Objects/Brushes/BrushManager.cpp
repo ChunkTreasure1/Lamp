@@ -4,6 +4,7 @@
 #include "Lamp/Meshes/GeometrySystem.h"
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
+#include "Lamp/AssetSystem/AssetManager.h"
 
 namespace Lamp
 {
@@ -48,7 +49,10 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path)
 	{
-		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		Ref<Model> model = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel(path, model.get());
+
+		auto brush = new Brush(model);
 		brush->SetLayerID(0);
 
 		m_Brushes.push_back(brush);
@@ -59,7 +63,9 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name)
 	{
-		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		Ref<Model> model = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel(path, model.get());
+		auto brush = new Brush(model);
 
 		brush->SetPosition(pos);
 		brush->SetRotation(rot);
@@ -75,6 +81,11 @@ namespace Lamp
 
 	void BrushManager::Remove(Brush* brush)
 	{
+		if (m_Brushes.size() == 0)
+		{
+			return;
+		}
+
 		auto it = std::find(m_Brushes.begin(), m_Brushes.end(), brush);
 		if (it != m_Brushes.end())
 		{

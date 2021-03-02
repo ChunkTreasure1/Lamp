@@ -12,7 +12,6 @@ namespace Lamp
 	{
 	public:
 		static Ref<Model> ImportModel(const std::string& path);
-		static Ref<Model> LoadFromFile(const std::string& path);
 		static bool SaveToPath(Ref<Model>& model, const std::string& path);
 
 	private:

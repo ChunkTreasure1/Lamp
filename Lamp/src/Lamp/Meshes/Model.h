@@ -12,6 +12,31 @@
 
 namespace Lamp
 {
+	struct MeshData
+	{
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
+		uint32_t matId;
+	};
+
+	struct ModelData
+	{
+		std::vector<Ref<Mesh>> meshes;
+		Material material;
+		std::string name;
+		SAABB boundingBox;
+		std::string path;
+	};
+
+	struct ModelLoadData
+	{
+		std::vector<MeshData> meshes;
+		Material material;
+		std::string name;
+		SAABB boundingBox;
+		std::string path;
+	};
+
 	class Model
 	{
 	public:
@@ -25,6 +50,9 @@ namespace Lamp
 		{
 		}
 
+		Model()
+		{}
+
 		void Render(size_t id = -1);
 		void RenderBoundingBox();
 
@@ -33,6 +61,14 @@ namespace Lamp
 		inline void SetLGFPath(const std::string& path) { m_LGFPath = path; }
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetMaterial(const Material& mat) { m_Material = mat; }
+		inline void SetData(ModelData& data)
+		{
+			m_Meshes = data.meshes;
+			m_Material = data.material;
+			m_Name = data.name;
+			m_BoundingBox = data.boundingBox;
+			m_LGFPath = data.path;
+		}
 
 		//Getting
 		inline Material& GetMaterial() { return m_Material; }

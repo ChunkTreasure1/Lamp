@@ -33,6 +33,11 @@ namespace Lamp
 
 	bool EntityManager::Remove(Entity* pEnt)
 	{
+		if (m_pEntites.size() == 0)
+		{
+			return false;
+		}
+
 		auto it = std::find(m_pEntites.begin(), m_pEntites.end(), pEnt);
 		if (it != m_pEntites.end())
 		{

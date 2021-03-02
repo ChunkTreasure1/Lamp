@@ -10,6 +10,7 @@
 
 #include "Lamp/Objects/Brushes/BrushManager.h"
 #include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/AssetSystem/AssetManager.h"
 
 #include "CoreLogger.h"
 
@@ -28,6 +29,7 @@ namespace Lamp
 		g_pEnv = new GlobalEnvironment();
 		g_pEnv->pRenderUtils = new RenderUtils();
 
+		g_pEnv->pAssetManager = new AssetManager();
 		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
 		g_pEnv->pEntityManager = new EntityManager();
 		g_pEnv->pBrushManager = new BrushManager();
@@ -60,6 +62,11 @@ namespace Lamp
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
+		delete g_pEnv->pBrushManager;
+		delete g_pEnv->pEntityManager;
+		delete g_pEnv->pObjectLayerManager;
+		delete g_pEnv->pAssetManager;
+
 		delete g_pEnv;
 	}
 
@@ -81,8 +88,10 @@ namespace Lamp
 			}
 			AudioEngine::Update();
 
-			//Update the application layers
+			//Load assets
+			g_pEnv->pAssetManager->Update();
 
+			//Update the application layers
 			if (!m_Minimized)
 			{
 				AppUpdateEvent updateEvent(timestep);
