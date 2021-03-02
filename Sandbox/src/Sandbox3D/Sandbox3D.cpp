@@ -19,6 +19,7 @@
 #include "Windows/MaterialEditor.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
+#include <Lamp/AssetSystem/AssetManager.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
 #include <imnodes.h>
@@ -31,6 +32,8 @@ namespace Sandbox3D
 	{
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
+
+		g_pEnv->pAssetManager->LoadTexture("engine/textures/default/defaultTexture.png", nullptr);
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();

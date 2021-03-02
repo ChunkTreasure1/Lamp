@@ -4,11 +4,11 @@
 #include <imgui/imgui.h>
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
-#include <Lamp/Meshes/GeometrySystem.h>
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 #include <imgui/imgui_stdlib.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
+#include <Lamp/AssetSystem/ModelLoader.h>
 
 namespace Sandbox3D
 {
@@ -188,7 +188,7 @@ namespace Sandbox3D
 			path = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
 			if (path != "" && std::filesystem::exists(path))
 			{
-				m_pModelToImport = GeometrySystem::ImportModel(path);
+				m_pModelToImport = ModelLoader::ImportModel(path);
 
 				savePath = path.substr(0, path.find_last_of('.'));
 				savePath += ".lgf";
@@ -218,14 +218,14 @@ namespace Sandbox3D
 
 				if (MaterialLibrary::GetMaterial(m_pModelToImport->GetMaterial().GetName()).GetIndex() == -1)
 				{
-					std::string matPath = savePath.substr(0, savePath.find_last_of('\\'));
+					std::string matPath = savePath.substr(0, savePath.find_last_of('\\') + 1);
 					matPath += m_MaterialName + ".mtl";
 					//Add material to library
 					MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial());
 					MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial());
 				}
 
-				Lamp::GeometrySystem::SaveToPath(m_pModelToImport, savePath + ".lgf");
+				ModelLoader::SaveToPath(m_pModelToImport, savePath + ".lgf");
 				path = "";
 				savePath = "";
 			}

@@ -2,7 +2,6 @@
 #include "Sandbox3D.h"
 
 #include <Lamp/Level/LevelSystem.h>
-#include <Lamp/Meshes/GeometrySystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Objects/ObjectLayer.h>
 

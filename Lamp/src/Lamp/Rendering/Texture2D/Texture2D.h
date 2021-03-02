@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include "Lamp/Core/Core.h"
 
-#include "Lamp/Rendering/Texture2D/TextureLoader.h"
+#include "Lamp/AssetSystem/TextureLoader.h"
 
 namespace Lamp
 {

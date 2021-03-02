@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "OpenGLTexture.h"
 
-#include "Lamp/Rendering/Texture2D/TextureCache.h"
+#include "Lamp/AssetSystem/TextureCache.h"
 
 namespace Lamp
 {

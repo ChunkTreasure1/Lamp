@@ -1,6 +1,5 @@
 #include "Game.h"
 
-#include <Lamp/Meshes/GeometrySystem.h>
 #include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 

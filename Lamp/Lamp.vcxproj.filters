@@ -234,9 +234,6 @@
     <ClInclude Include="src\Lamp\Math\Math.h">
       <Filter>src\Lamp\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h">
-      <Filter>src\Lamp\Meshes</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
       <Filter>src\Lamp\Meshes\Materials</Filter>
     </ClInclude>
@@ -379,12 +376,6 @@
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
@@ -1531,7 +1522,13 @@
     <ClInclude Include="src\Lamp\Objects\GUID.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
-    <ClInclude Include="src\Lamp\Meshes\ModelLoader.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\TextureCache.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1593,9 +1590,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Math\Math.cpp">
       <Filter>src\Lamp\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
       <Filter>src\Lamp\Meshes\Materials</Filter>
@@ -1720,12 +1714,6 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
@@ -1770,6 +1758,12 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\GraphKey\GraphKeyGraph.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\ModelLoader.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\TextureCache.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

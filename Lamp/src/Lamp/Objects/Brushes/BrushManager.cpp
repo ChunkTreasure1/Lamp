@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "BrushManager.h"
 
-#include "Lamp/Meshes/GeometrySystem.h"
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/AssetSystem/AssetManager.h"

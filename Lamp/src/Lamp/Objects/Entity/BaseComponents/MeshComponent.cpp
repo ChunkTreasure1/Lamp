@@ -3,7 +3,6 @@
 #include "MeshComponent.h"
 
 #include "Lamp/Event/ApplicationEvent.h"
-#include "Lamp/Meshes/GeometrySystem.h"
 #include "Lamp/AssetSystem/AssetManager.h"
 
 namespace Lamp

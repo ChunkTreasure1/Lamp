@@ -4,7 +4,6 @@
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
-#include <Lamp/Meshes/GeometrySystem.h>
 #include <Lamp/AssetSystem/AssetManager.h>
 
 namespace Sandbox3D

@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "Lamp/Utility/ThreadSafeQueue.h"
-#include "Lamp/Rendering/Texture2D/TextureLoader.h"
+#include "ModelLoader.h"
 #include "Lamp/Meshes/Model.h"
 
 namespace Lamp

@@ -2,9 +2,9 @@
 #include "AssetManager.h"
 
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
-#include "Lamp/Rendering/Texture2D/TextureCache.h"
+#include "Lamp/AssetSystem/TextureCache.h"
 
-#include "Lamp/Meshes/ModelLoader.h"
+#include "Lamp/AssetSystem/ModelLoader.h"
 
 namespace Lamp
 {
@@ -86,18 +86,19 @@ namespace Lamp
 			TextureLoadJob assetJob;
 			if (m_ProcessingTexturesQueue.TryPop(assetJob))
 			{
+				TextureData t;
+				if (assetJob.data.type == TextureType::Texture2D)
+				{
+					t = TextureLoader::GenerateTexture(assetJob.data);
+				}
+				else if (assetJob.data.type == TextureType::HDR)
+				{
+					t = TextureLoader::GenerateHDR(assetJob.data);
+				}
+				TextureCache::AddTexture(assetJob.path, t);
+
 				if (assetJob.pTexture)
 				{
-					TextureData t;
-					if (assetJob.data.type == TextureType::Texture2D)
-					{
-						t = TextureLoader::GenerateTexture(assetJob.data);
-					}
-					else if (assetJob.data.type == TextureType::HDR)
-					{
-						t = TextureLoader::GenerateHDR(assetJob.data);
-					}
-					TextureCache::AddTexture(assetJob.path, t);
 					assetJob.pTexture->SetData(t);
 					assetJob.pTexture->SetType(assetJob.data.type);
 				}
@@ -120,11 +121,6 @@ namespace Lamp
 
 	void AssetManager::LoadTexture(const std::string& path, Texture2D* pTex)
 	{
-		if (!pTex)
-		{
-			return;
-		}
-
 		TextureLoadJob job;
 		job.pTexture = pTex;
 		job.path = path;
