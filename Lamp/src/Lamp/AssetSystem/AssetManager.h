@@ -7,6 +7,7 @@
 #include "Lamp/Utility/ThreadSafeQueue.h"
 #include "ModelLoader.h"
 #include "Lamp/Meshes/Model.h"
+#include "Lamp/Level/Level.h"
 
 namespace Lamp
 {
@@ -28,6 +29,14 @@ namespace Lamp
 		ModelLoadData data;
 	};
 
+	struct LevelLoadJob
+	{
+		Level* pLevel = nullptr;
+		
+		std::string path;
+		LevelLoadData data;
+	};
+
 	class AssetManager
 	{
 	public:
@@ -41,6 +50,7 @@ namespace Lamp
 
 		void LoadTexture(const std::string& path, Texture2D* pTex);
 		void LoadModel(const std::string& path, Model* pModel);
+		void LoadLevel(const std::string& path, Level* pLevel);
 
 	private:
 		void LoaderThread();
@@ -57,6 +67,10 @@ namespace Lamp
 		//Models
 		ThreadSafeQueue<ModelLoadJob> m_LoadingModelsQueue;
 		ThreadSafeQueue<ModelLoadJob> m_ProcessingModelsQueue;
+
+		//Levels
+		ThreadSafeQueue<LevelLoadJob> m_LoadingLevelsQueue;
+		ThreadSafeQueue<LevelLoadJob> m_ProcessingLevelsQueue;
 
 		uint32_t m_MaxThreads = 8;
 		bool m_LoadingThreadActive = true;

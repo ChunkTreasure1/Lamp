@@ -306,9 +306,6 @@
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h">
       <Filter>src\Lamp\Physics\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h">
-      <Filter>src\Lamp\Physics\Internal</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
@@ -1529,6 +1526,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1654,9 +1652,6 @@
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp">
       <Filter>src\Lamp\Physics\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp">
-      <Filter>src\Lamp\Physics\Internal</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
@@ -1765,5 +1760,6 @@
     <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
   </ItemGroup>
 </Project>

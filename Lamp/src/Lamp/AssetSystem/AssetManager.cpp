@@ -5,6 +5,7 @@
 #include "Lamp/AssetSystem/TextureCache.h"
 
 #include "Lamp/AssetSystem/ModelLoader.h"
+#include "Lamp/AssetSystem/LevelLoader.h"
 
 namespace Lamp
 {
@@ -64,7 +65,7 @@ namespace Lamp
 			}
 
 			if (!m_LoadingModelsQueue.Empty())
-			{
+			{ 
 				ModelLoadJob modelJob;
 				if (m_LoadingModelsQueue.TryPop(modelJob))
 				{
@@ -73,7 +74,17 @@ namespace Lamp
 				}
 			}
 
-			uint32_t workRemaining = m_LoadingTexturesQueue.Size();
+			if (!m_LoadingLevelsQueue.Empty())
+			{
+				LevelLoadJob levelJob;
+				if (m_LoadingLevelsQueue.TryPop(levelJob))
+				{
+					LevelLoader::LoadLevel(levelJob.data, levelJob.path);
+					m_ProcessingLevelsQueue.Push(levelJob);
+				}
+			}
+
+			uint32_t workRemaining = m_LoadingTexturesQueue.Size() + m_LoadingModelsQueue.Size() + m_LoadingLevelsQueue.Size();
 			const int waitTime = workRemaining > 0 ? 10 : 2000;
 			std::this_thread::sleep_for(std::chrono::milliseconds(waitTime));
 		}

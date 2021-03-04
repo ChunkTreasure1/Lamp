@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
@@ -191,7 +192,6 @@
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\Lamp\Physics\Rigidbody.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffer.h" />
@@ -601,6 +601,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
@@ -644,7 +645,6 @@
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />

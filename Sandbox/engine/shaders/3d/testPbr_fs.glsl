@@ -150,7 +150,7 @@ float PointShadowCalculation(vec3 fragPos, PointLight light)
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 N, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
-	float shadow = 0.5;//DirectionalShadowCalculation(v_In.ShadowCoord);
+	float shadow = DirectionalShadowCalculation(v_In.ShadowCoord);
 
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);

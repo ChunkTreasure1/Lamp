@@ -8,8 +8,7 @@ namespace Lamp
 	static uint32_t s_ObjectId = 0;
 
 	Object::Object()
-		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0),
-		m_PickingCollider({ -0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, m_Position)
+		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
 	{
 		m_Id = s_ObjectId++;
 	}
@@ -25,7 +24,6 @@ namespace Lamp
 
 	void Object::SetPosition(const glm::vec3& pos)
 	{
-		m_PickingCollider.Transform(pos - m_Position);
 		m_Position = pos;
 		if (m_pRigidBody)
 		{
