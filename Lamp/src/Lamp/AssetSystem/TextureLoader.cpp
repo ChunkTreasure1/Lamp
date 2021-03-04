@@ -8,7 +8,7 @@ namespace Lamp
 {
 	void TextureLoader::LoadTexture(TextureLoadData& data, const std::string& path)
 	{
-		LP_PROFILE_FUNCTION();
+		//LP_PROFILE_FUNCTION();
 
 		std::string fileEnd = path.substr(path.find_last_of("."), path.size() - 1);
 		if (fileEnd.find("hdr") != std::string::npos)

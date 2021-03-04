@@ -273,7 +273,7 @@ namespace Lamp
 			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
 			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
 			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-			mat.GetShader()->UploadMat4("u_ShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 			mat.GetShader()->UploadInt("u_ObjectId", id);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);

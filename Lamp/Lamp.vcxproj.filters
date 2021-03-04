@@ -1762,4 +1762,7 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
 </Project>

@@ -62,6 +62,8 @@ namespace Lamp
 			{
 				m_Position += std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
 			}
+
+			//g_pEnv->DirLight.UpdateProjection(m_Position);
 		}
 
 		m_Camera->SetPosition(m_Position);

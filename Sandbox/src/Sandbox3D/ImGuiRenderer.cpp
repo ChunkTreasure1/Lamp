@@ -767,7 +767,7 @@ namespace Sandbox3D
 		if (ImGui::CollapsingHeader("Environment"))
 		{
 			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
-			g_pEnv->DirLight.UpdateProjection();
+			g_pEnv->DirLight.UpdateView();
 
 			static std::string path;
 			ImGui::InputText("HDR environment", &path);
