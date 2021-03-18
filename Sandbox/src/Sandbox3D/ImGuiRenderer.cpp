@@ -45,7 +45,7 @@ namespace Sandbox3D
 			{
 				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_SecondaryBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
-				m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				//m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
@@ -204,14 +204,14 @@ namespace Sandbox3D
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
 				{
-					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
+					//int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
 						m_pSelectedObject->SetIsSelected(false);
 					}
 
-					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
+					//m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
 					if (m_pSelectedObject)
 					{
 						m_pSelectedObject->SetIsSelected(true);
@@ -455,7 +455,7 @@ namespace Sandbox3D
 		{
 			if (ImGui::Button("Entity"))
 			{
-				m_pSelectedObject = Lamp::EntityManager::Get()->Create();
+				m_pSelectedObject = g_pEnv->pEntityManager->Create();
 				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
 				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
 			}

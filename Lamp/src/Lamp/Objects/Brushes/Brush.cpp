@@ -62,7 +62,7 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
-		BrushManager::Get()->Remove(this);
+		g_pEnv->pBrushManager->Remove(this);
 		ObjectLayerManager::Get()->Remove(this);
 
 		delete this;
@@ -76,7 +76,7 @@ namespace Lamp
 
 	Brush* Brush::Create(const std::string& path)
 	{
-		return BrushManager::Get()->Create(path);
+		return g_pEnv->pBrushManager->Create(path);
 	}
 
 	bool Brush::OnRender(AppRenderEvent& e)

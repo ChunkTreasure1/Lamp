@@ -30,9 +30,9 @@ namespace Lamp
 		g_pEnv->pRenderUtils = new RenderUtils();
 
 		g_pEnv->pAssetManager = new AssetManager();
-		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
 		g_pEnv->pEntityManager = new EntityManager();
 		g_pEnv->pBrushManager = new BrushManager();
+		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
 
 		//Create the window
 		WindowProps props;
@@ -62,9 +62,9 @@ namespace Lamp
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
+		delete g_pEnv->pObjectLayerManager;
 		delete g_pEnv->pBrushManager;
 		delete g_pEnv->pEntityManager;
-		delete g_pEnv->pObjectLayerManager;
 		delete g_pEnv->pAssetManager;
 
 		delete g_pEnv;

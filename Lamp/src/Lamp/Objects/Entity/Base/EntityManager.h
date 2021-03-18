@@ -16,21 +16,15 @@ namespace Lamp
 		bool Remove(Entity* pEnt);
 
 		//Getting
-		inline const std::vector<Entity*>& GetEntities() { return m_pEntites; }
+		inline const std::unordered_map<uint32_t, Entity*>& GetEntities() { return m_pEntities; }
 
 		Entity* GetEntityFromId(uint32_t id);
 		Entity* GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin);
 
 		//Setting
-		inline void SetEntities(std::vector<Entity*> entities) { m_pEntites = entities; }
-
-	public:
-		static EntityManager* Get() { return s_CurrentManager; }
+		inline void SetEntities(std::unordered_map<uint32_t, Entity*> entities) { m_pEntities = entities; }
 
 	private:
-		std::vector<Entity*> m_pEntites;
-
-	private:
-		static EntityManager* s_CurrentManager;
+		std::unordered_map<uint32_t, Entity*> m_pEntities;
 	};
 }

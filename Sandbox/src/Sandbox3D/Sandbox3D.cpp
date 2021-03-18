@@ -79,16 +79,13 @@ namespace Sandbox3D
 			m_IsPlaying = m_ShouldPlay;
 			m_pGame->OnStart();
 
-			//for (auto& node : static_cast<GraphKey*>(m_pWindows[1])->GetNodes())
-			//{
-			//	if (node->name == "Start")
-			//	{
-			//		node->ActivateOutput(0);
-			//	}
-			//}
+			for (auto& node : NodeRegistry::s_StartNodes())
+			{
+				node->ActivateOutput(0);
+			}
 		}
 
-		m_SecondaryBuffer->ClearAttachment(0, 0);
+		//m_SecondaryBuffer->ClearAttachment(0, 0);
 
 		if (m_SandboxController->GetCameraController()->GetRightPressed())
 		{
@@ -101,7 +98,7 @@ namespace Sandbox3D
 
 		GetInput();
 
-		m_SelectionBuffer->ClearAttachment(0, -1);
+		//m_SelectionBuffer->ClearAttachment(0, -1);
 		
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
@@ -137,8 +134,8 @@ namespace Sandbox3D
 		UpdateLogTool();
 		UpdateLevelSettings();
 
-		ImGuiUpdateEvent e;
-		OnEvent(e);
+		//ImGuiUpdateEvent e;
+		//OnEvent(e);
 	}
 
 	void Sandbox3D::OnEvent(Event& e)
@@ -343,59 +340,59 @@ namespace Sandbox3D
 	void Sandbox3D::CreateRenderPasses()
 	{
 		/////Shadow pass/////
-		{
-			FramebufferSpecification shadowBuffer;
-			shadowBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
-			};
-			shadowBuffer.ClearColor = m_ClearColor;
-			shadowBuffer.Height = 4096;
-			shadowBuffer.Width = 4096;
+		//{
+		//	FramebufferSpecification shadowBuffer;
+		//	shadowBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
+		//	};
+		//	shadowBuffer.ClearColor = m_ClearColor;
+		//	shadowBuffer.Height = 4096;
+		//	shadowBuffer.Width = 4096;
 
-			RenderPassSpecification shadowSpec;
-			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
-			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsShadowPass = true;
-			shadowSpec.Name = "DirShadowPass";
+		//	RenderPassSpecification shadowSpec;
+		//	shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
+		//	shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		//	shadowSpec.IsShadowPass = true;
+		//	shadowSpec.Name = "DirShadowPass";
 
-			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			RenderPassManager::Get()->AddPass(shadowPass);
-		}
-		/////////////////////
+		//	Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+		//	RenderPassManager::Get()->AddPass(shadowPass);
+		//}
+		///////////////////////
 
-		///////Point shadow pass/////
-		{
-			RenderPassSpecification shadowSpec;
-			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsPointShadowPass = true;
-			shadowSpec.Name = "PointShadowPass";
+		/////////Point shadow pass/////
+		//{
+		//	RenderPassSpecification shadowSpec;
+		//	shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		//	shadowSpec.IsPointShadowPass = true;
+		//	shadowSpec.Name = "PointShadowPass";
 
-			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			RenderPassManager::Get()->AddPass(shadowPass);
-		}
+		//	Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+		//	RenderPassManager::Get()->AddPass(shadowPass);
+		//}
 		/////////////////////////////
 
 		/////Selection/////
-		{
-			FramebufferSpecification spec;
-			spec.Attachments =
-			{
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
-			};
-			spec.Height = 1280;
-			spec.Width = 720;
-			spec.Samples = 1;
+		//{
+		//	FramebufferSpecification spec;
+		//	spec.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+		//	};
+		//	spec.Height = 1280;
+		//	spec.Width = 720;
+		//	spec.Samples = 1;
 
-			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
-			m_SelectionBuffer = passSpec.TargetFramebuffer;
-			passSpec.Name = "SelectionPass";
+		//	RenderPassSpecification passSpec;
+		//	passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
+		//	m_SelectionBuffer = passSpec.TargetFramebuffer;
+		//	passSpec.Name = "SelectionPass";
 
-			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(pass);
-		}
+		//	Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(pass);
+		//}
 		///////////////////
 
 		/////Main//////

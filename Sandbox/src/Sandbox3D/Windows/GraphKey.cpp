@@ -18,7 +18,7 @@ namespace Sandbox3D
 	GraphKey::GraphKey(std::string_view name)
 		: BaseWindow(name)
 	{
-		CreateComponentNodes();
+		//CreateComponentNodes();
 	}
 
 	void GraphKey::OnEvent(Lamp::Event& e)
@@ -416,7 +416,7 @@ namespace Sandbox3D
 		ImGui::Text(node->name.c_str());
 		imnodes::EndNodeTitleBar();
 
-		Entity* pEntity = Lamp::EntityManager::Get()->GetEntityFromId(node->entityId);
+		Entity* pEntity = g_pEnv->pEntityManager->GetEntityFromId(node->entityId);
 
 		if (!pEntity && node->needsEntity)
 		{
@@ -478,7 +478,7 @@ namespace Sandbox3D
 	{
 		auto& prop = attr;
 
-		Entity* pEntity = Lamp::EntityManager::Get()->GetEntityFromId(node->entityId);
+		Entity* pEntity = g_pEnv->pEntityManager->GetEntityFromId(node->entityId);
 
 		switch (prop.type)
 		{
@@ -832,7 +832,7 @@ namespace Sandbox3D
 	{
 		auto& prop = attr;
 
-		Entity* pEntity = Lamp::EntityManager::Get()->GetEntityFromId(node->entityId);
+		Entity* pEntity = g_pEnv->pEntityManager->GetEntityFromId(node->entityId);
 
 		switch (prop.type)
 		{

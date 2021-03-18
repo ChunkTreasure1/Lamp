@@ -114,7 +114,7 @@ namespace Lamp
 	private:
 		void AddComponent()
 		{
-			Entity* pEnt = EntityManager::Get()->GetEntityFromId(GetInput<int>(0));
+			Entity* pEnt = g_pEnv->pEntityManager->GetEntityFromId(GetInput<int>(0));
 			if (!pEnt)
 			{
 				return;

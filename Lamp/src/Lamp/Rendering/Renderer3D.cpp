@@ -236,7 +236,7 @@ namespace Lamp
 		}
 		else if (s_pData->CurrentRenderPass->IsPointShadowPass)
 		{
-			/////Point light shadows/////
+			///////Point light shadows/////
 			glCullFace(GL_BACK);
 			s_pData->PointShadowShader->Bind();
 
@@ -253,13 +253,13 @@ namespace Lamp
 			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
 
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			/////////////////////////////
+			///////////////////////////////
 		}
 		else
 		{
 			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadow map
-			int i = 4 + g_pEnv->pRenderUtils->GetPointLights().size();
+			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
 				if (mat.GetTextures()[name].get() != nullptr)
@@ -277,7 +277,7 @@ namespace Lamp
 			mat.GetShader()->UploadInt("u_ObjectId", id);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			s_pData->ShadowBuffer->BindDepthAttachment(0);
+			//s_pData->ShadowBuffer->BindDepthAttachment(0);
 
 			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
 			mat.GetShader()->UploadInt("u_PrefilterMap", 2);

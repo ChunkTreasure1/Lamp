@@ -7,11 +7,8 @@
 
 namespace Lamp
 {
-	BrushManager* BrushManager::s_Manager = nullptr;
-
 	BrushManager::BrushManager()
 	{
-		s_Manager = this;
 	}
 
 	BrushManager::~BrushManager()
@@ -54,7 +51,7 @@ namespace Lamp
 		auto brush = new Brush(model);
 		brush->SetLayerID(0);
 
-		m_Brushes.push_back(brush);
+		m_Brushes.emplace(std::make_pair(brush->GetID(), brush));
 
 		ObjectLayerManager::Get()->AddToLayer(brush, 0);
 		return brush;
@@ -72,7 +69,7 @@ namespace Lamp
 		brush->SetLayerID(layerId);
 		brush->SetName(name);
 
-		m_Brushes.push_back(brush);
+		m_Brushes.emplace(std::make_pair(brush->GetID(), brush));
 
 		ObjectLayerManager::Get()->AddToLayer(brush, layerId);
 		return brush;
@@ -80,16 +77,12 @@ namespace Lamp
 
 	void BrushManager::Remove(Brush* brush)
 	{
-		if (m_Brushes.size() == 0)
+		if (m_Brushes.size() == 0 && !brush)
 		{
 			return;
 		}
 
-		auto it = std::find(m_Brushes.begin(), m_Brushes.end(), brush);
-		if (it != m_Brushes.end())
-		{
-			m_Brushes.erase(it);
-		}
+		m_Brushes.erase(brush->GetID());
 	}
 
 	void BrushManager::Remove(Brush2D* brush)
@@ -99,7 +92,6 @@ namespace Lamp
 		{
 			m_2DBrushes.erase(it);
 		}
-
 	}
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)

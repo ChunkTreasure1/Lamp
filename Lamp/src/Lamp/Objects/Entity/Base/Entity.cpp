@@ -30,7 +30,7 @@ namespace Lamp
 
 	void Entity::Destroy()
 	{
-		EntityManager::Get()->Remove(this);
+		g_pEnv->pEntityManager->Remove(this);
 		ObjectLayerManager::Get()->Remove(this);
 
 		delete this;
@@ -38,7 +38,7 @@ namespace Lamp
 
 	Entity* Entity::Create()
 	{
-		return EntityManager::Get()->Create(false);
+		return g_pEnv->pEntityManager->Create(false);
 	}
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)

@@ -7,6 +7,8 @@
 #include "Lamp/AssetSystem/ModelLoader.h"
 #include "Lamp/AssetSystem/LevelLoader.h"
 
+#include <glm/gtx/quaternion.hpp>
+
 namespace Lamp
 {
 	AssetManager::AssetManager()

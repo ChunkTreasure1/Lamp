@@ -22,9 +22,29 @@ namespace Lamp
 
 		return nullptr;
 	}
+
+	void NodeRegistry::AddStart(Node* n)
+	{
+		s_StartNodes().push_back(n);
+	}
+
+	void NodeRegistry::RemoveStart(Node* n)
+	{
+		if (auto it = std::find(s_StartNodes().begin(), s_StartNodes().end(), n); it != s_StartNodes().end())
+		{
+			s_StartNodes().erase(it);
+		}
+	}
+
 	std::unordered_map<std::string, NodeRegistry::TCreateMethod>& NodeRegistry::s_Methods()
 	{
 		static std::unordered_map<std::string, NodeRegistry::TCreateMethod> impl;
+		return impl;
+	}
+
+	std::vector<Node*>& NodeRegistry::s_StartNodes()
+	{
+		static std::vector<Node*> impl;
 		return impl;
 	}
 }

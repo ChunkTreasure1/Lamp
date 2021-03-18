@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <stb/stb_image.h>
 
+
 namespace Lamp
 {
 	void TextureLoader::LoadTexture(TextureLoadData& data, const std::string& path)

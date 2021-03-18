@@ -18,6 +18,12 @@ namespace Lamp
 			outputAttributes = outputs;
 
 			name = "Start";
+			NodeRegistry::AddStart(this);
+		}
+
+		~StartNode()
+		{
+			NodeRegistry::RemoveStart(this);
 		}
 
 	public:

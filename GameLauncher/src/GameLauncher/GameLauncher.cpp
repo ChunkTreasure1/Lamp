@@ -10,8 +10,10 @@ namespace GameLauncher
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 
-		for (auto& entity : Lamp::EntityManager::Get()->GetEntities())
+		for (auto& e : g_pEnv->pEntityManager->GetEntities())
 		{
+			auto entity = e.second;
+
 			if (auto& comp = entity->GetComponent<Lamp::CameraComponent>())
 			{
 				if (comp->GetIsMain())
@@ -26,8 +28,9 @@ namespace GameLauncher
 	bool GameLauncher::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
 		//Improve
-		for (auto& entity : Lamp::EntityManager::Get()->GetEntities())
+		for (auto& e : g_pEnv->pEntityManager->GetEntities())
 		{
+			auto entity = e.second;
 			if (auto& comp = entity->GetComponent<Lamp::CameraComponent>())
 			{
 				if (comp->GetIsMain())
