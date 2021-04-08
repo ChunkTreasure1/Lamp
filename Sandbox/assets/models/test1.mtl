@@ -1,7 +1,0 @@
-<Material name="test1">
-	<albedo path="assets/textures/rusted_iron/albedo.png"/>
-	<normal path="assets/textures/rusted_iron/normal.png"/>
-	<mro path="assets/textures/rusted_iron/mro.png"/>
-	<Shininess value="32.000000"/>
-	<Shader name="testPbr" vertex="engine/shaders/3d/testPbr_vs.glsl" fragment="engine/shaders/3d/testPbr_fs.glsl"/>
-</Material>

@@ -115,12 +115,12 @@ namespace Sandbox3D
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
-				Command cmd;
-				cmd.commandType = CommandType::Transform;
-				cmd.lastData = new glm::mat4(lastTrans);
-				cmd.object = m_pSelectedObject;
+				TransformAction action;
+				action.lastData = lastTrans;
+				action.data = m_pSelectedObject->GetModelMatrix();
+				action.pObject = m_pSelectedObject;
 
-				m_PerspecticeCommands.push_front(cmd);
+
 			}
 		}
 
@@ -190,11 +190,7 @@ namespace Sandbox3D
 			{
 				mousePos -= windowPos;
 				mousePos.y = m_PerspectiveSize.y - mousePos.y;
-
-				Command cmd;
-				cmd.commandType = CommandType::Selection;
-				cmd.lastData = m_pSelectedObject;
-				cmd.object = nullptr;
+				mousePos.y = m_PerspectiveSize.y - mousePos.y;
 
 				/////Mouse picking/////
 				m_SandboxBuffer->Bind();
@@ -220,11 +216,6 @@ namespace Sandbox3D
 
 				m_SandboxBuffer->Unbind();
 				////////////////////////
-
-				if (cmd.lastData != m_pSelectedObject)
-				{
-					m_PerspecticeCommands.push_front(cmd);
-				}
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
@@ -243,12 +234,6 @@ namespace Sandbox3D
 					ImGui::InputFloat3("Position", f);
 					pEnt->SetPosition(glm::make_vec3(f));
 
-					if (pos != pEnt->GetPosition())
-					{
-						Command cmd;
-						cmd.commandType = CommandType::Position;
-						//cmd.lastData = 
-					}
 
 					glm::vec3 rot = pEnt->GetRotation();
 					float r[3] = { rot.x, rot.y, rot.z };

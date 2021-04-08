@@ -1,8 +1,0 @@
-<Material name="cerbus">
-	<albedo path="C:\Programing\Lamp\Sandbox\assets\models\cerbus\Cerbus_albedo.png"/>
-	<normal path="C:\Programing\Lamp\Sandbox\assets\models\cerbus\Cerberus_normal.png"/>
-	<mro path="C:\Programing\Lamp\Sandbox\assets\models\cerbus\Cerberus_mro.png"/>
-	<Shininess value="32.000000"/>
-	<Shader name="testPbr" vertex="engine/shaders/3d/testPbr_vs.glsl" fragment="engine/shaders/3d/testPbr_fs.glsl"/>
-</Material>
-

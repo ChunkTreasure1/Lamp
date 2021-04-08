@@ -209,6 +209,11 @@ namespace Lamp
 		return pixelData;
 	}
 
+	void OpenGLFramebuffer::Copy(uint32_t rendererId, const glm::vec2& size)
+	{
+		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	}
+
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)
 	{
 		LP_CORE_ASSERT(i < m_ColorAttachmentIDs.size(), "Index out of range!"); 

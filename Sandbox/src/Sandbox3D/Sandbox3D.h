@@ -11,7 +11,8 @@
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
 #include "SandboxController.h"
-#include "CommandStack.h"
+
+#include "Actions/ActionHandler.h"
 
 #include <Game/Game.h>
 
@@ -83,10 +84,11 @@ namespace Sandbox3D
 		bool m_PerspectiveOpen = true;
 		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
-		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
-		CommandStack<Command> m_PerspecticeCommands;
 		bool m_HaveUndone = false;
 		bool m_IsPlaying = false;
+
+		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
+		ActionHandler m_ActionHandler;
 
 		//Asset browser
 		Lamp::File m_SelectedFile;

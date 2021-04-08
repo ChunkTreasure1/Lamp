@@ -12,7 +12,7 @@ namespace Sandbox3D
 		using RenderFunc = std::function<void()>;
 
 		BaseWindow(std::string_view name)
-			: m_Name(name), m_Commands(100), m_IsOpen(false)
+			: m_Name(name), m_IsOpen(false)
 		{}
 
 		virtual void OnEvent(Lamp::Event& e) = 0;
@@ -33,7 +33,7 @@ namespace Sandbox3D
 	protected:
 		std::string m_Name;
 		bool m_IsOpen;
-		CommandStack<Command> m_Commands;
+		ActionHandler m_ActionHandler;
 
 		std::vector<RenderFunc> m_RenderFuncs;
 	};

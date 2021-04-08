@@ -38,62 +38,11 @@ namespace Sandbox3D
 
 	void Sandbox3D::Undo()
 	{
-		if (m_PerspecticeCommands.empty())
-		{
-			return;
-		}
-
-		//Currently only perspective undo
-		switch (m_PerspecticeCommands.front().commandType)
-		{
-			case CommandType::Transform:
-			{
-				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.front().object))
-				{
-					pObj->SetModelMatrix(glm::make_mat4((float*)m_PerspecticeCommands.front().lastData));
-
-					delete m_PerspecticeCommands.front().lastData;
-					m_PerspecticeCommands.pop_front();
-				}
-				break;
-			}
-
-			case CommandType::Selection:
-			{
-				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.front().lastData;
-				m_PerspecticeCommands.pop_front();
-				break;
-			}
-		}
+		m_ActionHandler.Undo();
 	}
+
 	void Sandbox3D::Redo()
 	{
-		if (m_PerspecticeCommands.redo_empty())
-		{
-			return;
-		}
-
-		//Currently only perspective undo
-		switch (m_PerspecticeCommands.redo_top().commandType)
-		{
-			case CommandType::Transform:
-			{
-				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.redo_top().object))
-				{
-					pObj->SetModelMatrix(glm::make_mat4((float*)m_PerspecticeCommands.redo_top().lastData));
-
-					delete m_PerspecticeCommands.redo_top().lastData;
-					m_PerspecticeCommands.redo_pop();
-				}
-				break;
-			}
-
-			case CommandType::Selection:
-			{
-				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.redo_top().lastData;
-				m_PerspecticeCommands.redo_pop();
-				break;
-			}
-		}
+	
 	}
 }

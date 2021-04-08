@@ -28,7 +28,7 @@ namespace Sandbox3D
 	using namespace Lamp;
 
 	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr), m_PerspecticeCommands(100)
+		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
 	{
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
@@ -37,7 +37,6 @@ namespace Sandbox3D
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
-		g_pEnv->ShouldRenderBB = true;
 
 		m_pWindows.push_back(new ModelImporter("Model Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
@@ -99,7 +98,7 @@ namespace Sandbox3D
 		GetInput();
 
 		//m_SelectionBuffer->ClearAttachment(0, -1);
-		
+
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
 			RenderPassManager::Get()->RenderPasses();
@@ -116,8 +115,7 @@ namespace Sandbox3D
 		}
 
 		glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
-
-		glBlitNamedFramebuffer(m_SandboxBuffer->GetRendererID(), m_SecondaryBuffer->GetRendererID(), 0, 0, srcSize.x, srcSize.y, 0, 0, srcSize.x, srcSize.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		m_SecondaryBuffer->Copy(m_SandboxBuffer->GetRendererID(), srcSize);
 
 		return false;
 	}
@@ -134,8 +132,8 @@ namespace Sandbox3D
 		UpdateLogTool();
 		UpdateLevelSettings();
 
-		//ImGuiUpdateEvent e;
-		//OnEvent(e);
+		ImGuiUpdateEvent e;
+		OnEvent(e);
 	}
 
 	void Sandbox3D::OnEvent(Event& e)
@@ -187,70 +185,70 @@ namespace Sandbox3D
 
 		switch (e.GetKeyCode())
 		{
-		case LP_KEY_S:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+			case LP_KEY_S:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
 
-			if (control && shift)
-			{
-				SaveLevelAs();
-			}
-			else if (control && !shift)
-			{
-				if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+				if (control && shift)
 				{
 					SaveLevelAs();
-					break;
 				}
-				else
+				else if (control && !shift)
 				{
-					LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+					{
+						SaveLevelAs();
+						break;
+					}
+					else
+					{
+						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+					}
 				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_N:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-
-			if (control)
+			case LP_KEY_N:
 			{
-				NewLevel();
-			}
-			break;
-		}
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
 
-		case LP_KEY_O:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
-			{
-				OpenLevel();
+				if (control)
+				{
+					NewLevel();
+				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_Z:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
+			case LP_KEY_O:
 			{
-				Undo();
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					OpenLevel();
+				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_Y:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
+			case LP_KEY_Z:
 			{
-				Redo();
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Undo();
+				}
+				break;
 			}
-			break;
-		}
+
+			case LP_KEY_Y:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Redo();
+				}
+				break;
+			}
 		}
 
 		return false;
@@ -374,25 +372,25 @@ namespace Sandbox3D
 		/////////////////////////////
 
 		/////Selection/////
-		//{
-		//	FramebufferSpecification spec;
-		//	spec.Attachments =
-		//	{
-		//		{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
-		//	};
-		//	spec.Height = 1280;
-		//	spec.Width = 720;
-		//	spec.Samples = 1;
+		{
+			FramebufferSpecification spec;
+			spec.Attachments =
+			{
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+			};
+			spec.Height = 1280;
+			spec.Width = 720;
+			spec.Samples = 1;
 
-		//	RenderPassSpecification passSpec;
-		//	passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
-		//	m_SelectionBuffer = passSpec.TargetFramebuffer;
-		//	passSpec.Name = "SelectionPass";
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
+			m_SelectionBuffer = passSpec.TargetFramebuffer;
+			passSpec.Name = "SelectionPass";
 
-		//	Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-		//	RenderPassManager::Get()->AddPass(pass);
-		//}
+			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(pass);
+		}
 		///////////////////
 
 		/////Main//////
