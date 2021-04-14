@@ -1,6 +1,5 @@
 #include "lppch.h"
 #include "GraphKeyGraph.h"
-#include <rapidxml/rapidxml.hpp>
 
 namespace Lamp
 {
@@ -85,24 +84,12 @@ namespace Lamp
 		m_Specification.links.erase(std::remove_if(m_Specification.links.begin(), m_Specification.links.end(), func), m_Specification.links.end());
 	}
 
-	void GraphKeyGraph::Save(Ref<GraphKeyGraph>& graph)
+	void GraphKeyGraph::Save(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot, rapidxml::xml_document<>& doc)
 	{
 		using namespace rapidxml;
 		
-		std::ofstream file;
-		xml_document<> doc;
-		file.open(graph->GetSpecification().path);
+		xml_node<>* pGraph = doc.allocate_node(node_element, "Graph");
 
-		xml_node<>* pRoot = doc.allocate_node(node_element, "GraphKeyGraph");
-		pRoot->append_attribute(doc.allocate_attribute("name", graph->GetSpecification().name.c_str()));
-
-		/////Nodes/////
-		xml_node<>* pNodes = doc.allocate_node(node_element, "Nodes");
-		for (auto& node : graph->GetSpecification().nodes)
-		{
-
-		}
-		///////////////
 	}
 
 	Ref<GraphKeyGraph> GraphKeyGraph::Load(const std::string& path)

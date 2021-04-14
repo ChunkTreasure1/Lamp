@@ -200,6 +200,7 @@ namespace Lamp
 
 	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
+		Bind();
 		LP_CORE_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Index out of range!");
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 

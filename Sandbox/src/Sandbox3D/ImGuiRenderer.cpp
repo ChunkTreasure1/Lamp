@@ -45,7 +45,7 @@ namespace Sandbox3D
 			{
 				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_SecondaryBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
-				//m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
@@ -200,14 +200,14 @@ namespace Sandbox3D
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
 				{
-					//int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
+					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
 						m_pSelectedObject->SetIsSelected(false);
 					}
 
-					//m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
+					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
 					if (m_pSelectedObject)
 					{
 						m_pSelectedObject->SetIsSelected(true);
@@ -888,6 +888,16 @@ namespace Sandbox3D
 				for (auto pWindow : m_pWindows)
 				{
 					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Buffers"))
+			{
+				for (auto& window : m_BufferWindows)
+				{
+					ImGui::MenuItem(window.GetLabel().c_str(), NULL, &window.GetIsOpen());
 				}
 
 				ImGui::EndMenu();

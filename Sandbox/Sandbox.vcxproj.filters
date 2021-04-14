@@ -75,6 +75,7 @@
     <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Windows\BufferWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">

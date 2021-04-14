@@ -13,6 +13,7 @@
 #include "SandboxController.h"
 
 #include "Actions/ActionHandler.h"
+#include "Windows/BufferWindow.h"
 
 #include <Game/Game.h>
 
@@ -81,6 +82,7 @@ namespace Sandbox3D
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
 		ImGuiID m_DockspaceID;
+		std::vector<BufferWindow> m_BufferWindows;
 
 		//Perspective
 		bool m_PerspectiveOpen = true;

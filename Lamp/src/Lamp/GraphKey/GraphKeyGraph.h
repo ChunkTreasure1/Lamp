@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.h"
+#include <rapidxml/rapidxml.hpp>
 
 namespace Lamp
 {
@@ -27,7 +28,7 @@ namespace Lamp
 		void RemoveLink(uint32_t id);
 
 	public:
-		static void Save(Ref<GraphKeyGraph>& graph);
+		static void Save(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot, rapidxml::xml_document<>& doc);
 		static Ref<GraphKeyGraph> Load(const std::string& path);
 
 	private:
