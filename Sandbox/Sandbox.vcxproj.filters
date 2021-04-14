@@ -37,6 +37,9 @@
     <Filter Include="src\Sandbox3D">
       <UniqueIdentifier>{A277177F-0E38-93B5-D772-DC3243F2D791}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Sandbox3D\Actions">
+      <UniqueIdentifier>{42C75A10-AE33-160B-7727-AE68E3523873}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Sandbox3D\Windows">
       <UniqueIdentifier>{DCA36BBB-4810-27B6-1104-BF137D2F491E}</UniqueIdentifier>
     </Filter>
@@ -50,6 +53,9 @@
     </ClInclude>
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h">
       <Filter>src\Sandbox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Actions\ActionHandler.h">
+      <Filter>src\Sandbox3D\Actions</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h">
       <Filter>src\Sandbox3D</Filter>
@@ -69,7 +75,6 @@
     <ClInclude Include="src\Sandbox3D\Windows\ModelImporter.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Actions\ActionHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -83,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp">
       <Filter>src\Sandbox2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox3D\Actions\ActionHandler.cpp">
+      <Filter>src\Sandbox3D\Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp">
       <Filter>src\Sandbox3D</Filter>
@@ -108,7 +116,6 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Actions\ActionHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\2d\FlatColor.frag">

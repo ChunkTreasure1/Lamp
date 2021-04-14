@@ -9,10 +9,17 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 #include <Lamp.h>
+#include <Lamp/AssetSystem/AssetManager.h>
+
+Game::~Game()
+{
+	delete m_pLevel;
+}
 
 void Game::OnStart()
 {
-	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
+	g_pEnv->pAssetManager->LoadLevel("assets/levels/Level.level", m_pLevel);
+	Lamp::Entity* pEnt = Lamp::Entity::Create();
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
