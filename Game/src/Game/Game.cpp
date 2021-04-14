@@ -11,15 +11,8 @@
 #include <Lamp.h>
 #include <Lamp/AssetSystem/AssetManager.h>
 
-Game::~Game()
-{
-	delete m_pLevel;
-}
-
 void Game::OnStart()
 {
-	g_pEnv->pAssetManager->LoadLevel("assets/levels/Level.level", m_pLevel);
-	Lamp::Entity* pEnt = Lamp::Entity::Create();
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)

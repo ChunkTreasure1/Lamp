@@ -69,6 +69,8 @@ namespace Sandbox3D
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
 
+		Lamp::Level* m_pLevel = nullptr;
+
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 		Ref<Lamp::Framebuffer> m_SandboxBuffer;
 		Ref<Lamp::Framebuffer> m_SecondaryBuffer;

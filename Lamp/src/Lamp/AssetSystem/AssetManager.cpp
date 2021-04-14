@@ -154,4 +154,7 @@ namespace Lamp
 
 		m_LoadingModelsQueue.Push(job);
 	}
+	void AssetManager::LoadLevel(const std::string& path, Level* pLevel)
+	{
+	}
 }

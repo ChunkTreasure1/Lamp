@@ -33,6 +33,7 @@ namespace Sandbox3D
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 
+		auto level = LevelSystem::LoadLevel("assets/levels/Level.level");
 		g_pEnv->pAssetManager->LoadTexture("engine/textures/default/defaultTexture.png", nullptr);
 
 		//Make sure the sandbox controller is created after level has been loaded
@@ -68,6 +69,8 @@ namespace Sandbox3D
 
 		m_pWindows.clear();
 		imnodes::Shutdown();
+
+		delete m_pLevel;
 	}
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)

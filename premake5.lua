@@ -143,8 +143,8 @@ project "Sandbox"
 
 	links
 	{
-		"Game",
 		"Lamp",
+		"Game",
 		"assimp-vc142-mt.lib",
 		"fmodstudio_vc.lib",
 		"fmod_vc.lib"
