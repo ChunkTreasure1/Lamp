@@ -89,7 +89,19 @@ namespace Lamp
 		using namespace rapidxml;
 		
 		xml_node<>* pGraph = doc.allocate_node(node_element, "Graph");
+		pGraph->append_attribute(doc.allocate_attribute("name", graph->GetSpecification().name.c_str()));
+		for (auto& n : graph->GetSpecification().nodes)
+		{
+			xml_node<>* node = doc.allocate_node(node_element, "Node");
+			for (auto& i : n->inputAttributes)
+			{
+				xml_node<>* in = doc.allocate_node(node_element, "Input");
+				char* pName = doc.allocate_string(i.name.c_str());
+				in->append_attribute(doc.allocate_attribute("name", pName));
 
+				node->append_node(in);
+			}
+		}
 	}
 
 	Ref<GraphKeyGraph> GraphKeyGraph::Load(const std::string& path)
