@@ -44,7 +44,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "CreateEntityNode"; }
+		static std::string GetFactoryName() { return "CreateEntity"; }
 		static Ref<Node> Create() { return CreateRef<CreateEntityNode>(); }
 
 	private:
@@ -74,7 +74,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "EntityNode"; }
+		static std::string GetFactoryName() { return "Entity"; }
 		static Ref<Node> Create() { return CreateRef<EntityNode>(); }
 
 	private:
@@ -138,7 +138,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "AddComponentNode"; }
+		static std::string GetFactoryName() { return "AddComponent"; }
 		static Ref<Node> Create() { return CreateRef<AddComponentNode>(); }
 	};
 

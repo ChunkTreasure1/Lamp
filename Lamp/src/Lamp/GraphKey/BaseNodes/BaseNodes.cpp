@@ -27,7 +27,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "StartNode"; }
+		static std::string GetFactoryName() { return "Start"; }
 		static Ref<Node> Create() { return CreateRef<StartNode>(); }
 	};
 

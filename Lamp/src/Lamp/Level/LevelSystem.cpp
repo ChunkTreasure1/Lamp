@@ -5,6 +5,7 @@
 #include <rapidxml/rapidxml_print.hpp>
 
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/GraphKey/GraphKeyGraph.h"
 
 namespace Lamp
 {
@@ -145,6 +146,10 @@ namespace Lamp
 		rapidxml::xml_node<>* pEntities = doc.allocate_node(rapidxml::node_element, "Entities");
 		for (auto& e : g_pEnv->pEntityManager->GetEntities())
 		{
+			if (e.second == nullptr)
+			{
+				continue;
+			}
 			auto entity = e.second;
 
 			if (!entity->GetSaveable())
@@ -188,73 +193,79 @@ namespace Lamp
 
 					switch (prop.PropertyType)
 					{
-					case Lamp::PropertyType::String:
-					{
-						char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Bool:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<bool*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Int:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<int*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<float*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float2:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec2*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float3:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Float4:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Path:
-					{
-						char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Color3:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-						break;
-					}
-					case Lamp::PropertyType::Color4:
-					{
-						char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
-						param->append_attribute(doc.allocate_attribute("value", pValue));
-					}
-					default:
-						break;
+						case Lamp::PropertyType::String:
+						{
+							char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Bool:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<bool*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Int:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<int*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<float*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float2:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec2*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float3:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Float4:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Path:
+						{
+							char* pValue = doc.allocate_string(static_cast<std::string*>(prop.Value)->c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Color3:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec3*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+							break;
+						}
+						case Lamp::PropertyType::Color4:
+						{
+							char* pValue = doc.allocate_string(ToString(*static_cast<glm::vec4*>(prop.Value)).c_str());
+							param->append_attribute(doc.allocate_attribute("value", pValue));
+						}
+						default:
+							break;
 					}
 
 					comp->append_node(param);
 				}
 
 				ent->append_node(comp);
+			}
+
+			//Graph
+			if (entity->GetGraphKeyGraph())
+			{
+				GraphKeyGraph::Save(entity->GetGraphKeyGraph(), ent, doc);
 			}
 
 			pEntities->append_node(ent);
@@ -264,7 +275,7 @@ namespace Lamp
 
 		/////Level environment/////
 		rapidxml::xml_node<>* pLevelEnv = doc.allocate_node(rapidxml::node_element, "LevelEnvironment");
-		
+
 		rapidxml::xml_node<>* globalAmbient = doc.allocate_node(rapidxml::node_element, "GlobalAmbient");
 		char* pGA = doc.allocate_string(ToString(level->GetEnvironment().GlobalAmbient).c_str());
 		globalAmbient->append_attribute(doc.allocate_attribute("value", pGA));
@@ -387,162 +398,168 @@ namespace Lamp
 
 					switch (type)
 					{
-					case Lamp::PropertyType::String:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::String:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								std::string* p = static_cast<std::string*>(prop.Value);
-								*p = std::string(pParam->first_attribute("value")->value());
+								if (prop.Name == paramName)
+								{
+									std::string* p = static_cast<std::string*>(prop.Value);
+									*p = std::string(pParam->first_attribute("value")->value());
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
-						}
 
-						break;
-					}
-					case Lamp::PropertyType::Bool:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+							break;
+						}
+						case Lamp::PropertyType::Bool:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								bool* p = static_cast<bool*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									bool* p = static_cast<bool*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Int:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Int:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								int* p = static_cast<int*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									int* p = static_cast<int*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								float* p = static_cast<float*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									float* p = static_cast<float*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float2:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float2:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float3:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float3:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Float4:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Float4:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Path:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Path:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								std::string* p = static_cast<std::string*>(prop.Value);
-								*p = std::string(pParam->first_attribute("value")->value());
+								if (prop.Name == paramName)
+								{
+									std::string* p = static_cast<std::string*>(prop.Value);
+									*p = std::string(pParam->first_attribute("value")->value());
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
-						}
 
-						break;
-					}
-					case Lamp::PropertyType::Color3:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+							break;
+						}
+						case Lamp::PropertyType::Color3:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
-					case Lamp::PropertyType::Color4:
-					{
-						for (auto& prop : pComp->GetComponentProperties().GetProperties())
+						case Lamp::PropertyType::Color4:
 						{
-							if (prop.Name == paramName)
+							for (auto& prop : pComp->GetComponentProperties().GetProperties())
 							{
-								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-								GetValue(pParam->first_attribute("value")->value(), *p);
+								if (prop.Name == paramName)
+								{
+									glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+									GetValue(pParam->first_attribute("value")->value(), *p);
 
-								EntityPropertyChangedEvent e;
-								pComp->OnEvent(e);
+									EntityPropertyChangedEvent e;
+									pComp->OnEvent(e);
+								}
 							}
+							break;
 						}
-						break;
-					}
 					}
 				}
 
 				pEnt->AddComponent(pComp);
+			}
+
+			if (rapidxml::xml_node<>* pGraph = pEntity->first_node("Graph"))
+			{
+				pEnt->SetGraphKeyGraph(CreateRef<GraphKeyGraph>());
+				GraphKeyGraph::Load(pEnt->GetGraphKeyGraph(), pGraph);
 			}
 
 			pEntities.emplace(std::make_pair(pEnt->GetID(), pEnt));

@@ -19,7 +19,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "IntNode"; }
+		static std::string GetFactoryName() { return "Int"; }
 		static Ref<Node> Create() { return CreateRef<IntNode>(); }
 	};
 
@@ -38,7 +38,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "FloatNode"; }
+		static std::string GetFactoryName() { return "Float"; }
 		static Ref<Node> Create() { return CreateRef<FloatNode>(); }
 	};
 
@@ -57,7 +57,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "Float2Node"; }
+		static std::string GetFactoryName() { return "Float2"; }
 		static Ref<Node> Create() { return CreateRef<Float2Node>(); }
 	};
 
@@ -76,7 +76,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "Float3Node"; }
+		static std::string GetFactoryName() { return "Float3"; }
 		static Ref<Node> Create() { return CreateRef<Float3Node>(); }
 	};
 

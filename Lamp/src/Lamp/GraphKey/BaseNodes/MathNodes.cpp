@@ -35,7 +35,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "AddNode"; }
+		static std::string GetFactoryName() { return "Add"; }
 		static Ref<Node> Create() { return CreateRef<AddNode>(); }
 
 	private:
@@ -71,7 +71,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "SubtractNode"; }
+		static std::string GetFactoryName() { return "Subtract"; }
 		static Ref<Node> Create() { return CreateRef<SubtractNode>(); }
 
 	private:
@@ -107,7 +107,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "MultiplyNode"; }
+		static std::string GetFactoryName() { return "Multiply"; }
 		static Ref<Node> Create() { return CreateRef<MultiplyNode>(); }
 	};
 
@@ -147,7 +147,7 @@ namespace Lamp
 		}
 
 	public:
-		static std::string GetFactoryName() { return "DivideNode"; }
+		static std::string GetFactoryName() { return "Divide"; }
 		static Ref<Node> Create() { return CreateRef<DivideNode>(); }
 	};
 

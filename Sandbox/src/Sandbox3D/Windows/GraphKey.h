@@ -13,7 +13,7 @@ namespace Sandbox3D
 
 		virtual void OnEvent(Lamp::Event& e) override;
 
-		inline void SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph) { m_CurrentlyOpenGraph = graph; }
+		void SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph);
 		inline Ref<Lamp::GraphKeyGraph>& GetCurrentlyOpenGraph() { return m_CurrentlyOpenGraph; }
 
 	private:

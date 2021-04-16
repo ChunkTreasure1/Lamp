@@ -205,6 +205,7 @@ namespace Sandbox3D
 				}
 				else if (control && !shift)
 				{
+
 					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
 					{
 						SaveLevelAs();

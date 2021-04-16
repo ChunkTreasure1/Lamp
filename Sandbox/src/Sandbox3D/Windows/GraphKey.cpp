@@ -28,6 +28,16 @@ namespace Sandbox3D
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(GraphKey::OnUpdate));
 	}
 
+	void GraphKey::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph)
+	{
+		m_CurrentlyOpenGraph = graph;
+
+		for (auto& n : graph->GetSpecification().nodes)
+		{
+			imnodes::SetNodeEditorSpacePos(n->id, ImVec2{ n->position.x, n->position.y });
+		}
+	}
+
 	bool GraphKey::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		if (!m_IsOpen)
@@ -411,6 +421,12 @@ namespace Sandbox3D
 	void GraphKey::DrawNode(Ref<Lamp::Node>& node)
 	{
 		imnodes::BeginNode(node->id);
+
+		ImVec2 pos = imnodes::GetNodeEditorSpacePos(node->id);
+		if (pos.x != node->position.x || pos.y != node->position.y)
+		{
+			node->position = { pos.x, pos.y };
+		}
 
 		imnodes::BeginNodeTitleBar();
 		ImGui::Text(node->name.c_str());

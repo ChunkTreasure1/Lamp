@@ -248,7 +248,8 @@ namespace Sandbox3D
 					pEnt->SetScale(glm::make_vec3(s));
 				}
 
-				if (ImGui::Button("Create Graph"))
+				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
+				if (ImGui::Button(graphButtonString.c_str()))
 				{
 					if (!pEnt->GetGraphKeyGraph())
 					{
@@ -257,6 +258,14 @@ namespace Sandbox3D
 						spec.path = "Assets/libs/graphkey/" + spec.name + ".graphkey";
 						pEnt->SetGraphKeyGraph(CreateRef<Lamp::GraphKeyGraph>(spec));
 					
+						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						{
+							vs->SetIsOpen(true);
+							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph());
+						}
+					}
+					else
+					{
 						if (auto vs = (GraphKey*)(m_pWindows[1]))
 						{
 							vs->SetIsOpen(true);
