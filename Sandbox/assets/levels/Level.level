@@ -6,7 +6,7 @@
 			<Graph name="Entity0">
 				<Nodes>
 					<Node name="Float" id="0" position="229.000000,173.000000">
-						<Attribute id="1" attrType="output" name="Value" type="float" data="0.000000"/>
+						<Attribute id="1" attrType="output" name="Value" type="float" data="55.000000"/>
 					</Node>
 					<Node name="Multiply" id="2" position="471.000000,105.000000">
 						<Attribute id="3" attrType="input" name="Multiply" type="void" data=""/>
@@ -16,16 +16,23 @@
 						<Attribute id="7" attrType="output" name="Result" type="float" data="0.000000"/>
 					</Node>
 					<Node name="Float" id="8" position="240.000000,64.000000">
-						<Attribute id="9" attrType="output" name="Value" type="float" data="0.000000"/>
+						<Attribute id="9" attrType="output" name="Value" type="float" data="10.000000"/>
 					</Node>
 					<Node name="Start" id="12" position="100.000000,100.000000">
 						<Attribute id="13" attrType="output" name="OnStart" type="void" data=""/>
+					</Node>
+					<Node name="AddComponent" id="15" position="246.000000,309.000000">
+						<Attribute id="16" attrType="input" name="EntityId" type="entityid" data="0"/>
+						<Attribute id="17" attrType="input" name="Add" type="void" data=""/>
+						<Attribute id="18" attrType="input" name="Component" type="selectable" data=""/>
+						<Attribute id="19" attrType="output" name="Added" type="void" data=""/>
 					</Node>
 				</Nodes>
 				<Links>
 					<Link id="10" from="9" to="4"/>
 					<Link id="11" from="1" to="5"/>
 					<Link id="14" from="13" to="3"/>
+					<Link id="20" from="13" to="17"/>
 				</Links>
 			</Graph>
 		</Entity>

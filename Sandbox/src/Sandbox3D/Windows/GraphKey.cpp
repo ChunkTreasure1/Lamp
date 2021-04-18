@@ -8,12 +8,11 @@
 
 #include <Lamp/GraphKey/Link.h>
 #include <Lamp/GraphKey/NodeRegistry.h>
+#include <Lamp/Objects/Entity/Base/Entity.h>
 
 namespace Sandbox3D
 {
 	using namespace Lamp;
-
-	static uint32_t s_Ids = 0;
 
 	GraphKey::GraphKey(std::string_view name)
 		: BaseWindow(name)
@@ -62,6 +61,7 @@ namespace Sandbox3D
 		UpdateNodeWindow();
 		UpdateNodeList();
 		UpdatePropertiesWindow();
+		UpdateGraphList();
 
 		return false;
 	}
@@ -188,7 +188,7 @@ namespace Sandbox3D
 					if (pStartAttr->type == pEndAttr->type)
 					{
 						Ref<Link> pL = CreateRef<Link>();
-						pL->id = s_Ids++;
+						pL->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
 						if (auto* p = dynamic_cast<InputAttribute*>(pStartAttr))
 						{
@@ -265,16 +265,16 @@ namespace Sandbox3D
 				if (ImGui::IsItemClicked())
 				{
 					Ref<Node> n = key.second();
-					n->id = s_Ids++;
+					n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
 					for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
 					{
-						n->inputAttributes[i].id = s_Ids++;
+						n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
 					}
 
 					for (int i = 0; i < n->outputAttributes.size(); i++)
 					{
-						n->outputAttributes[i].id = s_Ids++;
+						n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
 					}
 
 					if (m_CurrentlyOpenGraph)
@@ -367,6 +367,32 @@ namespace Sandbox3D
 
 			ImGui::EndPopup();
 		}
+	}
+
+	void GraphKey::UpdateGraphList()
+	{
+		if (!m_IsOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Graphs");
+
+		for (auto& pEnt : g_pEnv->pEntityManager->GetEntities())
+		{
+			if (pEnt.second)
+			{
+				if (pEnt.second->GetGraphKeyGraph())
+				{
+					if (ImGui::Selectable(pEnt.second->GetName().c_str()))
+					{
+						SetCurrentlyOpenGraph(pEnt.second->GetGraphKeyGraph());
+					}
+				}
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void GraphKey::CreateComponentNodes()
@@ -840,6 +866,24 @@ namespace Sandbox3D
 				}
 
 				ImGui::PopItemWidth();
+				break;
+			} 
+
+			case Lamp::PropertyType::EntityId:
+			{
+				auto id = std::any_cast<int>(prop.data);
+				node->entityId = id;
+				pEntity = g_pEnv->pEntityManager->GetEntityFromId(id);
+				if (pEntity)
+				{
+					ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), pEntity->GetName().c_str());
+				}
+				else
+				{
+					ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Assign an entity!");
+				}
+
+				break;
 			}
 		}
 	}

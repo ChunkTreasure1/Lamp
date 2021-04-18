@@ -24,6 +24,7 @@ namespace Sandbox3D
 		void UpdateNodeList();
 		void UpdatePropertiesWindow();
 		void UpdateRightClickPopup();
+		void UpdateGraphList();
 
 		void CreateComponentNodes();
 		void RemoveNode(uint32_t id);

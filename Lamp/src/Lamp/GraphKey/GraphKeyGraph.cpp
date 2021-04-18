@@ -493,7 +493,7 @@ namespace Lamp
 			}
 			case Lamp::PropertyType::EntityId:
 			{
-				uint32_t data = std::any_cast<uint32_t>(attr.data);
+				int data = std::any_cast<int>(attr.data);
 				char* pEntityId = doc.allocate_string(ToString(data).c_str());
 				pInput->append_attribute(doc.allocate_attribute("data", pEntityId));
 				break;
@@ -583,7 +583,7 @@ namespace Lamp
 			}
 			case Lamp::PropertyType::EntityId:
 			{
-				uint32_t val;
+				int val;
 				GetValue(pRoot->first_attribute("data")->value(), val);
 				attr.data = std::any(val);
 

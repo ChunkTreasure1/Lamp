@@ -98,7 +98,7 @@ namespace Lamp
 				OutputAttributeConfig_Void("Added", PropertyType::Void)
 			};
 
-			name = "Add Component";
+			name = "AddComponent";
 
 			auto& vec = std::any_cast<std::vector<std::pair<std::string, bool>>&>(inputs[2].data);
 			for (auto& key : ComponentRegistry::s_Methods())

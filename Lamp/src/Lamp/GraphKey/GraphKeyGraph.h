@@ -20,7 +20,7 @@ namespace Lamp
 		GraphKeyGraph(const GraphKeyGraphSpecification& spec);
 
 		inline GraphKeyGraphSpecification& GetSpecification() { return m_Specification; }
-		inline uint32_t GetCurrentId() { return m_CurrentId; }
+		inline uint32_t& GetCurrentId() { return m_CurrentId; }
 		inline void SetCurrentId(uint32_t id) { m_CurrentId = id; }
 
 		void AddNode(Ref<Node> node) { m_Specification.nodes.push_back(node); }
