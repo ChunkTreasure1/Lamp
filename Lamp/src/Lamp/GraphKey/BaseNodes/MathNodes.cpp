@@ -151,8 +151,8 @@ namespace Lamp
 		static Ref<Node> Create() { return CreateRef<DivideNode>(); }
 	};
 
-	LP_REGISTER_NODE(AddNode);
-	LP_REGISTER_NODE(SubtractNode);
-	LP_REGISTER_NODE(MultiplyNode);
-	LP_REGISTER_NODE(DivideNode);
+	LP_REGISTER_NODE(AddNode, "Math");
+	LP_REGISTER_NODE(SubtractNode, "Math");
+	LP_REGISTER_NODE(MultiplyNode, "Math");
+	LP_REGISTER_NODE(DivideNode, "Math");
 }

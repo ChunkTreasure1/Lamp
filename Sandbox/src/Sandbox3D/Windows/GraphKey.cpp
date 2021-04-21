@@ -259,30 +259,34 @@ namespace Sandbox3D
 			int i = 0;
 			for (auto& key : Lamp::NodeRegistry::s_Methods())
 			{
-				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-				ImGui::TreeNodeEx((void*)i, nodeFlags, key.first.c_str());
-				if (ImGui::IsItemClicked() && m_CurrentlyOpenGraph)
+				if (ImGui::TreeNode(Lamp::NodeRegistry::GetCategory(key.first).c_str()))
 				{
-					Ref<Node> n = key.second();
-					n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
+					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-					for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+					ImGui::TreeNodeEx((void*)i, nodeFlags, key.first.c_str());
+					if (ImGui::IsItemClicked() && m_CurrentlyOpenGraph)
 					{
-						n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+						Ref<Node> n = key.second();
+						n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
+
+						for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+						{
+							n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+						}
+
+						for (int i = 0; i < n->outputAttributes.size(); i++)
+						{
+							n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+						}
+
+						if (m_CurrentlyOpenGraph)
+						{
+							m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
+						}
 					}
 
-					for (int i = 0; i < n->outputAttributes.size(); i++)
-					{
-						n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
-					}
-
-					if (m_CurrentlyOpenGraph)
-					{
-						m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
-					}
+					ImGui::TreePop();
 				}
-
 				i++;
 			}
 

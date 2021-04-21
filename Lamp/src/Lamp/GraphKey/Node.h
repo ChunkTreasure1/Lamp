@@ -21,15 +21,17 @@ namespace Lamp
 		PropertyType type;
 		std::vector<Ref<Link>> pLinks;
 		std::any data;
+		bool linkable = true;
 	};
 
 	struct InputAttribute : public Attribute
 	{
 		using Func = std::function<void()>;
 
-		InputAttribute(const std::string& n)
+		InputAttribute(const std::string& n, bool linkable)
 		{
 			name = n;
+			linkable = linkable;
 		}
 
 		Func function = NULL;
@@ -37,9 +39,10 @@ namespace Lamp
 
 	struct OutputAttribute : public Attribute
 	{
-		OutputAttribute(const std::string& n)
+		OutputAttribute(const std::string& n, bool linkable)
 		{
 			name = n;
+			linkable = linkable;
 		}
 	};
 
@@ -64,9 +67,9 @@ namespace Lamp
 
 	public:
 		template<typename T>
-		InputAttribute InputAttributeConfig(const std::string& name, PropertyType type)
+		InputAttribute InputAttributeConfig(const std::string& name, PropertyType type, bool linkable = true)
 		{
-			InputAttribute attr(name);
+			InputAttribute attr(name, linkable);
 			attr.data = T();
 			attr.type = type;
 
@@ -74,9 +77,9 @@ namespace Lamp
 		}
 
 		template<typename T>
-		InputAttribute InputAttributeConfig(const std::string& name, PropertyType type, InputAttribute::Func f)
+		InputAttribute InputAttributeConfig(const std::string& name, PropertyType type, InputAttribute::Func f, bool linkable = true)
 		{
-			InputAttribute attr(name);
+			InputAttribute attr(name, linkable);
 			attr.data = T();
 			attr.type = type;
 			attr.function = f;
@@ -84,17 +87,17 @@ namespace Lamp
 			return attr;
 		}
 
-		InputAttribute InputAttributeConfig_Void(const std::string& name, PropertyType type)
+		InputAttribute InputAttributeConfig_Void(const std::string& name, PropertyType type, bool linkable = true)
 		{
-			InputAttribute attr(name);
+			InputAttribute attr(name, linkable);
 			attr.type = type;
 
 			return attr;
 		}
 
-		InputAttribute InputAttributeConfig_Void(const std::string& name, PropertyType type, InputAttribute::Func f)
+		InputAttribute InputAttributeConfig_Void(const std::string& name, PropertyType type, InputAttribute::Func f, bool linkable = true)
 		{
-			InputAttribute attr(name);
+			InputAttribute attr(name, linkable);
 			attr.type = type;
 			attr.function = f;
 
@@ -102,18 +105,18 @@ namespace Lamp
 		}
 
 		template<typename T>
-		OutputAttribute OutputAttributeConfig(const std::string& name, PropertyType type)
+		OutputAttribute OutputAttributeConfig(const std::string& name, PropertyType type, bool linkable = true)
 		{
-			OutputAttribute attr(name);
+			OutputAttribute attr(name, linkable);
 			attr.type = type;
 			attr.data = T();
 
 			return attr;
 		}
 
-		OutputAttribute OutputAttributeConfig_Void(const std::string& name, PropertyType type)
+		OutputAttribute OutputAttributeConfig_Void(const std::string& name, PropertyType type, bool linkable = true)
 		{
-			OutputAttribute attr(name);
+			OutputAttribute attr(name, linkable);
 			attr.type = type;
 
 			return attr;

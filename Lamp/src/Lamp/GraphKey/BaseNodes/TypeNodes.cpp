@@ -80,8 +80,42 @@ namespace Lamp
 		static Ref<Node> Create() { return CreateRef<Float3Node>(); }
 	};
 
-	LP_REGISTER_NODE(IntNode);
-	LP_REGISTER_NODE(FloatNode);
-	LP_REGISTER_NODE(Float2Node);
-	LP_REGISTER_NODE(Float3Node);
+	class BuildFloat2Node : public Node 
+	{
+	public:
+		BuildFloat2Node()
+		{
+			std::vector<InputAttribute> inputs =
+			{
+				InputAttributeConfig_Void("Build", PropertyType::Void, LP_BIND_NODE_FUNCTION(BuildFloat2Node::Build)),
+				InputAttributeConfig<float>("X", PropertyType::Float),
+				InputAttributeConfig<float>("Y", PropertyType::Float)
+			};
+
+			std::vector<OutputAttribute> outputs =
+			{
+				OutputAttributeConfig<glm::vec2>("Output", PropertyType::Float2)
+			};
+
+			name = "BuildFloat2";
+			inputAttributes = inputs;
+			outputAttributes = outputs;
+		}
+
+		void Build()
+		{
+			glm::vec2 out = { GetInput<float>(1), GetInput<float>(2) };
+			ActivateOutput(0, out);
+		}
+
+	public:
+		static std::string GetFactoryName() { return "BuildFloat2"; }
+		static Ref<Node> Create() { return CreateRef<BuildFloat2Node>(); }
+	};
+
+	LP_REGISTER_NODE(IntNode, "Types");
+	LP_REGISTER_NODE(FloatNode, "Types");
+	LP_REGISTER_NODE(Float2Node, "Types");
+	LP_REGISTER_NODE(Float3Node, "Types");
+	LP_REGISTER_NODE(BuildFloat2Node, "Utility");
 }

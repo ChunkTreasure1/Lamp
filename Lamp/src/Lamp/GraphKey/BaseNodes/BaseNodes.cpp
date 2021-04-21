@@ -31,5 +31,5 @@ namespace Lamp
 		static Ref<Node> Create() { return CreateRef<StartNode>(); }
 	};
 
-	LP_REGISTER_NODE(StartNode);
+	LP_REGISTER_NODE(StartNode, "Base");
 }

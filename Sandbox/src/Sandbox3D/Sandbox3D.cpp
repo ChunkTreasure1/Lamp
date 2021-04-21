@@ -77,14 +77,17 @@ namespace Sandbox3D
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
-		if (!m_IsPlaying && m_IsPlaying != m_ShouldPlay)
+		if (m_IsPlaying != m_ShouldPlay)
 		{
 			m_IsPlaying = m_ShouldPlay;
-			m_pGame->OnStart();
-
-			for (auto& node : NodeRegistry::s_StartNodes())
+		
+			if (m_IsPlaying)
 			{
-				node->ActivateOutput(0);
+				m_pGame->OnStart();
+				for (auto& node : NodeRegistry::s_StartNodes())
+				{
+					node->ActivateOutput(0);
+				}
 			}
 		}
 
@@ -150,6 +153,7 @@ namespace Sandbox3D
 		if (m_IsPlaying)
 		{
 			m_pGame->OnEvent(e);
+			g_pEnv->pObjectLayerManager->OnEvent(e);
 		}
 
 		for (auto pWindow : m_pWindows)

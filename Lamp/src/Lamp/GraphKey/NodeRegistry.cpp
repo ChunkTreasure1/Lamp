@@ -3,11 +3,12 @@
 
 namespace Lamp
 {
-	bool NodeRegistry::Register(const std::string& name, TCreateMethod func)
+	bool NodeRegistry::Register(const std::string& name, TCreateMethod func, const std::string& category)
 	{
 		if (auto it = s_Methods().find(name); it == s_Methods().end())
 		{
 			s_Methods()[name] = func;
+			s_Categories()[name] = category;
 			return true;
 		}
 
@@ -36,9 +37,20 @@ namespace Lamp
 		}
 	}
 
+	const std::string& NodeRegistry::GetCategory(const std::string& name)
+	{
+		return s_Categories()[name];
+	}
+
 	std::unordered_map<std::string, NodeRegistry::TCreateMethod>& NodeRegistry::s_Methods()
 	{
 		static std::unordered_map<std::string, NodeRegistry::TCreateMethod> impl;
+		return impl;
+	}
+
+	std::unordered_map<std::string, std::string>& NodeRegistry::s_Categories()
+	{
+		static std::unordered_map<std::string, std::string> impl;
 		return impl;
 	}
 

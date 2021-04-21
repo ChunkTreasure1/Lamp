@@ -414,12 +414,13 @@ namespace Lamp
 						{
 							link->pInput = &attr;
 							link->pInput->pLinks.push_back(link);
-							if (link->pOutput)
-							{
-								link->pInput->data = attr.data;
-							}
 							break;
 						}
+					}
+
+					if (link->pInput && link->pOutput)
+					{
+						link->pInput->data = link->pOutput->data;
 					}
 				}
 

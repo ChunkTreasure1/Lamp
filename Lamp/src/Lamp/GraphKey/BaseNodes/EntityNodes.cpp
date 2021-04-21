@@ -90,7 +90,7 @@ namespace Lamp
 			{
 				InputAttributeConfig<int>("EntityId", PropertyType::EntityId),
 				InputAttributeConfig_Void("Add", PropertyType::Void, LP_BIND_NODE_FUNCTION(AddComponentNode::AddComponent)),
-				InputAttributeConfig<std::vector<std::pair<std::string, bool>>>("Component", PropertyType::Selectable)
+				InputAttributeConfig<std::vector<std::pair<std::string, bool>>>("Component", PropertyType::Selectable, false)
 			};
 
 			std::vector<OutputAttribute> outputs =
@@ -142,7 +142,7 @@ namespace Lamp
 		static Ref<Node> Create() { return CreateRef<AddComponentNode>(); }
 	};
 
-	LP_REGISTER_NODE(CreateEntityNode);
-	LP_REGISTER_NODE(EntityNode);
-	LP_REGISTER_NODE(AddComponentNode);
+	LP_REGISTER_NODE(CreateEntityNode, "Entity");
+	LP_REGISTER_NODE(EntityNode, "Entity");
+	LP_REGISTER_NODE(AddComponentNode, "Entity");
 }
