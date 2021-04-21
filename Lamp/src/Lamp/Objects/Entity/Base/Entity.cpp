@@ -6,6 +6,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 #include <glm/ext/matrix_transform.hpp>
+#include "Lamp/GraphKey/GraphKeyGraph.h"
 
 namespace Lamp
 {
@@ -22,6 +23,11 @@ namespace Lamp
 			{
 				it->get()->OnEvent(e);
 			}
+		}
+
+		if (m_GraphKeyGraph)
+		{
+			m_GraphKeyGraph->OnEvent(e);
 		}
 
 		EventDispatcher dispatcher(e);

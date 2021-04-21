@@ -211,8 +211,8 @@ namespace Sandbox3D
 						pStartNode->pLinks.push_back(pL);
 						pEndNode->pLinks.push_back(pL);
 
-						pStartAttr->pLink = pL;
-						pEndAttr->pLink = pL;
+						pStartAttr->pLinks.push_back(pL);
+						pEndAttr->pLinks.push_back(pL);
 
 						m_CurrentlyOpenGraph->GetSpecification().links.push_back(pL);
 					}
@@ -262,7 +262,7 @@ namespace Sandbox3D
 				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 				ImGui::TreeNodeEx((void*)i, nodeFlags, key.first.c_str());
-				if (ImGui::IsItemClicked())
+				if (ImGui::IsItemClicked() && m_CurrentlyOpenGraph)
 				{
 					Ref<Node> n = key.second();
 					n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
@@ -528,7 +528,7 @@ namespace Sandbox3D
 			{
 				int& p = std::any_cast<int&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					int v = p;
 
@@ -558,7 +558,7 @@ namespace Sandbox3D
 			{
 				bool& p = std::any_cast<bool&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					bool v = p;
 
@@ -588,7 +588,7 @@ namespace Sandbox3D
 			{
 				float& p = std::any_cast<float&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					float v = p;
 
@@ -617,7 +617,7 @@ namespace Sandbox3D
 			{
 				glm::vec2& p = std::any_cast<glm::vec2&>(prop.data);
 
-				if (attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					glm::vec2 v = p;
 					ImGui::DragFloat2(prop.name.c_str(), glm::value_ptr(v));
@@ -646,7 +646,7 @@ namespace Sandbox3D
 			{
 				glm::vec3& p = std::any_cast<glm::vec3&>(prop.data);
 
-				if (!attr.pLink)
+				if (!attr.pLinks.size() == 0)
 				{
 					glm::vec3 v = p;
 
@@ -676,7 +676,7 @@ namespace Sandbox3D
 			{
 				glm::vec4& p = std::any_cast<glm::vec4&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					glm::vec4 v = p;
 
@@ -705,7 +705,7 @@ namespace Sandbox3D
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					std::string v = s;
 
@@ -734,7 +734,7 @@ namespace Sandbox3D
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					std::string v = s;
 
@@ -773,7 +773,7 @@ namespace Sandbox3D
 			{
 				glm::vec3& p = std::any_cast<glm::vec3&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					glm::vec3 v = p;
 
@@ -802,7 +802,7 @@ namespace Sandbox3D
 			{
 				glm::vec4& p = std::any_cast<glm::vec4&>(prop.data);
 
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					glm::vec4 v = p;
 
@@ -906,9 +906,12 @@ namespace Sandbox3D
 				{
 					p = v;
 
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -931,9 +934,12 @@ namespace Sandbox3D
 				{
 					p = v;
 
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -956,9 +962,12 @@ namespace Sandbox3D
 				{
 					p = v;
 
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -980,9 +989,12 @@ namespace Sandbox3D
 				{
 					p = v;
 
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -1004,9 +1016,12 @@ namespace Sandbox3D
 				{
 					p = v;
 
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -1027,9 +1042,12 @@ namespace Sandbox3D
 				if (v != p)
 				{
 					p = v;
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -1050,9 +1068,12 @@ namespace Sandbox3D
 				if (v != s)
 				{
 					s = v;
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = s;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -1083,9 +1104,12 @@ namespace Sandbox3D
 				if (v != s)
 				{
 					s = v;
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = s;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -1106,9 +1130,12 @@ namespace Sandbox3D
 				if (v != p)
 				{
 					p = v;
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)
@@ -1129,9 +1156,12 @@ namespace Sandbox3D
 				if (v != p)
 				{
 					p = v;
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						attr.pLink->pInput->data = p;
+						for (auto& link : attr.pLinks)
+						{
+							link->pInput->data = attr.data;
+						}
 					}
 
 					if (pEntity)

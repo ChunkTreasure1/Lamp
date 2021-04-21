@@ -163,17 +163,23 @@ namespace Lamp
 			{
 				for (auto& attr : node->inputAttributes)
 				{
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						RemoveLink(attr.pLink->id);
+						for (auto& link : attr.pLinks)
+						{
+							RemoveLink(link->id);
+						}
 					}
 				}
 
 				for (auto& attr : node->outputAttributes)
 				{
-					if (attr.pLink)
+					if (attr.pLinks.size() > 0)
 					{
-						RemoveLink(attr.pLink->id);
+						for (auto& link : attr.pLinks)
+						{
+							RemoveLink(link->id);
+						}
 					}
 				}
 
@@ -191,29 +197,41 @@ namespace Lamp
 		{
 			for (auto& attr : node->inputAttributes)
 			{
-				if (!attr.pLink)
+				if (attr.pLinks.size() == 0)
 				{
 					continue;
 				}
 
-				if (attr.pLink->id == id)
+				for (auto& link : attr.pLinks)
 				{
-					attr.pLink = nullptr;
-					break;
+					if (link->id == id)
+					{
+						if (auto it = std::find(attr.pLinks.begin(), attr.pLinks.end(), link); it != attr.pLinks.end())
+						{
+							attr.pLinks.erase(it);
+						}
+						break;
+					}
 				}
 			}
 
 			for (auto& attr : node->outputAttributes)
 			{
-				if (!attr.pLink)
+				if (!attr.pLinks.size() == 0)
 				{
 					continue;
 				}
 
-				if (attr.pLink->id == id)
+				for (auto& link : attr.pLinks)
 				{
-					attr.pLink = nullptr;
-					break;
+					if (link->id == id)
+					{
+						if (auto it = std::find(attr.pLinks.begin(), attr.pLinks.end(), link); it != attr.pLinks.end())
+						{
+							attr.pLinks.erase(it);
+						}
+						break;
+					}
 				}
 			}
 		}
@@ -224,6 +242,14 @@ namespace Lamp
 		};
 
 		m_Specification.links.erase(std::remove_if(m_Specification.links.begin(), m_Specification.links.end(), func), m_Specification.links.end());
+	}
+
+	void GraphKeyGraph::OnEvent(Event& e)
+	{
+		for (auto& node : m_Specification.nodes)
+		{
+			node->OnEvent(e);
+		}
 	}
 
 	void GraphKeyGraph::Save(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot, rapidxml::xml_document<>& doc)
@@ -323,6 +349,7 @@ namespace Lamp
 									graph->SetCurrentId(attr.id + 1);
 								}
 								LoadAttribute(attr, pAttr, name);
+
 							}
 						}
 					}
@@ -371,20 +398,26 @@ namespace Lamp
 
 				for (auto& n : graph->m_Specification.nodes)
 				{
-					for (auto& attr : n->inputAttributes)
-					{
-						if (to == attr.id)
-						{
-							link->pInput = &attr;
-							break;
-						}
-					}
-
 					for (auto& attr : n->outputAttributes)
 					{
 						if (from == attr.id)
 						{
 							link->pOutput = &attr;
+							link->pOutput->pLinks.push_back(link);
+							break;
+						}
+					}
+
+					for (auto& attr : n->inputAttributes)
+					{
+						if (to == attr.id)
+						{
+							link->pInput = &attr;
+							link->pInput->pLinks.push_back(link);
+							if (link->pOutput)
+							{
+								link->pInput->data = attr.data;
+							}
 							break;
 						}
 					}

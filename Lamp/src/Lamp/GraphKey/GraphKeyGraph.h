@@ -29,6 +29,8 @@ namespace Lamp
 		void RemoveNode(uint32_t id);
 		void RemoveLink(uint32_t id);
 
+		void OnEvent(Event& e);
+
 	public:
 		static void Save(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot, rapidxml::xml_document<>& doc);
 		static void Load(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot);

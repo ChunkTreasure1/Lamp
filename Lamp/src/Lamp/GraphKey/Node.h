@@ -19,7 +19,7 @@ namespace Lamp
 		std::string name;
 		uint32_t id;
 		PropertyType type;
-		Ref<Link> pLink = nullptr;
+		std::vector<Ref<Link>> pLinks;
 		std::any data;
 	};
 
@@ -58,6 +58,9 @@ namespace Lamp
 			inputAttributes = node->inputAttributes;
 			outputAttributes = node->outputAttributes;
 		}
+
+	public:
+		virtual void OnEvent(Event& e) {}
 
 	public:
 		template<typename T>
@@ -119,23 +122,29 @@ namespace Lamp
 		template<typename T>
 		void ActivateOutput(uint32_t index, T data)
 		{
-			if (outputAttributes[index].pLink)
+			if (outputAttributes[index].pLinks.size() > 0)
 			{
-				outputAttributes[index].pLink->pInput->data = data;
-				if (outputAttributes[index].pLink->pInput->function != NULL)
+				for (auto& link : outputAttributes[index].pLinks)
 				{
-					outputAttributes[index].pLink->pInput->function();
+					link->pInput->data = data;
+					if (link->pInput->function != NULL)
+					{
+						link->pInput->function();
+					}
 				}
 			}
 		}
 
 		void ActivateOutput(uint32_t index)
 		{
-			if (outputAttributes[index].pLink)
+			if (outputAttributes[index].pLinks.size() > 0)
 			{
-				if (outputAttributes[index].pLink->pInput->function != NULL)
+				for (auto& link : outputAttributes[index].pLinks)
 				{
-					outputAttributes[index].pLink->pInput->function();
+					if (link->pInput->function != NULL)
+					{
+						link->pInput->function();
+					}
 				}
 			}
 		}
