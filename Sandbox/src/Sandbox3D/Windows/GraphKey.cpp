@@ -256,38 +256,49 @@ namespace Sandbox3D
 		ImGui::Begin("Nodes");
 		if (ImGui::TreeNode("Nodes"))
 		{
-			int i = 0;
+			std::unordered_map<std::string, std::vector<std::pair<std::string, Lamp::NodeRegistry::TCreateMethod>>> sorted;
+
 			for (auto& key : Lamp::NodeRegistry::s_Methods())
 			{
-				if (ImGui::TreeNode(Lamp::NodeRegistry::GetCategory(key.first).c_str()))
+				sorted[Lamp::NodeRegistry::GetCategory(key.first)].push_back(key);
+			}
+
+			int i = 0;
+			for (auto& key : sorted)
+			{
+				if (ImGui::TreeNode(key.first.c_str()))
 				{
-					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-					ImGui::TreeNodeEx((void*)i, nodeFlags, key.first.c_str());
-					if (ImGui::IsItemClicked() && m_CurrentlyOpenGraph)
+					for (auto& p : key.second)
 					{
-						Ref<Node> n = key.second();
-						n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
+						ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-						for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+						ImGui::TreeNodeEx((void*)i, nodeFlags, p.first.c_str());
+						if (ImGui::IsItemClicked() && m_CurrentlyOpenGraph)
 						{
-							n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+							Ref<Node> n = p.second();
+							n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
+
+							for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+							{
+								n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+							}
+
+							for (int i = 0; i < n->outputAttributes.size(); i++)
+							{
+								n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+							}
+
+							if (m_CurrentlyOpenGraph)
+							{
+								m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
+							}
 						}
 
-						for (int i = 0; i < n->outputAttributes.size(); i++)
-						{
-							n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
-						}
-
-						if (m_CurrentlyOpenGraph)
-						{
-							m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
-						}
+						i++;
 					}
-
 					ImGui::TreePop();
+
 				}
-				i++;
 			}
 
 			//for (auto& node : m_ComponentNodes)

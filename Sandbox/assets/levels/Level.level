@@ -5,34 +5,31 @@
 		<Entity name="Entity0" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
 			<Graph name="Entity0">
 				<Nodes>
-					<Node name="KeyPressed" id="0" position="207.000000,215.000000">
-						<Attribute id="1" attrType="input" name="Key" type="int" data="89"/>
-						<Attribute id="2" attrType="output" name="Pressed" type="void" data=""/>
+					<Node name="Float3" id="0" position="243.000000,385.000000">
+						<Attribute id="1" attrType="output" name="Value" type="float3" data="3.000000,4.000000,0.000000"/>
 					</Node>
-					<Node name="Multiply" id="3" position="407.000000,189.000000">
-						<Attribute id="4" attrType="input" name="Multiply" type="void" data=""/>
-						<Attribute id="5" attrType="input" name="A" type="float" data="642.000000"/>
-						<Attribute id="6" attrType="input" name="B" type="float" data="572.000000"/>
-						<Attribute id="7" attrType="output" name="Done" type="void" data=""/>
-						<Attribute id="8" attrType="output" name="Result" type="float" data="0.000000"/>
+					<Node name="CreateEntity" id="2" position="322.000000,183.000000">
+						<Attribute id="3" attrType="input" name="Create" type="void" data=""/>
+						<Attribute id="4" attrType="input" name="Position" type="float3" data="3.000000,4.000000,0.000000"/>
+						<Attribute id="5" attrType="output" name="Id" type="entityid" data="0"/>
+						<Attribute id="6" attrType="output" name="Created" type="void" data=""/>
 					</Node>
-					<Node name="Add" id="9" position="694.000000,304.000000">
-						<Attribute id="10" attrType="input" name="Add" type="void" data=""/>
-						<Attribute id="11" attrType="input" name="A" type="float" data="464330.000000"/>
-						<Attribute id="12" attrType="input" name="B" type="float" data="0.000000"/>
-						<Attribute id="13" attrType="output" name="Done" type="void" data=""/>
-						<Attribute id="14" attrType="output" name="Result" type="float" data="0.000000"/>
+					<Node name="AddComponent" id="7" position="576.000000,149.000000">
+						<Attribute id="8" attrType="input" name="EntityId" type="entityid" data="0"/>
+						<Attribute id="9" attrType="input" name="Add" type="void" data=""/>
+						<Attribute id="10" attrType="input" name="Component" type="selectable" data=""/>
+						<Attribute id="11" attrType="output" name="Added" type="void" data=""/>
 					</Node>
-					<Node name="MouseMoved" id="17" position="203.000000,330.000000">
-						<Attribute id="18" attrType="output" name="X" type="float" data="0.000000"/>
-						<Attribute id="19" attrType="output" name="Y" type="float" data="0.000000"/>
+					<Node name="KeyPressed" id="15" position="101.000000,76.000000">
+						<Attribute id="16" attrType="input" name="Key" type="int" data="89"/>
+						<Attribute id="17" attrType="output" name="Pressed" type="void" data=""/>
 					</Node>
 				</Nodes>
 				<Links>
-					<Link id="15" from="8" to="11"/>
-					<Link id="16" from="2" to="4"/>
-					<Link id="20" from="18" to="5"/>
-					<Link id="21" from="19" to="6"/>
+					<Link id="12" from="5" to="8"/>
+					<Link id="13" from="6" to="9"/>
+					<Link id="14" from="1" to="4"/>
+					<Link id="18" from="17" to="3"/>
 				</Links>
 			</Graph>
 		</Entity>
