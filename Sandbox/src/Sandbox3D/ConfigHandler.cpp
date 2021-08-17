@@ -67,9 +67,6 @@ namespace Sandbox3D
 		char* pPers = doc.allocate_string(ToString(m_PerspectiveOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("Perspective", pPers));
 
-		char* pAssetB = doc.allocate_string(ToString(m_AssetBrowserOpen).c_str());
-		pWindowsOpen->append_attribute(doc.allocate_attribute("AssetBrowser", pAssetB));
-
 		char* pProps = doc.allocate_string(ToString(m_InspectiorOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("Inspector", pProps));
 
@@ -124,7 +121,6 @@ namespace Sandbox3D
 		if (xml_node<>* pWindowsOpen = pRootNode->first_node("WindowsOpen"))
 		{
 			GetValue(pWindowsOpen->first_attribute("Perspective")->value(), m_PerspectiveOpen);
-			GetValue(pWindowsOpen->first_attribute("AssetBrowser")->value(), m_AssetBrowserOpen);
 			GetValue(pWindowsOpen->first_attribute("Inspector")->value(), m_InspectiorOpen);
 			GetValue(pWindowsOpen->first_attribute("LayerView")->value(), m_LayerViewOpen);
 			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_CreateToolOpen);

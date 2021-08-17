@@ -43,6 +43,6 @@ namespace Sandbox3D
 
 	void Sandbox3D::Redo()
 	{
-	
+		m_ActionHandler.Redo();
 	}
 }

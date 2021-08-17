@@ -1580,6 +1580,9 @@
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp">
       <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\InputNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp">
       <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
     </ClCompile>
@@ -1781,6 +1784,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\InputNodes.cpp" />
   </ItemGroup>
 </Project>

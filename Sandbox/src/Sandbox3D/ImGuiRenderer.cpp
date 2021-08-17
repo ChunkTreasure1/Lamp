@@ -120,47 +120,12 @@ namespace Sandbox3D
 				action.data = m_pSelectedObject->GetModelMatrix();
 				action.pObject = m_pSelectedObject;
 
-
+				m_ActionHandler.AddAction(action);
 			}
 		}
 
 		ImGui::End();
 		ImGui::PopStyleVar();
-	}
-
-	void Sandbox3D::UpdateAssetBrowser()
-	{
-		if (!m_AssetBrowserOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Asset Browser", &m_AssetBrowserOpen);
-		{
-			//Asset browser
-			{
-				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
-
-					Lamp::FileSystem::PrintFoldersAndFiles(folders);
-				}
-				ImGui::EndChild();
-
-				ImGui::SameLine();
-				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					if (m_SelectedFile.GetFileType() == Lamp::FileType::Texture)
-					{
-						Ref<Lamp::Texture2D> selected;
-						selected = Lamp::Texture2D::Create(m_SelectedFile.GetPath());
-						ImGui::Image((void*)(uint64_t)selected->GetID(), ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
-					}
-				}
-				ImGui::EndChild();
-			}
-		}
-		ImGui::End();
 	}
 
 	void Sandbox3D::UpdateProperties()
@@ -473,10 +438,10 @@ namespace Sandbox3D
 
 			if (ImGui::Button("Create"))
 			{
-				if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
+				/*if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
 				{
 					m_pSelectedObject = Lamp::Brush::Create(m_SelectedFile.GetPath());
-				}
+				}*/
 			}
 
 			if (ImGui::BeginChild("Brushes"))
@@ -888,7 +853,6 @@ namespace Sandbox3D
 			if (ImGui::BeginMenu("Tools"))
 			{
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
-				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
 				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);

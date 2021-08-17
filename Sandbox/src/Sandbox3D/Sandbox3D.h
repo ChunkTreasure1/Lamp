@@ -14,6 +14,7 @@
 
 #include "Actions/ActionHandler.h"
 #include "Windows/BufferWindow.h"
+#include "Windows\AssetManagerPanel.h"
 
 #include <Game/Game.h>
 
@@ -95,9 +96,7 @@ namespace Sandbox3D
 		ActionHandler m_ActionHandler;
 
 		//Asset browser
-		Lamp::File m_SelectedFile;
-		int m_CurrSample = -1;
-		bool m_AssetBrowserOpen = true;
+		AssetManagerPanel m_assetManager;
 
 		//Inspector
 		bool m_MousePressed = false;

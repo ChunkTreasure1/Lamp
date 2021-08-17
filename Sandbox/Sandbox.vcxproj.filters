@@ -63,6 +63,9 @@
     <ClInclude Include="src\Sandbox3D\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Windows\AssetManagerPanel.h">
+      <Filter>src\Sandbox3D\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox3D\Windows\BaseWindow.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp">
       <Filter>src\Sandbox3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox3D\Windows\AssetManagerPanel.cpp">
+      <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox3D\Windows\GraphKey.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>

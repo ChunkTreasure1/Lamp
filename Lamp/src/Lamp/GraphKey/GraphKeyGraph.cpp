@@ -101,7 +101,7 @@ namespace Lamp
 	{
 		if (val)
 		{
-			var = (float)atof(val);
+			var = (float)atof(val);	
 			return true;
 		}
 		return false;

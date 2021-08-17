@@ -28,7 +28,7 @@ namespace Sandbox3D
 	using namespace Lamp;
 
 	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr)
+		: Layer("Sandbox3D"), m_DockspaceID(0), m_pShader(nullptr)
 	{
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
@@ -133,11 +133,11 @@ namespace Sandbox3D
 
 		UpdateProperties();
 		UpdatePerspective();
-		UpdateAssetBrowser();
 		UpdateLayerView();
 		UpdateCreateTool();
 		UpdateLogTool();
 		UpdateLevelSettings();
+		m_assetManager.OnImGuiRender();
 
 		for	(auto& window : m_BufferWindows)
 		{
@@ -184,7 +184,6 @@ namespace Sandbox3D
 
 	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
 	{
-		m_SelectedFile = e.GetFile();
 		return true;
 	}
 
