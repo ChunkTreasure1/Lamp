@@ -16,6 +16,9 @@
 	#endif
 #else
 	#define LP_DEBUGBREAK()
+	#if defined(LP_PLATFORM_WINDOWS)
+		#define GLFW_EXPOSE_NATIVE_WIN32
+	#endif
 #endif // DEBUG
 
 #ifdef LP_ENABLE_ASSERTS

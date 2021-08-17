@@ -33,7 +33,8 @@ namespace Sandbox3D
 
 		glm::vec2 perspectivePos;
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0.f, 0.f });
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
@@ -54,6 +55,23 @@ namespace Sandbox3D
 
 			uint32_t textureID = m_SecondaryBuffer->GetColorAttachmentID(0);
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)pPayload->Data;
+					OpenLevel(std::filesystem::path("assets") / path);
+				}
+
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("BRUSH_ITEM"))
+				{
+					const char* path = (const char*)pPayload->Data;
+					m_pSelectedObject = Lamp::Brush::Create(path);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
 			ImGui::SetCursorPos(ImVec2(20, 40));
@@ -125,7 +143,7 @@ namespace Sandbox3D
 		}
 
 		ImGui::End();
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
 	}
 
 	void Sandbox3D::UpdateProperties()
@@ -438,11 +456,11 @@ namespace Sandbox3D
 
 			if (ImGui::Button("Create"))
 			{
-				/*if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
+
+			}	/*if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
 				{
 					m_pSelectedObject = Lamp::Brush::Create(m_SelectedFile.GetPath());
 				}*/
-			}
 
 			if (ImGui::BeginChild("Brushes"))
 			{

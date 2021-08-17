@@ -19,8 +19,13 @@ namespace Sandbox3D
 		std::string filepath = Lamp::FileDialogs::OpenFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
-			Lamp::LevelSystem::LoadLevel(filepath);
+			OpenLevel(filepath);
 		}
+	}
+
+	void Sandbox3D::OpenLevel(const std::filesystem::path& path)
+	{
+		Lamp::LevelSystem::LoadLevel(path.string());
 		m_pSelectedObject = nullptr;
 	}
 

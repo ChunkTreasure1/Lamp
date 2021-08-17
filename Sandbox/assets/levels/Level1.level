@@ -1,8 +1,0 @@
-<Level name="Level1">
-	<Brushes>
-		<Brush position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" texture="engine\textures\GroundTiles\tile000.png" shouldCollide="1"/>
-		<Brush position="1.000000,1.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" texture="engine\textures\GroundTiles\tile003.png" shouldCollide="1"/>
-	</Brushes>
-	<Entities/>
-</Level>
-

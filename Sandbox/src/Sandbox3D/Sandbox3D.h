@@ -62,6 +62,7 @@ namespace Sandbox3D
 		//Shortcuts
 		void SaveLevelAs();
 		void OpenLevel();
+		void OpenLevel(const std::filesystem::path& path);
 		void NewLevel();
 		void Undo();
 		void Redo();
