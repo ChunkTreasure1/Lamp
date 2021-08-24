@@ -38,7 +38,7 @@ namespace Sandbox3D
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused();
+			m_PerspectiveHover = ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();

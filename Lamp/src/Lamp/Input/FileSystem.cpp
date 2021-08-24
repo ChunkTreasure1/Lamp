@@ -265,7 +265,7 @@ namespace Lamp
 				if (ImGui::BeginDragDropSource())
 				{
 					const char* path = files[j].c_str();
-					ImGui::SetDragDropPayload("BRUSH_ITEM", path, sizeof(char) * files[j].length(), ImGuiCond_Once);
+					ImGui::SetDragDropPayload("BRUSH_ITEM", path, sizeof(char) * (files[j].length() + 1), ImGuiCond_Once);
 					ImGui::EndDragDropSource();
 				}
 				if (ImGui::IsItemClicked())

@@ -232,11 +232,11 @@ void main()
 
 	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
 
-	for(int i = 0; i < u_LightCount; ++i)
-	{
-		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
-	}
-	
+	//for(int i = 0; i < u_LightCount; ++i)
+	//{
+	//	Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
+	//}
+
 	vec3 R = reflect(-V, N);
 	
 	const float maxReflectionLOD = 4.0;
@@ -251,15 +251,15 @@ void main()
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
 	vec3 ambient = (kD * diffuse + specular) * ao;
-	//vec3 ambient = vec3(0.04) * albedo;
 
 	vec3 color = ambient + Lo;
 
 	//HDR tonemapping
 	color = color / (color + vec3(1.0));
 
-	//Gamma correction
+	////Gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
+
 	FragColor = vec4(color, 1.0);
 
 	Color2 = u_ObjectId; //ObjectId;

@@ -5,6 +5,7 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 
 namespace Sandbox3D
 {
@@ -14,6 +15,7 @@ namespace Sandbox3D
 		: BaseWindow(name)
 	{
 		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
+		m_Camera->SetPosition({ 0.f, 0.f, 3.f });
 		m_RenderFuncs.push_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 
 		{
@@ -32,6 +34,8 @@ namespace Sandbox3D
 
 		m_MaterialModel = CreateRef<Model>();
 		g_pEnv->pAssetManager->LoadModel("assets/models/sphere.lgf", m_MaterialModel.get());
+
+		m_MaterialModel->SetModelMatrix(glm::mat4(1.f));
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)
@@ -75,8 +79,23 @@ namespace Sandbox3D
 
 	void MaterialEditor::UpdateMaterialView()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Material View");
+
+		ImVec2 panelSize = ImGui::GetContentRegionAvail();
+		if (m_perspectiveSize != *((glm::vec2*)&panelSize))
+		{
+			m_Framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+			m_perspectiveSize = { panelSize.x, panelSize.y };
+
+			m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+		}
+
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
+		ImGui::Image((ImTextureID)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
 		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void MaterialEditor::UpdateProperties()
@@ -85,13 +104,41 @@ namespace Sandbox3D
 
 		if (m_pSelectedMaterial)
 		{
-			ImGui::Text(m_pSelectedMaterial->GetName().c_str());
+			ImGui::InputText("Name", &m_pSelectedMaterial->GetName());
+
+			/////Shaders//////
+			static std::vector<const char*> shaders;
+			static int selectedShader = 0;
+			if (shaders.empty())
+			{
+				for (auto& shader : Lamp::ShaderLibrary::GetShaders())
+				{
+					shaders.push_back(shader->GetName().c_str());
+				}
+			}
+
+			for (int i = 0; i < shaders.size(); i++)
+			{
+				if (m_pSelectedMaterial->GetShader()->GetName() == shaders[i])
+				{
+					selectedShader = i;
+				}
+			}
+
+			ImGui::Combo("Shader", &selectedShader, shaders.data(), shaders.size());
+			if (m_pSelectedMaterial->GetShader() != Lamp::ShaderLibrary::GetShader(shaders[selectedShader]))
+			{
+				m_pSelectedMaterial->SetShader(Lamp::ShaderLibrary::GetShader(shaders[selectedShader]));
+				for (auto& tex : m_pSelectedMaterial->GetTextures())
+				{
+					tex.second = Texture2D::Create("engine/textures/default/defaultTexture.png");
+				}
+			}
+			/////////////////
 
 			for (auto& tex : m_pSelectedMaterial->GetTextures())
 			{
-				ImGui::InputText(tex.first.c_str(), &tex.second->GetPath());
-				ImGui::SameLine();
-				if (ImGui::Button("Open..."))
+				if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 128, 128 }, { 0, 1 }, { 1,0 }))
 				{
 					std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 					if (!path.empty())
@@ -100,6 +147,8 @@ namespace Sandbox3D
 						tex.second->GetPath() = path;
 					}
 				}
+
+				ImGui::InputText(tex.first.c_str(), &tex.second->GetPath());
 			}
 		}
 

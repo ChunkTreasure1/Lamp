@@ -31,5 +31,7 @@ namespace Sandbox3D
 		Ref<Lamp::Framebuffer> m_Framebuffer;
 		Ref<Lamp::Model> m_MaterialModel;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;
+
+		glm::vec2 m_perspectiveSize = { 0.f, 0.f };
 	};
 }

@@ -125,7 +125,9 @@ namespace Lamp
 			{
 				if (modelJob.pModel)
 				{
+					ModelLoader::LoadFromFile(modelJob.data, modelJob.path);
 					ModelData d = ModelLoader::GenerateMesh(modelJob.data);
+
 					modelJob.pModel->SetData(d);
 				}
 			}
