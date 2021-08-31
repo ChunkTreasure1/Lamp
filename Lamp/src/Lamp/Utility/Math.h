@@ -1,5 +1,7 @@
-#include "lppch.h"
-#include "Matrix.h"
+#pragma once
+
+#include <glm/glm.hpp>
+#include <DirectXMath.h>
 
 namespace Lamp::Math
 {
@@ -43,11 +45,6 @@ namespace Lamp::Math
 		return rotateX(rot.x) * rotateY(rot.y) * rotateZ(rot.z) * scale(s) * translate(pos);
 	}
 
-	void* valuePtr(mat4& mat)
-	{
-		return &mat.r[0];
-	}
-
 #elif LP_OPENGL
 
 	typedef glm::mat4 mat4;
@@ -61,7 +58,7 @@ namespace Lamp::Math
 	{
 		return glm::rotate(glm::mat4(1.f), angle, { 1.f, 0.f, 0.f });
 	}
-
+	
 	glm::mat4 rotateY(float angle)
 	{
 		return glm::rotate(glm::mat4(1.f), angle, { 0.f, 1.f, 0.f });
@@ -85,11 +82,6 @@ namespace Lamp::Math
 	glm::mat4 buildMatrix(const glm::vec3& pos, const glm::vec3& s, const glm::vec3& rot)
 	{
 		return translate(pos) * scale(s) * rotateX(rot.x) * rotateY(rot.y) * rotateZ(rot.z);
-	}
-
-	void* valuePtr(mat4& mat)
-	{
-		return glm::value_ptr(mat);
 	}
 
 #endif

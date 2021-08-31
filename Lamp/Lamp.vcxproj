@@ -171,7 +171,6 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
     <ClInclude Include="src\Lamp\Level\Level.h" />
     <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
-    <ClInclude Include="src\Lamp\Math\Matrix.h" />
     <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h" />
     <ClInclude Include="src\Lamp\Meshes\Material.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
@@ -226,6 +225,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Utility\Math.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h" />
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Context.h" />
@@ -622,7 +622,6 @@
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
-    <ClCompile Include="src\Lamp\Math\Matrix.cpp" />
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
