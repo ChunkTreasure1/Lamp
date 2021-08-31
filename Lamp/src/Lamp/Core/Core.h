@@ -10,7 +10,6 @@
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define LP_DEBUGBREAK() __debugbreak()
 		#define GLFW_EXPOSE_NATIVE_WIN32
-		#define LP_DX11
 	#else
 		#error "Platform does not support debugbreak!"
 	#endif
