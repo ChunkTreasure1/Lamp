@@ -25,6 +25,7 @@
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
+
 	{
 		if (!m_PerspectiveOpen)
 		{

@@ -1,12 +1,18 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\test1.lgf" position="0.000000,2.783653,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\test1.lgf" position="0.435695,0.122819,-5.506701" rotation="0.000000,0.000000,0.000000" scale="10.000000,1.000000,10.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
-	<Entities/>
+	<Entities>
+		<Entity name="Entity1" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+			<Component name="MeshComponent">
+				<Param name="Path" type="Path" value=""/>
+			</Component>
+		</Entity>
+	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="1.884330,5.232008,-1.599626" rotation="482.995575,-35.249390,0.000000" fov="60.000000"/>
+		<CameraValues position="-1.721725,9.572103,-8.992312" rotation="438.745117,-34.649406,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

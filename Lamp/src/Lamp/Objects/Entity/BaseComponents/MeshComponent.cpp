@@ -50,6 +50,10 @@ namespace Lamp
 
 	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
 	{
+		if (m_Model == nullptr)
+		{
+			m_Model = CreateRef<Model>();
+		}
 		g_pEnv->pAssetManager->LoadModel(m_Path, m_Model.get());
 
 		return false;

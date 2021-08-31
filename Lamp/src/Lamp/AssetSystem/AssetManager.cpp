@@ -145,10 +145,6 @@ namespace Lamp
 
 	void AssetManager::LoadModel(const std::string& path, Model* pModel)
 	{
-		if (!pModel)
-		{
-			return;
-		}
 
 		ModelLoadJob job;
 		job.pModel = pModel;
