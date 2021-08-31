@@ -8,6 +8,7 @@
 
 namespace Lamp
 {
+#define LP_CLIENT
 	class Log
 	{
 	public:

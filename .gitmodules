@@ -6,4 +6,4 @@
 	url = https://github.com/gabime/spdlog
 [submodule "Lamp/vendor/imgui"]
 	path = Lamp/vendor/imgui
-	url = https://github.com/TheCherno/imgui
+	url = https://github.com/ChunkTreasure1/imgui

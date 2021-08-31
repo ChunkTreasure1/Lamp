@@ -74,8 +74,4 @@
       <Filter>engine\shaders\2d</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="testShaders\PixelShader.hlsl" />
-    <FxCompile Include="testShaders\VertexShader.hlsl" />
-  </ItemGroup>
 </Project>

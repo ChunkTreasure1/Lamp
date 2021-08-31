@@ -100,19 +100,19 @@ namespace Lamp
 						dVB->SetBlob(shader->GetVertexBlob());
 					}
 				}
-				//glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f)) *
-				//	glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(1.f, 0.f, 0.f)) *
-				//	glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
 
-				//glm::mat4 proj = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+				namespace dx = DirectX;
 
-				//pShader->UploadData(ShaderData
-				//({
-				//	{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(model) },
-				//	{ "u_Projection", ShaderDataType::Mat4, glm::value_ptr(proj) }
-				//}));
+				auto v = 
+					dx::XMMatrixTranslation(0.f, 0.f, 4.f) * dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
 
-				pShader->UploadData(ShaderData({}));
+				auto d = glm::transpose(glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f) * glm::translate(glm::mat4(1.f), { 0.f, 0.f, 4.f }));
+
+				pShader->UploadData(ShaderData
+				({
+					{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(d) },
+				}));
+
 				vertexArray->AddVertexBuffer(vertexBuffer);
 				vertexArray->Bind();
 

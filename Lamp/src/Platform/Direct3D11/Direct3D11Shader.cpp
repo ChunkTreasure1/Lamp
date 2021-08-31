@@ -10,7 +10,7 @@
 #include "Lamp/Core/Application.h"
 #include "Direct3D11DebugLayer.h"
 
-#include <DirectXMath.h>
+#include "Lamp/Math/Matrix.h"
 
 namespace Lamp
 {
@@ -24,6 +24,9 @@ namespace Lamp
 				std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 				std::wstring vertex = converter.from_bytes(m_Paths[0]);
 				std::wstring pixel = converter.from_bytes(m_Paths[1]);
+
+
+
 
 				D3DReadFileToBlob(pixel.c_str(), &m_pBlob);
 				pContext->GetDevice()->CreatePixelShader(m_pBlob->GetBufferPointer(), m_pBlob->GetBufferSize(), nullptr, &m_pPixel);
@@ -53,28 +56,7 @@ namespace Lamp
 		namespace wrl = Microsoft::WRL;
 		namespace dx = DirectX;
 
-		struct Buff
-		{
-			dx::XMMATRIX trans;
-		};
-
 		static float angle = 0.f;
-
-		const Buff b
-		{
-			/*dx::XMMatrixRotationZ(glm::radians(angle))*
-			dx::XMMatrixRotationX(glm::radians(angle))**/
-
-			dx::XMMatrixTranspose( 
-			dx::XMMatrixTranslation(0.f, 0.f, 4.f) *
-			dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f))
-		};
-
-		glm::mat4 m = glm::perspectiveFovLH_ZO(glm::radians(45.f), 1280.f, 720.f, 0.1f, 100.f) * 
-			glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 4.f));
-
-		/*glm::rotate(glm::mat4(1.f), angle, glm::vec3(1.f, 0.f, 0.f))*
-			glm::rotate(glm::mat4(1.f), angle, glm::vec3(0.f, 0.f, 1.f))*/
 
 		angle++;
 
@@ -86,25 +68,25 @@ namespace Lamp
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
 
-		//uint32_t size = 0;
-		//for (auto& uniform : data.Data)
-		//{
-		//	size += uniform.Size;
-		//}
+		uint32_t size = 0;
+		for (auto& uniform : data.Data)
+		{
+			size += uniform.Size;
+		}
 
-		//void* base = malloc(size);
-		//void* ptr = base;
-		//for (auto& uniform : data.Data)
-		//{
-		//	uint32_t s = uniform.Size;
-		//	memmove(ptr, uniform.Data, s);
-		//	ptr = static_cast<char*>(ptr) + s;
-		//}
+		void* base = malloc(size);
+		void* ptr = base;
+		for (auto& uniform : data.Data)
+		{
+			uint32_t s = uniform.Size;
+			memmove(ptr, uniform.Data, s);
+			ptr = static_cast<char*>(ptr) + s;
+		}
 
-		bd.ByteWidth = sizeof(b);
+		bd.ByteWidth = size;
 		bd.StructureByteStride = 0u;
 		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = &b;
+		sd.pSysMem = base;
 
 		if (!pBuf.Get())
 		{
@@ -118,6 +100,5 @@ namespace Lamp
 				}
 			}
 		}
-
 	}
 }

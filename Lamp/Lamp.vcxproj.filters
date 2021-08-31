@@ -31,6 +31,9 @@
     <Filter Include="src\Lamp\Level">
       <UniqueIdentifier>{EDBCBB7B-D98A-AF81-C21E-20A8AE8B8BE6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Math">
+      <UniqueIdentifier>{7F2B061B-EBEB-8151-B426-CBCE20A6C62D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Meshes">
       <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
     </Filter>
@@ -218,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Level\LevelSystem.h">
       <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Math\Matrix.h">
+      <Filter>src\Lamp\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h">
       <Filter>src\Lamp\Meshes</Filter>
@@ -1564,6 +1570,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
       <Filter>src\Lamp\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Math\Matrix.cpp">
+      <Filter>src\Lamp\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
       <Filter>src\Lamp\Meshes</Filter>
