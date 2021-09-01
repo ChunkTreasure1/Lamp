@@ -79,7 +79,7 @@ namespace Lamp
 				({
 					{ ElementType::Float3, "POSITION" },
 					{ ElementType::Float3, "COLOR" }
-					});
+				});
 
 				std::vector<uint32_t> indices =
 				{
@@ -106,7 +106,7 @@ namespace Lamp
 				auto v = 
 					dx::XMMatrixTranslation(0.f, 0.f, 4.f) * dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
 
-				auto d = glm::transpose(glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f) * glm::translate(glm::mat4(1.f), { 0.f, 0.f, 4.f }));
+				auto d = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f) * glm::translate(glm::mat4(1.f), { 0.f, 0.f, 4.f });
 
 				pShader->UploadData(ShaderData
 				({

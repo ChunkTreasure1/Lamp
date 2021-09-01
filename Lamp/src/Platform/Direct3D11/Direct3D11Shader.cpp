@@ -25,14 +25,27 @@ namespace Lamp
 				std::wstring vertex = converter.from_bytes(m_Paths[0]);
 				std::wstring pixel = converter.from_bytes(m_Paths[1]);
 
+				namespace wrl = Microsoft::WRL;
+				wrl::ComPtr<ID3DBlob> byteCode = nullptr;
+				wrl::ComPtr<ID3DBlob> error = nullptr;
 
+				HRESULT hr = D3DCompileFromFile(L"testShaders\\PixelShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &m_pBlob, &error);
+				if (error)
+				{
+					LP_CORE_CRITICAL((char*)error->GetBufferPointer());
+					error->Release();
+				}
 
+				hr = D3DCompileFromFile(L"testShaders\\VertexShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &m_pVertexBlob, &error);
+				if (error)
+				{
+					LP_CORE_CRITICAL((char*)error->GetBufferPointer());
+					error->Release();
+				}
 
-				D3DReadFileToBlob(pixel.c_str(), &m_pBlob);
 				pContext->GetDevice()->CreatePixelShader(m_pBlob->GetBufferPointer(), m_pBlob->GetBufferSize(), nullptr, &m_pPixel);
 				pContext->GetDeviceContext()->PSSetShader(m_pPixel.Get(), nullptr, 0u);
 
-				D3DReadFileToBlob(vertex.c_str(), &m_pVertexBlob);
 				pContext->GetDevice()->CreateVertexShader(m_pVertexBlob->GetBufferPointer(), m_pVertexBlob->GetBufferSize(), nullptr, &m_pVertex);
 				pContext->GetDeviceContext()->VSSetShader(m_pVertex.Get(), nullptr, 0u);
 			}
