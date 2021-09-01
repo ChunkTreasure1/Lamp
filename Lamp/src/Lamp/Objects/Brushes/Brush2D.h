@@ -5,7 +5,6 @@
 #include "Lamp/Rendering/Renderer2D.h"
 
 #include "Lamp/Objects/Object.h"
-#include "Lamp/Physics/Colliders/AABB.h"
 #include "Lamp/Event/ApplicationEvent.h"
 
 namespace Lamp
@@ -17,6 +16,7 @@ namespace Lamp
 
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
+		virtual uint64_t GetEventMask() override { return EventType::AppRender; }
 
 	public:
 		static Brush2D* Create(const std::string& path);

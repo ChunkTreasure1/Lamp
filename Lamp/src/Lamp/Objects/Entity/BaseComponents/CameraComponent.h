@@ -25,6 +25,7 @@ namespace Lamp
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Lamp::Event& someE) override;
+		virtual uint64_t GetEventMask() override { return EventType::AppUpdate; }
 		////////////////
 
 		inline void SetIsMain(bool state) { m_IsMain = state; }
@@ -37,9 +38,6 @@ namespace Lamp
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }
 		static std::string GetFactoryName() { return "CameraComponent"; }
-
-	private:
-		static bool s_Registered;
 
 	private:
 		bool m_IsPerspective = true;

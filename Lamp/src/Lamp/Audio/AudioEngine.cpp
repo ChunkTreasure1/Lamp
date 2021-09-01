@@ -91,7 +91,7 @@ namespace Lamp
 
 	void AudioEngine::LoadBanksFromDefault()
 	{
-		std::vector<std::string> files = FileSystem::GetFiles(std::string(DefaultBankPath));
+		std::vector<std::string> files = FileSystem::GetFiles(std::string(DEFAULT_BANK_PATH));
 		if (files.size() > 0)
 		{
 			for (auto& file : files)
@@ -316,7 +316,6 @@ namespace Lamp
 		curr++;
 
 		g_AudioImplementation->StudioSystem->setNumListeners(curr);
-		g_AudioImplementation->StudioSystem->getNumListeners(&curr);
 
 		return Listener(curr);
 	}

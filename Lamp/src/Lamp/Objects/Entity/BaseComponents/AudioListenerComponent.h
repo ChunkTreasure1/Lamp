@@ -18,6 +18,7 @@ namespace Lamp
 		/////Base/////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
+		virtual uint64_t GetEventMask() { return EventType::EntityPositionChanged; }
 		//////////////
 
 	private:
@@ -27,9 +28,6 @@ namespace Lamp
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<AudioListenerComponent>(); }
 		static std::string GetFactoryName() { return "AudioListenerComponent"; }
-
-	private:
-		static bool s_Registered;
 
 	private:
 		glm::vec3 m_Forward;

@@ -60,7 +60,7 @@ namespace Lamp
 		Renderer2D::Statistics Stats;
 	};
 
-	Ref<FrameBuffer> Renderer2D::m_pFrameBuffer = nullptr;
+	Ref<Framebuffer> Renderer2D::m_pFrameBuffer = nullptr;
 	static Renderer2DStorage* s_pData;
 
 	void Renderer2D::Initialize()
@@ -144,7 +144,7 @@ namespace Lamp
 		s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		int* samplers{ new int[RenderCommand::GetCapabilities().MaxTextureSlots] };
-		for (int i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
+		for (uint32_t i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
 		{
 			samplers[i] = i;
 		}
@@ -158,7 +158,7 @@ namespace Lamp
 		delete[] samplers;
 		////////////////////////
 
-		m_pFrameBuffer = Lamp::FrameBuffer::Create(1280, 720);
+		//m_pFrameBuffer = Lamp::Framebuffer::Create(1280, 720);
 	}
 
 	void Renderer2D::Shutdown()
@@ -170,7 +170,6 @@ namespace Lamp
 
 	void Renderer2D::Begin(const Ref<CameraBase>& camera)
 	{
-		m_pFrameBuffer->Bind();
 		RenderCommand::Clear();
 
 		s_pData->pTextureShader->Bind();
@@ -188,7 +187,6 @@ namespace Lamp
 		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
 
 		Flush();
-		m_pFrameBuffer->Unbind();
 	}
 
 	void Renderer2D::Flush()

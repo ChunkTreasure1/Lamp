@@ -6,6 +6,8 @@
 #include "Lamp/Rendering/Renderer3D.h"
 #include "Lamp/Input/FileSystem.h"
 
+#include "Lamp/Rendering/RenderPass.h"
+
 namespace Lamp
 {
 	class WindowResizeEvent : public Event
@@ -70,17 +72,17 @@ namespace Lamp
 	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent(const RenderPassInfo& passInfo) 
+		AppRenderEvent(const RenderPassSpecification& passInfo) 
 			: m_RenderPassInfo(passInfo)
 		{}
 
-		inline const RenderPassInfo& GetPassInfo() { return m_RenderPassInfo; }
+		inline const RenderPassSpecification& GetPassInfo() { return m_RenderPassInfo; }
 
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 
 	private:
-		RenderPassInfo m_RenderPassInfo;
+		RenderPassSpecification m_RenderPassInfo;
 	};
 
 	class AppLogEvent : public Event
@@ -128,5 +130,22 @@ namespace Lamp
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	private:
 		File m_File;
+	};
+
+	class ImGuiBeginEvent : public Event
+	{
+	public:
+		ImGuiBeginEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "ImGui Begin Frame" << std::endl;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(ImGuiBegin);
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 }

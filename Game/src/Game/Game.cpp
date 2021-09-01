@@ -6,8 +6,10 @@
 
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
 #include <Lamp/Audio/AudioEngine.h>
-#include <Lamp/Objects/Entity/BaseComponents/AudioComponent.h>
 #include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
+#include <Lamp/Meshes/Materials/MaterialLibrary.h>
+
+#include <Lamp.h>
 
 void Game::OnStart()
 {
@@ -22,7 +24,7 @@ void Game::OnStart()
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
 {
-	return true;
+	return false;
 }
 
 void Game::OnEvent(Lamp::Event& e)

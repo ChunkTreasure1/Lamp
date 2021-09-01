@@ -8,10 +8,12 @@
 #include "Lamp/Event/Event.h"
 
 #include <algorithm>
-#include "Physical/PhysicalEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Lamp/Objects/Object.h"
+#include <string>
+
+#include "Lamp/Event/ApplicationEvent.h"
 
 class EntityManager;
 
@@ -22,20 +24,22 @@ namespace Lamp
 	public:
 		Entity()
 		{
-			m_PhysicalEntity = CreateRef<PhysicalEntity>();
-			m_PhysicalEntity->SetCollider(CreateRef<BoundingSphere>(m_Position, 1.f));
 			m_Name = "Entity";
+
+			m_GizmoTexure = Texture2D::Create("engine/gizmos/gizmoEntity.png");
 		}
 		~Entity() {}
 
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
+		virtual uint64_t GetEventMask() override { return EventType::All; }
 
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
 		inline bool GetSaveable() { return m_ShouldBeSaved; }
+		inline uint32_t GetId() { return m_Id; }
 
 		//Getting
-		inline std::vector<Ref<EntityComponent>> GetComponents() const { return m_pComponents; }
+		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
 
 		template<typename T>
 		Ref<T> GetComponent()
@@ -108,11 +112,56 @@ namespace Lamp
 			return false;
 		}
 
+		bool RemoveComponent(Ref<EntityComponent> comp)
+		{
+			auto it = std::find(m_pComponents.begin(), m_pComponents.end(), comp);
+			if (it != m_pComponents.end())
+			{
+				m_pComponents.erase(it);
+
+				if (auto t = m_pComponentMap.find(comp->GetName()); t != m_pComponentMap.end())
+				{
+					m_pComponentMap.erase(t);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		template<typename T>
+		bool RemoveComponent()
+		{
+			for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+			{
+				if (it->get()->GetName() == T::GetFactoryName())
+				{
+					m_pComponents.erase(it);
+
+					if (auto t = m_pComponentMap.find(T::GetFactoryName()); t != m_pComponentMap.end())
+					{
+						m_pComponentMap.erase(t);
+						return true;
+					}
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 	public:
 		static Entity* Create();
 
 	private:
+		bool OnRenderEvent(AppRenderEvent& e);
+
+	private:
 		bool m_ShouldBeSaved = false;
+
+		Ref<Texture2D> m_GizmoTexure = nullptr;
+		Ref<Shader> m_GizmoShader = nullptr;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

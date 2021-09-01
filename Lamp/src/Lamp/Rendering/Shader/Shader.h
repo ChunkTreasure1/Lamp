@@ -23,6 +23,13 @@ namespace Lamp
 		Unknown
 	};
 
+	struct ShaderSpec
+	{
+		std::string Name;
+		int TextureCount;
+		std::vector<std::string> TextureNames;
+	};
+
 	enum class ShaderDataType
 	{
 		Bool,
@@ -88,8 +95,10 @@ namespace Lamp
 		virtual const std::string& GetName() = 0;
 		virtual std::string& GetFragmentPath() = 0;
 		virtual std::string& GetVertexPath() = 0;
+		virtual std::string& GetGeoPath() = 0;
 
 		inline const ShaderType GetType() { return m_Type; }
+		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
 
 	public:
 		static Ref<Shader> Create(std::initializer_list<std::string> paths);
@@ -99,5 +108,6 @@ namespace Lamp
 
 	protected:
 		ShaderType m_Type;
+		ShaderSpec m_Specifications;
 	};
 }

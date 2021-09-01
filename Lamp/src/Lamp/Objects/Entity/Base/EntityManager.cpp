@@ -6,7 +6,17 @@
 
 namespace Lamp
 {
-	Ref<EntityManager> EntityManager::s_CurrentManager;
+	EntityManager* EntityManager::s_CurrentManager = nullptr;
+
+	EntityManager::EntityManager()
+	{
+		s_CurrentManager = this;
+	}
+
+	EntityManager::~EntityManager()
+	{
+		m_pEntites.clear();
+	}
 
 	Entity* EntityManager::Create(bool saveable)
 	{
@@ -17,7 +27,6 @@ namespace Lamp
 		m_pEntites.emplace_back(pEnt);
 
 		ObjectLayerManager::Get()->AddToLayer(pEnt, 0);
-		PhysicsEngine::Get()->AddEntity(pEnt->GetPhysicalEntity());
 
 		return pEnt;
 	}
@@ -34,17 +43,16 @@ namespace Lamp
 			return false;
 		}
 
-		PhysicsEngine::Get()->RemoveEntity(pEnt->GetPhysicalEntity());
 		return true;
 	}
 
-	Entity* EntityManager::GetEntityFromPhysicalEntity(PhysicalEntity* pEnt)
+	Entity* EntityManager::GetEntityFromId(uint32_t id)
 	{
-		for (auto& ent : m_pEntites)
+		for (int i = 0; i < m_pEntites.size(); i++)
 		{
-			if (ent->GetPhysicalEntity().get() == pEnt)
+			if (m_pEntites[i]->GetId() == id)
 			{
-				return ent;
+				return m_pEntites[i];
 			}
 		}
 
@@ -53,12 +61,13 @@ namespace Lamp
 
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		if (entity)
-		{
-			return entity;
-		}
+		//Entity* entity = dynamic_cast<Entity*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		//if (entity)
+		//{
+		//	return entity;
+		//}
 
 		return nullptr;
 	}
+
 }

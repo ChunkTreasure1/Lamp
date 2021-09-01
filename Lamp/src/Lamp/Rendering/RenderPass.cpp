@@ -4,53 +4,65 @@
 #include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/Core/Application.h"
 
+#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+
 namespace Lamp
 {
 	Ref<RenderPassManager> RenderPassManager::s_Instance = nullptr;
 
-	RenderPass::RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::vector<RenderFunc> extraRenders)
-		: m_FrameBuffer(frameBuffer), m_PassInfo(passInfo), m_ExtraRenders(extraRenders)
+	RenderPass::RenderPass(const RenderPassSpecification& spec)
+		: m_PassSpec(spec)
 	{
 	}
 
 	void RenderPass::Render()
 	{
-		if (m_PassInfo.IsShadowPass)
+		if (m_PassSpec.IsPointShadowPass)
 		{
-			m_PassInfo.ViewProjection = g_pEnv->DirLight.ViewProjection;
-			m_PassInfo.LightViewProjection = g_pEnv->DirLight.ViewProjection;
+			m_PassSpec.LightIndex = 0;
+			for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+			{
+				light->ShadowBuffer->Bind();
+				RenderCommand::Clear();
+
+				Renderer3D::Begin(m_PassSpec);
+
+				AppRenderEvent renderEvent(m_PassSpec);
+				ObjectLayerManager::Get()->OnEvent(renderEvent);
+				Application::Get().OnEvent(renderEvent);
+
+				Renderer3D::End();
+				light->ShadowBuffer->Unbind();
+				m_PassSpec.LightIndex++;
+			}
 		}
 		else
 		{
-			m_PassInfo.ViewProjection = m_PassInfo.Camera->GetViewProjectionMatrix();
-			m_PassInfo.LightViewProjection = g_pEnv->DirLight.ViewProjection;
+			RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
+			RenderCommand::Clear();
+
+			m_PassSpec.TargetFramebuffer->Bind();
+			RenderCommand::Clear();
+
+			Renderer3D::Begin(m_PassSpec);
+
+			AppRenderEvent renderEvent(m_PassSpec);
+			ObjectLayerManager::Get()->OnEvent(renderEvent);
+			Application::Get().OnEvent(renderEvent);
+
+			for (auto& f : m_PassSpec.ExtraRenders)
+			{
+				f();
+			}
+
+			Renderer3D::End();
+			m_PassSpec.TargetFramebuffer->Unbind();
 		}
-
-		RenderCommand::SetClearColor(m_PassInfo.ClearColor);
-		RenderCommand::Clear();
-
-		m_FrameBuffer->Bind();
-		RenderCommand::Clear();
-
-		Renderer3D::Begin(m_PassInfo);
-
-		AppRenderEvent renderEvent(m_PassInfo);
-		ObjectLayerManager::Get()->OnEvent(renderEvent);
-		Application::Get().OnEvent(renderEvent);
-
-		for (auto& f : m_ExtraRenders)
-		{
-			f();
-		}
-
-		Renderer3D::DrawSkybox();
-		Renderer3D::End();
-		m_FrameBuffer->Unbind();
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)
 	{
-		pass->SetID(m_RenderPasses.size());
+		pass->SetID((uint32_t)m_RenderPasses.size());
 		m_RenderPasses.push_back(pass);
 	}
 

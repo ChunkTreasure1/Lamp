@@ -29,7 +29,7 @@ namespace Lamp
 	}
 
 	//Gets the files in a specified folder
-	std::vector<std::string> FileSystem::GetFiles(std::string& path)
+	std::vector<std::string> FileSystem::GetFiles(const std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -44,7 +44,7 @@ namespace Lamp
 		return files;
 	}
 
-	std::vector<std::string> FileSystem::GetLevelFiles(std::string& path)
+	std::vector<std::string> FileSystem::GetLevelFiles(const std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -59,7 +59,7 @@ namespace Lamp
 		return files;
 	}
 
-	std::vector<std::string> FileSystem::GetBrushFiles(std::string& path)
+	std::vector<std::string> FileSystem::GetBrushFiles(const std::string& path)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -74,8 +74,23 @@ namespace Lamp
 		return files;
 	}
 
+	std::vector<std::string> FileSystem::GetMaterialFiles(const std::string& path)
+	{
+		std::vector<std::string> files;
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			std::string s = entry.path().string();
+			if (s.find(".mtl") != std::string::npos)
+			{
+				files.push_back(s);
+			}
+		}
+
+		return files;
+	}
+
 	//Gets the folders in a specified folder
-	std::vector<std::string> FileSystem::GetFolders(std::string& path)
+	std::vector<std::string> FileSystem::GetFolders(const std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
@@ -90,90 +105,27 @@ namespace Lamp
 		return folders;
 	}
 
-	std::string FileSystem::GetFileFromDialogue()
+	void FileSystem::GetAllMaterialFiles(std::vector<std::string>& folders, std::vector<std::string>& files)
 	{
-		wchar_t* path = 0;
-
-		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-		if (SUCCEEDED(hr))
+		if (folders.size() == 0)
 		{
-			IFileOpenDialog* pFileOpen;
+			return;
+		}
 
-			hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
-			if (SUCCEEDED(hr))
+		for (int i = 0; i < folders.size(); i++)
+		{
+			std::vector<std::string> f = Lamp::FileSystem::GetMaterialFiles(folders[i]);
+
+			for (int j = 0; j < f.size(); j++)
 			{
-				hr = pFileOpen->Show(NULL);
-				if (SUCCEEDED(hr))
-				{
-					IShellItem* pItem;
-					hr = pFileOpen->GetResult(&pItem);
-					if (SUCCEEDED(hr))
-					{
-
-						hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &path);
-						pItem->Release();
-					}
-				}
-				pFileOpen->Release();
+				files.push_back(f[j]);
 			}
-			CoUninitialize();
+			GetAllMaterialFiles(GetFolders(folders[i]), files);
 		}
-		if (path)
-		{
-			std::wstringstream ss;
-			ss << path;
-
-			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-
-			return converter.to_bytes(ss.str());
-		}
-
-		return "";
-	}
-
-	std::string FileSystem::SaveFileInDialogue()
-	{
-		wchar_t* path = 0;
-
-		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-		if (SUCCEEDED(hr))
-		{
-			IFileSaveDialog* pFileOpen;
-
-			hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileOpen));
-			if (SUCCEEDED(hr))
-			{
-				hr = pFileOpen->Show(NULL);
-				if (SUCCEEDED(hr))
-				{
-					IShellItem* pItem;
-					hr = pFileOpen->GetResult(&pItem);
-					if (SUCCEEDED(hr))
-					{
-
-						hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &path);
-						pItem->Release();
-					}
-				}
-				pFileOpen->Release();
-			}
-			CoUninitialize();
-		}
-		if (path)
-		{
-			std::wstringstream ss;
-			ss << path;
-
-			std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-
-			return converter.to_bytes(ss.str());
-		}
-
-		return "";
 	}
 
 	//Returns whether or not a folder contains folders
-	bool FileSystem::ContainsFolder(std::string& path)
+	bool FileSystem::ContainsFolder(const std::string& path)
 	{
 		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::directory_iterator(path))

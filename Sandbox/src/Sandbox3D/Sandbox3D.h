@@ -11,15 +11,19 @@
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
 #include "SandboxController.h"
+#include "CommandStack.h"
 
 #include <Game/Game.h>
 
 namespace Sandbox3D
 {
+	class ModelImporter;
+
 	class Sandbox3D : public Lamp::Layer
 	{
 	public:
 		Sandbox3D();
+		~Sandbox3D();
 
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
 
@@ -33,24 +37,42 @@ namespace Sandbox3D
 		void RenderSkybox();
 		void CreateRenderPasses();
 		void SetupFromConfig();
+		void RenderLines();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
 		bool OnWindowClose(Lamp::WindowCloseEvent& e);
+		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
+		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
 		void UpdateAssetBrowser();
 		void UpdateProperties();
-		void UpdateModelImporter();
 		void UpdateLayerView();
 		void UpdateAddComponent();
 		void UpdateCreateTool();
 		void UpdateLogTool();
+		bool DrawComponent(Lamp::EntityComponent* ptr);
+		void UpdateLevelSettings();
+
+		//Shortcuts
+		void SaveLevelAs();
+		void OpenLevel();
+		void NewLevel();
+		void Undo();
+		void Redo();
+
 
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
+
+		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
+		Ref<Lamp::Framebuffer> m_SandboxBuffer;
+		Ref<Lamp::Framebuffer> m_SecondaryBuffer;
+
+		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -62,7 +84,9 @@ namespace Sandbox3D
 		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
-		
+		CommandStack<Command> m_PerspecticeCommands;
+		bool m_HaveUndone = false;
+
 		//Asset browser
 		Lamp::File m_SelectedFile;
 		int m_CurrSample = -1;
@@ -80,8 +104,7 @@ namespace Sandbox3D
 		Ref<Lamp::Shader> m_pShader;
 
 		//Model importer
-		bool m_ModelImporterOpen = false;
-		Ref<Lamp::Model> m_pModelToImport;
+		ModelImporter* m_ModelImporter;
 
 		//Layers
 		bool m_LayerViewOpen = true;
@@ -96,8 +119,11 @@ namespace Sandbox3D
 		//Create
 		bool m_CreateToolOpen = true;
 
-		//Logginh
+		//Logging
 		bool m_LogToolOpen = false;
+
+		//Level settings
+		bool m_LevelSettingsOpen = false;
 		//--------------------------------------
 	};
 }

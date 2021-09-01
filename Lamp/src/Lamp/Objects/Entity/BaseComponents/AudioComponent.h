@@ -22,6 +22,7 @@ namespace Lamp
 		/////Base/////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
+		virtual uint64_t GetEventMask() override { return EventType::None; }
 		//////////////
 
 		//Setting
@@ -36,9 +37,6 @@ namespace Lamp
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<AudioComponent>(); }
 		static std::string GetFactoryName() { return "AudioComponent"; }
-
-	private:
-		static bool s_Registered;
 
 	private:
 		std::string m_EventName;

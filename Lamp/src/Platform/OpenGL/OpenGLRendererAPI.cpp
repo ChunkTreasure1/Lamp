@@ -37,6 +37,7 @@ namespace Lamp
 
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_MULTISAMPLE);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		GLint maxTextures;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextures);
@@ -57,6 +58,24 @@ namespace Lamp
 	void OpenGLRendererAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::ClearDepth()
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::OffsetPolygon(float factor, float unit)
+	{
+		if (factor == 0 || unit == 0)
+		{
+			glDisable(GL_POLYGON_OFFSET_FILL);
+		}
+		else
+		{
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(factor, unit);
+		}
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)

@@ -8,6 +8,9 @@
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 
+#include "Lamp/Objects/Brushes/BrushManager.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
+
 #include "CoreLogger.h"
 
 GlobalEnvironment* g_pEnv;
@@ -22,13 +25,27 @@ namespace Lamp
 	{
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
+		g_pEnv->pRenderUtils = new RenderUtils();
+
+		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
+		g_pEnv->pEntityManager = new EntityManager();
+		g_pEnv->pBrushManager = new BrushManager();
 
 		//Create the window
-		m_pWindow = Window::Create();
+		WindowProps props;
+		props.Height = 720;
+		props.Width = 1280;
+		props.IsVSync = false;
+		props.Title = "Lamp";
+
+		m_pWindow = Window::Create(props);
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Initialize();
 		AudioEngine::Initialize();
+
+		m_pPhysicsEngine = new PhysicsEngine();
+		m_pPhysicsEngine->Initialize();
 
 		//Setup the GUI system
 		//m_pImGuiLayer = new ImGuiLayer();
@@ -37,6 +54,7 @@ namespace Lamp
 
 	Application::~Application()
 	{
+		m_pPhysicsEngine->Shutdown();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
@@ -53,12 +71,11 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			//PhysicsEngine::Get()->Simulate(timestep);
-			//PhysicsEngine::Get()->HandleCollisions();
+			if (m_IsSimulating)
+			{
+				//m_pPhysicsEngine->Simulate();
+			}
 			AudioEngine::Update();
-
-			//AppUpdateEvent updateEvent(timestep);
-			//ObjectLayerManager::Get()->OnEvent(updateEvent);
 
 			//Update the application layers
 
@@ -66,6 +83,7 @@ namespace Lamp
 			{
 				AppUpdateEvent updateEvent(timestep);
 				OnEvent(updateEvent);
+				ObjectLayerManager::Get()->OnEvent(updateEvent);
 			}
 
 			/*		m_pImGuiLayer->Begin();
@@ -88,7 +106,7 @@ namespace Lamp
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-		//Handle rest of events
+		////Handle rest of events
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);

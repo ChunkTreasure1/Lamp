@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 
 #include "Mesh.h"
-#include "Material.h"
+#include "Materials/Material.h"
 #include "Lamp/Event/Event.h"
 #include "Lamp/Event/ApplicationEvent.h"
 
@@ -25,12 +25,14 @@ namespace Lamp
 		{
 		}
 
-		void Render();
+		void Render(size_t id = -1);
 		void RenderBoundingBox();
 
 		//Setting
 		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 		inline void SetLGFPath(const std::string& path) { m_LGFPath = path; }
+		inline void SetName(const std::string& name) { m_Name = name; }
+		inline void SetMaterial(const Material& mat) { m_Material = mat; }
 
 		//Getting
 		inline Material& GetMaterial() { return m_Material; }
@@ -38,7 +40,7 @@ namespace Lamp
 		inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
 		inline std::string& GetLGFPath() { return m_LGFPath; }
 		inline const glm::mat4& GetMatrix() { return m_ModelMatrix; }
-		inline const SAABB& GetBoundingBox() { return m_BoundingBox; }
+		inline SAABB& GetBoundingBox() { return m_BoundingBox; }
 		
 	private:
 		Material m_Material;

@@ -6,16 +6,11 @@
 		</Mesh>
 	</Meshes>
 	<Materials>
-		<Material name="">
-			<Diffuse path="engine/textures/default/defaultTexture.png"/>
-			<Specular path="engine/textures/default/defaultTexture.png"/>
-			<Shininess value="32.000000"/>
-			<Shader vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
-		</Material>
+		<Material name="test1"/>
 	</Materials>
 	<BoundingBox>
-		<Max position="1,1,2"/>
-		<Min position="-1,-1,0"/>
+		<Max position="1.000000,1.000000,2.000000"/>
+		<Min position="-1.000000,-1.000000,0.000000"/>
 	</BoundingBox>
 </Geometry>
 

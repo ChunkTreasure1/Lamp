@@ -107,13 +107,13 @@ namespace Sandbox2D
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
 			{
-				Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+			//	Lamp::Renderer3D::GetFrameBuffer()->Update((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
 				m_CameraController->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
-			uint32_t textureID = Lamp::Renderer2D::GetFrameBuffer()->GetColorAttachment();
+			uint32_t textureID = Lamp::Renderer2D::GetFrameBuffer()->GetColorAttachmentID();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
@@ -186,7 +186,7 @@ namespace Sandbox2D
 
 				glm::vec3 pos = m_CameraController->ScreenToWorldCoords(mousePos, m_PerspectiveSize);
 
-				m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera()->GetPosition());
+				//m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromPoint(pos, m_CameraController->GetCamera()->GetPosition());
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
@@ -349,19 +349,6 @@ namespace Sandbox2D
 
 					ImGui::InputFloat3("Scale", s);
 					pBrush->SetScale(glm::make_vec3(s));
-				}
-
-				if (ImGui::CollapsingHeader("Physics"))
-				{
-					glm::vec3 vel = pBrush->GetPhysicalEntity()->GetVelocity();
-					float f[3] = { vel.x, vel.y, vel.z };
-
-					ImGui::InputFloat3("Velocity", f);
-					pBrush->GetPhysicalEntity()->SetVelocity(glm::make_vec3(f));
-
-					float m = pBrush->GetPhysicalEntity()->GetMass();
-					ImGui::InputFloat("Mass", &m);
-					pBrush->GetPhysicalEntity()->SetMass(m);
 				}
 			}
 		}

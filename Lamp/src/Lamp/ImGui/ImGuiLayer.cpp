@@ -6,7 +6,8 @@
 #include "examples/imgui_impl_dx11.h"
 
 #include "Lamp/Core/Application.h"
-#include <ImGuizmo/ImGuizmo.h>
+#include "Lamp/Event/ApplicationEvent.h"
+
 //TEMPORARY
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -140,7 +141,9 @@ namespace Lamp
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
+
+		ImGuiBeginEvent e;
+		Application::Get().OnEvent(e);
 	}
 
 	void ImGuiLayer::End()

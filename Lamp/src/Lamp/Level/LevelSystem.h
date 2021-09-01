@@ -11,15 +11,17 @@ namespace Lamp
 	public:
 		static Ref<Level> LoadLevel(const std::string& path);
 		static bool SaveLevel(const std::string& path, Ref<Level>& level);
+		static bool SaveLevel(Ref<Level>& level);
 
 		static Ref<Level>& GetCurrentLevel() { return m_CurrentLevel; }
 		static LevelEnvironment& GetEnvironment() { return m_CurrentLevel->GetEnvironment(); }
+		static void SetCurrentLevel(Ref<Level> level) { m_CurrentLevel = level; }
 
 	private:
 		LevelSystem() = delete;
-		static std::vector<Brush*> LoadBrushes(rapidxml::xml_node<>* pNode, Ref<BrushManager>& brushManager);
-		static std::vector<Entity*> LoadEntities(rapidxml::xml_node<>* pNode, Ref<EntityManager>& entityManager);
-		static std::vector<ObjectLayer> LoadLayers(rapidxml::xml_node<>* pNode, Ref<ObjectLayerManager>& objLayerManager);
+		static std::vector<Brush*> LoadBrushes(rapidxml::xml_node<>* pNode, BrushManager* brushManager);
+		static std::vector<Entity*> LoadEntities(rapidxml::xml_node<>* pNode, EntityManager* entityManager);
+		static std::vector<ObjectLayer> LoadLayers(rapidxml::xml_node<>* pNode, ObjectLayerManager* objLayerManager);
 
 	private:
 		static bool GetValue(char* val, bool& var);

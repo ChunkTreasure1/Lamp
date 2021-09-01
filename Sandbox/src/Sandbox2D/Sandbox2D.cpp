@@ -31,7 +31,7 @@ namespace Sandbox2D
 
 		Lamp::Renderer2D::End();*/
 
-		return true;
+		return false;
 	}
 
 	void Sandbox2D::OnImGuiRender(Lamp::Timestep ts)

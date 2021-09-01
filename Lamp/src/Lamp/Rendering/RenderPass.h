@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vertices/FrameBuffer.h"
+#include "Vertices/Framebuffer.h"
 #include "Lamp/Core/Core.h"
 #include "RenderCommand.h"
 #include "Renderer3D.h"
@@ -9,20 +9,29 @@
 
 namespace Lamp
 {
+	struct RenderPassSpecification
+	{
+		using RenderFunc = std::function<void()>;
+		std::vector<RenderFunc> ExtraRenders;
+
+		Ref<CameraBase> Camera;
+		Ref<Framebuffer> TargetFramebuffer;
+
+		bool IsShadowPass = false;
+		bool IsPointShadowPass = false;
+		uint32_t LightIndex = 0;
+	};
+
 	class RenderPass
 	{
 	public:
-		using RenderFunc = std::function<void()>;
-
 		friend class RenderPassManager;
 
-		RenderPass(Ref<FrameBuffer>& frameBuffer, const RenderPassInfo& passInfo, std::vector<RenderFunc> extraRenders = {});
-		~RenderPass()
-		{
-			m_ExtraRenders.clear();
-		}
+		RenderPass(const RenderPassSpecification& spec);
+		~RenderPass() {}
 
 		inline uint32_t GetID() { return m_ID; }
+		inline const RenderPassSpecification& GetSpecification() const { return m_PassSpec; }
 
 		void Render();
 
@@ -30,11 +39,8 @@ namespace Lamp
 		inline void SetID(uint32_t id) { m_ID = id; }
 
 	private:
-		Ref<FrameBuffer> m_FrameBuffer;
-		std::vector<RenderFunc> m_ExtraRenders;
-
 		uint32_t m_ID;
-		RenderPassInfo m_PassInfo;
+		RenderPassSpecification m_PassSpec;
 	};
 
 	class RenderPassManager

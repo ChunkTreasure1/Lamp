@@ -2,21 +2,21 @@
 #include "BrushManager.h"
 
 #include "Lamp/Meshes/GeometrySystem.h"
-#include "Lamp/Physics/Ray.h"
-#include "Lamp/Objects/Entity/Base/Physical/PhysicalEntity.h"
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
 
 namespace Lamp
 {
-	Ref<BrushManager> BrushManager::s_Manager = nullptr;
+	BrushManager* BrushManager::s_Manager = nullptr;
 
 	BrushManager::BrushManager()
 	{
+		s_Manager = this;
 	}
 
 	BrushManager::~BrushManager()
 	{
+		m_Brushes.clear();
 	}
 
 	Brush2D* BrushManager::Create2D(const std::string& path)
@@ -27,7 +27,6 @@ namespace Lamp
 		m_2DBrushes.push_back(brush);
 
 		ObjectLayerManager::Get()->AddToLayer(brush, 0);
-		PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
@@ -44,7 +43,6 @@ namespace Lamp
 		m_2DBrushes.push_back(brush);
 
 		ObjectLayerManager::Get()->AddToLayer(brush, layerId);
-		PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
@@ -56,7 +54,6 @@ namespace Lamp
 		m_Brushes.push_back(brush);
 
 		ObjectLayerManager::Get()->AddToLayer(brush, 0);
-		PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
@@ -73,7 +70,6 @@ namespace Lamp
 		m_Brushes.push_back(brush);
 
 		ObjectLayerManager::Get()->AddToLayer(brush, layerId);
-		PhysicsEngine::Get()->AddEntity(brush->GetPhysicalEntity());
 		return brush;
 	}
 
@@ -84,9 +80,6 @@ namespace Lamp
 		{
 			m_Brushes.erase(it);
 		}
-
-
-		PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
 	}
 
 	void BrushManager::Remove(Brush2D* brush)
@@ -97,53 +90,26 @@ namespace Lamp
 			m_2DBrushes.erase(it);
 		}
 
-		PhysicsEngine::Get()->RemoveEntity(brush->GetPhysicalEntity());
 	}
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		Brush* brush = dynamic_cast<Brush*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		if (brush)
-		{
-			return brush;
-		}
+		//Brush* brush = dynamic_cast<Brush*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		//if (brush)
+		//{
+		//	return brush;
+		//}
 
 		return nullptr;
 	}
 
 	Brush2D* BrushManager::GetBrush2DFromPoint(const glm::vec3& pos, const glm::vec3& origin)
 	{
-		Brush2D* brush = dynamic_cast<Brush2D*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		if (brush)
-		{
-			return brush;
-		}
-
-		return nullptr;
-	}
-
-	Brush2D* BrushManager::GetBrush2DFromPhysicalEntity(Ref<PhysicalEntity>& pEnt)
-	{
-		for (auto& brush : m_2DBrushes)
-		{
-			if (brush->GetPhysicalEntity() == pEnt)
-			{
-				return brush;
-			}
-		}
-
-		return nullptr;
-	}
-
-	Brush* BrushManager::GetBrushFromPhysicalEntity(Ref<PhysicalEntity>& pEnt)
-	{
-		for (auto& brush : m_Brushes)
-		{
-			if (brush->GetPhysicalEntity() == pEnt)
-			{
-				return brush;
-			}
-		}
+		//Brush2D* brush = dynamic_cast<Brush2D*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
+		//if (brush)
+		//{
+		//	return brush;
+		//}
 
 		return nullptr;
 	}

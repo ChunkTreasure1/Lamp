@@ -33,7 +33,9 @@ namespace Lamp
 		}
 
 		glfwSetErrorCallback(GLFWErrorCallback);
-		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_SAMPLES, 0);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
 #if defined(LP_DEBUG)
 		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
@@ -52,7 +54,7 @@ namespace Lamp
 		m_pContext->Initialize();
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
-		SetIsVSync(true);
+		SetIsVSync(m_Data.VSync);
 
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
@@ -188,7 +190,7 @@ namespace Lamp
 	}
 	void WindowsWindow::SetSize(const glm::vec2& size)
 	{
-		glfwSetWindowSize(m_pWindow, (int)size.x, (int)size.y);
+		glfwSetWindowSize(m_pWindow, (uint32_t)size.x, (uint32_t)size.y);
 
 		WindowResizeEvent resize((uint32_t)size.x, (uint32_t)size.y);
 		Lamp::Application::Get().OnEvent(resize);

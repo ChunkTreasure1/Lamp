@@ -6,7 +6,7 @@
 #include "Lamp/Objects/Brushes/BrushManager.h"
 #include "Lamp/Objects/Entity/Base/EntityManager.h"
 #include "Lamp/Objects/ObjectLayer.h"
-#include "Lamp/Physics/PhysicsEngine.h"
+#include <btBulletDynamicsCommon.h>
 
 namespace Lamp
 {
@@ -22,35 +22,23 @@ namespace Lamp
 	class Level
 	{
 	public:
-		Level(const std::string& name)
-			: m_Name(name)
+		Level(const std::string& name, const std::string& path)
+			: m_Name(name), m_Path(path)
 		{
-			m_ObjectLayerManager = CreateRef<ObjectLayerManager>();
-			m_BrushManager = CreateRef<BrushManager>();
-			m_EntityManager = CreateRef<EntityManager>();
-			m_PhysicsEngine = CreateRef<PhysicsEngine>();
 		}
 
 		~Level()
 		{
-			m_ObjectLayerManager->Destroy();
 		}
-
-		inline Ref<BrushManager>& GetBrushManager() { return m_BrushManager; }
-		inline Ref<EntityManager>& GetEntityManager() { return m_EntityManager; }
-		inline Ref<ObjectLayerManager>& GetObjectLayerManager() { return m_ObjectLayerManager; }
-		inline Ref<PhysicsEngine>& GetPhysicsEngine() { return m_PhysicsEngine; }
 
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
+		inline const std::string& GetPath() { return m_Path; }
+		inline void SetPath(const std::string& path) { m_Path = path; }
 
 	private:
 		std::string m_Name;
-		Ref<BrushManager> m_BrushManager;
-		Ref<EntityManager> m_EntityManager;
-
-		Ref<ObjectLayerManager> m_ObjectLayerManager;
-		Ref<PhysicsEngine> m_PhysicsEngine;
+		std::string m_Path;
 		LevelEnvironment m_Environment;
 	};
 }
