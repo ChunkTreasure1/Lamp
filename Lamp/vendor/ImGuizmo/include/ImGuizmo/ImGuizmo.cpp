@@ -877,6 +877,12 @@ namespace ImGuizmo
       return gContext.mbUsing || gContext.mbUsingBounds;
    }
 
+   ///Custom
+   bool IsDragging()
+   {
+       return gContext.mbUsing;
+   }
+
    bool IsOver()
    {
       return (GetMoveType(NULL) != NONE) || GetRotateType() != NONE || GetScaleType() != NONE || IsUsing();
