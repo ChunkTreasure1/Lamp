@@ -197,7 +197,7 @@ namespace Sandbox3D
 								glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 
 								float f[2] = { p->x, p->y };
-								ImGui::InputFloat2(pProp.Name.c_str(), f, 3);
+								ImGui::InputFloat2(pProp.Name.c_str(), f);
 
 								*p = glm::make_vec2(f);
 								break;
@@ -208,7 +208,7 @@ namespace Sandbox3D
 								glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 
 								float f[3] = { p->x, p->y, p->z };
-								ImGui::InputFloat3(pProp.Name.c_str(), f, 3);
+								ImGui::InputFloat3(pProp.Name.c_str(), f);
 
 								*p = glm::make_vec3(f);
 								break;
@@ -219,7 +219,7 @@ namespace Sandbox3D
 								glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 
 								float f[4] = { p->x, p->y, p->z, p->w };
-								ImGui::InputFloat4(pProp.Name.c_str(), f, 3);
+								ImGui::InputFloat4(pProp.Name.c_str(), f);
 
 								*p = glm::make_vec4(f);
 								break;
