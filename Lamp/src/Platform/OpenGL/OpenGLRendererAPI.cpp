@@ -78,7 +78,7 @@ namespace Lamp
 		}
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
+	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count, Ref<Shader> shader)
 	{
 		if (count == 0)
 		{

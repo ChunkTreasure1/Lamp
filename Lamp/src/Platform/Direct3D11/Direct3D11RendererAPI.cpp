@@ -51,7 +51,17 @@ namespace Lamp
 		}
 	}
 
-	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size)
+	void Direct3D11RendererAPI::ClearDepth()
+	{
+
+	}
+
+	void Direct3D11RendererAPI::OffsetPolygon(float factor, float unit)
+	{
+
+	}
+
+	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size, Ref<Shader> shader)
 	{
 		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
 		{
@@ -59,67 +69,12 @@ namespace Lamp
 			{
 				namespace wrl = Microsoft::WRL;
 
-				std::vector<float> vertices =
-				{
-					 -1.0f, -1.0f, -1.0f,  1.f, 0.f, 0.f,
-					  1.0f, -1.0f, -1.0f,  0.f, 1.f, 0.f,
-					 -1.0f,  1.0f, -1.0f,  0.f, 0.f, 1.f,
-					  1.0f,  1.0f, -1.0f,  1.f, 0.f, 0.f,
-					 -1.0f, -1.0f,  1.0f,  1.f, 0.f, 0.f,
-					  1.0f, -1.0f,  1.0f,  0.f, 1.f, 0.f,
-					 -1.0f,  1.0f,  1.0f,  0.f, 0.f, 1.f,
-					  1.0f,  1.0f,  1.0f,  1.f, 0.f, 0.f
-				};
-
-				Ref<Shader> pShader = Shader::Create({ {"VertexShader.cso"}, {"PixelShader.cso"} });
-
-				Ref<VertexArray> vertexArray = VertexArray::Create();
-				Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, (uint32_t)sizeof(float) * vertices.size());
-				vertexBuffer->SetBufferLayout
-				({
-					{ ElementType::Float3, "POSITION" },
-					{ ElementType::Float3, "COLOR" }
-				});
-
-				std::vector<uint32_t> indices =
-				{
-					0, 2, 1,  2, 3, 1,
-					1, 3, 5,  3, 7, 5,
-					2, 6, 3,  3, 6, 7,
-					4, 5, 7,  4, 7, 6,
-					0, 4, 2,  2, 4, 6,
-					0, 1, 4,  1, 5, 4
-				};
-				Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
-				vertexArray->SetIndexBuffer(indexBuffer);
-
-				if (auto dVB = std::dynamic_pointer_cast<Direct3D11VertexArray>(vertexArray))
-				{
-					if (auto shader = std::dynamic_pointer_cast<Direct3D11Shader>(pShader))
-					{
-						dVB->SetBlob(shader->GetVertexBlob());
-					}
-				}
-
-				namespace dx = DirectX;
-
-				auto v = 
-					dx::XMMatrixTranslation(0.f, 0.f, 4.f) * dx::XMMatrixPerspectiveFovLH(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
-
-				auto d = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f) * glm::translate(glm::mat4(1.f), { 0.f, 0.f, 4.f });
-
-				pShader->UploadData(ShaderData
-				({
-					{ "u_Model", ShaderDataType::Mat4, glm::value_ptr(d) },
-				}));
-
-				vertexArray->AddVertexBuffer(vertexBuffer);
 				vertexArray->Bind();
 
 				pContext->GetDeviceContext()->OMSetRenderTargets(1u, pContext->GetRenderTarget().GetAddressOf(), nullptr);
 				pContext->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-				pContext->GetDeviceContext()->DrawIndexed((uint32_t)std::size(indices), 0u, 0u);
+				pContext->GetDeviceContext()->DrawIndexed(size, 0u, 0u);
 			}
 		}
 	}

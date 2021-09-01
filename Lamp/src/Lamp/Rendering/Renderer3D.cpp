@@ -30,6 +30,12 @@ namespace Lamp
 		static const uint32_t MaxLineVerts = MaxLines * 2;
 		static const uint32_t MaxLineIndices = MaxLines * 2;
 
+		/////TestCube/////
+		Ref<Shader> CubeShader;
+		Ref<VertexArray> CubeVertexArray;
+		Ref<VertexBuffer> CubeVertexBuffer;
+		//////////////////
+
 		/////Skybox//////
 		Ref<Shader> SkyboxShader;
 		Ref<VertexArray> SkyboxVertexArray;
@@ -47,7 +53,7 @@ namespace Lamp
 
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
-		Material LineMaterial;
+		//Material LineMaterial;
 		/////////////////
 
 		/////Grid/////
@@ -56,7 +62,7 @@ namespace Lamp
 		//////////////
 
 		Renderer3DStorage()
-			: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
+			//: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
 		{}
 
 		~Renderer3DStorage()
@@ -84,7 +90,7 @@ namespace Lamp
 		{
 			std::vector<float> quadPositions =
 			{
-				// positions       // texture Coords
+				// positions       // texture coords
 				-1.f, -1.f, 0.0f,  0.0f, 0.0f,
 				 1.f, -1.f, 0.0f,  1.0f, 0.0f,
 				 1.f,  1.f, 0.0f,  1.0f, 1.0f,
@@ -101,10 +107,10 @@ namespace Lamp
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadPositions, (uint32_t)sizeof(float) * quadPositions.size());
 			pBuffer->SetBufferLayout
 			({
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float2, "a_TexCoords" }
+				{ Type::Float3, "a_Position" },
+				{ Type::Float2, "a_TexCoords" }
 			});
-			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
+			//s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
 		}
@@ -116,10 +122,10 @@ namespace Lamp
 			s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
 			s_pData->LineVertexBuffer->SetBufferLayout
 			({
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float4, "a_Color" }
+				{ Type::Float3, "a_Position" },
+				{ Type::Float4, "a_Color" }
 				});
-			s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
+			//s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
 			uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
@@ -172,9 +178,9 @@ namespace Lamp
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
 			pBuffer->SetBufferLayout
 			({
-				{ ElementType::Float3, "a_Position" }
+				{ Type::Float3, "a_Position" }
 				});
-			s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
+			//s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
 
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
 			s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
@@ -182,6 +188,44 @@ namespace Lamp
 			s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/newport_loft.hdr");
 		}
 		////////////////
+
+		/////TestCube/////
+		std::vector<float> vertices =
+		{
+			 -1.0f, -1.0f, -1.0f,  1.f, 0.f, 0.f,
+			  1.0f, -1.0f, -1.0f,  0.f, 1.f, 0.f,
+			 -1.0f,  1.0f, -1.0f,  0.f, 0.f, 1.f,
+			  1.0f,  1.0f, -1.0f,  1.f, 0.f, 0.f,
+			 -1.0f, -1.0f,  1.0f,  1.f, 0.f, 0.f,
+			  1.0f, -1.0f,  1.0f,  0.f, 1.f, 0.f,
+			 -1.0f,  1.0f,  1.0f,  0.f, 0.f, 1.f,
+			  1.0f,  1.0f,  1.0f,  1.f, 0.f, 0.f
+		};
+
+		std::vector<uint32_t> indices =
+		{
+			0, 2, 1,  2, 3, 1,
+			1, 3, 5,  3, 7, 5,
+			2, 6, 3,  3, 6, 7,
+			4, 5, 7,  4, 7, 6,
+			0, 4, 2,  2, 4, 6,
+			0, 1, 4,  1, 5, 4
+		};
+
+		s_pData->CubeVertexArray = VertexArray::Create();
+		s_pData->CubeVertexBuffer = VertexBuffer::Create(vertices, static_cast<uint32_t>(sizeof(float)) * vertices.size());
+		s_pData->CubeVertexBuffer->SetBufferLayout
+		({
+			{ Type::Float3, "POSITION" },
+			{ Type::Float3, "COLOR" }
+		});
+
+		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
+		s_pData->CubeVertexArray->SetIndexBuffer(indexBuffer);
+		s_pData->CubeVertexArray->AddVertexBuffer(s_pData->CubeVertexBuffer);
+
+		s_pData->CubeShader = Shader::Create({ "VertexShader.cso", "PixelShader.cso" });
+		//////////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -206,8 +250,13 @@ namespace Lamp
 
 	void Renderer3D::Flush()
 	{
-		s_pData->LineMaterial.GetShader()->Bind();
-		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
+		//s_pData->LineMaterial.GetShader()->Bind();
+
+		glm::mat4 viewProjection = s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix();
+		//s_pData->LineMaterial.GetShader()->UploadData(ShaderData
+		//({
+		//	{ "u_ViewProjection", Type::Mat4, glm::value_ptr(viewProjection) }
+		//}));
 
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
@@ -221,7 +270,7 @@ namespace Lamp
 			s_pData->DirShadowShader->Bind();
 
 			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
-			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+			//s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
 			s_pData->ShadowBuffer = s_pData->CurrentRenderPass.TargetFramebuffer;
 
 			mesh->GetVertexArray()->Bind();
@@ -237,14 +286,14 @@ namespace Lamp
 			uint32_t j = s_pData->CurrentRenderPass.LightIndex;
 			const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
 
-			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
-			{
-				s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
-			}
-
-			s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-			s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
+			//for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
+			//{
+			//	s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
+			//}
+			//
+			//s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
+			//s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
+			//s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
 
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 			/////////////////////////////
@@ -264,19 +313,31 @@ namespace Lamp
 			}
 
 			mat.GetShader()->Bind();
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
-			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
-			mat.GetShader()->UploadMat4("u_ShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
-			mat.GetShader()->UploadInt("u_ObjectId", id);
 
-			mat.GetShader()->UploadInt("u_ShadowMap", 0);
+			glm::vec3 camPos = s_pData->CurrentRenderPass.Camera->GetPosition();
+			glm::mat4 viewProjection = s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix();
+			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
+			glm::mat4 model = modelMatrix;
+
+			int shadowMap = 0;
+			int irradianceMap = 1;
+			int prefilterMap = 2;
+			int brdflut = 3;
+
+			mat.GetShader()->UploadData(ShaderData
+			({
+				{ "u_CameraPosition", Type::Float3, glm::value_ptr(camPos) },
+				{ "u_Model", Type::Mat4, glm::value_ptr(model) },
+				{ "u_ViewProjection", Type::Mat4, glm::value_ptr(viewProjection) },
+				{ "u_ShadowMVP", Type::Mat4, glm::value_ptr(shadowMVP) },
+				{ "u_ObjectId", Type::Int, &id },
+				{ "u_ShadowMap", Type::Int, &shadowMap },
+				{ "u_IrradianceMap", Type::Int, &irradianceMap },
+				{ "u_PrefilterMap", Type::Int, &prefilterMap },
+				{ "u_BRDFLUT", Type::Int, &brdflut }
+			}));
+
 			s_pData->ShadowBuffer->BindDepthAttachment(0);
-
-			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
-			mat.GetShader()->UploadInt("u_PrefilterMap", 2);
-			mat.GetShader()->UploadInt("u_BRDFLUT", 3);
-
 			s_pData->SkyboxBuffer->BindTextures(1);
 
 			for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
@@ -292,9 +353,16 @@ namespace Lamp
 	void Renderer3D::DrawSkybox()
 	{
 		s_pData->SkyboxShader->Bind();
-		s_pData->SkyboxShader->UploadMat4("u_View", s_pData->CurrentRenderPass.Camera->GetViewMatrix());
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
-		s_pData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
+
+		glm::mat4 viewMatrix = s_pData->CurrentRenderPass.Camera->GetViewMatrix();
+		glm::mat4 projectionMatrix = s_pData->CurrentRenderPass.Camera->GetProjectionMatrix();
+		int environmentMap = 0;
+		s_pData->SkyboxShader->UploadData(ShaderData
+		({
+			{ "u_View", Type::Mat4, glm::value_ptr(viewMatrix) },
+			{ "u_Projection", Type::Mat4, glm::value_ptr(projectionMatrix) },
+			{ "u_EnvironmentMap", Type::Int, &environmentMap }
+		}));
 
 		s_pData->SkyboxBuffer->Bind();
 
@@ -319,10 +387,35 @@ namespace Lamp
 		s_pData->GridVertexArray->Bind();
 
 		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
-		s_pData->GridShader->UploadMat4("u_View", viewMat);
+		glm::mat4 viewProjectionMat = s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix();
 
-		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
+		s_pData->GridShader->UploadData(ShaderData
+		({
+			{ "u_Projection", Type::Mat4, glm::value_ptr(viewProjectionMat) },
+			{ "u_View", Type::Mat4, glm::value_ptr(viewMat) }
+		}));
+
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
+	}
+
+	void Renderer3D::DrawTestCube()
+	{
+
+		static float angle = 0.f;
+		auto d = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f) * glm::translate(glm::mat4(1.f), { 0.f, -2.f, 10.f }) * glm::rotate(glm::mat4(1.f), glm::radians(angle), { 0.f, 1.f, 0.f });
+		angle += 1.f;
+
+		if (angle >= 365.f)
+		{
+			angle = 0.f;
+		}
+
+		s_pData->CubeShader->UploadData(ShaderData
+		({
+			{ "u_Model", Type::Mat4, glm::value_ptr(d) },
+		}));
+
+		RenderCommand::DrawIndexed(s_pData->CubeVertexArray, s_pData->CubeVertexArray->GetIndexBuffer()->GetCount() * sizeof(uint32_t), s_pData->CubeShader);
 	}
 
 	void Renderer3D::SetEnvironment(const std::string& path)

@@ -7,18 +7,18 @@
 
 namespace Lamp
 {
-	static DXGI_FORMAT ElementTypeToDXEnum(ElementType type)
+	static DXGI_FORMAT ElementTypeToDXEnum(Type type)
 	{
 		switch (type)
 		{
-		case Lamp::ElementType::Bool: return DXGI_FORMAT_R8_SINT;
-		case Lamp::ElementType::Int: return DXGI_FORMAT_R32_SINT;
-		case Lamp::ElementType::Float: return DXGI_FORMAT_R32_FLOAT;
-		case Lamp::ElementType::Float2: return DXGI_FORMAT_R32G32_FLOAT;
-		case Lamp::ElementType::Float3: return DXGI_FORMAT_R32G32B32_FLOAT;
-		case Lamp::ElementType::Float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case Lamp::ElementType::Mat3: return DXGI_FORMAT_R32_FLOAT;
-		case Lamp::ElementType::Mat4: return DXGI_FORMAT_R32_FLOAT;
+		case Lamp::Type::Bool: return DXGI_FORMAT_R8_SINT;
+		case Lamp::Type::Int: return DXGI_FORMAT_R32_SINT;
+		case Lamp::Type::Float: return DXGI_FORMAT_R32_FLOAT;
+		case Lamp::Type::Float2: return DXGI_FORMAT_R32G32_FLOAT;
+		case Lamp::Type::Float3: return DXGI_FORMAT_R32G32B32_FLOAT;
+		case Lamp::Type::Float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case Lamp::Type::Mat3: return DXGI_FORMAT_R32_FLOAT;
+		case Lamp::Type::Mat4: return DXGI_FORMAT_R32_FLOAT;
 		}
 	}
 
@@ -61,6 +61,7 @@ namespace Lamp
 			{
 				//LP_ASSERT(!m_pBlob.Get(), "No vertex shader blob set!");
 
+				//TODO: m_pBlob access needs to be changed
 				pContext->GetDevice()->CreateInputLayout(&ied[0], m_NumAttributes, m_pBlob->GetBufferPointer(), m_pBlob->GetBufferSize(), &m_pInputLayout);
 				pContext->GetDeviceContext()->IASetInputLayout(m_pInputLayout.Get());
 			}

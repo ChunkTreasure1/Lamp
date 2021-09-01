@@ -20,6 +20,7 @@ namespace Lamp
 		virtual const std::string& GetName() override { return m_Name; }
 		virtual std::string& GetFragmentPath() override { return m_FragmentPath; }
 		virtual std::string& GetVertexPath() override { return m_VertexPath; }
+		virtual std::string& GetGeoPath() override { return m_VertexPath; }
 
 		Microsoft::WRL::ComPtr<ID3DBlob>& GetVertexBlob() { return m_pVertexBlob; }
 

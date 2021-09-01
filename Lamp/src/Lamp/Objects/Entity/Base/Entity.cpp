@@ -62,7 +62,6 @@ namespace Lamp
 
 			m_GizmoShader->Bind();
 
-			m_GizmoShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
 
 			glm::vec3 dir = glm::normalize(e.GetPassInfo().Camera->GetPosition() - m_Position);
 
@@ -75,9 +74,15 @@ namespace Lamp
 			glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position) 
 				* rotation
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-			m_GizmoShader->UploadMat4("u_Model", model);
-			m_GizmoShader->UploadInt("u_Texture", 0);
-			m_GizmoShader->UploadInt("u_ObjectId", m_Id);
+
+			glm::mat4 viewProjection = e.GetPassInfo().Camera->GetViewProjectionMatrix();
+
+			m_GizmoShader->UploadData(ShaderData
+			({
+				{ "u_ViewProjection", Type::Mat4, glm::value_ptr(viewProjection) },
+				{ "u_Model", Type::Mat4, glm::value_ptr(model) },
+				{ "u_ObjectId", Type::Int, &m_Id }
+			}));
 
 			m_GizmoTexure->Bind(0);
 

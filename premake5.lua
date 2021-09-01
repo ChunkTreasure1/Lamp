@@ -57,7 +57,7 @@ project "Lamp"
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
 		"%{prj.name}/vendor/ImGuizmo/include",
-		"%{prj.name}/vendor/dxerr"
+		"%{prj.name}/vendor/dxerr",
 		"%{prj.name}/vendor/bullet/src"
 	}
 	
@@ -67,13 +67,6 @@ project "Lamp"
 		"ImGui",
 		"Glad",
 		"Bullet"
-		"xaudio2.lib",
-		"opengl32.lib",
-		"assimp-vc142-mt.lib",
-		"fmodstudio_vc.lib",
-		"fmod_vc.lib",
-		"d3d11.lib",
-		"d3dcompiler.lib"
 	}
 
 	filter "system:windows"
@@ -153,9 +146,13 @@ project "Sandbox"
 	{
 		"Game",
 		"Lamp",
+		"xaudio2.lib",
 		"assimp-vc142-mt.lib",
 		"fmodstudio_vc.lib",
-		"fmod_vc.lib"
+		"fmod_vc.lib",
+		"opengl32.lib",
+		"d3d11.lib",
+		"d3dcompiler.lib"
 	}
 	
 	linkoptions
@@ -287,9 +284,13 @@ project "GameLauncher"
 	{
 		"Lamp",
 		"Game",
+		"xaudio2.lib",
 		"assimp-vc142-mt.lib",
 		"fmodstudio_vc.lib",
-		"fmod_vc.lib"
+		"fmod_vc.lib",
+		"opengl32.lib",
+		"d3d11.lib",
+		"d3dcompiler.lib"
 	}
 
 	filter "system:windows"

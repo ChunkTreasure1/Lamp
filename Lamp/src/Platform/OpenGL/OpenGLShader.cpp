@@ -86,9 +86,6 @@ namespace Lamp
 			LP_CORE_ERROR("Failed to open" + m_Paths[0] + "!");
 		}
 
-		std::getline(vertexFile, line);
-		m_Type = ShaderTypeFromString(line);
-
 		while (std::getline(vertexFile, line))
 		{
 			vertexCode += line + "\n";
@@ -97,13 +94,13 @@ namespace Lamp
 		vertexFile.close();
 
 		//Read the geometry shader
-		if (geoPath != "")
+		if (m_Paths.size() == 3)
 		{
-			std::ifstream geoFile(geoPath);
+			std::ifstream geoFile(m_Paths[2]);
 			if (geoFile.fail())
 			{
-				perror(geoPath.c_str());
-				LP_CORE_ERROR("Failed to open" + geoPath + "!");
+				perror(m_Paths[2].c_str());
+				LP_CORE_ERROR("Failed to open" + m_Paths[2] + "!");
 			}
 
 			while (std::getline(geoFile, line))
@@ -143,7 +140,7 @@ namespace Lamp
 			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[1]);
 		}
 
-		if (geoPath != "")
+		if (m_Paths.size() == 3)
 		{
 			const char* gGeoCode = geoCode.c_str();
 			geometry = glCreateShader(GL_GEOMETRY_SHADER);
@@ -154,7 +151,7 @@ namespace Lamp
 			if (!success)
 			{
 				glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-				LP_ERROR("Geometry shader compilation failed: " + std::string(infoLog) + ". At: " + fragmentPath);
+				LP_ERROR("Geometry shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[2]);
 			}
 		}
 
@@ -162,7 +159,7 @@ namespace Lamp
 		glAttachShader(m_RendererID, vertex);
 		glAttachShader(m_RendererID, fragment);
 
-		if (geoPath != "")
+		if (m_Paths.size() == 3)
 		{
 			glAttachShader(m_RendererID, geometry);
 		}
@@ -178,7 +175,7 @@ namespace Lamp
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
-		if (geoPath != "")
+		if (m_Paths.size() == 3)
 		{
 			glDeleteShader(geometry);
 		}
@@ -205,25 +202,25 @@ namespace Lamp
 		{
 			switch (uniform.Type)
 			{
-			case Lamp::ShaderDataType::Bool:
+			case Lamp::Type::Bool:
 			{
 				glUniform1i(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<int*>(uniform.Data));
 				break;
 			}
 
-			case Lamp::ShaderDataType::Int:
+			case Lamp::Type::Int:
 			{
 				glUniform1i(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<int*>(uniform.Data));
 				break;
 			}
 
-			case Lamp::ShaderDataType::Float:
+			case Lamp::Type::Float:
 			{
 				glUniform1f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), *static_cast<float*>(uniform.Data));
 				break;
 			}
 
-			case Lamp::ShaderDataType::Float2:
+			case Lamp::Type::Float2:
 			{
 				glm::vec2* p = static_cast<glm::vec2*>(uniform.Data);
 
@@ -231,34 +228,34 @@ namespace Lamp
 				break;
 			}
 
-			case Lamp::ShaderDataType::Float3:
+			case Lamp::Type::Float3:
 			{
 				glm::vec3* p = static_cast<glm::vec3*>(uniform.Data);
 				glUniform3f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), p->x, p->y, p->z);
 				break;
 			}
 
-			case Lamp::ShaderDataType::Float4:
+			case Lamp::Type::Float4:
 			{
 				glm::vec4* p = static_cast<glm::vec4*>(uniform.Data);
 				glUniform4f(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), p->x, p->y, p->z, p->w);
 				break;
 			}
 
-			case Lamp::ShaderDataType::Mat3:
+			case Lamp::Type::Mat3:
 			{
 				uint32_t transfromLoc = glGetUniformLocation(m_RendererID, uniform.Name.c_str());
 				glUniformMatrix3fv(transfromLoc, 1, GL_FALSE, (float*)uniform.Data);
 				break;
 			}
 
-			case Lamp::ShaderDataType::Mat4:
+			case Lamp::Type::Mat4:
 			{
 				uint32_t transfromLoc = glGetUniformLocation(m_RendererID, uniform.Name.c_str());
 				glUniformMatrix4fv(transfromLoc, 1, GL_FALSE, (float*)uniform.Data);
 				break;
 			}
-			case Lamp::ShaderDataType::IntArray:
+			case Lamp::Type::IntArray:
 
 				glUniform1iv(glGetUniformLocation(m_RendererID, uniform.Name.c_str()), uniform.Size / sizeof(int), (int*)uniform.Data);
 				break;

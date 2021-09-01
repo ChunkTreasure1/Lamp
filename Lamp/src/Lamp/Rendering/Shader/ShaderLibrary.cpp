@@ -7,7 +7,7 @@ namespace Lamp
 
 	void ShaderLibrary::AddShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath)
 	{
-		Ref<Shader> shader = Shader::Create(vertexPath, fragmentPath, geoPath);
+		Ref<Shader> shader = Shader::Create({ vertexPath, fragmentPath});
 
 		m_Shaders.push_back(shader);
 	}

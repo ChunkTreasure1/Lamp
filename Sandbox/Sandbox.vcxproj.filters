@@ -28,6 +28,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\DXTesting">
+      <UniqueIdentifier>{16809D8F-8240-19C6-4B7B-6243B7FA5DA2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Sandbox2D">
       <UniqueIdentifier>{8177177F-ED37-93B5-B672-DC3222F2D791}</UniqueIdentifier>
     </Filter>
@@ -41,6 +44,9 @@
   <ItemGroup>
     <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
       <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DXTesting\DXTesting.h">
+      <Filter>src\DXTesting</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox2D\Sandbox2D.h">
       <Filter>src\Sandbox2D</Filter>
@@ -61,6 +67,9 @@
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
       <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DXTesting\DXTesting.cpp">
+      <Filter>src\DXTesting</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp">
       <Filter>src\Sandbox2D</Filter>

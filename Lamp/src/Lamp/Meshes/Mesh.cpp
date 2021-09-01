@@ -19,11 +19,11 @@ namespace Lamp
 		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
 		pBuffer->SetBufferLayout
 		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" },
+			{ Type::Float3, "a_Position" },
+			{ Type::Float3, "a_Normal" },
+			{ Type::Float3, "a_Tangent" },
+			{ Type::Float3, "a_Bitangent" },
+			{ Type::Float2, "a_TexCoords" },
 		});
 
 		m_pVertexArray->AddVertexBuffer(pBuffer);

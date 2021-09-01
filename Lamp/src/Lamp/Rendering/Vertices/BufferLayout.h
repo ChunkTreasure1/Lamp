@@ -3,55 +3,29 @@
 #include <vector>
 #include <string>
 
+#include "Lamp/Utility/Types.h"
+
 namespace Lamp
 {
-	enum class ElementType
-	{
-		Int,
-		Bool,
-		Float,
-		Float2,
-		Float3,
-		Float4,
-		Mat3,
-		Mat4
-	};
-
-	static uint32_t GetSizeFromType(ElementType elementType)
-	{
-		switch (elementType)
-		{
-			case Lamp::ElementType::Bool: return 1;
-			case Lamp::ElementType::Int: return 4;
-			case Lamp::ElementType::Float: return 4;
-			case Lamp::ElementType::Float2: return 4 * 2;
-			case Lamp::ElementType::Float3: return 4 * 3;
-			case Lamp::ElementType::Float4: return 4 * 4;
-			case Lamp::ElementType::Mat3: return 4 * 3 * 3;
-			case Lamp::ElementType::Mat4: return 4 * 4 * 4;
-		}
-
-		return 0;
-	}
 
 	struct BufferElement
 	{
-		BufferElement(ElementType elementType, const std::string& name, bool normalized = false)
+		BufferElement(Type elementType, const std::string& name, bool normalized = false)
 			: Name(name), ElementType(elementType), Size(GetSizeFromType(elementType)), Offset(0), Normalized(normalized)
 		{}
 
-		uint32_t GetComponentCount(ElementType elementType)
+		uint32_t GetComponentCount(Type elementType)
 		{
 			switch (elementType)
 			{
-			case Lamp::ElementType::Bool: return 1;
-			case Lamp::ElementType::Int: return 1;
-			case Lamp::ElementType::Float: return 1;
-			case Lamp::ElementType::Float2: return 2;
-			case Lamp::ElementType::Float3: return 3;
-			case Lamp::ElementType::Float4: return 4;
-			case Lamp::ElementType::Mat3: return 3 * 3;
-			case Lamp::ElementType::Mat4: return 4 * 4;
+				case Lamp::Type::Bool: return 1;
+				case Lamp::Type::Int: return 1;
+				case Lamp::Type::Float: return 1;
+				case Lamp::Type::Float2: return 2;
+				case Lamp::Type::Float3: return 3;
+				case Lamp::Type::Float4: return 4;
+				case Lamp::Type::Mat3: return 3 * 3;
+				case Lamp::Type::Mat4: return 4 * 4;
 			}
 		}
 
@@ -60,7 +34,7 @@ namespace Lamp
 		std::string Name;
 		size_t Offset;
 		uint32_t Size;
-		ElementType ElementType;
+		Type ElementType;
 	};
 
 	class BufferLayout

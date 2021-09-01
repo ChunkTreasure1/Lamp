@@ -6,18 +6,18 @@
 namespace Lamp
 {
 
-	static GLenum ElementTypeToGLEnum(ElementType type)
+	static GLenum ElementTypeToGLEnum(Type type)
 	{
 		switch (type)
 		{
-			case Lamp::ElementType::Bool: return GL_BOOL;
-			case Lamp::ElementType::Int: return GL_INT;
-			case Lamp::ElementType::Float: return GL_FLOAT;
-			case Lamp::ElementType::Float2: return GL_FLOAT;
-			case Lamp::ElementType::Float3: return GL_FLOAT;
-			case Lamp::ElementType::Float4: return GL_FLOAT;
-			case Lamp::ElementType::Mat3: return GL_FLOAT;
-			case Lamp::ElementType::Mat4: return GL_FLOAT;
+			case Lamp::Type::Bool: return GL_BOOL;
+			case Lamp::Type::Int: return GL_INT;
+			case Lamp::Type::Float: return GL_FLOAT;
+			case Lamp::Type::Float2: return GL_FLOAT;
+			case Lamp::Type::Float3: return GL_FLOAT;
+			case Lamp::Type::Float4: return GL_FLOAT;
+			case Lamp::Type::Mat3: return GL_FLOAT;
+			case Lamp::Type::Mat4: return GL_FLOAT;
 		}
 	}
 

@@ -28,6 +28,8 @@ namespace Lamp
 		static void DrawQuad();
 		static void DrawGrid();
 
+		static void DrawTestCube();
+
 		static void SetEnvironment(const std::string& path);
 
 	private:

@@ -15,11 +15,11 @@ namespace Lamp
 	void Renderer::Initialize()
 	{
 		ShaderLibrary::LoadShaders();
-		MaterialLibrary::LoadMaterials();
+		//MaterialLibrary::LoadMaterials();
 
 		RenderCommand::Initialize();
 		//Renderer2D::Initialize();
-		//Renderer3D::Initialize();
+		Renderer3D::Initialize();
 	}
 
 	void Renderer::Shutdown()

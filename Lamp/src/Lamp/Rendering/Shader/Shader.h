@@ -12,17 +12,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Lamp/Utility/Types.h"
+
 namespace Lamp
 {
-	enum class ShaderType
-	{
-		Illum = 0,
-		Blinn,
-		Phong,
-		BlinnPhong,
-		Unknown
-	};
-
 	struct ShaderSpec
 	{
 		std::string Name;
@@ -30,45 +23,16 @@ namespace Lamp
 		std::vector<std::string> TextureNames;
 	};
 
-	enum class ShaderDataType
-	{
-		Bool,
-		Int,
-		Float,
-		Float2,
-		Float3,
-		Float4,
-		Mat3,
-		Mat4,
-		IntArray
-	};
-
-	static uint32_t GetSizeFromType(ShaderDataType elementType)
-	{
-		switch (elementType)
-		{
-			case Lamp::ShaderDataType::Bool: return 1;
-			case Lamp::ShaderDataType::Int: return 4;
-			case Lamp::ShaderDataType::Float: return 4;
-			case Lamp::ShaderDataType::Float2: return 4 * 2;
-			case Lamp::ShaderDataType::Float3: return 4 * 3;
-			case Lamp::ShaderDataType::Float4: return 4 * 4;
-			case Lamp::ShaderDataType::Mat3: return 4 * 3 * 3;
-			case Lamp::ShaderDataType::Mat4: return 4 * 4 * 4;
-		}
-
-		return 0;
-	}
-
 	struct ShaderUniform
 	{
-		ShaderUniform(const std::string& name, ShaderDataType type, void* pData)
+		ShaderUniform(const std::string& name, Type type, void* pData)
 			: Name(name), Type(type), Data(pData)
 		{
 			Size = GetSizeFromType(type);
 		}
+
 		std::string Name;
-		ShaderDataType Type;
+		Type Type;
 		uint32_t Size;
 		void* Data = nullptr;
 	};
@@ -97,17 +61,14 @@ namespace Lamp
 		virtual std::string& GetVertexPath() = 0;
 		virtual std::string& GetGeoPath() = 0;
 
-		inline const ShaderType GetType() { return m_Type; }
 		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
 
 	public:
 		static Ref<Shader> Create(std::initializer_list<std::string> paths);
 
 	protected:
-		ShaderType ShaderTypeFromString(const std::string& s);
 
 	protected:
-		ShaderType m_Type;
 		ShaderSpec m_Specifications;
 	};
 }

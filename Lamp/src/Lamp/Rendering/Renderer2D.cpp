@@ -73,10 +73,10 @@ namespace Lamp
 		s_pData->pQuadVertexBuffer = VertexBuffer::Create(s_pData->MaxVertices * sizeof(QuadVertex));
 		s_pData->pQuadVertexBuffer->SetBufferLayout
 		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float4, "a_Color" },
-			{ ElementType::Float2, "a_TexCoord" },
-			{ ElementType::Float, "a_TexIndex" }
+			{ Type::Float3, "a_Position" },
+			{ Type::Float4, "a_Color" },
+			{ Type::Float2, "a_TexCoord" },
+			{ Type::Float, "a_TexIndex" }
 		});
 		s_pData->pQuadVertexArray->AddVertexBuffer(s_pData->pQuadVertexBuffer);
 
@@ -115,8 +115,8 @@ namespace Lamp
 		s_pData->pLineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
 		s_pData->pLineVertexBuffer->SetBufferLayout
 		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float4, "a_Color" }
+			{ Type::Float3, "a_Position" },
+			{ Type::Float4, "a_Color" }
 		});
 		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
 		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];

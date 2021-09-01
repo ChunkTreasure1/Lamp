@@ -18,26 +18,4 @@ namespace Lamp
 
 		return nullptr;
 	}
-
-	ShaderType Shader::ShaderTypeFromString(const std::string& s)
-	{
-		if (s == "//Illum")
-		{
-			return ShaderType::Illum;
-		}
-		else if (s == "//Blinn")
-		{
-			return ShaderType::Blinn;
-		}
-		else if (s == "//Phong")
-		{
-			return ShaderType::Phong;
-		}
-		else if (s == "BlinnPhong")
-		{
-			return ShaderType::BlinnPhong;
-		}
-
-		return ShaderType::Unknown;
-	}
 }
