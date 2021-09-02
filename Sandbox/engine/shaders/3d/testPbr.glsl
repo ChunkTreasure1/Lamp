@@ -1,6 +1,6 @@
 #ShaderSpec
-Name: testPbr;
-TextureCount: 3;
+Name: testPbr
+TextureCount: 3
 TextureNames
 {
 albedo
