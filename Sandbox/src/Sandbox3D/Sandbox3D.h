@@ -92,6 +92,7 @@ namespace Sandbox3D
 		bool m_PerspectiveFocused = false;
 		bool m_HaveUndone = false;
 		bool m_IsPlaying = false;
+		bool m_RightMousePressed = false;
 
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
 		ActionHandler m_ActionHandler;

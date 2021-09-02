@@ -17,7 +17,8 @@ namespace Sandbox3D
 	ModelImporter::ModelImporter(std::string_view name)
 		: BaseWindow(name)
 	{
-		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
+		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
+		m_Camera->SetPosition({ -3.f, 2.f, 3.f });
 
 		m_RenderFuncs.push_back(LP_EXTRA_RENDER(ModelImporter::Render));
 
@@ -55,6 +56,7 @@ namespace Sandbox3D
 			ImGuiID dockspace_id = ImGui::GetID(m_Name.c_str());
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+
 		ImGui::End();
 
 		UpdatePerspective();
@@ -68,7 +70,7 @@ namespace Sandbox3D
 	{
 		if (m_DefaultShader == nullptr)
 		{
-			m_DefaultShader = Lamp::ShaderLibrary::GetShader("Illumn");
+			m_DefaultShader = Lamp::ShaderLibrary::GetShader("testPbr");
 		}
 		UpdateCamera(e.GetTimestep());
 
@@ -81,7 +83,11 @@ namespace Sandbox3D
 		{
 			return;
 		}
-		m_Camera->Update(ts);
+
+		if (Input::IsMouseButtonPressed(1) && (m_HoveringPerspective || m_RightMousePressed))
+		{
+			m_Camera->Update(ts);
+		}		
 	}
 
 	void ModelImporter::Render()
@@ -102,6 +108,12 @@ namespace Sandbox3D
 		RenderCommand::Clear();
 
 		Renderer3D::Begin(pass);
+
+		if (m_RenderSkybox)
+		{
+			Renderer3D::DrawSkybox();
+		}
+
 		if (m_pModelToImport.get() != nullptr)
 		{
 			m_pModelToImport->Render();
@@ -117,7 +129,26 @@ namespace Sandbox3D
 		{
 			return;
 		}
-		m_Camera->OnEvent(e);
+
+		if (Input::IsMouseButtonReleased(1))
+		{
+			m_Camera->SetHasControl(false);
+			m_RightMousePressed = false;
+
+			Application::Get().GetWindow().ShowCursor(true);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+		}
+
+		if (Input::IsMouseButtonPressed(1) && (m_HoveringPerspective || m_RightMousePressed))
+		{
+			m_Camera->OnEvent(e);
+			m_RightMousePressed = true;
+
+			Application::Get().GetWindow().ShowCursor(false);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		}
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(ModelImporter::UpdateImGui));
@@ -156,7 +187,7 @@ namespace Sandbox3D
 		ImGui::Begin("Import Perspective");
 		{
 			glm::vec2 windowPos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_HoveringPerspective = ImGui::IsWindowHovered() && ImGui::IsWindowFocused();
+			m_HoveringPerspective = ImGui::IsWindowHovered();
 			m_Camera->SetControlsEnabled(m_HoveringPerspective);
 
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
@@ -232,6 +263,8 @@ namespace Sandbox3D
 		}
 		ImGui::Text(("Source path: " + path).c_str());
 		ImGui::Text(("Destination path: " + savePath).c_str());
+
+		ImGui::Checkbox("Show Skybox", &m_RenderSkybox);
 
 		ImGui::End();
 	}

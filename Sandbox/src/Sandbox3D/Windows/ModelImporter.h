@@ -27,6 +27,8 @@ namespace Sandbox3D
 
 	private:
 		bool m_HoveringPerspective = false;
+		bool m_RightMousePressed = false;
+		bool m_RenderSkybox = false;
 		glm::vec2 m_PerspectiveSize;
 		std::string m_MaterialName = "";
 

@@ -93,11 +93,7 @@ namespace Sandbox3D
 
 		m_SelectionBuffer->ClearAttachment(0, 0);
 
-		if (m_SandboxController->GetCameraController()->GetRightPressed())
-		{
-			m_SandboxController->Update(e.GetTimestep());
-		}
-		else
+		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
 			m_SandboxController->Update(e.GetTimestep());
 		}
@@ -164,13 +160,24 @@ namespace Sandbox3D
 			}
 		}
 
-		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		if (Input::IsMouseButtonReleased(1))
 		{
-			m_SandboxController->OnEvent(e);
+			m_SandboxController->GetCameraController()->SetHasControl(false);
+			m_RightMousePressed = false;
+
+			Application::Get().GetWindow().ShowCursor(true);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 		}
-		else
+
+		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
 			m_SandboxController->OnEvent(e);
+			m_RightMousePressed = true;
+
+			Application::Get().GetWindow().ShowCursor(false);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		}
 
 		EventDispatcher dispatcher(e);

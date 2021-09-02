@@ -22,7 +22,8 @@ namespace Lamp
 
 		bool OnMouseMoved(MouseMovedEvent& e);
 		inline float GetFOV() { return m_FOV; }
-		inline bool GetRightPressed() { return m_RightMouseButtonPressed; }
+
+		inline void SetHasControl(bool state) { m_HasControl = state; }
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
@@ -42,6 +43,5 @@ namespace Lamp
 		float m_LastY = 720 / 2;
 
 		bool m_HasControl = false;
-		bool m_RightMouseButtonPressed = false;
 	};
 }

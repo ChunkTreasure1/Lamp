@@ -23,48 +23,24 @@ namespace Lamp
 
 	void PerspectiveCameraController::Update(Timestep ts)
 	{
-		if (!m_ControlsEnabled)
+		if (Input::IsKeyPressed(LP_KEY_W))
 		{
-			m_RightMouseButtonPressed = false;
-			Application::Get().GetWindow().ShowCursor(true);
-			m_HasControl = false;
-
-			return;
+			m_Position += m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
+		}
+		if (Input::IsKeyPressed(LP_KEY_S))
+		{
+			m_Position -= m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
+		}
+		if (Input::IsKeyPressed(LP_KEY_A))
+		{
+			m_Position -= std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
+		}
+		if (Input::IsKeyPressed(LP_KEY_D))
+		{
+			m_Position += std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
 		}
 
-		if (Input::IsMouseButtonPressed(1))
-		{
-			m_RightMouseButtonPressed = true;
-			Application::Get().GetWindow().ShowCursor(false);
-		}
-		if (Input::IsMouseButtonReleased(1))
-		{
-			m_RightMouseButtonPressed = false;
-			Application::Get().GetWindow().ShowCursor(true);
-			m_HasControl = false;
-		}
-
-		if (m_RightMouseButtonPressed)
-		{
-			if (Input::IsKeyPressed(LP_KEY_W))
-			{
-				m_Position += m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
-			}
-			if (Input::IsKeyPressed(LP_KEY_S))
-			{
-				m_Position -= m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
-			}
-			if (Input::IsKeyPressed(LP_KEY_A))
-			{
-				m_Position -= std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
-			}
-			if (Input::IsKeyPressed(LP_KEY_D))
-			{
-				m_Position += std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
-			}
-
-			//g_pEnv->DirLight.UpdateProjection(m_Position);
-		}
+		//g_pEnv->DirLight.UpdateProjection(m_Position);
 
 		m_Camera->SetPosition(m_Position);
 	}
@@ -109,52 +85,47 @@ namespace Lamp
 
 	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
-		if (m_RightMouseButtonPressed)
+		if (!m_HasControl)
 		{
-			if (!m_HasControl)
-			{
-				m_LastX = e.GetX();
-				m_LastY = e.GetY();
-
-				m_HasControl = true;
-			}
-
-			float xOffset = e.GetX() - m_LastX;
-			float yOffset = m_LastY - e.GetY();
 			m_LastX = e.GetX();
 			m_LastY = e.GetY();
 
-			float sensitivity = 0.15f;
-			xOffset *= sensitivity;
-			yOffset *= sensitivity;
-
-			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetYaw(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetYaw() + xOffset);
-			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() + yOffset);
-
-			if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() > 89.f)
-			{
-				std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(89.f);
-			}
-			if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() < -89.f)
-			{
-				std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(-89.f);
-			}
-
-			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->UpdateVectors();
+			m_HasControl = true;
 		}
+
+		float xOffset = e.GetX() - m_LastX;
+		float yOffset = m_LastY - e.GetY();
+		m_LastX = e.GetX();
+		m_LastY = e.GetY();
+
+		float sensitivity = 0.15f;
+		xOffset *= sensitivity;
+		yOffset *= sensitivity;
+
+		std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetYaw(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetYaw() + xOffset);
+		std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() + yOffset);
+
+		if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() > 89.f)
+		{
+			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(89.f);
+		}
+		if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() < -89.f)
+		{
+			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(-89.f);
+		}
+
+		std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->UpdateVectors();
+
 		return true;
 	}
 
 	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		if (m_RightMouseButtonPressed)
+		m_TranslationSpeed += e.GetYOffset() * 0.5f;
+		m_TranslationSpeed = std::min(m_TranslationSpeed, m_MaxTranslationSpeed);
+		if (m_TranslationSpeed < 0)
 		{
-			m_TranslationSpeed += e.GetYOffset() * 0.5f;
-			m_TranslationSpeed = std::min(m_TranslationSpeed, m_MaxTranslationSpeed);
-			if (m_TranslationSpeed < 0)
-			{
-				m_TranslationSpeed = 0;
-			}
+			m_TranslationSpeed = 0;
 		}
 		return true;
 	}
