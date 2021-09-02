@@ -61,7 +61,7 @@ namespace Lamp
 
 	}
 
-	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size, Ref<Shader> shader)
+	void Direct3D11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
 	{
 		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
 		{
@@ -74,7 +74,7 @@ namespace Lamp
 				pContext->GetDeviceContext()->OMSetRenderTargets(1u, pContext->GetRenderTarget().GetAddressOf(), nullptr);
 				pContext->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-				pContext->GetDeviceContext()->DrawIndexed(size, 0u, 0u);
+				pContext->GetDeviceContext()->DrawIndexed(count, 0u, 0u);
 			}
 		}
 	}

@@ -387,6 +387,9 @@
     <ClInclude Include="src\Lamp\Utility\Random.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\Types.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Direct3D11\Direct3D11Buffer.h">
       <Filter>src\Platform\Direct3D11</Filter>
     </ClInclude>
@@ -1527,7 +1530,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Utility\Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">

@@ -32,9 +32,9 @@ namespace Lamp
 			s_RendererAPI->OffsetPolygon(factor, unit);
 		}
 
-		static void DrawIndexed(const Ref<VertexArray>& VertexArray, uint32_t count = 0, Ref<Shader> shader = nullptr)
+		static void DrawIndexed(const Ref<VertexArray>& VertexArray, uint32_t count = 0)
 		{
-			s_RendererAPI->DrawIndexed(VertexArray, count, shader);
+			s_RendererAPI->DrawIndexed(VertexArray, count);
 		}
 
 		static void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t count = 0)

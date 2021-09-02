@@ -4,6 +4,7 @@ TextureCount : 0;
 TextureNames:
 {
 }
+#type fragment
 #version 440 core
 
 out vec4 FragColor;

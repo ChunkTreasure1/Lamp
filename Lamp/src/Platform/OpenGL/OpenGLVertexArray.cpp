@@ -42,7 +42,7 @@ namespace Lamp
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer)
+	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer, Ref<Shader> shader)
 	{
 		glBindVertexArray(m_RendererID);
 		pVertexBuffer->Bind();

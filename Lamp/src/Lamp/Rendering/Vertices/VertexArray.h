@@ -4,6 +4,8 @@
 
 namespace Lamp
 {
+	class Shader;
+
 	class VertexArray
 	{
 	public:
@@ -13,7 +15,7 @@ namespace Lamp
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
-		virtual void AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer) = 0;
+		virtual void AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer, Ref<Shader> shader = nullptr) = 0;
 		virtual void SetIndexBuffer(const Ref<IndexBuffer>& pIndexBuffer) = 0;
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
 

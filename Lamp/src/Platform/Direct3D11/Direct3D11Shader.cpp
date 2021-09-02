@@ -10,33 +10,27 @@
 #include "Lamp/Core/Application.h"
 #include "Direct3D11DebugLayer.h"
 
-#include "Lamp/Math/Matrix.h"
-
 namespace Lamp
 {
-	Direct3D11Shader::Direct3D11Shader(std::initializer_list<std::string> paths)
-		: m_Paths(paths)
+	Direct3D11Shader::Direct3D11Shader(const std::string& path)
+		: m_Path(path)
 	{
 		if (WindowsWindow* pWindow = static_cast<WindowsWindow*>(&Application::Get().GetWindow()))
 		{
 			if (Direct3D11Context* pContext = static_cast<Direct3D11Context*>(pWindow->GetGraphicsContext().get()))
 			{
-				std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-				std::wstring vertex = converter.from_bytes(m_Paths[0]);
-				std::wstring pixel = converter.from_bytes(m_Paths[1]);
 
 				namespace wrl = Microsoft::WRL;
-				wrl::ComPtr<ID3DBlob> byteCode = nullptr;
 				wrl::ComPtr<ID3DBlob> error = nullptr;
 
-				HRESULT hr = D3DCompileFromFile(L"testShaders\\PixelShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &m_pBlob, &error);
+				HRESULT hr = D3DCompileFromFile(L"testShaders\\TestShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSmain", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &m_pBlob, &error);
 				if (error)
 				{
 					LP_CORE_CRITICAL((char*)error->GetBufferPointer());
 					error->Release();
 				}
 
-				hr = D3DCompileFromFile(L"testShaders\\VertexShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &m_pVertexBlob, &error);
+				hr = D3DCompileFromFile(L"testShaders\\TestShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSmain", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &m_pVertexBlob, &error);
 				if (error)
 				{
 					LP_CORE_CRITICAL((char*)error->GetBufferPointer());
@@ -67,7 +61,6 @@ namespace Lamp
 	void Direct3D11Shader::UploadData(const ShaderData& data)
 	{
 		namespace wrl = Microsoft::WRL;
-		namespace dx = DirectX;
 
 		static float angle = 0.f;
 

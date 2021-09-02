@@ -7,13 +7,13 @@
 
 namespace Lamp
 {
-	Ref<Shader> Shader::Create(std::initializer_list<std::string> paths)
+	Ref<Shader> Shader::Create(const std::string& path)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(paths);
-			case RendererAPI::API::DX11: return CreateRef<Direct3D11Shader>(paths);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(path);
+			case RendererAPI::API::DX11: return CreateRef<Direct3D11Shader>(path);
 		}
 
 		return nullptr;

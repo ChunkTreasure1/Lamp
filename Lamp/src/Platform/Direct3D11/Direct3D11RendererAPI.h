@@ -16,7 +16,7 @@ namespace Lamp
 		virtual void ClearDepth() override;
 		virtual void OffsetPolygon(float factor, float unit) override;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size, Ref<Shader> shader) override;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t size) override;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) override;
 
 	private:

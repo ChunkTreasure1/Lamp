@@ -16,11 +16,19 @@
 
 namespace Lamp
 {
+	enum ShaderType
+	{
+		VertexShader = 0,
+		FragmentShader = BIT(1),
+		GeometryShader = BIT(2)
+	};
+
 	struct ShaderSpec
 	{
 		std::string Name;
 		int TextureCount;
 		std::vector<std::string> TextureNames;
+		ShaderType Types;
 	};
 
 	struct ShaderUniform
@@ -57,14 +65,12 @@ namespace Lamp
 		virtual void UploadData(const ShaderData& data) = 0;
 
 		virtual const std::string& GetName() = 0;
-		virtual std::string& GetFragmentPath() = 0;
-		virtual std::string& GetVertexPath() = 0;
-		virtual std::string& GetGeoPath() = 0;
+		virtual std::string& GetPath() = 0;
 
 		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
 
 	public:
-		static Ref<Shader> Create(std::initializer_list<std::string> paths);
+		static Ref<Shader> Create(const std::string& path);
 
 	protected:
 

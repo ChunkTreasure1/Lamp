@@ -3,19 +3,19 @@
 
 namespace Lamp
 {
-	OpenGLShader::OpenGLShader(std::initializer_list<std::string> paths)
-		: m_Paths(paths), m_RendererID(0), m_FragmentPath(m_Paths[1]), m_VertexPath(m_Paths[0])
+	OpenGLShader::OpenGLShader(const std::string& path)
+		: m_Path(path), m_RendererID(0), m_FragmentPath(path), m_VertexPath(path)
 	{
 		std::string vertexCode;
 		std::string fragmentCode;
 		std::string geoCode;
 
 		//Read the vertex shader
-		std::ifstream fragmentFile(m_Paths[1]);
+		std::ifstream fragmentFile(path);
 		if (fragmentFile.fail())
 		{
-			perror(m_Paths[1].c_str());
-			LP_CORE_ERROR("Failed to open" + m_Paths[1] + "!");
+			perror(path.c_str());
+			LP_CORE_ERROR("Failed to open" + path + "!");
 		}
 
 		std::string line;
@@ -79,11 +79,11 @@ namespace Lamp
 		fragmentFile.close();
 
 		//Read the vertex shader
-		std::ifstream vertexFile(m_Paths[0]);
+		std::ifstream vertexFile(path);
 		if (vertexFile.fail())
 		{
-			perror(m_Paths[0].c_str());
-			LP_CORE_ERROR("Failed to open" + m_Paths[0] + "!");
+			perror(m_Path.c_str());
+			LP_CORE_ERROR("Failed to open" + m_Path + "!");
 		}
 
 		while (std::getline(vertexFile, line))
@@ -94,13 +94,13 @@ namespace Lamp
 		vertexFile.close();
 
 		//Read the geometry shader
-		if (m_Paths.size() == 3)
+		if (false)
 		{
-			std::ifstream geoFile(m_Paths[2]);
+			std::ifstream geoFile(m_Path);
 			if (geoFile.fail())
 			{
-				perror(m_Paths[2].c_str());
-				LP_CORE_ERROR("Failed to open" + m_Paths[2] + "!");
+				perror(m_Path.c_str());
+				LP_CORE_ERROR("Failed to open" + m_Path + "!");
 			}
 
 			while (std::getline(geoFile, line))
@@ -126,7 +126,7 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[0]);
+			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + m_Path);
 		}
 
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -137,10 +137,10 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[1]);
+			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + m_Path);
 		}
 
-		if (m_Paths.size() == 3)
+		if (false)
 		{
 			const char* gGeoCode = geoCode.c_str();
 			geometry = glCreateShader(GL_GEOMETRY_SHADER);
@@ -151,7 +151,7 @@ namespace Lamp
 			if (!success)
 			{
 				glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-				LP_ERROR("Geometry shader compilation failed: " + std::string(infoLog) + ". At: " + m_Paths[2]);
+				LP_ERROR("Geometry shader compilation failed: " + std::string(infoLog) + ". At: " + m_Path);
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace Lamp
 		glAttachShader(m_RendererID, vertex);
 		glAttachShader(m_RendererID, fragment);
 
-		if (m_Paths.size() == 3)
+		if (false)
 		{
 			glAttachShader(m_RendererID, geometry);
 		}
@@ -175,7 +175,7 @@ namespace Lamp
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
-		if (m_Paths.size() == 3)
+		if (false)
 		{
 			glDeleteShader(geometry);
 		}

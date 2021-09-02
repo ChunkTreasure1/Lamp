@@ -44,6 +44,8 @@ namespace Lamp
 		Renderer::Initialize();
 		AudioEngine::Initialize();
 
+		RenderCommand::SetViewport(0, 0, props.Width, props.Height);
+
 		m_pPhysicsEngine = new PhysicsEngine();
 		m_pPhysicsEngine->Initialize();
 

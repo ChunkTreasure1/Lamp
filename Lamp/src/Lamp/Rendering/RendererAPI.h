@@ -32,7 +32,7 @@ namespace Lamp
 		virtual void ClearDepth() = 0;
 		virtual void OffsetPolygon(float factor, float unit) = 0;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0, Ref<Shader> shader = nullptr) = 0;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) = 0;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;
 
 		const RendererCapabilities& GetRendererCapabilities() { return m_RendererCapabilities; }

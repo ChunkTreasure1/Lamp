@@ -4,6 +4,7 @@
 #include "Lamp/Core/Application.h"
 #include "Platform/Windows/WindowsWindow.h"
 #include "Platform/Direct3D11/Direct3D11Context.h"
+#include "Platform/Direct3D11/Direct3D11Shader.h"
 
 namespace Lamp
 {
@@ -43,9 +44,14 @@ namespace Lamp
 	{
 	}
 
-	void Direct3D11VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer)
+	void Direct3D11VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& pVertexBuffer, Ref<Shader> shader)
 	{
 		pVertexBuffer->Bind();
+
+		if (auto s = std::dynamic_pointer_cast<Direct3D11Shader>(shader))
+		{
+			m_pBlob = s->GetVertexBlob();
+		}
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> ied;
 

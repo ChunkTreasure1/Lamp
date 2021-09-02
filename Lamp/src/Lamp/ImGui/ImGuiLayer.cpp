@@ -1,9 +1,9 @@
 #include "lppch.h"
 #include "ImGuiLayer.h"
 
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
-#include "examples/imgui_impl_dx11.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_dx11.h"
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Event/ApplicationEvent.h"

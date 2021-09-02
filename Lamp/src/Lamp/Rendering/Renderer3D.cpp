@@ -125,7 +125,7 @@ namespace Lamp
 				{ Type::Float3, "a_Position" },
 				{ Type::Float4, "a_Color" }
 				});
-			//s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
+			//s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer, s_pData->LineMaterial.GetShader());
 			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
 			uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
@@ -220,11 +220,12 @@ namespace Lamp
 			{ Type::Float3, "COLOR" }
 		});
 
+		s_pData->CubeShader = Shader::Create("testShaders/TestShader.hlsl");
+
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
 		s_pData->CubeVertexArray->SetIndexBuffer(indexBuffer);
-		s_pData->CubeVertexArray->AddVertexBuffer(s_pData->CubeVertexBuffer);
+		s_pData->CubeVertexArray->AddVertexBuffer(s_pData->CubeVertexBuffer, s_pData->CubeShader);
 
-		s_pData->CubeShader = Shader::Create({ "VertexShader.cso", "PixelShader.cso" });
 		//////////////////
 	}
 
@@ -415,7 +416,7 @@ namespace Lamp
 			{ "u_Model", Type::Mat4, glm::value_ptr(d) },
 		}));
 
-		RenderCommand::DrawIndexed(s_pData->CubeVertexArray, s_pData->CubeVertexArray->GetIndexBuffer()->GetCount() * sizeof(uint32_t), s_pData->CubeShader);
+		RenderCommand::DrawIndexed(s_pData->CubeVertexArray, s_pData->CubeVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::SetEnvironment(const std::string& path)
