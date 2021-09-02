@@ -77,6 +77,23 @@ namespace Sandbox3D
 		return false;
 	}
 
+	std::string ModelImporter::GetDragDropTarget()
+	{
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)pPayload->Data;
+				std::filesystem::path p = std::filesystem::path("assets") / path;
+				return p.string();
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		return "";
+	}
+
 	void ModelImporter::UpdateCamera(Lamp::Timestep ts)
 	{
 		if (!m_IsOpen)
@@ -87,7 +104,7 @@ namespace Sandbox3D
 		if (Input::IsMouseButtonPressed(1) && (m_HoveringPerspective || m_RightMousePressed))
 		{
 			m_Camera->Update(ts);
-		}		
+		}
 	}
 
 	void ModelImporter::Render()
@@ -118,7 +135,10 @@ namespace Sandbox3D
 		{
 			m_pModelToImport->Render();
 		}
-		RenderGrid();
+		if (m_RenderGrid)
+		{
+			RenderGrid();
+		}
 		Renderer3D::End();
 		m_Framebuffer->Unbind();
 	}
@@ -265,6 +285,7 @@ namespace Sandbox3D
 		ImGui::Text(("Destination path: " + savePath).c_str());
 
 		ImGui::Checkbox("Show Skybox", &m_RenderSkybox);
+		ImGui::Checkbox("Show Grid", &m_RenderGrid);
 
 		ImGui::End();
 	}
@@ -321,15 +342,36 @@ namespace Sandbox3D
 			}
 			for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
 			{
-				if (ImGui::Button((std::string("Load##") + tex.first).c_str()))
+				if (!m_pModelToImport->GetMaterial().GetTextures()[tex.first])
 				{
-					paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0");
+					if (ImGui::Button((std::string("Load##") + tex.first).c_str(), { 128, 128 }))
+					{
+						paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0*.tga\0");
+					}
+					std::string dragDropPath = GetDragDropTarget();
+					if (!dragDropPath.empty())
+					{
+						paths[tex.first] = dragDropPath;
+					}
 				}
-				if (paths[tex.first] != "")
+				else
+				{
+					if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 128, 128 }, { 0, 1 }, { 1, 0 }))
+					{
+						paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0*.tga\0");
+					}
+					std::string dragDropPath = GetDragDropTarget();
+					if (!dragDropPath.empty())
+					{
+						paths[tex.first] = dragDropPath;
+					}
+				}
+
+				if (paths[tex.first] != "" && paths[tex.first] != m_pModelToImport->GetMaterial().GetTextures()[tex.first]->GetPath())
 				{
 					m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create(paths[tex.first]));
 				}
-				else
+				else if (paths[tex.first] == "")
 				{
 					m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
 				}

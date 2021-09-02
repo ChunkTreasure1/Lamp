@@ -46,10 +46,10 @@ namespace Sandbox3D
 			std::string filenameString = relativePath.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			
+
 			Ref<Lamp::Texture2D> icon = directoryEntry.is_directory() ? m_directoryTexture : m_fileTexture;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 0.f, 0.f, 0.f });
-			
+
 			ImGui::ImageButton((ImTextureID)icon->GetID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 			if (ImGui::BeginDragDropSource())
 			{

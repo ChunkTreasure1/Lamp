@@ -25,10 +25,13 @@ namespace Sandbox3D
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool Update(Lamp::AppUpdateEvent& e);
 
+		std::string GetDragDropTarget();
+
 	private:
 		bool m_HoveringPerspective = false;
 		bool m_RightMousePressed = false;
 		bool m_RenderSkybox = false;
+		bool m_RenderGrid = true;
 		glm::vec2 m_PerspectiveSize;
 		std::string m_MaterialName = "";
 

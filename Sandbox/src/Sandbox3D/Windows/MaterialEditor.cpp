@@ -158,17 +158,27 @@ namespace Sandbox3D
 	void MaterialEditor::UpdateMaterialList()
 	{
 		ImGui::Begin("Material List");
-	
-		for (auto& mat : MaterialLibrary::GetMaterials())
+
+		if (ImGui::TreeNode("Materials"))
 		{
-			if (ImGui::Selectable(mat.GetName().c_str()));
+			int startId = 0;
+
+			for (auto& mat : MaterialLibrary::GetMaterials())
 			{
-				m_pSelectedMaterial = &mat;
-				if (m_MaterialModel)
+				startId++;
+				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+				ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, mat.GetName().c_str());
+				if (ImGui::IsItemClicked());
 				{
-					m_MaterialModel->SetMaterial(mat);
+					m_pSelectedMaterial = &mat;
+					if (m_MaterialModel)
+					{
+						m_MaterialModel->SetMaterial(mat);
+					}
 				}
 			}
+
+			ImGui::TreePop();
 		}
 		
 		ImGui::End();
