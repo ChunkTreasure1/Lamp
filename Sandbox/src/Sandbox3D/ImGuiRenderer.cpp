@@ -546,7 +546,8 @@ namespace Sandbox3D
 
 		if (ImGui::CollapsingHeader(ptr->GetName().c_str()))
 		{
-			if (ImGui::Button("Remove"))
+			std::string id = "Remove###Remove" + ptr->GetName();
+			if (ImGui::Button(id.c_str()))
 			{
 				removeComp = true;
 			}
@@ -675,6 +676,18 @@ namespace Sandbox3D
 						std::string v = *s;
 
 						ImGui::InputText(pProp.Name.c_str(), &v);
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+							{
+								const wchar_t* path = (const wchar_t*)pPayload->Data;
+								std::filesystem::path p = std::filesystem::path("assets") / path;
+								v = p.string();
+							}
+
+							ImGui::EndDragDropTarget();
+						}
+
 						ImGui::SameLine();
 						if (ImGui::Button("Open..."))
 						{

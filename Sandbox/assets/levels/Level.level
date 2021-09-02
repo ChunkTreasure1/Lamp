@@ -4,15 +4,11 @@
 	</Brushes>
 	<Layers/>
 	<Entities>
-		<Entity name="Entity1" position="0.000000,2.244824,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
-			<Component name="MeshComponent">
-				<Param name="Path" type="Path" value=""/>
-			</Component>
-		</Entity>
+		<Entity name="Entity1" position="0.000000,2.244824,0.000000" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000"/>
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-10.192181,3.363078,-2.103812" rotation="369.596375,-7.549949,0.000000" fov="60.000000"/>
+		<CameraValues position="-6.555613,6.658608,-4.566061" rotation="397.796051,-32.299999,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 
