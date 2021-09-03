@@ -180,7 +180,7 @@ namespace Lamp
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
 			s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
 			s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-			s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/newport_loft.hdr");
+			s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr");
 		}
 		////////////////
 	}
@@ -275,6 +275,7 @@ namespace Lamp
 			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 			mat.GetShader()->UploadInt("u_ObjectId", id);
+			mat.GetShader()->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
 			s_pData->ShadowBuffer->BindDepthAttachment(0);

@@ -1,7 +1,7 @@
 <Material name="sphere">
-	<albedo path="assets/textures/wornMetal/albedo.png"/>
-	<normal path="assets/textures/wornMetal/normal.png"/>
-	<mro path="assets/textures/wornMetal/mro.png"/>
+	<albedo path="assets/textures/wornMetal/tex_albedo.png"/>
+	<normal path="assets/textures/wornMetal/tex_normal.png"/>
+	<mro path="assets/textures/wornMetal/tex_mro.png"/>
 	<Shininess value="32.000000"/>
 	<Shader name="testPbr" vertex="engine/shaders/3d/testPbr_vs.glsl" fragment="engine/shaders/3d/testPbr_fs.glsl"/>
 </Material>

@@ -8,7 +8,7 @@ namespace Lamp
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
 		: m_Width(width), m_Height(height)
 	{
-		m_InternalFormat = GL_RGBA8, m_DataFormat = GL_RGBA;
+		m_InternalFormat = GL_SRGB8_ALPHA8, m_DataFormat = GL_RGBA;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);

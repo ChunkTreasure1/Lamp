@@ -62,16 +62,30 @@ namespace Lamp
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		GLenum dataFormat = 0, internalFormat = 0, type = 0;
+		
+		size_t pos = t.path.find_last_of("_");
+		std::string fileEnd;
+
+		if (pos != std::string::npos)
+		{
+			fileEnd = t.path.substr(pos, t.path.size() - 1);
+		}
+
+		bool gammaCorrect = true;
+		if (fileEnd.find("mro") != std::string::npos || fileEnd.find("normal") != std::string::npos)
+		{
+			gammaCorrect = false;
+		}
 
 		if (t.channels == 4)
 		{
-			internalFormat = GL_RGBA8;
+			internalFormat = gammaCorrect ? GL_SRGB8_ALPHA8 : GL_RGBA8;
 			dataFormat = GL_RGBA;
 			type = GL_UNSIGNED_BYTE;
 		}
 		else if (t.channels == 3)
 		{
-			internalFormat = GL_RGB8;
+			internalFormat = gammaCorrect ? GL_SRGB8 : GL_RGB8;
 			dataFormat = GL_RGB;
 			type = GL_UNSIGNED_BYTE;
 		}
@@ -81,7 +95,6 @@ namespace Lamp
 			dataFormat = GL_RED;
 			type = GL_UNSIGNED_BYTE;
 		}
-
 
 		if (t.pData)
 		{
