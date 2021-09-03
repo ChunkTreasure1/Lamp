@@ -43,8 +43,10 @@ namespace Lamp
 
 		for (auto& tex : mat.GetTextures())
 		{
+			std::string texPath = tex.second ? tex.second->GetPath() : "engine/textures/default/defaultTexture.png";
+
 			xml_node<>* pTex = doc.allocate_node(node_element, tex.first.c_str());
-			pTex->append_attribute(doc.allocate_attribute("path", tex.second->GetPath().c_str()));
+			pTex->append_attribute(doc.allocate_attribute("path", texPath.c_str()));
 			pRoot->append_node(pTex);
 		}
 
@@ -109,11 +111,12 @@ namespace Lamp
 				mat.SetShininess(val);
 			}
 
+			mat.SetPath(std::filesystem::path(path));
 			AddMaterial(mat);
 		}
 	}
 
-	Material MaterialLibrary::GetMaterial(const std::string& name)
+	Material& MaterialLibrary::GetMaterial(const std::string& name)
 	{
 		for (auto& mat : m_Materials)
 		{

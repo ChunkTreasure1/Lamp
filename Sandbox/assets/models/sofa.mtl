@@ -1,8 +1,0 @@
-<Material name="sofa">
-	<albedo path="engine/textures/default/defaultTexture.png"/>
-	<normal path="engine/textures/default/defaultTexture.png"/>
-	<mro path="engine/textures/default/defaultTexture.png"/>
-	<Shininess value="32.000000"/>
-	<Shader name="testPbr" vertex="engine/shaders/3d/testPbr_vs.glsl" fragment="engine/shaders/3d/testPbr_fs.glsl"/>
-</Material>
-

@@ -31,10 +31,11 @@ namespace Lamp
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
-		glCullFace(GL_BACK);
 		glDepthFunc(GL_LEQUAL);
 
 		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 

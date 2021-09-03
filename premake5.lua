@@ -107,8 +107,7 @@ project "Sandbox"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/engine/**.vert",
-		"%{prj.name}/engine/**.frag",
+		"%{prj.name}/engine/**.glsl",
 		"Lamp/vendor/ImGuizmo/include/**.h",
 		"Lamp/vendor/ImGuizmo/include/**.cpp",
 		"Lamp/vendor/imnodes/**.h",

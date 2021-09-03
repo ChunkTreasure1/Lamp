@@ -369,7 +369,7 @@ namespace Sandbox3D
 			shadowBuffer.Width = 4096;
 
 			RenderPassSpecification shadowSpec;
-			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
+			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.IsShadowPass = true;
 			shadowSpec.Name = "DirShadowPass";

@@ -1,0 +1,7 @@
+<Material name="base">
+	<albedo path="assets/textures/base/base_albedo.png"/>
+	<normal path="assets/textures/base/base_normal.png"/>
+	<mro path="assets/textures/base/base_mro.png"/>
+	<Shininess value="32.000000"/>
+	<Shader name="testPbr" vertex="engine/shaders/3d/testPbr_vs.glsl" fragment="engine/shaders/3d/testPbr_fs.glsl"/>
+</Material>
