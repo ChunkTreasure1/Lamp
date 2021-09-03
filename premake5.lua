@@ -1,5 +1,6 @@
 workspace "Lamp"
 	architecture "x64"
+	startproject "Sandbox"
 
 	configurations
 	{

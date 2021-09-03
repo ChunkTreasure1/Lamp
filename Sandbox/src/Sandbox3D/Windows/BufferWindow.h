@@ -38,6 +38,12 @@ namespace Sandbox3D
 			ImGui::Begin(m_Name.c_str(), &m_IsOpen);
 
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
+			if (m_panelSize != *((glm::vec2*)&panelSize))
+			{
+				m_FrameBuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				m_panelSize = { panelSize.x, panelSize.y };
+			}
+
 			ImGui::Image((void*)(uint64_t)m_TextureId, panelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			ImGui::End();
@@ -47,6 +53,7 @@ namespace Sandbox3D
 		bool& GetIsOpen() { return m_IsOpen; }
 
 	private:
+		glm::vec2 m_panelSize = { 0.f, 0.f };
 		Ref<Lamp::Framebuffer> m_FrameBuffer;
 		uint32_t m_TextureId = -1;
 		std::string m_Name;
