@@ -42,8 +42,16 @@ namespace Sandbox3D
 			m_PerspectiveHover = ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
+			//Viewport bounds
+			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+			auto viewportOffset = ImGui::GetWindowPos();
+
+			m_PerspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+			m_PerspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
-			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
+			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
 				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_SecondaryBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
@@ -89,7 +97,6 @@ namespace Sandbox3D
 		if (m_pSelectedObject)
 		{
 			transform = m_pSelectedObject->GetModelMatrix();
-			ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(m_pSelectedObject->GetPosition()), glm::value_ptr(m_pSelectedObject->GetRotation()), glm::value_ptr(m_pSelectedObject->GetScale()), glm::value_ptr(transform));
 
 			// TODO: improve this first part.
 			if (firstTime)
@@ -116,21 +123,36 @@ namespace Sandbox3D
 			}
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
-			
-			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
-			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
+
+			ImGuizmo::SetRect(m_PerspectiveBounds[0].x, m_PerspectiveBounds[0].y, m_PerspectiveBounds[1].x - m_PerspectiveBounds[0].x, m_PerspectiveBounds[1].y - m_PerspectiveBounds[0].y);
+
+			bool snap = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_CONTROL);
+
+			float snapValue = 0.5f;
+			if (m_ImGuizmoOperation == ImGuizmo::ROTATE)
+			{
+				snapValue = 45.f;
+			}
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(
+				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transform));
+				m_ImGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
 
 
-			glm::vec3 p, r, s;
-			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
-			
-			r = r - m_pSelectedObject->GetRotation();
-
-			m_pSelectedObject->SetPosition(p);
-			m_pSelectedObject->AddRotation(r);
-			m_pSelectedObject->SetScale(s);
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 p, r, s;
+				ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
+				
+				glm::vec3 deltaRot = r - m_pSelectedObject->GetRotation();
+				m_pSelectedObject->SetPosition(p);
+				m_pSelectedObject->AddRotation(deltaRot);
+				m_pSelectedObject->SetScale(s);
+			}
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
@@ -241,7 +263,7 @@ namespace Sandbox3D
 						spec.name = pEnt->GetName();
 						spec.path = "Assets/libs/graphkey/" + spec.name + ".graphkey";
 						pEnt->SetGraphKeyGraph(CreateRef<Lamp::GraphKeyGraph>(spec));
-					
+
 						if (auto vs = (GraphKey*)(m_pWindows[1]))
 						{
 							vs->SetIsOpen(true);
@@ -368,7 +390,7 @@ namespace Sandbox3D
 						}
 
 						m_pSelectedObject = layer.Objects[i];
-					
+
 						if (m_pSelectedObject)
 						{
 							m_pSelectedObject->SetIsSelected(true);
@@ -404,7 +426,7 @@ namespace Sandbox3D
 						if (comp != nullptr)
 						{
 							pEnt->AddComponent(comp);
-							
+
 							Lamp::EntityComponentAddedEvent e;
 							pEnt->OnEvent(e);
 						}
@@ -428,7 +450,7 @@ namespace Sandbox3D
 		ImGui::Begin("Create", &m_CreateToolOpen);
 
 		static bool brushListOpen = false;
-		
+
 		if (!brushListOpen)
 		{
 			if (ImGui::Button("Entity"))
@@ -437,7 +459,7 @@ namespace Sandbox3D
 				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
 				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
 			}
-			
+
 			ImGui::SameLine();
 
 			if (ImGui::Button("Brush"))
@@ -485,7 +507,7 @@ namespace Sandbox3D
 		}
 
 		ImGui::Begin("Log", &m_LogToolOpen);
-		
+
 		if (ImGui::BeginPopup("Options"))
 		{
 			ImGui::Checkbox("Auto-scroll", &autoScroll);
@@ -556,189 +578,189 @@ namespace Sandbox3D
 			{
 				switch (pProp.PropertyType)
 				{
-					case Lamp::PropertyType::Int:
+				case Lamp::PropertyType::Int:
+				{
+					int* p = static_cast<int*>(pProp.Value);
+					int v = *p;
+
+					ImGui::InputInt(pProp.Name.c_str(), &v);
+					if (v != *p)
 					{
-						int* p = static_cast<int*>(pProp.Value);
-						int v = *p;
-						
-						ImGui::InputInt(pProp.Name.c_str(), &v);
-						if (v != *p)
-						{
-							*p = v;
+						*p = v;
 
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
 
-					case Lamp::PropertyType::Bool:
+					break;
+				}
+
+				case Lamp::PropertyType::Bool:
+				{
+					bool* p = static_cast<bool*>(pProp.Value);
+					bool v = *p;
+
+					ImGui::Checkbox(pProp.Name.c_str(), &v);
+					if (v != *p)
 					{
-						bool* p = static_cast<bool*>(pProp.Value);
-						bool v = *p;
+						*p = v;
 
-						ImGui::Checkbox(pProp.Name.c_str(), &v);
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
 
-					case Lamp::PropertyType::Float:
+					break;
+				}
+
+				case Lamp::PropertyType::Float:
+				{
+					float* p = static_cast<float*>(pProp.Value);
+					float v = *p;
+
+					ImGui::InputFloat(pProp.Name.c_str(), &v);
+					if (v != *p)
 					{
-						float* p = static_cast<float*>(pProp.Value);
-						float v = *p;
+						*p = v;
 
-						ImGui::InputFloat(pProp.Name.c_str(), &v);
-						if (v != *p)
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Float2:
+				{
+					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+					glm::vec2 v = *p;
+
+					ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
+					{
+						*p = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Float3:
+				{
+					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					glm::vec3 v = *p;
+
+					ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
+					{
+						*p = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Float4:
+				{
+					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					glm::vec4 v = *p;
+
+					ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
+					if (v != *p)
+					{
+						*p = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::String:
+				{
+					std::string* s = static_cast<std::string*>(pProp.Value);
+					std::string v = *s;
+
+					ImGui::InputText(pProp.Name.c_str(), &v);
+					if (v != *s)
+					{
+						*s = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Path:
+				{
+					std::string* s = static_cast<std::string*>(pProp.Value);
+					std::string v = *s;
+
+					ImGui::InputText(pProp.Name.c_str(), &v);
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
+							const wchar_t* path = (const wchar_t*)pPayload->Data;
+							std::filesystem::path p = std::filesystem::path("assets") / path;
+							v = p.string();
 						}
-						break;
+
+						ImGui::EndDragDropTarget();
 					}
 
-					case Lamp::PropertyType::Float2:
+					ImGui::SameLine();
+					if (ImGui::Button("Open..."))
 					{
-						glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-						glm::vec2 v = *p;
-						
-						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
+						std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+						if (!path.empty())
 						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
+							v = path;
 						}
-						break;
 					}
 
-					case Lamp::PropertyType::Float3:
+					if (v != *s)
 					{
-						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-						glm::vec3 v = *p;
+						*s = v;
 
-						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
+					break;
+				}
 
-					case Lamp::PropertyType::Float4:
+				case Lamp::PropertyType::Color3:
+				{
+					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					glm::vec3 v = *p;
+
+					ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
 					{
-						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-						glm::vec4 v = *p;
+						*p = v;
 
-						ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
+					break;
+				}
 
-					case Lamp::PropertyType::String:
+				case Lamp::PropertyType::Color4:
+				{
+					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					glm::vec4 v = *p;
+
+					ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
 					{
-						std::string* s = static_cast<std::string*>(pProp.Value);
-						std::string v = *s;
+						*p = v;
 
-						ImGui::InputText(pProp.Name.c_str(), &v);
-						if (v != *s)
-						{
-							*s = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
-
-					case Lamp::PropertyType::Path:
-					{
-						std::string* s = static_cast<std::string*>(pProp.Value);
-						std::string v = *s;
-
-						ImGui::InputText(pProp.Name.c_str(), &v);
-						if (ImGui::BeginDragDropTarget())
-						{
-							if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-							{
-								const wchar_t* path = (const wchar_t*)pPayload->Data;
-								std::filesystem::path p = std::filesystem::path("assets") / path;
-								v = p.string();
-							}
-
-							ImGui::EndDragDropTarget();
-						}
-
-						ImGui::SameLine();
-						if (ImGui::Button("Open..."))
-						{
-							std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-							if (!path.empty())
-							{
-								v = path;
-							}
-						}
-
-						if (v != *s)
-						{
-							*s = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						break;
-					}
-
-					case Lamp::PropertyType::Color3:
-					{
-						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-						glm::vec3 v = *p;
-
-						ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						break;
-					}
-
-					case Lamp::PropertyType::Color4:
-					{
-						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-						glm::vec4 v = *p;
-
-						ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetEntity()->OnEvent(e);
-						}
-						break;
-					}
+					break;
+				}
 				}
 			}
 		}

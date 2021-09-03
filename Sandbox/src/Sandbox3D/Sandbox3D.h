@@ -83,6 +83,7 @@ namespace Sandbox3D
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
+		glm::vec2 m_PerspectiveBounds[2];
 		ImGuiID m_DockspaceID;
 		std::vector<BufferWindow> m_BufferWindows;
 
