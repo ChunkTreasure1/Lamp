@@ -127,6 +127,7 @@ namespace Sandbox3D
 			ImGuizmo::SetRect(m_PerspectiveBounds[0].x, m_PerspectiveBounds[0].y, m_PerspectiveBounds[1].x - m_PerspectiveBounds[0].x, m_PerspectiveBounds[1].y - m_PerspectiveBounds[0].y);
 
 			bool snap = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_CONTROL);
+			bool duplicate = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_SHIFT);
 
 			float snapValue = 0.5f;
 			if (m_ImGuizmoOperation == ImGuizmo::ROTATE)
@@ -139,19 +140,40 @@ namespace Sandbox3D
 			ImGuizmo::Manipulate(
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transform),
+				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
+			static bool hasDuplicated = false;
 
 			if (ImGuizmo::IsUsing())
 			{
-				glm::vec3 p, r, s;
-				ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
-				
-				glm::vec3 deltaRot = r - m_pSelectedObject->GetRotation();
-				m_pSelectedObject->SetPosition(p);
-				m_pSelectedObject->AddRotation(deltaRot);
-				m_pSelectedObject->SetScale(s);
+				if (duplicate && !hasDuplicated)
+				{
+					if (auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject))
+					{
+						m_pSelectedObject = Lamp::Brush::Duplicate(brush);
+					}
+					else if (auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject))
+					{
+
+					}
+
+					hasDuplicated = true;
+				}
+				else
+				{
+					glm::vec3 p, r, s;
+					ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
+
+					glm::vec3 deltaRot = r - m_pSelectedObject->GetRotation();
+					m_pSelectedObject->SetPosition(p);
+					m_pSelectedObject->AddRotation(deltaRot);
+					m_pSelectedObject->SetScale(s);
+				}
+			}
+			else
+			{
+				hasDuplicated = false;
 			}
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())

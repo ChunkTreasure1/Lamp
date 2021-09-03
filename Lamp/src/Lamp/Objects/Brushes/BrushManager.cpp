@@ -75,6 +75,19 @@ namespace Lamp
 		return brush;
 	}
 
+	Brush* BrushManager::Create(Brush* main)
+	{
+		Ref<Model> model = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel(main->GetModel()->GetLGFPath(), model.get());
+		auto brush = new Brush(model);
+		brush->SetLayerID(main->GetLayerID());
+
+		m_Brushes.emplace(std::make_pair(brush->GetID(), brush));
+		ObjectLayerManager::Get()->AddToLayer(brush, brush->GetLayerID());
+
+		return brush;
+	}
+
 	void BrushManager::Remove(Brush* brush)
 	{
 		if (m_Brushes.size() == 0 && !brush)

@@ -277,7 +277,7 @@ namespace Lamp
 			mat.GetShader()->UploadInt("u_ObjectId", id);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			//s_pData->ShadowBuffer->BindDepthAttachment(0);
+			s_pData->ShadowBuffer->BindDepthAttachment(0);
 
 			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
 			mat.GetShader()->UploadInt("u_PrefilterMap", 2);

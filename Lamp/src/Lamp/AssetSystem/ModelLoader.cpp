@@ -327,7 +327,7 @@ namespace Lamp
 		Assimp::Importer importer;
 		std::vector<Ref<Mesh>> meshes;
 
-		const aiScene* pScene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+		const aiScene* pScene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 		if (!pScene)
 		{
 			return meshes;

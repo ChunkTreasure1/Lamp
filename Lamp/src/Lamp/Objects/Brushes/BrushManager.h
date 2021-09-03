@@ -15,6 +15,7 @@ namespace Lamp
 
 		Brush* Create(const std::string& path);
 		Brush* Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name);
+		Brush* Create(Brush* main);
 
 		Brush2D* Create2D(const std::string& path);
 		Brush2D* Create2D(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name);

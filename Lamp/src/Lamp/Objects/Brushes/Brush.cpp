@@ -79,6 +79,26 @@ namespace Lamp
 		return g_pEnv->pBrushManager->Create(path);
 	}
 
+	Brush* Brush::Duplicate(Brush* main)
+	{
+		Brush* pBrush = g_pEnv->pBrushManager->Create(main);
+		pBrush->SetPosition(main->GetPosition());
+		pBrush->SetRotation(main->GetRotation());
+		pBrush->SetScale(main->GetScale());
+
+		std::string name = main->GetName();
+		if (auto pos = name.find_last_of("1234567890"); pos != std::string::npos)
+		{
+			int currIndex = stoi(name.substr(pos, 1));
+			currIndex++;
+			name.replace(pos, 1, std::to_string(currIndex));
+		}
+
+		pBrush->SetName(name);
+	
+		return pBrush;
+	}
+
 	bool Brush::OnRender(AppRenderEvent& e)
 	{
 		m_Model->Render(m_Id);

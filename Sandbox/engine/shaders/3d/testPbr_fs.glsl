@@ -232,10 +232,10 @@ void main()
 
 	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
 
-	//for(int i = 0; i < u_LightCount; ++i)
-	//{
-	//	Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
-	//}
+//	for(int i = 0; i < u_LightCount; ++i)
+//	{
+//		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
+//	}
 
 	vec3 R = reflect(-V, N);
 	

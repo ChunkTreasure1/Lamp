@@ -28,6 +28,7 @@ namespace Lamp
 
 	public:
 		static Brush* Create(const std::string& path);
+		static Brush* Duplicate(Brush* main);
 
 	private:
 		bool OnRender(AppRenderEvent& e);
