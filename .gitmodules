@@ -4,9 +4,6 @@
 [submodule "Lamp/vendor/spdlog"]
 	path = Lamp/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Lamp/vendor/imgui"]
-	path = Lamp/vendor/imgui
-	url = https://github.com/ChunkTreasure1/imgui
 [submodule "Lamp/vendor/bullet"]
 	path = Lamp/vendor/bullet
 	url = https://github.com/ChunkTreasure1/bullet3
