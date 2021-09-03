@@ -19,8 +19,13 @@ namespace Sandbox3D
 		std::string filepath = Lamp::FileDialogs::OpenFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
-			Lamp::LevelSystem::LoadLevel(filepath);
+			OpenLevel(filepath);
 		}
+	}
+
+	void Sandbox3D::OpenLevel(const std::filesystem::path& path)
+	{
+		Lamp::LevelSystem::LoadLevel(path.string());
 		m_pSelectedObject = nullptr;
 	}
 
@@ -38,62 +43,11 @@ namespace Sandbox3D
 
 	void Sandbox3D::Undo()
 	{
-		if (m_PerspecticeCommands.empty())
-		{
-			return;
-		}
-
-		//Currently only perspective undo
-		switch (m_PerspecticeCommands.front().cmd)
-		{
-			case Cmd::Transform:
-			{
-				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.front().object))
-				{
-					pObj->SetModelMatrix(glm::make_mat4((float*)m_PerspecticeCommands.front().lastData));
-
-					delete m_PerspecticeCommands.front().lastData;
-					m_PerspecticeCommands.pop_front();
-				}
-				break;
-			}
-
-			case Cmd::Selection:
-			{
-				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.front().lastData;
-				m_PerspecticeCommands.pop_front();
-				break;
-			}
-		}
+		m_ActionHandler.Undo();
 	}
+
 	void Sandbox3D::Redo()
 	{
-		if (m_PerspecticeCommands.redo_empty())
-		{
-			return;
-		}
-
-		//Currently only perspective undo
-		switch (m_PerspecticeCommands.redo_top().cmd)
-		{
-			case Cmd::Transform:
-			{
-				if (auto* pObj = static_cast<Lamp::Object*>(m_PerspecticeCommands.redo_top().object))
-				{
-					pObj->SetModelMatrix(glm::make_mat4((float*)m_PerspecticeCommands.redo_top().lastData));
-
-					delete m_PerspecticeCommands.redo_top().lastData;
-					m_PerspecticeCommands.redo_pop();
-				}
-				break;
-			}
-
-			case Cmd::Selection:
-			{
-				m_pSelectedObject = (Lamp::Object*)m_PerspecticeCommands.redo_top().lastData;
-				m_PerspecticeCommands.redo_pop();
-				break;
-			}
-		}
+		m_ActionHandler.Redo();
 	}
 }

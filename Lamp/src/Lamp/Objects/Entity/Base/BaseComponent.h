@@ -10,16 +10,17 @@
 namespace Lamp
 {
 	class Entity;
+	class LevelSystem;
+
 	class EntityComponent
 	{
 	public:
 
 		//Setting
-		inline void MakeOwner(Entity* pEntity) { m_pEntity = pEntity; }
 		inline void SetComponentProperties(const ComponentProperties& properties) { m_ComponentProperties = properties; }
 
 		//Getting
-		inline Entity* GetOwner() { return m_pEntity; }
+		inline Entity* GetEntity() { return m_pEntity; }
 		inline ComponentProperties& GetComponentProperties() { return m_ComponentProperties; }
 		inline const std::string& GetName() { return m_Name; }
 
@@ -35,5 +36,9 @@ namespace Lamp
 		Entity* m_pEntity;
 		ComponentProperties m_ComponentProperties;
 		std::string m_Name;
+
+	private:
+		friend class Entity;
+		friend class LevelSystem;
 	};
 }

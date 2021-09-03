@@ -9,6 +9,7 @@ namespace Lamp
 	class ObjectLayerManager;
 	class EntityManager;
 	class BrushManager;
+	class AssetManager;
 }
 
 class RenderUtils
@@ -34,9 +35,10 @@ struct GlobalEnvironment
 
 	RenderUtils* pRenderUtils = nullptr;
 
-	Lamp::ObjectLayerManager* pObjectLayerManager;
-	Lamp::EntityManager* pEntityManager;
-	Lamp::BrushManager* pBrushManager;
+	Lamp::ObjectLayerManager* pObjectLayerManager = nullptr;
+	Lamp::EntityManager* pEntityManager = nullptr;
+	Lamp::BrushManager* pBrushManager = nullptr;
+	Lamp::AssetManager* pAssetManager = nullptr;
 };
 
 struct SAABB

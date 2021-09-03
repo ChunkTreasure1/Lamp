@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "OpenGLTexture.h"
 
-#include "Lamp/Rendering/Texture2D/TextureCache.h"
+#include "Lamp/AssetSystem/TextureCache.h"
 
 namespace Lamp
 {
@@ -26,12 +26,7 @@ namespace Lamp
 	{
 		m_Path = path;
 
-		auto tex = TextureCache::GetTexture(path);
-		m_RendererID = std::get<0>(tex);
-		m_Width = std::get<1>(tex);
-		m_Height = std::get<2>(tex);
-		m_InternalFormat = std::get<3>(tex);
-		m_DataFormat = std::get<4>(tex);
+		TextureCache::GetTexture(path, this);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
@@ -42,5 +37,14 @@ namespace Lamp
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+	}
+
+	void OpenGLTexture2D::SetData(TextureData& data)
+	{
+		m_RendererID = data.rendererId;
+		m_Width = data.width;
+		m_Height = data.height;
+		m_InternalFormat = (GLenum)data.internalFormat;
+		m_DataFormat = (GLenum)data.dataFormat;
 	}
 }

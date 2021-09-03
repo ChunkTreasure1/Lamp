@@ -200,6 +200,7 @@ namespace Lamp
 
 	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
+		Bind();
 		LP_CORE_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Index out of range!");
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 
@@ -207,6 +208,11 @@ namespace Lamp
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 	
 		return pixelData;
+	}
+
+	void OpenGLFramebuffer::Copy(uint32_t rendererId, const glm::vec2& size)
+	{
+		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 	}
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)

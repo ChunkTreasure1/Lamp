@@ -17,6 +17,8 @@ namespace Lamp
 
 	void RenderPass::Render()
 	{
+		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
+
 		if (m_PassSpec.IsPointShadowPass)
 		{
 			m_PassSpec.LightIndex = 0;

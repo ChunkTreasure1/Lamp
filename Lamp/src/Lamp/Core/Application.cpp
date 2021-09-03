@@ -10,6 +10,7 @@
 
 #include "Lamp/Objects/Brushes/BrushManager.h"
 #include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/AssetSystem/AssetManager.h"
 
 #include "CoreLogger.h"
 
@@ -23,13 +24,15 @@ namespace Lamp
 
 	Application::Application()
 	{
+		LP_PROFILE_FUNCTION();
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
 		g_pEnv->pRenderUtils = new RenderUtils();
 
-		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
+		g_pEnv->pAssetManager = new AssetManager();
 		g_pEnv->pEntityManager = new EntityManager();
 		g_pEnv->pBrushManager = new BrushManager();
+		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
 
 		//Create the window
 		WindowProps props;
@@ -54,9 +57,15 @@ namespace Lamp
 
 	Application::~Application()
 	{
+		LP_PROFILE_FUNCTION();
 		m_pPhysicsEngine->Shutdown();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
+
+		delete g_pEnv->pObjectLayerManager;
+		delete g_pEnv->pBrushManager;
+		delete g_pEnv->pEntityManager;
+		delete g_pEnv->pAssetManager;
 
 		delete g_pEnv;
 	}
@@ -65,6 +74,8 @@ namespace Lamp
 	{
 		while (m_Running)
 		{
+			g_pEnv->ShouldRenderBB = false;
+			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
@@ -73,17 +84,24 @@ namespace Lamp
 
 			if (m_IsSimulating)
 			{
+				LP_PROFILE_SCOPE("Application::Run::Physics")
 				m_pPhysicsEngine->Simulate();
 			}
 			AudioEngine::Update();
 
-			//Update the application layers
+			//Load assets
+			g_pEnv->pAssetManager->Update();
 
+			//Update the application layers
 			if (!m_Minimized)
 			{
 				AppUpdateEvent updateEvent(timestep);
 				OnEvent(updateEvent);
-				ObjectLayerManager::Get()->OnEvent(updateEvent);
+
+				{
+					LP_PROFILE_SCOPE("Application::Run::ObjectUpdate");
+					ObjectLayerManager::Get()->OnEvent(updateEvent);
+				}
 			}
 
 			m_pImGuiLayer->Begin();
@@ -102,6 +120,7 @@ namespace Lamp
 
 	void Application::OnEvent(Event & e)
 	{
+		LP_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));

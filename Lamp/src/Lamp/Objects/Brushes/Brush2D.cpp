@@ -24,7 +24,7 @@ namespace Lamp
 
 	void Brush2D::Destroy()
 	{
-		BrushManager::Get()->Remove(this);
+		g_pEnv->pBrushManager->Remove(this);
 		ObjectLayerManager::Get()->Remove(this);
 
 		delete this;
@@ -32,7 +32,7 @@ namespace Lamp
 
 	Brush2D* Brush2D::Create(const std::string& path)
 	{
-		return BrushManager::Get()->Create2D(path);
+		return g_pEnv->pBrushManager->Create2D(path);
 	}
 
 	bool Brush2D::OnRender(AppRenderEvent& e)

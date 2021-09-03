@@ -64,7 +64,7 @@ namespace Lamp
 			delete[] LineVertexBufferBase;
 		}
 
-		RenderPassSpecification CurrentRenderPass;
+		RenderPassSpecification* CurrentRenderPass = nullptr;
 		Ref<VertexArray> SphereArray;
 
 		/////Shadows/////
@@ -78,6 +78,7 @@ namespace Lamp
 
 	void Renderer3D::Initialize()
 	{
+		LP_PROFILE_FUNCTION();
 		s_pData = new Renderer3DStorage();
 
 		/////Quad/////
@@ -144,7 +145,7 @@ namespace Lamp
 		s_pData->PointShadowShader = ShaderLibrary::GetShader("pointShadow");
 		/////////////////
 
-				/////Skybox/////
+		/////Skybox/////
 		{
 			std::vector<float> boxPositions =
 			{
@@ -186,12 +187,13 @@ namespace Lamp
 
 	void Renderer3D::Shutdown()
 	{
+		LP_PROFILE_FUNCTION();
 		delete s_pData;
 	}
 
-	void Renderer3D::Begin(const RenderPassSpecification& passSpec)
+	void Renderer3D::Begin(RenderPassSpecification& passSpec)
 	{
-		s_pData->CurrentRenderPass = passSpec;
+		s_pData->CurrentRenderPass = &passSpec;
 
 		ResetBatchData();
 	}
@@ -202,19 +204,23 @@ namespace Lamp
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
+		s_pData->CurrentRenderPass = nullptr;
 	}
 
 	void Renderer3D::Flush()
 	{
 		s_pData->LineMaterial.GetShader()->Bind();
-		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
+		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
 	{
-		if (s_pData->CurrentRenderPass.IsShadowPass)
+		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+
+		LP_PROFILE_FUNCTION();
+		if (s_pData->CurrentRenderPass->IsShadowPass)
 		{
 			/////Directional light shadows/////
 			glCullFace(GL_FRONT);
@@ -222,19 +228,19 @@ namespace Lamp
 
 			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
 			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
-			s_pData->ShadowBuffer = s_pData->CurrentRenderPass.TargetFramebuffer;
+			s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 			////////////////////////////////////
 		}
-		else if (s_pData->CurrentRenderPass.IsPointShadowPass)
+		else if (s_pData->CurrentRenderPass->IsPointShadowPass)
 		{
-			/////Point light shadows/////
+			///////Point light shadows/////
 			glCullFace(GL_BACK);
 			s_pData->PointShadowShader->Bind();
 
-			uint32_t j = s_pData->CurrentRenderPass.LightIndex;
+			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
 			const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
 
 			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
@@ -247,13 +253,13 @@ namespace Lamp
 			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
 
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			/////////////////////////////
+			///////////////////////////////
 		}
 		else
 		{
 			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadow map
-			int i = 4 + g_pEnv->pRenderUtils->GetPointLights().size();
+			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
 				if (mat.GetTextures()[name].get() != nullptr)
@@ -264,10 +270,10 @@ namespace Lamp
 			}
 
 			mat.GetShader()->Bind();
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass.Camera->GetPosition());
+			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
 			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
-			mat.GetShader()->UploadMat4("u_ShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 			mat.GetShader()->UploadInt("u_ObjectId", id);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
@@ -291,9 +297,12 @@ namespace Lamp
 
 	void Renderer3D::DrawSkybox()
 	{
+		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+
+		LP_PROFILE_FUNCTION();
 		s_pData->SkyboxShader->Bind();
-		s_pData->SkyboxShader->UploadMat4("u_View", s_pData->CurrentRenderPass.Camera->GetViewMatrix());
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetProjectionMatrix());
+		s_pData->SkyboxShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
+		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetProjectionMatrix());
 		s_pData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
 
 		s_pData->SkyboxBuffer->Bind();
@@ -315,13 +324,15 @@ namespace Lamp
 
 	void Renderer3D::DrawGrid()
 	{
+		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+
 		s_pData->GridShader->Bind();
 		s_pData->GridVertexArray->Bind();
 
-		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass.Camera->GetViewMatrix()));
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass->Camera->GetViewMatrix()));
 		s_pData->GridShader->UploadMat4("u_View", viewMat);
 
-		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass.Camera->GetViewProjectionMatrix());
+		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}
 

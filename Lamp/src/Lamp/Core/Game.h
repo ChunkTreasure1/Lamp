@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Lamp.h>
-#include "Lamp/Rendering/Cameras/PerspectiveCameraController.h"
+
+#include "Lamp/GraphKey/NodeRegistry.h"
 
 namespace Lamp
 {

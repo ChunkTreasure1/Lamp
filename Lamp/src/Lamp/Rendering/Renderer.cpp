@@ -14,6 +14,7 @@ namespace Lamp
 
 	void Renderer::Initialize()
 	{
+		LP_PROFILE_FUNCTION();
 		ShaderLibrary::LoadShaders();
 		MaterialLibrary::LoadMaterials();
 
@@ -24,7 +25,9 @@ namespace Lamp
 
 	void Renderer::Shutdown()
 	{
+		LP_PROFILE_FUNCTION();
 		Renderer2D::Shutdown();
+		Renderer3D::Shutdown();
 	}
 
 	void Renderer::Begin(OrthographicCamera & camera)

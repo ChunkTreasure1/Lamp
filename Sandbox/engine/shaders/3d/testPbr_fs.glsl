@@ -7,6 +7,7 @@ albedo
 normal
 mro
 }
+
 #version 440 core
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out int Color2;
@@ -149,7 +150,7 @@ float PointShadowCalculation(vec3 fragPos, PointLight light)
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 N, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
-	float shadow = 0.5;//DirectionalShadowCalculation(v_In.ShadowCoord);
+	float shadow = DirectionalShadowCalculation(v_In.ShadowCoord);
 
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);
@@ -231,11 +232,11 @@ void main()
 
 	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness);
 
-	for(int i = 0; i < u_LightCount; ++i)
-	{
-		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
-	}
-	
+//	for(int i = 0; i < u_LightCount; ++i)
+//	{
+//		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo);
+//	}
+
 	vec3 R = reflect(-V, N);
 	
 	const float maxReflectionLOD = 4.0;
@@ -250,15 +251,15 @@ void main()
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
 	vec3 ambient = (kD * diffuse + specular) * ao;
-	//vec3 ambient = vec3(0.04) * albedo;
 
 	vec3 color = ambient + Lo;
 
 	//HDR tonemapping
 	color = color / (color + vec3(1.0));
 
-	//Gamma correction
+	////Gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
+
 	FragColor = vec4(color, 1.0);
 
 	Color2 = u_ObjectId; //ObjectId;

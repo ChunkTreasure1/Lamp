@@ -3,7 +3,7 @@
 #include "MeshComponent.h"
 
 #include "Lamp/Event/ApplicationEvent.h"
-#include "Lamp/Meshes/GeometrySystem.h"
+#include "Lamp/AssetSystem/AssetManager.h"
 
 namespace Lamp
 {
@@ -50,11 +50,11 @@ namespace Lamp
 
 	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
 	{
-		Ref<Model> model = GeometrySystem::LoadFromFile(m_Path);
-		if (model.get())
+		if (m_Model == nullptr)
 		{
-			m_Model = model;
+			m_Model = CreateRef<Model>();
 		}
+		g_pEnv->pAssetManager->LoadModel(m_Path, m_Model.get());
 
 		return false;
 	}

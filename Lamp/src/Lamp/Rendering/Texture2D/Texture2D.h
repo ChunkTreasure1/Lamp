@@ -5,20 +5,17 @@
 #include <glad/glad.h>
 #include "Lamp/Core/Core.h"
 
+#include "Lamp/AssetSystem/TextureLoader.h"
+
 namespace Lamp
 {
-	enum class TextureType
-	{
-		Diffuse,
-		Specular
-	};
-
 	class Texture2D
 	{
 	public:
 		virtual void Bind(uint32_t slot = 0) const = 0;
 
 		virtual void SetData(void* data, uint32_t size) = 0;
+		virtual void SetData(TextureData& data) = 0;
 		void SetType(TextureType type) { m_Type = type; }
 
 		//Getting

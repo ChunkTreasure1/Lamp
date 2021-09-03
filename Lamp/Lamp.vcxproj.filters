@@ -7,6 +7,9 @@
     <Filter Include="src\Lamp">
       <UniqueIdentifier>{E68621CF-D253-7CDA-FB6C-6A82E798B168}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\AssetSystem">
+      <UniqueIdentifier>{5A7FA276-460E-2C40-EF2C-403BDB9A3CE6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Audio">
       <UniqueIdentifier>{6729FD7A-53F7-F080-3C8B-61A728F8CCE5}</UniqueIdentifier>
     </Filter>
@@ -16,8 +19,17 @@
     <Filter Include="src\Lamp\Core\Time">
       <UniqueIdentifier>{5CD62326-48BA-E47B-B11A-DFCE9D1DCFFD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Debug">
+      <UniqueIdentifier>{DCA52A7B-C873-1E81-B107-8FA79D74FAE5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Event">
       <UniqueIdentifier>{B71C467B-A3EA-3981-8C7E-AAA778EB15E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\GraphKey">
+      <UniqueIdentifier>{90F2A9A8-FC08-A83E-4580-3360B1D578C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\GraphKey\BaseNodes">
+      <UniqueIdentifier>{933522C8-FF42-50AE-8829-4C99F4351C65}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\ImGui">
       <UniqueIdentifier>{9010897B-7CDE-7C81-6572-EDA751DF58E6}</UniqueIdentifier>
@@ -63,9 +75,6 @@
     </Filter>
     <Filter Include="src\Lamp\Physics\Components\Colliders">
       <UniqueIdentifier>{7DA5E37C-E969-E26C-B2CF-12371E537EA2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Physics\Internal">
-      <UniqueIdentifier>{84F937BA-F0BB-6B44-396C-FAD0A56D4422}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
@@ -132,6 +141,21 @@
     <ClInclude Include="src\Lamp.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\TextureCache.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h">
       <Filter>src\Lamp\Audio</Filter>
     </ClInclude>
@@ -165,6 +189,9 @@
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Debug\Instrumentor.h">
+      <Filter>src\Lamp\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
       <Filter>src\Lamp\Event</Filter>
     </ClInclude>
@@ -179,6 +206,18 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\MouseEvent.h">
       <Filter>src\Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\Link.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\Node.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h">
+      <Filter>src\Lamp\GraphKey</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h">
       <Filter>src\Lamp\ImGui</Filter>
@@ -212,9 +251,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Math\Math.h">
       <Filter>src\Lamp\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h">
-      <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
       <Filter>src\Lamp\Meshes\Materials</Filter>
@@ -267,6 +303,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\GUID.h">
+      <Filter>src\Lamp\Objects</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Object.h">
       <Filter>src\Lamp\Objects</Filter>
     </ClInclude>
@@ -287,9 +326,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h">
       <Filter>src\Lamp\Physics\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h">
-      <Filter>src\Lamp\Physics\Internal</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h">
       <Filter>src\Lamp\Physics</Filter>
@@ -360,12 +396,6 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
@@ -382,6 +412,9 @@
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\Random.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
@@ -1508,6 +1541,21 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\TextureCache.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
       <Filter>src\Lamp\Audio</Filter>
     </ClCompile>
@@ -1525,6 +1573,30 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\InputNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\GraphKeyGraph.cpp">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\Node.cpp">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp">
+      <Filter>src\Lamp\GraphKey</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp">
       <Filter>src\Lamp\ImGui</Filter>
@@ -1549,9 +1621,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Math\Math.cpp">
       <Filter>src\Lamp\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
       <Filter>src\Lamp\Meshes\Materials</Filter>
@@ -1616,9 +1685,6 @@
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp">
       <Filter>src\Lamp\Physics\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp">
-      <Filter>src\Lamp\Physics\Internal</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
@@ -1674,12 +1740,6 @@
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp">
-      <Filter>src\Lamp\Rendering\Texture2D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">

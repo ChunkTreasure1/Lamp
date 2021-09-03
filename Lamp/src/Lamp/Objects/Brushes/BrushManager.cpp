@@ -1,17 +1,14 @@
 #include "lppch.h"
 #include "BrushManager.h"
 
-#include "Lamp/Meshes/GeometrySystem.h"
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
+#include "Lamp/AssetSystem/AssetManager.h"
 
 namespace Lamp
 {
-	BrushManager* BrushManager::s_Manager = nullptr;
-
 	BrushManager::BrushManager()
 	{
-		s_Manager = this;
 	}
 
 	BrushManager::~BrushManager()
@@ -48,10 +45,13 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path)
 	{
-		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		Ref<Model> model = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel(path, model.get());
+
+		auto brush = new Brush(model);
 		brush->SetLayerID(0);
 
-		m_Brushes.push_back(brush);
+		m_Brushes.emplace(std::make_pair(brush->GetID(), brush));
 
 		ObjectLayerManager::Get()->AddToLayer(brush, 0);
 		return brush;
@@ -59,7 +59,9 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name)
 	{
-		auto brush = new Brush(GeometrySystem::LoadFromFile(path));
+		Ref<Model> model = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel(path, model.get());
+		auto brush = new Brush(model);
 
 		brush->SetPosition(pos);
 		brush->SetRotation(rot);
@@ -67,19 +69,33 @@ namespace Lamp
 		brush->SetLayerID(layerId);
 		brush->SetName(name);
 
-		m_Brushes.push_back(brush);
+		m_Brushes.emplace(std::make_pair(brush->GetID(), brush));
 
 		ObjectLayerManager::Get()->AddToLayer(brush, layerId);
 		return brush;
 	}
 
+	Brush* BrushManager::Create(Brush* main)
+	{
+		Ref<Model> model = CreateRef<Model>();
+		g_pEnv->pAssetManager->LoadModel(main->GetModel()->GetLGFPath(), model.get());
+		auto brush = new Brush(model);
+		brush->SetLayerID(main->GetLayerID());
+
+		m_Brushes.emplace(std::make_pair(brush->GetID(), brush));
+		ObjectLayerManager::Get()->AddToLayer(brush, brush->GetLayerID());
+
+		return brush;
+	}
+
 	void BrushManager::Remove(Brush* brush)
 	{
-		auto it = std::find(m_Brushes.begin(), m_Brushes.end(), brush);
-		if (it != m_Brushes.end())
+		if (m_Brushes.size() == 0 && !brush)
 		{
-			m_Brushes.erase(it);
+			return;
 		}
+
+		m_Brushes.erase(brush->GetID());
 	}
 
 	void BrushManager::Remove(Brush2D* brush)
@@ -89,7 +105,6 @@ namespace Lamp
 		{
 			m_2DBrushes.erase(it);
 		}
-
 	}
 
 	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)

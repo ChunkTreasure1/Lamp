@@ -16,7 +16,7 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const RenderPassSpecification& passSpec);
+		static void Begin(RenderPassSpecification& passSpec);
 		static void End();
 		static void Flush();
 

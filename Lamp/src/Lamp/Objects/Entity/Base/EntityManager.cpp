@@ -6,16 +6,13 @@
 
 namespace Lamp
 {
-	EntityManager* EntityManager::s_CurrentManager = nullptr;
-
 	EntityManager::EntityManager()
 	{
-		s_CurrentManager = this;
 	}
 
 	EntityManager::~EntityManager()
 	{
-		m_pEntites.clear();
+		m_pEntities.clear();
 	}
 
 	Entity* EntityManager::Create(bool saveable)
@@ -24,7 +21,7 @@ namespace Lamp
 		pEnt->SetLayerID(0);
 		pEnt->SetSaveable(saveable);
 
-		m_pEntites.emplace_back(pEnt);
+		m_pEntities.emplace(std::make_pair(pEnt->GetID(), pEnt));
 
 		ObjectLayerManager::Get()->AddToLayer(pEnt, 0);
 
@@ -33,30 +30,19 @@ namespace Lamp
 
 	bool EntityManager::Remove(Entity* pEnt)
 	{
-		auto it = std::find(m_pEntites.begin(), m_pEntites.end(), pEnt);
-		if (it != m_pEntites.end())
-		{
-			m_pEntites.erase(it);
-		}
-		else
+		if (m_pEntities.size() == 0 || !pEnt)
 		{
 			return false;
 		}
+
+		m_pEntities.erase(pEnt->GetID());
 
 		return true;
 	}
 
 	Entity* EntityManager::GetEntityFromId(uint32_t id)
 	{
-		for (int i = 0; i < m_pEntites.size(); i++)
-		{
-			if (m_pEntites[i]->GetId() == id)
-			{
-				return m_pEntites[i];
-			}
-		}
-
-		return nullptr;
+		return m_pEntities[id];
 	}
 
 	Entity* EntityManager::GetEntityFromPoint(const glm::vec3& pos, const glm::vec3& origin)

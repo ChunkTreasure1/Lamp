@@ -11,7 +11,9 @@ namespace Lamp
 	class CameraControllerBase
 	{
 	public:
-		CameraControllerBase() {}
+		CameraControllerBase()
+			: m_AspectRatio(16.f/9.f)
+		{}
 		virtual ~CameraControllerBase() {}
 
 		virtual void Update(Timestep ts) = 0;

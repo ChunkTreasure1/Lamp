@@ -262,6 +262,12 @@ namespace Lamp
 				p = p.substr(0, lgfPos);
 
 				ImGui::TreeNodeEx((void*)(intptr_t)startID, nodeFlags, p.c_str());
+				if (ImGui::BeginDragDropSource())
+				{
+					const char* path = files[j].c_str();
+					ImGui::SetDragDropPayload("BRUSH_ITEM", path, sizeof(char) * (files[j].length() + 1), ImGuiCond_Once);
+					ImGui::EndDragDropSource();
+				}
 				if (ImGui::IsItemClicked())
 				{
 					File f(files[j]);

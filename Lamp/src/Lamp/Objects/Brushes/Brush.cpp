@@ -16,8 +16,6 @@ namespace Lamp
 	Brush::Brush(Ref<Model> model)
 		: m_Model(model)
 	{
-		m_PickingCollider = PickingCollider(m_Model->GetBoundingBox().Min, m_Model->GetBoundingBox().Max, m_Position);
-
 		m_pRigidBody = PhysicsEngine::Get()->CreateRigidBody(this);
 
 		btConvexHullShape* pShape = new btConvexHullShape();
@@ -64,7 +62,7 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
-		BrushManager::Get()->Remove(this);
+		g_pEnv->pBrushManager->Remove(this);
 		ObjectLayerManager::Get()->Remove(this);
 
 		delete this;
@@ -74,13 +72,31 @@ namespace Lamp
 	{
 		m_Model->GetBoundingBox().Max = m_Scale * m_Model->GetBoundingBox().StartMax;
 		m_Model->GetBoundingBox().Min = m_Scale * m_Model->GetBoundingBox().StartMin;
-
-		m_PickingCollider = PickingCollider(m_Model->GetBoundingBox().Min, m_Model->GetBoundingBox().Max, m_Position);
 	}
 
 	Brush* Brush::Create(const std::string& path)
 	{
-		return BrushManager::Get()->Create(path);
+		return g_pEnv->pBrushManager->Create(path);
+	}
+
+	Brush* Brush::Duplicate(Brush* main)
+	{
+		Brush* pBrush = g_pEnv->pBrushManager->Create(main);
+		pBrush->SetPosition(main->GetPosition());
+		pBrush->SetRotation(main->GetRotation());
+		pBrush->SetScale(main->GetScale());
+
+		std::string name = main->GetName();
+		if (auto pos = name.find_last_of("1234567890"); pos != std::string::npos)
+		{
+			int currIndex = stoi(name.substr(pos, 1));
+			currIndex++;
+			name.replace(pos, 1, std::to_string(currIndex));
+		}
+
+		pBrush->SetName(name);
+	
+		return pBrush;
 	}
 
 	bool Brush::OnRender(AppRenderEvent& e)

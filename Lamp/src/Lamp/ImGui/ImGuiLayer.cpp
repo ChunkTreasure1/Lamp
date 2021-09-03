@@ -1,8 +1,8 @@
 #include "lppch.h"
 #include "ImGuiLayer.h"
 
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Event/ApplicationEvent.h"
@@ -37,7 +37,7 @@ namespace Lamp
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Roboto-Regular.ttf", 14.f);
+		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Roboto-Regular.ttf", 16.f);
 
 		//Setup ImGui style
 		ImGui::StyleColorsDark();
@@ -71,7 +71,7 @@ namespace Lamp
 		style.Colors[ImGuiCol_CheckMark] = ImVec4(1.000f, 1.000f, 1.000f, 1.000f);
 		style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.391f, 0.391f, 0.391f, 1.000f);
 		style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(1.000f, 0.391f, 0.000f, 1.000f);
-		style.Colors[ImGuiCol_Button] = ImVec4(1.000f, 1.000f, 1.000f, 0.000f);
+		style.Colors[ImGuiCol_Button] = ImVec4(0.25f, 0.25f, 0.25f, 1.000f);
 		style.Colors[ImGuiCol_ButtonHovered] = ImVec4(1.000f, 1.000f, 1.000f, 0.156f);
 		style.Colors[ImGuiCol_ButtonActive] = ImVec4(1.000f, 1.000f, 1.000f, 0.391f);
 		style.Colors[ImGuiCol_Header] = ImVec4(0.313f, 0.313f, 0.313f, 1.000f);
@@ -102,7 +102,6 @@ namespace Lamp
 		style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.000f, 0.000f, 0.000f, 0.586f);
 
 		style.ChildRounding = 4.0f;
-		style.FrameBorderSize = 1.0f;
 		style.FrameRounding = 2.0f;
 		style.GrabMinSize = 7.0f;
 		style.PopupRounding = 2.0f;

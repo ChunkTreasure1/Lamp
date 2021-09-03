@@ -148,4 +148,21 @@ namespace Lamp
 		EVENT_CLASS_TYPE(ImGuiBegin);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
+
+	class ImGuiUpdateEvent : public Event 
+	{
+	public:
+		ImGuiUpdateEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "ImGui Update" << std::endl;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(ImGuiUpdate);
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+	};
 }

@@ -15,25 +15,33 @@
 #include <Lamp/Rendering/RenderPass.h>
 
 #include "Windows/ModelImporter.h"
+#include "Windows/GraphKey.h"
+#include "Windows/MaterialEditor.h"
+
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
+#include <Lamp/AssetSystem/AssetManager.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
-
+#include <imnodes.h>
 namespace Sandbox3D
 {
 	using namespace Lamp;
 
 	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_SelectedFile(""), m_DockspaceID(0), m_pShader(nullptr), m_PerspecticeCommands(100)
+		: Layer("Sandbox3D"), m_DockspaceID(0), m_pShader(nullptr)
 	{
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 
+		auto level = LevelSystem::LoadLevel("assets/levels/Level.level");
+		g_pEnv->pAssetManager->LoadTexture("engine/textures/default/defaultTexture.png", nullptr);
+
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
-		g_pEnv->ShouldRenderBB = true;
 
-		m_ModelImporter = new ModelImporter();
+		m_pWindows.push_back(new ModelImporter("Model Importer"));
+		m_pWindows.push_back(new GraphKey("Visual Scripting"));
+		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 
 		FramebufferSpecification spec;
 		spec.Attachments =
@@ -48,41 +56,69 @@ namespace Sandbox3D
 		m_SecondaryBuffer = Lamp::Framebuffer::Create(spec);
 		SetupFromConfig();
 		CreateRenderPasses();
+
+		imnodes::Initialize();
 	}
 
 	Sandbox3D::~Sandbox3D()
 	{
-		delete m_ModelImporter;
+		for (auto p : m_pWindows)
+		{
+			delete p;
+		}
+
+		m_BufferWindows.clear();
+		m_pWindows.clear();
+		imnodes::Shutdown();
+
+		delete m_pLevel;
 	}
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
-		m_SecondaryBuffer->ClearAttachment(0, 0);
+		LP_PROFILE_FUNCTION();
+		if (m_IsPlaying != m_ShouldPlay)
+		{
+			m_IsPlaying = m_ShouldPlay;
+		
+			if (m_IsPlaying)
+			{
+				m_pGame->OnStart();
+				for (auto& node : NodeRegistry::s_StartNodes())
+				{
+					node->ActivateOutput(0);
+				}
+			}
+		}
 
-		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		m_SelectionBuffer->ClearAttachment(1, 0);
+
+		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
 			m_SandboxController->Update(e.GetTimestep());
-		}
-		else if (m_ModelImporter->GetCamera()->GetRightPressed())
-		{
-			m_ModelImporter->UpdateCamera(e.GetTimestep());
-		}
-		else
-		{
-			m_SandboxController->Update(e.GetTimestep());
-			m_ModelImporter->UpdateCamera(e.GetTimestep());
 		}
 
 		GetInput();
 
-		m_SelectionBuffer->ClearAttachment(0, -1);
+		m_SelectionBuffer->ClearAttachment(1, -1);
 
-		RenderPassManager::Get()->RenderPasses();
-		m_ModelImporter->Render();
+		{
+			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
+			RenderPassManager::Get()->RenderPasses();
+			for (auto pWindow : m_pWindows)
+			{
+				if (pWindow->GetIsOpen())
+				{
+					for (auto pFunc : pWindow->GetRenderFuncs())
+					{
+						pFunc();
+					}
+				}
+			}
+		}
 
 		glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
-
-		glBlitNamedFramebuffer(m_SandboxBuffer->GetRendererID(), m_SecondaryBuffer->GetRendererID(), 0, 0, srcSize.x, srcSize.y, 0, 0, srcSize.x, srcSize.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		m_SecondaryBuffer->Copy(m_SandboxBuffer->GetRendererID(), srcSize);
 
 		return false;
 	}
@@ -93,31 +129,55 @@ namespace Sandbox3D
 
 		UpdateProperties();
 		UpdatePerspective();
-		UpdateAssetBrowser();
 		UpdateLayerView();
 		UpdateCreateTool();
 		UpdateLogTool();
 		UpdateLevelSettings();
+		m_assetManager.OnImGuiRender();
 
-		m_ModelImporter->Update();
+		for	(auto& window : m_BufferWindows)
+		{
+			window.Update();
+		}
+
+		ImGuiUpdateEvent e;
+		OnEvent(e);
 	}
 
 	void Sandbox3D::OnEvent(Event& e)
 	{
-		m_pGame->OnEvent(e);
+		if (m_IsPlaying)
+		{
+			m_pGame->OnEvent(e);
+			g_pEnv->pObjectLayerManager->OnEvent(e);
+		}
 
-		if (m_SandboxController->GetCameraController()->GetRightPressed())
+		for (auto pWindow : m_pWindows)
+		{
+			if (pWindow->GetIsOpen())
+			{
+				pWindow->OnEvent(e);
+			}
+		}
+
+		if (Input::IsMouseButtonReleased(1))
+		{
+			m_SandboxController->GetCameraController()->SetHasControl(false);
+			m_RightMousePressed = false;
+
+			Application::Get().GetWindow().ShowCursor(true);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+		}
+
+		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
 			m_SandboxController->OnEvent(e);
-		}
-		else if (m_ModelImporter->GetCamera()->GetRightPressed())
-		{
-			m_ModelImporter->OnEvent(e);
-		}
-		else
-		{
-			m_SandboxController->OnEvent(e);
-			m_ModelImporter->OnEvent(e);
+			m_RightMousePressed = true;
+
+			Application::Get().GetWindow().ShowCursor(false);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		}
 
 		EventDispatcher dispatcher(e);
@@ -131,7 +191,6 @@ namespace Sandbox3D
 
 	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
 	{
-		m_SelectedFile = e.GetFile();
 		return true;
 	}
 
@@ -145,70 +204,71 @@ namespace Sandbox3D
 
 		switch (e.GetKeyCode())
 		{
-		case LP_KEY_S:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+			case LP_KEY_S:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
 
-			if (control && shift)
-			{
-				SaveLevelAs();
-			}
-			else if (control && !shift)
-			{
-				if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+				if (control && shift)
 				{
 					SaveLevelAs();
-					break;
 				}
-				else
+				else if (control && !shift)
 				{
-					LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+
+					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+					{
+						SaveLevelAs();
+						break;
+					}
+					else
+					{
+						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+					}
 				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_N:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-
-			if (control)
+			case LP_KEY_N:
 			{
-				NewLevel();
-			}
-			break;
-		}
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
 
-		case LP_KEY_O:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
-			{
-				OpenLevel();
+				if (control)
+				{
+					NewLevel();
+				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_Z:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
+			case LP_KEY_O:
 			{
-				Undo();
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					OpenLevel();
+				}
+				break;
 			}
-			break;
-		}
 
-		case LP_KEY_Y:
-		{
-			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-			if (control)
+			case LP_KEY_Z:
 			{
-				Redo();
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Undo();
+				}
+				break;
 			}
-			break;
-		}
+
+			case LP_KEY_Y:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					Redo();
+				}
+				break;
+			}
 		}
 
 		return false;
@@ -217,7 +277,6 @@ namespace Sandbox3D
 	bool Sandbox3D::OnImGuiBegin(ImGuiBeginEvent& e)
 	{
 		ImGuizmo::BeginFrame();
-
 		return true;
 	}
 
@@ -313,17 +372,21 @@ namespace Sandbox3D
 			shadowSpec.TargetFramebuffer = CreateRef<Lamp::OpenGLFramebuffer>(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.IsShadowPass = true;
+			shadowSpec.Name = "DirShadowPass";
+
+			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
 			RenderPassManager::Get()->AddPass(shadowPass);
 		}
-		/////////////////////
+		///////////////////////
 
-		///////Point shadow pass/////
+		/////////Point shadow pass/////
 		{
 			RenderPassSpecification shadowSpec;
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.IsPointShadowPass = true;
+			shadowSpec.Name = "PointShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
 			RenderPassManager::Get()->AddPass(shadowPass);
@@ -335,6 +398,7 @@ namespace Sandbox3D
 			FramebufferSpecification spec;
 			spec.Attachments =
 			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, true },
 				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
 			};
 			spec.Height = 1280;
@@ -345,6 +409,9 @@ namespace Sandbox3D
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
+			passSpec.Name = "SelectionPass";
+
+			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
 
 			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(pass);
@@ -373,6 +440,7 @@ namespace Sandbox3D
 			passSpec.ExtraRenders = ptrs;
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.Name = "MainPass";
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 

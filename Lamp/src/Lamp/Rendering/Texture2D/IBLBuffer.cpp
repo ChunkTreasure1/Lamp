@@ -11,6 +11,7 @@ namespace Lamp
 {
 	IBLBuffer::IBLBuffer(const std::string& path)
 	{
+		LP_PROFILE_FUNCTION();
 		m_EqCubeShader = ShaderLibrary::GetShader("EqCube");
 		m_ConvolutionShader = ShaderLibrary::GetShader("Convolution");
 		m_PrefilterShader = ShaderLibrary::GetShader("Prefilter");
@@ -188,6 +189,7 @@ namespace Lamp
 
 	IBLBuffer::~IBLBuffer()
 	{
+		LP_PROFILE_FUNCTION();
 		glDeleteTextures(1, &m_CubeMapId);
 		glDeleteTextures(1, &m_HdrTextureId);
 		glDeleteTextures(1, &m_IrradianceId);

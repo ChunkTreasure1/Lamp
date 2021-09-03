@@ -62,6 +62,7 @@ namespace Lamp
 
 	void AudioEngine::Initialize()
 	{
+		LP_PROFILE_FUNCTION();
 		s_Instance = CreateRef<AudioEngine>();
 		g_AudioImplementation = new AudioImplementation();
 
@@ -75,6 +76,7 @@ namespace Lamp
 
 	void AudioEngine::Shutdown()
 	{
+		LP_PROFILE_FUNCTION();
 		delete g_AudioImplementation;
 	}
 

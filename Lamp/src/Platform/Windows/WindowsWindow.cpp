@@ -12,11 +12,13 @@ namespace Lamp
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		LP_PROFILE_FUNCTION();
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		LP_PROFILE_FUNCTION();
 		Shutdown();
 	}
 
@@ -153,6 +155,7 @@ namespace Lamp
 
 	void WindowsWindow::Update(Timestep ts)
 	{
+		LP_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_pContext->SwapBuffers();
 	}

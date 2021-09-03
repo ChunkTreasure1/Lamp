@@ -11,13 +11,16 @@
 #include <Lamp/Objects/Brushes/Brush.h>
 #include <Lamp/Event/MouseEvent.h>
 #include "SandboxController.h"
-#include "CommandStack.h"
+
+#include "Actions/ActionHandler.h"
+#include "Windows/BufferWindow.h"
+#include "Windows\AssetManagerPanel.h"
 
 #include <Game/Game.h>
 
 namespace Sandbox3D
 {
-	class ModelImporter;
+	class BaseWindow;
 
 	class Sandbox3D : public Lamp::Layer
 	{
@@ -59,6 +62,7 @@ namespace Sandbox3D
 		//Shortcuts
 		void SaveLevelAs();
 		void OpenLevel();
+		void OpenLevel(const std::filesystem::path& path);
 		void NewLevel();
 		void Undo();
 		void Redo();
@@ -67,6 +71,8 @@ namespace Sandbox3D
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
+
+		Lamp::Level* m_pLevel = nullptr;
 
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 		Ref<Lamp::Framebuffer> m_SandboxBuffer;
@@ -77,20 +83,23 @@ namespace Sandbox3D
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
+		glm::vec2 m_PerspectiveBounds[2];
 		ImGuiID m_DockspaceID;
+		std::vector<BufferWindow> m_BufferWindows;
 
 		//Perspective
 		bool m_PerspectiveOpen = true;
 		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
-		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
-		CommandStack<Command> m_PerspecticeCommands;
 		bool m_HaveUndone = false;
+		bool m_IsPlaying = false;
+		bool m_RightMousePressed = false;
+
+		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
+		ActionHandler m_ActionHandler;
 
 		//Asset browser
-		Lamp::File m_SelectedFile;
-		int m_CurrSample = -1;
-		bool m_AssetBrowserOpen = true;
+		AssetManagerPanel m_assetManager;
 
 		//Inspector
 		bool m_MousePressed = false;
@@ -103,8 +112,8 @@ namespace Sandbox3D
 		glm::vec2 m_WindowSize = glm::vec2(0, 0);
 		Ref<Lamp::Shader> m_pShader;
 
-		//Model importer
-		ModelImporter* m_ModelImporter;
+		//Windows
+		std::vector<BaseWindow*> m_pWindows;
 
 		//Layers
 		bool m_LayerViewOpen = true;

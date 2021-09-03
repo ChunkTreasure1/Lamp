@@ -1,6 +1,5 @@
 #include "Game.h"
 
-#include <Lamp/Meshes/GeometrySystem.h>
 #include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
 #include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
 
@@ -10,10 +9,10 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 #include <Lamp.h>
+#include <Lamp/AssetSystem/AssetManager.h>
 
 void Game::OnStart()
 {
-	auto tempLevel = Lamp::LevelSystem::LoadLevel("assets/levels/Level.level");
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)

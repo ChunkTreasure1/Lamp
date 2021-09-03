@@ -19,6 +19,14 @@ namespace Lamp
 		float CameraFOV = 60.f;
 	};
 
+	struct LevelLoadData
+	{
+		std::string name;
+		std::string path;
+
+		LevelEnvironment env;
+	};
+
 	class Level
 	{
 	public:

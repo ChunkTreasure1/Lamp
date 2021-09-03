@@ -20,13 +20,20 @@ namespace Lamp
 		Float3,
 		Float4,
 		Color3,
-		Color4
+		Color4,
+		Void,
+		Selectable,
+		EntityId
 	};
 
 	struct ComponentProperty
 	{
 		ComponentProperty(PropertyType propertyType, const std::string& name, void* value)
 			: PropertyType(propertyType), Name(name), Value(value)
+		{}
+
+		ComponentProperty() 
+			: PropertyType(PropertyType::Void), Value(nullptr)
 		{}
 
 		std::string Name;
@@ -39,6 +46,9 @@ namespace Lamp
 	public:
 		ComponentProperties(std::initializer_list<ComponentProperty> properties)
 			: m_Properties(properties)
+		{}
+
+		ComponentProperties()
 		{}
 
 		inline std::vector<ComponentProperty>& GetProperties() { return m_Properties; }

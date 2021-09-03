@@ -17,7 +17,7 @@ out Out
 
 uniform mat4 u_Model;
 uniform mat4 u_ViewProjection;
-uniform mat4 u_ShadowMVP;
+uniform mat4 u_SunShadowMVP;
 
 void main()
 {
@@ -33,7 +33,7 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	//Shadow calculation
-	v_Out.ShadowCoord = u_ShadowMVP * vec4(a_Position, 1.0);
+	v_Out.ShadowCoord = u_SunShadowMVP * vec4(a_Position, 1.0);
 
 	gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
 }

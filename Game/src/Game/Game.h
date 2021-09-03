@@ -13,4 +13,6 @@ public:
 	virtual void OnStart() override;
 	bool OnUpdate(Lamp::AppUpdateEvent& e);
 	virtual void OnEvent(Lamp::Event& e) override;
+
+private:
 };

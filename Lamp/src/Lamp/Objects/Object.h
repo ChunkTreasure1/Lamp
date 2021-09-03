@@ -5,7 +5,6 @@
 #include "Lamp/Event/EntityEvent.h"
 
 #include "Lamp/Math/Math.h"
-#include "Lamp/Physics/Internal/Picking.h"
 
 namespace Lamp
 {
@@ -72,7 +71,6 @@ namespace Lamp
 		std::string m_Name;
 
 		Rigidbody* m_pRigidBody = nullptr;
-		PickingCollider m_PickingCollider;
 		uint32_t m_LayerID = 0;
 		uint32_t m_Id = 0;
 	};

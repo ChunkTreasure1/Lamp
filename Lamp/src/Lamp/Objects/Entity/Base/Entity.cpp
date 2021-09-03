@@ -6,6 +6,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 #include <glm/ext/matrix_transform.hpp>
+#include "Lamp/GraphKey/GraphKeyGraph.h"
 
 namespace Lamp
 {
@@ -24,13 +25,18 @@ namespace Lamp
 			}
 		}
 
+		if (m_GraphKeyGraph)
+		{
+			m_GraphKeyGraph->OnEvent(e);
+		}
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Entity::OnRenderEvent));
 	}
 
 	void Entity::Destroy()
 	{
-		EntityManager::Get()->Remove(this);
+		g_pEnv->pEntityManager->Remove(this);
 		ObjectLayerManager::Get()->Remove(this);
 
 		delete this;
@@ -38,7 +44,7 @@ namespace Lamp
 
 	Entity* Entity::Create()
 	{
-		return EntityManager::Get()->Create(false);
+		return g_pEnv->pEntityManager->Create(false);
 	}
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)

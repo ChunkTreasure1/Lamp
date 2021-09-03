@@ -132,6 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\TextureCache.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
@@ -143,11 +148,16 @@
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
+    <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />
     <ClInclude Include="src\Lamp\Event\MouseEvent.h" />
+    <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h" />
+    <ClInclude Include="src\Lamp\GraphKey\Link.h" />
+    <ClInclude Include="src\Lamp\GraphKey\Node.h" />
+    <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h" />
     <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Lamp\Input\FileSystem.h" />
     <ClInclude Include="src\Lamp\Input\Input.h" />
@@ -159,7 +169,6 @@
     <ClInclude Include="src\Lamp\Level\Level.h" />
     <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />
-    <ClInclude Include="src\Lamp\Meshes\GeometrySystem.h" />
     <ClInclude Include="src\Lamp\Meshes\Materials\Material.h" />
     <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
@@ -177,6 +186,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\GUID.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />
@@ -184,7 +194,6 @@
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\Lamp\Physics\Rigidbody.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffer.h" />
@@ -208,14 +217,13 @@
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureCache.h" />
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\TextureLoader.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
+    <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -592,12 +600,25 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\TextureCache.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp" />
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\InputNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\MathNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\BaseNodes\TypeNodes.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\GraphKeyGraph.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\Node.cpp" />
+    <ClCompile Include="src\Lamp\GraphKey\NodeRegistry.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Lamp\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Lamp\Input\FileSystem.cpp" />
@@ -606,7 +627,6 @@
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\GeometrySystem.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
@@ -628,7 +648,6 @@
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
@@ -648,8 +667,6 @@
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureCache.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\TextureLoader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />

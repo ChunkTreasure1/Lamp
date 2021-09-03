@@ -2,7 +2,6 @@
 #include "Sandbox3D.h"
 
 #include <Lamp/Level/LevelSystem.h>
-#include <Lamp/Meshes/GeometrySystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Objects/ObjectLayer.h>
 
@@ -20,10 +19,13 @@
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
 #include <Lamp/Core/Application.h>
+#include <Lamp/GraphKey/GraphKeyGraph.h>
+#include "Sandbox3D/Windows/GraphKey.h"
 
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
+
 	{
 		if (!m_PerspectiveOpen)
 		{
@@ -32,15 +34,24 @@ namespace Sandbox3D
 
 		glm::vec2 perspectivePos;
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0.f, 0.f });
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered() && ImGui::IsWindowFocused() || !m_ModelImporter->GetIsOpen() && ImGui::IsWindowHovered();
+			m_PerspectiveHover = ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
 
+			//Viewport bounds
+			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+			auto viewportOffset = ImGui::GetWindowPos();
+
+			m_PerspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+			m_PerspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
-			if (m_PerspectiveSize != *((glm::vec2*) & perspectivePanelSize))
+			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
 				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_SecondaryBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
@@ -53,6 +64,23 @@ namespace Sandbox3D
 
 			uint32_t textureID = m_SecondaryBuffer->GetColorAttachmentID(0);
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)pPayload->Data;
+					OpenLevel(std::filesystem::path("assets") / path);
+				}
+
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("BRUSH_ITEM"))
+				{
+					const char* path = (const char*)pPayload->Data;
+					m_pSelectedObject = Lamp::Brush::Create(path);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
 
 			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
 			ImGui::SetCursorPos(ImVec2(20, 40));
@@ -95,69 +123,72 @@ namespace Sandbox3D
 			}
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
-			
-			ImGuizmo::SetRect(perspectivePos.x, perspectivePos.y, m_PerspectiveSize.x, m_PerspectiveSize.y);
-			ImGuizmo::Manipulate(glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
+
+			ImGuizmo::SetRect(m_PerspectiveBounds[0].x, m_PerspectiveBounds[0].y, m_PerspectiveBounds[1].x - m_PerspectiveBounds[0].x, m_PerspectiveBounds[1].y - m_PerspectiveBounds[0].y);
+
+			bool snap = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_CONTROL);
+			bool duplicate = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_SHIFT);
+
+			float snapValue = 0.5f;
+			if (m_ImGuizmoOperation == ImGuizmo::ROTATE)
+			{
+				snapValue = 45.f;
+			}
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(
+				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform));
+				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
 
-			glm::vec3 p, r, s;
-			Lamp::Math::DecomposeTransform(transform, p, r, s);
+			static bool hasDuplicated = false;
 
-			r = r - m_pSelectedObject->GetRotation();
+			if (ImGuizmo::IsUsing())
+			{
+				if (duplicate && !hasDuplicated)
+				{
+					if (auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject))
+					{
+						m_pSelectedObject = Lamp::Brush::Duplicate(brush);
+					}
+					else if (auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject))
+					{
 
-			m_pSelectedObject->SetPosition(p);
-			m_pSelectedObject->SetRotation(r);
-			m_pSelectedObject->SetScale(s);
+					}
+
+					hasDuplicated = true;
+				}
+				else
+				{
+					glm::vec3 p, r, s;
+					ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
+
+					glm::vec3 deltaRot = r - m_pSelectedObject->GetRotation();
+					m_pSelectedObject->SetPosition(p);
+					m_pSelectedObject->AddRotation(deltaRot);
+					m_pSelectedObject->SetScale(s);
+				}
+			}
+			else
+			{
+				hasDuplicated = false;
+			}
 
 			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
 			{
-				Command cmd;
-				cmd.cmd = Cmd::Transform;
-				cmd.lastData = new glm::mat4(lastTrans);
-				cmd.object = m_pSelectedObject;
+				TransformAction action;
+				action.lastData = lastTrans;
+				action.data = m_pSelectedObject->GetModelMatrix();
+				action.pObject = m_pSelectedObject;
 
-				m_PerspecticeCommands.push_front(cmd);
+				m_ActionHandler.AddAction(action);
 			}
 		}
 
 		ImGui::End();
-		ImGui::PopStyleVar();
-	}
-
-	void Sandbox3D::UpdateAssetBrowser()
-	{
-		if (!m_AssetBrowserOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Asset Browser", &m_AssetBrowserOpen);
-		{
-			//Asset browser
-			{
-				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
-
-					Lamp::FileSystem::PrintFoldersAndFiles(folders);
-				}
-				ImGui::EndChild();
-
-				ImGui::SameLine();
-				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					if (m_SelectedFile.GetFileType() == Lamp::FileType::Texture)
-					{
-						Ref<Lamp::Texture2D> selected;
-						selected = Lamp::Texture2D::Create(m_SelectedFile.GetPath());
-						ImGui::Image((void*)(uint64_t)selected->GetID(), ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
-					}
-				}
-				ImGui::EndChild();
-			}
-		}
-		ImGui::End();
+		ImGui::PopStyleVar(2);
 	}
 
 	void Sandbox3D::UpdateProperties()
@@ -186,22 +217,23 @@ namespace Sandbox3D
 			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
-				mousePos.y = m_PerspectiveSize.y - mousePos.y;
-
-				Command cmd;
-				cmd.cmd = Cmd::Selection;
-				cmd.lastData = m_pSelectedObject;
-				cmd.object = nullptr;
 
 				/////Mouse picking/////
-				m_SandboxBuffer->Bind();
+				m_SelectionBuffer->Bind();
 
-				int mouseX = (int)mousePos.x;
-				int mouseY = (int)mousePos.y;
+				auto [mx, my] = ImGui::GetMousePos();
+				mx -= m_PerspectiveBounds[0].x;
+				my -= m_PerspectiveBounds[0].y;
 
-				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
+				glm::vec2 perspectiveSize = m_PerspectiveBounds[1] - m_PerspectiveBounds[0];
+				my = perspectiveSize.y - my;
+
+				int mouseX = (int)mx;
+				int mouseY = (int)my;
+
+				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 				{
-					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
+					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
@@ -215,13 +247,8 @@ namespace Sandbox3D
 					}
 				}
 
-				m_SandboxBuffer->Unbind();
+				m_SelectionBuffer->Unbind();
 				////////////////////////
-
-				if (cmd.lastData != m_pSelectedObject)
-				{
-					m_PerspecticeCommands.push_front(cmd);
-				}
 			}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
@@ -240,12 +267,6 @@ namespace Sandbox3D
 					ImGui::InputFloat3("Position", f);
 					pEnt->SetPosition(glm::make_vec3(f));
 
-					if (pos != pEnt->GetPosition())
-					{
-						Command cmd;
-						cmd.cmd = Cmd::Position;
-						//cmd.lastData = 
-					}
 
 					glm::vec3 rot = pEnt->GetRotation();
 					float r[3] = { rot.x, rot.y, rot.z };
@@ -258,6 +279,32 @@ namespace Sandbox3D
 
 					ImGui::InputFloat3("Scale", s);
 					pEnt->SetScale(glm::make_vec3(s));
+				}
+
+				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
+				if (ImGui::Button(graphButtonString.c_str()))
+				{
+					if (!pEnt->GetGraphKeyGraph())
+					{
+						Lamp::GraphKeyGraphSpecification spec;
+						spec.name = pEnt->GetName();
+						spec.path = "Assets/libs/graphkey/" + spec.name + ".graphkey";
+						pEnt->SetGraphKeyGraph(CreateRef<Lamp::GraphKeyGraph>(spec));
+
+						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						{
+							vs->SetIsOpen(true);
+							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph());
+						}
+					}
+					else
+					{
+						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						{
+							vs->SetIsOpen(true);
+							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph());
+						}
+					}
 				}
 
 				for (size_t i = 0; i < pEnt->GetComponents().size(); i++)
@@ -370,7 +417,7 @@ namespace Sandbox3D
 						}
 
 						m_pSelectedObject = layer.Objects[i];
-					
+
 						if (m_pSelectedObject)
 						{
 							m_pSelectedObject->SetIsSelected(true);
@@ -406,7 +453,7 @@ namespace Sandbox3D
 						if (comp != nullptr)
 						{
 							pEnt->AddComponent(comp);
-							
+
 							Lamp::EntityComponentAddedEvent e;
 							pEnt->OnEvent(e);
 						}
@@ -430,16 +477,16 @@ namespace Sandbox3D
 		ImGui::Begin("Create", &m_CreateToolOpen);
 
 		static bool brushListOpen = false;
-		
+
 		if (!brushListOpen)
 		{
 			if (ImGui::Button("Entity"))
 			{
-				m_pSelectedObject = Lamp::EntityManager::Get()->Create();
+				m_pSelectedObject = g_pEnv->pEntityManager->Create();
 				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
 				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
 			}
-			
+
 			ImGui::SameLine();
 
 			if (ImGui::Button("Brush"))
@@ -459,11 +506,11 @@ namespace Sandbox3D
 
 			if (ImGui::Button("Create"))
 			{
-				if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
+
+			}	/*if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
 				{
 					m_pSelectedObject = Lamp::Brush::Create(m_SelectedFile.GetPath());
-				}
-			}
+				}*/
 
 			if (ImGui::BeginChild("Brushes"))
 			{
@@ -487,7 +534,7 @@ namespace Sandbox3D
 		}
 
 		ImGui::Begin("Log", &m_LogToolOpen);
-		
+
 		if (ImGui::BeginPopup("Options"))
 		{
 			ImGui::Checkbox("Auto-scroll", &autoScroll);
@@ -548,7 +595,8 @@ namespace Sandbox3D
 
 		if (ImGui::CollapsingHeader(ptr->GetName().c_str()))
 		{
-			if (ImGui::Button("Remove"))
+			std::string id = "Remove###Remove" + ptr->GetName();
+			if (ImGui::Button(id.c_str()))
 			{
 				removeComp = true;
 			}
@@ -557,177 +605,189 @@ namespace Sandbox3D
 			{
 				switch (pProp.PropertyType)
 				{
-					case Lamp::PropertyType::Int:
+				case Lamp::PropertyType::Int:
+				{
+					int* p = static_cast<int*>(pProp.Value);
+					int v = *p;
+
+					ImGui::InputInt(pProp.Name.c_str(), &v);
+					if (v != *p)
 					{
-						int* p = static_cast<int*>(pProp.Value);
-						int v = *p;
-						
-						ImGui::InputInt(pProp.Name.c_str(), &v);
-						if (v != *p)
-						{
-							*p = v;
+						*p = v;
 
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
 
-					case Lamp::PropertyType::Bool:
+					break;
+				}
+
+				case Lamp::PropertyType::Bool:
+				{
+					bool* p = static_cast<bool*>(pProp.Value);
+					bool v = *p;
+
+					ImGui::Checkbox(pProp.Name.c_str(), &v);
+					if (v != *p)
 					{
-						bool* p = static_cast<bool*>(pProp.Value);
-						bool v = *p;
+						*p = v;
 
-						ImGui::Checkbox(pProp.Name.c_str(), &v);
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
 
-					case Lamp::PropertyType::Float:
+					break;
+				}
+
+				case Lamp::PropertyType::Float:
+				{
+					float* p = static_cast<float*>(pProp.Value);
+					float v = *p;
+
+					ImGui::InputFloat(pProp.Name.c_str(), &v);
+					if (v != *p)
 					{
-						float* p = static_cast<float*>(pProp.Value);
-						float v = *p;
+						*p = v;
 
-						ImGui::InputFloat(pProp.Name.c_str(), &v);
-						if (v != *p)
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Float2:
+				{
+					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
+					glm::vec2 v = *p;
+
+					ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
+					{
+						*p = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Float3:
+				{
+					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					glm::vec3 v = *p;
+
+					ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
+					{
+						*p = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Float4:
+				{
+					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					glm::vec4 v = *p;
+
+					ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
+					if (v != *p)
+					{
+						*p = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::String:
+				{
+					std::string* s = static_cast<std::string*>(pProp.Value);
+					std::string v = *s;
+
+					ImGui::InputText(pProp.Name.c_str(), &v);
+					if (v != *s)
+					{
+						*s = v;
+
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
+					}
+					break;
+				}
+
+				case Lamp::PropertyType::Path:
+				{
+					std::string* s = static_cast<std::string*>(pProp.Value);
+					std::string v = *s;
+
+					ImGui::InputText(pProp.Name.c_str(), &v);
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							const wchar_t* path = (const wchar_t*)pPayload->Data;
+							std::filesystem::path p = std::filesystem::path("assets") / path;
+							v = p.string();
 						}
-						break;
+
+						ImGui::EndDragDropTarget();
 					}
 
-					case Lamp::PropertyType::Float2:
+					ImGui::SameLine();
+					if (ImGui::Button("Open..."))
 					{
-						glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-						glm::vec2 v = *p;
-						
-						ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
+						std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+						if (!path.empty())
 						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
+							v = path;
 						}
-						break;
 					}
 
-					case Lamp::PropertyType::Float3:
+					if (v != *s)
 					{
-						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-						glm::vec3 v = *p;
+						*s = v;
 
-						ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
+					break;
+				}
 
-					case Lamp::PropertyType::Float4:
+				case Lamp::PropertyType::Color3:
+				{
+					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
+					glm::vec3 v = *p;
+
+					ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
 					{
-						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-						glm::vec4 v = *p;
+						*p = v;
 
-						ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
+					break;
+				}
 
-					case Lamp::PropertyType::String:
+				case Lamp::PropertyType::Color4:
+				{
+					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
+					glm::vec4 v = *p;
+
+					ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
+					if (v != *p)
 					{
-						std::string* s = static_cast<std::string*>(pProp.Value);
-						std::string v = *s;
+						*p = v;
 
-						ImGui::InputText(pProp.Name.c_str(), &v);
-						if (v != *s)
-						{
-							*s = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						break;
+						Lamp::EntityPropertyChangedEvent e;
+						ptr->GetEntity()->OnEvent(e);
 					}
-
-					case Lamp::PropertyType::Path:
-					{
-						std::string* s = static_cast<std::string*>(pProp.Value);
-						std::string v = *s;
-
-						ImGui::InputText(pProp.Name.c_str(), &v);
-						ImGui::SameLine();
-						if (ImGui::Button("Open..."))
-						{
-							std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-							if (!path.empty())
-							{
-								v = path;
-							}
-						}
-
-						if (v != *s)
-						{
-							*s = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						break;
-					}
-
-					case Lamp::PropertyType::Color3:
-					{
-						glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-						glm::vec3 v = *p;
-
-						ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						break;
-					}
-
-					case Lamp::PropertyType::Color4:
-					{
-						glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-						glm::vec4 v = *p;
-
-						ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
-						if (v != *p)
-						{
-							*p = v;
-
-							Lamp::EntityPropertyChangedEvent e;
-							ptr->GetOwner()->OnEvent(e);
-						}
-						break;
-					}
+					break;
+				}
 				}
 			}
 		}
@@ -747,7 +807,7 @@ namespace Sandbox3D
 		if (ImGui::CollapsingHeader("Environment"))
 		{
 			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
-			g_pEnv->DirLight.UpdateProjection();
+			g_pEnv->DirLight.UpdateView();
 
 			static std::string path;
 			ImGui::InputText("HDR environment", &path);
@@ -873,13 +933,26 @@ namespace Sandbox3D
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Import Model", NULL, &m_ModelImporter->GetIsOpen());
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
-				ImGui::MenuItem("Asset browser", NULL, &m_AssetBrowserOpen);
 				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
 				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
+
+				for (auto pWindow : m_pWindows)
+				{
+					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Buffers"))
+			{
+				for (auto& window : m_BufferWindows)
+				{
+					ImGui::MenuItem(window.GetLabel().c_str(), NULL, &window.GetIsOpen());
+				}
 
 				ImGui::EndMenu();
 			}
