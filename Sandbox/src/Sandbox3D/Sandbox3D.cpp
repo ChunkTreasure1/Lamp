@@ -91,7 +91,7 @@ namespace Sandbox3D
 			}
 		}
 
-		m_SelectionBuffer->ClearAttachment(0, 0);
+		m_SelectionBuffer->ClearAttachment(1, 0);
 
 		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
@@ -100,7 +100,7 @@ namespace Sandbox3D
 
 		GetInput();
 
-		m_SelectionBuffer->ClearAttachment(0, -1);
+		m_SelectionBuffer->ClearAttachment(1, -1);
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
@@ -398,6 +398,7 @@ namespace Sandbox3D
 			FramebufferSpecification spec;
 			spec.Attachments =
 			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, true },
 				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
 			};
 			spec.Height = 1280;

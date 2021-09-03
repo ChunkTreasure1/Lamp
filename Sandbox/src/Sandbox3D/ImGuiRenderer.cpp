@@ -217,18 +217,23 @@ namespace Sandbox3D
 			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
 			{
 				mousePos -= windowPos;
-				mousePos.y = m_PerspectiveSize.y - mousePos.y;
-				mousePos.y = m_PerspectiveSize.y - mousePos.y;
 
 				/////Mouse picking/////
-				m_SandboxBuffer->Bind();
+				m_SelectionBuffer->Bind();
 
-				int mouseX = (int)mousePos.x;
-				int mouseY = (int)mousePos.y;
+				auto [mx, my] = ImGui::GetMousePos();
+				mx -= m_PerspectiveBounds[0].x;
+				my -= m_PerspectiveBounds[0].y;
 
-				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_PerspectiveSize.x && mouseY < (int)m_PerspectiveSize.y)
+				glm::vec2 perspectiveSize = m_PerspectiveBounds[1] - m_PerspectiveBounds[0];
+				my = perspectiveSize.y - my;
+
+				int mouseX = (int)mx;
+				int mouseY = (int)my;
+
+				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 				{
-					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
+					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
@@ -242,7 +247,7 @@ namespace Sandbox3D
 					}
 				}
 
-				m_SandboxBuffer->Unbind();
+				m_SelectionBuffer->Unbind();
 				////////////////////////
 			}
 
