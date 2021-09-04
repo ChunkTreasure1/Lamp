@@ -820,6 +820,8 @@ namespace Sandbox3D
 					Lamp::Renderer3D::SetEnvironment(path);
 				}
 			}
+
+			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
 		}
 
 		ImGui::End();

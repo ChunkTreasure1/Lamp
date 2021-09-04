@@ -151,7 +151,7 @@ namespace Lamp
 			}
 			else
 			{
-				m_DepthAttachmentFormatSpec = format.TextureFormat;
+				m_DepthAttachmentFormatSpec = format;
 			}
 		}
 
@@ -305,6 +305,12 @@ namespace Lamp
 		else if (m_ColorAttachmentSpecs.empty())
 		{
 			glDrawBuffer(GL_NONE);
+		}
+
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE)
+		{
+			LP_CORE_ERROR("Framebuffer error: {0}", status);
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

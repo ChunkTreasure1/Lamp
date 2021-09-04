@@ -1,9 +1,0 @@
-<Material name="sphere1">
-	<diffuse path="engine/textures/default/defaultTexture.png"/>
-	<specular path="engine/textures/default/defaultTexture.png"/>
-	<depth path="engine/textures/default/defaultTexture.png"/>
-	<normal path="engine/textures/default/defaultTexture.png"/>
-	<Shininess value="32.000000"/>
-	<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
-</Material>
-

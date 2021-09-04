@@ -1,6 +1,0 @@
-<Material name="box">
-	<Diffuse path="assets/textures/container_diff.png"/>
-	<Specular path="assets/textures/container_spec.png"/>
-	<Shininess value="32.000000"/>
-	<Shader name="Illumn" vertex="engine/shaders/3d/shader_vs.glsl" fragment="engine/shaders/3d/shader_fs.glsl"/>
-</Material>

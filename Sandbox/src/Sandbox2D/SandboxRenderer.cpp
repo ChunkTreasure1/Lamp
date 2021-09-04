@@ -131,32 +131,6 @@ namespace Sandbox2D
 			return;
 		}
 
-		ImGui::Begin("Asset Browser", &m_AssetBrowserOpen);
-		{
-			//Asset browser
-			{
-				ImGui::BeginChild("Browser", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.12f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
-
-					Lamp::FileSystem::PrintFoldersAndFiles(folders);
-				}
-				ImGui::EndChild();
-
-				ImGui::SameLine();
-				ImGui::BeginChild("Viewer", ImVec2(ImGui::GetWindowSize().y * 0.85f, ImGui::GetWindowSize().y * 0.85f), true);
-				{
-					if (m_SelectedFile.GetFileType() == Lamp::FileType::Texture)
-					{
-						Ref<Lamp::Texture2D> selected;
-						selected = Lamp::Texture2D::Create(m_SelectedFile.GetPath());
-						ImGui::Image((void*)(uint64_t)selected->GetID(), ImVec2(ImGui::GetWindowSize().y * 0.9f, ImGui::GetWindowSize().y * 0.9f));
-					}
-				}
-				ImGui::EndChild();
-			}
-		}
-		ImGui::End();
 	}
 
 	void Sandbox2D::RenderProperties()
