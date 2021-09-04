@@ -9,7 +9,6 @@ layout(location = 4) in vec2 a_TexCoords;
 out Out
 {
 	vec3 fragPos;
-	vec3 normal;
 	vec2 texCoords;
 	mat3 TBN;
 } v_Out;
@@ -31,6 +30,5 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	mat3 normalMatrix = transpose(inverse(mat3(u_Model)));
-	v_Out.normal = normalMatrix * a_Normal;
 	gl_Position = u_ViewProjection * worldPos;
 }

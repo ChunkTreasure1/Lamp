@@ -16,7 +16,6 @@ layout(location = 2) out vec4 o_AlbedoRoughness;
 in Out
 {
 	vec3 fragPos;
-	vec3 normal;
 	vec2 texCoords;
 	mat3 TBN;
 } v_In;

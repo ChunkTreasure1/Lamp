@@ -34,9 +34,6 @@ namespace Lamp
 		m_pShader->Bind();
 
 		/////Lighting/////
-		m_pShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-		m_pShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
-		m_pShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 
 		int lightCount = 0;
 		/////Point lights/////

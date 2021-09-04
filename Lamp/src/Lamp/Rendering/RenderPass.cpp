@@ -60,6 +60,8 @@ namespace Lamp
 			Renderer3D::End();
 			m_PassSpec.TargetFramebuffer->Unbind();
 		}
+
+		Renderer3D::CombineLightning();
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)
