@@ -186,8 +186,8 @@
     <None Include="engine\shaders\3d\ibl\skybox_vs.glsl" />
     <None Include="engine\shaders\3d\lineShader_fs.glsl" />
     <None Include="engine\shaders\3d\lineShader_vs.glsl" />
-    <None Include="engine\shaders\3d\shader_fs.glsl" />
-    <None Include="engine\shaders\3d\shader_vs.glsl" />
+    <None Include="engine\shaders\3d\selection_fs.glsl" />
+    <None Include="engine\shaders\3d\selection_vs.glsl" />
     <None Include="engine\shaders\3d\shadows\dirShadow_fs.glsl" />
     <None Include="engine\shaders\3d\shadows\dirShadow_vs.glsl" />
     <None Include="engine\shaders\3d\shadows\pointShadow_fs.glsl" />

@@ -237,7 +237,7 @@ namespace Lamp
 	{
 		int bit = depth ? GL_DEPTH_BUFFER_BIT : GL_COLOR_BUFFER_BIT;
 
-		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, bit, GL_LINEAR);
+		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, bit, GL_NEAREST);
 	}
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)

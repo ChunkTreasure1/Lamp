@@ -453,6 +453,11 @@ namespace Sandbox3D
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
 			passSpec.Name = "LightPass";
 			passSpec.type = PassType::Lightning;
+			std::vector<std::function<void()>> ptrs;
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+			passSpec.ExtraRenders = ptrs;
+
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
@@ -482,13 +487,10 @@ namespace Sandbox3D
 
 			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
 
-			std::vector<std::function<void()>> ptrs;
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
-			passSpec.ExtraRenders = ptrs;
+
 
 			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(pass);
+			//RenderPassManager::Get()->AddPass(pass);
 		}
 		///////////////////
 	}
