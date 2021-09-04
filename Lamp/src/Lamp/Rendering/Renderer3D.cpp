@@ -72,6 +72,10 @@ namespace Lamp
 		Ref<Framebuffer> ShadowBuffer;
 		Ref<Shader> PointShadowShader;
 		/////////////////
+
+		Ref<Shader> GBufferShader;
+		Ref<Shader> DeferredShader;
+		Ref<Framebuffer> GBuffer;
 	};
 
 	static Renderer3DStorage* s_pData;
@@ -86,16 +90,16 @@ namespace Lamp
 			std::vector<float> quadPositions =
 			{
 				// positions       // texture Coords
-				-1.f, -1.f, 0.0f,  0.0f, 0.0f,
-				 1.f, -1.f, 0.0f,  1.0f, 0.0f,
-				 1.f,  1.f, 0.0f,  1.0f, 1.0f,
-				-1.f,  1.f, 0.0f,  0.0f, 1.0f,
+				 1.f,  1.f, 0.0f,  1.0f, 1.0f, // top right
+				 1.f, -1.f, 0.0f,  1.0f, 0.0f, // bottom right
+				-1.f, -1.f, 0.0f,  0.0f, 0.0f, // bottom left
+				-1.f,  1.f, 0.0f,  0.0f, 1.0f, // top left
 			};
 
 			std::vector<uint32_t> quadIndices =
 			{
-				0, 1, 2,
-				0, 2, 3
+				0, 1, 3, //(top left - bottom left - top right)
+				1, 2, 3 //(top left - top right - bottom right)
 			};
 
 			s_pData->QuadVertexArray = VertexArray::Create();
@@ -183,6 +187,9 @@ namespace Lamp
 			s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr");
 		}
 		////////////////
+
+		s_pData->GBufferShader = ShaderLibrary::GetShader("gbuffer");
+		s_pData->DeferredShader = ShaderLibrary::GetShader("deferred");
 	}
 
 	void Renderer3D::Shutdown()
@@ -204,6 +211,7 @@ namespace Lamp
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
+
 		s_pData->CurrentRenderPass = nullptr;
 	}
 
@@ -220,80 +228,136 @@ namespace Lamp
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
-		if (s_pData->CurrentRenderPass->IsShadowPass)
+		switch (s_pData->CurrentRenderPass->type)
 		{
-			/////Directional light shadows/////
-			glCullFace(GL_FRONT);
-			s_pData->DirShadowShader->Bind();
-
-			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
-			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
-			s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			////////////////////////////////////
-		}
-		else if (s_pData->CurrentRenderPass->IsPointShadowPass)
-		{
-			///////Point light shadows/////
-			glCullFace(GL_BACK);
-			s_pData->PointShadowShader->Bind();
-
-			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
-			const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
-
-			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
+			case PassType::DirShadow:
 			{
-				s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
+				glCullFace(GL_FRONT);
+				s_pData->DirShadowShader->Bind();
+
+				glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
+				s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+				s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+				mesh->GetVertexArray()->Bind();
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+				break;
 			}
-
-			s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-			s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
-
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			///////////////////////////////
-		}
-		else
-		{
-			glCullFace(GL_BACK);
-			//Reserve spot 0 for shadow map
-			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
-			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			
+			case PassType::PointShadow:
 			{
-				if (mat.GetTextures()[name].get() != nullptr)
+				glCullFace(GL_BACK);
+				s_pData->PointShadowShader->Bind();
+
+				uint32_t j = s_pData->CurrentRenderPass->LightIndex;
+				const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
+
+				for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
 				{
-					mat.GetTextures()[name]->Bind(i);
-					i++;
+					s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
 				}
+
+				s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
+				s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
+				s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
+
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+				break;
 			}
 
-			mat.GetShader()->Bind();
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
-			mat.GetShader()->UploadInt("u_ObjectId", id);
-			mat.GetShader()->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
-
-			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			s_pData->ShadowBuffer->BindDepthAttachment(0);
-
-			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
-			mat.GetShader()->UploadInt("u_PrefilterMap", 2);
-			mat.GetShader()->UploadInt("u_BRDFLUT", 3);
-
-			s_pData->SkyboxBuffer->BindTextures(1);
-
-			for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+			case PassType::Geometry:
 			{
-				g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+				s_pData->GBufferShader->Bind();
+				s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
+				s_pData->GBufferShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+
+				s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
+				s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
+				s_pData->GBufferShader->UploadInt("u_Material.mro", 2);
+
+				int i = 0;
+				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+				{
+					if (mat.GetTextures()[name].get() != nullptr)
+					{
+						mat.GetTextures()[name]->Bind(i);
+						i++;
+					}
+				}
+
+				mesh->GetVertexArray()->Bind();
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+				s_pData->GBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+				break;
+			}
+			
+			case PassType::Lightning:
+			{
+				s_pData->DeferredShader->Bind();
+
+				s_pData->DeferredShader->UploadInt("u_GBuffer.positionAO", 0);
+				s_pData->DeferredShader->UploadInt("u_GBuffer.normalMetallic", 1);
+				s_pData->DeferredShader->UploadInt("u_GBuffer.albedoRoughness", 2);
+
+				s_pData->DeferredShader->UploadInt("u_IrradianceMap", 3);
+				s_pData->DeferredShader->UploadInt("u_PrefilterMap", 4);
+				s_pData->DeferredShader->UploadInt("u_BRDFLUT", 5);
+
+				s_pData->GBuffer->BindColorAttachment(0, 0);
+				s_pData->GBuffer->BindColorAttachment(1, 1);
+				s_pData->GBuffer->BindColorAttachment(2, 2);
+
+				s_pData->SkyboxBuffer->BindTextures(3);
+
+				s_pData->DeferredShader->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
+				s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+
+				DrawQuad();
+
+				break;
 			}
 
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 		}
+
+			//glCullFace(GL_BACK);
+			////Reserve spot 0 for shadow map
+			//int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
+			//for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			//{
+			//	if (mat.GetTextures()[name].get() != nullptr)
+			//	{
+			//		mat.GetTextures()[name]->Bind(i);
+			//		i++;
+			//	}
+			//}
+
+			//mat.GetShader()->Bind();
+			//mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+			//mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+			//mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+			//mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+			//mat.GetShader()->UploadInt("u_ObjectId", id);
+			//mat.GetShader()->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
+
+			//mat.GetShader()->UploadInt("u_ShadowMap", 0);
+			//s_pData->ShadowBuffer->BindDepthAttachment(0);
+
+			//mat.GetShader()->UploadInt("u_IrradianceMap", 1);
+			//mat.GetShader()->UploadInt("u_PrefilterMap", 2);
+			//mat.GetShader()->UploadInt("u_BRDFLUT", 3);
+
+			//s_pData->SkyboxBuffer->BindTextures(1);
+
+			//for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+			//{
+			//	g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+			//}
+
+
 	}
 
 	void Renderer3D::DrawSkybox()

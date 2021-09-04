@@ -19,6 +19,12 @@ namespace Lamp
 		Depth = DEPTH24STENCIL8
 	};
 
+	enum class FramebufferRenderbufferType
+	{
+		Color = 0,
+		Depth
+	};
+
 	enum class FramebufferTexureFiltering
 	{
 		Nearest = 0,
@@ -42,9 +48,9 @@ namespace Lamp
 	{
 		FramebufferTextureSpecification() = default;
 		FramebufferTextureSpecification(
-			FramebufferTextureFormat format, 
-			FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear, 
-			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat, 
+			FramebufferTextureFormat format,
+			FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear,
+			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat,
 			const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f },
 			bool sampled = false)
 			: TextureFormat(format), TextureFiltering(filtering), TextureWrap(wrap), BorderColor(borderColor)
@@ -58,6 +64,16 @@ namespace Lamp
 		glm::vec4 BorderColor = { 1.f, 1.f, 1.f, 1.f };
 	};
 
+	struct FramebufferRenderbufferSpecification
+	{
+		FramebufferRenderbufferSpecification() = default;
+		FramebufferRenderbufferSpecification(FramebufferRenderbufferType format)
+			: Format(format)
+		{}
+
+		FramebufferRenderbufferType Format;
+	};
+
 	struct FramebufferAttachmentSpecification
 	{
 		FramebufferAttachmentSpecification() = default;
@@ -66,7 +82,10 @@ namespace Lamp
 		{}
 
 		std::vector<FramebufferTextureSpecification> Attachments;
+		std::vector<FramebufferRenderbufferSpecification> Renderbuffers;
 	};
+
+
 
 	struct FramebufferSpecification
 	{
@@ -87,7 +106,7 @@ namespace Lamp
 		virtual void Unbind() = 0;
 		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
-		virtual void Copy(uint32_t rendererId, const glm::vec2& size) = 0;
+		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth = false) = 0;
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 

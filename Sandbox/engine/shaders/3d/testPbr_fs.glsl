@@ -112,7 +112,6 @@ float DirectionalShadowCalculation(vec4 pos)
 	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
-	vec3 normal = normalize(v_In.Normal);
 
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);

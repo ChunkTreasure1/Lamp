@@ -103,7 +103,7 @@ namespace Lamp
 	{
 		m_Model->Render(m_Id);
 
-		if (g_pEnv->ShouldRenderBB && !e.GetPassInfo().IsShadowPass && !e.GetPassInfo().IsPointShadowPass)
+		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().type != PassType::DirShadow ||e.GetPassInfo().type != PassType::PointShadow))
 		{
 			m_Model->RenderBoundingBox();
 		}

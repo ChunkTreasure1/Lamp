@@ -93,6 +93,29 @@ namespace Lamp
 			}
 		}
 
+		static GLint RenderbufferTypeGL(FramebufferRenderbufferType type)
+		{
+			switch (type)
+			{
+			case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_COMPONENTS;
+			case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_COMPONENT;
+				break;
+			default:
+				break;
+			}
+		}
+
+		static GLint RenderbufferTypeAttachment(FramebufferRenderbufferType type)
+		{
+			switch (type)
+			{
+			case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_ATTACHMENT0;
+			case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_ATTACHMENT;
+			default:
+				break;
+			}
+		}
+
 		static void AttachTexture(FramebufferSpecification spec, FramebufferTextureSpecification textureSpec, uint32_t id, bool multisample)
 		{
 			Utils::BindTexture(multisample, id);
@@ -210,9 +233,11 @@ namespace Lamp
 		return pixelData;
 	}
 
-	void OpenGLFramebuffer::Copy(uint32_t rendererId, const glm::vec2& size)
+	void OpenGLFramebuffer::Copy(uint32_t rendererId, const glm::vec2& size, bool depth)
 	{
-		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		int bit = depth ? GL_DEPTH_BUFFER_BIT : GL_COLOR_BUFFER_BIT;
+
+		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, bit, GL_LINEAR);
 	}
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)
@@ -305,6 +330,18 @@ namespace Lamp
 		else if (m_ColorAttachmentSpecs.empty())
 		{
 			glDrawBuffer(GL_NONE);
+		}
+
+		for (auto& buff : m_Specification.Attachments.Renderbuffers)
+		{
+			uint32_t id;
+			glGenRenderbuffers(1, &id);
+			glBindRenderbuffer(GL_RENDERBUFFER, id);
+
+			glRenderbufferStorage(GL_RENDERBUFFER, Utils::RenderbufferTypeGL(buff.Format), m_Specification.Width, m_Specification.Height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, Utils::RenderbufferTypeAttachment(buff.Format), GL_RENDERBUFFER, id);
+
+			m_RenderbufferIDs.push_back(id);
 		}
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

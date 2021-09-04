@@ -172,6 +172,10 @@
   <ItemGroup>
     <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl" />
     <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl" />
+    <None Include="engine\shaders\3d\deferredShading_fs.glsl" />
+    <None Include="engine\shaders\3d\deferredShading_vs.glsl" />
+    <None Include="engine\shaders\3d\gBuffer_fs.glsl" />
+    <None Include="engine\shaders\3d\gBuffer_vs.glsl" />
     <None Include="engine\shaders\3d\ibl\brdfIntegrate_fs.glsl" />
     <None Include="engine\shaders\3d\ibl\brdfIntegrate_vs.glsl" />
     <None Include="engine\shaders\3d\ibl\convolution_fs.glsl" />

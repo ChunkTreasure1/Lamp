@@ -19,7 +19,7 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
-		if (m_PassSpec.IsPointShadowPass)
+		if (m_PassSpec.type == PassType::PointShadow)
 		{
 			m_PassSpec.LightIndex = 0;
 			for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
@@ -82,5 +82,6 @@ namespace Lamp
 		{
 			pass->Render();
 		}
+
 	}
 }

@@ -53,7 +53,6 @@ namespace Sandbox3D
 		spec.Width = 1280;
 		spec.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
 
-		m_SecondaryBuffer = Lamp::Framebuffer::Create(spec);
 		SetupFromConfig();
 		CreateRenderPasses();
 
@@ -117,8 +116,8 @@ namespace Sandbox3D
 			}
 		}
 
-		glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
-		m_SecondaryBuffer->Copy(m_SandboxBuffer->GetRendererID(), srcSize);
+		//glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
+		//m_SecondaryBuffer->Copy(m_SandboxBuffer->GetRendererID(), srcSize);
 
 		return false;
 	}
@@ -371,7 +370,7 @@ namespace Sandbox3D
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsShadowPass = true;
+			shadowSpec.type = PassType::DirShadow;
 			shadowSpec.Name = "DirShadowPass";
 
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
@@ -385,7 +384,7 @@ namespace Sandbox3D
 		{
 			RenderPassSpecification shadowSpec;
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsPointShadowPass = true;
+			shadowSpec.type = PassType::PointShadow;
 			shadowSpec.Name = "PointShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
@@ -398,7 +397,7 @@ namespace Sandbox3D
 			FramebufferSpecification spec;
 			spec.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, true },
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, false },
 				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
 			};
 			spec.Height = 1280;
@@ -414,7 +413,7 @@ namespace Sandbox3D
 			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
 
 			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(pass);
+			//RenderPassManager::Get()->AddPass(pass);
 		}
 		///////////////////
 
@@ -423,13 +422,20 @@ namespace Sandbox3D
 			FramebufferSpecification mainBuffer;
 			mainBuffer.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, true },
-				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //albedo + roughness
 			};
+
+			mainBuffer.Attachments.Renderbuffers =
+			{
+				{ FramebufferRenderbufferType::Depth }
+			};
+
 			mainBuffer.ClearColor = m_ClearColor;
 			mainBuffer.Height = 1280;
 			mainBuffer.Width = 720;
-			mainBuffer.Samples = 2;
+			mainBuffer.Samples = 1;
 
 			std::vector<std::function<void()>> ptrs;
 			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
@@ -441,12 +447,43 @@ namespace Sandbox3D
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.Name = "MainPass";
+			passSpec.type = PassType::Geometry;
 
-			m_SandboxBuffer = passSpec.TargetFramebuffer;
+			m_GBuffer = passSpec.TargetFramebuffer;
+
+			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Position+AO", 2));
+			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Normal+Metallic", 1));
+			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Albedo+Roughness", 2));
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
 		}
 		///////////////
+
+		/////Lightning/////
+		{
+			FramebufferSpecification lightBuffer;
+			lightBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+			};
+
+			lightBuffer.ClearColor = m_ClearColor;
+			lightBuffer.Height = 1280;
+			lightBuffer.Width = 720;
+			lightBuffer.Samples = 1;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
+			passSpec.Name = "LightPass";
+			passSpec.type = PassType::Lightning;
+			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+
+			m_SandboxBuffer = passSpec.TargetFramebuffer;
+
+			RenderPassManager::Get()->AddPass(renderPass);
+		}
+		///////////////////
 	}
 }

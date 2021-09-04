@@ -9,6 +9,14 @@
 
 namespace Lamp
 {
+	enum PassType
+	{
+		DirShadow = 0,
+		PointShadow = BIT(1),
+		Lightning = BIT(2),
+		Geometry = BIT(3)
+	};
+
 	struct RenderPassSpecification
 	{
 		using RenderFunc = std::function<void()>;
@@ -17,8 +25,7 @@ namespace Lamp
 		Ref<CameraBase> Camera;
 		Ref<Framebuffer> TargetFramebuffer;
 
-		bool IsShadowPass = false;
-		bool IsPointShadowPass = false;
+		PassType type;
 		uint32_t LightIndex = 0;
 		std::string Name = "";
 	};

@@ -25,6 +25,8 @@ namespace Lamp
 		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/prefilter_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/brdfIntegrate_vs.glsl", "engine/shaders/3d/ibl/brdfIntegrate_fs.glsl");
 		AddShader("engine/shaders/3d/sprite_vs.glsl", "engine/shaders/3d/sprite_fs.glsl");
+		AddShader("engine/shaders/3d/gBuffer_vs.glsl", "engine/shaders/3d/gBuffer_fs.glsl");
+		AddShader("engine/shaders/3d/deferredShading_vs.glsl", "engine/shaders/3d/deferredShading_fs.glsl");
 	}
 
 	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)

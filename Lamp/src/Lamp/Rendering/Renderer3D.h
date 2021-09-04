@@ -18,6 +18,7 @@ namespace Lamp
 
 		static void Begin(RenderPassSpecification& passSpec);
 		static void End();
+		static void CombineLightning();
 		static void Flush();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id = -1);

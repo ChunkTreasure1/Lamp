@@ -16,7 +16,7 @@ namespace Lamp
 		virtual void Unbind() override;
 		virtual void Resize(uint32_t width, uint32_t height) override;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override { return -1; }
-		virtual void Copy(uint32_t rendererId, const glm::vec2& size) override {}
+		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override {}
 
 		inline const std::vector<glm::mat4>& GetTransforms() { return m_Transforms; }
 

@@ -75,8 +75,8 @@ namespace Sandbox3D
 		Lamp::Level* m_pLevel = nullptr;
 
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
+		Ref<Lamp::Framebuffer> m_GBuffer;
 		Ref<Lamp::Framebuffer> m_SandboxBuffer;
-		Ref<Lamp::Framebuffer> m_SecondaryBuffer;
 
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 		//---------------Editor-----------------
