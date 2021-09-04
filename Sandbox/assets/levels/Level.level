@@ -2,6 +2,7 @@
 	<Brushes>
 		<Brush lgfPath="assets\models\test1.lgf" position="-5.277136,0.122819,-12.494215" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(1)"/>
 		<Brush lgfPath="assets\models\sphere.lgf" position="-4.417362,3.987679,3.429043" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sprayBottle.lgf" position="0.000000,5.295491,0.586966" rotation="0.000000,0.000000,0.000000" scale="30.989111,30.989111,30.989111" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
@@ -9,7 +10,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="22.396208,14.506301,-1.120188" rotation="-209.704559,-20.149920,0.000000" fov="60.000000"/>
+		<CameraValues position="4.610011,11.827606,2.078024" rotation="-150.004425,-36.049774,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

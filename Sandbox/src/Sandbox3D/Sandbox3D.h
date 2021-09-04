@@ -77,8 +77,13 @@ namespace Sandbox3D
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 		Ref<Lamp::Framebuffer> m_SandboxBuffer;
 		Ref<Lamp::Framebuffer> m_SecondaryBuffer;
-
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
+
+		/////SSAO/////
+		Ref<Lamp::Framebuffer> m_SSAODepthBuffer;
+		Ref<Lamp::Framebuffer> m_SSAOMainBuffer;
+		//////////////
+
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);

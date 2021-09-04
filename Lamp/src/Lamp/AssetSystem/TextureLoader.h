@@ -21,12 +21,12 @@ namespace Lamp
 
 	struct TextureData
 	{
-		uint32_t rendererId;
-		uint32_t width;
-		uint32_t height;
+		uint32_t rendererId = -1;
+		uint32_t width = -1;
+		uint32_t height = -1;
 
-		uint32_t internalFormat;
-		uint32_t dataFormat;
+		uint32_t internalFormat = -1;
+		uint32_t dataFormat = -1;
 	};
 
 	class TextureLoader

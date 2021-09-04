@@ -16,6 +16,8 @@
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 
+#include <random>
+
 namespace Lamp
 {
 	struct LineVertex
@@ -72,9 +74,21 @@ namespace Lamp
 		Ref<Framebuffer> ShadowBuffer;
 		Ref<Shader> PointShadowShader;
 		/////////////////
+
+		/////SSAO/////
+		Ref<Shader> SSAODepthShader;
+		Ref<Shader> SSAOMainShader;
+		Ref<Framebuffer> SSOADepthbuffer;
+		std::vector<glm::vec3> SSAOKernel;
+		//////////////
 	};
 
 	static Renderer3DStorage* s_pData;
+
+	static float Lerp(float a, float b, float t)
+	{
+		return a + t * (b - a);
+	}
 
 	void Renderer3D::Initialize()
 	{
@@ -183,6 +197,28 @@ namespace Lamp
 			s_pData->SkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr");
 		}
 		////////////////
+
+		/////SSAO//////
+		s_pData->SSAODepthShader = ShaderLibrary::GetShader("ssaoDepth");
+		s_pData->SSAOMainShader = ShaderLibrary::GetShader("ssaoMain");
+		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+		std::default_random_engine generator;
+		std::vector<glm::vec3> ssaoKernel;
+		for (unsigned int i = 0; i < 64; ++i)
+		{
+			glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+			sample = glm::normalize(sample);
+			sample *= randomFloats(generator);
+			float scale = float(i) / 64.0;
+
+			// scale samples s.t. they're more aligned to center of kernel
+			scale = Lerp(0.1f, 1.0f, scale * scale);
+			sample *= scale;
+			ssaoKernel.push_back(sample);
+		}
+
+		s_pData->SSAOKernel = ssaoKernel;
+		///////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -220,79 +256,121 @@ namespace Lamp
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
-		if (s_pData->CurrentRenderPass->IsShadowPass)
+		switch (s_pData->CurrentRenderPass->type)
 		{
-			/////Directional light shadows/////
-			glCullFace(GL_FRONT);
-			s_pData->DirShadowShader->Bind();
-
-			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
-			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
-			s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			////////////////////////////////////
-		}
-		else if (s_pData->CurrentRenderPass->IsPointShadowPass)
-		{
-			///////Point light shadows/////
-			glCullFace(GL_BACK);
-			s_pData->PointShadowShader->Bind();
-
-			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
-			const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
-
-			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
+			case PassType::DirectionalShadow:
 			{
-				s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
+				/////Directional light shadows/////
+				glCullFace(GL_FRONT);
+				s_pData->DirShadowShader->Bind();
+
+				glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
+				s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+				s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+				mesh->GetVertexArray()->Bind();
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+				break;
+				////////////////////////////////////
 			}
 
-			s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-			s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
-
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			///////////////////////////////
-		}
-		else
-		{
-			glCullFace(GL_BACK);
-			//Reserve spot 0 for shadow map
-			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
-			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			case PassType::PointShadow:
 			{
-				if (mat.GetTextures()[name].get() != nullptr)
+				///////Point light shadows/////
+				glCullFace(GL_BACK);
+				s_pData->PointShadowShader->Bind();
+
+				uint32_t j = s_pData->CurrentRenderPass->LightIndex;
+				const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
+
+				for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
 				{
-					mat.GetTextures()[name]->Bind(i);
-					i++;
+					s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
 				}
+
+				s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
+				s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
+				s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
+
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+				break;
+				///////////////////////////////
 			}
 
-			mat.GetShader()->Bind();
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
-			mat.GetShader()->UploadInt("u_ObjectId", id);
-			mat.GetShader()->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
-
-			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			s_pData->ShadowBuffer->BindDepthAttachment(0);
-
-			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
-			mat.GetShader()->UploadInt("u_PrefilterMap", 2);
-			mat.GetShader()->UploadInt("u_BRDFLUT", 3);
-
-			s_pData->SkyboxBuffer->BindTextures(1);
-
-			for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+			case PassType::SSAODepth:
 			{
-				g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+				s_pData->SSOADepthbuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+				s_pData->SSAODepthShader->Bind();
+				s_pData->SSAODepthShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+				s_pData->SSAODepthShader->UploadMat4("u_Model", modelMatrix);
+				s_pData->SSAODepthShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
+
+				mesh->GetVertexArray()->Bind();
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+				break;
 			}
 
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			case PassType::SSAOMain:
+			{
+
+				s_pData->SSAOMainShader->Bind();
+
+				s_pData->SSAOMainShader->UploadInt("u_DepthMap", 0);
+				s_pData->SSOADepthbuffer->BindDepthAttachment(0);
+
+				s_pData->SSAOMainShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetProjectionMatrix());
+				for (uint32_t i = 0; i < 64; i++)
+				{
+					s_pData->SSAOMainShader->UploadFloat3("u_Samples[" + std::to_string(i) + "]", s_pData->SSAOKernel[i]);
+				}
+				break;
+			}
+
+			case PassType::Main:
+			{
+				glCullFace(GL_BACK);
+				//Reserve spot 0 for shadow map
+				int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
+				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+				{
+					if (mat.GetTextures()[name].get() != nullptr)
+					{
+						mat.GetTextures()[name]->Bind(i);
+						i++;
+					}
+				}
+
+				mat.GetShader()->Bind();
+				mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+				mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+				mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+				mat.GetShader()->UploadInt("u_ObjectId", id);
+				mat.GetShader()->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
+
+				mat.GetShader()->UploadInt("u_ShadowMap", 0);
+				s_pData->ShadowBuffer->BindDepthAttachment(0);
+
+				mat.GetShader()->UploadInt("u_IrradianceMap", 1);
+				mat.GetShader()->UploadInt("u_PrefilterMap", 2);
+				mat.GetShader()->UploadInt("u_BRDFLUT", 3);
+
+				s_pData->SkyboxBuffer->BindTextures(1);
+
+				for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+				{
+					g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+				}
+
+				mesh->GetVertexArray()->Bind();
+				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 

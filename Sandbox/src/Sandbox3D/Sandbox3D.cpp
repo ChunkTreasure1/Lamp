@@ -80,7 +80,7 @@ namespace Sandbox3D
 		if (m_IsPlaying != m_ShouldPlay)
 		{
 			m_IsPlaying = m_ShouldPlay;
-		
+
 			if (m_IsPlaying)
 			{
 				m_pGame->OnStart();
@@ -135,7 +135,7 @@ namespace Sandbox3D
 		UpdateLevelSettings();
 		m_assetManager.OnImGuiRender();
 
-		for	(auto& window : m_BufferWindows)
+		for (auto& window : m_BufferWindows)
 		{
 			window.Update();
 		}
@@ -204,71 +204,71 @@ namespace Sandbox3D
 
 		switch (e.GetKeyCode())
 		{
-			case LP_KEY_S:
-			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
+		case LP_KEY_S:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			bool shift = Input::IsKeyPressed(LP_KEY_LEFT_SHIFT) || Input::IsKeyPressed(LP_KEY_RIGHT_SHIFT);
 
-				if (control && shift)
+			if (control && shift)
+			{
+				SaveLevelAs();
+			}
+			else if (control && !shift)
+			{
+
+				if (LevelSystem::GetCurrentLevel()->GetPath().empty())
 				{
 					SaveLevelAs();
+					break;
 				}
-				else if (control && !shift)
+				else
 				{
-
-					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
-					{
-						SaveLevelAs();
-						break;
-					}
-					else
-					{
-						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
-					}
+					LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
 				}
-				break;
 			}
+			break;
+		}
 
-			case LP_KEY_N:
+		case LP_KEY_N:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-
-				if (control)
-				{
-					NewLevel();
-				}
-				break;
+				NewLevel();
 			}
+			break;
+		}
 
-			case LP_KEY_O:
+		case LP_KEY_O:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					OpenLevel();
-				}
-				break;
+				OpenLevel();
 			}
+			break;
+		}
 
-			case LP_KEY_Z:
+		case LP_KEY_Z:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					Undo();
-				}
-				break;
+				Undo();
 			}
+			break;
+		}
 
-			case LP_KEY_Y:
+		case LP_KEY_Y:
+		{
+			bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+			if (control)
 			{
-				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control)
-				{
-					Redo();
-				}
-				break;
+				Redo();
 			}
+			break;
+		}
 		}
 
 		return false;
@@ -371,8 +371,8 @@ namespace Sandbox3D
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsShadowPass = true;
 			shadowSpec.Name = "DirShadowPass";
+			shadowSpec.type = Lamp::PassType::DirectionalShadow;
 
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
@@ -385,7 +385,7 @@ namespace Sandbox3D
 		{
 			RenderPassSpecification shadowSpec;
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsPointShadowPass = true;
+			shadowSpec.type = Lamp::PassType::PointShadow;
 			shadowSpec.Name = "PointShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
@@ -410,6 +410,7 @@ namespace Sandbox3D
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
 			passSpec.Name = "SelectionPass";
+			passSpec.type = PassType::Main;
 
 			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
 
@@ -417,6 +418,55 @@ namespace Sandbox3D
 			RenderPassManager::Get()->AddPass(pass);
 		}
 		///////////////////
+
+		/////SSAODepth/////
+		{
+			FramebufferSpecification bufferSpec;
+			bufferSpec.Attachments =
+			{
+				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
+			};
+			bufferSpec.ClearColor = m_ClearColor;
+			bufferSpec.Height = 720;
+			bufferSpec.Width = 1280;
+
+			RenderPassSpecification passSpec;
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(bufferSpec);
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.Name = "SSAO";
+			passSpec.type = PassType::SSAODepth;
+
+			m_SSAODepthBuffer = passSpec.TargetFramebuffer;
+			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(shadowPass);
+		}
+		//////////////
+
+		/////SSAOMain/////
+		{
+			FramebufferSpecification bufferSpec;
+			bufferSpec.Attachments =
+			{
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToBorder }
+			};
+			bufferSpec.ClearColor = m_ClearColor;
+			bufferSpec.Height = 720;
+			bufferSpec.Width = 1280;
+
+			RenderPassSpecification passSpec;
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(bufferSpec);
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.Name = "SSAO";
+			passSpec.type = PassType::SSAOMain;
+
+			m_SSAOMainBuffer = passSpec.TargetFramebuffer;
+
+			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "ssao"));
+
+			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(shadowPass);
+		}
+		//////////////
 
 		/////Main//////
 		{
@@ -441,6 +491,7 @@ namespace Sandbox3D
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.Name = "MainPass";
+			passSpec.type = PassType::Main;
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 

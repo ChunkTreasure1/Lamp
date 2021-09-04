@@ -1,0 +1,8 @@
+<Material name="sprayBottle">
+	<albedo path="assets/textures/SprayBottle/SprayBottle_low_albedo.png"/>
+	<normal path="assets/textures/SprayBottle/SprayBottle_low_normal.png"/>
+	<mro path="assets/textures/SprayBottle/SprayBottle_low_mro.png"/>
+	<Shininess value="32.000000"/>
+	<Shader name="testPbr" vertex="engine/shaders/3d/testPbr_vs.glsl" fragment="engine/shaders/3d/testPbr_fs.glsl"/>
+</Material>
+

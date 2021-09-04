@@ -35,6 +35,7 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_R32I;
+				case Lamp::FramebufferTextureFormat::RED: return GL_RED;
 			}
 		}
 
@@ -50,6 +51,7 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+				case Lamp::FramebufferTextureFormat::RED: return GL_RED;
 			}
 		}
 
@@ -65,6 +67,7 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_FLOAT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_INT;
+				case Lamp::FramebufferTextureFormat::RED: return GL_FLOAT;
 			}
 		}
 

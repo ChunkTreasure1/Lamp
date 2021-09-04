@@ -117,6 +117,7 @@ namespace Sandbox3D
 		RenderPassSpecification pass;
 		pass.Camera = m_Camera->GetCamera();
 		pass.TargetFramebuffer = m_Framebuffer;
+		pass.type = PassType::Main;
 
 		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));
 		RenderCommand::Clear();
@@ -346,7 +347,7 @@ namespace Sandbox3D
 				{
 					if (ImGui::Button((std::string("Load##") + tex.first).c_str(), { 128, 128 }))
 					{
-						paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0*.tga\0");
+						paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.*\0");
 					}
 					std::string dragDropPath = GetDragDropTarget();
 					if (!dragDropPath.empty())
@@ -358,7 +359,7 @@ namespace Sandbox3D
 				{
 					if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 128, 128 }, { 0, 1 }, { 1, 0 }))
 					{
-						paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0*.tga\0");
+						paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.*\0");
 					}
 					std::string dragDropPath = GetDragDropTarget();
 					if (!dragDropPath.empty())

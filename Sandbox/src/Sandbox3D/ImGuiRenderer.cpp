@@ -56,6 +56,8 @@ namespace Sandbox3D
 				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_SecondaryBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_SSAODepthBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				m_SSAOMainBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 

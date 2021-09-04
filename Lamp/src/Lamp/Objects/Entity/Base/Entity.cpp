@@ -49,7 +49,7 @@ namespace Lamp
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)
 	{
-		if (e.GetPassInfo().IsShadowPass || e.GetPassInfo().IsPointShadowPass)
+		if (e.GetPassInfo().type == PassType::DirectionalShadow || e.GetPassInfo().type == PassType::PointShadow)
 		{
 			return false;
 		}
