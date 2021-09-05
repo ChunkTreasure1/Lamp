@@ -352,7 +352,7 @@ namespace Sandbox3D
 
 					if (n != pBrush->GetModel()->GetMaterial().GetName())
 					{
-						if (auto mat = Lamp::MaterialLibrary::GetMaterial(n); mat.GetIndex() != -1)
+						if (Lamp::MaterialLibrary::GetMaterial(n).GetIndex() != -1)
 						{
 							pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(n));
 						}

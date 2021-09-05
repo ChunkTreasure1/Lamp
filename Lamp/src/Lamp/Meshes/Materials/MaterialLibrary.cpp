@@ -111,12 +111,12 @@ namespace Lamp
 				mat.SetShininess(val);
 			}
 
-			mat.SetPath(std::filesystem::path(path));
+			mat.SetPath(path);
 			AddMaterial(mat);
 		}
 	}
 
-	Material& MaterialLibrary::GetMaterial(const std::string& name)
+	Material MaterialLibrary::GetMaterial(const std::string& name)
 	{
 		for (auto& mat : m_Materials)
 		{

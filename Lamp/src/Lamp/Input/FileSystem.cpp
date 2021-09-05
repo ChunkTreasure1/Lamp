@@ -45,16 +45,16 @@ namespace Lamp
 	}
 
 	//Gets the folders in a specified folder
-	std::vector<std::filesystem::path> FileSystem::GetMaterialFolders(const std::filesystem::path& path)
+	std::vector<std::string> FileSystem::GetMaterialFolders(const std::string& path)
 	{
-		std::vector<std::filesystem::path> folders;
+		std::vector<std::string> folders;
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
 		{
 			if (entry.is_directory())
 			{
 				if (ContainsMaterialFiles(entry.path().string()))
 				{
-					folders.push_back(entry.path());
+					folders.push_back(entry.path().string());
 				}
 			}
 		}

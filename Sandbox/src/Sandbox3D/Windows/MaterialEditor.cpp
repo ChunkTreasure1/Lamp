@@ -91,7 +91,7 @@ namespace Sandbox3D
 				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
 				if (control && m_pSelectedMaterial)
 				{
-					MaterialLibrary::SaveMaterial(m_pSelectedMaterial->GetPath().string(), *m_pSelectedMaterial);
+					MaterialLibrary::SaveMaterial(m_pSelectedMaterial->GetPath(), *m_pSelectedMaterial);
 					LP_CORE_INFO("Saved materil {0}", m_pSelectedMaterial->GetName());
 				}
 			}
@@ -220,14 +220,14 @@ namespace Sandbox3D
 
 		}
 
-		std::vector<std::filesystem::path> folders = FileSystem::GetMaterialFolders(s_assetsPath);
+		std::vector<std::string> folders = FileSystem::GetMaterialFolders(s_assetsPath.string());
 		int id = 0;
 
 		if (ImGui::TreeNode("Assets"))
 		{
 			for (auto& folder : folders)
 			{
-				if (ImGui::TreeNode(folder.filename().string().c_str()))
+				if (ImGui::TreeNode(folder.c_str()))
 				{
 					for (const auto& entry : std::filesystem::directory_iterator(folder))
 					{
@@ -240,7 +240,7 @@ namespace Sandbox3D
 							ImGui::TreeNodeEx((void*)(intptr_t)id, nodeFlags, filename.c_str());
 							if (ImGui::IsItemClicked())
 							{
-								m_pSelectedMaterial = &MaterialLibrary::GetMaterial(filename);
+								//m_pSelectedMaterial = MaterialLibrary::GetMaterial(filename);
 								if (m_MaterialModel)
 								{
 									m_MaterialModel->SetMaterial(*m_pSelectedMaterial);

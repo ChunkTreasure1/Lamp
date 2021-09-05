@@ -267,7 +267,7 @@ namespace Sandbox3D
 				m_pModelToImport->SetName(m_MaterialName);
 				m_pModelToImport->GetMaterial().SetName(m_MaterialName);
 
-				if (MaterialLibrary::GetMaterial(m_pModelToImport->GetMaterial().GetName()).GetIndex() == -1)
+				if (auto mat = MaterialLibrary::GetMaterial(m_pModelToImport->GetMaterial().GetName()); mat.GetIndex() == -1)
 				{
 					std::string matPath = savePath.substr(0, savePath.find_last_of('\\') + 1);
 					matPath += m_MaterialName + ".mtl";

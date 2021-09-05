@@ -12,7 +12,7 @@ namespace Lamp
 		static void SaveMaterial(const std::string& path, Material& mat);
 		static void LoadMaterials();
 
-		static Material& GetMaterial(const std::string& name);
+		static Material GetMaterial(const std::string& name);
 		static std::vector<Material>& GetMaterials() { return m_Materials; }
 
 	private:
