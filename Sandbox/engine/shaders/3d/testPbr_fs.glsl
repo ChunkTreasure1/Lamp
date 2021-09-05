@@ -10,7 +10,6 @@ mro
 
 #version 440 core
 layout(location = 0) out vec4 FragColor;
-layout(location = 1) out int Color2;
 
 in Out
 {
@@ -56,7 +55,6 @@ uniform int u_LightCount;
 uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
-uniform int u_ObjectId;
 uniform float u_Exposure;
 
 //Bind the shadowmap to slot 0, 1, 2, 3, 4
@@ -262,5 +260,4 @@ void main()
 	color = pow(color, vec3(1.0 / 2.2));
 
 	FragColor = vec4(color, 1.0);
-	Color2 = u_ObjectId; //ObjectId;
 }

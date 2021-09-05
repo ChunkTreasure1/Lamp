@@ -41,6 +41,7 @@ namespace Sandbox3D
 		void CreateRenderPasses();
 		void SetupFromConfig();
 		void RenderLines();
+		void ResizeBuffers(uint32_t width, uint32_t height);
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
@@ -50,7 +51,6 @@ namespace Sandbox3D
 
 		//ImGui
 		void UpdatePerspective();
-		void UpdateAssetBrowser();
 		void UpdateProperties();
 		void UpdateLayerView();
 		void UpdateAddComponent();

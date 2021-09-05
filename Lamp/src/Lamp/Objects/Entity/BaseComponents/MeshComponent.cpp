@@ -30,7 +30,7 @@ namespace Lamp
 
 		m_Model->Render(m_pEntity->GetID());
 
-		if (g_pEnv->ShouldRenderBB && !e.GetPassInfo().IsShadowPass && !e.GetPassInfo().IsShadowPass)
+		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().Type != PassType::DirectionalShadow && e.GetPassInfo().Type != PassType::PointShadow))
 		{
 			m_Model->RenderBoundingBox();
 		}

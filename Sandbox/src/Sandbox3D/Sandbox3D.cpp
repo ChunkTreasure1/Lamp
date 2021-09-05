@@ -91,7 +91,7 @@ namespace Sandbox3D
 			}
 		}
 
-		m_SelectionBuffer->ClearAttachment(1, 0);
+		m_SelectionBuffer->ClearAttachment(0, 0);
 
 		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
@@ -100,7 +100,7 @@ namespace Sandbox3D
 
 		GetInput();
 
-		m_SelectionBuffer->ClearAttachment(1, -1);
+		m_SelectionBuffer->ClearAttachment(0, -1);
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
@@ -142,6 +142,13 @@ namespace Sandbox3D
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);
+
+		static bool first = false;
+		if (!first)
+		{
+			ResizeBuffers((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
+			first = true;
+		}
 	}
 
 	void Sandbox3D::OnEvent(Event& e)
@@ -355,6 +362,13 @@ namespace Sandbox3D
 		}
 	}
 
+	void Sandbox3D::ResizeBuffers(uint32_t width, uint32_t height)
+	{
+		m_SandboxBuffer->Resize(width, height);
+		m_SecondaryBuffer->Resize(width, height);
+		m_SelectionBuffer->Resize(width, height);
+	}
+
 	void Sandbox3D::CreateRenderPasses()
 	{
 		/////Shadow pass/////
@@ -371,8 +385,8 @@ namespace Sandbox3D
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsShadowPass = true;
 			shadowSpec.Name = "DirShadowPass";
+			shadowSpec.Type = PassType::DirectionalShadow;
 
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
@@ -385,8 +399,8 @@ namespace Sandbox3D
 		{
 			RenderPassSpecification shadowSpec;
 			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			shadowSpec.IsPointShadowPass = true;
 			shadowSpec.Name = "PointShadowPass";
+			shadowSpec.Type = PassType::PointShadow;
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
 			RenderPassManager::Get()->AddPass(shadowPass);
@@ -398,8 +412,7 @@ namespace Sandbox3D
 			FramebufferSpecification spec;
 			spec.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, true },
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
 			};
 			spec.Height = 1280;
 			spec.Width = 720;
@@ -410,6 +423,7 @@ namespace Sandbox3D
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
 			passSpec.Name = "SelectionPass";
+			passSpec.Type = PassType::Selection;
 
 			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
 
@@ -441,6 +455,7 @@ namespace Sandbox3D
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.Name = "MainPass";
+			passSpec.Type = PassType::Main;
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 

@@ -49,26 +49,23 @@ namespace Lamp
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)
 	{
-		if (e.GetPassInfo().IsShadowPass || e.GetPassInfo().IsPointShadowPass)
+		if (e.GetPassInfo().Type == PassType::DirectionalShadow || e.GetPassInfo().Type == PassType::PointShadow)
 		{
 			return false;
 		}
 
 		if (g_pEnv->ShouldRenderGizmos)
 		{
-			if (!m_GizmoShader)
+			if (!m_GizmoShader || !m_SelectionShader)
 			{
 				m_GizmoShader = ShaderLibrary::GetShader("Sprite");
+				m_SelectionShader = ShaderLibrary::GetShader("selection");
 			}
 
-			if (!m_GizmoShader)
+			if (!m_GizmoShader || !m_SelectionShader)
 			{
 				return false;
 			}
-
-			m_GizmoShader->Bind();
-
-			m_GizmoShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
 
 			glm::vec3 dir = glm::normalize(e.GetPassInfo().Camera->GetPosition() - m_Position);
 
@@ -78,14 +75,35 @@ namespace Lamp
 			glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
 				* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
 
-			glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position) 
+			glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
 				* rotation
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-			m_GizmoShader->UploadMat4("u_Model", model);
-			m_GizmoShader->UploadInt("u_Texture", 0);
-			m_GizmoShader->UploadInt("u_ObjectId", m_Id);
 
-			m_GizmoTexure->Bind(0);
+			switch (e.GetPassInfo().Type)
+			{
+				case PassType::Selection:
+				{
+					m_SelectionShader->Bind();
+					m_SelectionShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
+					m_SelectionShader->UploadMat4("u_Model", model);
+					m_SelectionShader->UploadInt("u_ObjectId", m_Id);
+					break;
+				}
+
+				case PassType::Main:
+				{
+					m_GizmoShader->Bind();
+					m_GizmoShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
+					m_GizmoShader->UploadMat4("u_Model", model);
+
+					m_GizmoShader->UploadInt("u_Texture", 0);
+					m_GizmoTexure->Bind(0);
+					break;
+				}
+
+			default:
+				break;
+			}
 
 			Renderer3D::DrawQuad();
 		}

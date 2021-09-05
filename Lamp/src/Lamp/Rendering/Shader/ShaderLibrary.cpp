@@ -15,7 +15,6 @@ namespace Lamp
 	void ShaderLibrary::LoadShaders()
 	{
 		AddShader("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl");
-		AddShader("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
 		AddShader("engine/shaders/3d/testPbr_vs.glsl", "engine/shaders/3d/testPbr_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/eqCube_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/skybox_vs.glsl", "engine/shaders/3d/ibl/skybox_fs.glsl");
@@ -25,6 +24,7 @@ namespace Lamp
 		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/prefilter_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/brdfIntegrate_vs.glsl", "engine/shaders/3d/ibl/brdfIntegrate_fs.glsl");
 		AddShader("engine/shaders/3d/sprite_vs.glsl", "engine/shaders/3d/sprite_fs.glsl");
+		AddShader("engine/shaders/3d/selectionShader_vs.glsl", "engine/shaders/3d/selectionShader_fs.glsl");
 	}
 
 	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)
