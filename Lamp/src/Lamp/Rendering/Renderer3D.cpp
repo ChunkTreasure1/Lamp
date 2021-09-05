@@ -75,6 +75,9 @@ namespace Lamp
 
 		Ref<Shader> GBufferShader;
 		Ref<Shader> DeferredShader;
+
+		Ref<Shader> DirLightShader;
+
 		Ref<Framebuffer> GBuffer;
 		Ref<Framebuffer> LightBuffer;
 	};
@@ -191,6 +194,7 @@ namespace Lamp
 
 		s_pData->GBufferShader = ShaderLibrary::GetShader("gbuffer");
 		s_pData->DeferredShader = ShaderLibrary::GetShader("deferred");
+		s_pData->DirLightShader = ShaderLibrary::GetShader("dirLightPass");
 	}
 
 	void Renderer3D::Shutdown()
@@ -238,6 +242,55 @@ namespace Lamp
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
+	void Renderer3D::BeginLightPass()
+	{
+
+	}
+
+	void Renderer3D::DirLightPass()
+	{
+		if (!s_pData->GBuffer || !s_pData->LightBuffer)
+		{
+			return;
+		}
+
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		s_pData->DirLightShader->Bind();
+		s_pData->DirLightShader->UploadMat4("u_MVP", glm::mat4(1.f));
+
+
+		s_pData->DeferredShader->UploadInt("u_GBuffer.positionAO", 0);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.normalMetallic", 1);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.albedoRoughness", 2);
+
+		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 3);
+		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 4);
+		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 5);
+
+		s_pData->GBuffer->BindColorAttachment(0, 0);
+		s_pData->GBuffer->BindColorAttachment(1, 1);
+		s_pData->GBuffer->BindColorAttachment(2, 2);
+		s_pData->GBuffer->BindColorAttachment(3, 3);
+
+		s_pData->SkyboxBuffer->BindTextures(3);
+
+		s_pData->DeferredShader->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
+		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+		s_pData->DeferredShader->UploadFloat2("u_BufferSize", { s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Width, s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Height });
+
+		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Position);
+		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
+		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+
+		DrawQuad();
+	}
+
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
@@ -283,6 +336,9 @@ namespace Lamp
 
 			case PassType::Geometry:
 			{
+				glDepthMask(GL_TRUE);
+				glEnable(GL_DEPTH_TEST);
+				glDisable(GL_BLEND);
 				glCullFace(GL_BACK);
 				s_pData->GBufferShader->Bind();
 				s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
@@ -307,38 +363,8 @@ namespace Lamp
 
 				s_pData->GBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
 
-				break;
-			}
-			
-			case PassType::Lightning:
-			{
-
-				s_pData->DeferredShader->Bind();
-				s_pData->LightBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-				s_pData->DeferredShader->UploadInt("u_GBuffer.positionAO", 0);
-				s_pData->DeferredShader->UploadInt("u_GBuffer.normalMetallic", 1);
-				s_pData->DeferredShader->UploadInt("u_GBuffer.albedoRoughness", 2);
-
-				s_pData->DeferredShader->UploadInt("u_IrradianceMap", 3);
-				s_pData->DeferredShader->UploadInt("u_PrefilterMap", 4);
-				s_pData->DeferredShader->UploadInt("u_BRDFLUT", 5);
-
-				s_pData->GBuffer->BindColorAttachment(0, 0);
-				s_pData->GBuffer->BindColorAttachment(1, 1);
-				s_pData->GBuffer->BindColorAttachment(2, 2);
-
-
-				s_pData->SkyboxBuffer->BindTextures(3);
-
-				s_pData->DeferredShader->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
-				s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-
-				s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Position);
-				s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
-				s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-
-				DrawQuad();
+				glDepthMask(GL_FALSE);
+				glDisable(GL_DEPTH_TEST);
 
 				break;
 			}

@@ -376,7 +376,7 @@ namespace Sandbox3D
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			RenderPassManager::Get()->AddPass(shadowPass);
+			//RenderPassManager::Get()->AddPass(shadowPass);
 		}
 		///////////////////////
 
@@ -388,7 +388,7 @@ namespace Sandbox3D
 			shadowSpec.Name = "PointShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			RenderPassManager::Get()->AddPass(shadowPass);
+			//RenderPassManager::Get()->AddPass(shadowPass);
 		}
 		/////////////////////////////
 
@@ -400,7 +400,6 @@ namespace Sandbox3D
 				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
 				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
 				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo + roughness
-				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //tex coords
 				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //depth
 			};
 
@@ -421,7 +420,6 @@ namespace Sandbox3D
 			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Position", 0));
 			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Normal+Metallic", 1));
 			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Albedo+Roughness", 2));
-			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "TexCoords", 3));
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
@@ -445,11 +443,11 @@ namespace Sandbox3D
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
 			passSpec.Name = "LightPass";
-			passSpec.type = PassType::Lightning;
-			std::vector<std::function<void()>> ptrs;
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
-			passSpec.ExtraRenders = ptrs;
+			passSpec.type = PassType::DirLight;
+			//std::vector<std::function<void()>> ptrs;
+			//ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+			//ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+			//passSpec.ExtraRenders = ptrs;
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 

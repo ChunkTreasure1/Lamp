@@ -148,6 +148,9 @@
     <None Include="engine\shaders\3d\deferredShading_vs.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
+    <None Include="engine\shaders\3d\dirLightPass_fs.glsl">
+      <Filter>engine\shaders\3d</Filter>
+    </None>
     <None Include="engine\shaders\3d\gBuffer_fs.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
@@ -177,6 +180,9 @@
     </None>
     <None Include="engine\shaders\3d\ibl\skybox_vs.glsl">
       <Filter>engine\shaders\3d\ibl</Filter>
+    </None>
+    <None Include="engine\shaders\3d\lightPass_vs.glsl">
+      <Filter>engine\shaders\3d</Filter>
     </None>
     <None Include="engine\shaders\3d\lineShader_fs.glsl">
       <Filter>engine\shaders\3d</Filter>

@@ -19,24 +19,14 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
-		if (m_PassSpec.type == PassType::PointShadow)
+		if (m_PassSpec.type == PassType::DirLight)
 		{
-			m_PassSpec.LightIndex = 0;
-			for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
-			{
-				light->ShadowBuffer->Bind();
-				RenderCommand::Clear();
+			Renderer3D::Begin(m_PassSpec);
 
-				Renderer3D::Begin(m_PassSpec);
+			Renderer3D::BeginLightPass();
+			Renderer3D::DirLightPass();
 
-				AppRenderEvent renderEvent(m_PassSpec);
-				ObjectLayerManager::Get()->OnEvent(renderEvent);
-				Application::Get().OnEvent(renderEvent);
-
-				Renderer3D::End();
-				light->ShadowBuffer->Unbind();
-				m_PassSpec.LightIndex++;
-			}
+			Renderer3D::End();
 		}
 		else
 		{

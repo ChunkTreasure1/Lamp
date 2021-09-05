@@ -62,7 +62,7 @@ namespace Sandbox3D
 				m_SandboxController->GetCameraController()->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
-			uint32_t textureID = m_GBuffer->GetColorAttachmentID(0);
+			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID(0);
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if (ImGui::BeginDragDropTarget())

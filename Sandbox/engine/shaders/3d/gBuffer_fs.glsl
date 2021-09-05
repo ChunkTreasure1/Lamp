@@ -12,7 +12,6 @@ mro
 layout(location = 0) out vec4 o_Position;
 layout(location = 1) out vec4 o_NormalMetallic;
 layout(location = 2) out vec4 o_AlbedoRoughness;
-layout(location = 3) out vec4 o_TexCoords;
 
 in Out
 {
@@ -47,6 +46,4 @@ void main()
 
 	o_AlbedoRoughness.rgb = texture(u_Material.albedo, v_In.texCoords).rgb;
 	o_AlbedoRoughness.a = mro.b;
-
-	o_TexCoords = vec4(v_In.texCoords.x, v_In.texCoords.y, 0.0, 1.0);
 }
