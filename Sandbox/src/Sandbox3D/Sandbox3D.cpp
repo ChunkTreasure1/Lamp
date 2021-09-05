@@ -397,14 +397,11 @@ namespace Sandbox3D
 			FramebufferSpecification mainBuffer;
 			mainBuffer.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //albedo + roughness
-			};
-
-			mainBuffer.Attachments.Renderbuffers =
-			{
-				{ FramebufferRenderbufferType::Depth }
+				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
+				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
+				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo + roughness
+				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //tex coords
+				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //depth
 			};
 
 			mainBuffer.ClearColor = m_ClearColor;
@@ -421,9 +418,10 @@ namespace Sandbox3D
 
 			m_GBuffer = passSpec.TargetFramebuffer;
 
-			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Position+AO", 2));
-			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Normal+Metallic", 1));
-			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Albedo+Roughness", 2));
+			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Position", 0));
+			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Normal+Metallic", 1));
+			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Albedo+Roughness", 2));
+			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "TexCoords", 3));
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
@@ -436,11 +434,6 @@ namespace Sandbox3D
 			lightBuffer.Attachments =
 			{
 				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
-			};
-
-			lightBuffer.Attachments.Renderbuffers =
-			{
-				{ FramebufferRenderbufferType::Depth }
 			};
 
 			lightBuffer.ClearColor = m_ClearColor;

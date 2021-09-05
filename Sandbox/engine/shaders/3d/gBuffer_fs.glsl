@@ -9,9 +9,10 @@ mro
 }
 
 #version 440 core
-layout(location = 0) out vec4 o_PositionAO;
+layout(location = 0) out vec4 o_Position;
 layout(location = 1) out vec4 o_NormalMetallic;
 layout(location = 2) out vec4 o_AlbedoRoughness;
+layout(location = 3) out vec4 o_TexCoords;
 
 in Out
 {
@@ -39,12 +40,13 @@ void main()
 {
 	vec3 mro = texture(u_Material.mro, v_In.texCoords).rgb;
 
-	o_PositionAO.rgb = v_In.fragPos;
-	o_PositionAO.a = mro.g;
+	o_Position = vec4(v_In.fragPos, 1.0);
 
 	o_NormalMetallic.rgb = CalculateNormal();
 	o_NormalMetallic.a = mro.r;
 
 	o_AlbedoRoughness.rgb = texture(u_Material.albedo, v_In.texCoords).rgb;
 	o_AlbedoRoughness.a = mro.b;
+
+	o_TexCoords = vec4(v_In.texCoords.x, v_In.texCoords.y, 0.0, 1.0);
 }

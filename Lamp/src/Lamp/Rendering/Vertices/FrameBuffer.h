@@ -10,12 +10,13 @@ namespace Lamp
 		RGBA8 = 1,
 		RGBA16F = 2,
 		RGBA32F = 3,
-		RG32F = 4,
-		RED_INTEGER = 5,
+		RGB32F = 4,
+		RG32F = 5,
+		RED_INTEGER = 6,
 
 		//Depth
-		DEPTH32F = 6,
-		DEPTH24STENCIL8 = 7,
+		DEPTH32F = 7,
+		DEPTH24STENCIL8 = 8,
 		Depth = DEPTH24STENCIL8
 	};
 
