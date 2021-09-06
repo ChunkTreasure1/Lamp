@@ -19,39 +19,65 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
-		if (m_PassSpec.type == PassType::DirLight)
+		switch (m_PassSpec.type)
 		{
-			Renderer3D::Begin(m_PassSpec);
-
-			Renderer3D::BeginLightPass();
-			Renderer3D::DirLightPass();
-
-			Renderer3D::End();
-		}
-		else
-		{
-			RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-			RenderCommand::Clear();
-
-			m_PassSpec.TargetFramebuffer->Bind();
-			RenderCommand::Clear();
-
-			Renderer3D::Begin(m_PassSpec);
-
-			AppRenderEvent renderEvent(m_PassSpec);
-			ObjectLayerManager::Get()->OnEvent(renderEvent);
-			Application::Get().OnEvent(renderEvent);
-
-			for (auto& f : m_PassSpec.ExtraRenders)
+			case PassType::PointShadow:
 			{
-				f();
+				m_PassSpec.LightIndex = 0;
+				for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+				{
+					light->ShadowBuffer->Bind();
+					RenderCommand::Clear();
+
+					Renderer3D::Begin(m_PassSpec);
+
+					AppRenderEvent renderEvent(m_PassSpec);
+					ObjectLayerManager::Get()->OnEvent(renderEvent);
+					Application::Get().OnEvent(renderEvent);
+
+					Renderer3D::End();
+					light->ShadowBuffer->Unbind();
+					m_PassSpec.LightIndex++;
+				}
+				break;
 			}
 
-			Renderer3D::End();
-			m_PassSpec.TargetFramebuffer->Unbind();
-		}
+			case PassType::Lightning:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::Clear();
+				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::CombineLightning();
 
-		Renderer3D::CombineLightning();
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+
+			default:
+			{
+				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
+				RenderCommand::Clear();
+
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::Clear();
+
+				Renderer3D::Begin(m_PassSpec);
+
+				AppRenderEvent renderEvent(m_PassSpec);
+				ObjectLayerManager::Get()->OnEvent(renderEvent);
+				Application::Get().OnEvent(renderEvent);
+
+				for (auto& f : m_PassSpec.ExtraRenders)
+				{
+					f();
+				}
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+		}
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)

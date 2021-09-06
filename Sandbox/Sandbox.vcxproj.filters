@@ -196,6 +196,12 @@
     <None Include="engine\shaders\3d\selection_vs.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
+    <None Include="engine\shaders\3d\shader_fs.glsl">
+      <Filter>engine\shaders\3d</Filter>
+    </None>
+    <None Include="engine\shaders\3d\shader_vs.glsl">
+      <Filter>engine\shaders\3d</Filter>
+    </None>
     <None Include="engine\shaders\3d\shadows\dirShadow_fs.glsl">
       <Filter>engine\shaders\3d\shadows</Filter>
     </None>

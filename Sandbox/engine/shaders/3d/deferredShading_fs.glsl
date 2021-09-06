@@ -1,11 +1,8 @@
 #ShaderSpec
 Name: deferred;
-TextureCount: 3;
+TextureCount: 0;
 TextureNames
 {
-albedo
-normal
-mro
 }
 
 #version 440 core
@@ -70,41 +67,47 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 baseReflectivity, float roughn
 	return baseReflectivity + (max(vec3(1.0 - roughness), baseReflectivity) - baseReflectivity) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 view, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
-	vec3 lightDir = normalize(light.direction);
-	vec3 H = normalize(view + lightDir);
+	float shadow = 0.0;
 
-	//Cook Torrance BRDF
-	float NdotV = max(dot(normal, view), 0.0000001);
-	float NdotL = max(dot(normal, lightDir), 0.0000001);
-	float HdotV = max(dot(H, normal), 0.0);
+	vec3 L = normalize(light.direction);
+	vec3 H = normalize(V + L);
+
+	// Cook-Torrance BRDF
+	float NdotV = max(dot(normal, V), 0.0000001);
+	float NdotL = max(dot(normal, L), 0.0000001);
+	float HdotV	= max(dot(H, V), 0.0);
 	float NdotH = max(dot(normal, H), 0.0);
 
-	float dist = distributionGGX(NdotH, roughness);
+	float d = distributionGGX(NdotH, roughness);
 	float g = geometrySmith(NdotV, NdotL, roughness);
-	vec3 fresnel = fresnelSchlick(HdotV, baseReflectivity);
+	vec3 f = fresnelSchlick(HdotV, baseReflectivity);
 
-	vec3 specular = dist * g * fresnel;
+	vec3 specular = d * g * f;
 	specular /= 4.0 * NdotV * NdotL;
 
 	//Energy conservation
-	vec3 kD = vec3(1.0) - fresnel;
+	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-	vec3 lightStrength = (kD * albedo / PI + specular) * vec3(1.0) * NdotL * light.intensity * light.color;
+	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.intensity * light.color;
 	return lightStrength;
 }
 
 void main()
 {
-	vec3 fragPos = texture(u_GBuffer.positionAO, v_TexCoords).rbg;
-	vec3 normal = texture(u_GBuffer.normalMetallic, v_TexCoords).rgb;
-	vec3 albedo = texture(u_GBuffer.albedoRoughness, v_TexCoords).rgb;
+	vec4 positionAO = texture(u_GBuffer.positionAO, v_TexCoords);
+	vec4 normalMetallic = texture(u_GBuffer.normalMetallic, v_TexCoords);
+	vec4 albedoRoughness = texture(u_GBuffer.albedoRoughness, v_TexCoords);
 
-	float metallic = texture(u_GBuffer.normalMetallic, v_TexCoords).a;
-	float roughness = texture(u_GBuffer.albedoRoughness, v_TexCoords).a;
-	float ao = texture(u_GBuffer.positionAO, v_TexCoords).a;
+	vec3 fragPos = positionAO.rbg;
+	vec3 normal = normalMetallic.rbg;
+	vec3 albedo = pow(albedoRoughness.rbg, vec3(2.2));
+
+	float metallic = normalMetallic.a;
+	float roughness = albedoRoughness.a;
+	float ao = positionAO.a;
 
 	vec3 V = normalize(u_CameraPosition - fragPos);
 

@@ -90,7 +90,7 @@ namespace Sandbox3D
 			}
 		}
 
-		//m_SelectionBuffer->ClearAttachment(1, 0);
+		m_SelectionBuffer->ClearAttachment(1, 0);
 
 		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
@@ -99,7 +99,7 @@ namespace Sandbox3D
 
 		GetInput();
 
-		//m_SelectionBuffer->ClearAttachment(1, -1);
+		m_SelectionBuffer->ClearAttachment(1, -1);
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
@@ -376,7 +376,7 @@ namespace Sandbox3D
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			//RenderPassManager::Get()->AddPass(shadowPass);
+			RenderPassManager::Get()->AddPass(shadowPass);
 		}
 		///////////////////////
 
@@ -388,19 +388,48 @@ namespace Sandbox3D
 			shadowSpec.Name = "PointShadowPass";
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			//RenderPassManager::Get()->AddPass(shadowPass);
+			RenderPassManager::Get()->AddPass(shadowPass);
 		}
 		/////////////////////////////
+
+		/////Selection/////
+		{
+			FramebufferSpecification spec;
+			spec.Attachments =
+			{
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, false },
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+			};
+			spec.Height = 1280;
+			spec.Width = 720;
+			spec.Samples = 1;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
+			m_SelectionBuffer = passSpec.TargetFramebuffer;
+			passSpec.Name = "SelectionPass";
+
+			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
+
+			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
+			//RenderPassManager::Get()->AddPass(pass);
+		}
+		///////////////////
 
 		/////Main//////
 		{
 			FramebufferSpecification mainBuffer;
 			mainBuffer.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
-				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
-				{ FramebufferTextureFormat::RGBA32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo + roughness
-				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //depth
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
+				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //albedo + roughness
+			};
+
+			mainBuffer.Attachments.Renderbuffers =
+			{
+				{ FramebufferRenderbufferType::Depth }
 			};
 
 			mainBuffer.ClearColor = m_ClearColor;
@@ -408,8 +437,13 @@ namespace Sandbox3D
 			mainBuffer.Width = 720;
 			mainBuffer.Samples = 1;
 
+			std::vector<std::function<void()>> ptrs;
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
 			RenderPassSpecification passSpec;
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.ExtraRenders = ptrs;
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.Name = "MainPass";
@@ -417,9 +451,9 @@ namespace Sandbox3D
 
 			m_GBuffer = passSpec.TargetFramebuffer;
 
-			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Position", 0));
-			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Normal+Metallic", 1));
-			m_BufferWindows.push_back(BufferWindow(m_GBuffer, "Albedo+Roughness", 2));
+			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Position+AO", 2));
+			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Normal+Metallic", 1));
+			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Albedo+Roughness", 2));
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
@@ -443,45 +477,12 @@ namespace Sandbox3D
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
 			passSpec.Name = "LightPass";
-			passSpec.type = PassType::DirLight;
-			//std::vector<std::function<void()>> ptrs;
-			//ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-			//ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
-			//passSpec.ExtraRenders = ptrs;
-
+			passSpec.type = PassType::Lightning;
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 
 			RenderPassManager::Get()->AddPass(renderPass);
-		}
-		///////////////////
-
-		/////Selection/////
-		{
-			FramebufferSpecification spec;
-			spec.Attachments =
-			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, false },
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
-			};
-			spec.Height = 1280;
-			spec.Width = 720;
-			spec.Samples = 1;
-
-			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passSpec.TargetFramebuffer = m_SandboxBuffer;
-			//m_SelectionBuffer = passSpec.TargetFramebuffer;
-			passSpec.Name = "SelectionPass";
-			passSpec.type = PassType::Selection;
-
-			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
-
-
-
-			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-			//RenderPassManager::Get()->AddPass(pass);
 		}
 		///////////////////
 	}
