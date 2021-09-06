@@ -81,25 +81,25 @@ namespace Lamp
 
 			switch (e.GetPassInfo().Type)
 			{
-				case PassType::Selection:
-				{
-					m_SelectionShader->Bind();
-					m_SelectionShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
-					m_SelectionShader->UploadMat4("u_Model", model);
-					m_SelectionShader->UploadInt("u_ObjectId", m_Id);
-					break;
-				}
+			case PassType::Selection:
+			{
+				m_SelectionShader->Bind();
+				m_SelectionShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
+				m_SelectionShader->UploadMat4("u_Model", model);
+				m_SelectionShader->UploadInt("u_ObjectId", m_Id);
+				break;
+			}
 
-				case PassType::Main:
-				{
-					m_GizmoShader->Bind();
-					m_GizmoShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
-					m_GizmoShader->UploadMat4("u_Model", model);
+			case PassType::Main:
+			{
+				m_GizmoShader->Bind();
+				m_GizmoShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
+				m_GizmoShader->UploadMat4("u_Model", model);
 
-					m_GizmoShader->UploadInt("u_Texture", 0);
-					m_GizmoTexure->Bind(0);
-					break;
-				}
+				m_GizmoShader->UploadInt("u_Texture", 0);
+				m_GizmoTexure->Bind(0);
+				break;
+			}
 
 			default:
 				break;

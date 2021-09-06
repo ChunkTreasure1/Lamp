@@ -412,7 +412,7 @@ namespace Sandbox3D
 			FramebufferSpecification spec;
 			spec.Attachments =
 			{
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 			};
 			spec.Height = 1280;
 			spec.Width = 720;
