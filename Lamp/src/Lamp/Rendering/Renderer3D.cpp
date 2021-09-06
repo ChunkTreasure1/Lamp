@@ -76,6 +76,7 @@ namespace Lamp
 		Ref<Shader> GBufferShader;
 		Ref<Shader> DeferredShader;
 		Ref<Framebuffer> GBuffer;
+		Ref<Framebuffer> LightBuffer;
 	};
 
 	static Renderer3DStorage* s_pData;
@@ -228,8 +229,8 @@ namespace Lamp
 		s_pData->DeferredShader->UploadInt("u_GBuffer.position", 0);
 		s_pData->DeferredShader->UploadInt("u_GBuffer.normal", 1);
 		s_pData->DeferredShader->UploadInt("u_GBuffer.albedo", 2);
-		s_pData->DeferredShader->UploadInt("u_GBuffer.mro", 3);
 
+		s_pData->DeferredShader->UploadInt("u_ShadowMap", 3);
 		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 4);
 		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 5);
 		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 6);
@@ -237,16 +238,18 @@ namespace Lamp
 		s_pData->GBuffer->BindColorAttachment(0, 0);
 		s_pData->GBuffer->BindColorAttachment(1, 1);
 		s_pData->GBuffer->BindColorAttachment(2, 2);
-		s_pData->GBuffer->BindColorAttachment(3, 3);
-
+		s_pData->ShadowBuffer->BindDepthAttachment(3);
 		s_pData->SkyboxBuffer->BindTextures(4);
 
 		s_pData->DeferredShader->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
 		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+		s_pData->DeferredShader->UploadMat4("u_SunShadowVP", g_pEnv->DirLight.ViewProjection);
 
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Position);
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+
+		s_pData->LightBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
 
 		DrawQuad();
 	}
@@ -450,4 +453,15 @@ namespace Lamp
 		s_pData->LineIndexCount = 0;
 		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
 	}
+
+	void Renderer3D::CopyDepth()
+	{
+		if (!s_pData->GBuffer || !s_pData->LightBuffer)
+		{
+			return;
+		}
+
+		s_pData->LightBuffer->Copy(s_pData->GBuffer->GetRendererID(), { s_pData->LightBuffer->GetSpecification().Width, s_pData->LightBuffer->GetSpecification().Height }, true);
+	}
+
 }

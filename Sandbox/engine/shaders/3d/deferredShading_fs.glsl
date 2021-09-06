@@ -9,13 +9,13 @@ TextureNames
 layout(location = 0) out vec4 FragColor;
 
 in vec2 v_TexCoords;
+in vec4 v_ShadowCoords;
 
 struct GBuffer
 {
 	sampler2D position;
 	sampler2D normal;
 	sampler2D albedo;
-	sampler2D mro;
 };
 
 struct DirectionalLight
@@ -29,6 +29,7 @@ struct DirectionalLight
 uniform GBuffer u_GBuffer;
 uniform DirectionalLight u_DirectionalLight;
 
+uniform sampler2D u_ShadowMap;
 uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
 uniform sampler2D u_BRDFLUT;
@@ -68,9 +69,40 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 baseReflectivity, float roughn
 	return baseReflectivity + (max(vec3(1.0 - roughness), baseReflectivity) - baseReflectivity) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
+float DirectionalShadowCalculation(vec4 pos)
+{
+	vec3 projCoords = pos.xyz / pos.w;
+	projCoords = projCoords * 0.5 + 0.5;
+
+	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth > closestDepth ? 1.0 : 0.0;
+		}
+	}
+
+	shadow /= 9.0;
+
+	if (projCoords.z > 1.0)
+	{
+		shadow = 0.0;
+	}
+
+	return shadow;
+}
+
+
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
-	float shadow = 0.0;
+	float shadow = DirectionalShadowCalculation(v_ShadowCoords);
 
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);
@@ -102,11 +134,9 @@ void main()
 	vec3 normal = texture(u_GBuffer.normal, v_TexCoords).rgb;
 	vec3 albedo = pow(texture(u_GBuffer.albedo, v_TexCoords).rgb, vec3(2.2));
 
-	vec3 mro = texture(u_GBuffer.mro, v_TexCoords).rgb;
-
-	float metallic = mro.r;
-	float roughness = mro.g;
-	float ao = mro.b;
+	float metallic = texture(u_GBuffer.position, v_TexCoords).a;
+	float roughness = texture(u_GBuffer.normal, v_TexCoords).a;
+	float ao = texture(u_GBuffer.albedo, v_TexCoords).a;
 
 	vec3 V = normalize(u_CameraPosition - fragPos);
 

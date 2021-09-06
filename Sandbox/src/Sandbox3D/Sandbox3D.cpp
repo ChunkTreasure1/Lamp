@@ -422,10 +422,9 @@ namespace Sandbox3D
 			FramebufferSpecification mainBuffer;
 			mainBuffer.Attachments =
 			{
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //mro
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position + metallic
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + roughness
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo + ao
 			};
 
 			mainBuffer.Attachments.Renderbuffers =
@@ -467,6 +466,11 @@ namespace Sandbox3D
 			lightBuffer.Attachments =
 			{
 				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+			};
+
+			lightBuffer.Attachments.Renderbuffers =
+			{
+				{ FramebufferRenderbufferType::Depth }
 			};
 
 			lightBuffer.ClearColor = m_ClearColor;
