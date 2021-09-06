@@ -14,7 +14,9 @@ namespace Lamp
 		DirShadow = 0,
 		PointShadow = BIT(1),
 		Lightning = BIT(2),
-		Geometry = BIT(3)
+		Geometry = BIT(3),
+		SSAO = BIT(4),
+		SSAOBlur = BIT(5)
 	};
 
 	struct RenderPassSpecification

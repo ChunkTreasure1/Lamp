@@ -22,6 +22,9 @@ namespace Lamp
 		static void Flush();
 		static void CopyDepth();
 
+		static void SSAOMainPass();
+		static void SSAOBlurPass();
+
 		static void DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id = -1);
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
 

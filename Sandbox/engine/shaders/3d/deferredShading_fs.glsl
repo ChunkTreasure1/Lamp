@@ -33,6 +33,7 @@ uniform sampler2D u_ShadowMap;
 uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
 uniform sampler2D u_BRDFLUT;
+uniform sampler2D u_SSAO;
 
 uniform vec3 u_CameraPosition;
 uniform float u_Exposure;
@@ -136,7 +137,7 @@ void main()
 
 	float metallic = texture(u_GBuffer.position, v_TexCoords).a;
 	float roughness = texture(u_GBuffer.normal, v_TexCoords).a;
-	float ao = texture(u_GBuffer.albedo, v_TexCoords).a;
+	float ao = texture(u_SSAO, v_TexCoords).r;
 
 	vec3 V = normalize(u_CameraPosition - fragPos);
 

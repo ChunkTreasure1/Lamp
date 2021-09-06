@@ -41,6 +41,7 @@ namespace Sandbox3D
 		void CreateRenderPasses();
 		void SetupFromConfig();
 		void RenderLines();
+		void ResizeBuffers(uint32_t width, uint32_t height);
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
@@ -50,7 +51,6 @@ namespace Sandbox3D
 
 		//ImGui
 		void UpdatePerspective();
-		void UpdateAssetBrowser();
 		void UpdateProperties();
 		void UpdateLayerView();
 		void UpdateAddComponent();
@@ -77,7 +77,8 @@ namespace Sandbox3D
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 		Ref<Lamp::Framebuffer> m_GBuffer;
 		Ref<Lamp::Framebuffer> m_SandboxBuffer;
-
+		Ref<Lamp::Framebuffer> m_SSAOBuffer;
+		Ref<Lamp::Framebuffer> m_SSAOBlurBuffer;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

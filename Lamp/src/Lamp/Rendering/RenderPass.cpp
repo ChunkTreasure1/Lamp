@@ -48,11 +48,36 @@ namespace Lamp
 				RenderCommand::Clear();
 				Renderer3D::Begin(m_PassSpec);
 				Renderer3D::CombineLightning();
-
 				Renderer3D::End();
 				m_PassSpec.TargetFramebuffer->Unbind();
 
 				Renderer3D::CopyDepth();
+				break;
+			}
+
+			case PassType::SSAO:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::ClearColor();
+				Renderer3D::Begin(m_PassSpec);
+
+				Renderer3D::SSAOMainPass();
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+
+			case PassType::SSAOBlur:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::ClearColor();
+				Renderer3D::Begin(m_PassSpec);
+
+				Renderer3D::SSAOBlurPass();
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
 			}
 

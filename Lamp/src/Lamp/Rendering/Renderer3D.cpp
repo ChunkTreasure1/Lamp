@@ -16,6 +16,8 @@
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 
+#include <random>
+
 namespace Lamp
 {
 	struct LineVertex
@@ -77,9 +79,24 @@ namespace Lamp
 		Ref<Shader> DeferredShader;
 		Ref<Framebuffer> GBuffer;
 		Ref<Framebuffer> LightBuffer;
+
+		/////SSAO/////
+		Ref<Texture2D> SSAONoiseTexture;
+		std::vector<glm::vec3> SSAONoise;
+		std::vector<glm::vec3> SSAOKernel;
+		Ref<Shader> SSAOMainShader;
+		Ref<Shader> SSAOBlurShader;
+		Ref<Framebuffer> SSAOBuffer;
+		Ref<Framebuffer> SSAOBlurBuffer;
+		//////////////
 	};
 
 	static Renderer3DStorage* s_pData;
+
+	static float Lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
 
 	void Renderer3D::Initialize()
 	{
@@ -191,6 +208,35 @@ namespace Lamp
 
 		s_pData->GBufferShader = ShaderLibrary::GetShader("gbuffer");
 		s_pData->DeferredShader = ShaderLibrary::GetShader("deferred");
+
+		/////SSAO/////
+		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+		std::default_random_engine generator;
+		for (uint32_t i = 0; i < 64; i++)
+		{
+			glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+			sample = glm::normalize(sample);
+			sample *= randomFloats(generator);
+
+			float scale = float(i) / 64.f;
+
+			scale = Lerp(0.1f, 1.0f, scale * scale);
+			sample *= scale;
+			s_pData->SSAOKernel.push_back(sample);
+		}
+
+		for (uint32_t i = 0; i < 16; i++)
+		{
+			glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.f);
+			s_pData->SSAONoise.push_back(noise);
+		}
+
+		s_pData->SSAONoiseTexture = Texture2D::Create(4, 4);
+		s_pData->SSAONoiseTexture->SetData(&s_pData->SSAONoise[0], 0);
+
+		s_pData->SSAOMainShader = ShaderLibrary::GetShader("SSAOMain");
+		s_pData->SSAOBlurShader = ShaderLibrary::GetShader("SSAOBlur");
+		//////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -218,7 +264,7 @@ namespace Lamp
 
 	void Renderer3D::CombineLightning()
 	{
-		if (!s_pData->GBuffer)
+		if (!s_pData->GBuffer || !s_pData->SSAOBuffer)
 		{
 			return;
 		}
@@ -234,12 +280,15 @@ namespace Lamp
 		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 4);
 		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 5);
 		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 6);
+		s_pData->DeferredShader->UploadInt("u_SSAO", 7);
 
 		s_pData->GBuffer->BindColorAttachment(0, 0);
 		s_pData->GBuffer->BindColorAttachment(1, 1);
 		s_pData->GBuffer->BindColorAttachment(2, 2);
 		s_pData->ShadowBuffer->BindDepthAttachment(3);
 		s_pData->SkyboxBuffer->BindTextures(4);
+
+		s_pData->SSAOBlurBuffer->BindColorAttachment(7);
 
 		s_pData->DeferredShader->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
 		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
@@ -312,6 +361,7 @@ namespace Lamp
 				s_pData->GBufferShader->Bind();
 				s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
 				s_pData->GBufferShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+				s_pData->GBufferShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
 
 				s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
 				s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
@@ -464,4 +514,58 @@ namespace Lamp
 		s_pData->LightBuffer->Copy(s_pData->GBuffer->GetRendererID(), { s_pData->LightBuffer->GetSpecification().Width, s_pData->LightBuffer->GetSpecification().Height }, true);
 	}
 
+	void Renderer3D::SSAOMainPass()
+	{
+		if (!s_pData->GBuffer)
+		{
+			return;
+		}
+
+		glCullFace(GL_FRONT);
+		s_pData->SSAOMainShader->Bind();
+		
+		for (uint32_t i = 0; i < s_pData->SSAOKernel.size(); i++)
+		{
+			s_pData->SSAOMainShader->UploadFloat3("u_Samples[" + std::to_string(i) + "]", s_pData->SSAOKernel[i]);
+		}
+
+		s_pData->SSAOMainShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetProjectionMatrix());
+		s_pData->SSAOMainShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
+		s_pData->SSAOMainShader->UploadInt("u_GBuffer.position", 0);
+		s_pData->SSAOMainShader->UploadInt("u_GBuffer.normal", 1);
+		s_pData->SSAOMainShader->UploadMat4("u_SunShadowVP", glm::mat4(1.f));
+		s_pData->SSAOMainShader->UploadInt("u_KernelSize", 64);
+		s_pData->SSAOMainShader->UploadFloat("u_Radius", 0.5f);
+		s_pData->SSAOMainShader->UploadFloat("u_Bias", 0.025f);
+
+		s_pData->SSAOMainShader->UploadInt("u_Noise", 2);
+
+		glm::vec2 bufferSize = { s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Width, s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Height };
+		s_pData->SSAOMainShader->UploadFloat2("u_BufferSize", bufferSize);
+
+		s_pData->GBuffer->BindColorAttachment(0, 0);
+		s_pData->GBuffer->BindColorAttachment(1, 1);
+		s_pData->SSAONoiseTexture->Bind(2);
+
+		s_pData->SSAOBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+		DrawQuad();
+	}
+
+	void Renderer3D::SSAOBlurPass()
+	{
+		if (!s_pData->SSAOBuffer)
+		{
+			return;
+		}
+
+		glCullFace(GL_FRONT);
+		s_pData->SSAOBlurShader->Bind();
+		s_pData->SSAOBlurShader->UploadInt("u_SSAO", 0);
+		s_pData->SSAOBuffer->BindColorAttachment(0);
+
+		s_pData->SSAOBlurBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+		DrawQuad();
+	}
 }

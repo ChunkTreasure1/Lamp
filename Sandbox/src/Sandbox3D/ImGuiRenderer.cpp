@@ -53,9 +53,7 @@ namespace Sandbox3D
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
-				m_SandboxBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
-				m_GBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
-				m_SelectionBuffer->Resize((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				ResizeBuffers((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
@@ -806,10 +804,17 @@ namespace Sandbox3D
 
 		if (ImGui::CollapsingHeader("Environment"))
 		{
+			ImGui::Text("Sun Settings");
 			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
 			g_pEnv->DirLight.UpdateView();
 
+			ImGui::ColorEdit3("Sun Color", glm::value_ptr(g_pEnv->DirLight.Color));
+			ImGui::DragFloat("Sun Intensity", &g_pEnv->DirLight.Intensity);
+
+			ImGui::Separator();
+			ImGui::Text("HDR Settings");
 			static std::string path;
+			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
 			ImGui::InputText("HDR environment", &path);
 			ImGui::SameLine();
 			if (ImGui::Button("Open..."))
@@ -820,8 +825,6 @@ namespace Sandbox3D
 					Lamp::Renderer3D::SetEnvironment(path);
 				}
 			}
-
-			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
 		}
 
 		ImGui::End();

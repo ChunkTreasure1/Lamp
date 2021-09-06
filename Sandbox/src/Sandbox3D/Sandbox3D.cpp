@@ -354,6 +354,15 @@ namespace Sandbox3D
 		}
 	}
 
+	void Sandbox3D::ResizeBuffers(uint32_t width, uint32_t height)
+	{
+		m_SandboxBuffer->Resize(width, height);
+		m_GBuffer->Resize(width, height);
+		m_SelectionBuffer->Resize(width, height);
+		m_SSAOBuffer->Resize(width, height);
+		m_SSAOBlurBuffer->Resize(width, height);
+	}
+
 	void Sandbox3D::CreateRenderPasses()
 	{
 		/////Shadow pass/////
@@ -433,8 +442,8 @@ namespace Sandbox3D
 			};
 
 			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Height = 1280;
-			mainBuffer.Width = 720;
+			mainBuffer.Height = 720;
+			mainBuffer.Width = 1280;
 			mainBuffer.Samples = 1;
 
 			std::vector<std::function<void()>> ptrs;
@@ -451,14 +460,63 @@ namespace Sandbox3D
 
 			m_GBuffer = passSpec.TargetFramebuffer;
 
-			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Position+AO", 2));
-			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Normal+Metallic", 1));
-			//m_BufferWindows.push_back(BufferWindow(m_SandboxBuffer, "Albedo+Roughness", 2));
-
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
 		}
 		///////////////
+
+		/////SSAOMain/////
+		{
+			FramebufferSpecification mainBuffer;
+			mainBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::RED, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+			};
+
+			mainBuffer.ClearColor = m_ClearColor;
+			mainBuffer.Height = 720;
+			mainBuffer.Width = 1280;
+			mainBuffer.Samples = 1;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.type = PassType::SSAO;
+			passSpec.Name = "SSAOMain";
+
+			m_SSAOBuffer = passSpec.TargetFramebuffer;
+
+
+			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(ssaoPath);
+		}
+		//////////////////
+
+		/////SSAOBlur/////
+		{
+			FramebufferSpecification mainBuffer;
+			mainBuffer.Attachments =
+			{
+				{ FramebufferTextureFormat::RED, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+			};
+
+			mainBuffer.ClearColor = m_ClearColor;
+			mainBuffer.Height = 720;
+			mainBuffer.Width = 1280;
+			mainBuffer.Samples = 1;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.type = PassType::SSAOBlur;
+			passSpec.Name = "SSAOBlur";
+
+			m_SSAOBlurBuffer = passSpec.TargetFramebuffer;
+
+			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(ssaoPath);
+		}
+		//////////////////
 
 		/////Lightning/////
 		{
