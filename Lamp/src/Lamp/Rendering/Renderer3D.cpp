@@ -225,19 +225,21 @@ namespace Lamp
 		glCullFace(GL_FRONT);
 		s_pData->DeferredShader->Bind();
 
-		s_pData->DeferredShader->UploadInt("u_GBuffer.positionAO", 0);
-		s_pData->DeferredShader->UploadInt("u_GBuffer.normalMetallic", 1);
-		s_pData->DeferredShader->UploadInt("u_GBuffer.albedoRoughness", 2);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.position", 0);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.normal", 1);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.albedo", 2);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.mro", 3);
 
-		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 3);
-		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 4);
-		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 5);
+		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 4);
+		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 5);
+		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 6);
 
 		s_pData->GBuffer->BindColorAttachment(0, 0);
 		s_pData->GBuffer->BindColorAttachment(1, 1);
 		s_pData->GBuffer->BindColorAttachment(2, 2);
+		s_pData->GBuffer->BindColorAttachment(3, 3);
 
-		s_pData->SkyboxBuffer->BindTextures(3);
+		s_pData->SkyboxBuffer->BindTextures(4);
 
 		s_pData->DeferredShader->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
 		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());

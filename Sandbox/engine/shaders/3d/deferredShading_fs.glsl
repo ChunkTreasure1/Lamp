@@ -12,9 +12,10 @@ in vec2 v_TexCoords;
 
 struct GBuffer
 {
-	sampler2D positionAO;
-	sampler2D normalMetallic;
-	sampler2D albedoRoughness;
+	sampler2D position;
+	sampler2D normal;
+	sampler2D albedo;
+	sampler2D mro;
 };
 
 struct DirectionalLight
@@ -97,17 +98,15 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 
 void main()
 {
-	vec4 positionAO = texture(u_GBuffer.positionAO, v_TexCoords);
-	vec4 normalMetallic = texture(u_GBuffer.normalMetallic, v_TexCoords);
-	vec4 albedoRoughness = texture(u_GBuffer.albedoRoughness, v_TexCoords);
+	vec3 fragPos = texture(u_GBuffer.position, v_TexCoords).rgb;
+	vec3 normal = texture(u_GBuffer.normal, v_TexCoords).rgb;
+	vec3 albedo = pow(texture(u_GBuffer.albedo, v_TexCoords).rgb, vec3(2.2));
 
-	vec3 fragPos = positionAO.rbg;
-	vec3 normal = normalMetallic.rbg;
-	vec3 albedo = pow(albedoRoughness.rbg, vec3(2.2));
+	vec3 mro = texture(u_GBuffer.mro, v_TexCoords).rgb;
 
-	float metallic = normalMetallic.a;
-	float roughness = albedoRoughness.a;
-	float ao = positionAO.a;
+	float metallic = mro.r;
+	float roughness = mro.g;
+	float ao = mro.b;
 
 	vec3 V = normalize(u_CameraPosition - fragPos);
 

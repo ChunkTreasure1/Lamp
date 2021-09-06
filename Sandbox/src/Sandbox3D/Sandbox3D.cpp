@@ -423,8 +423,9 @@ namespace Sandbox3D
 			mainBuffer.Attachments =
 			{
 				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + metallic
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //albedo + roughness
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo
+				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge } //mro
 			};
 
 			mainBuffer.Attachments.Renderbuffers =
