@@ -17,6 +17,7 @@ namespace Lamp
 		float SSAORadius = 0.5f;
 		float SSAOBias = 0.025f;
 		float HDRExposure = 3.f;
+		float Gamma = 2.2f;
 	};
 
 	struct RenderPassSpecification;

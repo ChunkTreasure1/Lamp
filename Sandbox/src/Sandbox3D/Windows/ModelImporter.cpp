@@ -33,7 +33,7 @@ namespace Sandbox3D
 			mainBuffer.Height = 720;
 			mainBuffer.Width = 1280;
 
-			m_Framebuffer = CreateRef<OpenGLFramebuffer>(mainBuffer);
+			m_Framebuffer = Lamp::Framebuffer::Create(mainBuffer);
 		}
 	}
 
@@ -117,6 +117,7 @@ namespace Sandbox3D
 		RenderPassSpecification pass;
 		pass.Camera = m_Camera->GetCamera();
 		pass.TargetFramebuffer = m_Framebuffer;
+		pass.type = PassType::Forward;
 
 		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));
 		RenderCommand::Clear();
@@ -133,7 +134,7 @@ namespace Sandbox3D
 
 		if (m_pModelToImport.get() != nullptr)
 		{
-			m_pModelToImport->Render();
+			m_pModelToImport->Render(0, true);
 		}
 		if (m_RenderGrid)
 		{
@@ -266,8 +267,7 @@ namespace Sandbox3D
 			{
 				m_pModelToImport->SetName(m_MaterialName);
 				m_pModelToImport->GetMaterial().SetName(m_MaterialName);
-
-				if (MaterialLibrary::GetMaterial(m_pModelToImport->GetMaterial().GetName()).GetIndex() == -1)
+				if (!MaterialLibrary::IsMaterialLoaded(m_MaterialName))
 				{
 					std::string matPath = savePath.substr(0, savePath.find_last_of('\\') + 1);
 					matPath += m_MaterialName + ".mtl";

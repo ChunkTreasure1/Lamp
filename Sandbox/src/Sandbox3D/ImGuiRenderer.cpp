@@ -25,8 +25,9 @@
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
-
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_PerspectiveOpen)
 		{
 			return;
@@ -192,6 +193,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateProperties()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_InspectiorOpen)
 		{
 			return;
@@ -374,6 +377,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLayerView()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_LayerViewOpen)
 		{
 			return;
@@ -468,6 +473,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateCreateTool()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_CreateToolOpen)
 		{
 			return;
@@ -525,6 +532,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLogTool()
 	{
+		LP_PROFILE_FUNCTION();
+
 		static bool autoScroll = true;
 
 		if (!m_LogToolOpen)
@@ -590,6 +599,8 @@ namespace Sandbox3D
 
 	bool Sandbox3D::DrawComponent(Lamp::EntityComponent* ptr)
 	{
+		LP_PROFILE_FUNCTION();
+
 		bool removeComp = false;
 
 		if (ImGui::CollapsingHeader(ptr->GetName().c_str()))
@@ -796,6 +807,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLevelSettings()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_LevelSettingsOpen)
 		{
 			return;
@@ -821,6 +834,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateRenderingSettings()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_RenderingSettingsOpen)
 		{
 			return;
@@ -861,8 +876,9 @@ namespace Sandbox3D
 	}
 
 	void Sandbox3D::CreateDockspace()
-
 	{
+		LP_PROFILE_FUNCTION();
+
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;

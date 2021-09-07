@@ -124,6 +124,7 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnImGuiRender(Timestep ts)
 	{
+		LP_PROFILE_FUNCTION();
 		CreateDockspace();
 
 		UpdateProperties();
@@ -142,7 +143,7 @@ namespace Sandbox3D
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);
-	}
+	}	
 
 	void Sandbox3D::OnEvent(Event& e)
 	{

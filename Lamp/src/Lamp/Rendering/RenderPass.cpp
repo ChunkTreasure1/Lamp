@@ -5,7 +5,8 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-#include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/Brushes/BrushManager.h"
 
 namespace Lamp
 {
@@ -90,9 +91,9 @@ namespace Lamp
 				AppRenderEvent renderEvent(m_PassSpec);
 				Application::Get().OnEvent(renderEvent);
 
-				for (auto& mesh : g_pEnv->pRenderUtils->GetMeshComponents())
+				for (auto& entity : g_pEnv->pEntityManager->GetEntities())
 				{
-					mesh.second->OnEvent(renderEvent);
+					entity.second->OnEvent(renderEvent);
 				}
 
 				for (auto& f : m_PassSpec.ExtraRenders)
@@ -116,8 +117,17 @@ namespace Lamp
 				Renderer3D::Begin(m_PassSpec);
 
 				AppRenderEvent renderEvent(m_PassSpec);
-				ObjectLayerManager::Get()->OnEvent(renderEvent);
 				Application::Get().OnEvent(renderEvent);
+
+				for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+				{
+					entity.second->OnEvent(renderEvent);
+				}
+
+				for (auto& brush : g_pEnv->pBrushManager->GetBrushes())
+				{
+					brush.second->OnEvent(renderEvent);
+				}
 
 				for (auto& f : m_PassSpec.ExtraRenders)
 				{

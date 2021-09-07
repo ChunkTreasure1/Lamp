@@ -9,7 +9,6 @@ TextureNames
 layout(location = 0) out vec4 FragColor;
 
 in vec2 v_TexCoords;
-in vec4 v_ShadowCoords;
 
 struct GBuffer
 {
@@ -22,7 +21,7 @@ struct DirectionalLight
 {
 	vec3 direction;
 	vec3 color;
-	
+
 	float intensity;
 };
 
@@ -43,6 +42,8 @@ uniform PointLight u_PointLights[12];
 uniform int u_LightCount;
 
 uniform sampler2D u_ShadowMap;
+uniform mat4 u_ShadowVP;
+
 uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
 uniform sampler2D u_BRDFLUT;
@@ -50,6 +51,7 @@ uniform sampler2D u_SSAO;
 
 uniform vec3 u_CameraPosition;
 uniform float u_Exposure;
+uniform float u_Gamma;
 
 const float PI = 3.14159265359;
 
@@ -114,9 +116,9 @@ float DirectionalShadowCalculation(vec4 pos)
 }
 
 
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, vec4 shadowCoord)
 {
-	float shadow = DirectionalShadowCalculation(v_ShadowCoords);
+	float shadow = DirectionalShadowCalculation(shadowCoord);
 
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);
@@ -187,7 +189,7 @@ void main()
 {
 	vec3 fragPos = texture(u_GBuffer.position, v_TexCoords).rgb;
 	vec3 normal = texture(u_GBuffer.normal, v_TexCoords).rgb;
-	vec3 albedo = pow(texture(u_GBuffer.albedo, v_TexCoords).rgb, vec3(2.2));
+	vec3 albedo = pow(texture(u_GBuffer.albedo, v_TexCoords).rgb, vec3(u_Gamma));
 
 	float metallic = texture(u_GBuffer.position, v_TexCoords).a;
 	float roughness = texture(u_GBuffer.normal, v_TexCoords).a;
@@ -198,7 +200,9 @@ void main()
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
 
-	Lo += CalculateDirectionalLight(u_DirectionalLight, V, normal, baseReflectivity, albedo, metallic, roughness);
+	vec4 shadowCoord = u_ShadowVP * vec4(fragPos, 1.0);
+
+	Lo += CalculateDirectionalLight(u_DirectionalLight, V, normal, baseReflectivity, albedo, metallic, roughness, shadowCoord);
 
 	for(int i = 0; i < u_LightCount; ++i)
 	{
@@ -227,7 +231,7 @@ void main()
 	color = vec3(1.0) - exp(-color * u_Exposure);
 
 	//Gamma correction
-	color = pow(color, vec3(1.0 / 2.2));
+	color = pow(color, vec3(1.0 / u_Gamma));
 
 	FragColor = vec4(color, 1.0);
 }

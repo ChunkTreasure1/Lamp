@@ -107,12 +107,13 @@ namespace Lamp
 
 		/////Quad/////
 		{
-			std::vector<Vertex> quadVertices =
+			std::vector<float> quadVertices =
 			{
-				Vertex({ 1.f, 1.f, 0.f }, {  1.f, 1.f }),
-				Vertex({ 1.f, -1.f, 0.f }, { 1.f, 0.f }),
-				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 0.f }),
-				Vertex({ -1.f, 1.f, 0.f }, { 0.f, 1.f }),
+				// positions       // texture Coords
+				 1.f,  1.f, 0.0f,  1.0f, 1.0f, // top right
+				 1.f, -1.f, 0.0f,  1.0f, 0.0f, // bottom right
+				-1.f, -1.f, 0.0f,  0.0f, 0.0f, // bottom left
+				-1.f,  1.f, 0.0f,  0.0f, 1.0f, // top left
 			};
 
 			std::vector<uint32_t> quadIndices =
@@ -122,14 +123,11 @@ namespace Lamp
 			};
 
 			s_pData->QuadVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)sizeof(Vertex) * quadVertices.size());
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)sizeof(float) * quadVertices.size());
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
+				{ ElementType::Float2, "a_TexCoords" }
 			});
 			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
@@ -277,10 +275,11 @@ namespace Lamp
 		s_pData->SSAOBlurBuffer->BindColorAttachment(7);
 
 		s_pData->DeferredShader->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+		s_pData->DeferredShader->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
 		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-		s_pData->DeferredShader->UploadMat4("u_SunShadowVP", g_pEnv->DirLight.ViewProjection);
+		s_pData->DeferredShader->UploadMat4("u_ShadowVP", g_pEnv->DirLight.ViewProjection);
 
-		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", g_pEnv->DirLight.Position);
+		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
 
@@ -424,6 +423,7 @@ namespace Lamp
 			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 			mat.GetShader()->UploadInt("u_ObjectId", id);
 			mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+			mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
 
 			mat.GetShader()->UploadInt("u_ShadowMap", 0);
 			s_pData->ShadowBuffer->BindDepthAttachment(0);
@@ -438,6 +438,9 @@ namespace Lamp
 			{
 				g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
 			}
+
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 			break;
 		}
 
