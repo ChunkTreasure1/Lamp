@@ -2,9 +2,9 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 18) out;
 
-uniform mat4 u_Transforms[6];
+layout(location = 2)out vec4 FragPos;
 
-out vec4 FragPos;
+uniform mat4 u_Transforms[6];
 
 void main()
 {

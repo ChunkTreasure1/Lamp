@@ -9,8 +9,14 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(MeshComponent);
 
+	MeshComponent::~MeshComponent()
+	{
+		g_pEnv->pRenderUtils->UnegisterMeshComponent(m_pEntity->GetID());
+	}
+
 	void MeshComponent::Initialize()
 	{
+		g_pEnv->pRenderUtils->RegisterMeshComponent(m_pEntity->GetId(), this);
 	}
 
 	void MeshComponent::OnEvent(Event& e)

@@ -147,8 +147,9 @@ namespace Sandbox3D
 			{
 				if (duplicate && !hasDuplicated)
 				{
-					if (auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject))
+					if (typeid(*m_pSelectedObject) == typeid(Lamp::Brush))
 					{
+						auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject);
 						m_pSelectedObject = Lamp::Brush::Duplicate(brush);
 					}
 					else if (auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject))

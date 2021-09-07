@@ -101,6 +101,11 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{
+		if (e.GetPassInfo().type == PassType::Forward)
+		{
+			return true;
+		}
+
 		bool forward = e.GetPassInfo().type == PassType::Selection ? true : false;
 
 		m_Model->Render(m_Id, forward);

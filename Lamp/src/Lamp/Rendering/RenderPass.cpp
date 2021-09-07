@@ -5,6 +5,7 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
 
 namespace Lamp
 {
@@ -87,8 +88,12 @@ namespace Lamp
 				Renderer3D::Begin(m_PassSpec);
 
 				AppRenderEvent renderEvent(m_PassSpec);
-				ObjectLayerManager::Get()->OnEvent(renderEvent);
 				Application::Get().OnEvent(renderEvent);
+
+				for (auto& mesh : g_pEnv->pRenderUtils->GetMeshComponents())
+				{
+					mesh.second->OnEvent(renderEvent);
+				}
 
 				for (auto& f : m_PassSpec.ExtraRenders)
 				{

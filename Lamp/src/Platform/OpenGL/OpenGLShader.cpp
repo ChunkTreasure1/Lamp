@@ -4,7 +4,7 @@
 namespace Lamp
 {
 	OpenGLShader::OpenGLShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath)
-		: m_RendererID(0), m_FragmentPath(fragmentPath), m_VertexPath(vertexPath)
+		: m_RendererID(0), m_FragmentPath(fragmentPath), m_VertexPath(vertexPath), m_GeoPath(geoPath)
 	{
 		Recompile();
 	}
@@ -180,12 +180,11 @@ namespace Lamp
 
 		m_RendererID = glCreateProgram();
 		glAttachShader(m_RendererID, vertex);
-		glAttachShader(m_RendererID, fragment);
-
 		if (m_GeoPath != "")
 		{
 			glAttachShader(m_RendererID, geometry);
 		}
+		glAttachShader(m_RendererID, fragment);
 
 		glLinkProgram(m_RendererID);
 		glGetProgramiv(m_RendererID, GL_LINK_STATUS, &success);

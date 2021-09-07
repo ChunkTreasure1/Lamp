@@ -20,6 +20,8 @@ namespace Lamp
 			});
 		}
 
+		~MeshComponent();
+
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
