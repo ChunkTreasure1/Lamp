@@ -223,6 +223,12 @@
     <None Include="engine\shaders\3d\sprite_vs.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
+    <None Include="engine\shaders\3d\ssaoBlur_fs.glsl">
+      <Filter>engine\shaders\3d</Filter>
+    </None>
+    <None Include="engine\shaders\3d\ssao_fs.glsl">
+      <Filter>engine\shaders\3d</Filter>
+    </None>
     <None Include="engine\shaders\3d\testPbr_fs.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>

@@ -20,14 +20,14 @@ struct GBuffer
 uniform GBuffer u_GBuffer;
 uniform sampler2D u_Noise;
 
-uniform vec3 u_Samples[64];
+uniform vec3 u_Samples[256];
 uniform mat4 u_Projection;
 uniform mat4 u_View;
 uniform vec2 u_BufferSize;
 
-uniform int u_KernelSize = 64;
-uniform float u_Radius = 0.5;
-uniform float u_Bias = 0.025;
+uniform int u_KernelSize;
+uniform float u_Radius;
+uniform float u_Bias;
 
 vec2 noiseScale;
 

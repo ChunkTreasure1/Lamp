@@ -81,6 +81,25 @@ namespace Lamp
 				break;
 			}
 
+			case PassType::Forward:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				Renderer3D::Begin(m_PassSpec);
+
+				AppRenderEvent renderEvent(m_PassSpec);
+				ObjectLayerManager::Get()->OnEvent(renderEvent);
+				Application::Get().OnEvent(renderEvent);
+
+				for (auto& f : m_PassSpec.ExtraRenders)
+				{
+					f();
+				}
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+
 			default:
 			{
 				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);

@@ -231,7 +231,7 @@ namespace Sandbox3D
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 				{
-					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
+					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
@@ -608,7 +608,7 @@ namespace Sandbox3D
 					int* p = static_cast<int*>(pProp.Value);
 					int v = *p;
 
-					ImGui::InputInt(pProp.Name.c_str(), &v);
+					ImGui::DragInt(pProp.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -642,7 +642,7 @@ namespace Sandbox3D
 					float* p = static_cast<float*>(pProp.Value);
 					float v = *p;
 
-					ImGui::InputFloat(pProp.Name.c_str(), &v);
+					ImGui::DragFloat(pProp.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -658,7 +658,7 @@ namespace Sandbox3D
 					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 					glm::vec2 v = *p;
 
-					ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::DragFloat2(pProp.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -674,7 +674,7 @@ namespace Sandbox3D
 					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 					glm::vec3 v = *p;
 
-					ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::DragFloat3(pProp.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -690,7 +690,7 @@ namespace Sandbox3D
 					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 					glm::vec4 v = *p;
 
-					ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
+					ImGui::DragFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
 					if (v != *p)
 					{
 						*p = v;
@@ -813,18 +813,47 @@ namespace Sandbox3D
 
 			ImGui::Separator();
 			ImGui::Text("HDR Settings");
-			static std::string path;
-			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
-			ImGui::InputText("HDR environment", &path);
-			ImGui::SameLine();
-			if (ImGui::Button("Open..."))
+		}
+
+		ImGui::End();
+	}
+
+	void Sandbox3D::UpdateRenderingSettings()
+	{
+		if (!m_RenderingSettingsOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
+
+		ImGui::Text("HDR");
+
+		static std::string path;
+		ImGui::DragFloat("HDR Exposure", &Lamp::Renderer3D::GetSettings().HDRExposure);
+		ImGui::InputText("HDR environment", &path);
+		ImGui::SameLine();
+		if (ImGui::Button("Open..."))
+		{
+			path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			if (!path.empty())
 			{
-				path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-				if (!path.empty())
-				{
-					Lamp::Renderer3D::SetEnvironment(path);
-				}
+				Lamp::Renderer3D::SetEnvironment(path);
 			}
+		}
+
+		ImGui::Separator();
+
+		ImGui::Text("SSAO");
+
+		int preKernelSize = Lamp::Renderer3D::GetSettings().SSAOKernelSize;
+		ImGui::SliderInt("Kernel Size", &Lamp::Renderer3D::GetSettings().SSAOKernelSize, 16, Lamp::Renderer3D::GetSettings().SSAOMaxKernelSize, "%d");
+		ImGui::SliderFloat("Radius", &Lamp::Renderer3D::GetSettings().SSAORadius, 0.f, 10.f, "%.3f");
+		ImGui::SliderFloat("Bias", &Lamp::Renderer3D::GetSettings().SSAOBias, 0.f, 1.f, "%.3f");
+
+		if (Lamp::Renderer3D::GetSettings().SSAOKernelSize != preKernelSize)
+		{
+			Lamp::Renderer3D::RegenerateSSAOKernel();
 		}
 
 		ImGui::End();
@@ -948,6 +977,13 @@ namespace Sandbox3D
 				{
 					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
 				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Rendering"))
+			{
+				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
 
 				ImGui::EndMenu();
 			}

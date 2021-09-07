@@ -29,6 +29,7 @@ namespace Lamp
 		AddShader("engine/shaders/3d/deferredShading_vs.glsl", "engine/shaders/3d/deferredShading_fs.glsl");
 		AddShader("engine/shaders/3d/deferredShading_vs.glsl", "engine/shaders/3d/ssao_fs.glsl");
 		AddShader("engine/shaders/3d/deferredShading_vs.glsl", "engine/shaders/3d/ssaoBlur_fs.glsl");
+		AddShader("engine/shaders/3d/selection_vs.glsl", "engine/shaders/3d/selection_fs.glsl");
 	}
 
 	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)

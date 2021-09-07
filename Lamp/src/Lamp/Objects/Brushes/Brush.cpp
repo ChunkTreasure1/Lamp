@@ -101,9 +101,11 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{
-		m_Model->Render(m_Id);
+		bool forward = e.GetPassInfo().type == PassType::Selection ? true : false;
 
-		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().type != PassType::DirShadow ||e.GetPassInfo().type != PassType::PointShadow))
+		m_Model->Render(m_Id, forward);
+
+		if (g_pEnv->ShouldRenderBB && e.GetPassInfo().type == PassType::Forward)
 		{
 			m_Model->RenderBoundingBox();
 		}

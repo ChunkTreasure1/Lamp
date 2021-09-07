@@ -166,6 +166,7 @@ namespace Lamp
 
 		Ref<Texture2D> m_GizmoTexure = nullptr;
 		Ref<Shader> m_GizmoShader = nullptr;
+		Ref<Shader> m_SelectionShader = nullptr;
 		Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;

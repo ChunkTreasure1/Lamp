@@ -90,7 +90,7 @@ namespace Sandbox3D
 			}
 		}
 
-		m_SelectionBuffer->ClearAttachment(1, 0);
+		m_SelectionBuffer->ClearAttachment(0, 0);
 
 		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
@@ -99,7 +99,7 @@ namespace Sandbox3D
 
 		GetInput();
 
-		m_SelectionBuffer->ClearAttachment(1, -1);
+		m_SelectionBuffer->ClearAttachment(0, -1);
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
@@ -132,6 +132,7 @@ namespace Sandbox3D
 		UpdateCreateTool();
 		UpdateLogTool();
 		UpdateLevelSettings();
+		UpdateRenderingSettings();
 		m_assetManager.OnImGuiRender();
 
 		for	(auto& window : m_BufferWindows)
@@ -401,31 +402,6 @@ namespace Sandbox3D
 		}
 		/////////////////////////////
 
-		/////Selection/////
-		{
-			FramebufferSpecification spec;
-			spec.Attachments =
-			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge, { 1.f, 1.f, 1.f, 1.f }, false },
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
-			};
-			spec.Height = 1280;
-			spec.Width = 720;
-			spec.Samples = 1;
-
-			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
-			m_SelectionBuffer = passSpec.TargetFramebuffer;
-			passSpec.Name = "SelectionPass";
-
-			m_BufferWindows.push_back(BufferWindow(passSpec.TargetFramebuffer, "SelectionPass"));
-
-			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-			//RenderPassManager::Get()->AddPass(pass);
-		}
-		///////////////////
-
 		/////Main//////
 		{
 			FramebufferSpecification mainBuffer;
@@ -446,13 +422,8 @@ namespace Sandbox3D
 			mainBuffer.Width = 1280;
 			mainBuffer.Samples = 1;
 
-			std::vector<std::function<void()>> ptrs;
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
-
 			RenderPassSpecification passSpec;
 			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
-			passSpec.ExtraRenders = ptrs;
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.Name = "MainPass";
@@ -546,6 +517,48 @@ namespace Sandbox3D
 			m_SandboxBuffer = passSpec.TargetFramebuffer;
 
 			RenderPassManager::Get()->AddPass(renderPass);
+		}
+		///////////////////
+
+		/////Forward Rendering/////
+		{
+			std::vector<std::function<void()>> ptrs;
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.ExtraRenders = ptrs;
+
+			passSpec.TargetFramebuffer = m_SandboxBuffer;
+			passSpec.Name = "ForwardPass";
+			passSpec.type = PassType::Forward;
+
+			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(renderPass);
+		}
+		///////////////////////////
+
+		/////Selection/////
+		{
+			FramebufferSpecification spec;
+			spec.Attachments =
+			{
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+			};
+			spec.Height = 720;
+			spec.Width = 1280;
+			spec.Samples = 1;
+
+			RenderPassSpecification passSpec;
+			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
+			m_SelectionBuffer = passSpec.TargetFramebuffer;
+			passSpec.Name = "SelectionPass";
+			passSpec.type = PassType::Selection;
+
+			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
+			RenderPassManager::Get()->AddPass(pass);
 		}
 		///////////////////
 	}

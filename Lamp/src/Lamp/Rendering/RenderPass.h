@@ -9,14 +9,16 @@
 
 namespace Lamp
 {
-	enum PassType
+	enum class PassType
 	{
 		DirShadow = 0,
 		PointShadow = BIT(1),
 		Lightning = BIT(2),
 		Geometry = BIT(3),
 		SSAO = BIT(4),
-		SSAOBlur = BIT(5)
+		SSAOBlur = BIT(5),
+		Forward = BIT(6),
+		Selection = BIT(7),
 	};
 
 	struct RenderPassSpecification

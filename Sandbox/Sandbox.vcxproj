@@ -199,6 +199,8 @@
     <None Include="engine\shaders\3d\shadows\pointShadow_vs.glsl" />
     <None Include="engine\shaders\3d\sprite_fs.glsl" />
     <None Include="engine\shaders\3d\sprite_vs.glsl" />
+    <None Include="engine\shaders\3d\ssaoBlur_fs.glsl" />
+    <None Include="engine\shaders\3d\ssao_fs.glsl" />
     <None Include="engine\shaders\3d\testPbr_fs.glsl" />
     <None Include="engine\shaders\3d\testPbr_vs.glsl" />
   </ItemGroup>

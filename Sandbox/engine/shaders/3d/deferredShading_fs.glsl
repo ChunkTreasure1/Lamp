@@ -26,8 +26,21 @@ struct DirectionalLight
 	float intensity;
 };
 
+struct PointLight
+{
+	vec3 position;
+	vec3 color;
+	
+	float radius;
+	float intensity;
+	float falloff;
+	float farPlane;
+};
+
 uniform GBuffer u_GBuffer;
 uniform DirectionalLight u_DirectionalLight;
+uniform PointLight u_PointLights[12];
+uniform int u_LightCount;
 
 uniform sampler2D u_ShadowMap;
 uniform samplerCube u_IrradianceMap;
@@ -129,6 +142,47 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 	return lightStrength;
 }
 
+vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
+{
+	float shadow = 0.0; //PointShadowCalculation(fragPos, light);
+	float distance = length(light.position - fragPos);
+	if(distance > light.radius)
+	{
+		return vec3(0.0);
+	}
+
+	//Radiance
+	vec3 L = normalize(light.position - fragPos);
+	vec3 H = normalize(V + L);
+
+	//Change to work with a falloff value
+	float attenuation = clamp(1.0 - distance / light.radius, 0.0, 1.0);
+	attenuation *= attenuation;
+
+	vec3 radiance = (light.color * light.intensity) * attenuation;
+
+	// Cook-Torrance BRDF
+	float NdotV = max(dot(N, V), 0.0000001);
+	float NdotL = max(dot(N, L), 0.0000001);
+	float HdotV	= max(dot(H, V), 0.0);
+	float NdotH = max(dot(N, H), 0.0);
+
+	float d = distributionGGX(NdotH, roughness);
+	float g = geometrySmith(NdotV, NdotL, roughness);
+	vec3 f = fresnelSchlick(HdotV, baseReflectivity);
+
+	vec3 specular = d * g * f;
+	specular /= 4.0 * NdotV * NdotL;
+
+	//Energy conservation
+	vec3 kD = vec3(1.0) - f;
+	kD *= 1.0 - metallic;
+
+	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular)) * radiance * NdotL;
+
+	return lightStrength;
+}
+
 void main()
 {
 	vec3 fragPos = texture(u_GBuffer.position, v_TexCoords).rgb;
@@ -145,6 +199,11 @@ void main()
 	vec3 Lo = vec3(0.0);
 
 	Lo += CalculateDirectionalLight(u_DirectionalLight, V, normal, baseReflectivity, albedo, metallic, roughness);
+
+	for(int i = 0; i < u_LightCount; ++i)
+	{
+		Lo += CalculatePointLight(u_PointLights[i], V, normal, baseReflectivity, metallic, roughness, albedo, fragPos);
+	}
 
 	vec3 R = reflect(-V, normal);
 
