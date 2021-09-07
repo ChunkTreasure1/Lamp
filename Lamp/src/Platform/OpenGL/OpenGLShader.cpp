@@ -6,16 +6,36 @@ namespace Lamp
 	OpenGLShader::OpenGLShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath)
 		: m_RendererID(0), m_FragmentPath(fragmentPath), m_VertexPath(vertexPath)
 	{
+		Recompile();
+	}
+
+	OpenGLShader::~OpenGLShader()
+	{
+		glDeleteProgram(m_RendererID);
+	}
+
+	void OpenGLShader::Bind() const
+	{
+		glUseProgram(m_RendererID);
+	}
+
+	void OpenGLShader::Unbind() const
+	{
+		glUseProgram(0);
+	}
+
+	void OpenGLShader::Recompile()
+	{
 		std::string vertexCode;
 		std::string fragmentCode;
 		std::string geoCode;
 
 		//Read the fragment shader
-		std::ifstream fragmentFile(fragmentPath);
+		std::ifstream fragmentFile(m_FragmentPath);
 		if (fragmentFile.fail())
 		{
-			perror(fragmentPath.c_str());
-			LP_CORE_ERROR("Failed to open" + fragmentPath + "!");
+			perror(m_FragmentPath.c_str());
+			LP_CORE_ERROR("Failed to open" + m_FragmentPath + "!");
 		}
 
 		std::string line;
@@ -43,9 +63,9 @@ namespace Lamp
 				//If this fails, check for a typo in the shader spec
 				std::string s = line.substr(line.find_first_of(':') + 1, line.size() - line.find_first_of(':'));
 				s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
-				s.erase(std::remove(s.begin(), s.end(), 
+				s.erase(std::remove(s.begin(), s.end(),
 					';'), s.end());
-				
+
 				m_Specifications.TextureCount = std::atoi(s.c_str());
 				continue;
 			}
@@ -79,11 +99,11 @@ namespace Lamp
 		fragmentFile.close();
 
 		//Read the vertex shader
-		std::ifstream vertexFile(vertexPath);
+		std::ifstream vertexFile(m_VertexPath);
 		if (vertexFile.fail())
 		{
-			perror(vertexPath.c_str());
-			LP_CORE_ERROR("Failed to open" + vertexPath + "!");
+			perror(m_VertexPath.c_str());
+			LP_CORE_ERROR("Failed to open" + m_VertexPath + "!");
 		}
 
 		std::getline(vertexFile, line);
@@ -97,13 +117,13 @@ namespace Lamp
 		vertexFile.close();
 
 		//Read the geometry shader
-		if (geoPath != "")
+		if (m_GeoPath != "")
 		{
-			std::ifstream geoFile(geoPath);
+			std::ifstream geoFile(m_GeoPath);
 			if (geoFile.fail())
 			{
-				perror(geoPath.c_str());
-				LP_CORE_ERROR("Failed to open" + geoPath + "!");
+				perror(m_GeoPath.c_str());
+				LP_CORE_ERROR("Failed to open" + m_GeoPath + "!");
 			}
 
 			while (std::getline(geoFile, line))
@@ -129,7 +149,7 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + vertexPath);
+			LP_ERROR("Vertex shader compilation failed: " + std::string(infoLog) + ". At: " + m_VertexPath);
 		}
 
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -140,10 +160,10 @@ namespace Lamp
 		if (!success)
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + fragmentPath);
+			LP_ERROR("Fragment shader compilation failed: " + std::string(infoLog) + ". At: " + m_FragmentPath);
 		}
 
-		if (geoPath != "")
+		if (m_GeoPath != "")
 		{
 			const char* gGeoCode = geoCode.c_str();
 			geometry = glCreateShader(GL_GEOMETRY_SHADER);
@@ -154,7 +174,7 @@ namespace Lamp
 			if (!success)
 			{
 				glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-				LP_ERROR("Geometry shader compilation failed: " + std::string(infoLog) + ". At: " + fragmentPath);
+				LP_ERROR("Geometry shader compilation failed: " + std::string(infoLog) + ". At: " + m_GeoPath);
 			}
 		}
 
@@ -162,7 +182,7 @@ namespace Lamp
 		glAttachShader(m_RendererID, vertex);
 		glAttachShader(m_RendererID, fragment);
 
-		if (geoPath != "")
+		if (m_GeoPath != "")
 		{
 			glAttachShader(m_RendererID, geometry);
 		}
@@ -178,25 +198,10 @@ namespace Lamp
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 
-		if (geoPath != "")
+		if (m_GeoPath != "")
 		{
 			glDeleteShader(geometry);
 		}
-	}
-
-	OpenGLShader::~OpenGLShader()
-	{
-		glDeleteProgram(m_RendererID);
-	}
-
-	void OpenGLShader::Bind() const
-	{
-		glUseProgram(m_RendererID);
-	}
-
-	void OpenGLShader::Unbind() const
-	{
-		glUseProgram(0);
 	}
 
 	void OpenGLShader::UploadBool(const std::string& name, bool value) const

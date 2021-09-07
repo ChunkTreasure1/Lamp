@@ -12,6 +12,7 @@ namespace Lamp
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+		virtual void Recompile() override;
 
 		virtual void UploadBool(const std::string& name, bool value) const override;
 		virtual void UploadInt(const std::string& name, int value) const override;

@@ -32,6 +32,14 @@ namespace Lamp
 		AddShader("engine/shaders/3d/selection_vs.glsl", "engine/shaders/3d/selection_fs.glsl");
 	}
 
+	void ShaderLibrary::RecompileShaders()
+	{
+		for (auto& shader : m_Shaders)
+		{
+			shader->Recompile();
+		}
+	}
+
 	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)
 	{
 		for (auto& shader : m_Shaders)

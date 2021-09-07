@@ -11,6 +11,7 @@ namespace Lamp
 	public:
 		static void AddShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath = "");
 		static void LoadShaders();
+		static void RecompileShaders();
 
 		static Ref<Shader>& GetShader(const std::string& name);
 		static std::vector<Ref<Shader>>& GetShaders() { return m_Shaders; }

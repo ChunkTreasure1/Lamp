@@ -37,6 +37,7 @@ namespace Lamp
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
+		virtual void Recompile() = 0;
 
 		virtual void UploadBool(const std::string& name, bool value) const = 0;
 		virtual void UploadInt(const std::string& name, int value) const = 0;

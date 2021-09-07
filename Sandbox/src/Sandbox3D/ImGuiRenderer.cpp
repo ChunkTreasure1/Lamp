@@ -984,6 +984,10 @@ namespace Sandbox3D
 			if (ImGui::BeginMenu("Rendering"))
 			{
 				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
+				if (ImGui::MenuItem("Recompile shaders"))
+				{
+					Lamp::ShaderLibrary::RecompileShaders();
+				}
 
 				ImGui::EndMenu();
 			}
