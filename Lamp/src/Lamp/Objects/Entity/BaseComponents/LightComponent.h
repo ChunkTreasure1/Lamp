@@ -38,6 +38,7 @@ namespace Lamp
 		bool OnRender(AppRenderEvent& e);
 		bool OnUpdate(AppUpdateEvent& e);
 		bool OnPositionChanged(EntityPositionChangedEvent& e);
+		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<LightComponent>(); }

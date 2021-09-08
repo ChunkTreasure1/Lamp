@@ -27,6 +27,7 @@ namespace Lamp
 			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->Intensity) },
 			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->Radius) },
 			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->Falloff) },
+			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->ShadowBuffer->GetNearPlane()) },
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->Color) }
 		});
 	}
@@ -47,6 +48,7 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<EntityPositionChangedEvent>(LP_BIND_EVENT_FN(LightComponent::OnPositionChanged));
+		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(LightComponent::OnPropertyChanged));
 	}
 
 	bool LightComponent::OnRender(AppRenderEvent& e)
@@ -56,12 +58,20 @@ namespace Lamp
 
 	bool LightComponent::OnUpdate(AppUpdateEvent& e)
 	{
+
 		return false;
 	}
 
 	bool LightComponent::OnPositionChanged(EntityPositionChangedEvent& e)
 	{
 		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
+
+		return false;
+	}
+
+	bool LightComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
+	{
+		m_pPointLight->ShadowBuffer->UpdateProjection();
 
 		return false;
 	}

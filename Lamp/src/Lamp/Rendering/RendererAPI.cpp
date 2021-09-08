@@ -22,5 +22,4 @@ namespace Lamp
 
 		return nullptr;
 	}
-
 }

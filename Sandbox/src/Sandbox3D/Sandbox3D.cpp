@@ -43,16 +43,6 @@ namespace Sandbox3D
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 
-		FramebufferSpecification spec;
-		spec.Attachments =
-		{
-			{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
-		};
-
-		spec.Height = 720;
-		spec.Width = 1280;
-		spec.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
-
 		SetupFromConfig();
 		CreateRenderPasses();
 
@@ -115,9 +105,6 @@ namespace Sandbox3D
 				}
 			}
 		}
-
-		//glm::vec2 srcSize = { m_SandboxBuffer->GetSpecification().Width, m_SandboxBuffer->GetSpecification().Height };
-		//m_SecondaryBuffer->Copy(m_SandboxBuffer->GetRendererID(), srcSize);
 
 		return false;
 	}

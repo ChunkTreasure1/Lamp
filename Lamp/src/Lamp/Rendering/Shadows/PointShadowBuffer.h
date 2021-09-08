@@ -34,10 +34,18 @@ namespace Lamp
 		void SetPosition(const glm::vec3& pos);
 		inline const glm::vec3& GetPosition() { return m_Position; }
 
+		inline float& GetNearPlane() { return m_NearPlane; }
+		inline float& GetFarPlane() { return m_FarPlane; }
+
+		void UpdateProjection();
+
 	private:
 		void Invalidate();
 
 	private:
+		float m_NearPlane = 0.1f;
+		float m_FarPlane = 25.f;
+
 		std::vector<glm::mat4> m_Transforms;
 		glm::mat4 m_Projection = glm::mat4(1.f);
 

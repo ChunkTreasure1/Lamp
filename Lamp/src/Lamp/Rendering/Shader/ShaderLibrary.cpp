@@ -15,11 +15,9 @@ namespace Lamp
 	void ShaderLibrary::LoadShaders()
 	{
 		AddShader("engine/shaders/3d/lineShader_vs.glsl", "engine/shaders/3d/lineShader_fs.glsl");
-		AddShader("engine/shaders/3d/shader_vs.glsl", "engine/shaders/3d/shader_fs.glsl");
 		AddShader("engine/shaders/3d/testPbr_vs.glsl", "engine/shaders/3d/testPbr_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/eqCube_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/skybox_vs.glsl", "engine/shaders/3d/ibl/skybox_fs.glsl");
-		AddShader("engine/shaders/3d/shadows/dirShadow_vs.glsl", "engine/shaders/3d/shadows/dirShadow_fs.glsl");
 		AddShader("engine/shaders/3d/shadows/pointShadow_vs.glsl", "engine/shaders/3d/shadows/pointShadow_fs.glsl", "engine/shaders/3d/shadows/pointShadow_gs.glsl");
 		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/convolution_fs.glsl");
 		AddShader("engine/shaders/3d/ibl/eqCube_vs.glsl", "engine/shaders/3d/ibl/prefilter_fs.glsl");
@@ -30,6 +28,7 @@ namespace Lamp
 		AddShader("engine/shaders/3d/deferredShading_vs.glsl", "engine/shaders/3d/ssao_fs.glsl");
 		AddShader("engine/shaders/3d/deferredShading_vs.glsl", "engine/shaders/3d/ssaoBlur_fs.glsl");
 		AddShader("engine/shaders/3d/selection_vs.glsl", "engine/shaders/3d/selection_fs.glsl");
+		AddShader("engine/shaders/3d/shadows/dirShadow_vs.glsl", "engine/shaders/3d/shadows/dirShadow_fs.glsl");
 	}
 
 	void ShaderLibrary::RecompileShaders()

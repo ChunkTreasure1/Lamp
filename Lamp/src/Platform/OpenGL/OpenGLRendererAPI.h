@@ -17,6 +17,7 @@ namespace Lamp
 		virtual void ClearColor() override;
 		virtual void ClearDepth() override;
 		virtual void OffsetPolygon(float factor, float unit) override;
+		virtual void SetCullFace(CullFace face) const override;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) override;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) override;

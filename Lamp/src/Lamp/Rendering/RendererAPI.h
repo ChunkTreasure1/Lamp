@@ -11,6 +11,12 @@ namespace Lamp
 		uint32_t MaxTextureSlots = 0;
 	};
 
+	enum class CullFace
+	{
+		Front,
+		Back
+	};
+
 	class RendererAPI
 	{
 	public:
@@ -30,6 +36,7 @@ namespace Lamp
 		virtual void ClearColor() = 0;
 		virtual void ClearDepth() = 0;
 		virtual void OffsetPolygon(float factor, float unit) = 0;
+		virtual void SetCullFace(CullFace face) const = 0;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t = 0) = 0;
 		virtual void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;

@@ -52,6 +52,11 @@ namespace Lamp
 			s_RendererAPI->DrawIndexedLines(vertexArray, count);
 		}
 
+		static void SetCullFace(CullFace face)
+		{
+			s_RendererAPI->SetCullFace(face);
+		}
+
 		static const RendererCapabilities& GetCapabilities()
 		{
 			return s_RendererAPI->GetRendererCapabilities();

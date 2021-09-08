@@ -9,7 +9,7 @@ namespace Lamp
 	PointShadowBuffer::PointShadowBuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
-		m_Projection = glm::perspective(glm::radians(90.f), (float)spec.Width / (float)spec.Height, 1.f, 25.f);
+		m_Projection = glm::perspective(glm::radians(90.f), (float)spec.Width / (float)spec.Height, 0.1f, 25.f);
 
 		SetPosition(m_Position);
 
@@ -37,6 +37,9 @@ namespace Lamp
 	{
 		m_Specification.Width = width;
 		m_Specification.Height = height;
+
+		Invalidate();
+		m_Projection = glm::perspective(glm::radians(90.f), (float)width / (float)height, m_NearPlane, m_FarPlane);
 	}
 
 	void PointShadowBuffer::BindColorAttachment(uint32_t id, uint32_t i)
@@ -62,6 +65,11 @@ namespace Lamp
 		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
 		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
 		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
+	}
+
+	void PointShadowBuffer::UpdateProjection()
+	{
+		m_Projection = glm::perspective(glm::radians(90.f), (float)m_Specification.Width / (float)m_Specification.Height, m_NearPlane, m_FarPlane);
 	}
 
 	void PointShadowBuffer::Invalidate()

@@ -253,7 +253,7 @@ namespace Lamp
 			return;
 		}
 
-		glCullFace(GL_FRONT);
+		RenderCommand::SetCullFace(CullFace::Front);
 		s_pData->DeferredShader->Bind();
 
 		s_pData->DeferredShader->UploadInt("u_GBuffer.position", 0);
@@ -337,7 +337,7 @@ namespace Lamp
 		{
 		case PassType::DirShadow:
 		{
-			glCullFace(GL_FRONT);
+			RenderCommand::SetCullFace(CullFace::Front);
 			s_pData->DirShadowShader->Bind();
 
 			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
@@ -352,7 +352,7 @@ namespace Lamp
 
 		case PassType::PointShadow:
 		{
-			glCullFace(GL_BACK);
+			RenderCommand::SetCullFace(CullFace::Back);
 			s_pData->PointShadowShader->Bind();
 
 			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
@@ -374,7 +374,7 @@ namespace Lamp
 
 		case PassType::Geometry:
 		{
-			glCullFace(GL_BACK);
+			RenderCommand::SetCullFace(CullFace::Back);
 			s_pData->GBufferShader->Bind();
 			s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
 			s_pData->GBufferShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
@@ -407,7 +407,7 @@ namespace Lamp
 
 	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
 	{
-		glCullFace(GL_BACK);
+		RenderCommand::SetCullFace(CullFace::Back);
 
 		switch (s_pData->CurrentRenderPass->type)
 		{
@@ -473,7 +473,7 @@ namespace Lamp
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
-		glCullFace(GL_BACK);
+		RenderCommand::SetCullFace(CullFace::Back);
 
 		LP_PROFILE_FUNCTION();
 		s_pData->SkyboxShader->Bind();
@@ -566,7 +566,8 @@ namespace Lamp
 			return;
 		}
 
-		glCullFace(GL_FRONT);
+		RenderCommand::SetCullFace(CullFace::Front);
+
 		s_pData->SSAOMainShader->Bind();
 
 		for (uint32_t i = 0; i < s_pData->SSAOKernel.size(); i++)
@@ -604,7 +605,8 @@ namespace Lamp
 			return;
 		}
 
-		glCullFace(GL_FRONT);
+		RenderCommand::SetCullFace(CullFace::Front);
+
 		s_pData->SSAOBlurShader->Bind();
 		s_pData->SSAOBlurShader->UploadInt("u_SSAO", 0);
 		s_pData->SSAOBuffer->BindColorAttachment(0);

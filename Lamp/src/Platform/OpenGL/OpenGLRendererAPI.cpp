@@ -83,6 +83,23 @@ namespace Lamp
 		}
 	}
 
+	void OpenGLRendererAPI::SetCullFace(CullFace face) const
+	{
+		switch (face)
+		{
+		case Lamp::CullFace::Front:
+			glCullFace(GL_FRONT);
+			break;
+
+		case Lamp::CullFace::Back:
+			glCullFace(GL_BACK);
+			break;
+
+		default:
+			break;
+		}
+	}
+
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
 	{
 		if (count == 0)
