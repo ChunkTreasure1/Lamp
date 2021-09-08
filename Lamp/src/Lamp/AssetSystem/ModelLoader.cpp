@@ -147,7 +147,10 @@ namespace Lamp
 				std::string name;
 
 				name = pMaterial->first_attribute("name")->value();
-				mat = MaterialLibrary::GetMaterial(name);
+				if (MaterialLibrary::IsMaterialLoaded(name))
+				{
+					mat = MaterialLibrary::GetMaterial(name);
+				}
 			}
 		}
 

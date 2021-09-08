@@ -27,7 +27,7 @@ namespace Lamp
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
 
-		glEnable(GL_BLEND);
+		glDisable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
@@ -60,6 +60,11 @@ namespace Lamp
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
+	void OpenGLRendererAPI::ClearColor()
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
 	void OpenGLRendererAPI::ClearDepth()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -75,6 +80,23 @@ namespace Lamp
 		{
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(factor, unit);
+		}
+	}
+
+	void OpenGLRendererAPI::SetCullFace(CullFace face) const
+	{
+		switch (face)
+		{
+		case Lamp::CullFace::Front:
+			glCullFace(GL_FRONT);
+			break;
+
+		case Lamp::CullFace::Back:
+			glCullFace(GL_BACK);
+			break;
+
+		default:
+			break;
 		}
 	}
 

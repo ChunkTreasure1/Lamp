@@ -27,6 +27,11 @@ namespace Lamp
 			s_RendererAPI->Clear();
 		}
 		
+		static void ClearColor()
+		{
+			s_RendererAPI->ClearColor();
+		}
+
 		static void ClearDepth()
 		{
 			s_RendererAPI->ClearDepth();
@@ -45,6 +50,11 @@ namespace Lamp
 		static void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
 		{
 			s_RendererAPI->DrawIndexedLines(vertexArray, count);
+		}
+
+		static void SetCullFace(CullFace face)
+		{
+			s_RendererAPI->SetCullFace(face);
 		}
 
 		static const RendererCapabilities& GetCapabilities()

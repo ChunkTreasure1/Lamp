@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <unordered_map>
 
 #include "Lamp/Rendering/LightBase.h"
 
@@ -10,6 +11,7 @@ namespace Lamp
 	class EntityManager;
 	class BrushManager;
 	class AssetManager;
+	class MeshComponent;
 }
 
 class RenderUtils
@@ -21,10 +23,15 @@ public:
 	void RegisterPointLight(Lamp::PointLight* light);
 	bool UnregisterPointLight(Lamp::PointLight* light);
 
+	void RegisterMeshComponent(uint32_t id, Lamp::MeshComponent* mesh);
+	bool UnegisterMeshComponent(uint32_t id);
+
 	inline const std::vector<Lamp::PointLight*>& GetPointLights() { return m_PointLights; }
+	inline const std::unordered_map<uint32_t, Lamp::MeshComponent*>& GetMeshComponents() { return m_MeshComponents; }
 
 private:
 	std::vector<Lamp::PointLight*> m_PointLights;
+	std::unordered_map<uint32_t, Lamp::MeshComponent*> m_MeshComponents;
 };
 
 struct GlobalEnvironment

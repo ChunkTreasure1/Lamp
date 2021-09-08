@@ -1,16 +1,24 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\test1.lgf" position="-5.277136,0.122819,-12.559552" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(1)"/>
-		<Brush lgfPath="assets\models\sphere.lgf" position="1.624907,3.987679,3.429043" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\test1.lgf" position="14.278623,3.970932,-12.527596" rotation="0.000000,0.000000,0.000000" scale="0.447091,2.960000,19.967907" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(1)"/>
+		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,1.899629,10.439320" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sphere.lgf" position="0.000000,0.763550,20.837059" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\teddy.lgf" position="-14.864316,0.954229,16.267361" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Layers/>
 	<Entities>
-		<Entity name="Entity1" position="0.000000,2.244824,0.000000" rotation="0.000000,-33.854748,0.000000" scale="1.000000,1.000000,1.000000"/>
+		<Entity name="Entity3" position="-0.563373,4.310013,17.188782" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+			<Component name="LightComponent">
+				<Param name="Intensity" type="Float" value="10.000000"/>
+				<Param name="Radius" type="Float" value="10.000000"/>
+				<Param name="Falloff" type="Float" value="0.000000"/>
+				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
+			</Component>
+		</Entity>
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-6.691443,10.521607,-23.317574" rotation="-298.204132,-18.049921,0.000000" fov="60.000000"/>
+		<CameraValues position="-14.610673,2.969951,19.657021" rotation="-81.454224,-18.500200,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

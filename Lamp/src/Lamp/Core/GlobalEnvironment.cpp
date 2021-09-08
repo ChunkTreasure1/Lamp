@@ -24,3 +24,18 @@ bool RenderUtils::UnregisterPointLight(Lamp::PointLight* light)
 
 	return false;
 }
+
+void RenderUtils::RegisterMeshComponent(uint32_t id, Lamp::MeshComponent* mesh)
+{
+	m_MeshComponents.insert(std::make_pair(id, mesh));
+}
+
+bool RenderUtils::UnegisterMeshComponent(uint32_t id)
+{
+	if (m_MeshComponents.find(id) != m_MeshComponents.end())
+	{
+		m_MeshComponents.erase(id);
+		return true;
+	}
+	return false;
+}

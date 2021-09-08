@@ -170,10 +170,39 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\2d\FlatColor.frag" />
-    <None Include="engine\shaders\2d\FlatColor.vert" />
-    <None Include="engine\shaders\2d\Texture.frag" />
-    <None Include="engine\shaders\2d\Texture.vert" />
+    <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl" />
+    <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl" />
+    <None Include="engine\shaders\3d\deferredShading_fs.glsl" />
+    <None Include="engine\shaders\3d\deferredShading_vs.glsl" />
+    <None Include="engine\shaders\3d\dirLightPass_fs.glsl" />
+    <None Include="engine\shaders\3d\gBuffer_fs.glsl" />
+    <None Include="engine\shaders\3d\gBuffer_vs.glsl" />
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate_vs.glsl" />
+    <None Include="engine\shaders\3d\ibl\convolution_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\eqCube_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\eqCube_vs.glsl" />
+    <None Include="engine\shaders\3d\ibl\prefilter_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\skybox_fs.glsl" />
+    <None Include="engine\shaders\3d\ibl\skybox_vs.glsl" />
+    <None Include="engine\shaders\3d\lightPass_vs.glsl" />
+    <None Include="engine\shaders\3d\lineShader_fs.glsl" />
+    <None Include="engine\shaders\3d\lineShader_vs.glsl" />
+    <None Include="engine\shaders\3d\selection_fs.glsl" />
+    <None Include="engine\shaders\3d\selection_vs.glsl" />
+    <None Include="engine\shaders\3d\shader_fs.glsl" />
+    <None Include="engine\shaders\3d\shader_vs.glsl" />
+    <None Include="engine\shaders\3d\shadows\dirShadow_fs.glsl" />
+    <None Include="engine\shaders\3d\shadows\dirShadow_vs.glsl" />
+    <None Include="engine\shaders\3d\shadows\pointShadow_fs.glsl" />
+    <None Include="engine\shaders\3d\shadows\pointShadow_gs.glsl" />
+    <None Include="engine\shaders\3d\shadows\pointShadow_vs.glsl" />
+    <None Include="engine\shaders\3d\sprite_fs.glsl" />
+    <None Include="engine\shaders\3d\sprite_vs.glsl" />
+    <None Include="engine\shaders\3d\ssaoBlur_fs.glsl" />
+    <None Include="engine\shaders\3d\ssao_fs.glsl" />
+    <None Include="engine\shaders\3d\testPbr_fs.glsl" />
+    <None Include="engine\shaders\3d\testPbr_vs.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

@@ -58,6 +58,7 @@ namespace Sandbox3D
 		void UpdateLogTool();
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
+		void UpdateRenderingSettings();
 
 		//Shortcuts
 		void SaveLevelAs();
@@ -75,9 +76,10 @@ namespace Sandbox3D
 		Lamp::Level* m_pLevel = nullptr;
 
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
+		Ref<Lamp::Framebuffer> m_GBuffer;
 		Ref<Lamp::Framebuffer> m_SandboxBuffer;
-		Ref<Lamp::Framebuffer> m_SecondaryBuffer;
-
+		Ref<Lamp::Framebuffer> m_SSAOBuffer;
+		Ref<Lamp::Framebuffer> m_SSAOBlurBuffer;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
@@ -133,6 +135,9 @@ namespace Sandbox3D
 
 		//Level settings
 		bool m_LevelSettingsOpen = false;
+
+		//Rendering settings
+		bool m_RenderingSettingsOpen = false;
 		//--------------------------------------
 	};
 }

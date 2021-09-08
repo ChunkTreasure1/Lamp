@@ -10,6 +10,7 @@ mro
 
 #version 440 core
 layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int Color2;
 
 in Out
 {
@@ -55,7 +56,9 @@ uniform int u_LightCount;
 uniform DirectionalLight u_DirectionalLight;
 
 uniform vec3 u_CameraPosition;
+uniform int u_ObjectId;
 uniform float u_Exposure;
+uniform float u_Gamma;
 
 //Bind the shadowmap to slot 0, 1, 2, 3, 4
 uniform sampler2D u_ShadowMap;
@@ -110,7 +113,6 @@ float DirectionalShadowCalculation(vec4 pos)
 	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
-	vec3 normal = normalize(v_In.Normal);
 
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
@@ -218,7 +220,7 @@ vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity
 
 void main()
 {
-	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(2.2));
+	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(u_Gamma));
 	float metallic = texture(u_Material.mro, v_In.TexCoord).r;
 	float roughness = texture(u_Material.mro, v_In.TexCoord).g;
 	float ao = texture(u_Material.mro, v_In.TexCoord).b;
@@ -257,7 +259,8 @@ void main()
 	color = vec3(1.0) - exp(-color * u_Exposure);
 
 	//Gamma correction
-	color = pow(color, vec3(1.0 / 2.2));
+	color = pow(color, vec3(1.0 / u_Gamma));
 
 	FragColor = vec4(color, 1.0);
+	Color2 = u_ObjectId; //ObjectId;
 }

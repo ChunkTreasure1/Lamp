@@ -9,7 +9,7 @@ namespace Sandbox3D
 	class BufferWindow
 	{
 	public:
-		BufferWindow(Ref<Lamp::Framebuffer> framebuffer, const std::string& name)
+		BufferWindow(Ref<Lamp::Framebuffer> framebuffer, const std::string& name, uint32_t texId = 0)
 			: m_FrameBuffer(framebuffer), m_Name(name)
 		{
 			for (auto& att : m_FrameBuffer->GetSpecification().Attachments.Attachments)

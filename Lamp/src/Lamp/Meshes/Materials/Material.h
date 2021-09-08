@@ -27,7 +27,7 @@ namespace Lamp
 		void SetShader(Ref<Shader> shader);
 		inline void SetShininess(float val) { m_Shininess = val; }
 		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetPath(const std::string& path) { m_Path = path; }
+		inline void SetPath(const std::filesystem::path& path) { m_Path = path; }
 
 		//Getting
 		inline std::unordered_map<std::string, Ref<Texture2D>>& GetTextures() { return m_pTextures; }
@@ -35,7 +35,7 @@ namespace Lamp
 		inline const Ref<Shader>& GetShader() { return m_pShader; }
 		inline std::string& GetName() { return m_Name; }
 		inline const float GetShininess() { return m_Shininess; }
-		inline const std::string& GetPath() { return m_Path; }
+		inline const std::filesystem::path& GetPath() { return m_Path; }
 
 		void UploadData();
 
@@ -47,6 +47,6 @@ namespace Lamp
 		Ref<Shader> m_pShader;
 		uint32_t m_Index;
 		std::string m_Name;
-		std::string m_Path;
+		std::filesystem::path m_Path;
 	};
 }

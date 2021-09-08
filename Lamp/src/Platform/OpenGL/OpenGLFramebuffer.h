@@ -17,7 +17,7 @@ namespace Lamp
 		virtual void Unbind() override;
 		virtual void Resize(const uint32_t width, const uint32_t height) override;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
-		virtual void Copy(uint32_t rendererId, const glm::vec2& size) override;
+		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override;
 
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
 		virtual inline const uint32_t GetDepthAttachmentID() override;
@@ -37,6 +37,7 @@ namespace Lamp
 		uint32_t m_RendererID;
 
 		std::vector<uint32_t> m_ColorAttachmentIDs;
+		std::vector<uint32_t> m_RenderbufferIDs;
 		uint32_t m_DepthAttachmentID;
 
 		FramebufferSpecification m_Specification;

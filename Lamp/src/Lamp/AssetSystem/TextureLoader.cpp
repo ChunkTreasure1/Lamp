@@ -71,12 +71,6 @@ namespace Lamp
 			fileEnd = t.path.substr(pos, t.path.size() - 1);
 		}
 
-		bool gammaCorrect = true;
-		if (fileEnd.find("mro") != std::string::npos || fileEnd.find("normal") != std::string::npos)
-		{
-			gammaCorrect = false;
-		}
-
 		if (t.channels == 4)
 		{
 			internalFormat = gammaCorrect ? GL_SRGB8_ALPHA8 : GL_RGBA8;

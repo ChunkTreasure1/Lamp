@@ -53,7 +53,7 @@ namespace Lamp
 		Model()
 		{}
 
-		void Render(size_t id = -1);
+		void Render(size_t id = -1, bool forward = false);
 		void RenderBoundingBox();
 
 		//Setting

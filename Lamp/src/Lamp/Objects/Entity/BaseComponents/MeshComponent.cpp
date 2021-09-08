@@ -9,8 +9,14 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(MeshComponent);
 
+	MeshComponent::~MeshComponent()
+	{
+		g_pEnv->pRenderUtils->UnegisterMeshComponent(m_pEntity->GetID());
+	}
+
 	void MeshComponent::Initialize()
 	{
+		g_pEnv->pRenderUtils->RegisterMeshComponent(m_pEntity->GetId(), this);
 	}
 
 	void MeshComponent::OnEvent(Event& e)
@@ -30,7 +36,7 @@ namespace Lamp
 
 		m_Model->Render(m_pEntity->GetID());
 
-		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().Type != PassType::DirectionalShadow && e.GetPassInfo().Type != PassType::PointShadow))
+		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().type != PassType::DirShadow || e.GetPassInfo().type != PassType::PointShadow))
 		{
 			m_Model->RenderBoundingBox();
 		}

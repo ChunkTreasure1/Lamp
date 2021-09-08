@@ -104,14 +104,19 @@ namespace Lamp
 				}
 			}
 
-			m_pImGuiLayer->Begin();
-
-			for (Layer* pLayer : m_LayerStack)
 			{
-				pLayer->OnImGuiRender(timestep);
+				LP_PROFILE_SCOPE("Application::UpdateImGui")
+
+				m_pImGuiLayer->Begin();
+
+				for (Layer* pLayer : m_LayerStack)
+				{
+					pLayer->OnImGuiRender(timestep);
+				}
+
+				m_pImGuiLayer->End();
 			}
 
-			m_pImGuiLayer->End();
 			m_pWindow->Update(timestep);
 		
 			m_FrameTime.End();

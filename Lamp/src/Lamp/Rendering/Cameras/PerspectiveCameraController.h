@@ -37,7 +37,7 @@ namespace Lamp
 		float m_NearPlane = 0.1f;
 		float m_FarPlane = 100.f;
 		float m_FOV = 45.f;
-		float m_MaxTranslationSpeed = 20.f;
+		float m_MaxTranslationSpeed = 40.f;
 
 		float m_LastX = 1280 / 2;
 		float m_LastY = 720 / 2;

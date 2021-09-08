@@ -5,6 +5,8 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/Objects/Brushes/BrushManager.h"
 
 namespace Lamp
 {
@@ -19,46 +21,131 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
-		if (m_PassSpec.Type == PassType::PointShadow)
+		switch (m_PassSpec.type)
 		{
-			m_PassSpec.LightIndex = 0;
-			for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+			case PassType::PointShadow:
 			{
-				light->ShadowBuffer->Bind();
+				m_PassSpec.LightIndex = 0;
+				for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+				{
+					light->ShadowBuffer->Bind();
+					RenderCommand::Clear();
+
+					Renderer3D::Begin(m_PassSpec);
+
+					AppRenderEvent renderEvent(m_PassSpec);
+					for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+					{
+						entity.second->OnEvent(renderEvent);
+					}
+
+					for (auto& brush : g_pEnv->pBrushManager->GetBrushes())
+					{
+						brush.second->OnEvent(renderEvent);
+					}
+
+
+					Renderer3D::End();
+					light->ShadowBuffer->Unbind();
+					m_PassSpec.LightIndex++;
+				}
+				break;
+			}
+
+			case PassType::Lightning:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::Clear();
+				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::CombineLightning();
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+
+				Renderer3D::CopyDepth();
+				break;
+			}
+
+			case PassType::SSAO:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::ClearColor();
+				Renderer3D::Begin(m_PassSpec);
+
+				Renderer3D::SSAOMainPass();
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+
+			case PassType::SSAOBlur:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				RenderCommand::ClearColor();
+				Renderer3D::Begin(m_PassSpec);
+
+				Renderer3D::SSAOBlurPass();
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+
+			case PassType::Forward:
+			{
+				m_PassSpec.TargetFramebuffer->Bind();
+				Renderer3D::Begin(m_PassSpec);
+
+				AppRenderEvent renderEvent(m_PassSpec);
+				Application::Get().OnEvent(renderEvent);
+
+				for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+				{
+					entity.second->OnEvent(renderEvent);
+				}
+
+				for (auto& f : m_PassSpec.ExtraRenders)
+				{
+					f();
+				}
+
+				Renderer3D::End();
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
+			}
+
+			default:
+			{
+				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
+				RenderCommand::Clear();
+
+				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::Clear();
 
 				Renderer3D::Begin(m_PassSpec);
 
 				AppRenderEvent renderEvent(m_PassSpec);
-				ObjectLayerManager::Get()->OnEvent(renderEvent);
 				Application::Get().OnEvent(renderEvent);
 
+				for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+				{
+					entity.second->OnEvent(renderEvent);
+				}
+
+				for (auto& brush : g_pEnv->pBrushManager->GetBrushes())
+				{
+					brush.second->OnEvent(renderEvent);
+				}
+
+				for (auto& f : m_PassSpec.ExtraRenders)
+				{
+					f();
+				}
+
 				Renderer3D::End();
-				light->ShadowBuffer->Unbind();
-				m_PassSpec.LightIndex++;
+				m_PassSpec.TargetFramebuffer->Unbind();
+				break;
 			}
-		}
-		else
-		{
-			RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-			RenderCommand::Clear();
-
-			m_PassSpec.TargetFramebuffer->Bind();
-			RenderCommand::Clear();
-
-			Renderer3D::Begin(m_PassSpec);
-
-			AppRenderEvent renderEvent(m_PassSpec);
-			ObjectLayerManager::Get()->OnEvent(renderEvent);
-			Application::Get().OnEvent(renderEvent);
-
-			for (auto& f : m_PassSpec.ExtraRenders)
-			{
-				f();
-			}
-
-			Renderer3D::End();
-			m_PassSpec.TargetFramebuffer->Unbind();
 		}
 	}
 
@@ -82,5 +169,6 @@ namespace Lamp
 		{
 			pass->Render();
 		}
+
 	}
 }

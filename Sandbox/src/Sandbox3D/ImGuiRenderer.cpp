@@ -25,8 +25,9 @@
 namespace Sandbox3D
 {
 	void Sandbox3D::UpdatePerspective()
-
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_PerspectiveOpen)
 		{
 			return;
@@ -60,7 +61,7 @@ namespace Sandbox3D
 				m_SandboxController->GetCameraController()->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 			}
 
-			uint32_t textureID = m_SecondaryBuffer->GetColorAttachmentID(0);
+			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID(0);
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if (ImGui::BeginDragDropTarget())
@@ -147,8 +148,9 @@ namespace Sandbox3D
 			{
 				if (duplicate && !hasDuplicated)
 				{
-					if (auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject))
+					if (typeid(*m_pSelectedObject) == typeid(Lamp::Brush))
 					{
+						auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject);
 						m_pSelectedObject = Lamp::Brush::Duplicate(brush);
 					}
 					else if (auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject))
@@ -191,6 +193,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateProperties()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_InspectiorOpen)
 		{
 			return;
@@ -373,6 +377,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLayerView()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_LayerViewOpen)
 		{
 			return;
@@ -467,6 +473,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateCreateTool()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_CreateToolOpen)
 		{
 			return;
@@ -524,6 +532,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLogTool()
 	{
+		LP_PROFILE_FUNCTION();
+
 		static bool autoScroll = true;
 
 		if (!m_LogToolOpen)
@@ -589,6 +599,8 @@ namespace Sandbox3D
 
 	bool Sandbox3D::DrawComponent(Lamp::EntityComponent* ptr)
 	{
+		LP_PROFILE_FUNCTION();
+
 		bool removeComp = false;
 
 		if (ImGui::CollapsingHeader(ptr->GetName().c_str()))
@@ -608,7 +620,7 @@ namespace Sandbox3D
 					int* p = static_cast<int*>(pProp.Value);
 					int v = *p;
 
-					ImGui::InputInt(pProp.Name.c_str(), &v);
+					ImGui::DragInt(pProp.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -642,7 +654,7 @@ namespace Sandbox3D
 					float* p = static_cast<float*>(pProp.Value);
 					float v = *p;
 
-					ImGui::InputFloat(pProp.Name.c_str(), &v);
+					ImGui::DragFloat(pProp.Name.c_str(), &v);
 					if (v != *p)
 					{
 						*p = v;
@@ -658,7 +670,7 @@ namespace Sandbox3D
 					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
 					glm::vec2 v = *p;
 
-					ImGui::InputFloat2(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::DragFloat2(pProp.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -674,7 +686,7 @@ namespace Sandbox3D
 					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
 					glm::vec3 v = *p;
 
-					ImGui::InputFloat3(pProp.Name.c_str(), glm::value_ptr(v));
+					ImGui::DragFloat3(pProp.Name.c_str(), glm::value_ptr(v));
 					if (v != *p)
 					{
 						*p = v;
@@ -690,7 +702,7 @@ namespace Sandbox3D
 					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
 					glm::vec4 v = *p;
 
-					ImGui::InputFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
+					ImGui::DragFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
 					if (v != *p)
 					{
 						*p = v;
@@ -795,6 +807,8 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateLevelSettings()
 	{
+		LP_PROFILE_FUNCTION();
+
 		if (!m_LevelSettingsOpen)
 		{
 			return;
@@ -804,30 +818,74 @@ namespace Sandbox3D
 
 		if (ImGui::CollapsingHeader("Environment"))
 		{
+			ImGui::Text("Sun Settings");
 			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
 			g_pEnv->DirLight.UpdateView();
 
-			static std::string path;
-			ImGui::InputText("HDR environment", &path);
-			ImGui::SameLine();
-			if (ImGui::Button("Open..."))
-			{
-				path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-				if (!path.empty())
-				{
-					Lamp::Renderer3D::SetEnvironment(path);
-				}
-			}
+			ImGui::ColorEdit3("Sun Color", glm::value_ptr(g_pEnv->DirLight.Color));
+			ImGui::DragFloat("Sun Intensity", &g_pEnv->DirLight.Intensity);
 
-			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
+			ImGui::Separator();
+			ImGui::Text("HDR Settings");
 		}
 
 		ImGui::End();
 	}
 
-	void Sandbox3D::CreateDockspace()
-
+	void Sandbox3D::UpdateRenderingSettings()
 	{
+		LP_PROFILE_FUNCTION();
+
+		if (!m_RenderingSettingsOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
+
+		ImGui::Text("HDR");
+
+		static std::string path;
+		ImGui::DragFloat("HDR Exposure", &Lamp::Renderer3D::GetSettings().HDRExposure);
+		ImGui::InputText("HDR environment", &path);
+		ImGui::SameLine();
+		if (ImGui::Button("Open..."))
+		{
+			path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			if (!path.empty())
+			{
+				Lamp::Renderer3D::SetEnvironment(path);
+			}
+
+			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
+		}
+
+		ImGui::Separator();
+
+		ImGui::Text("SSAO");
+
+		int preKernelSize = Lamp::Renderer3D::GetSettings().SSAOKernelSize;
+		ImGui::SliderInt("Kernel Size", &Lamp::Renderer3D::GetSettings().SSAOKernelSize, 16, Lamp::Renderer3D::GetSettings().SSAOMaxKernelSize, "%d");
+		ImGui::SliderFloat("Radius", &Lamp::Renderer3D::GetSettings().SSAORadius, 0.f, 10.f, "%.3f");
+		ImGui::SliderFloat("Bias", &Lamp::Renderer3D::GetSettings().SSAOBias, 0.f, 1.f, "%.3f");
+
+		if (Lamp::Renderer3D::GetSettings().SSAOKernelSize != preKernelSize)
+		{
+			Lamp::Renderer3D::RegenerateSSAOKernel();
+		}
+
+		ImGui::Separator();
+		ImGui::Text("General");
+
+		ImGui::SliderFloat("Gamma", &Lamp::Renderer3D::GetSettings().Gamma, 0.f, 10.f, "%.3f");
+
+		ImGui::End();
+	}
+
+	void Sandbox3D::CreateDockspace()
+	{
+		LP_PROFILE_FUNCTION();
+
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -942,6 +1000,17 @@ namespace Sandbox3D
 				for (auto pWindow : m_pWindows)
 				{
 					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Rendering"))
+			{
+				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
+				if (ImGui::MenuItem("Recompile shaders"))
+				{
+					Lamp::ShaderLibrary::RecompileShaders();
 				}
 
 				ImGui::EndMenu();

@@ -32,9 +32,10 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA16F;
 				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;
 				case Lamp::FramebufferTextureFormat::RG32F: return GL_RG32F;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_R32I;
+				case Lamp::FramebufferTextureFormat::RED: return GL_RED;
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
-				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_R32I;
 			}
 		}
 
@@ -47,6 +48,7 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA;
 				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA;
 				case Lamp::FramebufferTextureFormat::RG32F: return GL_RG;
+				case Lamp::FramebufferTextureFormat::RED: return GL_RED;
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
@@ -62,6 +64,7 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_FLOAT;
 				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_FLOAT;
 				case Lamp::FramebufferTextureFormat::RG32F: return GL_FLOAT;
+				case Lamp::FramebufferTextureFormat::RED: return GL_FLOAT;
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_FLOAT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_INT;
@@ -90,6 +93,29 @@ namespace Lamp
 			case Lamp::FramebufferTextureWrap::ClampToEdge: return GL_CLAMP_TO_EDGE;
 			case Lamp::FramebufferTextureWrap::ClampToBorder: return GL_CLAMP_TO_BORDER;
 			case Lamp::FramebufferTextureWrap::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
+			}
+		}
+
+		static GLint RenderbufferTypeGL(FramebufferRenderbufferType type)
+		{
+			switch (type)
+			{
+			case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_COMPONENTS;
+			case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_COMPONENT;
+				break;
+			default:
+				break;
+			}
+		}
+
+		static GLint RenderbufferTypeAttachment(FramebufferRenderbufferType type)
+		{
+			switch (type)
+			{
+			case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_ATTACHMENT0;
+			case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_ATTACHMENT;
+			default:
+				break;
 			}
 		}
 
@@ -210,9 +236,11 @@ namespace Lamp
 		return pixelData;
 	}
 
-	void OpenGLFramebuffer::Copy(uint32_t rendererId, const glm::vec2& size)
+	void OpenGLFramebuffer::Copy(uint32_t rendererId, const glm::vec2& size, bool depth)
 	{
-		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		int bit = depth ? GL_DEPTH_BUFFER_BIT : GL_COLOR_BUFFER_BIT;
+
+		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, bit, GL_NEAREST);
 	}
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)
@@ -305,6 +333,18 @@ namespace Lamp
 		else if (m_ColorAttachmentSpecs.empty())
 		{
 			glDrawBuffer(GL_NONE);
+		}
+
+		for (auto& buff : m_Specification.Attachments.Renderbuffers)
+		{
+			uint32_t id;
+			glGenRenderbuffers(1, &id);
+			glBindRenderbuffer(GL_RENDERBUFFER, id);
+
+			glRenderbufferStorage(GL_RENDERBUFFER, Utils::RenderbufferTypeGL(buff.Format), m_Specification.Width, m_Specification.Height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, Utils::RenderbufferTypeAttachment(buff.Format), GL_RENDERBUFFER, id);
+
+			m_RenderbufferIDs.push_back(id);
 		}
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

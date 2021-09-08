@@ -12,10 +12,12 @@ namespace Lamp
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+		virtual void Recompile() override;
 
 		virtual void UploadBool(const std::string& name, bool value) const override;
 		virtual void UploadInt(const std::string& name, int value) const override;
 		virtual void UploadFloat(const std::string& name, float value) const override;
+		virtual void UploadFloat2(const std::string& name, const glm::vec2& value) const override;
 		virtual void UploadFloat3(const std::string& name, const glm::vec3& value) const override;
 		virtual void UploadFloat4(const std::string& name, const glm::vec4& value) const override;
 

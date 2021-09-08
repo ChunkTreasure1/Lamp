@@ -16,6 +16,8 @@
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 
+#include <random>
+
 namespace Lamp
 {
 	struct LineVertex
@@ -73,10 +75,30 @@ namespace Lamp
 		Ref<Shader> PointShadowShader;
 		/////////////////
 
+		Ref<Shader> GBufferShader;
+		Ref<Shader> DeferredShader;
 		Ref<Shader> SelectionShader;
+		Ref<Framebuffer> GBuffer;
+		Ref<Framebuffer> LightBuffer;
+
+		/////SSAO/////
+		Ref<Texture2D> SSAONoiseTexture;
+		std::vector<glm::vec3> SSAONoise;
+		std::vector<glm::vec3> SSAOKernel;
+		Ref<Shader> SSAOMainShader;
+		Ref<Shader> SSAOBlurShader;
+		Ref<Framebuffer> SSAOBuffer;
+		Ref<Framebuffer> SSAOBlurBuffer;
+		//////////////
 	};
 
 	static Renderer3DStorage* s_pData;
+	RendererSettings Renderer3D::s_RendererSettings;
+
+	static float Lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
 
 	void Renderer3D::Initialize()
 	{
@@ -85,23 +107,23 @@ namespace Lamp
 
 		/////Quad/////
 		{
-			std::vector<float> quadPositions =
+			std::vector<float> quadVertices =
 			{
 				// positions       // texture Coords
-				-1.f, -1.f, 0.0f,  0.0f, 0.0f,
-				 1.f, -1.f, 0.0f,  1.0f, 0.0f,
-				 1.f,  1.f, 0.0f,  1.0f, 1.0f,
-				-1.f,  1.f, 0.0f,  0.0f, 1.0f,
+				 1.f,  1.f, 0.0f,  1.0f, 1.0f, // top right
+				 1.f, -1.f, 0.0f,  1.0f, 0.0f, // bottom right
+				-1.f, -1.f, 0.0f,  0.0f, 0.0f, // bottom left
+				-1.f,  1.f, 0.0f,  0.0f, 1.0f, // top left
 			};
 
 			std::vector<uint32_t> quadIndices =
 			{
-				0, 1, 2,
-				0, 2, 3
+				0, 1, 3, //(top left - bottom left - top right)
+				1, 2, 3 //(top left - top right - bottom right)
 			};
 
 			s_pData->QuadVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadPositions, (uint32_t)sizeof(float) * quadPositions.size());
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)sizeof(float) * quadVertices.size());
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" },
@@ -121,7 +143,7 @@ namespace Lamp
 			({
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float4, "a_Color" }
-				});
+			});
 			s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -186,7 +208,19 @@ namespace Lamp
 		}
 		////////////////
 
+		s_pData->GBufferShader = ShaderLibrary::GetShader("gbuffer");
+		s_pData->DeferredShader = ShaderLibrary::GetShader("deferred");
 		s_pData->SelectionShader = ShaderLibrary::GetShader("selection");
+
+		/////SSAO/////
+		RegenerateSSAOKernel();
+
+		s_pData->SSAONoiseTexture = Texture2D::Create(4, 4);
+		s_pData->SSAONoiseTexture->SetData(&s_pData->SSAONoise[0], 0);
+
+		s_pData->SSAOMainShader = ShaderLibrary::GetShader("SSAOMain");
+		s_pData->SSAOBlurShader = ShaderLibrary::GetShader("SSAOBlur");
+		//////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -208,7 +242,82 @@ namespace Lamp
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
+
 		s_pData->CurrentRenderPass = nullptr;
+	}
+
+	void Renderer3D::CombineLightning()
+	{
+		if (!s_pData->GBuffer || !s_pData->SSAOBuffer)
+		{
+			return;
+		}
+
+		RenderCommand::SetCullFace(CullFace::Front);
+		s_pData->DeferredShader->Bind();
+
+		s_pData->DeferredShader->UploadInt("u_GBuffer.position", 0);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.normal", 1);
+		s_pData->DeferredShader->UploadInt("u_GBuffer.albedo", 2);
+
+		s_pData->DeferredShader->UploadInt("u_ShadowMap", 3);
+		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 4);
+		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 5);
+		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 6);
+		s_pData->DeferredShader->UploadInt("u_SSAO", 7);
+
+		s_pData->GBuffer->BindColorAttachment(0, 0);
+		s_pData->GBuffer->BindColorAttachment(1, 1);
+		s_pData->GBuffer->BindColorAttachment(2, 2);
+		s_pData->ShadowBuffer->BindDepthAttachment(3);
+		s_pData->SkyboxBuffer->BindTextures(4);
+
+		s_pData->SSAOBlurBuffer->BindColorAttachment(7);
+
+		s_pData->DeferredShader->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+		s_pData->DeferredShader->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
+		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+		s_pData->DeferredShader->UploadMat4("u_ShadowVP", g_pEnv->DirLight.ViewProjection);
+
+		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
+		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
+		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+
+
+		int lightCount = 0;
+		for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+		{
+			if (lightCount > 11)
+			{
+				LP_CORE_WARN("There are more lights in scene than able to render! Will skip some lights.");
+				break;
+			}
+
+			std::string v = std::to_string(lightCount);
+
+			s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].intensity", light->Intensity);
+			s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].radius", light->Radius);
+			s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].falloff", light->Falloff);
+			s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].farPlane", light->FarPlane);
+
+			s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].position", light->ShadowBuffer->GetPosition());
+			s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].color", light->Color);
+			s_pData->DeferredShader->UploadInt("u_PointLights[" + v + "].shadowMap", lightCount + 8);
+			
+			light->ShadowBuffer->BindDepthAttachment(8 + lightCount);
+
+			lightCount++;
+		}
+
+		for (int i = 0; i < 12; i++)
+		{
+			s_pData->DeferredShader->UploadInt("u_PointLights[" + std::to_string(i) + "].shadowMap", 8 + i);
+		}
+
+		s_pData->LightBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+		s_pData->DeferredShader->UploadInt("u_LightCount", lightCount);
+
+		DrawQuad();
 	}
 
 	void Renderer3D::Flush()
@@ -224,20 +333,27 @@ namespace Lamp
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
-
-		switch (s_pData->CurrentRenderPass->Type)
+		switch (s_pData->CurrentRenderPass->type)
 		{
-			case PassType::DirectionalShadow:
-			{
-				glCullFace(GL_FRONT);
-				s_pData->DirShadowShader->Bind();
+		case PassType::DirShadow:
+		{
+			RenderCommand::SetCullFace(CullFace::Front);
+			s_pData->DirShadowShader->Bind();
 
-				glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
-				s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
-				s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
+			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+			s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
 
-				mesh->GetVertexArray()->Bind();
-				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+			break;
+		}
+
+		case PassType::PointShadow:
+		{
+			RenderCommand::SetCullFace(CullFace::Back);
+			s_pData->PointShadowShader->Bind();
 
 				break;
 			}
@@ -276,7 +392,55 @@ namespace Lamp
 				break;
 			}
 
-			case PassType::Main:
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+			break;
+		}
+
+		case PassType::Geometry:
+		{
+			RenderCommand::SetCullFace(CullFace::Back);
+			s_pData->GBufferShader->Bind();
+			s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
+			s_pData->GBufferShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+			s_pData->GBufferShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
+
+			s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
+			s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
+			s_pData->GBufferShader->UploadInt("u_Material.mro", 2);
+
+			int i = 0;
+			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			{
+				if (mat.GetTextures()[name].get() != nullptr)
+				{
+					mat.GetTextures()[name]->Bind(i);
+					i++;
+				}
+			}
+
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
+			s_pData->GBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+			break;
+		}
+
+		}
+	}
+
+	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
+	{
+		RenderCommand::SetCullFace(CullFace::Back);
+
+		switch (s_pData->CurrentRenderPass->type)
+		{
+		case PassType::Forward:
+		{
+			//Reserve spot 0 for shadow map
+			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
+			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
 				glCullFace(GL_BACK);
 				//Reserve spot 0 for shadow map
@@ -290,12 +454,14 @@ namespace Lamp
 					}
 				}
 
-				mat.GetShader()->Bind();
-				mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-				mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-				mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
-				mat.GetShader()->UploadFloat("u_Exposure", g_pEnv->HDRExposure);
+			mat.GetShader()->Bind();
+			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+			mat.GetShader()->UploadInt("u_ObjectId", id);
+			mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+			mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
 
 				mat.GetShader()->UploadInt("u_ShadowMap", 0);
 				s_pData->ShadowBuffer->BindDepthAttachment(0);
@@ -317,6 +483,23 @@ namespace Lamp
 				break;
 			}
 
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			break;
+		}
+
+		case PassType::Selection:
+		{
+			s_pData->SelectionShader->Bind();
+			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
+			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
+			s_pData->SelectionShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			break;
+		}
+
 		default:
 			break;
 		}
@@ -325,6 +508,8 @@ namespace Lamp
 	void Renderer3D::DrawSkybox()
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+
+		RenderCommand::SetCullFace(CullFace::Back);
 
 		LP_PROFILE_FUNCTION();
 		s_pData->SkyboxShader->Bind();
@@ -398,5 +583,99 @@ namespace Lamp
 	{
 		s_pData->LineIndexCount = 0;
 		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
+	}
+
+	void Renderer3D::CopyDepth()
+	{
+		if (!s_pData->GBuffer || !s_pData->LightBuffer)
+		{
+			return;
+		}
+
+		s_pData->LightBuffer->Copy(s_pData->GBuffer->GetRendererID(), { s_pData->LightBuffer->GetSpecification().Width, s_pData->LightBuffer->GetSpecification().Height }, true);
+	}
+
+	void Renderer3D::SSAOMainPass()
+	{
+		if (!s_pData->GBuffer)
+		{
+			return;
+		}
+
+		RenderCommand::SetCullFace(CullFace::Front);
+
+		s_pData->SSAOMainShader->Bind();
+
+		for (uint32_t i = 0; i < s_pData->SSAOKernel.size(); i++)
+		{
+			s_pData->SSAOMainShader->UploadFloat3("u_Samples[" + std::to_string(i) + "]", s_pData->SSAOKernel[i]);
+		}
+
+		s_pData->SSAOMainShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetProjectionMatrix());
+		s_pData->SSAOMainShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
+		s_pData->SSAOMainShader->UploadInt("u_GBuffer.position", 0);
+		s_pData->SSAOMainShader->UploadInt("u_GBuffer.normal", 1);
+		s_pData->SSAOMainShader->UploadMat4("u_SunShadowVP", glm::mat4(1.f));
+		s_pData->SSAOMainShader->UploadInt("u_KernelSize", s_RendererSettings.SSAOKernelSize);
+		s_pData->SSAOMainShader->UploadFloat("u_Radius", s_RendererSettings.SSAORadius);
+		s_pData->SSAOMainShader->UploadFloat("u_Bias", s_RendererSettings.SSAOBias);
+
+		s_pData->SSAOMainShader->UploadInt("u_Noise", 2);
+
+		glm::vec2 bufferSize = { s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Width, s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Height };
+		s_pData->SSAOMainShader->UploadFloat2("u_BufferSize", bufferSize);
+
+		s_pData->GBuffer->BindColorAttachment(0, 0);
+		s_pData->GBuffer->BindColorAttachment(1, 1);
+		s_pData->SSAONoiseTexture->Bind(2);
+
+		s_pData->SSAOBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+		DrawQuad();
+	}
+
+	void Renderer3D::SSAOBlurPass()
+	{
+		if (!s_pData->SSAOBuffer)
+		{
+			return;
+		}
+
+		RenderCommand::SetCullFace(CullFace::Front);
+
+		s_pData->SSAOBlurShader->Bind();
+		s_pData->SSAOBlurShader->UploadInt("u_SSAO", 0);
+		s_pData->SSAOBuffer->BindColorAttachment(0);
+
+		s_pData->SSAOBlurBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+		DrawQuad();
+	}
+
+	void Renderer3D::RegenerateSSAOKernel()
+	{
+		s_pData->SSAOKernel.clear();
+		s_pData->SSAONoise.clear();
+
+		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+		std::default_random_engine generator;
+		for (uint32_t i = 0; i < s_RendererSettings.SSAOKernelSize; i++)
+		{
+			glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+			sample = glm::normalize(sample);
+			sample *= randomFloats(generator);
+
+			float scale = float(i) / s_RendererSettings.SSAOKernelSize;
+
+			scale = Lerp(0.1f, 1.0f, scale * scale);
+			sample *= scale;
+			s_pData->SSAOKernel.push_back(sample);
+		}
+
+		for (uint32_t i = 0; i < 16; i++)
+		{
+			glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.f);
+			s_pData->SSAONoise.push_back(noise);
+		}
 	}
 }
