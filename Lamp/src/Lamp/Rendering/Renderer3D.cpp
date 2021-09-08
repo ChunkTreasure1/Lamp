@@ -128,7 +128,7 @@ namespace Lamp
 			({
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float2, "a_TexCoords" }
-			});
+				});
 			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
@@ -143,7 +143,7 @@ namespace Lamp
 			({
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float4, "a_Color" }
-			});
+				});
 			s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -303,7 +303,7 @@ namespace Lamp
 			s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].position", light->ShadowBuffer->GetPosition());
 			s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].color", light->Color);
 			s_pData->DeferredShader->UploadInt("u_PointLights[" + v + "].shadowMap", lightCount + 8);
-			
+
 			light->ShadowBuffer->BindDepthAttachment(8 + lightCount);
 
 			lightCount++;
@@ -355,45 +355,32 @@ namespace Lamp
 			RenderCommand::SetCullFace(CullFace::Back);
 			s_pData->PointShadowShader->Bind();
 
-				break;
-			}
+			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
+			const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
 
-			case PassType::PointShadow:
+			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
 			{
-				glCullFace(GL_BACK);
-				s_pData->PointShadowShader->Bind();
-
-				uint32_t j = s_pData->CurrentRenderPass->LightIndex;
-				const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
-
-				for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
-				{
-					s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
-				}
-
-				s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-				s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-				s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
-
-				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-
-				break;
+				s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
 			}
 
-			case PassType::Selection:
-			{
-				s_pData->SelectionShader->Bind();
-				s_pData->SelectionShader->UploadInt("u_ObjectId", id);
-				s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-				s_pData->SelectionShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-
-				mesh->GetVertexArray()->Bind();
-				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-				break;
-			}
+			s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
+			s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
+			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
 
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 
+			break;
+		}
+
+		case PassType::Selection:
+		{
+			s_pData->SelectionShader->Bind();
+			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
+			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
+			s_pData->SelectionShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+
+			mesh->GetVertexArray()->Bind();
+			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
 			break;
 		}
 
@@ -454,14 +441,14 @@ namespace Lamp
 					}
 				}
 
-			mat.GetShader()->Bind();
-			mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-			mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
-			mat.GetShader()->UploadInt("u_ObjectId", id);
-			mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
-			mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
+				mat.GetShader()->Bind();
+				mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
+				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+				mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
+				mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
+				mat.GetShader()->UploadInt("u_ObjectId", id);
+				mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+				mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
 
 				mat.GetShader()->UploadInt("u_ShadowMap", 0);
 				s_pData->ShadowBuffer->BindDepthAttachment(0);

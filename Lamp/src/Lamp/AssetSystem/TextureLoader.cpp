@@ -73,13 +73,13 @@ namespace Lamp
 
 		if (t.channels == 4)
 		{
-			internalFormat = gammaCorrect ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+			internalFormat = GL_RGBA8;
 			dataFormat = GL_RGBA;
 			type = GL_UNSIGNED_BYTE;
 		}
 		else if (t.channels == 3)
 		{
-			internalFormat = gammaCorrect ? GL_SRGB8 : GL_RGB8;
+			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
 			type = GL_UNSIGNED_BYTE;
 		}
