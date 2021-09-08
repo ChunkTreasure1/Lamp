@@ -57,6 +57,15 @@ uniform float u_Gamma;
 
 const float PI = 3.14159265359;
 
+vec3 gridSamplingDisk[20] = vec3[]
+(
+   vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1), 
+   vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+   vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
+   vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
+   vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+);
+
 float distributionGGX(float NdotH, float roughness)
 {
 	float a = roughness * roughness;
@@ -92,7 +101,6 @@ float DirectionalShadowCalculation(vec4 pos)
 	vec3 projCoords = pos.xyz / pos.w;
 	projCoords = projCoords * 0.5 + 0.5;
 
-	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
 	float shadow = 0.0;
@@ -102,11 +110,11 @@ float DirectionalShadowCalculation(vec4 pos)
 		for (int y = -1; y <= 1; y++)
 		{
 			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth > closestDepth ? 1.0 : 0.0;
+			shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
 		}
 	}
 
-	shadow /= 9.0;
+	shadow = (0.5 + (shadow / 18));
 
 	if (projCoords.z > 1.0)
 	{
@@ -145,24 +153,37 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 	return lightStrength;
 }
 
-float PointShadowCalculation(vec3 fragPos, PointLight light)
+float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 {
 	vec3 fragToLight = fragPos - light.position;
-	float closestDepth = texture(light.shadowMap, fragToLight).r;
-	closestDepth *= light.farPlane;
 
 	float currentDepth = length(fragToLight);
 
 	float bias = 0.05;
-	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	float shadow = 0.0;
+	int samples = 20;
+	float offset = 0.1;
+
+	float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
+
+	for(int i = 0; i < samples; ++i)
+    {
+        float closestDepth = texture(light.shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= light.farPlane;   
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+
+	shadow /= float(samples);
 
 	return shadow;
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
 {
-	float shadow = PointShadowCalculation(fragPos, light);
 	float distance = length(light.position - fragPos);
+	float shadow = PointShadowCalculation(fragPos, light, distance);
+
 	if(distance > light.radius)
 	{
 		return vec3(0.0);
