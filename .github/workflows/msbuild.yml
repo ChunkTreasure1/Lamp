@@ -22,7 +22,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Premake
-      run: call vendor\bin\premake\premake5.exe vs2019
+      run: vendor\bin\premake\premake5.exe vs2019
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
