@@ -9,7 +9,7 @@ namespace Lamp
 	class ShaderLibrary
 	{
 	public:
-		static void AddShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath = "");
+		static void AddShader(const std::string& shader);
 		static void LoadShaders();
 		static void RecompileShaders();
 

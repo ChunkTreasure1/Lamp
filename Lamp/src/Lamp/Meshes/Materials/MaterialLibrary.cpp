@@ -58,8 +58,7 @@ namespace Lamp
 
 		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
 		pShader->append_attribute(doc.allocate_attribute("name", mat.GetShader()->GetName().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("vertex", mat.GetShader()->GetVertexPath().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("fragment", mat.GetShader()->GetFragmentPath().c_str()));
+		pShader->append_attribute(doc.allocate_attribute("path", mat.GetShader()->GetPath().c_str()));
 		pRoot->append_node(pShader);
 
 		doc.append_node(pRoot);

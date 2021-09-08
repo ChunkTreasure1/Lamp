@@ -14,13 +14,11 @@
 
 namespace Lamp
 {
-	enum class ShaderType
+	enum ShaderType
 	{
-		Illum = 0,
-		Blinn,
-		Phong,
-		BlinnPhong,
-		Unknown
+		VertexShader = BIT(1),
+		FragmentShader = BIT(2),
+		GeometryShader = BIT(3)
 	};
 
 	struct ShaderSpec
@@ -28,6 +26,7 @@ namespace Lamp
 		std::string Name;
 		int TextureCount;
 		std::vector<std::string> TextureNames;
+		int Type = 0;
 	};
 
 	class Shader
@@ -51,21 +50,14 @@ namespace Lamp
 		virtual void UploadIntArray(const std::string& name, int* values, uint32_t count) const = 0;
 
 		virtual const std::string& GetName() = 0;
-		virtual std::string& GetFragmentPath() = 0;
-		virtual std::string& GetVertexPath() = 0;
-		virtual std::string& GetGeoPath() = 0;
+		virtual std::string& GetPath() = 0;
 
-		inline const ShaderType GetType() { return m_Type; }
 		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
 
 	public:
-		static Ref<Shader> Create(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath = "");
+		static Ref<Shader> Create(const std::string& path);
 
 	protected:
-		ShaderType ShaderTypeFromString(const std::string& s);
-
-	protected:
-		ShaderType m_Type;
 		ShaderSpec m_Specifications;
 	};
 }
