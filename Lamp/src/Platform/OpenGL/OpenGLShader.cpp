@@ -47,6 +47,7 @@ namespace Lamp
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		//Get specs
 		const char* nameToken = "Name:";
 		const char* textureCountToken = "TextureCount:";
 		const char* textureNamesToken = "TextureNames";
@@ -88,12 +89,11 @@ namespace Lamp
 
 				eol = pos;
 			}
-			
-
 		}
 
 		std::unordered_map<GLenum, std::string> shaderSources;
 
+		//Divide up code
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
 		size_t pos = source.find(typeToken, 0);
@@ -129,6 +129,35 @@ namespace Lamp
 			default:
 				m_Specifications.Type = ShaderType::VertexShader;
 				break;
+			}
+		}
+
+		for (auto& source : shaderSources)
+		{
+			std::string& s = source.second;
+			const char* includeToken = "#include";
+			size_t includeTokenLength = strlen(includeToken);
+			size_t includePos = s.find(includeToken, 0);
+			while (includePos != std::string::npos)
+			{
+				size_t eol = s.find_first_of("\r\n", includePos);
+
+				size_t begin = includePos + includeTokenLength + 1;
+				//Get include path and remove from string
+				std::string includePath = s.substr(begin, eol - begin);
+				s.erase(includePos, eol - includePos);
+
+				std::string startPath = m_Path.substr(0, m_Path.find_last_of("/\\") + 1);
+				std::string includeSource = ReadFile(startPath + includePath);
+
+				s.insert(includePos, includeSource);
+
+				size_t nextLinePos = s.find_first_not_of("\r\n", eol);
+				includePos = s.find(includeToken, nextLinePos);
+
+				std::ofstream out("test.txt");
+				out << s;
+				out.close();
 			}
 		}
 

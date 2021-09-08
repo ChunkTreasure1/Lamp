@@ -70,7 +70,7 @@ namespace Sandbox3D
 	{
 		if (m_DefaultShader == nullptr)
 		{
-			m_DefaultShader = Lamp::ShaderLibrary::GetShader("testPbr");
+			m_DefaultShader = Lamp::ShaderLibrary::GetShader("pbrForward");
 		}
 		UpdateCamera(e.GetTimestep());
 
