@@ -9,15 +9,9 @@ namespace Lamp
 	PointShadowBuffer::PointShadowBuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
-		m_Projection = glm::perspective(glm::radians(90.f), (float)spec.Width / (float)spec.Height, 1.f, 100.f);
+		m_Projection = glm::perspective(glm::radians(90.f), (float)spec.Width / (float)spec.Height, 1.f, 25.f);
 
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)));
-
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(1.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
+		SetPosition(m_Position);
 
 		Invalidate();
 	}
@@ -67,7 +61,7 @@ namespace Lamp
 
 		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
 		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
-		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(1.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
+		m_Transforms.push_back(m_Projection * glm::lookAt(m_Position, m_Position + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 	}
 
 	void PointShadowBuffer::Invalidate()

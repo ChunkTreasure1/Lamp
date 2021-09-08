@@ -283,6 +283,7 @@ namespace Lamp
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
 
+
 		int lightCount = 0;
 		for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
 		{
@@ -301,9 +302,16 @@ namespace Lamp
 
 			s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].position", light->ShadowBuffer->GetPosition());
 			s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].color", light->Color);
-			//s_pData->DeferredShader->UploadInt("u_PointLights[" + v + "].shadowMap", 4 + lightCount);
+			s_pData->DeferredShader->UploadInt("u_PointLights[" + v + "].shadowMap", lightCount + 8);
+			
+			light->ShadowBuffer->BindDepthAttachment(8 + lightCount);
 
 			lightCount++;
+		}
+
+		for (int i = 0; i < 12; i++)
+		{
+			s_pData->DeferredShader->UploadInt("u_PointLights[" + std::to_string(i) + "].shadowMap", 8 + i);
 		}
 
 		s_pData->LightBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;

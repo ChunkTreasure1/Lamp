@@ -18,7 +18,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-13.935933,2.284580,17.227465" rotation="-129.154160,-2.900200,0.000000" fov="60.000000"/>
+		<CameraValues position="-14.610673,2.969951,19.657021" rotation="-81.454224,-18.500200,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

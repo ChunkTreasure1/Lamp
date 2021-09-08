@@ -872,6 +872,11 @@ namespace Sandbox3D
 			Lamp::Renderer3D::RegenerateSSAOKernel();
 		}
 
+		ImGui::Separator();
+		ImGui::Text("General");
+
+		ImGui::SliderFloat("Gamma", &Lamp::Renderer3D::GetSettings().Gamma, 0.f, 10.f, "%.3f");
+
 		ImGui::End();
 	}
 

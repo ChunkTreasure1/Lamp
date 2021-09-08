@@ -34,6 +34,8 @@ struct PointLight
 	float intensity;
 	float falloff;
 	float farPlane;
+
+	samplerCube shadowMap;
 };
 
 uniform GBuffer u_GBuffer;
@@ -93,7 +95,6 @@ float DirectionalShadowCalculation(vec4 pos)
 	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
-
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
 	for (int x = -1; x <= 1; x++)
@@ -144,9 +145,23 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 	return lightStrength;
 }
 
+float PointShadowCalculation(vec3 fragPos, PointLight light)
+{
+	vec3 fragToLight = fragPos - light.position;
+	float closestDepth = texture(light.shadowMap, fragToLight).r;
+	closestDepth *= light.farPlane;
+
+	float currentDepth = length(fragToLight);
+
+	float bias = 0.05;
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+	return shadow;
+}
+
 vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
 {
-	float shadow = 0.0; //PointShadowCalculation(fragPos, light);
+	float shadow = PointShadowCalculation(fragPos, light);
 	float distance = length(light.position - fragPos);
 	if(distance > light.radius)
 	{

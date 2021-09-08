@@ -375,8 +375,8 @@ namespace Sandbox3D
 				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
 			};
 			shadowBuffer.ClearColor = m_ClearColor;
-			shadowBuffer.Height = 4096;
-			shadowBuffer.Width = 4096;
+			shadowBuffer.Height = 8192;
+			shadowBuffer.Width = 8192;
 
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
