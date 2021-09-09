@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "ShaderLibrary.h"
 
+#include "Lamp/Input/FileSystem.h"
+
 namespace Lamp
 {
 	std::vector<Ref<Shader>> ShaderLibrary::m_Shaders;
@@ -14,21 +16,13 @@ namespace Lamp
 
 	void ShaderLibrary::LoadShaders()
 	{
-		AddShader("engine/shaders/3d/lineShader.glsl");
-		AddShader("engine/shaders/3d/main/pbrForward.glsl");
-		AddShader("engine/shaders/3d/ibl/eqCube.glsl");
-		AddShader("engine/shaders/3d/ibl/skybox.glsl");
-		AddShader("engine/shaders/3d/shadows/pointShadow.glsl");
-		AddShader("engine/shaders/3d/ibl/convolution.glsl");
-		AddShader("engine/shaders/3d/ibl/prefilter.glsl");
-		AddShader("engine/shaders/3d/ibl/brdfIntegrate.glsl");
-		AddShader("engine/shaders/3d/sprite.glsl");
-		AddShader("engine/shaders/3d/main/gBuffer.glsl");
-		AddShader("engine/shaders/3d/main/deferredShading.glsl");
-		AddShader("engine/shaders/3d/main/ssao.glsl");
-		AddShader("engine/shaders/3d/main/ssaoBlur.glsl");
-		AddShader("engine/shaders/3d/selection.glsl");
-		AddShader("engine/shaders/3d/shadows/dirShadow.glsl");
+		std::vector<std::string> paths;
+		FileSystem::GetAllFilesOfType(paths, ".glsl", "engine");
+
+		for (auto& path : paths)
+		{
+			AddShader(path);
+		}
 	}
 
 	void ShaderLibrary::RecompileShaders()

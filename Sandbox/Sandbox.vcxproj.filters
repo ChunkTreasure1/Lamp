@@ -28,11 +28,11 @@
     <Filter Include="engine\shaders\3d">
       <UniqueIdentifier>{5A1EE239-C634-E0CF-0FAC-6BF17B01B157}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\shaders\3d\Testing">
-      <UniqueIdentifier>{A74F0D1B-1312-41A5-5CC2-CF31C8C31983}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\shaders\3d\ibl">
       <UniqueIdentifier>{E04C3980-4CB9-F47A-15AD-8CD881D816E3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\shaders\3d\main">
+      <UniqueIdentifier>{2E166587-1A10-8ED9-037D-24EAEF15F445}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\shaders\3d\shadows">
       <UniqueIdentifier>{82C00B73-EE82-3FFD-3733-CE89A33418DB}</UniqueIdentifier>
@@ -136,103 +136,49 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\3d\Testing\testShadow_fs.glsl">
-      <Filter>engine\shaders\3d\Testing</Filter>
-    </None>
-    <None Include="engine\shaders\3d\Testing\testShadow_vs.glsl">
-      <Filter>engine\shaders\3d\Testing</Filter>
-    </None>
-    <None Include="engine\shaders\3d\deferredShading_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\deferredShading_vs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\dirLightPass_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\gBuffer_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\gBuffer_vs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\ibl\brdfIntegrate_fs.glsl">
+    <None Include="engine\shaders\3d\ibl\brdfIntegrate.glsl">
       <Filter>engine\shaders\3d\ibl</Filter>
     </None>
-    <None Include="engine\shaders\3d\ibl\brdfIntegrate_vs.glsl">
+    <None Include="engine\shaders\3d\ibl\convolution.glsl">
       <Filter>engine\shaders\3d\ibl</Filter>
     </None>
-    <None Include="engine\shaders\3d\ibl\convolution_fs.glsl">
+    <None Include="engine\shaders\3d\ibl\eqCube.glsl">
       <Filter>engine\shaders\3d\ibl</Filter>
     </None>
-    <None Include="engine\shaders\3d\ibl\eqCube_fs.glsl">
+    <None Include="engine\shaders\3d\ibl\prefilter.glsl">
       <Filter>engine\shaders\3d\ibl</Filter>
     </None>
-    <None Include="engine\shaders\3d\ibl\eqCube_vs.glsl">
+    <None Include="engine\shaders\3d\ibl\skybox.glsl">
       <Filter>engine\shaders\3d\ibl</Filter>
     </None>
-    <None Include="engine\shaders\3d\ibl\prefilter_fs.glsl">
-      <Filter>engine\shaders\3d\ibl</Filter>
-    </None>
-    <None Include="engine\shaders\3d\ibl\skybox_fs.glsl">
-      <Filter>engine\shaders\3d\ibl</Filter>
-    </None>
-    <None Include="engine\shaders\3d\ibl\skybox_vs.glsl">
-      <Filter>engine\shaders\3d\ibl</Filter>
-    </None>
-    <None Include="engine\shaders\3d\lightPass_vs.glsl">
+    <None Include="engine\shaders\3d\lineShader.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
-    <None Include="engine\shaders\3d\lineShader_fs.glsl">
+    <None Include="engine\shaders\3d\main\deferredShading.glsl">
+      <Filter>engine\shaders\3d\main</Filter>
+    </None>
+    <None Include="engine\shaders\3d\main\gBuffer.glsl">
+      <Filter>engine\shaders\3d\main</Filter>
+    </None>
+    <None Include="engine\shaders\3d\main\pbrForward.glsl">
+      <Filter>engine\shaders\3d\main</Filter>
+    </None>
+    <None Include="engine\shaders\3d\main\ssao.glsl">
+      <Filter>engine\shaders\3d\main</Filter>
+    </None>
+    <None Include="engine\shaders\3d\main\ssaoBlur.glsl">
+      <Filter>engine\shaders\3d\main</Filter>
+    </None>
+    <None Include="engine\shaders\3d\selection.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
-    <None Include="engine\shaders\3d\lineShader_vs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\selection_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\selection_vs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shader_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shader_vs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shadows\dirShadow_fs.glsl">
+    <None Include="engine\shaders\3d\shadows\dirShadow.glsl">
       <Filter>engine\shaders\3d\shadows</Filter>
     </None>
-    <None Include="engine\shaders\3d\shadows\dirShadow_vs.glsl">
+    <None Include="engine\shaders\3d\shadows\pointShadow.glsl">
       <Filter>engine\shaders\3d\shadows</Filter>
     </None>
-    <None Include="engine\shaders\3d\shadows\pointShadow_fs.glsl">
-      <Filter>engine\shaders\3d\shadows</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shadows\pointShadow_gs.glsl">
-      <Filter>engine\shaders\3d\shadows</Filter>
-    </None>
-    <None Include="engine\shaders\3d\shadows\pointShadow_vs.glsl">
-      <Filter>engine\shaders\3d\shadows</Filter>
-    </None>
-    <None Include="engine\shaders\3d\sprite_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\sprite_vs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\ssaoBlur_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\ssao_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\testPbr_fs.glsl">
-      <Filter>engine\shaders\3d</Filter>
-    </None>
-    <None Include="engine\shaders\3d\testPbr_vs.glsl">
+    <None Include="engine\shaders\3d\sprite.glsl">
       <Filter>engine\shaders\3d</Filter>
     </None>
   </ItemGroup>

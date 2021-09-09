@@ -70,8 +70,7 @@ namespace Lamp
 	{
 		using namespace rapidxml;
 		std::vector<std::string> paths;
-		std::vector<std::string> foldes = FileSystem::GetAssetFolders();
-		FileSystem::GetAllMaterialFiles(foldes, paths);
+		FileSystem::GetAllFilesOfType(paths, ".mtl", "assets");
 
 		for (std::string& path : paths)
 		{

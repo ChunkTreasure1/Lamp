@@ -154,10 +154,6 @@ namespace Lamp
 
 				size_t nextLinePos = s.find_first_not_of("\r\n", eol);
 				includePos = s.find(includeToken, nextLinePos);
-
-				std::ofstream out("test.txt");
-				out << s;
-				out.close();
 			}
 		}
 
