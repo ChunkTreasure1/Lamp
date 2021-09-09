@@ -74,7 +74,6 @@ namespace Lamp
 	{
 		while (m_Running)
 		{
-			g_pEnv->ShouldRenderBB = false;
 			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;

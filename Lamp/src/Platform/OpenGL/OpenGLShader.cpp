@@ -3,6 +3,25 @@
 
 namespace Lamp
 {
+	static UniformType GLUniformToUniformType(GLenum type)
+	{
+		switch (type)
+		{
+		case GL_INT: return UniformType::Int;
+		case GL_FLOAT: return UniformType::Float;
+		case GL_FLOAT_VEC2: return UniformType::Float2;
+		case GL_FLOAT_VEC3: return UniformType::Float3;
+		case GL_FLOAT_VEC4: return UniformType::Float4;
+		case GL_FLOAT_MAT3: return UniformType::Mat3;
+		case GL_FLOAT_MAT4: return UniformType::Mat4;
+		case GL_SAMPLER_2D: return UniformType::Sampler2D;
+		case GL_SAMPLER_CUBE: return UniformType::SamplerCube;
+
+		default:
+			break;
+		}
+	}
+
 	static GLenum ShaderTypeFromString(const std::string& type)
 	{
 		if (type == "vertex")
@@ -28,6 +47,20 @@ namespace Lamp
 		auto shaderSources = PreProcess(source);
 
 		Compile(shaderSources);
+
+		int count;
+		glGetProgramiv(m_RendererID, GL_ACTIVE_UNIFORMS, &count);
+		for (int i = 0; i < count; i++)
+		{
+			GLchar name[512];
+			int length;
+			int size;
+			GLenum type;
+
+			glGetActiveUniform(m_RendererID, (GLuint)i, 512, &length, &size, &type, name);
+
+			m_Specifications.Uniforms.emplace(std::make_pair(name, GLUniformToUniformType(type))); //TODO: add support for arrays
+		}
 	}
 
 	OpenGLShader::~OpenGLShader()

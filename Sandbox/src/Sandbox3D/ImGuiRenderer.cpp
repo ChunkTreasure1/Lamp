@@ -884,6 +884,11 @@ namespace Sandbox3D
 
 	void Sandbox3D::UpdateRenderPassView()
 	{
+		if (!m_RenderPassViewOpen)
+		{
+			return;
+		}
+
 		ImGui::Begin("Render pass view", &m_RenderPassViewOpen);
 
 		auto& passes = Lamp::RenderPassManager::Get()->GetRenderPasses();
@@ -891,6 +896,34 @@ namespace Sandbox3D
 		{
 			if (ImGui::CollapsingHeader(pass->GetSpecification().Name.c_str()))
 			{
+			}
+		}
+
+		ImGui::End();
+	}
+
+	void Sandbox3D::UpdateShaderView()
+	{
+		if (!m_ShaderViewOpen)
+		{
+			return;
+		}
+
+		ImGui::Begin("Shader View", &m_ShaderViewOpen);
+
+		static auto& shaders = Lamp::ShaderLibrary::GetShaders();
+		for (auto& shader : shaders)
+		{
+			if (ImGui::CollapsingHeader(shader->GetName().c_str()))
+			{
+				ImGui::Text("Path: %s", shader->GetPath().c_str());
+				ImGui::Separator();
+
+				ImGui::Text("Uniforms");
+				for (auto& uniform : shader->GetSpecifications().Uniforms)
+				{
+					ImGui::Selectable(uniform.first.c_str());
+				}
 			}
 		}
 
@@ -1024,6 +1057,7 @@ namespace Sandbox3D
 			{
 				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
 				ImGui::MenuItem("Render pass view", NULL, &m_RenderPassViewOpen);
+				ImGui::MenuItem("Shader View", NULL, &m_ShaderViewOpen);
 				if (ImGui::MenuItem("Recompile shaders"))
 				{
 					Lamp::ShaderLibrary::RecompileShaders();

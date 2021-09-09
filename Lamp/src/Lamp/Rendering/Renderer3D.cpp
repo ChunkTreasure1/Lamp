@@ -92,7 +92,7 @@ namespace Lamp
 		Ref<Framebuffer> SSAOBlurBuffer;
 		//////////////
 
-		/////Uniform buffer/////
+		/////Uniform buffers/////
 		struct UBuffer
 		{
 			glm::mat4 View;
@@ -271,6 +271,7 @@ namespace Lamp
 
 	void Renderer3D::CombineLightning()
 	{
+		LP_PROFILE_FUNCTION();
 		if (!s_pData->GBuffer || !s_pData->SSAOBuffer)
 		{
 			return;
@@ -371,6 +372,7 @@ namespace Lamp
 
 		case PassType::PointShadow:
 		{
+			LP_PROFILE_SCOPE("PointShadowPass");
 			RenderCommand::SetCullFace(CullFace::Back);
 			s_pData->PointShadowShader->Bind();
 
@@ -393,6 +395,7 @@ namespace Lamp
 
 		case PassType::Selection:
 		{
+			LP_PROFILE_SCOPE("SelectionPass");
 			s_pData->SelectionShader->Bind();
 			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
 			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
@@ -404,6 +407,8 @@ namespace Lamp
 
 		case PassType::Geometry:
 		{
+			LP_PROFILE_SCOPE("GeometryPass");
+
 			RenderCommand::SetCullFace(CullFace::Back);
 			s_pData->GBufferShader->Bind();
 			s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
@@ -435,6 +440,7 @@ namespace Lamp
 
 	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
 	{
+		LP_PROFILE_FUNCTION();
 		RenderCommand::SetCullFace(CullFace::Back);
 
 		switch (s_pData->CurrentRenderPass->type)
@@ -592,6 +598,7 @@ namespace Lamp
 
 	void Renderer3D::SSAOMainPass()
 	{
+		LP_PROFILE_FUNCTION();
 		if (!s_pData->GBuffer)
 		{
 			return;
@@ -628,6 +635,7 @@ namespace Lamp
 
 	void Renderer3D::SSAOBlurPass()
 	{
+		LP_PROFILE_FUNCTION();
 		if (!s_pData->SSAOBuffer)
 		{
 			return;

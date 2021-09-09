@@ -14,6 +14,19 @@
 
 namespace Lamp
 {
+	enum class UniformType
+	{
+		Int,
+		Float,
+		Float2,
+		Float3,
+		Float4,
+		Mat3,
+		Mat4,
+		Sampler2D,
+		SamplerCube
+	};
+
 	enum ShaderType
 	{
 		VertexShader = BIT(1),
@@ -26,6 +39,7 @@ namespace Lamp
 		std::string Name;
 		int TextureCount;
 		std::vector<std::string> TextureNames;
+		std::map<std::string, UniformType> Uniforms;
 		int Type = 0;
 	};
 

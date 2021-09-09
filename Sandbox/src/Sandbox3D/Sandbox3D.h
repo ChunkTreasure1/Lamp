@@ -60,6 +60,7 @@ namespace Sandbox3D
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
 		void UpdateRenderPassView();
+		void UpdateShaderView();
 
 		//Shortcuts
 		void SaveLevelAs();
@@ -140,6 +141,7 @@ namespace Sandbox3D
 		//Rendering settings
 		bool m_RenderingSettingsOpen = false;
 		bool m_RenderPassViewOpen = false;
+		bool m_ShaderViewOpen = false;
 		//--------------------------------------
 	};
 }

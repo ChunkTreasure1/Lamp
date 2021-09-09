@@ -122,6 +122,7 @@ namespace Sandbox3D
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
 		UpdateRenderPassView();
+		UpdateShaderView();
 		m_assetManager.OnImGuiRender();
 
 		for	(auto& window : m_BufferWindows)
