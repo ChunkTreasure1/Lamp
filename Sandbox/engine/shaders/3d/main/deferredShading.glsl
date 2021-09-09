@@ -34,7 +34,6 @@ struct GBuffer
 };
 
 uniform GBuffer u_GBuffer;
-uniform mat4 u_ShadowVP;
 uniform sampler2D u_SSAO;
 
 

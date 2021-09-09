@@ -15,6 +15,7 @@
 #include "Lamp/Rendering/Texture2D/IBLBuffer.h"
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "UniformBuffer.h"
 
 #include <random>
 
@@ -90,6 +91,17 @@ namespace Lamp
 		Ref<Framebuffer> SSAOBuffer;
 		Ref<Framebuffer> SSAOBlurBuffer;
 		//////////////
+
+		/////Uniform buffer/////
+		struct UBuffer
+		{
+			glm::mat4 View;
+			glm::mat4 Projection;
+			glm::mat4 ShadowVP;
+			glm::vec3 CameraPosition;
+		} DataBuffer;
+		Ref<UniformBuffer> DataUniformBuffer;
+		////////////////////////
 	};
 
 	static Renderer3DStorage* s_pData;
@@ -221,6 +233,10 @@ namespace Lamp
 		s_pData->SSAOMainShader = ShaderLibrary::GetShader("SSAOMain");
 		s_pData->SSAOBlurShader = ShaderLibrary::GetShader("SSAOBlur");
 		//////////////
+
+		/////Uniform Buffer/////
+		s_pData->DataUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DStorage::UBuffer), 0);
+		////////////////////////
 	}
 
 	void Renderer3D::Shutdown()
@@ -232,6 +248,13 @@ namespace Lamp
 	void Renderer3D::Begin(RenderPassSpecification& passSpec)
 	{
 		s_pData->CurrentRenderPass = &passSpec;
+
+		s_pData->DataBuffer.CameraPosition = passSpec.Camera->GetPosition();
+		s_pData->DataBuffer.Projection = passSpec.Camera->GetProjectionMatrix();
+		s_pData->DataBuffer.View = passSpec.Camera->GetViewMatrix();
+		s_pData->DataBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
+
+		s_pData->DataUniformBuffer->SetData(&s_pData->DataBuffer, sizeof(Renderer3DStorage::DataBuffer));
 
 		ResetBatchData();
 	}
@@ -276,9 +299,7 @@ namespace Lamp
 
 		s_pData->DeferredShader->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
 		s_pData->DeferredShader->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
-		s_pData->DeferredShader->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
-		s_pData->DeferredShader->UploadMat4("u_ShadowVP", g_pEnv->DirLight.ViewProjection);
-
+		
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
@@ -323,7 +344,6 @@ namespace Lamp
 	void Renderer3D::Flush()
 	{
 		s_pData->LineMaterial.GetShader()->Bind();
-		s_pData->LineMaterial.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
@@ -340,8 +360,7 @@ namespace Lamp
 			RenderCommand::SetCullFace(CullFace::Front);
 			s_pData->DirShadowShader->Bind();
 
-			glm::mat4 shadowMVP = g_pEnv->DirLight.ViewProjection * modelMatrix;
-			s_pData->DirShadowShader->UploadMat4("u_ShadowMVP", shadowMVP);
+			s_pData->DirShadowShader->UploadMat4("u_Model", modelMatrix);
 			s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
 
 			mesh->GetVertexArray()->Bind();
@@ -377,7 +396,6 @@ namespace Lamp
 			s_pData->SelectionShader->Bind();
 			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
 			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-			s_pData->SelectionShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
@@ -389,8 +407,6 @@ namespace Lamp
 			RenderCommand::SetCullFace(CullFace::Back);
 			s_pData->GBufferShader->Bind();
 			s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
-			s_pData->GBufferShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-			s_pData->GBufferShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
 
 			s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
 			s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
@@ -442,10 +458,7 @@ namespace Lamp
 				}
 
 				mat.GetShader()->Bind();
-				mat.GetShader()->UploadFloat3("u_CameraPosition", s_pData->CurrentRenderPass->Camera->GetPosition());
 				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-				mat.GetShader()->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
-				mat.GetShader()->UploadMat4("u_SunShadowMVP", g_pEnv->DirLight.ViewProjection * modelMatrix);
 				mat.GetShader()->UploadInt("u_ObjectId", id);
 				mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
 				mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
@@ -480,7 +493,6 @@ namespace Lamp
 			s_pData->SelectionShader->Bind();
 			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
 			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-			s_pData->SelectionShader->UploadMat4("u_ViewProjection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
@@ -500,8 +512,6 @@ namespace Lamp
 
 		LP_PROFILE_FUNCTION();
 		s_pData->SkyboxShader->Bind();
-		s_pData->SkyboxShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
-		s_pData->SkyboxShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetProjectionMatrix());
 		s_pData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
 
 		s_pData->SkyboxBuffer->Bind();
@@ -529,9 +539,7 @@ namespace Lamp
 		s_pData->GridVertexArray->Bind();
 
 		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass->Camera->GetViewMatrix()));
-		s_pData->GridShader->UploadMat4("u_View", viewMat);
 
-		s_pData->GridShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetViewProjectionMatrix());
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}
 
@@ -598,11 +606,8 @@ namespace Lamp
 			s_pData->SSAOMainShader->UploadFloat3("u_Samples[" + std::to_string(i) + "]", s_pData->SSAOKernel[i]);
 		}
 
-		s_pData->SSAOMainShader->UploadMat4("u_Projection", s_pData->CurrentRenderPass->Camera->GetProjectionMatrix());
-		s_pData->SSAOMainShader->UploadMat4("u_View", s_pData->CurrentRenderPass->Camera->GetViewMatrix());
 		s_pData->SSAOMainShader->UploadInt("u_GBuffer.position", 0);
 		s_pData->SSAOMainShader->UploadInt("u_GBuffer.normal", 1);
-		s_pData->SSAOMainShader->UploadMat4("u_SunShadowVP", glm::mat4(1.f));
 		s_pData->SSAOMainShader->UploadInt("u_KernelSize", s_RendererSettings.SSAOKernelSize);
 		s_pData->SSAOMainShader->UploadFloat("u_Radius", s_RendererSettings.SSAORadius);
 		s_pData->SSAOMainShader->UploadFloat("u_Bias", s_RendererSettings.SSAOBias);

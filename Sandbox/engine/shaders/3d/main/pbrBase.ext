@@ -19,6 +19,14 @@ struct PointLight
 	samplerCube shadowMap;
 };
 
+layout(std140, binding = 0) uniform Main
+{
+	mat4 u_View;
+	mat4 u_Projection;
+	mat4 u_ShadowVP;
+	vec3 u_CameraPosition;
+};
+
 uniform PointLight u_PointLights[2];
 uniform int u_LightCount;
 uniform DirectionalLight u_DirectionalLight;
@@ -28,7 +36,6 @@ uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
 uniform sampler2D u_BRDFLUT;
 
-uniform vec3 u_CameraPosition;
 uniform float u_Exposure;
 uniform float u_Gamma;
 

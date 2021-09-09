@@ -9,8 +9,13 @@ TextureNames:
 #version 440 core
 layout(location = 0) in vec3 a_Position;
 
-uniform mat4 u_Projection;
-uniform mat4 u_View;
+layout(std140, binding = 0) uniform Main
+{
+	mat4 u_View;
+	mat4 u_Projection;
+	mat4 u_ShadowVP;
+	vec3 u_CameraPosition;
+};
 
 out vec3 v_LocalPos;
 
