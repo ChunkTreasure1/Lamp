@@ -121,6 +121,7 @@ namespace Sandbox3D
 		UpdateLogTool();
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
+		UpdateRenderPassView();
 		m_assetManager.OnImGuiRender();
 
 		for	(auto& window : m_BufferWindows)

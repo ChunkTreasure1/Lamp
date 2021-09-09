@@ -882,6 +882,21 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
+	void Sandbox3D::UpdateRenderPassView()
+	{
+		ImGui::Begin("Render pass view", &m_RenderPassViewOpen);
+
+		auto& passes = Lamp::RenderPassManager::Get()->GetRenderPasses();
+		for (auto& pass : passes)
+		{
+			if (ImGui::CollapsingHeader(pass->GetSpecification().Name.c_str()))
+			{
+			}
+		}
+
+		ImGui::End();
+	}
+
 	void Sandbox3D::CreateDockspace()
 	{
 		LP_PROFILE_FUNCTION();
@@ -1008,6 +1023,7 @@ namespace Sandbox3D
 			if (ImGui::BeginMenu("Rendering"))
 			{
 				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
+				ImGui::MenuItem("Render pass view", NULL, &m_RenderPassViewOpen);
 				if (ImGui::MenuItem("Recompile shaders"))
 				{
 					Lamp::ShaderLibrary::RecompileShaders();

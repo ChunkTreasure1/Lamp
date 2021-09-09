@@ -163,6 +163,11 @@ namespace Lamp
 		return it != m_RenderPasses.end();
 	}
 
+	std::vector<Ref<RenderPass>>& RenderPassManager::GetRenderPasses()
+	{
+		return m_RenderPasses;
+	}
+
 	void RenderPassManager::RenderPasses()
 	{
 		for (auto& pass : m_RenderPasses)

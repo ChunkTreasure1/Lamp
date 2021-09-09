@@ -68,6 +68,8 @@ namespace Lamp
 		void AddPass(Ref<RenderPass>& pass);
 		bool RemovePass(uint32_t id);
 
+		std::vector<Ref<RenderPass>>& GetRenderPasses();
+
 		void RenderPasses();
 
 	public:

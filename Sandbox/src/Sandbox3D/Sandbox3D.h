@@ -59,6 +59,7 @@ namespace Sandbox3D
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
+		void UpdateRenderPassView();
 
 		//Shortcuts
 		void SaveLevelAs();
@@ -138,6 +139,7 @@ namespace Sandbox3D
 
 		//Rendering settings
 		bool m_RenderingSettingsOpen = false;
+		bool m_RenderPassViewOpen = false;
 		//--------------------------------------
 	};
 }
