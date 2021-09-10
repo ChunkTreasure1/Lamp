@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "OpenGLTexture.h"
 
-#include "Lamp/AssetSystem/TextureCache.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -26,7 +26,7 @@ namespace Lamp
 	{
 		m_Path = path;
 
-		TextureCache::GetTexture(path, this);
+		ResourceCache::GetTexture(path, this);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const

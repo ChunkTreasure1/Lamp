@@ -31,9 +31,6 @@ namespace Lamp
 		inline std::unordered_map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
 		inline std::vector<Brush2D*>& Get2DBrushes() { return m_2DBrushes; }
 
-		Brush* GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin);
-		Brush2D* GetBrush2DFromPoint(const glm::vec3& pos, const glm::vec3& origin);
-
 	private:
 		std::unordered_map<uint32_t, Brush*> m_Brushes;
 		std::vector<Brush2D*> m_2DBrushes;

@@ -2,12 +2,13 @@
 #include "AssetManager.h"
 
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
-#include "Lamp/AssetSystem/TextureCache.h"
 
 #include "Lamp/AssetSystem/ModelLoader.h"
 #include "Lamp/AssetSystem/LevelLoader.h"
 
 #include <glm/gtx/quaternion.hpp>
+
+#include "ResourceCache.h"
 
 namespace Lamp
 {
@@ -108,7 +109,7 @@ namespace Lamp
 				{
 					t = TextureLoader::GenerateHDR(assetJob.data);
 				}
-				TextureCache::AddTexture(assetJob.path, t);
+				ResourceCache::AddTexture(assetJob.path, t);
 
 				if (assetJob.pTexture)
 				{

@@ -4,6 +4,7 @@
 #include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/AssetSystem/AssetManager.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -45,8 +46,7 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path)
 	{
-		Ref<Model> model = CreateRef<Model>();
-		g_pEnv->pAssetManager->LoadModel(path, model.get());
+		Ref<Model> model = ResourceCache::GetModel(path);
 
 		auto brush = new Brush(model);
 		brush->SetLayerID(0);
@@ -59,8 +59,7 @@ namespace Lamp
 
 	Brush* BrushManager::Create(const std::string& path, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, uint32_t layerId, const std::string& name)
 	{
-		Ref<Model> model = CreateRef<Model>();
-		g_pEnv->pAssetManager->LoadModel(path, model.get());
+		Ref<Model> model = ResourceCache::GetModel(path);
 		auto brush = new Brush(model);
 
 		brush->SetPosition(pos);
@@ -77,8 +76,8 @@ namespace Lamp
 
 	Brush* BrushManager::Create(Brush* main)
 	{
-		Ref<Model> model = CreateRef<Model>();
-		g_pEnv->pAssetManager->LoadModel(main->GetModel()->GetLGFPath(), model.get());
+		Ref<Model> model = ResourceCache::GetModel(main->GetModel()->GetLGFPath());
+
 		auto brush = new Brush(model);
 		brush->SetLayerID(main->GetLayerID());
 
@@ -105,27 +104,5 @@ namespace Lamp
 		{
 			m_2DBrushes.erase(it);
 		}
-	}
-
-	Brush* BrushManager::GetBrushFromPoint(const glm::vec3& pos, const glm::vec3& origin)
-	{
-		//Brush* brush = dynamic_cast<Brush*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		//if (brush)
-		//{
-		//	return brush;
-		//}
-
-		return nullptr;
-	}
-
-	Brush2D* BrushManager::GetBrush2DFromPoint(const glm::vec3& pos, const glm::vec3& origin)
-	{
-		//Brush2D* brush = dynamic_cast<Brush2D*>(ObjectLayerManager::Get()->GetObjectFromPoint(pos, origin));
-		//if (brush)
-		//{
-		//	return brush;
-		//}
-
-		return nullptr;
 	}
 }

@@ -261,6 +261,7 @@ namespace Lamp
 
 	void Renderer3D::End()
 	{
+		LP_PROFILE_FUNCTION();
 		uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
@@ -344,6 +345,7 @@ namespace Lamp
 
 	void Renderer3D::Flush()
 	{
+		LP_PROFILE_FUNCTION();
 		s_pData->LineMaterial.GetShader()->Bind();
 
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);

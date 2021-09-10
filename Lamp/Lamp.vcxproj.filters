@@ -150,9 +150,6 @@
     <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\TextureCache.h">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
@@ -1545,6 +1542,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="RenderGraphGraph.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
@@ -1554,9 +1552,6 @@
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\AssetSystem\TextureCache.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp">
@@ -1793,5 +1788,6 @@
     <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="RenderGraphGraph.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp" />
   </ItemGroup>
 </Project>
