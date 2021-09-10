@@ -449,50 +449,40 @@ namespace Lamp
 		{
 		case PassType::Forward:
 		{
+			glCullFace(GL_BACK);
 			//Reserve spot 0 for shadow map
 			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
 			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 			{
-				glCullFace(GL_BACK);
-				//Reserve spot 0 for shadow map
-				int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
-				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+				if (mat.GetTextures()[name].get() != nullptr)
 				{
-					if (mat.GetTextures()[name].get() != nullptr)
-					{
-						mat.GetTextures()[name]->Bind(i);
-						i++;
-					}
+					mat.GetTextures()[name]->Bind(i);
+					i++;
 				}
-
-				mat.GetShader()->Bind();
-				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-				mat.GetShader()->UploadInt("u_ObjectId", id);
-				mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
-				mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
-
-				mat.GetShader()->UploadInt("u_ShadowMap", 0);
-				s_pData->ShadowBuffer->BindDepthAttachment(0);
-
-				mat.GetShader()->UploadInt("u_IrradianceMap", 1);
-				mat.GetShader()->UploadInt("u_PrefilterMap", 2);
-				mat.GetShader()->UploadInt("u_BRDFLUT", 3);
-
-				s_pData->SkyboxBuffer->BindTextures(1);
-
-				for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
-				{
-					g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
-				}
-
-				mesh->GetVertexArray()->Bind();
-				RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-
-				break;
 			}
+
+			mat.GetShader()->Bind();
+			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+			mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+			mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
+
+			mat.GetShader()->UploadInt("u_ShadowMap", 0);
+			s_pData->ShadowBuffer->BindDepthAttachment(0);
+
+			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
+			mat.GetShader()->UploadInt("u_PrefilterMap", 2);
+			mat.GetShader()->UploadInt("u_BRDFLUT", 3);
+
+			s_pData->SkyboxBuffer->BindTextures(1);
+
+			//for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+			//{
+			//	g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+			//}
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+
 			break;
 		}
 

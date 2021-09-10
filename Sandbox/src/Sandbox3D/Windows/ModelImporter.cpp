@@ -287,12 +287,21 @@ namespace Sandbox3D
 		ImGui::Checkbox("Show Skybox", &m_RenderSkybox);
 		ImGui::Checkbox("Show Grid", &m_RenderGrid);
 
+		ImGui::Separator();
+		ImGui::Text("Mesh settings");
+
+		if (ImGui::DragFloat("Scale", &m_ImportSettings.MeshScale) && m_pModelToImport)
+		{
+		}
+		
+		ImGui::DragFloat3("Up", glm::value_ptr(m_ImportSettings.MeshUp));
+
 		ImGui::End();
 	}
 
 	void ModelImporter::UpdateMaterial()
 	{
-		ImGui::Begin("Importer Material");
+		ImGui::Begin("Materials");
 
 		static std::vector<const char*> shaders;
 		static std::unordered_map<std::string, std::string> paths;

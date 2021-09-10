@@ -14,8 +14,8 @@ namespace Lamp
 
 		inline const Ref<VertexArray>& GetVertexArray() { return m_pVertexArray; }
 		inline const uint32_t GetMaterialIndex() { return m_MaterialIndex; }
-		inline const std::vector<uint32_t>& GetIndices() { return m_Indices; }
-		inline const std::vector<Vertex>& GetVertices() { return m_Vertices; }
+		inline std::vector<uint32_t>& GetIndices() { return m_Indices; }
+		inline std::vector<Vertex>& GetVertices() { return m_Vertices; }
 
 	private:
 		void SetupMesh();
