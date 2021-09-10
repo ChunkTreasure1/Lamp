@@ -3,42 +3,67 @@
 
 namespace Lamp
 {
-	static UniformType GLUniformToUniformType(GLenum type)
+	namespace Utils
 	{
-		switch (type)
+		static UniformType GLUniformToUniformType(GLenum type)
 		{
-		case GL_INT: return UniformType::Int;
-		case GL_FLOAT: return UniformType::Float;
-		case GL_FLOAT_VEC2: return UniformType::Float2;
-		case GL_FLOAT_VEC3: return UniformType::Float3;
-		case GL_FLOAT_VEC4: return UniformType::Float4;
-		case GL_FLOAT_MAT3: return UniformType::Mat3;
-		case GL_FLOAT_MAT4: return UniformType::Mat4;
-		case GL_SAMPLER_2D: return UniformType::Sampler2D;
-		case GL_SAMPLER_CUBE: return UniformType::SamplerCube;
+			switch (type)
+			{
+			case GL_INT: return UniformType::Int;
+			case GL_FLOAT: return UniformType::Float;
+			case GL_FLOAT_VEC2: return UniformType::Float2;
+			case GL_FLOAT_VEC3: return UniformType::Float3;
+			case GL_FLOAT_VEC4: return UniformType::Float4;
+			case GL_FLOAT_MAT3: return UniformType::Mat3;
+			case GL_FLOAT_MAT4: return UniformType::Mat4;
+			case GL_SAMPLER_2D: return UniformType::Sampler2D;
+			case GL_SAMPLER_CUBE: return UniformType::SamplerCube;
 
-		default:
-			break;
+			default:
+				return UniformType::Int;
+				break;
+			}
+		}
+
+		static uint32_t GLUniformToSize(GLenum type)
+		{
+			switch (type)
+			{
+				case GL_INT: return 4;
+				case GL_FLOAT: return 4;
+				case GL_FLOAT_VEC2: return 4 * 2;
+				case GL_FLOAT_VEC3: return 4 * 3;
+				case GL_FLOAT_VEC4: return 4 * 4;
+				case GL_FLOAT_MAT3: return 4 * 3 * 3;
+				case GL_FLOAT_MAT4: return 4 * 4 * 4;
+				case GL_SAMPLER_2D: return 4;
+				case GL_SAMPLER_CUBE: return 4;
+
+				default:
+					return 1;
+					break;
+			}
+		}
+
+		static GLenum ShaderTypeFromString(const std::string& type)
+		{
+			if (type == "vertex")
+			{
+				return GL_VERTEX_SHADER;
+			}
+			if (type == "fragment")
+			{
+				return GL_FRAGMENT_SHADER;
+			}
+			if (type == "geometry")
+			{
+				return GL_GEOMETRY_SHADER;
+			}
+
+			return 0;
 		}
 	}
 
-	static GLenum ShaderTypeFromString(const std::string& type)
-	{
-		if (type == "vertex")
-		{
-			return GL_VERTEX_SHADER;
-		}
-		if (type == "fragment")
-		{
-			return GL_FRAGMENT_SHADER;
-		}
-		if (type == "geometry")
-		{
-			return GL_GEOMETRY_SHADER;
-		}
-
-		return 0;
-	}
 
 	OpenGLShader::OpenGLShader(const std::string& path)
 		: m_RendererID(0), m_Path(path)
@@ -57,9 +82,15 @@ namespace Lamp
 			int size;
 			GLenum type;
 
-			glGetActiveUniform(m_RendererID, (GLuint)i, 512, &length, &size, &type, name);
+			std::string n;
 
-			m_Specifications.Uniforms.emplace(std::make_pair(name, GLUniformToUniformType(type))); //TODO: add support for arrays
+			glGetActiveUniform(m_RendererID, (GLuint)i, 512, &length, &size, &type, name);
+			if (n.find("["))
+			{
+
+			}
+
+			m_Specifications.Uniforms.emplace(std::make_pair(name, Utils::GLUniformToUniformType(type))); //TODO: add support for arrays
 		}
 	}
 
@@ -137,15 +168,15 @@ namespace Lamp
 
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
-			LP_CORE_ASSERT(ShaderTypeFromString(type), "Invalid shader type specified!");
+			LP_CORE_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified!");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); // start of shader code
 			LP_CORE_ASSERT(eol != std::string::npos, "Syntax error!");
 
 			pos = source.find(typeToken, nextLinePos); //start of next type declaration
 
-			shaderSources[ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
-			switch (ShaderTypeFromString(type))
+			shaderSources[Utils::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
+			switch (Utils::ShaderTypeFromString(type))
 			{
 			case GL_VERTEX_SHADER:
 				m_Specifications.Type |= ShaderType::VertexShader;

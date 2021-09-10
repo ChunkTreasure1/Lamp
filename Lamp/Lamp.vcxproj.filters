@@ -1543,6 +1543,8 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
+    <ClInclude Include="RenderGraphGraph.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
@@ -1790,5 +1792,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
+    <ClCompile Include="RenderGraphGraph.cpp" />
   </ItemGroup>
 </Project>
