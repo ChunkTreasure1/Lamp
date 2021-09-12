@@ -2,3 +2,4 @@
 bin/
 bin-int/
 Sandbox/Profiling/
+*.sln

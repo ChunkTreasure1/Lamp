@@ -198,6 +198,9 @@
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
       <Filter>src\Lamp\Event</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Event\EditorEvent.h">
+      <Filter>src\Lamp\Event</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Event\EntityEvent.h">
       <Filter>src\Lamp\Event</Filter>
     </ClInclude>
@@ -1536,7 +1539,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Event\EditorEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
