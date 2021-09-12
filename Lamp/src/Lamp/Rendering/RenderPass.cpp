@@ -29,7 +29,7 @@ namespace Lamp
 					light->ShadowBuffer->Bind();
 					RenderCommand::Clear();
 
-					Renderer3D::Begin(m_PassSpec, camera);
+					Renderer3D::BeginPass(m_PassSpec);
 
 					AppRenderEvent renderEvent(m_PassSpec, camera);
 					for (auto& entity : g_pEnv->pLevel->GetEntities())
@@ -43,7 +43,7 @@ namespace Lamp
 					}
 
 
-					Renderer3D::End();
+					Renderer3D::EndPass();
 					light->ShadowBuffer->Unbind();
 					m_PassSpec.LightIndex++;
 				}
@@ -54,9 +54,9 @@ namespace Lamp
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::Clear();
-				Renderer3D::Begin(m_PassSpec, camera);
+				Renderer3D::BeginPass(m_PassSpec);
 				Renderer3D::CombineLightning();
-				Renderer3D::End();
+				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 
 				Renderer3D::CopyDepth();
@@ -67,11 +67,11 @@ namespace Lamp
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::ClearColor();
-				Renderer3D::Begin(m_PassSpec, camera);
+				Renderer3D::BeginPass(m_PassSpec);
 
 				Renderer3D::SSAOMainPass();
 
-				Renderer3D::End();
+				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
 			}
@@ -80,11 +80,11 @@ namespace Lamp
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::ClearColor();
-				Renderer3D::Begin(m_PassSpec, camera);
+				Renderer3D::BeginPass(m_PassSpec);
 
 				Renderer3D::SSAOBlurPass();
 
-				Renderer3D::End();
+				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
 			}
@@ -92,7 +92,7 @@ namespace Lamp
 			case PassType::Forward:
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
-				Renderer3D::Begin(m_PassSpec, camera);
+				Renderer3D::BeginPass(m_PassSpec);
 
 				AppRenderEvent renderEvent(m_PassSpec, camera);
 				Application::Get().OnEvent(renderEvent);
@@ -107,7 +107,7 @@ namespace Lamp
 					f();
 				}
 
-				Renderer3D::End();
+				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
 			}
@@ -120,7 +120,7 @@ namespace Lamp
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::Clear();
 
-				Renderer3D::Begin(m_PassSpec, camera);
+				Renderer3D::BeginPass(m_PassSpec);
 
 				AppRenderEvent renderEvent(m_PassSpec, camera);
 				Application::Get().OnEvent(renderEvent);
@@ -140,7 +140,7 @@ namespace Lamp
 					f();
 				}
 
-				Renderer3D::End();
+				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
 			}
@@ -168,10 +168,11 @@ namespace Lamp
 
 	void RenderPassManager::RenderPasses(Ref<CameraBase>& camera)
 	{
+		Renderer3D::Begin(camera);
 		for (auto& pass : m_RenderPasses)
 		{
 			pass->Render(camera);
 		}
-
+		Renderer3D::End();
 	}
 }

@@ -53,11 +53,12 @@ namespace Sandbox3D
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
-				ResizeBuffers((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
-
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
-				m_SandboxController->GetCameraController()->UpdateProjection((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
+				OnEvent(e);
+				g_pEnv->pLevel->OnEvent(e);
+				OnEvent(e);
 			}
 
 			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID(0);
@@ -152,9 +153,10 @@ namespace Sandbox3D
 						auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject);
 						m_pSelectedObject = Lamp::Brush::Duplicate(brush, true);
 					}
-					else if (auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject))
+					else if (typeid(*m_pSelectedObject) == typeid(Lamp::Entity))
 					{
-
+						auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject);
+						m_pSelectedObject = Lamp::Entity::Duplicate(entity, true);
 					}
 
 					hasDuplicated = true;
@@ -1111,7 +1113,18 @@ namespace Sandbox3D
 
 			if (ImGui::BeginMenu("Play"))
 			{
-				ImGui::MenuItem("Play", "Ctrl + G", &m_ShouldPlay);
+				if (ImGui::MenuItem("Play", "Ctrl + G"))
+				{
+					if (m_SceneState == SceneState::Edit)
+					{
+						OnLevelPlay();
+					}
+					else if (m_SceneState == SceneState::Play)
+					{
+						OnLevelStop();
+					}
+				}
+
 				ImGui::MenuItem("Play physics", NULL, &Lamp::Application::Get().GetIsSimulating());
 
 				ImGui::EndMenu();

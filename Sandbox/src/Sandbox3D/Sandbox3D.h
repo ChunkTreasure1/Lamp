@@ -15,6 +15,7 @@
 #include "Actions/ActionHandler.h"
 #include "Windows/BufferWindow.h"
 #include "Windows\AssetManagerPanel.h"
+#include "Lamp/Event/EditorEvent.h"
 
 #include <Game/Game.h>
 
@@ -41,7 +42,6 @@ namespace Sandbox3D
 		void CreateRenderPasses();
 		void SetupFromConfig();
 		void RenderLines();
-		void ResizeBuffers(uint32_t width, uint32_t height);
 
 		void OnLevelPlay();
 		void OnLevelStop();
@@ -51,6 +51,7 @@ namespace Sandbox3D
 		bool OnWindowClose(Lamp::WindowCloseEvent& e);
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
+		bool OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();

@@ -30,6 +30,7 @@ namespace Sandbox3D
 	Sandbox3D::Sandbox3D()
 		: Layer("Sandbox3D"), m_DockspaceID(0)
 	{
+		g_pEnv->IsEditor = true;
 		m_IconPlay = Texture2D::Create("engine/textures/ui/PlayIcon.png");
 		m_IconStop = Texture2D::Create("engine/textures/ui/StopIcon.png");
 
@@ -76,9 +77,10 @@ namespace Sandbox3D
 
 		m_SelectionBuffer->ClearAttachment(0, -1);
 
-		switch (m_SceneState)
 		{
-			LP_PROFILE_SCOPE("Sandbox3D::Update::Level")
+			LP_PROFILE_SCOPE("Sandbox3D::Update::LevelUpdate")
+			switch (m_SceneState)
+			{
 			case SceneState::Edit:
 			{
 				g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), std::dynamic_pointer_cast<CameraBase>(m_SandboxController->GetCameraController()->GetCamera()));
@@ -89,8 +91,10 @@ namespace Sandbox3D
 				g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
 				break;
 			}
-		default:
-			break;
+
+			default:
+				break;
+			}
 		}
 
 		{
@@ -178,6 +182,7 @@ namespace Sandbox3D
 		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
 		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnKeyPressed));
 		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnImGuiBegin));
+		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnViewportSizeChanged));
 	}
 
 	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
@@ -260,6 +265,24 @@ namespace Sandbox3D
 				}
 				break;
 			}
+
+			case LP_KEY_G:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					if (m_SceneState == SceneState::Edit)
+					{
+						OnLevelPlay();
+					}
+					else if (m_SceneState == SceneState::Play)
+					{
+						OnLevelStop();
+					}
+				}
+
+				break;
+			}
 		}
 
 		return false;
@@ -269,6 +292,22 @@ namespace Sandbox3D
 	{
 		ImGuizmo::BeginFrame();
 		return true;
+	}
+
+	bool Sandbox3D::OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e)
+	{
+		uint32_t width = e.GetWidth();
+		uint32_t height = e.GetHeight();
+
+		m_SandboxBuffer->Resize(width, height);
+		m_GBuffer->Resize(width, height);
+		m_SelectionBuffer->Resize(width, height);
+		m_SSAOBuffer->Resize(width, height);
+		m_SSAOBlurBuffer->Resize(width, height);
+
+		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
+
+		return false;
 	}
 
 	void Sandbox3D::GetInput()
@@ -344,15 +383,6 @@ namespace Sandbox3D
 		{
 			Renderer3D::DrawLine(p.first, p.second, 1.f);
 		}
-	}
-
-	void Sandbox3D::ResizeBuffers(uint32_t width, uint32_t height)
-	{
-		m_SandboxBuffer->Resize(width, height);
-		m_GBuffer->Resize(width, height);
-		m_SelectionBuffer->Resize(width, height);
-		m_SSAOBuffer->Resize(width, height);
-		m_SSAOBlurBuffer->Resize(width, height);
 	}
 
 	void Sandbox3D::OnLevelPlay()
@@ -466,7 +496,7 @@ namespace Sandbox3D
 
 			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(ssaoPath);
-		}
+		} 
 		//////////////////
 
 		/////SSAOBlur/////

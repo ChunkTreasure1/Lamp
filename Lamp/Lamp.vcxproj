@@ -150,6 +150,7 @@
     <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
+    <ClInclude Include="src\Lamp\Event\EditorEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />

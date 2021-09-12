@@ -37,6 +37,7 @@ struct GlobalEnvironment
 	Lamp::DirectionalLight DirLight;
 	bool ShouldRenderBB = false;
 	bool ShouldRenderGizmos = true;
+	bool IsEditor = false;
 	float HDRExposure = 3.f;
 
 	RenderUtils* pRenderUtils = nullptr;

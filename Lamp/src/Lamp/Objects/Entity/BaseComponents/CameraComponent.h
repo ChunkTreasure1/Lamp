@@ -6,6 +6,7 @@
 
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 #include "Lamp/Rendering/Cameras/OrthographicCamera.h"
+#include "Lamp/Event/EditorEvent.h"
 
 #include <Lamp.h>
 
@@ -34,6 +35,7 @@ namespace Lamp
 
 	private:
 		bool OnUpdate(AppUpdateEvent& e);
+		bool OnViewportSizeChanged(EditorViewportSizeChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }

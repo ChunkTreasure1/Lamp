@@ -247,10 +247,8 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer3D::Begin(RenderPassSpecification& passSpec, Ref<CameraBase>& camera)
+	void Renderer3D::Begin(Ref<CameraBase>& camera)
 	{
-		s_pData->CurrentRenderPass = &passSpec;
-
 		s_pData->DataBuffer.CameraPosition = camera->GetPosition();
 		s_pData->DataBuffer.Projection = camera->GetProjectionMatrix();
 		s_pData->DataBuffer.View = camera->GetViewMatrix();
@@ -270,7 +268,15 @@ namespace Lamp
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
 		Flush();
+	}
 
+	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
+	{
+		s_pData->CurrentRenderPass = &passSpec;
+	}
+
+	void Renderer3D::EndPass()
+	{
 		s_pData->CurrentRenderPass = nullptr;
 	}
 
