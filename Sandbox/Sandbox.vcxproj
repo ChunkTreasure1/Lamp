@@ -142,7 +142,6 @@
   <ItemGroup>
     <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="..\Lamp\vendor\imnodes\imnodes.h" />
-    <ClInclude Include="src\Sandbox2D\Sandbox2D.h" />
     <ClInclude Include="src\Sandbox3D\Actions\ActionHandler.h" />
     <ClInclude Include="src\Sandbox3D\Sandbox3D.h" />
     <ClInclude Include="src\Sandbox3D\SandboxController.h" />
@@ -157,8 +156,6 @@
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="..\Lamp\vendor\imnodes\imnodes.cpp" />
-    <ClCompile Include="src\Sandbox2D\Sandbox2D.cpp" />
-    <ClCompile Include="src\Sandbox2D\SandboxRenderer.cpp" />
     <ClCompile Include="src\Sandbox3D\Actions\ActionHandler.cpp" />
     <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp" />
     <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp" />
@@ -172,21 +169,21 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\3d\ibl\brdfIntegrate.glsl" />
-    <None Include="engine\shaders\3d\ibl\convolution.glsl" />
-    <None Include="engine\shaders\3d\ibl\eqCube.glsl" />
-    <None Include="engine\shaders\3d\ibl\prefilter.glsl" />
-    <None Include="engine\shaders\3d\ibl\skybox.glsl" />
-    <None Include="engine\shaders\3d\lineShader.glsl" />
-    <None Include="engine\shaders\3d\main\deferredShading.glsl" />
-    <None Include="engine\shaders\3d\main\gBuffer.glsl" />
-    <None Include="engine\shaders\3d\main\pbrForward.glsl" />
-    <None Include="engine\shaders\3d\main\ssao.glsl" />
-    <None Include="engine\shaders\3d\main\ssaoBlur.glsl" />
-    <None Include="engine\shaders\3d\selection.glsl" />
-    <None Include="engine\shaders\3d\shadows\dirShadow.glsl" />
-    <None Include="engine\shaders\3d\shadows\pointShadow.glsl" />
-    <None Include="engine\shaders\3d\sprite.glsl" />
+    <None Include="engine\shaders\ibl\brdfIntegrate.glsl" />
+    <None Include="engine\shaders\ibl\convolution.glsl" />
+    <None Include="engine\shaders\ibl\eqCube.glsl" />
+    <None Include="engine\shaders\ibl\prefilter.glsl" />
+    <None Include="engine\shaders\ibl\skybox.glsl" />
+    <None Include="engine\shaders\lineShader.glsl" />
+    <None Include="engine\shaders\main\deferredShading.glsl" />
+    <None Include="engine\shaders\main\gBuffer.glsl" />
+    <None Include="engine\shaders\main\pbrForward.glsl" />
+    <None Include="engine\shaders\main\ssao.glsl" />
+    <None Include="engine\shaders\main\ssaoBlur.glsl" />
+    <None Include="engine\shaders\selection.glsl" />
+    <None Include="engine\shaders\shadows\dirShadow.glsl" />
+    <None Include="engine\shaders\shadows\pointShadow.glsl" />
+    <None Include="engine\shaders\sprite.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

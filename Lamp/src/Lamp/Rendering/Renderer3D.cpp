@@ -58,6 +58,8 @@ namespace Lamp
 		Ref<Shader> GridShader;
 		//////////////
 
+		Ref<CameraBase> Camera;
+
 		Renderer3DStorage()
 			: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
 		{}
@@ -245,16 +247,18 @@ namespace Lamp
 		delete s_pData;
 	}
 
-	void Renderer3D::Begin(RenderPassSpecification& passSpec)
+	void Renderer3D::Begin(RenderPassSpecification& passSpec, Ref<CameraBase>& camera)
 	{
 		s_pData->CurrentRenderPass = &passSpec;
 
-		s_pData->DataBuffer.CameraPosition = passSpec.Camera->GetPosition();
-		s_pData->DataBuffer.Projection = passSpec.Camera->GetProjectionMatrix();
-		s_pData->DataBuffer.View = passSpec.Camera->GetViewMatrix();
+		s_pData->DataBuffer.CameraPosition = camera->GetPosition();
+		s_pData->DataBuffer.Projection = camera->GetProjectionMatrix();
+		s_pData->DataBuffer.View = camera->GetViewMatrix();
 		s_pData->DataBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
 
 		s_pData->DataUniformBuffer->SetData(&s_pData->DataBuffer, sizeof(Renderer3DStorage::DataBuffer));
+
+		s_pData->Camera = camera;
 
 		ResetBatchData();
 	}
@@ -536,7 +540,7 @@ namespace Lamp
 		s_pData->GridShader->Bind();
 		s_pData->GridVertexArray->Bind();
 
-		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->CurrentRenderPass->Camera->GetViewMatrix()));
+		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->Camera->GetViewMatrix()));
 
 		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
 	}

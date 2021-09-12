@@ -299,7 +299,6 @@ namespace Sandbox3D
 		}
 
 		RenderPassSpecification pass;
-		pass.Camera = m_Camera->GetCamera();
 		pass.TargetFramebuffer = m_Framebuffer;
 
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -308,7 +307,7 @@ namespace Sandbox3D
 		m_Framebuffer->Bind();
 		RenderCommand::Clear();
 
-		Renderer3D::Begin(pass);
+		Renderer3D::Begin(pass, std::dynamic_pointer_cast<CameraBase>(m_Camera));
 		if (m_MaterialModel)
 		{
 			m_MaterialModel->Render(-1);

@@ -2,6 +2,5 @@
 	<albedo path="assets/textures/base/base_albedo.png"/>
 	<normal path="assets/textures/base/base_normal.png"/>
 	<mro path="assets/textures/base/base_mro.png"/>
-	<Shininess value="32.000000"/>
 	<Shader name="pbrForward" path="engine/shaders/3d/main/pbrForward.glsl"/>
 </Material>

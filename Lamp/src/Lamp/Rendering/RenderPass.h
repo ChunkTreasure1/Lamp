@@ -26,7 +26,6 @@ namespace Lamp
 		using RenderFunc = std::function<void()>;
 		std::vector<RenderFunc> ExtraRenders;
 
-		Ref<CameraBase> Camera;
 		Ref<Framebuffer> TargetFramebuffer;
 
 		PassType type;
@@ -45,7 +44,7 @@ namespace Lamp
 		inline uint32_t GetID() { return m_ID; }
 		inline const RenderPassSpecification& GetSpecification() const { return m_PassSpec; }
 
-		void Render();
+		void Render(Ref<CameraBase>& camera);
 
 	private:
 		inline void SetID(uint32_t id) { m_ID = id; }
@@ -70,7 +69,7 @@ namespace Lamp
 
 		std::vector<Ref<RenderPass>>& GetRenderPasses();
 
-		void RenderPasses();
+		void RenderPasses(Ref<CameraBase>& camera);
 
 	public:
 		static Ref<RenderPassManager>& Get()

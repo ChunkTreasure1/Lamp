@@ -28,7 +28,9 @@ namespace Lamp
 
 	public:
 		static Brush* Create(const std::string& path);
-		static Brush* Duplicate(Brush* main);
+		static Brush* Create(const std::string& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name);
+		static Brush* Duplicate(Brush* main, bool addToLevel);
+		static Brush* Get(uint32_t id);
 
 	private:
 		bool OnRender(AppRenderEvent& e);

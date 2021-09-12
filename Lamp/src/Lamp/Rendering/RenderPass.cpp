@@ -1,12 +1,10 @@
 #include "lppch.h"
 #include "RenderPass.h"
 #include "Lamp/Event/ApplicationEvent.h"
-#include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
-#include "Lamp/Objects/Brushes/BrushManager.h"
+#include "Lamp/Level/Level.h"
 
 namespace Lamp
 {
@@ -17,7 +15,7 @@ namespace Lamp
 	{
 	}
 
-	void RenderPass::Render()
+	void RenderPass::Render(Ref<CameraBase>& camera)
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
@@ -31,15 +29,15 @@ namespace Lamp
 					light->ShadowBuffer->Bind();
 					RenderCommand::Clear();
 
-					Renderer3D::Begin(m_PassSpec);
+					Renderer3D::Begin(m_PassSpec, camera);
 
-					AppRenderEvent renderEvent(m_PassSpec);
-					for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+					AppRenderEvent renderEvent(m_PassSpec, camera);
+					for (auto& entity : g_pEnv->pLevel->GetEntities())
 					{
 						entity.second->OnEvent(renderEvent);
 					}
 
-					for (auto& brush : g_pEnv->pBrushManager->GetBrushes())
+					for (auto& brush : g_pEnv->pLevel->GetBrushes())
 					{
 						brush.second->OnEvent(renderEvent);
 					}
@@ -56,7 +54,7 @@ namespace Lamp
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::Clear();
-				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::Begin(m_PassSpec, camera);
 				Renderer3D::CombineLightning();
 				Renderer3D::End();
 				m_PassSpec.TargetFramebuffer->Unbind();
@@ -69,7 +67,7 @@ namespace Lamp
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::ClearColor();
-				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::Begin(m_PassSpec, camera);
 
 				Renderer3D::SSAOMainPass();
 
@@ -82,7 +80,7 @@ namespace Lamp
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::ClearColor();
-				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::Begin(m_PassSpec, camera);
 
 				Renderer3D::SSAOBlurPass();
 
@@ -94,12 +92,12 @@ namespace Lamp
 			case PassType::Forward:
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
-				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::Begin(m_PassSpec, camera);
 
-				AppRenderEvent renderEvent(m_PassSpec);
+				AppRenderEvent renderEvent(m_PassSpec, camera);
 				Application::Get().OnEvent(renderEvent);
 
-				for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+				for (auto& entity : g_pEnv->pLevel->GetEntities())
 				{
 					entity.second->OnEvent(renderEvent);
 				}
@@ -122,17 +120,17 @@ namespace Lamp
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::Clear();
 
-				Renderer3D::Begin(m_PassSpec);
+				Renderer3D::Begin(m_PassSpec, camera);
 
-				AppRenderEvent renderEvent(m_PassSpec);
+				AppRenderEvent renderEvent(m_PassSpec, camera);
 				Application::Get().OnEvent(renderEvent);
 
-				for (auto& entity : g_pEnv->pEntityManager->GetEntities())
+				for (auto& entity : g_pEnv->pLevel->GetEntities())
 				{
 					entity.second->OnEvent(renderEvent);
 				}
 
-				for (auto& brush : g_pEnv->pBrushManager->GetBrushes())
+				for (auto& brush : g_pEnv->pLevel->GetBrushes())
 				{
 					brush.second->OnEvent(renderEvent);
 				}
@@ -168,11 +166,11 @@ namespace Lamp
 		return m_RenderPasses;
 	}
 
-	void RenderPassManager::RenderPasses()
+	void RenderPassManager::RenderPasses(Ref<CameraBase>& camera)
 	{
 		for (auto& pass : m_RenderPasses)
 		{
-			pass->Render();
+			pass->Render(camera);
 		}
 
 	}

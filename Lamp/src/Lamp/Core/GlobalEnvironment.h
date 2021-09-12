@@ -7,9 +7,7 @@
 
 namespace Lamp
 {
-	class ObjectLayerManager;
-	class EntityManager;
-	class BrushManager;
+	class Level;
 	class AssetManager;
 	class MeshComponent;
 }
@@ -43,9 +41,7 @@ struct GlobalEnvironment
 
 	RenderUtils* pRenderUtils = nullptr;
 
-	Lamp::ObjectLayerManager* pObjectLayerManager = nullptr;
-	Lamp::EntityManager* pEntityManager = nullptr;
-	Lamp::BrushManager* pBrushManager = nullptr;
+	std::shared_ptr<Lamp::Level> pLevel = nullptr;
 	Lamp::AssetManager* pAssetManager = nullptr;
 };
 

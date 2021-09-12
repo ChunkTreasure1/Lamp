@@ -3,7 +3,6 @@
 
 #include <Lamp/Level/LevelSystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
-#include <Lamp/Objects/ObjectLayer.h>
 
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
@@ -93,7 +92,7 @@ namespace Sandbox3D
 		static bool hasStarted = false;
 		static bool firstTime = true;
 
-		if (m_pSelectedObject)
+		if (m_pSelectedObject && m_SceneState != SceneState::Play)
 		{
 			transform = m_pSelectedObject->GetModelMatrix();
 
@@ -151,7 +150,7 @@ namespace Sandbox3D
 					if (typeid(*m_pSelectedObject) == typeid(Lamp::Brush))
 					{
 						auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject);
-						m_pSelectedObject = Lamp::Brush::Duplicate(brush);
+						m_pSelectedObject = Lamp::Brush::Duplicate(brush, true);
 					}
 					else if (auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject))
 					{
@@ -216,7 +215,7 @@ namespace Sandbox3D
 			}
 			ImGui::End();
 
-			if (m_MousePressed && perspHover && !ImGuizmo::IsOver())
+			if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)
 			{
 				mousePos -= windowPos;
 
@@ -242,7 +241,12 @@ namespace Sandbox3D
 						m_pSelectedObject->SetIsSelected(false);
 					}
 
-					m_pSelectedObject = Lamp::ObjectLayerManager::Get()->GetObjectFromId(pixelData);
+					m_pSelectedObject = Lamp::Entity::Get(pixelData);
+					if (!m_pSelectedObject)
+					{
+						m_pSelectedObject = Lamp::Brush::Get(pixelData);
+					}
+
 					if (m_pSelectedObject)
 					{
 						m_pSelectedObject->SetIsSelected(true);
@@ -387,51 +391,49 @@ namespace Sandbox3D
 		ImGui::Begin("Layers", &m_LayerViewOpen);
 
 		int startId = 0;
-		int j = 0;
-
-		for (Lamp::ObjectLayer& layer : Lamp::ObjectLayerManager::Get()->GetLayers())
+		for (auto& entity : g_pEnv->pLevel->GetEntities())
 		{
-			if (ImGui::Button(std::string("A##" + std::to_string(j)).c_str()))
-			{
-				layer.IsActive = !layer.IsActive;
-			}
+			startId++;
+			ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, entity.second->GetName().c_str());
 
-			ImGui::SameLine();
-			if (ImGui::TreeNode(layer.Name.c_str()))
+			if (ImGui::IsItemClicked())
 			{
-
-				for (int i = 0; i < layer.Objects.size(); i++)
+				if (m_pSelectedObject)
 				{
-					if (ImGui::Button(std::string("A##" + std::to_string(i)).c_str()))
-					{
-						layer.Objects[i]->SetIsActive(!layer.Objects[i]->GetIsActive());
-					}
-
-					ImGui::SameLine();
-
-					startId++;
-					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, layer.Objects[i]->GetName().c_str());
-
-					if (ImGui::IsItemClicked())
-					{
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(false);
-						}
-
-						m_pSelectedObject = layer.Objects[i];
-
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(true);
-						}
-					}
+					m_pSelectedObject->SetIsSelected(false);
 				}
 
-				ImGui::TreePop();
+				m_pSelectedObject = dynamic_cast<Lamp::Object*>(entity.second);
+
+				if (m_pSelectedObject)
+				{
+					m_pSelectedObject->SetIsSelected(true);
+				}
 			}
-			j++;
+		}
+
+		startId = 0;
+		for (auto& brush : g_pEnv->pLevel->GetBrushes())
+		{
+			startId++;
+			ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, brush.second->GetName().c_str());
+
+			if (ImGui::IsItemClicked())
+			{
+				if (m_pSelectedObject)
+				{
+					m_pSelectedObject->SetIsSelected(false);
+				}
+
+				m_pSelectedObject = dynamic_cast<Lamp::Object*>(brush.second);
+
+				if (m_pSelectedObject)
+				{
+					m_pSelectedObject->SetIsSelected(true);
+				}
+			}
 		}
 
 		ImGui::End();
@@ -488,7 +490,7 @@ namespace Sandbox3D
 		{
 			if (ImGui::Button("Entity"))
 			{
-				m_pSelectedObject = g_pEnv->pEntityManager->Create();
+				m_pSelectedObject = Lamp::Entity::Create();
 				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
 				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
 			}
@@ -930,6 +932,37 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
+	void Sandbox3D::UpdateToolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.305f, 0.31f, 0.5f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
+
+		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		
+		float size = ImGui::GetWindowHeight() - 4.f;
+		Ref<Lamp::Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+
+		if (ImGui::ImageButton((ImTextureID)icon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		{
+			if (m_SceneState == SceneState::Edit)
+			{
+				OnLevelPlay();
+			}
+			else if (m_SceneState == SceneState::Play)
+			{
+				OnLevelStop();
+			}
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
+	}
+
 	void Sandbox3D::CreateDockspace()
 	{
 		LP_PROFILE_FUNCTION();
@@ -965,7 +998,7 @@ namespace Sandbox3D
 		bool pp = true;
 		bool* p = &pp;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace Demo", p, window_flags);
+		ImGui::Begin("MainDockspace", p, window_flags);
 		ImGui::PopStyleVar();
 
 		if (opt_fullscreen)

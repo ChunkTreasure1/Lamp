@@ -393,7 +393,7 @@ namespace Sandbox3D
 
 		ImGui::Begin("Graphs");
 
-		for (auto& pEnt : g_pEnv->pEntityManager->GetEntities())
+		for (auto& pEnt : g_pEnv->pLevel->GetEntities())
 		{
 			if (pEnt.second)
 			{
@@ -473,7 +473,7 @@ namespace Sandbox3D
 		ImGui::Text(node->name.c_str());
 		imnodes::EndNodeTitleBar();
 
-		Entity* pEntity = g_pEnv->pEntityManager->GetEntityFromId(node->entityId);
+		Entity* pEntity = Entity::Get(node->id);
 
 		if (!pEntity && node->needsEntity)
 		{
@@ -535,7 +535,7 @@ namespace Sandbox3D
 	{
 		auto& prop = attr;
 
-		Entity* pEntity = g_pEnv->pEntityManager->GetEntityFromId(node->entityId);
+		Entity* pEntity = Entity::Get(node->id);
 
 		switch (prop.type)
 		{
@@ -888,7 +888,7 @@ namespace Sandbox3D
 			{
 				auto id = std::any_cast<int>(prop.data);
 				node->entityId = id;
-				pEntity = g_pEnv->pEntityManager->GetEntityFromId(id);
+				pEntity = Entity::Get(node->id);
 				if (pEntity)
 				{
 					ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), pEntity->GetName().c_str());
@@ -907,7 +907,7 @@ namespace Sandbox3D
 	{
 		auto& prop = attr;
 
-		Entity* pEntity = g_pEnv->pEntityManager->GetEntityFromId(node->entityId);
+		Entity* pEntity = Entity::Get(node->entityId);
 
 		switch (prop.type)
 		{

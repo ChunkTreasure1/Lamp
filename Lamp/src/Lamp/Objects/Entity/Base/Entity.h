@@ -156,7 +156,9 @@ namespace Lamp
 		}
 
 	public:
-		static Entity* Create();
+		static Entity* Create(bool saveable = false);
+		static Entity* Get(uint32_t id);
+		static Entity* Duplicate(Entity* entity, bool addToLevel = true);
 
 	private:
 		bool OnRenderEvent(AppRenderEvent& e);

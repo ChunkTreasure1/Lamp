@@ -35,8 +35,6 @@ namespace Lamp
 		inline void SetColor(const glm::vec3& val) { m_pPointLight->Color = val; }
 
 	private:
-		bool OnRender(AppRenderEvent& e);
-		bool OnUpdate(AppUpdateEvent& e);
 		bool OnPositionChanged(EntityPositionChangedEvent& e);
 		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
 

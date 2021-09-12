@@ -62,7 +62,7 @@ namespace Lamp
 				RenderPassSpecification spec;
 				//spec.TargetFramebuffer = Ref<ReflectionBuffer>(this);
 
-				AppRenderEvent e(spec);
+				AppRenderEvent e(spec, nullptr);
 
 				//m_PrefilterShader->UploadMat4("u_View", m_CaptureViews[j]);
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, m_TextureId, i);

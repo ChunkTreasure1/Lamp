@@ -51,11 +51,6 @@ namespace Lamp
 			pRoot->append_node(pTex);
 		}
 
-		xml_node<>* pShine = doc.allocate_node(node_element, "Shininess");
-		char* pS = doc.allocate_string(ToString(mat.GetShininess()).c_str());
-		pShine->append_attribute(doc.allocate_attribute("value", pS));
-		pRoot->append_node(pShine);
-
 		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
 		pShader->append_attribute(doc.allocate_attribute("name", mat.GetShader()->GetName().c_str()));
 		pShader->append_attribute(doc.allocate_attribute("path", mat.GetShader()->GetPath().c_str()));
@@ -103,12 +98,6 @@ namespace Lamp
 				}
 			}
 
-			if (xml_node<>* pShine = pRoot->first_node("Shininess"))
-			{
-				float val;
-				GetValue(pShine->first_attribute("value")->value(), val);
-				mat.SetShininess(val);
-			}
 			mat.SetPath(std::filesystem::path(path));
 			AddMaterial(mat);
 		}

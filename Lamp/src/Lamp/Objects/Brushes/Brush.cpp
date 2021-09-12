@@ -1,10 +1,10 @@
 #include "lppch.h"
 #include "Brush.h"
 
-#include "BrushManager.h"
-#include "Lamp/Objects/ObjectLayer.h"
 #include <btBulletDynamicsCommon.h>
 #include "Lamp/Physics/PhysicsEngine.h"
+#include "Lamp/Level/Level.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -62,8 +62,7 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
-		g_pEnv->pBrushManager->Remove(this);
-		ObjectLayerManager::Get()->Remove(this);
+		g_pEnv->pLevel->GetBrushes().erase(m_Id);
 
 		delete this;
 	}
@@ -76,12 +75,46 @@ namespace Lamp
 
 	Brush* Brush::Create(const std::string& path)
 	{
-		return g_pEnv->pBrushManager->Create(path);
+		Ref<Model> model = ResourceCache::GetModel(path);
+		Brush* brush = new Brush(model);
+		brush->SetLayerID(0);
+
+		g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
+
+		return brush;
 	}
 
-	Brush* Brush::Duplicate(Brush* main)
+	Brush* Brush::Create(const std::string& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
 	{
-		Brush* pBrush = g_pEnv->pBrushManager->Create(main);
+		Ref<Model> model = ResourceCache::GetModel(path);
+		Brush* brush = new Brush(model);
+
+		brush->SetPosition(pos);
+		brush->SetRotation(rot);
+		brush->SetScale(scale);
+		brush->SetLayerID(layerId);
+		brush->SetName(name);
+
+		g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
+
+		return brush;
+	}
+
+	Brush* Brush::Duplicate(Brush* main, bool addToLevel)
+	{
+		Ref<Model> model = ResourceCache::GetModel(main->GetModel()->GetLGFPath());
+		Brush* pBrush = new Brush(model);
+
+		if (addToLevel)
+		{
+			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_Id, pBrush));
+		}
+		else
+		{
+			pBrush->m_Id = main->m_Id;
+		}
+
+		pBrush->SetLayerID(main->GetLayerID());
 		pBrush->SetPosition(main->GetPosition());
 		pBrush->SetRotation(main->GetRotation());
 		pBrush->SetScale(main->GetScale());
@@ -97,6 +130,16 @@ namespace Lamp
 		pBrush->SetName(name);
 	
 		return pBrush;
+	}
+
+	Brush* Brush::Get(uint32_t id)
+	{
+		if (auto& it = g_pEnv->pLevel->GetBrushes().find(id); it != g_pEnv->pLevel->GetBrushes().end())
+		{
+			return g_pEnv->pLevel->GetBrushes().at(id);
+		}
+
+		return nullptr;
 	}
 
 	bool Brush::OnRender(AppRenderEvent& e)

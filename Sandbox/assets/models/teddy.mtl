@@ -2,7 +2,6 @@
 	<albedo path="assets\textures\TeddyTextures\DJTeddy_final_albedo.tga"/>
 	<normal path="assets\textures\TeddyTextures\DJTeddy_final_normal.tga"/>
 	<mro path="assets\textures\TeddyTextures\DJTeddy_final_mro.tga"/>
-	<Shininess value="32.000000"/>
 	<Shader name="pbrForward" path="engine/shaders/3d/main/pbrForward.glsl"/>
 </Material>
 

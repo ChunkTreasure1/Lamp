@@ -131,7 +131,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="RenderGraphGraph.h" />
     <ClInclude Include="src\Lamp.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
@@ -175,21 +174,16 @@
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\GUID.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
-    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
@@ -604,7 +598,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RenderGraphGraph.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp" />
@@ -630,6 +623,7 @@
     <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
+    <ClCompile Include="src\Lamp\Level\Level.cpp" />
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
@@ -637,18 +631,14 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
-    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />

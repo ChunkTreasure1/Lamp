@@ -7,7 +7,6 @@
 #include <Lamp/Rendering/Renderer3D.h>
 #include <Lamp/Rendering/Texture2D/Texture2D.h>
 		 
-#include <Lamp/Objects/Entity/Base/EntityManager.h>
 #include <Lamp/Rendering/Vertices/FrameBuffer.h>
 #include <Lamp/Core/Core.h>
 
@@ -18,5 +17,4 @@
 #include <Lamp/Objects/Brushes/Brush.h>
 
 #include <Lamp/Physics/PhysicsEngine.h>
-#include <Lamp/Objects/ObjectLayer.h>
 #include <Lamp/Level/LevelSystem.h>

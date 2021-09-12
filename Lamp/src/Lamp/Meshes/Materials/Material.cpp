@@ -1,13 +1,6 @@
 #include "lppch.h"
 #include "Material.h"
 
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
-#include "Lamp/Objects/Entity/BaseComponents/LightComponent.h"
-
-#include "Lamp/Level/LevelSystem.h"
-
-#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-
 namespace Lamp
 {
 	void Material::SetTexture(const std::string& name, Ref<Texture2D>& texture)

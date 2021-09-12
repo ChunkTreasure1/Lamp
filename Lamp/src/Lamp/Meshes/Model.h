@@ -51,6 +51,7 @@ namespace Lamp
 		}
 
 		Model()
+			: m_ModelMatrix(glm::mat4(1.f))
 		{}
 
 		friend class ResourceCache;
