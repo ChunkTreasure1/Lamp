@@ -70,7 +70,7 @@ namespace Sandbox3D
 	{
 		if (m_DefaultShader == nullptr)
 		{
-			m_DefaultShader = Lamp::ShaderLibrary::GetShader("testPbr");
+			m_DefaultShader = Lamp::ShaderLibrary::GetShader("pbrForward");
 		}
 		UpdateCamera(e.GetTimestep());
 
@@ -115,7 +115,6 @@ namespace Sandbox3D
 		}
 
 		RenderPassSpecification pass;
-		pass.Camera = m_Camera->GetCamera();
 		pass.TargetFramebuffer = m_Framebuffer;
 		pass.type = PassType::Forward;
 
@@ -125,7 +124,8 @@ namespace Sandbox3D
 		m_Framebuffer->Bind();
 		RenderCommand::Clear();
 
-		Renderer3D::Begin(pass);
+		Renderer3D::Begin(std::dynamic_pointer_cast<CameraBase>(m_Camera));
+		Renderer3D::BeginPass(pass);
 
 		if (m_RenderSkybox)
 		{
@@ -140,6 +140,8 @@ namespace Sandbox3D
 		{
 			RenderGrid();
 		}
+
+		Renderer3D::EndPass();
 		Renderer3D::End();
 		m_Framebuffer->Unbind();
 	}
@@ -287,12 +289,23 @@ namespace Sandbox3D
 		ImGui::Checkbox("Show Skybox", &m_RenderSkybox);
 		ImGui::Checkbox("Show Grid", &m_RenderGrid);
 
+		ImGui::Separator();
+		ImGui::Text("Mesh settings");
+
+		if (ImGui::DragFloat("Scale", &m_ImportSettings.MeshScale) && m_pModelToImport)
+		{
+		}
+		
+		static const char* meshDirections[] = {"Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up"};
+		static int currentDirection = 0;
+		ImGui::Combo("Up", &currentDirection, meshDirections, IM_ARRAYSIZE(meshDirections));
+
 		ImGui::End();
 	}
 
 	void ModelImporter::UpdateMaterial()
 	{
-		ImGui::Begin("Importer Material");
+		ImGui::Begin("Materials");
 
 		static std::vector<const char*> shaders;
 		static std::unordered_map<std::string, std::string> paths;

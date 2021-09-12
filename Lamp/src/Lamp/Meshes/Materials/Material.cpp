@@ -1,13 +1,6 @@
 #include "lppch.h"
 #include "Material.h"
 
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
-#include "Lamp/Objects/Entity/BaseComponents/LightComponent.h"
-
-#include "Lamp/Level/LevelSystem.h"
-
-#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-
 namespace Lamp
 {
 	void Material::SetTexture(const std::string& name, Ref<Texture2D>& texture)
@@ -45,16 +38,5 @@ namespace Lamp
 		{
 			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i - (4 + lightCount)], i);
 		}
-
-			//m_pShader->UploadFloat("u_Material.depthScale", m_DepthScale);
-		m_pShader->UploadInt("u_LightCount", lightCount);
-
-			//if (m_pTextures.find("Depth") != m_pTextures.end())
-			//{
-			//	if (m_pTextures["Depth"].get())
-			//	{
-			//		m_pShader->UploadInt("u_UsingParallax", 1);
-			//	}
-			//}
 	}
 }

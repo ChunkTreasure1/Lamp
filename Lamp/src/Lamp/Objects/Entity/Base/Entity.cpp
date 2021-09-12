@@ -1,12 +1,12 @@
 #include "lppch.h"
 #include "Entity.h"
 
-#include "EntityManager.h"
-#include "Lamp/Objects/ObjectLayer.h"
+#include "Lamp/Level/Level.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 #include <glm/ext/matrix_transform.hpp>
 #include "Lamp/GraphKey/GraphKeyGraph.h"
+#include "ComponentRegistry.h"
 
 namespace Lamp
 {
@@ -36,15 +36,59 @@ namespace Lamp
 
 	void Entity::Destroy()
 	{
-		g_pEnv->pEntityManager->Remove(this);
-		ObjectLayerManager::Get()->Remove(this);
-
+		auto& entites = g_pEnv->pLevel->GetEntities();
+		entites.erase(m_Id);
 		delete this;
 	}
 
-	Entity* Entity::Create()
+	Entity* Entity::Create(bool saveable)
 	{
-		return g_pEnv->pEntityManager->Create(false);
+		Entity* pEnt = new Entity();
+		pEnt->SetLayerID(0);
+		pEnt->SetSaveable(saveable);
+
+		g_pEnv->pLevel->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
+
+		return pEnt;
+	}
+
+	Entity* Entity::Get(uint32_t id)
+	{
+		if (auto it = g_pEnv->pLevel->GetEntities().find(id); it != g_pEnv->pLevel->GetEntities().end())
+		{
+			return g_pEnv->pLevel->GetEntities().at(id);
+		}
+
+		return nullptr;
+	}
+
+	Entity* Entity::Duplicate(Entity* entity, bool addToLevel)
+	{
+		Entity* copy = new Entity();
+		for (auto& comp : entity->GetComponents())
+		{
+			copy->AddComponent(ComponentRegistry::Create(comp->GetName()));
+		}
+
+		if (entity->m_GraphKeyGraph)
+		{
+			copy->m_GraphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_GraphKeyGraph);
+		}
+		copy->m_ModelMatrix = entity->m_ModelMatrix;
+		copy->m_Position = entity->m_Position;
+		copy->m_Rotation = entity->m_Rotation;
+		copy->m_Scale = entity->m_Scale;
+
+		if (addToLevel)
+		{
+			g_pEnv->pLevel->GetEntities().emplace(copy->m_Id, copy);
+		}
+		else
+		{
+			copy->m_Id = entity->m_Id;
+		}
+
+		return copy;
 	}
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)
@@ -68,9 +112,9 @@ namespace Lamp
 			{
 				m_GizmoShader->Bind();
 
-				m_GizmoShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
+				m_GizmoShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
 
-				glm::vec3 dir = glm::normalize(e.GetPassInfo().Camera->GetPosition() - m_Position);
+				glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 				
 				float angleXZ = std::atan2f(dir.z, dir.x);
 				float angleY = -std::asin(dir.y);
@@ -94,9 +138,9 @@ namespace Lamp
 			{
 				m_SelectionShader->Bind();
 
-				m_SelectionShader->UploadMat4("u_ViewProjection", e.GetPassInfo().Camera->GetViewProjectionMatrix());
+				m_SelectionShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
 
-				glm::vec3 dir = glm::normalize(e.GetPassInfo().Camera->GetPosition() - m_Position);
+				glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 
 				float angleXZ = std::atan2f(dir.z, dir.x);
 				float angleY = -std::asin(dir.y);

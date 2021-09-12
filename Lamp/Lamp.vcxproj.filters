@@ -85,6 +85,9 @@
     <Filter Include="src\Lamp\Rendering\Reflections">
       <UniqueIdentifier>{A05AA371-8C80-6DD8-75C6-F2A3618B92A4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\RenderGraph">
+      <UniqueIdentifier>{74024CD3-6028-163A-496E-9B0535333B06}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
@@ -150,7 +153,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\TextureCache.h">
+    <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h">
@@ -267,12 +270,6 @@
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h">
-      <Filter>src\Lamp\Objects\Brushes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h">
-      <Filter>src\Lamp\Objects\Brushes</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
@@ -283,9 +280,6 @@
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h">
@@ -303,13 +297,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\GUID.h">
-      <Filter>src\Lamp\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Object.h">
-      <Filter>src\Lamp\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h">
       <Filter>src\Lamp\Objects</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Collision.h">
@@ -366,6 +354,9 @@
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -395,6 +386,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\UniformBuffer.h">
+      <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
@@ -433,6 +427,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
@@ -1539,6 +1536,7 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Event\EditorEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
@@ -1550,7 +1548,7 @@
     <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\AssetSystem\TextureCache.cpp">
+    <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp">
@@ -1616,6 +1614,9 @@
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
       <Filter>src\Lamp\Layer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Level\Level.cpp">
+      <Filter>src\Lamp\Level</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
@@ -1637,19 +1638,10 @@
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp">
-      <Filter>src\Lamp\Objects\Brushes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp">
-      <Filter>src\Lamp\Objects\Brushes</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp">
@@ -1668,9 +1660,6 @@
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
-      <Filter>src\Lamp\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp">
       <Filter>src\Lamp\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp">
@@ -1742,6 +1731,9 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
@@ -1767,6 +1759,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">

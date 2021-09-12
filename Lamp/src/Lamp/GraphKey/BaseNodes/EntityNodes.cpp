@@ -3,7 +3,7 @@
 #include "Lamp/GraphKey/NodeRegistry.h"
 
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
+#include "Lamp/Level/Level.h"
 
 namespace Lamp
 {
@@ -114,7 +114,7 @@ namespace Lamp
 	private:
 		void AddComponent()
 		{
-			Entity* pEnt = g_pEnv->pEntityManager->GetEntityFromId(GetInput<int>(0));
+			Entity* pEnt = Entity::Get(GetInput<int>(0));
 			if (!pEnt)
 			{
 				return;

@@ -51,7 +51,10 @@ namespace Lamp
 		}
 
 		Model()
+			: m_ModelMatrix(glm::mat4(1.f))
 		{}
+
+		friend class ResourceCache;
 
 		void Render(size_t id = -1, bool forward = false);
 		void RenderBoundingBox();

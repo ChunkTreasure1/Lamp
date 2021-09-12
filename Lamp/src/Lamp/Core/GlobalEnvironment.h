@@ -7,9 +7,7 @@
 
 namespace Lamp
 {
-	class ObjectLayerManager;
-	class EntityManager;
-	class BrushManager;
+	class Level;
 	class AssetManager;
 	class MeshComponent;
 }
@@ -39,13 +37,12 @@ struct GlobalEnvironment
 	Lamp::DirectionalLight DirLight;
 	bool ShouldRenderBB = false;
 	bool ShouldRenderGizmos = true;
+	bool IsEditor = false;
 	float HDRExposure = 3.f;
 
 	RenderUtils* pRenderUtils = nullptr;
 
-	Lamp::ObjectLayerManager* pObjectLayerManager = nullptr;
-	Lamp::EntityManager* pEntityManager = nullptr;
-	Lamp::BrushManager* pBrushManager = nullptr;
+	std::shared_ptr<Lamp::Level> pLevel = nullptr;
 	Lamp::AssetManager* pAssetManager = nullptr;
 };
 

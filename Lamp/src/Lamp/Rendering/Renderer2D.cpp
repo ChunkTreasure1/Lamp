@@ -149,7 +149,7 @@ namespace Lamp
 			samplers[i] = i;
 		}
 
-		s_pData->pTextureShader = Shader::Create("engine/shaders/2d/Texture.vert", "engine/shaders/2d/Texture.frag");
+		//s_pData->pTextureShader = Shader::Create("engine/shaders/2d/Texture.vert", "engine/shaders/2d/Texture.frag");
 		s_pData->pTextureShader->Bind();
 		s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 

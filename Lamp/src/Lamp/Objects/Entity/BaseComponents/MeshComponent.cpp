@@ -4,6 +4,7 @@
 
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/AssetSystem/AssetManager.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -56,11 +57,7 @@ namespace Lamp
 
 	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
 	{
-		if (m_Model == nullptr)
-		{
-			m_Model = CreateRef<Model>();
-		}
-		g_pEnv->pAssetManager->LoadModel(m_Path, m_Model.get());
+		m_Model = ResourceCache::GetModel(m_Path);
 
 		return false;
 	}

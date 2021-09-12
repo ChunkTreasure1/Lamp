@@ -299,7 +299,6 @@ namespace Sandbox3D
 		}
 
 		RenderPassSpecification pass;
-		pass.Camera = m_Camera->GetCamera();
 		pass.TargetFramebuffer = m_Framebuffer;
 
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -308,11 +307,13 @@ namespace Sandbox3D
 		m_Framebuffer->Bind();
 		RenderCommand::Clear();
 
-		Renderer3D::Begin(pass);
+		Renderer3D::Begin(std::dynamic_pointer_cast<CameraBase>(m_Camera));
+		Renderer3D::BeginPass(pass);
 		if (m_MaterialModel)
 		{
 			m_MaterialModel->Render(-1);
 		}
+		Renderer3D::EndPass();
 		Renderer3D::End();
 		m_Framebuffer->Unbind();
 	}
@@ -325,7 +326,6 @@ namespace Sandbox3D
 		ofs << "	<albedo path=\"engine/textures/default/defaultTexture.png\"/>\n";
 		ofs << "	<normal path=\"engine/textures/default/defaultTexture.png\"/>\n";
 		ofs << "	<mro path=\"engine/textures/default/defaultTexture.png\"/>\n";
-		ofs << "	<Shininess value=\"32.000\"/>\n";
 		ofs << "	<Shader name=\"testPbr\" vertex=\"engine/shaders/3d/testPbr_vs.glsl\" fragment=\"engine/shaders/3d/testPbr_fs.glsl\"/>\n";
 		ofs << "</Material>";
 		ofs.close();

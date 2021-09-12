@@ -4,12 +4,9 @@
 #include "imgui.h"
 
 #include "Lamp/Physics/PhysicsEngine.h"
-#include "Lamp/Objects/ObjectLayer.h"
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 
-#include "Lamp/Objects/Brushes/BrushManager.h"
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
 #include "Lamp/AssetSystem/AssetManager.h"
 
 #include "CoreLogger.h"
@@ -30,9 +27,6 @@ namespace Lamp
 		g_pEnv->pRenderUtils = new RenderUtils();
 
 		g_pEnv->pAssetManager = new AssetManager();
-		g_pEnv->pEntityManager = new EntityManager();
-		g_pEnv->pBrushManager = new BrushManager();
-		g_pEnv->pObjectLayerManager = new ObjectLayerManager();
 
 		//Create the window
 		WindowProps props;
@@ -62,11 +56,7 @@ namespace Lamp
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
-		delete g_pEnv->pObjectLayerManager;
-		delete g_pEnv->pBrushManager;
-		delete g_pEnv->pEntityManager;
 		delete g_pEnv->pAssetManager;
-
 		delete g_pEnv;
 	}
 
@@ -74,7 +64,6 @@ namespace Lamp
 	{
 		while (m_Running)
 		{
-			g_pEnv->ShouldRenderBB = false;
 			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
@@ -92,15 +81,13 @@ namespace Lamp
 			//Load assets
 			g_pEnv->pAssetManager->Update();
 
-			//Update the application layers
-			if (!m_Minimized)
 			{
-				AppUpdateEvent updateEvent(timestep);
-				OnEvent(updateEvent);
+				LP_PROFILE_SCOPE("Application::UpdateLayers")
+				AppUpdateEvent e(timestep);
 
+				for (Layer* pLayer : m_LayerStack)
 				{
-					LP_PROFILE_SCOPE("Application::Run::ObjectUpdate");
-					ObjectLayerManager::Get()->OnEvent(updateEvent);
+					pLayer->OnEvent(e);
 				}
 			}
 

@@ -27,8 +27,12 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(RenderPassSpecification& passSpec);
+		static void Begin(Ref<CameraBase>& camera);
 		static void End();
+
+		static void BeginPass(RenderPassSpecification& passSpec);
+		static void EndPass();
+
 		static void CombineLightning();
 		static void Flush();
 		static void CopyDepth();

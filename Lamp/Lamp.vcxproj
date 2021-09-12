@@ -135,7 +135,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h" />
-    <ClInclude Include="src\Lamp\AssetSystem\TextureCache.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h" />
     <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
@@ -150,6 +150,7 @@
     <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
+    <ClInclude Include="src\Lamp\Event\EditorEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />
@@ -174,21 +175,16 @@
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\Brush2D.h" />
-    <ClInclude Include="src\Lamp\Objects\Brushes\BrushManager.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\EntityManager.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\GUID.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
-    <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Physics\Collision.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
     <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
@@ -207,6 +203,7 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
@@ -217,6 +214,7 @@
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
+    <ClInclude Include="src\Lamp\Rendering\UniformBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
@@ -230,6 +228,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lppch.h" />
@@ -603,7 +602,7 @@
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp" />
-    <ClCompile Include="src\Lamp\AssetSystem\TextureCache.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp" />
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
@@ -625,6 +624,7 @@
     <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
+    <ClCompile Include="src\Lamp\Level\Level.cpp" />
     <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
@@ -632,18 +632,14 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\Brush2D.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Brushes\BrushManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\EntityManager.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
-    <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
@@ -667,6 +663,7 @@
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
@@ -676,6 +673,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />

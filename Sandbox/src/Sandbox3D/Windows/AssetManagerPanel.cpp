@@ -81,9 +81,6 @@ namespace Sandbox3D
 
 		ImGui::Columns(1);
 
-		ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16.f, 512.f);
-		ImGui::SliderFloat("Padding", &padding, 0.f, 32.f);
-
 		ImGui::End();
 	}
 }

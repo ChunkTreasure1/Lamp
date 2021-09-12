@@ -6,6 +6,12 @@
 
 namespace Sandbox3D
 {
+	struct ImportSettings
+	{
+		float MeshScale = 1.f;
+		glm::vec3 MeshUp = { 0.f, 1.f, 0.f };
+	};
+
 	class ModelImporter : public BaseWindow
 	{
 	public:
@@ -39,5 +45,8 @@ namespace Sandbox3D
 		Ref<Lamp::Model> m_pModelToImport;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;
 		Ref<Lamp::Shader> m_DefaultShader;
+
+		//Import settings
+		ImportSettings m_ImportSettings;
 	};
 }

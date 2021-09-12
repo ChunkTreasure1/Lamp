@@ -1,11 +1,9 @@
 #pragma once
 
 #include <string>
+#include "Lamp/Objects/Brushes/Brush.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include "Lamp/Objects/Brushes/Brush2D.h"
-#include "Lamp/Objects/Brushes/BrushManager.h"
-#include "Lamp/Objects/Entity/Base/EntityManager.h"
-#include "Lamp/Objects/ObjectLayer.h"
 #include <btBulletDynamicsCommon.h>
 
 namespace Lamp
@@ -35,6 +33,23 @@ namespace Lamp
 		{
 		}
 
+		Level(const Level& level)
+		{
+			for (auto& brush : level.m_Brushes)
+			{
+				m_Brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
+			}
+
+			for (auto& entity : level.m_Entities)
+			{
+				m_Entities.emplace(std::make_pair(entity.first, Entity::Duplicate(entity.second, false)));
+			}
+
+			m_Environment = level.m_Environment;
+			m_Name = m_Name;
+			m_Path = m_Path;
+		}
+
 		~Level()
 		{
 		}
@@ -43,10 +58,18 @@ namespace Lamp
 		inline const std::string& GetName() { return m_Name; }
 		inline const std::string& GetPath() { return m_Path; }
 		inline void SetPath(const std::string& path) { m_Path = path; }
+		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes;  }
+		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities;  }
+
+		void OnEvent(Event& e);
+		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);
+		void UpdateRuntime(Timestep ts);
 
 	private:
 		std::string m_Name;
 		std::string m_Path;
 		LevelEnvironment m_Environment;
+		std::map<uint32_t, Brush*> m_Brushes;
+		std::map<uint32_t, Entity*> m_Entities;
 	};
 }

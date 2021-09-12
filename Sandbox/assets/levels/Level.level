@@ -1,24 +1,32 @@
 <Level name="Level">
 	<Brushes>
 		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(1)"/>
-		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,1.899629,10.439320" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="" position="0.000000,1.899629,10.439320" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 		<Brush lgfPath="assets\models\sphere.lgf" position="0.000000,0.763550,20.837059" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\teddy.lgf" position="-14.864316,0.954229,16.267361" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\teddy.lgf" position="-10.288723,0.954229,16.818138" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="" position="18.685272,9.908257,1.040956" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(2)"/>
 	</Brushes>
-	<Layers/>
 	<Entities>
-		<Entity name="Entity3" position="-0.563373,4.310013,17.188782" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+		<Entity name="Entity3" position="2.568061,4.310013,18.495684" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
 			<Component name="LightComponent">
 				<Param name="Intensity" type="Float" value="10.000000"/>
 				<Param name="Radius" type="Float" value="10.000000"/>
 				<Param name="Falloff" type="Float" value="0.000000"/>
+				<Param name="Near plane" type="Float" value="0.100000"/>
 				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
+			</Component>
+		</Entity>
+		<Entity name="Entity18" position="-0.140403,5.306564,29.375040" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
+			<Component name="CameraComponent">
+				<Param name="Is Perspective" type="Bool" value="1"/>
+				<Param name="Is Main" type="Bool" value="0"/>
+				<Param name="Field Of View" type="Float" value="60.000000"/>
 			</Component>
 		</Entity>
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-14.610673,2.969951,19.657021" rotation="-81.454224,-18.500200,0.000000" fov="60.000000"/>
+		<CameraValues position="-26.448118,10.809709,24.918268" rotation="-16.504271,-19.400291,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

@@ -116,7 +116,7 @@ namespace Lamp
 
 		//Setup platform/renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplOpenGL3_Init("#version 440");
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -155,6 +155,5 @@ namespace Lamp
 
 			glfwMakeContextCurrent(pBackup_current_context);
 		}
-
 	}
 }

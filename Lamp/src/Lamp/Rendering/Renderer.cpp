@@ -19,14 +19,12 @@ namespace Lamp
 		MaterialLibrary::LoadMaterials();
 
 		RenderCommand::Initialize();
-		Renderer2D::Initialize();
 		Renderer3D::Initialize();
 	}
 
 	void Renderer::Shutdown()
 	{
 		LP_PROFILE_FUNCTION();
-		Renderer2D::Shutdown();
 		Renderer3D::Shutdown();
 	}
 

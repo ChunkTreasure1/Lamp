@@ -44,6 +44,21 @@ namespace Lamp
 		return folders;
 	}
 
+	std::vector<std::string> FileSystem::GetEngineFolders()
+	{
+		std::vector<std::string> folders;
+		for (const auto& entry : std::filesystem::directory_iterator("engine"))
+		{
+			if (entry.is_directory())
+			{
+				std::string s = entry.path().string();
+				folders.push_back(s);
+			}
+		}
+
+		return folders;
+	}
+
 	//Gets the folders in a specified folder
 	std::vector<std::filesystem::path> FileSystem::GetMaterialFolders(const std::filesystem::path& path)
 	{
@@ -62,13 +77,13 @@ namespace Lamp
 		return folders;
 	}
 
-	std::vector<std::string> FileSystem::GetMaterialFiles(const std::string& path)
+	std::vector<std::string> FileSystem::GeFilesOfType(const std::string& path, const std::string& type)
 	{
 		std::vector<std::string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			std::string s = entry.path().string();
-			if (s.find(".mtl") != std::string::npos)
+			if (s.find(type.c_str()) != std::string::npos)
 			{
 				files.push_back(s);
 			}
@@ -77,22 +92,15 @@ namespace Lamp
 		return files;
 	}
 
-	void FileSystem::GetAllMaterialFiles(std::vector<std::string>& folders, std::vector<std::string>& files)
+	void FileSystem::GetAllFilesOfType(std::vector<std::string>& files, const std::string& type, const std::string& path)
 	{
-		if (folders.size() == 0)
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
 		{
-			return;
-		}
-
-		for (int i = 0; i < folders.size(); i++)
-		{
-			std::vector<std::string> f = Lamp::FileSystem::GetMaterialFiles(folders[i]);
-
-			for (int j = 0; j < f.size(); j++)
+			std::string s = entry.path().string();
+			if (s.find(type) != std::string::npos)
 			{
-				files.push_back(f[j]);
+				files.push_back(s);
 			}
-			GetAllMaterialFiles(GetFolders(folders[i]), files);
 		}
 	}
 

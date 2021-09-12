@@ -6,36 +6,14 @@
 
 namespace Lamp
 {
-	Ref<Shader> Shader::Create(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geoPath)
+	Ref<Shader> Shader::Create(const std::string& path)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(vertexPath, fragmentPath, geoPath);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(path);
 		}
 
 		return nullptr;
-	}
-
-	ShaderType Shader::ShaderTypeFromString(const std::string& s)
-	{
-		if (s == "//Illum")
-		{
-			return ShaderType::Illum;
-		}
-		else if (s == "//Blinn")
-		{
-			return ShaderType::Blinn;
-		}
-		else if (s == "//Phong")
-		{
-			return ShaderType::Phong;
-		}
-		else if (s == "BlinnPhong")
-		{
-			return ShaderType::BlinnPhong;
-		}
-
-		return ShaderType::Unknown;
 	}
 }

@@ -10,37 +10,12 @@ namespace GameLauncher
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 
-		for (auto& e : g_pEnv->pEntityManager->GetEntities())
-		{
-			auto entity = e.second;
-
-			if (auto& comp = entity->GetComponent<Lamp::CameraComponent>())
-			{
-				if (comp->GetIsMain())
-				{
-					m_Camera = comp->GetCamera();
-				}
-			}
-		}
 		CreateRenderPasses();
 	}
 
 	bool GameLauncher::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		//Improve
-		for (auto& e : g_pEnv->pEntityManager->GetEntities())
-		{
-			auto entity = e.second;
-			if (auto& comp = entity->GetComponent<Lamp::CameraComponent>())
-			{
-				if (comp->GetIsMain())
-				{
-					m_Camera = comp->GetCamera();
-				}
-			}
-		}
-
-		Lamp::RenderPassManager::Get()->RenderPasses();
+		//Lamp::RenderPassManager::Get()->RenderPasses();
 
 		return false;
 	}

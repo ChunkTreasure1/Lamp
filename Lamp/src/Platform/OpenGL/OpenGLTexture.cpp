@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "OpenGLTexture.h"
 
-#include "Lamp/AssetSystem/TextureCache.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -18,15 +18,15 @@ namespace Lamp
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		//Set filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 	{
 		m_Path = path;
 
-		TextureCache::GetTexture(path, this);
+		ResourceCache::GetTexture(path, this);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const

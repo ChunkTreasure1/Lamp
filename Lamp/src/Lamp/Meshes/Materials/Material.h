@@ -16,16 +16,16 @@ namespace Lamp
 		}
 
 		Material()
+			: m_Index(0)
 		{}
 
 		Material(uint32_t index)
-			: m_Index(index), m_Shininess(32.f)
+			: m_Index(index)
 		{}
 		//Setting
 		inline void SetTextures(std::unordered_map<std::string, Ref<Texture2D>>& map) { m_pTextures = map; }
 		void SetTexture(const std::string& name, Ref<Texture2D>& texture);
 		void SetShader(Ref<Shader> shader);
-		inline void SetShininess(float val) { m_Shininess = val; }
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetPath(const std::filesystem::path& path) { m_Path = path; }
 
@@ -34,14 +34,12 @@ namespace Lamp
 		inline const uint32_t GetIndex() { return m_Index; }
 		inline const Ref<Shader>& GetShader() { return m_pShader; }
 		inline std::string& GetName() { return m_Name; }
-		inline const float GetShininess() { return m_Shininess; }
 		inline const std::filesystem::path& GetPath() { return m_Path; }
 
 		void UploadData();
 
 	private:
 		std::unordered_map<std::string, Ref<Texture2D>> m_pTextures;
-		float m_Shininess;
 		float m_DepthScale = 0.1f;
 
 		Ref<Shader> m_pShader;

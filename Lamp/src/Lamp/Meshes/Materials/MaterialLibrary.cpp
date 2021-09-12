@@ -51,15 +51,9 @@ namespace Lamp
 			pRoot->append_node(pTex);
 		}
 
-		xml_node<>* pShine = doc.allocate_node(node_element, "Shininess");
-		char* pS = doc.allocate_string(ToString(mat.GetShininess()).c_str());
-		pShine->append_attribute(doc.allocate_attribute("value", pS));
-		pRoot->append_node(pShine);
-
 		xml_node<>* pShader = doc.allocate_node(node_element, "Shader");
 		pShader->append_attribute(doc.allocate_attribute("name", mat.GetShader()->GetName().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("vertex", mat.GetShader()->GetVertexPath().c_str()));
-		pShader->append_attribute(doc.allocate_attribute("fragment", mat.GetShader()->GetFragmentPath().c_str()));
+		pShader->append_attribute(doc.allocate_attribute("path", mat.GetShader()->GetPath().c_str()));
 		pRoot->append_node(pShader);
 
 		doc.append_node(pRoot);
@@ -71,8 +65,7 @@ namespace Lamp
 	{
 		using namespace rapidxml;
 		std::vector<std::string> paths;
-		std::vector<std::string> foldes = FileSystem::GetAssetFolders();
-		FileSystem::GetAllMaterialFiles(foldes, paths);
+		FileSystem::GetAllFilesOfType(paths, ".mtl", "assets");
 
 		for (std::string& path : paths)
 		{
@@ -105,12 +98,6 @@ namespace Lamp
 				}
 			}
 
-			if (xml_node<>* pShine = pRoot->first_node("Shininess"))
-			{
-				float val;
-				GetValue(pShine->first_attribute("value")->value(), val);
-				mat.SetShininess(val);
-			}
 			mat.SetPath(std::filesystem::path(path));
 			AddMaterial(mat);
 		}

@@ -51,17 +51,6 @@ namespace Lamp
 		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(LightComponent::OnPropertyChanged));
 	}
 
-	bool LightComponent::OnRender(AppRenderEvent& e)
-	{
-		return false;
-	}
-
-	bool LightComponent::OnUpdate(AppUpdateEvent& e)
-	{
-
-		return false;
-	}
-
 	bool LightComponent::OnPositionChanged(EntityPositionChangedEvent& e)
 	{
 		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());

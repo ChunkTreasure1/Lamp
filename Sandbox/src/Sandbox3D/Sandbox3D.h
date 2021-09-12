@@ -15,6 +15,7 @@
 #include "Actions/ActionHandler.h"
 #include "Windows/BufferWindow.h"
 #include "Windows\AssetManagerPanel.h"
+#include "Lamp/Event/EditorEvent.h"
 
 #include <Game/Game.h>
 
@@ -41,13 +42,16 @@ namespace Sandbox3D
 		void CreateRenderPasses();
 		void SetupFromConfig();
 		void RenderLines();
-		void ResizeBuffers(uint32_t width, uint32_t height);
+
+		void OnLevelPlay();
+		void OnLevelStop();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
 		bool OnWindowClose(Lamp::WindowCloseEvent& e);
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
+		bool OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
@@ -59,6 +63,9 @@ namespace Sandbox3D
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
+		void UpdateRenderPassView();
+		void UpdateShaderView();
+		void UpdateToolbar();
 
 		//Shortcuts
 		void SaveLevelAs();
@@ -73,7 +80,8 @@ namespace Sandbox3D
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
 
-		Lamp::Level* m_pLevel = nullptr;
+		Ref<Lamp::Level> m_pLevel = nullptr;
+		Ref<Lamp::Level> m_pRuntimeLevel = nullptr;
 
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 		Ref<Lamp::Framebuffer> m_GBuffer;
@@ -81,6 +89,7 @@ namespace Sandbox3D
 		Ref<Lamp::Framebuffer> m_SSAOBuffer;
 		Ref<Lamp::Framebuffer> m_SSAOBlurBuffer;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
+
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -88,6 +97,9 @@ namespace Sandbox3D
 		glm::vec2 m_PerspectiveBounds[2];
 		ImGuiID m_DockspaceID;
 		std::vector<BufferWindow> m_BufferWindows;
+
+		Ref<Lamp::Texture2D> m_IconPlay;
+		Ref<Lamp::Texture2D> m_IconStop;
 
 		//Perspective
 		bool m_PerspectiveOpen = true;
@@ -112,7 +124,6 @@ namespace Sandbox3D
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
 		glm::vec2 m_WindowSize = glm::vec2(0, 0);
-		Ref<Lamp::Shader> m_pShader;
 
 		//Windows
 		std::vector<BaseWindow*> m_pWindows;
@@ -138,6 +149,16 @@ namespace Sandbox3D
 
 		//Rendering settings
 		bool m_RenderingSettingsOpen = false;
+		bool m_RenderPassViewOpen = false;
+		bool m_ShaderViewOpen = false;
+
+		enum class SceneState
+		{
+			Edit = 0,
+			Play = 1
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
 		//--------------------------------------
 	};
 }

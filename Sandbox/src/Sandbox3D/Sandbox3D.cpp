@@ -9,7 +9,6 @@
 
 #include <Lamp/Physics/PhysicsEngine.h>
 
-#include <Lamp/Objects/ObjectLayer.h>
 #include <Lamp/Core/Game.h>
 
 #include <Lamp/Rendering/RenderPass.h>
@@ -17,6 +16,7 @@
 #include "Windows/ModelImporter.h"
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
+#include "Windows/RenderGraph.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 #include <Lamp/AssetSystem/AssetManager.h>
@@ -28,12 +28,13 @@ namespace Sandbox3D
 	using namespace Lamp;
 
 	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_DockspaceID(0), m_pShader(nullptr)
+		: Layer("Sandbox3D"), m_DockspaceID(0)
 	{
-		m_pGame = CreateScope<Game>();
-		m_pGame->OnStart();
+		g_pEnv->IsEditor = true;
+		m_IconPlay = Texture2D::Create("engine/textures/ui/PlayIcon.png");
+		m_IconStop = Texture2D::Create("engine/textures/ui/StopIcon.png");
 
-		auto level = LevelSystem::LoadLevel("assets/levels/Level.level");
+		m_pLevel = LevelSystem::LoadLevel("assets/levels/Level.level");
 		g_pEnv->pAssetManager->LoadTexture("engine/textures/default/defaultTexture.png", nullptr);
 
 		//Make sure the sandbox controller is created after level has been loaded
@@ -42,6 +43,7 @@ namespace Sandbox3D
 		m_pWindows.push_back(new ModelImporter("Model Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
+		m_pWindows.push_back(new RenderGraph("Render Graph"));
 
 		SetupFromConfig();
 		CreateRenderPasses();
@@ -59,27 +61,11 @@ namespace Sandbox3D
 		m_BufferWindows.clear();
 		m_pWindows.clear();
 		imnodes::Shutdown();
-
-		delete m_pLevel;
 	}
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
-		if (m_IsPlaying != m_ShouldPlay)
-		{
-			m_IsPlaying = m_ShouldPlay;
-		
-			if (m_IsPlaying)
-			{
-				m_pGame->OnStart();
-				for (auto& node : NodeRegistry::s_StartNodes())
-				{
-					node->ActivateOutput(0);
-				}
-			}
-		}
-
 		m_SelectionBuffer->ClearAttachment(0, 0);
 
 		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
@@ -92,8 +78,27 @@ namespace Sandbox3D
 		m_SelectionBuffer->ClearAttachment(0, -1);
 
 		{
-			LP_PROFILE_SCOPE("Sandbox3D::Update::Rendering");
-			RenderPassManager::Get()->RenderPasses();
+			LP_PROFILE_SCOPE("Sandbox3D::Update::LevelUpdate")
+			switch (m_SceneState)
+			{
+			case SceneState::Edit:
+			{
+				g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), std::dynamic_pointer_cast<CameraBase>(m_SandboxController->GetCameraController()->GetCamera()));
+				break;
+			}
+			case SceneState::Play:
+			{
+				g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
+				break;
+			}
+
+			default:
+				break;
+			}
+		}
+
+		{
+			LP_PROFILE_SCOPE("Sandbox3D::Update::WindowRendering");
 			for (auto pWindow : m_pWindows)
 			{
 				if (pWindow->GetIsOpen())
@@ -121,6 +126,9 @@ namespace Sandbox3D
 		UpdateLogTool();
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
+		UpdateRenderPassView();
+		UpdateShaderView();
+		UpdateToolbar();
 		m_assetManager.OnImGuiRender();
 
 		for	(auto& window : m_BufferWindows)
@@ -134,10 +142,9 @@ namespace Sandbox3D
 
 	void Sandbox3D::OnEvent(Event& e)
 	{
-		if (m_IsPlaying)
+		if (m_SceneState == SceneState::Play && m_pGame)
 		{
 			m_pGame->OnEvent(e);
-			g_pEnv->pObjectLayerManager->OnEvent(e);
 		}
 
 		for (auto pWindow : m_pWindows)
@@ -175,6 +182,7 @@ namespace Sandbox3D
 		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
 		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnKeyPressed));
 		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnImGuiBegin));
+		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnViewportSizeChanged));
 	}
 
 	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
@@ -257,6 +265,24 @@ namespace Sandbox3D
 				}
 				break;
 			}
+
+			case LP_KEY_G:
+			{
+				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
+				if (control)
+				{
+					if (m_SceneState == SceneState::Edit)
+					{
+						OnLevelPlay();
+					}
+					else if (m_SceneState == SceneState::Play)
+					{
+						OnLevelStop();
+					}
+				}
+
+				break;
+			}
 		}
 
 		return false;
@@ -266,6 +292,22 @@ namespace Sandbox3D
 	{
 		ImGuizmo::BeginFrame();
 		return true;
+	}
+
+	bool Sandbox3D::OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e)
+	{
+		uint32_t width = e.GetWidth();
+		uint32_t height = e.GetHeight();
+
+		m_SandboxBuffer->Resize(width, height);
+		m_GBuffer->Resize(width, height);
+		m_SelectionBuffer->Resize(width, height);
+		m_SSAOBuffer->Resize(width, height);
+		m_SSAOBlurBuffer->Resize(width, height);
+
+		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
+
+		return false;
 	}
 
 	void Sandbox3D::GetInput()
@@ -343,13 +385,23 @@ namespace Sandbox3D
 		}
 	}
 
-	void Sandbox3D::ResizeBuffers(uint32_t width, uint32_t height)
+	void Sandbox3D::OnLevelPlay()
 	{
-		m_SandboxBuffer->Resize(width, height);
-		m_GBuffer->Resize(width, height);
-		m_SelectionBuffer->Resize(width, height);
-		m_SSAOBuffer->Resize(width, height);
-		m_SSAOBlurBuffer->Resize(width, height);
+		m_SceneState = SceneState::Play;
+		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
+
+		g_pEnv->pLevel = m_pRuntimeLevel;
+		m_pGame = CreateScope<Game>();
+		m_pGame->OnStart();
+	}
+
+	void Sandbox3D::OnLevelStop()
+	{
+		m_SceneState = SceneState::Edit;
+		g_pEnv->pLevel = m_pLevel;
+
+		m_pRuntimeLevel = nullptr;
+		m_pGame = nullptr;
 	}
 
 	void Sandbox3D::CreateRenderPasses()
@@ -367,7 +419,6 @@ namespace Sandbox3D
 
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
-			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.type = PassType::DirShadow;
 			shadowSpec.Name = "DirShadowPass";
 
@@ -381,7 +432,6 @@ namespace Sandbox3D
 		/////////Point shadow pass/////
 		{
 			RenderPassSpecification shadowSpec;
-			shadowSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			shadowSpec.type = PassType::PointShadow;
 			shadowSpec.Name = "PointShadowPass";
 
@@ -411,7 +461,6 @@ namespace Sandbox3D
 			mainBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.Name = "MainPass";
@@ -438,7 +487,6 @@ namespace Sandbox3D
 			mainBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.type = PassType::SSAO;
 			passSpec.Name = "SSAOMain";
@@ -448,7 +496,7 @@ namespace Sandbox3D
 
 			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(ssaoPath);
-		}
+		} 
 		//////////////////
 
 		/////SSAOBlur/////
@@ -465,7 +513,6 @@ namespace Sandbox3D
 			mainBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.type = PassType::SSAOBlur;
 			passSpec.Name = "SSAOBlur";
@@ -496,7 +543,6 @@ namespace Sandbox3D
 			lightBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
 			passSpec.Name = "LightPass";
 			passSpec.type = PassType::Lightning;
@@ -515,7 +561,6 @@ namespace Sandbox3D
 			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
 
 			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.ExtraRenders = ptrs;
 
 			passSpec.TargetFramebuffer = m_SandboxBuffer;
@@ -539,7 +584,6 @@ namespace Sandbox3D
 			spec.Samples = 1;
 
 			RenderPassSpecification passSpec;
-			passSpec.Camera = m_SandboxController->GetCameraController()->GetCamera();
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
 			passSpec.Name = "SelectionPass";

@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "LevelSystem.h"
 
-#include "Lamp/Objects/Brushes/BrushManager.h"
 #include <rapidxml/rapidxml_print.hpp>
 
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
@@ -15,8 +14,6 @@ namespace Lamp
 	{
 		LP_CORE_INFO("Loading level...");
 
-		Ref<Level> pLevel;
-
 		rapidxml::xml_document<> file;
 		rapidxml::xml_node<>* pRootNode;
 
@@ -27,7 +24,8 @@ namespace Lamp
 		file.parse<0>(&buffer[0]);
 		pRootNode = file.first_node("Level");
 
-		pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value(), path);
+		Ref<Level> pLevel = CreateRef<Level>(pRootNode->first_attribute("name")->value(), path);
+		g_pEnv->pLevel = pLevel;
 
 		if (rapidxml::xml_node<>* pLevelEnv = pRootNode->first_node("LevelEnvironment"))
 		{
@@ -55,19 +53,14 @@ namespace Lamp
 			}
 		}
 
-		if (rapidxml::xml_node<>* pLayers = pRootNode->first_node("Layers"))
-		{
-			ObjectLayerManager::Get()->SetLayers(LoadLayers(pLayers, ObjectLayerManager::Get()));
-		}
-
 		if (rapidxml::xml_node<>* pBrushes = pRootNode->first_node("Brushes"))
 		{
-			g_pEnv->pBrushManager->SetBrushes(LoadBrushes(pBrushes, g_pEnv->pBrushManager));
+			pLevel->GetBrushes() = LoadBrushes(pBrushes);
 		}
 
 		if (rapidxml::xml_node<>* pEntities = pRootNode->first_node("Entities"))
 		{
-			g_pEnv->pEntityManager->SetEntities(LoadEntities(pEntities, g_pEnv->pEntityManager));
+			pLevel->GetEntities() = LoadEntities(pEntities);
 		}
 
 		m_CurrentLevel = pLevel;
@@ -90,7 +83,7 @@ namespace Lamp
 
 		/////Brushes/////
 		rapidxml::xml_node<>* pBrushes = doc.allocate_node(rapidxml::node_element, "Brushes");
-		for (auto& b : g_pEnv->pBrushManager->GetBrushes())
+		for (auto& b : level->GetBrushes())
 		{
 			auto brush = b.second;
 
@@ -119,32 +112,9 @@ namespace Lamp
 
 		/////////////////
 
-		/////Layers//////
-		rapidxml::xml_node<>* pLayers = doc.allocate_node(rapidxml::node_element, "Layers");
-		for (auto& layer : ObjectLayerManager::Get()->GetLayers())
-		{
-			if (layer.ID == 0)
-				continue;
-
-			rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "Layer");
-
-			char* pId = doc.allocate_string(ToString((int)layer.ID).c_str());
-			child->append_attribute(doc.allocate_attribute("id", pId));
-
-			char* pName = doc.allocate_string(layer.Name.c_str());
-			child->append_attribute(doc.allocate_attribute("name", pName));
-
-			char* pDestroyable = doc.allocate_string(ToString(layer.IsDestroyable).c_str());
-			child->append_attribute(doc.allocate_attribute("destroyable", pDestroyable));
-
-			pLayers->append_node(child);
-		}
-		pRoot->append_node(pLayers);
-		/////////////////
-
 		////Entities/////
 		rapidxml::xml_node<>* pEntities = doc.allocate_node(rapidxml::node_element, "Entities");
-		for (auto& e : g_pEnv->pEntityManager->GetEntities())
+		for (auto& e : level->GetEntities())
 		{
 			if (e.second == nullptr)
 			{
@@ -309,31 +279,9 @@ namespace Lamp
 		return SaveLevel(level->GetPath(), level);
 	}
 
-	std::vector<ObjectLayer> LevelSystem::LoadLayers(rapidxml::xml_node<>* pNode, ObjectLayerManager* objLayerManager)
+	std::map<uint32_t, Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode)
 	{
-		std::vector<ObjectLayer> layers;
-
-		for (rapidxml::xml_node<>* pLayer = pNode->first_node("Layer"); pLayer; pLayer = pLayer->next_sibling())
-		{
-			std::string name(pLayer->first_attribute("name")->value());
-
-			int id;
-			GetValue(pLayer->first_attribute("id")->value(), id);
-
-			bool destroyable;
-			GetValue(pLayer->first_attribute("destroyable")->value(), destroyable);
-
-			layers.push_back(ObjectLayer((uint32_t)id, name, destroyable));
-		}
-
-		layers.push_back(ObjectLayer(0, "Main", false));
-
-		return layers;
-	}
-
-	std::unordered_map<uint32_t, Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode, BrushManager* brushManager)
-	{
-		std::unordered_map<uint32_t, Brush*> pBrushes;
+		std::map<uint32_t, Brush*> pBrushes;
 
 		for (rapidxml::xml_node<>* pBrush = pNode->first_node("Brush"); pBrush; pBrush = pBrush->next_sibling())
 		{
@@ -353,20 +301,20 @@ namespace Lamp
 
 			std::string name = pBrush->first_attribute("name")->value();
 
-			Brush* pB = brushManager->Create(path, pos, rot, scale, layerID, name);
+			Brush* pB = Brush::Create(path, pos, rot, scale, layerID, name);
 			pBrushes.emplace(std::make_pair(pB->GetID(), pB));
 		}
 
 		return pBrushes;
 	}
 
-	std::unordered_map<uint32_t, Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode, EntityManager* entityManager)
+	std::map<uint32_t, Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode)
 	{
-		std::unordered_map<uint32_t, Entity*> pEntities;
+		std::map<uint32_t, Entity*> pEntities;
 
 		for (rapidxml::xml_node<>* pEntity = pNode->first_node("Entity"); pEntity; pEntity = pEntity->next_sibling())
 		{
-			Entity* pEnt = entityManager->Create();
+			Entity* pEnt = Entity::Create(true);
 
 			std::string name = pEntity->first_attribute("name")->value();
 
