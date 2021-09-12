@@ -66,15 +66,14 @@ project "Lamp"
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",
+		"Glad",		
 		"%{LibraryDir.PhysX}/PhysX_static_64.lib",
 		"%{LibraryDir.PhysX}/PhysXCharacterKinematic_static_64.lib",
 		"%{LibraryDir.PhysX}/PhysXCommon_static_64.lib",
 		"%{LibraryDir.PhysX}/PhysXCooking_static_64.lib",	
 		"%{LibraryDir.PhysX}/PhysXExtensions_static_64.lib",
 		"%{LibraryDir.PhysX}/PhysXFoundation_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"
-	}
+		"%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"	}
 
 	defines 
 	{
@@ -118,7 +117,7 @@ project "Sandbox"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "off"
-
+	
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 	gamedir = "bin/" .. outputdir .. "/Game"
@@ -149,17 +148,17 @@ project "Sandbox"
 		"Lamp/vendor/fmod/include",
 		"Game/src",
 		"Lamp/vendor/ImGuizmo/include",
-		"Lamp/vendor/imnodes/",
-		"%{prj.name}/vendor/PhysX/include"
+		"Lamp/vendor/bullet/src",
+		"Lamp/vendor/imnodes/"
 	}
-
+	
 	libdirs
 	{
 		gamedir,
 		"Lamp/vendor/assimp",
 		"Lamp/vendor/fmod"
 	}
-
+	
 	links
 	{
 		"Lamp",
@@ -171,8 +170,7 @@ project "Sandbox"
 	
 	linkoptions
 	{
-		"/WHOLEARCHIVE:Game",
-		"/WHOLEARCHIVE:Lamp"
+		"/WHOLEARCHIVE:Game"
 	}
 
 	filter "system:windows"

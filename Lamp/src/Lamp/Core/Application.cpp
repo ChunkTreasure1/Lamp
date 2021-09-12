@@ -10,6 +10,8 @@
 
 #include "CoreLogger.h"
 
+#include "Lamp/Objects/Entity/ComponentInclude.h"
+
 GlobalEnvironment* g_pEnv;
 
 namespace Lamp

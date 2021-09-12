@@ -67,6 +67,9 @@
     <Filter Include="src\Lamp\Objects\Entity\BaseComponents">
       <UniqueIdentifier>{DBFEA38A-C750-7B7A-B06F-B88A9C609463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Physics">
+      <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
     </Filter>
@@ -291,8 +294,17 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Object.h">
       <Filter>src\Lamp\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\Physics.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsScene.h">
+      <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffer.h">
       <Filter>src\Lamp\Rendering</Filter>
@@ -1509,6 +1521,11 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsActor.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\RigidbodyComponent.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
@@ -1634,6 +1651,9 @@
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
       <Filter>src\Lamp\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\Physics.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClCompile>
@@ -1733,5 +1753,7 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\RigidbodyComponent.cpp" />
   </ItemGroup>
 </Project>
