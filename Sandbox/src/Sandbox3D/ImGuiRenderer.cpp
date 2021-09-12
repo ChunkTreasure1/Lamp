@@ -393,47 +393,29 @@ namespace Sandbox3D
 		ImGui::Begin("Layers", &m_LayerViewOpen);
 
 		int startId = 0;
-		for (auto& entity : g_pEnv->pLevel->GetEntities())
+		for (auto& layer : g_pEnv->pLevel->GetLayers())
 		{
-			startId++;
-			ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-			ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, entity.second->GetName().c_str());
-
-			if (ImGui::IsItemClicked())
+			if (ImGui::CollapsingHeader(layer.Name.c_str()))
 			{
-				if (m_pSelectedObject)
+				for (auto& obj : layer.Objects)
 				{
-					m_pSelectedObject->SetIsSelected(false);
-				}
+					startId++;
+					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
+					if (ImGui::IsItemClicked())
+					{
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(false);
+						}
 
-				m_pSelectedObject = dynamic_cast<Lamp::Object*>(entity.second);
+						m_pSelectedObject = obj;
 
-				if (m_pSelectedObject)
-				{
-					m_pSelectedObject->SetIsSelected(true);
-				}
-			}
-		}
-
-		startId = 0;
-		for (auto& brush : g_pEnv->pLevel->GetBrushes())
-		{
-			startId++;
-			ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-			ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, brush.second->GetName().c_str());
-
-			if (ImGui::IsItemClicked())
-			{
-				if (m_pSelectedObject)
-				{
-					m_pSelectedObject->SetIsSelected(false);
-				}
-
-				m_pSelectedObject = dynamic_cast<Lamp::Object*>(brush.second);
-
-				if (m_pSelectedObject)
-				{
-					m_pSelectedObject->SetIsSelected(true);
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(true);
+						}
+					}
 				}
 			}
 		}

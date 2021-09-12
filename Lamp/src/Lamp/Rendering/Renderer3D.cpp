@@ -485,10 +485,10 @@ namespace Lamp
 
 			s_pData->SkyboxBuffer->BindTextures(1);
 
-			//for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
-			//{
-			//	g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
-			//}
+			for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+			{
+				g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+			}
 
 			mesh->GetVertexArray()->Bind();
 			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());

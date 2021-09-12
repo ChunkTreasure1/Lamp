@@ -21,6 +21,7 @@ namespace Lamp
 		LevelSystem() = delete;
 		static std::map<uint32_t, Brush*> LoadBrushes(rapidxml::xml_node<>* pNode);
 		static std::map<uint32_t, Entity*> LoadEntities(rapidxml::xml_node<>* pNode);
+		static std::vector<ObjectLayer> LoadLayers(rapidxml::xml_node<>* pNode);
 
 	private:
 		static bool GetValue(char* val, bool& var);
@@ -33,6 +34,7 @@ namespace Lamp
 		//CHANGE TO CHAR*
 		static std::string ToString(const bool& var);
 		static std::string ToString(const int& var);
+		static std::string ToString(const uint32_t& var);
 		static std::string ToString(const float& var);
 		static std::string ToString(const glm::vec2& var);
 		static std::string ToString(const glm::vec3& var);

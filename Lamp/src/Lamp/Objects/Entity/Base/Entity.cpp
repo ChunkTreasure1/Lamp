@@ -37,6 +37,15 @@ namespace Lamp
 	void Entity::Destroy()
 	{
 		auto& entites = g_pEnv->pLevel->GetEntities();
+
+		for (auto& layer : g_pEnv->pLevel->GetLayers())
+		{
+			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), this); it != layer.Objects.end())
+			{
+				layer.Objects.erase(it);
+			}
+		}
+
 		entites.erase(m_Id);
 		delete this;
 	}
@@ -48,6 +57,7 @@ namespace Lamp
 		pEnt->SetSaveable(saveable);
 
 		g_pEnv->pLevel->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
+		g_pEnv->pLevel->GetLayers()[pEnt->GetLayerID()].Objects.push_back(pEnt);
 
 		return pEnt;
 	}

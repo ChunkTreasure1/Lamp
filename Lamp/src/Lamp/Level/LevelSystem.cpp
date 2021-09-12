@@ -53,6 +53,16 @@ namespace Lamp
 			}
 		}
 
+		if (rapidxml::xml_node<>* pLayers = pRootNode->first_node("Layers"))
+		{
+			pLevel->GetLayers() = LoadLayers(pLayers);
+		}
+
+		if (pLevel->GetLayers().empty())
+		{
+			pLevel->GetLayers().push_back(ObjectLayer("Main", 0, true));
+		}
+
 		if (rapidxml::xml_node<>* pBrushes = pRootNode->first_node("Brushes"))
 		{
 			pLevel->GetBrushes() = LoadBrushes(pBrushes);
@@ -140,6 +150,9 @@ namespace Lamp
 
 			char* pScale = doc.allocate_string(ToString(entity->GetScale()).c_str());
 			ent->append_attribute(doc.allocate_attribute("scale", pScale));
+
+			char* pLayerId = doc.allocate_string(ToString(entity->GetLayerID()).c_str());
+			ent->append_attribute(doc.allocate_attribute("layerId", pLayerId));
 
 			for (auto component : entity->GetComponents())
 			{
@@ -243,6 +256,26 @@ namespace Lamp
 		pRoot->append_node(pEntities);
 		/////////////////
 
+		/////Layers/////
+		rapidxml::xml_node<>* pLayers = doc.allocate_node(rapidxml::node_element, "Layers");
+		for (auto& layer : level->GetLayers())
+		{
+			rapidxml::xml_node<>* l = doc.allocate_node(rapidxml::node_element, "Layer");
+
+			char* pName = doc.allocate_string(layer.Name.c_str());
+			l->append_attribute(doc.allocate_attribute("name", pName));
+
+			char* pId = doc.allocate_string(ToString(layer.ID).c_str());
+			l->append_attribute(doc.allocate_attribute("id", pId));
+
+			char* pActive = doc.allocate_string(ToString(layer.Active).c_str());
+			l->append_attribute(doc.allocate_attribute("active", pActive));
+
+			pLayers->append_node(l);
+		}
+		pRoot->append_node(pLayers);
+		////////////////
+
 		/////Level environment/////
 		rapidxml::xml_node<>* pLevelEnv = doc.allocate_node(rapidxml::node_element, "LevelEnvironment");
 
@@ -327,10 +360,14 @@ namespace Lamp
 			glm::vec3 scale(1, 1, 1);
 			GetValue(pEntity->first_attribute("scale")->value(), scale);
 
+			int layerId;
+			GetValue(pEntity->first_attribute("layerId")->value(), layerId);
+
 			pEnt->SetName(name);
 			pEnt->SetPosition(pos);
 			pEnt->SetRotation(rot);
 			pEnt->SetScale(scale);
+			pEnt->SetLayerID(layerId);
 
 			for (rapidxml::xml_node<>* pComponent = pEntity->first_node("Component"); pComponent; pComponent = pComponent->next_sibling())
 			{
@@ -516,6 +553,26 @@ namespace Lamp
 		return pEntities;
 	}
 
+	std::vector<ObjectLayer> LevelSystem::LoadLayers(rapidxml::xml_node<>* pNode)
+	{
+		std::vector<ObjectLayer> layers;
+
+		for (rapidxml::xml_node<>* pLayer = pNode->first_node("Layer"); pLayer; pLayer = pLayer->next_sibling())
+		{
+			std::string name(pLayer->first_attribute("name")->value());
+
+			int id;
+			GetValue(pLayer->first_attribute("id")->value(), id);
+
+			bool active;
+			GetValue(pLayer->first_attribute("active")->value(), active);
+
+			layers.push_back(ObjectLayer(name, id, active));
+		}
+
+		return layers;
+	}
+
 	//////////Getters//////////
 	bool LevelSystem::GetValue(char* val, bool& var)
 	{
@@ -601,6 +658,10 @@ namespace Lamp
 		return str;
 	}
 	std::string LevelSystem::ToString(const int& var)
+	{
+		return std::to_string(var);
+	}
+	std::string LevelSystem::ToString(const uint32_t& var)
 	{
 		return std::to_string(var);
 	}

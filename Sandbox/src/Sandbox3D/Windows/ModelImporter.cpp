@@ -124,7 +124,7 @@ namespace Sandbox3D
 		m_Framebuffer->Bind();
 		RenderCommand::Clear();
 
-		Renderer3D::Begin(std::dynamic_pointer_cast<CameraBase>(m_Camera));
+		Renderer3D::Begin(std::dynamic_pointer_cast<CameraBase>(m_Camera->GetCamera()));
 		Renderer3D::BeginPass(pass);
 
 		if (m_RenderSkybox)

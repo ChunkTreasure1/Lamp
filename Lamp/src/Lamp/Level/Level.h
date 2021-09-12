@@ -4,7 +4,7 @@
 #include "Lamp/Objects/Brushes/Brush.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include <btBulletDynamicsCommon.h>
+#include "Layer.h"
 
 namespace Lamp
 {
@@ -60,6 +60,7 @@ namespace Lamp
 		inline void SetPath(const std::string& path) { m_Path = path; }
 		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes;  }
 		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities;  }
+		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers;  }
 
 		void OnEvent(Event& e);
 		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);
@@ -71,5 +72,6 @@ namespace Lamp
 		LevelEnvironment m_Environment;
 		std::map<uint32_t, Brush*> m_Brushes;
 		std::map<uint32_t, Entity*> m_Entities;
+		std::vector<ObjectLayer> m_Layers;
 	};
 }

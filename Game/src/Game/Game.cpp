@@ -1,15 +1,6 @@
 #include "Game.h"
 
-#include <Lamp/Objects/Entity/BaseComponents/LightComponent.h>
-#include <Lamp/Objects/Entity/BaseComponents/MeshComponent.h>
-
-#include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
-#include <Lamp/Audio/AudioEngine.h>
-#include <Lamp/Objects/Entity/BaseComponents/AudioListenerComponent.h>
-#include <Lamp/Meshes/Materials/MaterialLibrary.h>
-
 #include <Lamp.h>
-#include <Lamp/AssetSystem/AssetManager.h>
 
 void Game::OnStart()
 {
