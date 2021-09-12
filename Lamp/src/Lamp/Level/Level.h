@@ -46,8 +46,9 @@ namespace Lamp
 			}
 
 			m_Environment = level.m_Environment;
-			m_Name = m_Name;
-			m_Path = m_Path;
+			m_Name = level.m_Name;
+			m_Path = level.m_Path;
+			m_Layers = level.m_Layers;
 		}
 
 		~Level()

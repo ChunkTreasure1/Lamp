@@ -128,9 +128,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game\ControllerComponent.h" />
     <ClInclude Include="src\Game\Game.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game\ControllerComponent.cpp" />
     <ClCompile Include="src\Game\Game.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

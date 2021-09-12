@@ -810,9 +810,6 @@ namespace Sandbox3D
 
 			ImGui::ColorEdit3("Sun Color", glm::value_ptr(g_pEnv->DirLight.Color));
 			ImGui::DragFloat("Sun Intensity", &g_pEnv->DirLight.Intensity);
-
-			ImGui::Separator();
-			ImGui::Text("HDR Settings");
 		}
 
 		ImGui::End();

@@ -24,19 +24,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.h">
-      <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
-    </ClInclude>
     <ClInclude Include="src\Game\Game.h">
       <Filter>src\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Game\ControllerComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
-      <Filter>Lamp\vendor\ImGuizmo\include\ImGuizmo</Filter>
-    </ClCompile>
     <ClCompile Include="src\Game\Game.cpp">
       <Filter>src\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game\ControllerComponent.cpp" />
   </ItemGroup>
 </Project>

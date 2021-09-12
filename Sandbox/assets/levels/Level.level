@@ -14,20 +14,13 @@
 				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
 			</Component>
 		</Entity>
-		<Entity name="Entity18" position="-0.140403,5.306564,29.375040" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
-			<Component name="CameraComponent">
-				<Param name="Is Perspective" type="Bool" value="1"/>
-				<Param name="Is Main" type="Bool" value="0"/>
-				<Param name="Field Of View" type="Float" value="60.000000"/>
-			</Component>
-		</Entity>
 	</Entities>
 	<Layers>
 		<Layer name="Main" id="0" active="1"/>
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="21.833031,18.776026,34.840759" rotation="213.744675,-33.799896,0.000000" fov="60.000000"/>
+		<CameraValues position="21.954908,19.375784,35.906818" rotation="227.244400,-25.699846,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 
