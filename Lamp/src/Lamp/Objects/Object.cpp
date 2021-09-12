@@ -1,7 +1,5 @@
 #include "lppch.h"
 #include "Object.h"
-#include "Lamp/Physics/Rigidbody.h"
-#include "Lamp/Physics/PhysicsEngine.h"
 
 namespace Lamp
 {
@@ -15,20 +13,11 @@ namespace Lamp
 
 	Object::~Object()
 	{
-		PhysicsEngine::Get()->RemoveRigidBody(this);
-		if (m_pRigidBody)
-		{
-			delete m_pRigidBody;
-		}
 	}
 
 	void Object::SetPosition(const glm::vec3& pos)
 	{
 		m_Position = pos;
-		if (m_pRigidBody)
-		{
-			m_pRigidBody->SetPosition(pos);
-		}
 
 		CalculateModelMatrix();
 		UpdatedMatrix();
@@ -52,10 +41,6 @@ namespace Lamp
 		UpdatedMatrix();
 		ScaleChanged();
 
-		if (m_pRigidBody)
-		{
-			m_pRigidBody->SetScale(m_Scale);
-		}
 	}
 
 	void Object::SetModelMatrix(const glm::mat4& mat)
@@ -72,10 +57,6 @@ namespace Lamp
 
 		m_Rotation += rotation;
 		m_Position = position;
-		if (!m_pRigidBody)
-		{
-			m_pRigidBody->SetPosition(position);
-		}
 
 		m_Scale = scale;
 	}

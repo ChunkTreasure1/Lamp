@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Lamp/Physics/Rigidbody.h"
 
 #include "Lamp/Meshes/Model.h"
 #include "Lamp/Objects/Object.h"

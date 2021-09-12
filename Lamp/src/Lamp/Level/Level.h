@@ -4,8 +4,6 @@
 #include "Lamp/Objects/Brushes/Brush.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include <btBulletDynamicsCommon.h>
-
 namespace Lamp
 {
 	struct LevelEnvironment

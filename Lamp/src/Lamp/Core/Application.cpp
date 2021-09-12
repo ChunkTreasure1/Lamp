@@ -3,7 +3,6 @@
 
 #include "imgui.h"
 
-#include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 
@@ -41,9 +40,6 @@ namespace Lamp
 		Renderer::Initialize();
 		AudioEngine::Initialize();
 
-		m_pPhysicsEngine = new PhysicsEngine();
-		m_pPhysicsEngine->Initialize();
-
 		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_pImGuiLayer);
@@ -52,7 +48,6 @@ namespace Lamp
 	Application::~Application()
 	{
 		LP_PROFILE_FUNCTION();
-		m_pPhysicsEngine->Shutdown();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
@@ -71,11 +66,6 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			if (m_IsSimulating)
-			{
-				LP_PROFILE_SCOPE("Application::Run::Physics")
-				m_pPhysicsEngine->Simulate();
-			}
 			AudioEngine::Update();
 
 			//Load assets
