@@ -26,6 +26,7 @@ namespace Lamp
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Lamp::Event& someE) override;
+		virtual uint32_t GetSize() { return sizeof(*this); }
 		virtual uint64_t GetEventMask() override { return EventType::AppUpdate; }
 		////////////////
 

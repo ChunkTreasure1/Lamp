@@ -12,11 +12,6 @@ namespace Lamp
 		m_Name = "Brush";
 	}
 
-	void Brush::UpdatedMatrix()
-	{
-		m_Model->SetModelMatrix(m_ModelMatrix);
-	}
-
 	void Brush::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
@@ -110,7 +105,7 @@ namespace Lamp
 	{
 		if (g_pEnv->ShouldRenderBB && e.GetPassInfo().type == PassType::Forward)
 		{
-			m_Model->RenderBoundingBox();
+			m_Model->RenderBoundingBox(m_ModelMatrix);
 		}
 		
 		if (e.GetPassInfo().type == PassType::Forward)
@@ -120,7 +115,7 @@ namespace Lamp
 
 		bool forward = e.GetPassInfo().type == PassType::Selection ? true : false;
 
-		m_Model->Render(m_Id, forward);
+		m_Model->Render(m_Id, m_ModelMatrix, forward);
 
 		return true;
 	}

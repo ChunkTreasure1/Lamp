@@ -134,7 +134,7 @@ namespace Sandbox3D
 
 		if (m_pModelToImport.get() != nullptr)
 		{
-			m_pModelToImport->Render(0, true);
+			m_pModelToImport->Render(0, glm::mat4(1.f), true);
 		}
 		if (m_RenderGrid)
 		{

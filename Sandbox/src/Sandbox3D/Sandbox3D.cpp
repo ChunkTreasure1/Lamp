@@ -386,9 +386,13 @@ namespace Sandbox3D
 	void Sandbox3D::OnLevelPlay()
 	{
 		m_SceneState = SceneState::Play;
+		m_pSelectedObject = nullptr;
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
 
 		g_pEnv->pLevel = m_pRuntimeLevel;
+		m_pRuntimeLevel->SetIsPlaying(true);
+		m_pRuntimeLevel->OnRuntimeStart();
+
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 	}
@@ -396,6 +400,9 @@ namespace Sandbox3D
 	void Sandbox3D::OnLevelStop()
 	{
 		m_SceneState = SceneState::Edit;
+		m_pSelectedObject = nullptr;
+
+		m_pRuntimeLevel->OnRuntimeEnd();
 		g_pEnv->pLevel = m_pLevel;
 
 		m_pRuntimeLevel = nullptr;
@@ -575,7 +582,8 @@ namespace Sandbox3D
 			FramebufferSpecification spec;
 			spec.Attachments =
 			{
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
+				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
 			};
 			spec.Height = 720;
 			spec.Width = 1280;

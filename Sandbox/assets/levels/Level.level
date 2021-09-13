@@ -1,10 +1,10 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(1)"/>
 		<Brush lgfPath="" position="0.000000,1.899629,10.439320" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 		<Brush lgfPath="assets\models\sphere.lgf" position="0.000000,0.763550,20.837059" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 		<Brush lgfPath="assets\models\teddy.lgf" position="-10.288723,0.954229,16.818138" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 		<Brush lgfPath="" position="18.685272,9.908257,1.040956" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(2)"/>
+		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,-3.086224" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Entities>
 		<Entity name="Entity3" position="2.568061,4.310013,18.495684" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
@@ -14,6 +14,19 @@
 				<Param name="Falloff" type="Float" value="0.000000"/>
 				<Param name="Near plane" type="Float" value="0.100000"/>
 				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
+			</Component>
+			<Component name="MeshComponent">
+				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf"/>
+			</Component>
+			<Component name="RigidbodyComponent">
+				<Param name="Body type" type="Int" value="1"/>
+				<Param name="Collision type" type="Int" value="0"/>
+				<Param name="Mass" type="Float" value="1.000000"/>
+				<Param name="Linear Drag" type="Float" value="1.000000"/>
+				<Param name="Angular Drag" type="Float" value="1.000000"/>
+				<Param name="Disable gravity" type="Bool" value="0"/>
+				<Param name="Is Kinematic" type="Bool" value="0"/>
+				<Param name="Layer" type="Int" value="0"/>
 			</Component>
 		</Entity>
 		<Entity name="Entity18" position="-0.140403,5.306564,29.375040" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000">
@@ -26,7 +39,7 @@
 	</Entities>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-26.448118,10.809709,24.918268" rotation="-16.504271,-19.400291,0.000000" fov="60.000000"/>
+		<CameraValues position="-15.678370,10.909122,38.050442" rotation="-407.702728,-18.800251,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

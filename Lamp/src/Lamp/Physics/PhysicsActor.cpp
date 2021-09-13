@@ -1,6 +1,9 @@
 #include "lppch.h"
 #include "PhysicsActor.h"
 
+#include "PhysXInternal.h"
+#include "Physics.h"
+
 namespace Lamp
 {
 	PhysicsActor::PhysicsActor(Entity* pEnt)
@@ -255,46 +258,153 @@ namespace Lamp
 
 	glm::vec3 PhysicsActor::GetKinematicTargetPosition() const
 	{
-		return glm::vec3();
+		if (!IsKinematic())
+		{
+			LP_CORE_WARN("Trying to set kinematic target for a non-kinematic actor.");
+			return glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+
+		physx::PxRigidDynamic* actor = m_pRigidActor->is<physx::PxRigidDynamic>();
+		LP_CORE_ASSERT(actor, "Actor is null!");
+		physx::PxTransform target;
+		actor->getKinematicTarget(target);
+		return PhysXUtils::FromPhysXVector(target.p);
 	}
 
 	glm::vec3 PhysicsActor::GetKinematicTargetRotation() const
 	{
-		return glm::vec3();
+		if (!IsKinematic())
+		{
+			LP_CORE_WARN("Trying to set kinematic target for a non-kinematic actor.");
+			return glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+
+		physx::PxRigidDynamic* actor = m_pRigidActor->is<physx::PxRigidDynamic>();
+		LP_CORE_ASSERT(actor, "Actor is null!");
+		physx::PxTransform target;
+		actor->getKinematicTarget(target);
+		return glm::eulerAngles(PhysXUtils::FromPhysXQuat(target.q));
 	}
 
 	void PhysicsActor::SetKinematicTarget(const glm::vec3& targetPosition, const glm::vec3& targetRotation) const
 	{
+		if (!IsKinematic())
+		{
+			LP_CORE_WARN("Trying to set kinematic target for a non-kinematic actor.");
+			return;
+		}
+
+		physx::PxRigidDynamic* actor = m_pRigidActor->is<physx::PxRigidDynamic>();
+		LP_CORE_ASSERT(actor, "Actor is null!");
+		actor->setKinematicTarget(PhysXUtils::ToPhysXTransform(targetPosition, targetRotation));
 	}
 
 	void PhysicsActor::SetSimulationData(uint32_t layerId)
 	{
+		//const PhysicsLayer& layerInfo = PhysicsLayerManager::GetLayer(layerId);
+		//
+		//if (layerInfo.CollidesWith == 0)
+		//	return;
+		//
+		//physx::PxFilterData filterData;
+		//filterData.word0 = layerInfo.BitValue;
+		//filterData.word1 = layerInfo.CollidesWith;
+		//filterData.word2 = (uint32_t)m_RigidBodyData.CollisionDetection;
+		//
+		//for (auto& collider : m_Colliders)
+		//	collider->SetFilterData(filterData);
 	}
 
 	void PhysicsActor::SetKinematic(bool isKinematic)
 	{
+		if (!IsDynamic())
+		{
+			LP_CORE_WARN("Static PhysicsActor can't be kinematic.");
+			return;
+		}
+
+		m_RigidbodyData->GetSpecification().IsKinematic = isKinematic;
+		m_pRigidActor->is<physx::PxRigidDynamic>()->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, isKinematic);
 	}
 
 	void PhysicsActor::SetGravityDisabled(bool disable)
 	{
+		m_pRigidActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, disable);
 	}
 
 	void PhysicsActor::SetLockFlag(ActorLockFlag flag, bool value)
 	{
+		if (!IsDynamic())
+			return;
+
+		if (value)
+			m_LockFlags |= (uint32_t)flag;
+		else
+			m_LockFlags &= ~(uint32_t)flag;
+
+		m_pRigidActor->is<physx::PxRigidDynamic>()->setRigidDynamicLockFlags((physx::PxRigidDynamicLockFlags)m_LockFlags);
 	}
 
 	void PhysicsActor::OnFixedUpdate(float fixedDeltaTime)
 	{
+		EntityPhysicsUpdateEvent e(fixedDeltaTime);
+		m_pEntity->OnEvent(e);
 	}
+
 	void PhysicsActor::AddCollider(Ref<BoxColliderComponent> collider, Entity* pEnt, const glm::vec3& offset)
 	{
+		m_Colliders.push_back(CreateRef<BoxColliderShape>(collider, *this, pEnt, offset));
+	}
+
+	void PhysicsActor::AddCollider(Ref<SphereColliderComponent> collider, Entity* pEnt, const glm::vec3& offset)
+	{
+		m_Colliders.push_back(CreateRef<SphereColliderShape>(collider, *this, pEnt, offset));
+	}
+
+	void PhysicsActor::AddCollider(Ref<CapsuleColliderComponent> collider, Entity* pEnt, const glm::vec3& offset)
+	{
+		m_Colliders.push_back(CreateRef<CapsuleColliderShape>(collider, *this, pEnt, offset));
 	}
 
 	void PhysicsActor::CreateRigidActor()
 	{
+		auto& sdk = PhysXInternal::GetPhysXSDK();
+		
+		glm::mat4 transform = m_pEntity->GetModelMatrix();
+
+		if (m_RigidbodyData->GetSpecification().m_BodyType == RigidbodyComponent::Type::Static)
+		{
+			m_pRigidActor = sdk.createRigidStatic(PhysXUtils::ToPhysXTransform(transform));
+		}
+		else
+		{
+			const PhysicsSettings& settings = Physics::GetSettings();
+			m_pRigidActor = sdk.createRigidDynamic(PhysXUtils::ToPhysXTransform(transform));
+
+			SetLinearDrag(m_RigidbodyData->GetSpecification().m_LinearDrag);
+			SetAngularDrag(m_RigidbodyData->GetSpecification().m_AngularDrag);
+
+			SetKinematic(m_RigidbodyData->GetSpecification().IsKinematic);
+
+			SetGravityDisabled(m_RigidbodyData->GetSpecification().m_DisableGravity);
+
+			m_pRigidActor->is<physx::PxRigidDynamic>()->setSolverIterationCounts(settings.SolverIterations, settings.SolverVelocityIterations);
+			m_pRigidActor->is<physx::PxRigidDynamic>()->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, m_RigidbodyData->GetSpecification().m_CollisionDetection == RigidbodyComponent::CollisionDetectionType::Continuous);
+			m_pRigidActor->is<physx::PxRigidDynamic>()->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_SPECULATIVE_CCD, m_RigidbodyData->GetSpecification().m_CollisionDetection == RigidbodyComponent::CollisionDetectionType::ContinuousSpeculative);
+		}
+
+		if (m_pEntity->HasComponent<BoxColliderComponent>()) AddCollider(m_pEntity->GetComponent<BoxColliderComponent>(), m_pEntity);
+		if (m_pEntity->HasComponent<SphereColliderComponent>()) AddCollider(m_pEntity->GetComponent<SphereColliderComponent>(), m_pEntity);
+		if (m_pEntity->HasComponent<CapsuleColliderComponent>()) AddCollider(m_pEntity->GetComponent<CapsuleColliderComponent>(), m_pEntity);
+	
+		SetMass(m_RigidbodyData->GetSpecification().m_Mass);
+		m_pRigidActor->userData = this;
 	}
 
 	void PhysicsActor::SynchronizeTransform()
 	{
+		physx::PxTransform actorPose = m_pRigidActor->getGlobalPose();
+		m_pEntity->SetPosition(PhysXUtils::FromPhysXVector(actorPose.p));
+		m_pEntity->SetRotation(glm::eulerAngles(PhysXUtils::FromPhysXQuat(actorPose.q)));
 	}
 }

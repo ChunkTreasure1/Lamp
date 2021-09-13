@@ -5,6 +5,7 @@
 
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
+#include "Lamp/Physics/Physics.h"
 
 #include "Lamp/AssetSystem/AssetManager.h"
 
@@ -25,7 +26,6 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
-		g_pEnv->pRenderUtils = new RenderUtils();
 
 		g_pEnv->pAssetManager = new AssetManager();
 
@@ -41,6 +41,7 @@ namespace Lamp
 
 		Renderer::Initialize();
 		AudioEngine::Initialize();
+		Physics::Initialize();
 
 		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();

@@ -40,29 +40,29 @@ namespace Lamp
 		{
 		case physx::PxErrorCode::eNO_ERROR:
 		case physx::PxErrorCode::eDEBUG_INFO:
-			LP_CORE_INFO("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
+			LP_INFO("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
 			break;
 		case physx::PxErrorCode::eDEBUG_WARNING:
 		case physx::PxErrorCode::ePERF_WARNING:
-			LP_CORE_INFO("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
+			LP_INFO("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
 			break;
 		case physx::PxErrorCode::eINVALID_PARAMETER:
 		case physx::PxErrorCode::eINVALID_OPERATION:
 		case physx::PxErrorCode::eOUT_OF_MEMORY:
 		case physx::PxErrorCode::eINTERNAL_ERROR:
-			LP_CORE_ERROR("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
+			LP_ERROR("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
 			break;
 		case physx::PxErrorCode::eABORT:
 		case physx::PxErrorCode::eMASK_ALL:
-			LP_CORE_ERROR("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
-			LP_CORE_ASSERT(false, "");
+			LP_ERROR("[PhysX]: {0}: {1} at {2} ({3})", errorMessage, message, file, line);
+			LP_ASSERT(false, "");
 			break;
 		}
 	}
 
 	void PhysicsAssertHandler::operator()(const char* exp, const char* file, int line, bool& ignore)
 	{
-		LP_CORE_ERROR("[PhysX Error]: {0}:{1} - {2}", file, line, exp);
+		LP_ERROR("[PhysX Error]: {0}:{1} - {2}", file, line, exp);
 	}
 
 	void PhysXInternal::Initialize()
@@ -90,6 +90,8 @@ namespace Lamp
 
 		bool extentionsLoaded = PxInitExtensions(*s_PhysXData->PhysXSDK, nullptr);
 		LP_CORE_ASSERT(extentionsLoaded, "Failed to initialize PhysX extentions");
+
+		s_PhysXData->PhysXCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 
 		PxSetAssertHandler(s_PhysXData->AssertHandler);
 		

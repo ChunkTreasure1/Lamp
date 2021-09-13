@@ -22,7 +22,6 @@ namespace Lamp
 		m_Position = pos;
 
 		CalculateModelMatrix();
-		UpdatedMatrix();
 
 		EntityPositionChangedEvent e;
 		OnEvent(e);
@@ -32,17 +31,13 @@ namespace Lamp
 	{
 		m_Position = pos; 
 		CalculateModelMatrix(); 
-		UpdatedMatrix(); 
-		//m_PickingCollider.Transform(pos);
 	}
 
 	void Object::SetScale(const glm::vec3& scale)
 	{
 		m_Scale = scale;
 		CalculateModelMatrix();
-		UpdatedMatrix();
 		ScaleChanged();
-
 	}
 
 	void Object::SetModelMatrix(const glm::mat4& mat)

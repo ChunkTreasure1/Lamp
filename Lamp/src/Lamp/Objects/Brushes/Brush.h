@@ -13,14 +13,12 @@ namespace Lamp
 	public:
 		Brush(Ref<Model> model);
 
-		virtual void UpdatedMatrix() override;
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
 		virtual uint64_t GetEventMask() override { return EventType::AppRender | EventType::AppUpdate; }
 
 		//Getting
 		inline Ref<Model>& GetModel() { return m_Model; }
-		inline Rigidbody* GetRigidbody() { return m_pRigidBody; }
 
 	protected:
 		virtual void ScaleChanged() override;

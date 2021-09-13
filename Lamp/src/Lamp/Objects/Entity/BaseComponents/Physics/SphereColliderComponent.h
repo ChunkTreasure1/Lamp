@@ -12,11 +12,18 @@ namespace Lamp
 		SphereColliderComponent()
 			: EntityComponent("SphereColliderComponent")
 		{
+			SetComponentProperties
+			({
+				{ PropertyType::Float, "Radius", RegisterData(&m_Specification.m_Radius) },
+				{ PropertyType::Float3, "Offset", RegisterData(&m_Specification.m_Offset) },
+				{ PropertyType::Bool, "Is Trigger", RegisterData(&m_Specification.m_IsTrigger) }
+			});
 		}
 
 		/////Base/////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
+		virtual uint32_t GetSize() { return sizeof(*this); }
 		virtual uint64_t GetEventMask() override { return EventType::None; }
 		//////////////
 

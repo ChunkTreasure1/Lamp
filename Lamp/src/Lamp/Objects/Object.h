@@ -8,8 +8,6 @@
 
 namespace Lamp
 {
-	class Rigidbody;
-
 	class Object
 	{
 	public:
@@ -19,8 +17,8 @@ namespace Lamp
 		//Setting
 		void SetPosition(const glm::vec3& pos);
 		void SetPhysicsPosition(const glm::vec3& pos);
-		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); UpdatedMatrix(); }
-		inline void AddRotation(const glm::vec3& rot) { m_Rotation += rot; CalculateModelMatrix(); UpdatedMatrix(); }
+		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); }
+		inline void AddRotation(const glm::vec3& rot) { m_Rotation += rot; CalculateModelMatrix(); }
 		void SetScale(const glm::vec3& scale);
 
 		void SetModelMatrix(const glm::mat4& mat);
@@ -29,7 +27,6 @@ namespace Lamp
 
 		inline void SetIsFrozen(bool state) { m_IsFrozen = state; }
 		inline void SetIsActive(bool state) { m_IsActive = state; }
-		inline void SetRigidbody(Rigidbody* pBody) { m_pRigidBody = pBody; }
 		inline void SetIsSelected(bool state) { m_IsSelected = state; }
 
 		//Getting
@@ -39,8 +36,6 @@ namespace Lamp
 
 		inline const glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
 		inline const std::string& GetName() { return m_Name; }
-
-		inline Rigidbody* GetRigidbody() { return m_pRigidBody; }
 
 		inline uint32_t GetLayerID() { return m_LayerID; }
 		inline bool GetIsFrozen() { return m_IsFrozen; }
@@ -55,7 +50,6 @@ namespace Lamp
 
 	protected:
 		void CalculateModelMatrix();
-		virtual void UpdatedMatrix() {}
 		virtual void ScaleChanged() {}
 
 	protected:
@@ -70,7 +64,6 @@ namespace Lamp
 		glm::mat4 m_ModelMatrix = glm::mat4(1.f);
 		std::string m_Name;
 
-		Rigidbody* m_pRigidBody = nullptr;
 		uint32_t m_LayerID = 0;
 		uint32_t m_Id = 0;
 	};

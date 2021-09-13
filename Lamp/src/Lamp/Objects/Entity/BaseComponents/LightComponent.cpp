@@ -2,6 +2,7 @@
 #include "LightComponent.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Level/Level.h"
 
 namespace Lamp
 {
@@ -18,7 +19,7 @@ namespace Lamp
 			m_pPointLight = new PointLight();
 
 			m_pPointLight->ShadowBuffer = std::make_shared<PointShadowBuffer>(spec);
-			g_pEnv->pRenderUtils->RegisterPointLight(m_pPointLight);
+			g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
 		}
 
 
@@ -34,7 +35,7 @@ namespace Lamp
 
 	LightComponent::~LightComponent()
 	{
-		g_pEnv->pRenderUtils->UnregisterPointLight(m_pPointLight);
+		g_pEnv->pLevel->GetRenderUtils().UnregisterPointLight(m_pPointLight);
 
 		delete m_pPointLight;
 	}

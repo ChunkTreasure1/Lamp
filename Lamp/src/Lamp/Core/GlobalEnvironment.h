@@ -9,28 +9,7 @@ namespace Lamp
 {
 	class Level;
 	class AssetManager;
-	class MeshComponent;
 }
-
-class RenderUtils
-{
-public:
-	RenderUtils() {}
-	~RenderUtils();
-
-	void RegisterPointLight(Lamp::PointLight* light);
-	bool UnregisterPointLight(Lamp::PointLight* light);
-
-	void RegisterMeshComponent(uint32_t id, Lamp::MeshComponent* mesh);
-	bool UnegisterMeshComponent(uint32_t id);
-
-	inline const std::vector<Lamp::PointLight*>& GetPointLights() { return m_PointLights; }
-	inline const std::unordered_map<uint32_t, Lamp::MeshComponent*>& GetMeshComponents() { return m_MeshComponents; }
-
-private:
-	std::vector<Lamp::PointLight*> m_PointLights;
-	std::unordered_map<uint32_t, Lamp::MeshComponent*> m_MeshComponents;
-};
 
 struct GlobalEnvironment
 {
@@ -39,8 +18,6 @@ struct GlobalEnvironment
 	bool ShouldRenderGizmos = true;
 	bool IsEditor = false;
 	float HDRExposure = 3.f;
-
-	RenderUtils* pRenderUtils = nullptr;
 
 	std::shared_ptr<Lamp::Level> pLevel = nullptr;
 	Lamp::AssetManager* pAssetManager = nullptr;

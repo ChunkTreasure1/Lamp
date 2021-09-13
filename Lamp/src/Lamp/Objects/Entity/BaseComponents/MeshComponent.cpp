@@ -12,19 +12,18 @@ namespace Lamp
 
 	MeshComponent::~MeshComponent()
 	{
-		g_pEnv->pRenderUtils->UnegisterMeshComponent(m_pEntity->GetID());
+		g_pEnv->pLevel->GetRenderUtils().UnegisterMeshComponent(m_pEntity->GetID());
 	}
 
 	void MeshComponent::Initialize()
 	{
-		g_pEnv->pRenderUtils->RegisterMeshComponent(m_pEntity->GetId(), this);
+		g_pEnv->pLevel->GetRenderUtils().RegisterMeshComponent(m_pEntity->GetId(), this);
 	}
 
 	void MeshComponent::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(MeshComponent::OnRender));
-		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(MeshComponent::OnUpdate));
 		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(MeshComponent::OnPropertyChanged));
 	}
 
@@ -35,24 +34,14 @@ namespace Lamp
 			return false;
 		}
 
-		m_Model->Render(m_pEntity->GetID());
+		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetModelMatrix());
 
 		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().type != PassType::DirShadow || e.GetPassInfo().type != PassType::PointShadow))
 		{
-			m_Model->RenderBoundingBox();
+			m_Model->RenderBoundingBox(m_pEntity->GetModelMatrix());
 		}
 
 		return true;
-	}
-
-	bool MeshComponent::OnUpdate(AppUpdateEvent& e)
-	{
-		if (m_Model)
-		{
-			m_Model->SetModelMatrix(m_pEntity->GetModelMatrix());
-		}
-
-		return false;
 	}
 
 	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
