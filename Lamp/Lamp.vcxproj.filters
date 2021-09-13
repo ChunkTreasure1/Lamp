@@ -1558,6 +1558,7 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
@@ -1814,5 +1815,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp" />
   </ItemGroup>
 </Project>

@@ -188,6 +188,7 @@
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
@@ -653,6 +654,7 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
