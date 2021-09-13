@@ -1,6 +1,11 @@
 #pragma once
 
 #include "PhysXUtils.h"
+#include "PhysicsMaterial.h"
+
+#include "Lamp/Objects/Entity/BaseComponents/Physics/BoxColliderComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/Physics/CapsuleColliderComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/Physics/SphereColliderComponent.h"
 
 namespace Lamp
 {
@@ -50,13 +55,13 @@ namespace Lamp
 	class BoxColliderShape : public ColliderShape
 	{
 	public:
-		BoxColliderShape(BoxColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
+		BoxColliderShape(Ref<BoxColliderComponent> component, const PhysicsActor& actor, Entity* entity, const glm::vec3& offset = glm::vec3(0.0f));
 		~BoxColliderShape();
 
-		const glm::vec3& GetOffset() const override { return m_Component.Offset; }
+		const glm::vec3& GetOffset() const override { return m_Component->GetSpecification().m_Offset; }
 		void SetOffset(const glm::vec3& offset) override;
 
-		virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
+		virtual bool IsTrigger() const override { return m_Component->GetSpecification().m_IsTrigger; }
 		virtual void SetTrigger(bool isTrigger) override;
 
 		virtual void SetFilterData(const physx::PxFilterData& filterData) override;
@@ -64,20 +69,20 @@ namespace Lamp
 		virtual void DetachFromActor(physx::PxRigidActor* actor) override;
 
 	private:
-		BoxColliderComponent& m_Component;
+		Ref<BoxColliderComponent> m_Component;
 		physx::PxShape* m_Shape;
 	};
 
 	class SphereColliderShape : public ColliderShape
 	{
 	public:
-		SphereColliderShape(SphereColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
+		SphereColliderShape(Ref<SphereColliderComponent> component, const PhysicsActor& actor, Entity* entity, const glm::vec3& offset = glm::vec3(0.0f));
 		~SphereColliderShape();
 
-		const glm::vec3& GetOffset() const override { return m_Component.Offset; }
+		const glm::vec3& GetOffset() const override { return m_Component->GetSpecification().m_Offset; }
 		void SetOffset(const glm::vec3& offset) override;
 
-		virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
+		virtual bool IsTrigger() const override { return m_Component->GetSpecification().m_IsTrigger; }
 		virtual void SetTrigger(bool isTrigger) override;
 
 		virtual void SetFilterData(const physx::PxFilterData& filterData) override;
@@ -85,20 +90,20 @@ namespace Lamp
 		virtual void DetachFromActor(physx::PxRigidActor* actor) override;
 
 	private:
-		SphereColliderComponent& m_Component;
+		Ref<SphereColliderComponent> m_Component;
 		physx::PxShape* m_Shape;
 	};
 
 	class CapsuleColliderShape : public ColliderShape
 	{
 	public:
-		CapsuleColliderShape(CapsuleColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
+		CapsuleColliderShape(Ref<CapsuleColliderComponent> component, const PhysicsActor& actor, Entity* entity, const glm::vec3& offset = glm::vec3(0.0f));
 		~CapsuleColliderShape();
 
-		const glm::vec3& GetOffset() const override { return m_Component.Offset; }
+		const glm::vec3& GetOffset() const override { return m_Component->GetSpecification().m_Offset; }
 		void SetOffset(const glm::vec3& offset) override;
 
-		virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
+		virtual bool IsTrigger() const override { return m_Component->GetSpecification().m_IsTrigger; }
 		virtual void SetTrigger(bool isTrigger) override;
 
 		virtual void SetFilterData(const physx::PxFilterData& filterData) override;
@@ -106,49 +111,49 @@ namespace Lamp
 		virtual void DetachFromActor(physx::PxRigidActor* actor) override;
 
 	private:
-		CapsuleColliderComponent& m_Component;
+		Ref<CapsuleColliderComponent> m_Component;
 		physx::PxShape* m_Shape;
 	};
 
-	class ConvexMeshShape : public ColliderShape
-	{
-	public:
-		ConvexMeshShape(MeshColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
-		~ConvexMeshShape();
+	//class ConvexMeshShape : public ColliderShape
+	//{
+	//public:
+	//	ConvexMeshShape(MeshColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
+	//	~ConvexMeshShape();
 
-		const glm::vec3& GetOffset() const override { return glm::vec3(0.0f); }
-		void SetOffset(const glm::vec3& offset) override {}
+	//	const glm::vec3& GetOffset() const override { return glm::vec3(0.0f); }
+	//	void SetOffset(const glm::vec3& offset) override {}
 
-		virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
-		virtual void SetTrigger(bool isTrigger) override;
+	//	virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
+	//	virtual void SetTrigger(bool isTrigger) override;
 
-		virtual void SetFilterData(const physx::PxFilterData& filterData) override;
+	//	virtual void SetFilterData(const physx::PxFilterData& filterData) override;
 
-		virtual void DetachFromActor(physx::PxRigidActor* actor) override;
+	//	virtual void DetachFromActor(physx::PxRigidActor* actor) override;
 
-	private:
-		MeshColliderComponent& m_Component;
-		std::vector<physx::PxShape*> m_Shapes;
-	};
+	//private:
+	//	MeshColliderComponent& m_Component;
+	//	std::vector<physx::PxShape*> m_Shapes;
+	//};
 
-	class TriangleMeshShape : public ColliderShape
-	{
-	public:
-		TriangleMeshShape(MeshColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
-		~TriangleMeshShape();
+	//class TriangleMeshShape : public ColliderShape
+	//{
+	//public:
+	//	TriangleMeshShape(MeshColliderComponent& component, const PhysicsActor& actor, Entity entity, const glm::vec3& offset = glm::vec3(0.0f));
+	//	~TriangleMeshShape();
 
-		const glm::vec3& GetOffset() const override { return glm::vec3(0.0f); }
-		void SetOffset(const glm::vec3& offset) override {}
+	//	const glm::vec3& GetOffset() const override { return glm::vec3(0.0f); }
+	//	void SetOffset(const glm::vec3& offset) override {}
 
-		virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
-		virtual void SetTrigger(bool isTrigger) override;
+	//	virtual bool IsTrigger() const override { return m_Component.IsTrigger; }
+	//	virtual void SetTrigger(bool isTrigger) override;
 
-		virtual void SetFilterData(const physx::PxFilterData& filterData) override;
+	//	virtual void SetFilterData(const physx::PxFilterData& filterData) override;
 
-		virtual void DetachFromActor(physx::PxRigidActor* actor) override;
+	//	virtual void DetachFromActor(physx::PxRigidActor* actor) override;
 
-	private:
-		MeshColliderComponent& m_Component;
-		std::vector<physx::PxShape*> m_Shapes;
-	};
+	//private:
+	//	MeshColliderComponent& m_Component;
+	//	std::vector<physx::PxShape*> m_Shapes;
+	//};
 }

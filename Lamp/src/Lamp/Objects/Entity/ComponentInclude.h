@@ -5,4 +5,7 @@
 #include "BaseComponents/CameraComponent.cpp"
 #include "BaseComponents/LightComponent.cpp"
 #include "BaseComponents/MeshComponent.cpp"
-#include "BaseComponents/RigidbodyComponent.h"
+#include "BaseComponents/Physics/RigidbodyComponent.cpp"
+#include "BaseComponents/Physics/BoxColliderComponent.cpp"
+#include "BaseComponents/Physics/SphereColliderComponent.cpp"
+#include "BaseComponents/Physics/CapsuleColliderComponent.cpp"

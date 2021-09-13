@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PhysicsSettings.h"
+#include "PhysicsActor.h"
 
 namespace Lamp
 {

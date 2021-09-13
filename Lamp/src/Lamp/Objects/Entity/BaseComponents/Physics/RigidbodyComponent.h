@@ -34,16 +34,24 @@ namespace Lamp
 			Discrete, Continuous, ContinuousSpeculative
 		};
 
+		struct RigidbodySpecification
+		{
+			Type m_BodyType = Type::Dynamic;
+			CollisionDetectionType m_CollisionDetection = CollisionDetectionType::Discrete;
+
+			float m_Mass = 1.f;
+			float m_LinearDrag = 1.f;
+			float AngularDrag = 1.f;
+
+			bool m_DisableGravity = false;
+			bool IsKinematic = false;
+			uint32_t m_Layer = 0;
+		};
+
+	public:
+		inline RigidbodySpecification& GetSpecification() { return m_Specification; }
+
 	private:
-		Type m_BodyType = Type::Dynamic;
-		CollisionDetectionType m_CollisionDetection = CollisionDetectionType::Discrete;
-
-		float m_Mass = 1.f;
-		float m_LinearDrag = 1.f;
-		float AngularDrag = 1.f;
-
-		bool m_DisableGravity = false;
-		bool IsKinematic = false;
-		uint32_t m_Layer = 0;
+		RigidbodySpecification m_Specification;
 	};
 }

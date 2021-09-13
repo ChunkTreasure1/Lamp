@@ -67,6 +67,9 @@
     <Filter Include="src\Lamp\Objects\Entity\BaseComponents">
       <UniqueIdentifier>{DBFEA38A-C750-7B7A-B06F-B88A9C609463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Objects\Entity\BaseComponents\Physics">
+      <UniqueIdentifier>{4DADE605-392B-379F-2223-F5360E4079C7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Physics">
       <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
     </Filter>
@@ -294,16 +297,49 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h">
       <Filter>src\Lamp\Objects\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Object.h">
       <Filter>src\Lamp\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\CookingFactory.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysXInternal.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysXUtils.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\Physics.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsActor.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsMaterial.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysicsScene.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffer.h">
@@ -1521,11 +1557,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsActor.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\RigidbodyComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
@@ -1648,10 +1679,37 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
       <Filter>src\Lamp\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Physics\Physics.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysicsActor.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
@@ -1753,7 +1811,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\RigidbodyComponent.cpp" />
   </ItemGroup>
 </Project>
