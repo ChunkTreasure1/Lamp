@@ -353,19 +353,20 @@ namespace Sandbox3D
 					pBrush->SetScale(glm::make_vec3(s));
 				}
 
-				if (ImGui::CollapsingHeader("Material"))
-				{
-					std::string n = pBrush->GetModel()->GetMaterial().GetName();
-					ImGui::InputText("Name##mat", &n);
-
-					if (n != pBrush->GetModel()->GetMaterial().GetName())
-					{
-						if (Lamp::MaterialLibrary::GetMaterial(n).GetIndex() != -1)
-						{
-							pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(n));
-						}
-					}
-				}
+				//TODO: Fix
+				//if (ImGui::CollapsingHeader("Material"))
+				//{
+				//	std::string n = pBrush->GetModel()->GetMaterial().GetName();
+				//	ImGui::InputText("Name##mat", &n);
+				//
+				//	if (n != pBrush->GetModel()->GetMaterial().GetName())
+				//	{
+				//		if (Lamp::MaterialLibrary::GetMaterial(n).GetIndex() != -1)
+				//		{
+				//			pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(n));
+				//		}
+				//	}
+				//}
 			}
 
 			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))

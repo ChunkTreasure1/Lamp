@@ -1,6 +1,6 @@
 #pragma once
 #include "Cameras/PerspectiveCamera.h"
-#include "Lamp/Meshes/Mesh.h"
+#include "Lamp/Meshes/SubMesh.h"
 #include "Lamp/Meshes/Materials/Material.h"
 
 #include "Lamp/Rendering/Vertices/Framebuffer.h"
@@ -41,8 +41,8 @@ namespace Lamp
 		static void SSAOBlurPass();
 		static void RegenerateSSAOKernel();
 
-		static void DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id = -1);
-		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id = -1);
+		static void DrawMesh(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id = -1);
+		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id = -1);
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
 
 		static void DrawSkybox();

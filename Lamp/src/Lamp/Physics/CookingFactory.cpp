@@ -37,11 +37,11 @@ namespace Lamp
     {
         return CookingResult();
     }
-    CookingResult CookingFactory::CookConvexMesh(const Ref<Model>& mesh, std::vector<MeshColliderData>& outData)
+    CookingResult CookingFactory::CookConvexMesh(const Ref<Mesh>& mesh, std::vector<MeshColliderData>& outData)
     {
         return CookingResult();
     }
-    CookingResult CookingFactory::CookTriangleMesh(const Ref<Model>& mesh, std::vector<MeshColliderData>& outData)
+    CookingResult CookingFactory::CookTriangleMesh(const Ref<Mesh>& mesh, std::vector<MeshColliderData>& outData)
     {
         return CookingResult();
     }

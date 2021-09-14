@@ -46,7 +46,7 @@ namespace Lamp
 
 	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
 	{
-		m_Model = ResourceCache::GetModel(m_Path);
+		m_Model = ResourceCache::GetAsset(m_Path);
 
 		return false;
 	}

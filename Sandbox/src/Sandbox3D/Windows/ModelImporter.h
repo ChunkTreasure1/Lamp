@@ -42,7 +42,7 @@ namespace Sandbox3D
 		std::string m_MaterialName = "";
 
 		Ref<Lamp::Framebuffer> m_Framebuffer;
-		Ref<Lamp::Model> m_pModelToImport;
+		Ref<Lamp::Mesh> m_pModelToImport;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;
 		Ref<Lamp::Shader> m_DefaultShader;
 

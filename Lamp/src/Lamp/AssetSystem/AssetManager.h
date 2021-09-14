@@ -8,36 +8,17 @@
 #include <unordered_map>
 
 #include "Lamp/Utility/ThreadSafeQueue.h"
-#include "ModelLoader.h"
-#include "Lamp/Meshes/Model.h"
+#include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Level/Level.h"
+#include "AssetLoader.h"
 
 namespace Lamp
 {
-	class Texture2D;
-	class Model;
-	struct TextureLoadJob
+	struct AssetLoadJob
 	{
-		Texture2D* pTexture = nullptr;
-
-		std::string path;
-		TextureLoadData data;
-	};
-
-	struct ModelLoadJob
-	{
-		Model* pModel = nullptr;
-
-		std::string path;
-		ModelLoadData data;
-	};
-
-	struct LevelLoadJob
-	{
-		Level* pLevel = nullptr;
-		
-		std::string path;
-		LevelLoadData data;
+		std::filesystem::path path;
+		Ref<Asset> asset;
+		AssetType type;
 	};
 
 	class AssetManager
@@ -51,9 +32,10 @@ namespace Lamp
 
 		void Update();
 
-		void LoadTexture(const std::string& path, Texture2D* pTex);
-		void LoadModel(const std::string& path, Model* pModel);
-		void LoadLevel(const std::string& path, Level* pLevel);
+		void LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset);
+
+		AssetType GetAssetTypeFromPath(const std::filesystem::path& path);
+		AssetType GetAssetTypeFromExtension(const std::string& ext);
 
 	private:
 		void LoaderThread();
@@ -63,19 +45,12 @@ namespace Lamp
 		std::unordered_map<std::thread::id, std::string> m_ThreadNames;
 		std::mutex m_OutputMutex;
 
-		//Textures
-		ThreadSafeQueue<TextureLoadJob> m_LoadingTexturesQueue;
-		ThreadSafeQueue<TextureLoadJob> m_ProcessingTexturesQueue;
-
-		//Models
-		ThreadSafeQueue<ModelLoadJob> m_LoadingModelsQueue;
-		ThreadSafeQueue<ModelLoadJob> m_ProcessingModelsQueue;
-
-		//Levels
-		ThreadSafeQueue<LevelLoadJob> m_LoadingLevelsQueue;
-		ThreadSafeQueue<LevelLoadJob> m_ProcessingLevelsQueue;
+		ThreadSafeQueue<AssetLoadJob> m_LoadingAssetsQueue;
+		ThreadSafeQueue<AssetLoadJob> m_ProcessingAssetsQueue;
 
 		uint32_t m_MaxThreads = 8;
 		bool m_LoadingThreadActive = true;
+
+		std::unordered_map<AssetType, Scope<AssetLoader>> m_AssetLoaders;
 	};
 }

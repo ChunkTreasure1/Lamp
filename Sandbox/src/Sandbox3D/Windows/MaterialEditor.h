@@ -34,7 +34,7 @@ namespace Sandbox3D
 	private:
 		Lamp::Material* m_pSelectedMaterial = nullptr;
 		Ref<Lamp::Framebuffer> m_Framebuffer;
-		Ref<Lamp::Model> m_MaterialModel;
+		Ref<Lamp::Mesh> m_MaterialModel;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;
 		std::filesystem::path m_pathOnRightClick;
 

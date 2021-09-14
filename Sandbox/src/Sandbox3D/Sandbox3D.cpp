@@ -17,9 +17,9 @@
 #include "Windows/RenderGraph.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
-#include <Lamp/AssetSystem/AssetManager.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
 #include <imnodes.h>
 namespace Sandbox3D
 {
@@ -33,7 +33,7 @@ namespace Sandbox3D
 		m_IconStop = Texture2D::Create("engine/textures/ui/StopIcon.png");
 
 		m_pLevel = LevelSystem::LoadLevel("assets/levels/Level.level");
-		g_pEnv->pAssetManager->LoadTexture("engine/textures/default/defaultTexture.png", nullptr);
+		ResourceCache::GetAsset("engine/textures/default/defaultTexture.png");
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();

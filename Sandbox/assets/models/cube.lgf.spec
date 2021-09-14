@@ -6,7 +6,7 @@
 		</Mesh>
 	</Meshes>
 	<Materials>
-		<Material name="base"/>
+		<Material name="base" id="0"/>
 	</Materials>
 	<BoundingBox>
 		<Max position="1.000000,1.000000,2.000000"/>

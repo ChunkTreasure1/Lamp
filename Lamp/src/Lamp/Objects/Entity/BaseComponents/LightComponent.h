@@ -4,7 +4,7 @@
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include "Lamp/Meshes/Model.h"
+#include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Rendering/LightBase.h"
 
 namespace Lamp

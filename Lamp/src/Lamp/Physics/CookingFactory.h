@@ -22,8 +22,8 @@ namespace Lamp
 
 		static CookingResult CookMesh(Ref<MeshColliderComponent> component, bool invalidateOld = false, std::vector<MeshColliderData>& outData = std::vector<MeshColliderData>());
 
-		static CookingResult CookConvexMesh(const Ref<Model>& mesh, std::vector<MeshColliderData>& outData);
-		static CookingResult CookTriangleMesh(const Ref<Model>& mesh, std::vector<MeshColliderData>& outData);
+		static CookingResult CookConvexMesh(const Ref<Mesh>& mesh, std::vector<MeshColliderData>& outData);
+		static CookingResult CookTriangleMesh(const Ref<Mesh>& mesh, std::vector<MeshColliderData>& outData);
 
 	};
 }

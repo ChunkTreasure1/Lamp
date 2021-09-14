@@ -6,6 +6,7 @@
 
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
 
 namespace Sandbox3D
 {
@@ -34,8 +35,7 @@ namespace Sandbox3D
 			m_Framebuffer = Framebuffer::Create(main);
 		}
 
-		m_MaterialModel = CreateRef<Model>();
-		g_pEnv->pAssetManager->LoadModel("assets/models/sphere.lgf", m_MaterialModel.get());
+		m_MaterialModel = ResourceCache::GetAsset("assets/models/sphere.lgf");
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)
@@ -125,7 +125,7 @@ namespace Sandbox3D
 
 		if (m_pSelectedMaterial)
 		{
-			ImGui::InputText("Name", &m_pSelectedMaterial->GetName());
+			//ImGui::InputText("Name", &m_pSelectedMaterial->GetName());
 
 			/////Shaders//////
 			static std::vector<const char*> shaders;
@@ -167,14 +167,14 @@ namespace Sandbox3D
 						if (!path.empty())
 						{
 							tex.second = Texture2D::Create(path);
-							tex.second->GetPath() = path;
+							tex.second->Path.string() = path;
 						}
 					}
 					std::string dragDropPath = GetDragDropTarget();
 					if (!dragDropPath.empty())
 					{
 						tex.second = Texture2D::Create(dragDropPath);
-						tex.second->GetPath() = dragDropPath;
+						tex.second->Path.string() = dragDropPath;
 					}
 				}
 				else
@@ -185,19 +185,19 @@ namespace Sandbox3D
 						if (!path.empty())
 						{
 							tex.second = Texture2D::Create(path);
-							tex.second->GetPath() = path;
+							tex.second->Path.string() = path;
 						}
 					}
 					std::string dragDropPath = GetDragDropTarget();
 					if (!dragDropPath.empty())
 					{
 						tex.second = Texture2D::Create(dragDropPath);
-						tex.second->GetPath() = dragDropPath;
+						tex.second->Path.string() = dragDropPath;
 					}
 				}
 
 				std::string texPath;
-				ImGui::InputText(tex.first.c_str(), tex.second ? &tex.second->GetPath() : &texPath);
+				ImGui::InputText(tex.first.c_str(), tex.second ? &tex.second->Path.string() : &texPath);
 			}
 		}
 
@@ -241,7 +241,7 @@ namespace Sandbox3D
 								m_pSelectedMaterial = &MaterialLibrary::GetMaterial(filename);
 								if (m_MaterialModel)
 								{
-									m_MaterialModel->SetMaterial(*m_pSelectedMaterial);
+									m_MaterialModel->SetMaterial(*m_pSelectedMaterial, 0);
 								}
 							}
 						}

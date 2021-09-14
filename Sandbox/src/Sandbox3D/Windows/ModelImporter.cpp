@@ -8,7 +8,6 @@
 #include <imgui/imgui_stdlib.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
-#include <Lamp/AssetSystem/ModelLoader.h>
 
 namespace Sandbox3D
 {
@@ -247,12 +246,12 @@ namespace Sandbox3D
 				savePath = path.substr(0, path.find_last_of('.'));
 				savePath += ".lgf";
 
-				m_pModelToImport->GetMaterial().SetShader(m_DefaultShader);
+				//m_pModelToImport->GetMaterial().SetShader(m_DefaultShader);
 
-				for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-				{
-					tex.second = Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png");
-				}
+				//for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
+				//{
+				//	tex.second = Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png");
+				//}
 			}
 		}
 		ImGui::SameLine();

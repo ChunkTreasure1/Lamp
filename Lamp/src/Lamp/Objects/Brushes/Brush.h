@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Lamp/Meshes/Model.h"
+#include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Objects/Object.h"
 
 namespace Lamp
@@ -11,14 +11,14 @@ namespace Lamp
 	class Brush : public Object
 	{
 	public:
-		Brush(Ref<Model> model);
+		Brush(Ref<Mesh> model);
 
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
 		virtual uint64_t GetEventMask() override { return EventType::AppRender | EventType::AppUpdate; }
 
 		//Getting
-		inline Ref<Model>& GetModel() { return m_Model; }
+		inline Ref<Mesh>& GetModel() { return m_Model; }
 
 	protected:
 		virtual void ScaleChanged() override;
@@ -34,6 +34,6 @@ namespace Lamp
 		bool OnUpdate(AppUpdateEvent& e);
 
 	private:
-		Ref<Model> m_Model;
+		Ref<Mesh> m_Model;
 	};
 }

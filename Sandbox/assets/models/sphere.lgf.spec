@@ -6,7 +6,7 @@
 		</Mesh>
 	</Meshes>
 	<Materials>
-		<Material name="sphere"/>
+		<Material name="sphere" id="0"/>
 	</Materials>
 	<BoundingBox>
 		<Max position="1.000000,1.000000,1.000000"/>

@@ -7,7 +7,6 @@ LP_REGISTER_COMPONENT(ControllerComponent);
 
 void ControllerComponent::Initialize()
 {
-	m_pEntity->SetPosition({ 0.f, 3.f, 0.f });
 }
 
 void ControllerComponent::OnEvent(Lamp::Event& e)
@@ -20,12 +19,12 @@ bool ControllerComponent::OnUpdateEvent(Lamp::AppUpdateEvent& e)
 {
 	if (Lamp::Input::IsKeyPressed(LP_KEY_W))
 	{
-		m_pEntity->SetPosition(m_pEntity->GetPosition() + 10.f * e.GetTimestep());
+		m_pEntity->SetPosition(m_pEntity->GetPosition() - glm::vec3(0.f, 0.f, 10.f * e.GetTimestep()));
 	}
 
 	if (Lamp::Input::IsKeyPressed(LP_KEY_S))
 	{
-		m_pEntity->SetPosition(m_pEntity->GetPosition() - 10.f * e.GetTimestep());
+		m_pEntity->SetPosition(m_pEntity->GetPosition() + glm::vec3(0.f, 0.f, 10.f * e.GetTimestep()));
 	}
 
 	return false;

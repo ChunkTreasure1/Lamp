@@ -33,7 +33,7 @@ namespace Lamp
 		inline std::unordered_map<std::string, Ref<Texture2D>>& GetTextures() { return m_pTextures; }
 		inline const uint32_t GetIndex() { return m_Index; }
 		inline const Ref<Shader>& GetShader() { return m_pShader; }
-		inline std::string& GetName() { return m_Name; }
+		inline const std::string& GetName() { return m_Name; }
 		inline const std::filesystem::path& GetPath() { return m_Path; }
 
 		void UploadData();

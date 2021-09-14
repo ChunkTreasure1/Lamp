@@ -362,7 +362,7 @@ namespace Lamp
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id)
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
@@ -451,7 +451,7 @@ namespace Lamp
 		}
 	}
 
-	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<Mesh>& mesh, Material& mat, size_t id)
+	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 		RenderCommand::SetCullFace(CullFace::Back);
@@ -486,9 +486,9 @@ namespace Lamp
 
 			s_pData->SkyboxBuffer->BindTextures(1);
 
-			for (int i = 0; i < g_pEnv->pRenderUtils->GetPointLights().size(); i++)
+			for (int i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
 			{
-				g_pEnv->pRenderUtils->GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+				g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
 			}
 
 			mesh->GetVertexArray()->Bind();

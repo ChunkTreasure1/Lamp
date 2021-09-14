@@ -3,7 +3,7 @@
 #include "Lamp/Physics/PhysicsMaterial.h"
 #include "Lamp/Objects/Entity/Base/BaseComponent.h"
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Meshes/Model.h"
+#include "Lamp/Meshes/Mesh.h"
 
 namespace Lamp
 {
@@ -33,7 +33,7 @@ namespace Lamp
 	public:
 		struct MeshColliderSpecification
 		{
-			Ref<Model> CollisionMesh;
+			Ref<Mesh> CollisionMesh;
 			bool IsConvex = false;
 			bool IsTrigger = false;
 			bool OverrideMesh = false;

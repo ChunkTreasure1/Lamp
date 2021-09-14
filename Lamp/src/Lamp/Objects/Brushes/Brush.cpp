@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-	Brush::Brush(Ref<Model> model)
+	Brush::Brush(Ref<Mesh> model)
 		: m_Model(model)
 	{
 		m_Name = "Brush";
@@ -42,7 +42,7 @@ namespace Lamp
 
 	Brush* Brush::Create(const std::string& path)
 	{
-		Ref<Model> model = ResourceCache::GetModel(path);
+		Ref<Mesh> model = std::dynamic_pointer_cast<Mesh>(ResourceCache::GetAsset(path));
 		Brush* brush = new Brush(model);
 		brush->SetLayerID(0);
 
@@ -54,7 +54,7 @@ namespace Lamp
 
 	Brush* Brush::Create(const std::string& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
 	{
-		Ref<Model> model = ResourceCache::GetModel(path);
+		Ref<Mesh> model = std::dynamic_pointer_cast<Mesh>(ResourceCache::GetAsset(path));
 		Brush* brush = new Brush(model);
 
 		brush->SetPosition(pos);
@@ -71,7 +71,7 @@ namespace Lamp
 
 	Brush* Brush::Duplicate(Brush* main, bool addToLevel)
 	{
-		Ref<Model> model = ResourceCache::GetModel(main->GetModel()->GetLGFPath());
+		Ref<Mesh> model = std::dynamic_pointer_cast<Mesh>(ResourceCache::GetAsset(main->GetModel()->Path));
 		Brush* pBrush = new Brush(model);
 
 		if (addToLevel)

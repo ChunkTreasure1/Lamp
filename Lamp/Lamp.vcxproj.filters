@@ -141,19 +141,22 @@
     <ClInclude Include="src\Lamp.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\Asset.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\AssetLoader.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\ModelLoader.h">
+    <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\TextureLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h">
@@ -246,6 +249,9 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Level\Layer.h">
+      <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Level\Level.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
@@ -264,7 +270,7 @@
     <ClInclude Include="src\Lamp\Meshes\Mesh.h">
       <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Model.h">
+    <ClInclude Include="src\Lamp\Meshes\SubMesh.h">
       <Filter>src\Lamp\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
@@ -303,6 +309,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
     </ClInclude>
@@ -314,6 +323,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Object.h">
       <Filter>src\Lamp\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\ContactListener.h">
+      <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h">
       <Filter>src\Lamp\Physics</Filter>
@@ -1557,23 +1569,21 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\AssetSystem\ModelLoader.cpp">
+    <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\AssetSystem\TextureLoader.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp">
@@ -1654,7 +1664,7 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Model.cpp">
+    <ClCompile Include="src\Lamp\Meshes\SubMesh.cpp">
       <Filter>src\Lamp\Meshes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
@@ -1687,6 +1697,9 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
     </ClCompile>
@@ -1695,6 +1708,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
       <Filter>src\Lamp\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\ContactListener.cpp">
+      <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp">
       <Filter>src\Lamp\Physics</Filter>
@@ -1709,6 +1725,9 @@
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysicsActor.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp">
@@ -1813,8 +1832,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
-    <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp" />
   </ItemGroup>
 </Project>

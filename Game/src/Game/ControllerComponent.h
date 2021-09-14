@@ -15,6 +15,7 @@ public:
 	/////Base/////
 	virtual void Initialize() override;
 	virtual void OnEvent(Lamp::Event& e) override;
+	virtual uint32_t GetSize() { return sizeof(*this); }
 	virtual uint64_t GetEventMask() override { return Lamp::EventType::All; }
 	//////////////
 

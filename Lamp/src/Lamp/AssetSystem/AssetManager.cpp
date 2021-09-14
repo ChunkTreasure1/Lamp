@@ -3,7 +3,6 @@
 
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 
-#include "Lamp/AssetSystem/ModelLoader.h"
 #include "Lamp/AssetSystem/LevelLoader.h"
 
 #include <glm/gtx/quaternion.hpp>
@@ -22,20 +21,25 @@ namespace Lamp
 		Shutdown();
 	}
 
+	namespace Utils
+	{
+		std::string ToLower(const std::string& s)
+		{
+			std::string result;
+			for (const auto& character : s)
+			{
+				result += std::tolower(character);
+			}
+
+			return result;
+		}
+	}
+
 	void AssetManager::Initialize()
 	{
-		for (uint32_t i = 0; i < m_MaxThreads; i++)
-		{
-			m_WorkerThreads.push_back(std::thread(&AssetManager::LoaderThread, this));
-		}
-
-		m_ThreadNames.emplace(std::this_thread::get_id(), "Main");
-
-		for (uint32_t i = 0; i < m_MaxThreads; i++)
-		{
-			std::string name = "T" + std::to_string(i);
-			m_ThreadNames.emplace(m_WorkerThreads[i].get_id(), name);
-		}
+		m_AssetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
+		m_AssetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
+		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
 	}
 
 	void AssetManager::Shutdown()
@@ -47,113 +51,43 @@ namespace Lamp
 			m_WorkerThreads[i].join();
 		}
 	}
-
+	 
 	void AssetManager::LoaderThread()
-	{
-		{
-			std::scoped_lock<std::mutex> lock(m_OutputMutex);
-			LP_PROFILE_FUNCTION();
-		}
-
-		while (m_LoadingThreadActive)
-		{
-			if (!m_LoadingTexturesQueue.Empty())
-			{
-				TextureLoadJob assetJob;
-				if (m_LoadingTexturesQueue.TryPop(assetJob))
-				{
-					TextureLoader::LoadTexture(assetJob.data, assetJob.path);
-					m_ProcessingTexturesQueue.Push(assetJob);
-				}
-			}
-
-			if (!m_LoadingModelsQueue.Empty())
-			{ 
-				ModelLoadJob modelJob;
-				if (m_LoadingModelsQueue.TryPop(modelJob))
-				{
-					ModelLoader::LoadFromFile(modelJob.data, modelJob.path);
-					m_ProcessingModelsQueue.Push(modelJob);
-				}
-			}
-
-			if (!m_LoadingLevelsQueue.Empty())
-			{
-				LevelLoadJob levelJob;
-				if (m_LoadingLevelsQueue.TryPop(levelJob))
-				{
-					LevelLoader::LoadLevel(levelJob.data, levelJob.path);
-					m_ProcessingLevelsQueue.Push(levelJob);
-				}
-			}
-
-			uint32_t workRemaining = m_LoadingTexturesQueue.Size() + m_LoadingModelsQueue.Size() + m_LoadingLevelsQueue.Size();
-			const int waitTime = workRemaining > 0 ? 10 : 2000;
-			std::this_thread::sleep_for(std::chrono::milliseconds(waitTime));
-		}
-	}
+	{}
 
 	void AssetManager::Update()
+	{}
+
+	void AssetManager::LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset)
 	{
-		if (!m_ProcessingTexturesQueue.Empty())
-		{
-			TextureLoadJob assetJob;
-			if (m_ProcessingTexturesQueue.TryPop(assetJob))
-			{
-				TextureData t;
-				if (assetJob.data.type == TextureType::Texture2D)
-				{
-					t = TextureLoader::GenerateTexture(assetJob.data);
-				}
-				else if (assetJob.data.type == TextureType::HDR)
-				{
-					t = TextureLoader::GenerateHDR(assetJob.data);
-				}
-				ResourceCache::AddTexture(assetJob.path, t);
+		AssetLoadJob job;
+		job.asset = asset;
+		job.path = path;
+		job.type = GetAssetTypeFromPath(path);
 
-				if (assetJob.pTexture)
-				{
-					assetJob.pTexture->SetData(t);
-					assetJob.pTexture->SetType(assetJob.data.type);
-				}
-			}
+		if (m_AssetLoaders.find(job.type) == m_AssetLoaders.end())
+		{
+			LP_CORE_ERROR("No importer for asset exists!");
+			return;
 		}
-
-		if (!m_ProcessingModelsQueue.Empty())
+		m_AssetLoaders[job.type]->Load(job.path, job.asset);
+		if (asset->IsValid())
 		{
-			ModelLoadJob modelJob;
-			if (m_ProcessingModelsQueue.TryPop(modelJob))
-			{
-				if (modelJob.pModel)
-				{
-					ModelLoader::LoadFromFile(modelJob.data, modelJob.path);
-					ModelData d = ModelLoader::GenerateMesh(modelJob.data);
-
-					modelJob.pModel->SetData(d);
-				}
-			}
+			ResourceCache::AddAsset(path, asset);
 		}
 	}
-
-	void AssetManager::LoadTexture(const std::string& path, Texture2D* pTex)
+	AssetType AssetManager::GetAssetTypeFromPath(const std::filesystem::path& path)
 	{
-		TextureLoadJob job;
-		job.pTexture = pTex;
-		job.path = path;
-
-		m_LoadingTexturesQueue.Push(job);
+		return GetAssetTypeFromExtension(path.extension().string());
 	}
-
-	void AssetManager::LoadModel(const std::string& path, Model* pModel)
+	AssetType AssetManager::GetAssetTypeFromExtension(const std::string& ext)
 	{
+		std::string ext = Utils::ToLower(ext);
+		if (s_AssetExtensionMap.find(ext) == s_AssetExtensionMap.end())
+		{
+			return AssetType::None;
+		}
 
-		ModelLoadJob job;
-		job.pModel = pModel;
-		job.path = path;
-
-		m_LoadingModelsQueue.Push(job);
-	}
-	void AssetManager::LoadLevel(const std::string& path, Level* pLevel)
-	{
+		return s_AssetExtensionMap.at(ext);
 	}
 }

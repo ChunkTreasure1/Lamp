@@ -1,24 +1,21 @@
 #pragma once
 
 #include <unordered_map>
-#include "Lamp/Meshes/Model.h"
+#include "Lamp/Meshes/Mesh.h"
 
 namespace Lamp
 {
 	class ResourceCache
 	{
 	public:
-		static bool AddModel(const std::string& path, Ref<Model>& model);
-		static bool AddTexture(const std::string& path, TextureData& tex);
+		static bool AddAsset(const std::filesystem::path& path, Ref<Asset>& asset);
 
-		static Ref<Model> GetModel(const std::string& path);
-		static void GetTexture(const std::string& path, Texture2D* pTex);
+		static Ref<Asset> GetAsset(const std::filesystem::path& path);
 
 	private:
 		ResourceCache() = delete;
 
 	private:
-		static std::unordered_map<std::string, Ref<Model>> s_ModelCache;
-		static std::unordered_map<std::string, TextureData> s_TextureCache;
+		static std::unordered_map<std::filesystem::path, Ref<Asset>> s_AssetCache;
 	};
 }

@@ -5,59 +5,28 @@
 
 namespace Lamp
 {
-	std::unordered_map<std::string, Ref<Model>> ResourceCache::s_ModelCache;
-	std::unordered_map<std::string, TextureData> ResourceCache::s_TextureCache;
+	std::unordered_map<std::filesystem::path, Ref<Asset>> ResourceCache::s_AssetCache;
 
-	bool ResourceCache::AddModel(const std::string& path, Ref<Model>& model)
+	bool ResourceCache::AddAsset(const std::filesystem::path& path, Ref<Asset>& asset)
 	{
-		if (s_ModelCache.find(path) == s_ModelCache.end())
+		if (s_AssetCache.find(path) == s_AssetCache.end())
 		{
-			s_ModelCache.insert(std::make_pair(path, model));
+			s_AssetCache.insert(std::make_pair(path, asset));
 			return true;
 		}
 		return false;
 	}
 
-	bool ResourceCache::AddTexture(const std::string& path, TextureData& texture)
+	Ref<Asset> ResourceCache::GetAsset(const std::filesystem::path& path)
 	{
-		if (s_TextureCache.find(path) == s_TextureCache.end())
+		if (s_AssetCache.find(path) != s_AssetCache.end())
 		{
-			s_TextureCache.insert(std::make_pair(path, texture));
-			return true;
+			return s_AssetCache.at(path);
 		}
 
-		return false;
-	}
+		Ref<Asset> asset;
+		g_pEnv->pAssetManager->LoadAsset(path, asset);
 
-	Ref<Model> ResourceCache::GetModel(const std::string& path)
-	{
-		Ref<Model> model = CreateRef<Model>();
-
-		if (s_ModelCache.find(path) != s_ModelCache.end())
-		{
-			model->m_Meshes = s_ModelCache[path]->m_Meshes;
-			model->m_Material = s_ModelCache[path]->m_Material;
-			model->m_LGFPath = s_ModelCache[path]->m_LGFPath;
-			model->m_BoundingBox = s_ModelCache[path]->m_BoundingBox;
-			model->m_Name = s_ModelCache[path]->m_Name;
-
-			return model;
-		}
-
-		g_pEnv->pAssetManager->LoadModel(path, model.get());
-		AddModel(path, model);
-	
-		return model;
-	}
-
-	void ResourceCache::GetTexture(const std::string& path, Texture2D* pTex)
-	{
-		if (s_TextureCache.find(path) != s_TextureCache.end())
-		{
-			pTex->SetData(s_TextureCache[path]);
-			return;
-		}
-
-		g_pEnv->pAssetManager->LoadTexture(path, pTex);
+		return asset;
 	}
 }

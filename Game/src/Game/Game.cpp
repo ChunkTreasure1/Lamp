@@ -7,9 +7,13 @@
 
 void Game::OnStart()
 {
-	Lamp::Entity* pEnt = Lamp::Entity::Create();
-	pEnt->GetOrCreateComponent<Lamp::CameraComponent>();
-	pEnt->GetOrCreateComponent<ControllerComponent>();
+	for (auto& ent : g_pEnv->pLevel->GetEntities())
+	{
+		if (ent.second->HasComponent<Lamp::CameraComponent>())
+		{
+			ent.second->GetOrCreateComponent<ControllerComponent>();
+		}
+	}
 }
 
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)

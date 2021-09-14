@@ -4,7 +4,7 @@
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include "Lamp/Meshes/Model.h"
+#include "Lamp/Meshes/Mesh.h"
 
 namespace Lamp
 {
@@ -40,7 +40,7 @@ namespace Lamp
 		static std::string GetFactoryName() { return "MeshComponent"; }
 
 	private:
-		Ref<Model> m_Model;
+		Ref<Mesh> m_Model;
 		std::string m_Path;
 	};
 

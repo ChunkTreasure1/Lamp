@@ -1,36 +1,51 @@
 #include "lppch.h"
 #include "Mesh.h"
 
+#include "Lamp/Rendering/Renderer3D.h"
+#include "glm/glm.hpp"
+
+#include "Lamp/Math/Math.h"
+
 namespace Lamp
 {
-	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex)
-		: m_MaterialIndex(matIndex)
+	void Mesh::Render(size_t id, const glm::mat4& transform, bool forward)
 	{
-		m_Vertices = vertices;
-		m_Indices = indices;
+		for (size_t i = 0; i < m_Meshes.size(); i++)
+		{
 
-		SetupMesh();
+			if (!forward)
+			{
+				Renderer3D::DrawMesh(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
+			}
+			else
+			{
+				m_Materials[m_Meshes[i]->GetMaterialIndex()].UploadData();
+				Renderer3D::DrawMeshForward(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
+			}
+		}
 	}
 
-	void Mesh::SetupMesh()
+	void Mesh::RenderBoundingBox(const glm::mat4& transform)
 	{
-		m_pVertexArray = VertexArray::Create();
+		glm::vec3 scale;
+		glm::vec3 rotation;
+		glm::vec3 position;
 
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
-		pBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" },
-		});
+		Math::DecomposeTransform(transform, position, rotation, scale);
 
-		m_pVertexArray->AddVertexBuffer(pBuffer);
+		Renderer3D::DrawLine(position + m_BoundingBox.Max, position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Max.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Max.z), position + m_BoundingBox.Max, 1.f);
 
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, (uint32_t)m_Indices.size());
-		m_pVertexArray->SetIndexBuffer(pIndexBuffer);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Min.y, m_BoundingBox.Max.z), position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Min.y, m_BoundingBox.Min.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Min.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Min.y, m_BoundingBox.Min.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Min.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Min.y, m_BoundingBox.Max.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Min.y, m_BoundingBox.Max.z), position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Min.y, m_BoundingBox.Max.z), 1.f);
 
-		m_pVertexArray->Unbind();
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Max.y, m_BoundingBox.Max.z), position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Min.y, m_BoundingBox.Max.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Max.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Min.y, m_BoundingBox.Max.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Max.x, m_BoundingBox.Min.y, m_BoundingBox.Min.z), 1.f);
+		Renderer3D::DrawLine(position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Max.y, m_BoundingBox.Min.z), position + glm::vec3(m_BoundingBox.Min.x, m_BoundingBox.Min.y, m_BoundingBox.Min.z), 1.f);
 	}
 }

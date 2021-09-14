@@ -44,7 +44,7 @@ namespace Lamp
 		for (auto& tex : mat.GetTextures())
 		{
 			static std::string texPath = "";
-			texPath = tex.second ? tex.second->GetPath() : "engine/textures/default/defaultTexture.png";
+			texPath = tex.second ? tex.second->Path.string() : "engine/textures/default/defaultTexture.png";
 
 			xml_node<>* pTex = doc.allocate_node(node_element, tex.first.c_str());
 			pTex->append_attribute(doc.allocate_attribute("path", texPath.c_str()));
