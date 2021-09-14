@@ -9,19 +9,26 @@ workspace "Lamp"
 		"Dist"
 	}
 	
+	flags
+	{
+		"MultiProcessorCompile"
+	}
+	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+LibraryDir = {}
+LibraryDir["PhysX"] = "%{wks.location}/Lamp/vendor/PhysX/lib/%{cfg.buildcfg}"
 
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
-include "Lamp/vendor/bullet"
 
 project "Lamp"
 	location "Lamp"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -39,11 +46,6 @@ project "Lamp"
 		"%{prj.name}/vendor/stb_image/stb/**.cpp"
 	}
 
-	defines 
-	{
-		"_CRT_SECURE_NO_WARNINGS"
-	}
-
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -57,15 +59,26 @@ project "Lamp"
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/bullet/src"
+		"%{prj.name}/vendor/PhysX/include"
 	}
 	
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",
-		"Bullet"
+		"Glad",		
+		"%{LibraryDir.PhysX}/PhysX_static_64.lib",
+		"%{LibraryDir.PhysX}/PhysXCharacterKinematic_static_64.lib",
+		"%{LibraryDir.PhysX}/PhysXCommon_static_64.lib",
+		"%{LibraryDir.PhysX}/PhysXCooking_static_64.lib",	
+		"%{LibraryDir.PhysX}/PhysXExtensions_static_64.lib",
+		"%{LibraryDir.PhysX}/PhysXFoundation_static_64.lib",
+		"%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"	}
+
+	defines 
+	{
+		"_CRT_SECURE_NO_WARNINGS",
+		"PX_PHYSX_STATIC_LIB"
 	}
 
 	filter "system:windows"
@@ -86,6 +99,12 @@ project "Lamp"
 			defines "LP_RELEASE"
 			runtime "Release"
 			optimize "on"
+			
+			defines
+			{
+				"NDEBUG",
+				"LP_RELEASE"
+			}
 
 		filter "configurations:Dist"
 			defines "LP_DIST"
@@ -97,8 +116,8 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
-
+	staticruntime "off"
+	
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 	gamedir = "bin/" .. outputdir .. "/Game"
@@ -132,15 +151,14 @@ project "Sandbox"
 		"Lamp/vendor/bullet/src",
 		"Lamp/vendor/imnodes/"
 	}
-
+	
 	libdirs
 	{
 		gamedir,
 		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod",
-		"Lamp/vendor/bullet"
+		"Lamp/vendor/fmod"
 	}
-
+	
 	links
 	{
 		"Lamp",
@@ -152,8 +170,7 @@ project "Sandbox"
 	
 	linkoptions
 	{
-		"/WHOLEARCHIVE:Game",
-		"/WHOLEARCHIVE:Lamp"
+		"/WHOLEARCHIVE:Game"
 	}
 
 	filter "system:windows"
@@ -184,7 +201,7 @@ project "Game"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -207,8 +224,7 @@ project "Game"
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
-		"Lamp/vendor/fmod/include",
-		"Lamp/vendor/bullet/src"
+		"Lamp/vendor/fmod/include"
 	}
 	
 	filter "system:windows"
@@ -239,7 +255,7 @@ project "GameLauncher"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -265,7 +281,7 @@ project "GameLauncher"
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
 		"Game/src",
-		"Lamp/vendor/bullet/src"
+		"%{prj.name}/vendor/PhysX/include"
 	}
 
 	libdirs

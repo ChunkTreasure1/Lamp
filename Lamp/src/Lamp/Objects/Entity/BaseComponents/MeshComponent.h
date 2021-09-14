@@ -25,6 +25,7 @@ namespace Lamp
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
+		virtual uint32_t GetSize() { return sizeof(*this); }
 		virtual uint64_t GetEventMask() override { return EventType::AppRender 
 			| EventType::AppUpdate 
 			| EventType::EntityPropertyChanged; }
@@ -32,7 +33,6 @@ namespace Lamp
 
 	private:
 		bool OnRender(AppRenderEvent& e);
-		bool OnUpdate(AppUpdateEvent& e);
 		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
 
 	public:

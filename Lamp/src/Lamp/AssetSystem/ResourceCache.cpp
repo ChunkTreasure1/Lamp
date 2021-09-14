@@ -39,7 +39,6 @@ namespace Lamp
 			model->m_Material = s_ModelCache[path]->m_Material;
 			model->m_LGFPath = s_ModelCache[path]->m_LGFPath;
 			model->m_BoundingBox = s_ModelCache[path]->m_BoundingBox;
-			model->m_ModelMatrix = s_ModelCache[path]->m_ModelMatrix;
 			model->m_Name = s_ModelCache[path]->m_Name;
 
 			return model;

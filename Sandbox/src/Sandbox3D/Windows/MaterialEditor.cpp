@@ -36,8 +36,6 @@ namespace Sandbox3D
 
 		m_MaterialModel = CreateRef<Model>();
 		g_pEnv->pAssetManager->LoadModel("assets/models/sphere.lgf", m_MaterialModel.get());
-
-		m_MaterialModel->SetModelMatrix(glm::mat4(1.f));
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)

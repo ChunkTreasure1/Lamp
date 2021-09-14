@@ -41,26 +41,24 @@ namespace Lamp
 	{
 	public:
 		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb)
-			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb)
+			: m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb)
 		{
 		}
 
 		Model(std::vector<Ref<Mesh>> meshes, Material mat, const std::string& name, SAABB bb, const std::string& path)
-			: m_ModelMatrix(1.f), m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb), m_LGFPath(path)
+			: m_Material(mat), m_Meshes(meshes), m_Name(name), m_BoundingBox(bb), m_LGFPath(path)
 		{
 		}
 
 		Model()
-			: m_ModelMatrix(glm::mat4(1.f))
 		{}
 
 		friend class ResourceCache;
 
-		void Render(size_t id = -1, bool forward = false);
-		void RenderBoundingBox();
+		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f), bool forward = false);
+		void RenderBoundingBox(const glm::mat4& transform);
 
 		//Setting
-		inline void SetModelMatrix(const glm::mat4& mat) { m_ModelMatrix = mat; }
 		inline void SetLGFPath(const std::string& path) { m_LGFPath = path; }
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetMaterial(const Material& mat) { m_Material = mat; }
@@ -78,7 +76,6 @@ namespace Lamp
 		inline const std::string& GetName() { return m_Name; }
 		inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
 		inline std::string& GetLGFPath() { return m_LGFPath; }
-		inline const glm::mat4& GetMatrix() { return m_ModelMatrix; }
 		inline SAABB& GetBoundingBox() { return m_BoundingBox; }
 		
 	private:
@@ -87,7 +84,6 @@ namespace Lamp
 		std::string m_Name;
 		std::string m_LGFPath;
 
-		glm::mat4 m_ModelMatrix;
 		SAABB m_BoundingBox;
 	};
 }

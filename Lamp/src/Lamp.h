@@ -16,5 +16,4 @@
 #include <Lamp/Objects/Entity/Base/BaseComponent.h>
 #include <Lamp/Objects/Brushes/Brush.h>
 
-#include <Lamp/Physics/PhysicsEngine.h>
 #include <Lamp/Level/LevelSystem.h>

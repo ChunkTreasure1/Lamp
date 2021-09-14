@@ -24,7 +24,7 @@ namespace Lamp
 			case PassType::PointShadow:
 			{
 				m_PassSpec.LightIndex = 0;
-				for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+				for (auto& light : g_pEnv->pLevel->GetRenderUtils().GetPointLights())
 				{
 					light->ShadowBuffer->Bind();
 					RenderCommand::Clear();

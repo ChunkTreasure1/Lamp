@@ -3,13 +3,15 @@
 
 #include "imgui.h"
 
-#include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
+#include "Lamp/Physics/Physics.h"
 
 #include "Lamp/AssetSystem/AssetManager.h"
 
 #include "CoreLogger.h"
+
+#include "Lamp/Objects/Entity/ComponentInclude.h"
 
 GlobalEnvironment* g_pEnv;
 
@@ -24,7 +26,6 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		s_pInstance = this;
 		g_pEnv = new GlobalEnvironment();
-		g_pEnv->pRenderUtils = new RenderUtils();
 
 		g_pEnv->pAssetManager = new AssetManager();
 
@@ -40,9 +41,7 @@ namespace Lamp
 
 		Renderer::Initialize();
 		AudioEngine::Initialize();
-
-		m_pPhysicsEngine = new PhysicsEngine();
-		m_pPhysicsEngine->Initialize();
+		Physics::Initialize();
 
 		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();
@@ -52,7 +51,6 @@ namespace Lamp
 	Application::~Application()
 	{
 		LP_PROFILE_FUNCTION();
-		m_pPhysicsEngine->Shutdown();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
@@ -71,11 +69,6 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			if (m_IsSimulating)
-			{
-				LP_PROFILE_SCOPE("Application::Run::Physics")
-				m_pPhysicsEngine->Simulate();
-			}
 			AudioEngine::Update();
 
 			//Load assets

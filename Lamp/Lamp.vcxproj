@@ -76,31 +76,37 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -108,20 +114,24 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -129,6 +139,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Lamp.h" />
@@ -176,6 +189,7 @@
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\Model.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
@@ -185,14 +199,22 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
-    <ClInclude Include="src\Lamp\Physics\Collision.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
-    <ClInclude Include="src\Lamp\Physics\Rigidbody.h" />
+    <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
+    <ClInclude Include="src\Lamp\Physics\CookingFactory.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysXInternal.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
+    <ClInclude Include="src\Lamp\Physics\Physics.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsActor.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsMaterial.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsScene.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
@@ -633,6 +655,7 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Model.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
@@ -640,13 +663,19 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp" />
+    <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
+    <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
+    <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsActor.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
@@ -692,9 +721,6 @@
     </ProjectReference>
     <ProjectReference Include="vendor\glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="vendor\bullet\Bullet\Bullet.vcxproj">
-      <Project>{0DC355AA-F964-8080-E21F-94D4CE6007D1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

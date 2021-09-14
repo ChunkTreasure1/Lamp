@@ -16,6 +16,7 @@
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "UniformBuffer.h"
+#include "Lamp/Level/Level.h"
 
 #include <random>
 
@@ -318,7 +319,7 @@ namespace Lamp
 
 
 		int lightCount = 0;
-		for (auto& light : g_pEnv->pRenderUtils->GetPointLights())
+		for (auto& light : g_pEnv->pLevel->GetRenderUtils().GetPointLights())
 		{
 			if (lightCount > 11)
 			{
@@ -389,7 +390,7 @@ namespace Lamp
 			s_pData->PointShadowShader->Bind();
 
 			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
-			const PointLight* light = g_pEnv->pRenderUtils->GetPointLights()[j];
+			const PointLight* light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[j];
 
 			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
 			{

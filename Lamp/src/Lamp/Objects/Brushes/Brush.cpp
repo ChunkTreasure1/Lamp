@@ -1,56 +1,15 @@
 #include "lppch.h"
 #include "Brush.h"
 
-#include <btBulletDynamicsCommon.h>
-#include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Level/Level.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
-	static btVector3 ToBtVector(const glm::vec3& v)
-	{
-		return btVector3(v.x, v.y, v.z);
-	}
-
 	Brush::Brush(Ref<Model> model)
 		: m_Model(model)
 	{
-		m_pRigidBody = PhysicsEngine::Get()->CreateRigidBody(this);
-
-		btConvexHullShape* pShape = new btConvexHullShape();
-		glm::vec3 points[8];
-
-		points[0] = m_Model->GetBoundingBox().Min;
-		points[1] = m_Model->GetBoundingBox().Max;
-		points[2] = { points[0].x, points[0].y, points[1].z };
-		points[3] = { points[0].x, points[1].y, points[0].z };
-		points[4] = { points[1].x, points[0].y, points[0].z };
-		points[5] = { points[0].x, points[1].y, points[1].z };
-		points[6] = { points[1].x, points[0].y, points[1].z };
-		points[7] = { points[1].x, points[1].y, points[0].z };
-
-		pShape->addPoint(ToBtVector(points[0]));
-		pShape->addPoint(ToBtVector(points[1]));
-		pShape->addPoint(ToBtVector(points[2]));
-		pShape->addPoint(ToBtVector(points[3]));
-		pShape->addPoint(ToBtVector(points[4]));
-		pShape->addPoint(ToBtVector(points[5]));
-		pShape->addPoint(ToBtVector(points[6]));
-		pShape->addPoint(ToBtVector(points[7]));
-
-		m_pRigidBody->SetCollisionShape(pShape, this);
-
-		m_pRigidBody->GetRigidbody()->setUserPointer(this);
-		m_pRigidBody->GetCollisionShape()->setUserPointer(this);
-		m_pRigidBody->SetStatic(true);
-
 		m_Name = "Brush";
-	}
-
-	void Brush::UpdatedMatrix()
-	{
-		m_Model->SetModelMatrix(m_ModelMatrix);
 	}
 
 	void Brush::OnEvent(Event& e)
@@ -157,7 +116,7 @@ namespace Lamp
 	{
 		if (g_pEnv->ShouldRenderBB && e.GetPassInfo().type == PassType::Forward)
 		{
-			m_Model->RenderBoundingBox();
+			m_Model->RenderBoundingBox(m_ModelMatrix);
 		}
 		
 		if (e.GetPassInfo().type == PassType::Forward)
@@ -167,16 +126,13 @@ namespace Lamp
 
 		bool forward = e.GetPassInfo().type == PassType::Selection ? true : false;
 
-		m_Model->Render(m_Id, forward);
+		m_Model->Render(m_Id, m_ModelMatrix, forward);
 
 		return true;
 	}
 
 	bool Brush::OnUpdate(AppUpdateEvent& e)
 	{
-		btTransform& tr = m_pRigidBody->GetTransform();
-		SetPhysicsPosition({ tr.getOrigin().getX(), tr.getOrigin().getY(), tr.getOrigin().getZ() });
-
 		return false;
 	}
 }

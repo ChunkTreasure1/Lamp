@@ -39,6 +39,28 @@ namespace Lamp
 		std::string Name;
 		void* Value;
 		PropertyType PropertyType;
+
+		static uint32_t PropertyTypeToSize(Lamp::PropertyType type)
+		{
+			switch (type)
+			{
+			case Lamp::PropertyType::String: return 0;
+			case Lamp::PropertyType::Path: return 0;
+			case Lamp::PropertyType::Bool: return 1;
+			case Lamp::PropertyType::Int: return 4;
+			case Lamp::PropertyType::Float: return 4;
+			case Lamp::PropertyType::Float2: return 2 * 4;
+			case Lamp::PropertyType::Float3: return 3 * 4;
+			case Lamp::PropertyType::Float4: return 3 * 4;
+			case Lamp::PropertyType::Color3: return 3 * 4;
+			case Lamp::PropertyType::Color4: return 4 * 4;
+			case Lamp::PropertyType::Void: return 0;
+			case Lamp::PropertyType::Selectable: return 0;
+			case Lamp::PropertyType::EntityId: return 0;
+			default:
+				break;
+			}
+		}
 	};
 
 	class ComponentProperties

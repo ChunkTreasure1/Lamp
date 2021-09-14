@@ -18,14 +18,15 @@ namespace Lamp
 		KeyPressed = 0b00001100, KeyReleased = 0b00001101, KeyTyped = 0b00001110,
 		MouseButtonPressed = 0b00001111, MouseButtonReleased = 0b00010000, MouseMoved = 0b00010001, MouseScrolled = 0b00010010,
 		EntityCollision = 0b00010011, EntityStoppedCollision = 0b00010100, EntityPositionChanged = 0b00010101, ImGuiBegin = 0b0010110, EntityPropertyChanged = 0b0011000,
-		EntityComponentAdded = 0b0011001, ImGuiUpdate = 0b0011011, EditorViewportSizeChanged = 0b0011100,
+		EntityComponentAdded = 0b0011001, ImGuiUpdate = 0b0011011, EditorViewportSizeChanged = 0b0011100, EntityPhysicsUpdate = 0b0011101, EntityCollisionStart = 0b0011110,
+		EntityCollisionEnd = 0b0011111, EntityTriggerBegin = 0b0100000, EntityTriggerEnd = 0b0100001,
 
 		All = WindowClose | WindowResize | WindowFocus | WindowLostFocus | WindowMoved |
 		AppTick | AppUpdate | AppRender | AppLog | AppItemClicked | ImGuiBegin | ImGuiUpdate |
 		KeyPressed | KeyReleased | KeyTyped |
 		MouseButtonPressed | MouseButtonReleased | MouseMoved | MouseScrolled |
-		EntityCollision | EntityStoppedCollision | EntityPositionChanged | ImGuiBegin | EntityPropertyChanged | EntityComponentAdded |
-		EditorViewportSizeChanged
+		EntityCollision | EntityStoppedCollision | EntityPositionChanged | ImGuiBegin | EntityPropertyChanged | EntityComponentAdded | EntityPhysicsUpdate |
+		EditorViewportSizeChanged | EntityCollisionStart | EntityCollisionEnd
 	};
 
 

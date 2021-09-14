@@ -26,7 +26,7 @@ namespace Lamp
 	public:
 		Entity()
 		{
-			m_Name = "Entity" + std::to_string(m_Id);
+			m_Name = "Entity";
 
 			m_GizmoTexure = Texture2D::Create("engine/gizmos/gizmoEntity.png");
 		}

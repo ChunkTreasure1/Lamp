@@ -7,6 +7,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "ComponentRegistry.h"
+#include "Lamp/Objects/Entity/BaseComponents/Physics/BoxColliderComponent.h"
 
 namespace Lamp
 {
@@ -77,7 +78,168 @@ namespace Lamp
 		Entity* copy = new Entity();
 		for (auto& comp : entity->GetComponents())
 		{
-			copy->AddComponent(ComponentRegistry::Create(comp->GetName()));
+			Ref<EntityComponent> component = ComponentRegistry::Create(comp->GetName());
+
+			for (auto& property : comp->GetComponentProperties().GetProperties())
+			{
+				switch (property.PropertyType)
+				{
+					case Lamp::PropertyType::String:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								std::string* p = static_cast<std::string*>(prop.Value);
+								*p = std::string(*static_cast<std::string*>(property.Value));
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+
+						break;
+					}
+					case Lamp::PropertyType::Bool:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								bool* p = static_cast<bool*>(prop.Value);
+								*p = *static_cast<bool*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Int:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								int* p = static_cast<int*>(prop.Value);
+								*p = *static_cast<int*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Float:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								float* p = static_cast<float*>(prop.Value);
+								*p = *static_cast<float*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Float2:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
+								*p = *static_cast<glm::vec2*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Float3:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+								*p = *static_cast<glm::vec3*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Float4:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+								*p = *static_cast<glm::vec4*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Path:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								std::string* p = static_cast<std::string*>(prop.Value);
+								*p = *static_cast<std::string*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+
+						break;
+					}
+					case Lamp::PropertyType::Color3:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
+								*p = *static_cast<glm::vec3*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+					case Lamp::PropertyType::Color4:
+					{
+						for (auto& prop : component->GetComponentProperties().GetProperties())
+						{
+							if (prop.Name == property.Name)
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
+								*p = *static_cast<glm::vec4*>(property.Value);
+
+								EntityPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
+						}
+						break;
+					}
+				}
+			}
+
+			copy->AddComponent(component);
 		}
 
 		if (entity->m_GraphKeyGraph)

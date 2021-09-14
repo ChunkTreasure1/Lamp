@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "Object.h"
-#include "Lamp/Physics/Rigidbody.h"
-#include "Lamp/Physics/PhysicsEngine.h"
+
+#include <glm/gtx/quaternion.hpp>
 
 namespace Lamp
 {
@@ -15,23 +15,13 @@ namespace Lamp
 
 	Object::~Object()
 	{
-		PhysicsEngine::Get()->RemoveRigidBody(this);
-		if (m_pRigidBody)
-		{
-			delete m_pRigidBody;
-		}
 	}
 
 	void Object::SetPosition(const glm::vec3& pos)
 	{
 		m_Position = pos;
-		if (m_pRigidBody)
-		{
-			m_pRigidBody->SetPosition(pos);
-		}
 
 		CalculateModelMatrix();
-		UpdatedMatrix();
 
 		EntityPositionChangedEvent e;
 		OnEvent(e);
@@ -41,21 +31,13 @@ namespace Lamp
 	{
 		m_Position = pos; 
 		CalculateModelMatrix(); 
-		UpdatedMatrix(); 
-		//m_PickingCollider.Transform(pos);
 	}
 
 	void Object::SetScale(const glm::vec3& scale)
 	{
 		m_Scale = scale;
 		CalculateModelMatrix();
-		UpdatedMatrix();
 		ScaleChanged();
-
-		if (m_pRigidBody)
-		{
-			m_pRigidBody->SetScale(m_Scale);
-		}
 	}
 
 	void Object::SetModelMatrix(const glm::mat4& mat)
@@ -72,10 +54,6 @@ namespace Lamp
 
 		m_Rotation += rotation;
 		m_Position = position;
-		if (!m_pRigidBody)
-		{
-			m_pRigidBody->SetPosition(position);
-		}
 
 		m_Scale = scale;
 	}
@@ -83,9 +61,7 @@ namespace Lamp
 	void Object::CalculateModelMatrix()
 	{
 		m_ModelMatrix = glm::translate(glm::mat4(1.f), m_Position)
-			* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.x), glm::vec3(1.f, 0.f, 0.f))
-			* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.y), glm::vec3(0.f, 1.f, 0.f))
-			* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.z), glm::vec3(0.f, 0.f, 1.f))
+			* glm::toMat4(glm::quat(m_Rotation))
 			* glm::scale(glm::mat4(1.f), m_Scale);
 	}
 }
