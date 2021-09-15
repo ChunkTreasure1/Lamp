@@ -71,6 +71,7 @@ namespace Lamp
 		if (rapidxml::xml_node<>* pEntities = pRootNode->first_node("Entities"))
 		{
 			pLevel->GetEntities() = LoadEntities(pEntities);
+			pLevel->SetupLights();
 		}
 
 		m_CurrentLevel = pLevel;

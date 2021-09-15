@@ -255,7 +255,7 @@ namespace Lamp
 			copy->m_GraphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_GraphKeyGraph);
 		}
 		copy->m_ModelMatrix = entity->m_ModelMatrix;
-		copy->m_Position = entity->m_Position;
+		copy->SetPosition(entity->m_Position);
 		copy->m_Rotation = entity->m_Rotation;
 		copy->m_Scale = entity->m_Scale;
 		copy->m_LayerID = entity->m_LayerID;

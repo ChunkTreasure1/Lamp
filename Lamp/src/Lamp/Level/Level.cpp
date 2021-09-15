@@ -2,6 +2,7 @@
 #include "Level.h"
 
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/LightComponent.h"
 #include "Lamp/Physics/Physics.h"
 
 namespace Lamp
@@ -43,6 +44,28 @@ namespace Lamp
 			return true;
 		}
 		return false;
+	}
+
+	Level::Level(const Level& level)
+	{
+		for (auto& brush : level.m_Brushes)
+		{
+			m_Brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
+		}
+
+		for (auto& entity : level.m_Entities)
+		{
+			std::pair pair = std::make_pair(entity.first, Entity::Duplicate(entity.second, false));
+			m_Entities.emplace(pair);
+			if (auto lightComp = pair.second->GetComponent<LightComponent>())
+			{
+				m_RenderUtils.RegisterPointLight(lightComp->GetPointLight());
+			}
+		}
+		m_Environment = level.m_Environment;
+		m_Name = level.m_Name;
+		m_Path = level.m_Path;
+		m_Layers = level.m_Layers;
 	}
 
 	void Level::OnEvent(Event& e)
@@ -98,5 +121,16 @@ namespace Lamp
 	{
 		Physics::DestroyScene();
 		g_pEnv->ShouldRenderGizmos = m_LastShowedGizmos;
+	}
+
+	void Level::SetupLights()
+	{
+		for (auto& entity : m_Entities)
+		{
+			if (auto& comp = entity.second->GetComponent<LightComponent>())
+			{
+				m_RenderUtils.RegisterPointLight(comp->GetPointLight());
+			}
+		}
 	}
 }

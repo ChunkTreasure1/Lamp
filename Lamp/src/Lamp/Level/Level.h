@@ -54,23 +54,7 @@ namespace Lamp
 		{
 		}
 
-		Level(const Level& level)
-		{
-			for (auto& brush : level.m_Brushes)
-			{
-				m_Brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
-			}
-
-			for (auto& entity : level.m_Entities)
-			{
-				m_Entities.emplace(std::make_pair(entity.first, Entity::Duplicate(entity.second, false)));
-			}
-
-			m_Environment = level.m_Environment;
-			m_Name = level.m_Name;
-			m_Path = level.m_Path;
-			m_Layers = level.m_Layers;
-		}
+		Level(const Level& level);
 
 		~Level()
 		{
@@ -94,6 +78,8 @@ namespace Lamp
 
 		void OnRuntimeStart();
 		void OnRuntimeEnd();
+
+		void SetupLights();
 
 	private:
 		std::string m_Name;

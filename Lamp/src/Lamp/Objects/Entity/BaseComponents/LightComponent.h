@@ -30,6 +30,7 @@ namespace Lamp
 
 		inline const glm::vec3& GetColor() { return m_pPointLight->Color; }
 		inline const float GetFarPlane() { return m_pPointLight->FarPlane; }
+		inline PointLight* GetPointLight() { return m_pPointLight; }
 
 		//Setting
 		inline void SetIntensity(float val) { m_pPointLight->Intensity = val; }
