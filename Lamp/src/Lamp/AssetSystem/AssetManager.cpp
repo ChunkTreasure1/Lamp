@@ -45,23 +45,17 @@ namespace Lamp
 	void AssetManager::Shutdown()
 	{
 		LP_PROFILE_FUNCTION();
-		m_LoadingThreadActive = false;
-		for (uint32_t i = 0; i < m_MaxThreads; i++)
-		{
-			m_WorkerThreads[i].join();
-		}
 	}
-	 
-	void AssetManager::LoaderThread()
-	{}
+	
 
 	void AssetManager::Update()
-	{}
+	{
+		ResourceCache::Update();
+	}
 
 	void AssetManager::LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset)
 	{
 		AssetLoadJob job;
-		job.asset = asset;
 		job.path = path;
 		job.type = GetAssetTypeFromPath(path);
 
@@ -70,24 +64,37 @@ namespace Lamp
 			LP_CORE_ERROR("No importer for asset exists!");
 			return;
 		}
-		m_AssetLoaders[job.type]->Load(job.path, job.asset);
-		if (asset->IsValid())
-		{
-			ResourceCache::AddAsset(path, asset);
-		}
+		m_AssetLoaders[job.type]->Load(job.path, asset);
 	}
+
+	void AssetManager::SaveAsset(const Ref<Asset>& asset)
+	{
+		if (m_AssetLoaders.find(asset->GetType()) == m_AssetLoaders.end())
+		{
+			LP_CORE_ERROR("No importer found for asset!");
+			return;
+		}
+
+		if (!asset->IsValid())
+		{
+			return;
+		}
+
+		m_AssetLoaders[asset->GetType()]->Save(asset);
+	}
+
 	AssetType AssetManager::GetAssetTypeFromPath(const std::filesystem::path& path)
 	{
 		return GetAssetTypeFromExtension(path.extension().string());
 	}
 	AssetType AssetManager::GetAssetTypeFromExtension(const std::string& ext)
 	{
-		std::string ext = Utils::ToLower(ext);
-		if (s_AssetExtensionMap.find(ext) == s_AssetExtensionMap.end())
+		std::string extension = Utils::ToLower(ext);
+		if (s_AssetExtensionMap.find(extension) == s_AssetExtensionMap.end())
 		{
 			return AssetType::None;
 		}
 
-		return s_AssetExtensionMap.at(ext);
+		return s_AssetExtensionMap.at(extension);
 	}
 }

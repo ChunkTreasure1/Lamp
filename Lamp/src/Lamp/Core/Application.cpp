@@ -12,12 +12,21 @@
 #include "CoreLogger.h"
 
 #include "Lamp/Objects/Entity/ComponentInclude.h"
+#include <thread>
 
 GlobalEnvironment* g_pEnv;
 
 namespace Lamp
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+
+	void UpdateAssetManager(bool& running)
+	{
+		while (running)
+		{
+			g_pEnv->pAssetManager->Update();
+		}
+	}
 
 	Application* Application::s_pInstance = nullptr;
 
@@ -43,6 +52,8 @@ namespace Lamp
 		AudioEngine::Initialize();
 		Physics::Initialize();
 
+		m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_Running));
+
 		//Setup the GUI system
 		m_pImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_pImGuiLayer);
@@ -53,6 +64,8 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
+		
+		m_AssetManagerThread.join();
 
 		delete g_pEnv->pAssetManager;
 		delete g_pEnv;
@@ -70,13 +83,10 @@ namespace Lamp
 			m_FrameTime.Begin();
 
 			AudioEngine::Update();
-
-			//Load assets
-			g_pEnv->pAssetManager->Update();
-
+			//Load 
 			{
 				LP_PROFILE_SCOPE("Application::UpdateLayers")
-				AppUpdateEvent e(timestep);
+					AppUpdateEvent e(timestep);
 
 				for (Layer* pLayer : m_LayerStack)
 				{
@@ -87,7 +97,7 @@ namespace Lamp
 			{
 				LP_PROFILE_SCOPE("Application::UpdateImGui")
 
-				m_pImGuiLayer->Begin();
+					m_pImGuiLayer->Begin();
 
 				for (Layer* pLayer : m_LayerStack)
 				{
@@ -98,12 +108,12 @@ namespace Lamp
 			}
 
 			m_pWindow->Update(timestep);
-		
+
 			m_FrameTime.End();
 		}
 	}
 
-	void Application::OnEvent(Event & e)
+	void Application::OnEvent(Event& e)
 	{
 		LP_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
@@ -121,12 +131,12 @@ namespace Lamp
 		}
 	}
 
-	void Application::PushLayer(Layer * pLayer)
+	void Application::PushLayer(Layer* pLayer)
 	{
 		m_LayerStack.PushLayer(pLayer);
 	}
 
-	void Application::PushOverlay(Layer * pLayer)
+	void Application::PushOverlay(Layer* pLayer)
 	{
 		m_LayerStack.PushOverlay(pLayer);
 	}
@@ -137,7 +147,7 @@ namespace Lamp
 		return false;
 	}
 
-	bool Application::OnWindowResize(WindowResizeEvent & e)
+	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
 		if (e.GetWidth() == 0 && e.GetHeight() == 0)
 		{

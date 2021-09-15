@@ -99,7 +99,8 @@ namespace Lamp
 
 			rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "Brush");
 
-			child->append_attribute(doc.allocate_attribute("lgfPath", brush->GetModel()->Path.string().c_str()));
+			char* pPath = doc.allocate_string(brush->GetModel()->Path.string().c_str());
+			child->append_attribute(doc.allocate_attribute("lgfPath", pPath));
 
 			char* pPos = doc.allocate_string(ToString(brush->GetPosition()).c_str());
 			child->append_attribute(doc.allocate_attribute("position", pPos));

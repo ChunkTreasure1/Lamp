@@ -1,8 +1,7 @@
 <Level name="Level">
 	<Brushes>
-		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush(1)"/>
-		<Brush lgfPath="assets\models\sphere.lgf" position="0.000000,0.763550,20.837059" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
-		<Brush lgfPath="assets\models\teddy.lgf" position="-10.288723,0.902829,16.818138" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,3.808346,21.462688" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Entities>
 		<Entity name="Entity3" position="-2.428791,4.310011,16.715326" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
@@ -14,13 +13,21 @@
 				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
 			</Component>
 		</Entity>
+		<Entity name="Entity" position="0.000000,3.201024,28.467682" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
+			<Component name="CameraComponent">
+				<Param name="Is Perspective" type="Bool" value="1"/>
+				<Param name="Is Main" type="Bool" value="0"/>
+				<Param name="Field Of View" type="Float" value="60.000000"/>
+			</Component>
+			<Component name="ControllerComponent"/>
+		</Entity>
 	</Entities>
 	<Layers>
 		<Layer name="Main" id="0" active="1"/>
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="21.954908,19.375784,35.906818" rotation="227.244400,-25.699846,0.000000" fov="60.000000"/>
+		<CameraValues position="-20.705534,16.226685,32.456486" rotation="681.747253,-32.299885,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

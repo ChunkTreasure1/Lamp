@@ -5,28 +5,30 @@
 
 namespace Lamp
 {
-	std::unordered_map<std::filesystem::path, Ref<Asset>> ResourceCache::s_AssetCache;
+	std::unordered_map<std::string, Ref<Asset>> ResourceCache::s_AssetCache;
+	std::mutex ResourceCache::s_CacheMutex;
 
-	bool ResourceCache::AddAsset(const std::filesystem::path& path, Ref<Asset>& asset)
+	bool ResourceCache::AddAsset(std::filesystem::path path, Ref<Asset>& asset)
 	{
-		if (s_AssetCache.find(path) == s_AssetCache.end())
+		if (s_AssetCache.find(path.string()) == s_AssetCache.end())
 		{
-			s_AssetCache.insert(std::make_pair(path, asset));
+			s_AssetCache.insert(std::make_pair(path.string(), asset));
 			return true;
 		}
 		return false;
 	}
 
-	Ref<Asset> ResourceCache::GetAsset(const std::filesystem::path& path)
+	void ResourceCache::Update()
 	{
-		if (s_AssetCache.find(path) != s_AssetCache.end())
+		std::lock_guard<std::mutex> lock(s_CacheMutex);
+
+		for (auto& asset : s_AssetCache)
 		{
-			return s_AssetCache.at(path);
+			if (asset.second.use_count() <= 1)
+			{
+				s_AssetCache.erase(asset.first);
+				break;
+			}
 		}
-
-		Ref<Asset> asset;
-		g_pEnv->pAssetManager->LoadAsset(path, asset);
-
-		return asset;
 	}
 }

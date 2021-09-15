@@ -14,8 +14,6 @@
 #include <string>
 
 #include "Lamp/Event/ApplicationEvent.h"
-
-
 namespace Lamp
 {
 	class GraphKeyGraph;
@@ -24,12 +22,7 @@ namespace Lamp
 	class Entity : public Object
 	{
 	public:
-		Entity()
-		{
-			m_Name = "Entity";
-
-			m_GizmoTexure = Texture2D::Create("engine/gizmos/gizmoEntity.png");
-		}
+		Entity();
 		~Entity() {}
 
 		virtual void OnEvent(Event& e) override;
@@ -76,6 +69,7 @@ namespace Lamp
 				return std::dynamic_pointer_cast<T>(it->second);
 			}
 		}
+		
 
 		template<typename T>
 		bool HasComponent()

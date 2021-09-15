@@ -3,7 +3,7 @@
 
 namespace Lamp
 {
-	void Material::SetTexture(const std::string& name, Ref<Texture2D>& texture)
+	void Material::SetTexture(const std::string& name, Ref<Texture2D> texture)
 	{
 		if (m_pTextures.find(name) != m_pTextures.end())
 		{

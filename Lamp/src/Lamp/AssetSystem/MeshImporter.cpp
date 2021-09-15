@@ -2,8 +2,7 @@
 #include "MeshImporter.h"
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+
 
 namespace Lamp
 {
@@ -81,7 +80,7 @@ namespace Lamp
 		boundingBox.Max = glm::vec3(xMax, yMax, zMax);
 		boundingBox.Min = glm::vec3(xMin, yMin, zMin);
 
-		Ref<Mesh> mesh = CreateRef<Mesh>(meshes, materials, path.stem(), boundingBox);
+		Ref<Mesh> mesh = CreateRef<Mesh>(path.stem().string(), meshes, materials, boundingBox);
 
 		return mesh;
 	}

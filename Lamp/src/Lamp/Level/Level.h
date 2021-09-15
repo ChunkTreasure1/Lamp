@@ -100,6 +100,7 @@ namespace Lamp
 		std::string m_Path;
 		LevelEnvironment m_Environment;
 		bool m_IsPlaying = false;
+		bool m_LastShowedGizmos = false;
 
 		std::map<uint32_t, Brush*> m_Brushes;
 		std::map<uint32_t, Entity*> m_Entities;

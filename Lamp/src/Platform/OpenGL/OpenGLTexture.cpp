@@ -26,8 +26,9 @@ namespace Lamp
 	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& path)
 	{
 		int width, height, channels;
-		if (GetType() == AssetType::EnvironmentMap)
+		if (GetType() == AssetType::Texture)
 		{
+			stbi_set_flip_vertically_on_load(1);
 			unsigned char* pData = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
 			glGenTextures(1, &m_RendererID);

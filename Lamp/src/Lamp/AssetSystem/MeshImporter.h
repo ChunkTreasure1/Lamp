@@ -2,6 +2,9 @@
 
 #include "Lamp/Meshes/Mesh.h"
 
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 namespace Lamp
 {
 	class MeshImporter

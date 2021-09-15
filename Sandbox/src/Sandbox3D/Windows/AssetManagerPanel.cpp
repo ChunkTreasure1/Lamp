@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <filesystem>
 
+#include <Lamp/AssetSystem/ResourceCache.h>
+
 namespace Sandbox3D
 {
 	static const std::filesystem::path s_assetsPath = "assets";
@@ -10,8 +12,8 @@ namespace Sandbox3D
 	AssetManagerPanel::AssetManagerPanel()
 		: m_currentDirectory(s_assetsPath)
 	{
-		m_directoryTexture = Lamp::Texture2D::Create("engine/textures/ui/directoryIcon.png");
-		m_fileTexture = Lamp::Texture2D::Create("engine/textures/ui/files.png");
+		m_directoryTexture = Lamp::ResourceCache::GetAsset<Lamp::Texture2D>("engine/textures/ui/directoryIcon.png");
+		m_fileTexture = Lamp::ResourceCache::GetAsset<Lamp::Texture2D>("engine/textures/ui/files.png");
 	}
 
 	void AssetManagerPanel::OnImGuiRender()

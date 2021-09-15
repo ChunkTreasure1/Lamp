@@ -33,23 +33,12 @@ namespace Lamp
 		void Update();
 
 		void LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset);
+		void SaveAsset(const Ref<Asset>& asset);
 
 		AssetType GetAssetTypeFromPath(const std::filesystem::path& path);
 		AssetType GetAssetTypeFromExtension(const std::string& ext);
 
 	private:
-		void LoaderThread();
-
-	private:
-		std::vector<std::thread> m_WorkerThreads;
-		std::unordered_map<std::thread::id, std::string> m_ThreadNames;
-		std::mutex m_OutputMutex;
-
-		ThreadSafeQueue<AssetLoadJob> m_LoadingAssetsQueue;
-		ThreadSafeQueue<AssetLoadJob> m_ProcessingAssetsQueue;
-
-		uint32_t m_MaxThreads = 8;
-		bool m_LoadingThreadActive = true;
 
 		std::unordered_map<AssetType, Scope<AssetLoader>> m_AssetLoaders;
 	};

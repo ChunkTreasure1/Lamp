@@ -5,6 +5,7 @@
 
 #include "Lamp/Input/FileSystem.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -94,7 +95,7 @@ namespace Lamp
 			{
 				if (xml_node<>* pTex = pRoot->first_node(texName.c_str()))
 				{
-					mat.SetTexture(texName, Texture2D::Create(pTex->first_attribute("path")->value()));
+					mat.SetTexture(texName, ResourceCache::GetAsset<Texture2D>(pTex->first_attribute("path")->value()));
 				}
 			}
 

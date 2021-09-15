@@ -48,13 +48,9 @@ namespace Lamp
 	class Mesh : public Asset
 	{
 	public:
-		Mesh(const std::string& name, std::vector<SubMeshData> meshes, std::map<uint32_t, Material> mats, AABB bb)
-			: m_Materials(mats), m_Name(name), m_BoundingBox(bb)
+		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Material> mats, AABB bb)
+			: m_Materials(mats), m_Name(name), m_BoundingBox(bb), m_Meshes(meshes)
 		{
-			for (auto& mesh : meshes)
-			{
-				m_Meshes.push_back(CreateRef<SubMesh>(mesh.vertices, mesh.indices, mesh.matId));
-			}
 		}
 
 		Mesh()

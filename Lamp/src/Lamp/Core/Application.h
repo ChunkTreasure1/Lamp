@@ -51,6 +51,7 @@ namespace Lamp
 		float m_LastFrameTime = 0.f;
 
 		FrameTime m_FrameTime;
+		std::thread m_AssetManagerThread;
 	};
 	
 	static Application* CreateApplication();

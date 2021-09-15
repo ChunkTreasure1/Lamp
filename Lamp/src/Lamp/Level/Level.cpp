@@ -89,10 +89,14 @@ namespace Lamp
 	{
 		Physics::CreateScene();
 		Physics::CreateActors(this);
+
+		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
+		g_pEnv->ShouldRenderGizmos = false;
 	}
 
 	void Level::OnRuntimeEnd()
 	{
 		Physics::DestroyScene();
+		g_pEnv->ShouldRenderGizmos = m_LastShowedGizmos;
 	}
 }

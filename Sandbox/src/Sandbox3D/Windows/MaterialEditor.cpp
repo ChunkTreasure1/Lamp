@@ -35,7 +35,7 @@ namespace Sandbox3D
 			m_Framebuffer = Framebuffer::Create(main);
 		}
 
-		m_MaterialModel = ResourceCache::GetAsset("assets/models/sphere.lgf");
+		m_MaterialModel = ResourceCache::GetAsset<Mesh>("assets/models/sphere.lgf");
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)
@@ -152,7 +152,7 @@ namespace Sandbox3D
 				m_pSelectedMaterial->SetShader(Lamp::ShaderLibrary::GetShader(shaders[selectedShader]));
 				for (auto& tex : m_pSelectedMaterial->GetTextures())
 				{
-					tex.second = Texture2D::Create("engine/textures/default/defaultTexture.png");
+					tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 				}
 			}
 			/////////////////
@@ -166,14 +166,14 @@ namespace Sandbox3D
 						std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 						if (!path.empty())
 						{
-							tex.second = Texture2D::Create(path);
+							tex.second = ResourceCache::GetAsset<Texture2D>(path);
 							tex.second->Path.string() = path;
 						}
 					}
 					std::string dragDropPath = GetDragDropTarget();
 					if (!dragDropPath.empty())
 					{
-						tex.second = Texture2D::Create(dragDropPath);
+						tex.second = ResourceCache::GetAsset<Texture2D>(dragDropPath);
 						tex.second->Path.string() = dragDropPath;
 					}
 				}
@@ -184,14 +184,14 @@ namespace Sandbox3D
 						std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 						if (!path.empty())
 						{
-							tex.second = Texture2D::Create(path);
+							tex.second = ResourceCache::GetAsset<Texture2D>(path);
 							tex.second->Path.string() = path;
 						}
 					}
 					std::string dragDropPath = GetDragDropTarget();
 					if (!dragDropPath.empty())
 					{
-						tex.second = Texture2D::Create(dragDropPath);
+						tex.second = ResourceCache::GetAsset<Texture2D>(dragDropPath);
 						tex.second->Path.string() = dragDropPath;
 					}
 				}

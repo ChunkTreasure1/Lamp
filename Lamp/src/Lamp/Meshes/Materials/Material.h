@@ -24,7 +24,7 @@ namespace Lamp
 		{}
 		//Setting
 		inline void SetTextures(std::unordered_map<std::string, Ref<Texture2D>>& map) { m_pTextures = map; }
-		void SetTexture(const std::string& name, Ref<Texture2D>& texture);
+		void SetTexture(const std::string& name, Ref<Texture2D> texture);
 		void SetShader(Ref<Shader> shader);
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetPath(const std::filesystem::path& path) { m_Path = path; }

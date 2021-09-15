@@ -186,7 +186,7 @@ namespace Lamp
 		}
 
 		std::string name = "";
-		std::vector<SubMeshData> meshes;
+		std::vector<Ref<SubMesh>> meshes;
 		std::map<uint32_t, Material> materials;
 		AABB boundingBox;
 
@@ -234,7 +234,7 @@ namespace Lamp
 				}
 
 				in.close();
-				meshes.push_back(SubMeshData{ vertices, indices, (uint32_t)matId });
+				meshes.push_back(CreateRef<SubMesh>(vertices, indices, (uint32_t)matId));
 			}
 		}
 
@@ -252,8 +252,10 @@ namespace Lamp
 				{
 					materials[id] = MaterialLibrary::GetMaterial(name);
 				}
-
-				LP_CORE_ERROR("Material {0} not loaded!", name);
+				else
+				{
+					LP_CORE_ERROR("Material {0} not loaded!", name);
+				}
 			}
 		}
 
@@ -283,8 +285,6 @@ namespace Lamp
 	{
 		asset = Texture2D::Create(path);
 		asset->Path = path;
-
-
 
 		return true;
 	}

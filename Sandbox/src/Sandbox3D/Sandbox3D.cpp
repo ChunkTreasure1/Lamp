@@ -29,11 +29,11 @@ namespace Sandbox3D
 		: Layer("Sandbox3D"), m_DockspaceID(0)
 	{
 		g_pEnv->IsEditor = true;
-		m_IconPlay = Texture2D::Create("engine/textures/ui/PlayIcon.png");
-		m_IconStop = Texture2D::Create("engine/textures/ui/StopIcon.png");
+		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
+		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
 		m_pLevel = LevelSystem::LoadLevel("assets/levels/Level.level");
-		ResourceCache::GetAsset("engine/textures/default/defaultTexture.png");
+		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
