@@ -99,7 +99,7 @@ namespace Sandbox3D
 		{
 			if (ImGui::Selectable("Add"))
 			{
-				g_pEnv->pLevel->AddLayer(ObjectLayer("New layer", g_pEnv->pLevel->GetLayers().size(), true));
+				g_pEnv->pLevel->AddLayer(ObjectLayer("New layer",(uint32_t)g_pEnv->pLevel->GetLayers().size(), true));
 				ImGui::CloseCurrentPopup();
 			}
 

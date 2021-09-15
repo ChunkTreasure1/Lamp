@@ -76,6 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -91,6 +92,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,6 +100,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -116,6 +119,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -123,6 +127,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -141,6 +146,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -208,11 +214,11 @@
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsLayer.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXInternal.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsActor.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsLayer.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsMaterial.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsScene.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
@@ -672,11 +678,11 @@
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
-    <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsActor.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />

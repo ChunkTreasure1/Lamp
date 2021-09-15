@@ -51,8 +51,8 @@ namespace Lamp
 		uint32_t maxMips = 5;
 		for (uint32_t i = 0; i < maxMips; i++)
 		{
-			uint32_t mipWidth = 128 * std::pow(0.5f, i);
-			uint32_t mipHeight = 128 * std::pow(0.5f, i);
+			uint32_t mipWidth = (uint32_t)(128 * std::pow(0.5f, i));
+			uint32_t mipHeight = (uint32_t)(128 * std::pow(0.5f, i));
 
 			glViewport(0, 0, mipWidth, mipHeight);
 			float roughness = (float)i / (float)(maxMips - 1);

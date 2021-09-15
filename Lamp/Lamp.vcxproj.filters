@@ -342,6 +342,9 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsActor.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysicsLayer.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysicsMaterial.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
@@ -1569,7 +1572,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\PhysicsLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1728,6 +1730,9 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsActor.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
@@ -1833,6 +1838,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
   </ItemGroup>
 </Project>

@@ -15,6 +15,8 @@ namespace Lamp
 		default:
 			break;
 		}
+
+		return Ref<UniformBuffer>(nullptr);
 	}
 }
 

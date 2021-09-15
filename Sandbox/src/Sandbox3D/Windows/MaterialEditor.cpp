@@ -146,7 +146,7 @@ namespace Sandbox3D
 				}
 			}
 
-			ImGui::Combo("Shader", &selectedShader, shaders.data(), shaders.size());
+			ImGui::Combo("Shader", &selectedShader, shaders.data(), (int)shaders.size());
 			if (m_pSelectedMaterial->GetShader() != Lamp::ShaderLibrary::GetShader(shaders[selectedShader]))
 			{
 				m_pSelectedMaterial->SetShader(Lamp::ShaderLibrary::GetShader(shaders[selectedShader]));

@@ -138,7 +138,7 @@ namespace Lamp
 			};
 
 			s_pData->QuadVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)sizeof(float) * quadVertices.size());
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(float) * quadVertices.size()));
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" },
@@ -410,7 +410,7 @@ namespace Lamp
 		{
 			LP_PROFILE_SCOPE("SelectionPass");
 			s_pData->SelectionShader->Bind();
-			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
+			s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
 			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
 
 			mesh->GetVertexArray()->Bind();
@@ -500,7 +500,7 @@ namespace Lamp
 		case PassType::Selection:
 		{
 			s_pData->SelectionShader->Bind();
-			s_pData->SelectionShader->UploadInt("u_ObjectId", id);
+			s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
 			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
 
 			mesh->GetVertexArray()->Bind();

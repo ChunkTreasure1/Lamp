@@ -19,6 +19,8 @@ namespace Lamp
 			case Lamp::ElementType::Mat3: return GL_FLOAT;
 			case Lamp::ElementType::Mat4: return GL_FLOAT;
 		}
+
+		return GL_INT;
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray()

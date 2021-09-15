@@ -30,6 +30,17 @@ project "Lamp"
 	cppdialect "C++17"
 	staticruntime "off"
 
+	disablewarnings
+	{
+		"4005"
+	}
+
+	linkoptions 
+	{
+		"/ignore:4006",
+		"/ignore:4099"
+	}
+
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 
@@ -118,6 +129,11 @@ project "Sandbox"
 	cppdialect "C++17"
 	staticruntime "off"
 	
+	disablewarnings
+	{
+		"4005"
+	}
+	
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 	gamedir = "bin/" .. outputdir .. "/Game"
@@ -203,6 +219,16 @@ project "Game"
 	cppdialect "C++17"
 	staticruntime "off"
 
+	disablewarnings
+	{
+		"4005"
+	}
+
+	linkoptions 
+	{
+		"/ignore:4099"
+	}
+
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
 
@@ -256,6 +282,16 @@ project "GameLauncher"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "off"
+
+	disablewarnings
+	{
+		"4005"
+	}
+
+	linkoptions 
+	{
+		"/ignore:4099"
+	}
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")

@@ -82,6 +82,8 @@ namespace Lamp
 			case Lamp::FramebufferTexureFiltering::NearestMipMapLinear: return GL_NEAREST_MIPMAP_LINEAR;
 			case Lamp::FramebufferTexureFiltering::LinearMipMapLinear: return GL_LINEAR_MIPMAP_LINEAR;
 			}
+
+			return 0;
 		}
 
 		static GLint WrapToGL(FramebufferTextureWrap wrap)
@@ -94,6 +96,8 @@ namespace Lamp
 			case Lamp::FramebufferTextureWrap::ClampToBorder: return GL_CLAMP_TO_BORDER;
 			case Lamp::FramebufferTextureWrap::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
 			}
+
+			return 0;
 		}
 
 		static GLint RenderbufferTypeGL(FramebufferRenderbufferType type)
@@ -106,6 +110,8 @@ namespace Lamp
 			default:
 				break;
 			}
+
+			return 0;
 		}
 
 		static GLint RenderbufferTypeAttachment(FramebufferRenderbufferType type)
@@ -117,6 +123,8 @@ namespace Lamp
 			default:
 				break;
 			}
+
+			return 0;
 		}
 
 		static void AttachTexture(FramebufferSpecification spec, FramebufferTextureSpecification textureSpec, uint32_t id, bool multisample)
@@ -190,7 +198,7 @@ namespace Lamp
 
 		if (m_ColorAttachmentIDs.size())
 		{
-			glDeleteTextures(m_ColorAttachmentIDs.size(), m_ColorAttachmentIDs.data());
+			glDeleteTextures((GLsizei)m_ColorAttachmentIDs.size(), m_ColorAttachmentIDs.data());
 		}
 
 		if (m_DepthAttachmentID != 0)
@@ -240,7 +248,7 @@ namespace Lamp
 	{
 		int bit = depth ? GL_DEPTH_BUFFER_BIT : GL_COLOR_BUFFER_BIT;
 
-		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, bit, GL_NEAREST);
+		glBlitNamedFramebuffer(rendererId, m_RendererID, 0, 0, (GLint)size.x, (GLint)size.y, 0, 0, (GLint)size.x, (GLint)size.y, bit, GL_NEAREST);
 	}
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)
@@ -279,7 +287,7 @@ namespace Lamp
 			
 			if (m_ColorAttachmentIDs.size())
 			{
-				glDeleteTextures(m_ColorAttachmentIDs.size(), m_ColorAttachmentIDs.data());
+				glDeleteTextures((GLsizei)m_ColorAttachmentIDs.size(), m_ColorAttachmentIDs.data());
 			}
 
 			if (m_DepthAttachmentID != 0)
@@ -303,13 +311,13 @@ namespace Lamp
 
 			for (int i = 0; i < m_ColorAttachmentSpecs.size(); i++)
 			{
-				Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), m_ColorAttachmentIDs.size());
+				Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), (uint32_t)m_ColorAttachmentIDs.size());
 			}
 
 			for (size_t i = 0; i < m_ColorAttachmentIDs.size(); i++)
 			{
 				Utils::AttachTexture(m_Specification, m_ColorAttachmentSpecs[i], m_ColorAttachmentIDs[i], multisample);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, Utils::TextureTarget(multisample), m_ColorAttachmentIDs[i], 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, Utils::TextureTarget(multisample), m_ColorAttachmentIDs[i], (GLenum)0);
 			}
 		}
 
@@ -328,7 +336,7 @@ namespace Lamp
 				buffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 			}
 
-			glDrawBuffers(buffers.size(), buffers.data());
+			glDrawBuffers((GLsizei)buffers.size(), buffers.data());
 		}
 		else if (m_ColorAttachmentSpecs.empty())
 		{

@@ -23,6 +23,8 @@ namespace Lamp
 			case Lamp::PropertyType::Selectable:  return "selectable";
 			case Lamp::PropertyType::EntityId:    return "entityid";
 		}
+
+		return "";
 	}
 
 	static std::string ToString(const bool& var)

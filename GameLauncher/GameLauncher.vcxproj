@@ -78,6 +78,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -92,12 +93,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\bin\Debug-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -115,12 +118,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\bin\Release-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Lamp\src;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor;..\Lamp\vendor\glad\include;..\Lamp\vendor\GLFW\include;..\Lamp\vendor\imgui;..\Lamp\vendor\rapidxml;src;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;..\Game\src;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -138,6 +143,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>assimp-vc142-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\bin\Dist-windows-x86_64\Game;..\Lamp\vendor\assimp;..\Lamp\vendor\fmod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
