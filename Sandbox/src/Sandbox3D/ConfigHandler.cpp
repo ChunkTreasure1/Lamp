@@ -70,22 +70,18 @@ namespace Sandbox3D
 		char* pProps = doc.allocate_string(ToString(m_InspectiorOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("Inspector", pProps));
 
-		char* pLayers = doc.allocate_string(ToString(m_LayerViewOpen).c_str());
-		pWindowsOpen->append_attribute(doc.allocate_attribute("LayerView", pLayers));
-
 		char* pCreate = doc.allocate_string(ToString(m_CreateToolOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("CreateTool", pCreate));
 
 		char* pLog = doc.allocate_string(ToString(m_LogToolOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("LogTool", pLog));
 
-		//for (auto pWindow : m_pWindows)
-		//{
-		//	char* pImp = doc.allocate_string(ToString(pWindow->GetIsOpen()).c_str());
-
-		//	std::string name = pWindow->GetName();
-		//	pWindowsOpen->append_attribute(doc.allocate_attribute(name.c_str(), pImp));
-		//}
+		for (auto pWindow : m_pWindows)
+		{
+			char* pImp = doc.allocate_string(ToString(pWindow->GetIsOpen()).c_str());
+			char* pName = doc.allocate_string(pWindow->GetName().c_str());
+			pWindowsOpen->append_attribute(doc.allocate_attribute(pName, pImp));
+		}
 
 		pRoot->append_node(pWindowSize);
 		pRoot->append_node(pWindowsOpen);
@@ -122,15 +118,14 @@ namespace Sandbox3D
 		{
 			GetValue(pWindowsOpen->first_attribute("Perspective")->value(), m_PerspectiveOpen);
 			GetValue(pWindowsOpen->first_attribute("Inspector")->value(), m_InspectiorOpen);
-			GetValue(pWindowsOpen->first_attribute("LayerView")->value(), m_LayerViewOpen);
 			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_CreateToolOpen);
 			GetValue(pWindowsOpen->first_attribute("LogTool")->value(), m_LogToolOpen);
 
-			//for (auto pWindow : m_pWindows)
-			//{
-			//	std::string name = pWindow->GetName();
-			//	GetValue(pWindowsOpen->first_attribute(name.c_str())->value(), pWindow->GetIsOpen());
-			//}
+			for (auto pWindow : m_pWindows)
+			{
+				std::string name = pWindow->GetName();
+				GetValue(pWindowsOpen->first_attribute(name.c_str())->value(), pWindow->GetIsOpen());
+			}
 		}
 	}
 }

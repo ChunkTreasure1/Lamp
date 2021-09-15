@@ -382,48 +382,6 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateLayerView()
-	{
-		LP_PROFILE_FUNCTION();
-
-		if (!m_LayerViewOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Layers", &m_LayerViewOpen);
-
-		int startId = 0;
-		for (auto& layer : g_pEnv->pLevel->GetLayers())
-		{
-			if (ImGui::CollapsingHeader(layer.Name.c_str()))
-			{
-				for (auto& obj : layer.Objects)
-				{
-					startId++;
-					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
-					if (ImGui::IsItemClicked())
-					{
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(false);
-						}
-
-						m_pSelectedObject = obj;
-
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(true);
-						}
-					}
-				}
-			}
-		}
-
-		ImGui::End();
-	}
-
 	void Sandbox3D::UpdateAddComponent()
 	{
 		if (ImGui::BeginPopup("AddComponent"))
@@ -1055,7 +1013,6 @@ namespace Sandbox3D
 			if (ImGui::BeginMenu("Tools"))
 			{
 				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
-				ImGui::MenuItem("Layer view", NULL, &m_LayerViewOpen);
 				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);

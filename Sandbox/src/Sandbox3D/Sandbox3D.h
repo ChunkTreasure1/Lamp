@@ -56,7 +56,6 @@ namespace Sandbox3D
 		//ImGui
 		void UpdatePerspective();
 		void UpdateProperties();
-		void UpdateLayerView();
 		void UpdateAddComponent();
 		void UpdateCreateTool();
 		void UpdateLogTool();
@@ -127,9 +126,6 @@ namespace Sandbox3D
 
 		//Windows
 		std::vector<BaseWindow*> m_pWindows;
-
-		//Layers
-		bool m_LayerViewOpen = true;
 
 		//Play
 		bool m_ShouldPlay = false;

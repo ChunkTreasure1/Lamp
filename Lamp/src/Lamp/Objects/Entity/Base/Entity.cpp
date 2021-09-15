@@ -47,26 +47,18 @@ namespace Lamp
 	{
 		auto& entites = g_pEnv->pLevel->GetEntities();
 
-		for (auto& layer : g_pEnv->pLevel->GetLayers())
-		{
-			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), this); it != layer.Objects.end())
-			{
-				layer.Objects.erase(it);
-			}
-		}
-
 		entites.erase(m_Id);
 		delete this;
 	}
 
-	Entity* Entity::Create(bool saveable)
+	Entity* Entity::Create(bool saveable, uint32_t layer)
 	{
 		Entity* pEnt = new Entity();
-		pEnt->SetLayerID(0);
+		pEnt->SetLayerID(layer);
 		pEnt->SetSaveable(saveable);
 
 		g_pEnv->pLevel->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
-		g_pEnv->pLevel->GetLayers()[pEnt->GetLayerID()].Objects.push_back(pEnt);
+		g_pEnv->pLevel->AddToLayer(pEnt);
 
 		return pEnt;
 	}
@@ -256,15 +248,15 @@ namespace Lamp
 		}
 		copy->m_ModelMatrix = entity->m_ModelMatrix;
 		copy->SetPosition(entity->m_Position);
-		copy->m_Rotation = entity->m_Rotation;
-		copy->m_Scale = entity->m_Scale;
+		copy->SetRotation(entity->m_Rotation);
+		copy->SetScale(entity->m_Scale);
 		copy->m_LayerID = entity->m_LayerID;
 
 
 		if (addToLevel)
 		{
 			g_pEnv->pLevel->GetEntities().emplace(copy->m_Id, copy);
-			g_pEnv->pLevel->GetLayers()[copy->m_LayerID].Objects.push_back(copy);
+			g_pEnv->pLevel->AddToLayer(copy);
 		}
 		else
 		{

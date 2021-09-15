@@ -60,7 +60,7 @@ namespace Lamp
 
 		if (pLevel->GetLayers().empty())
 		{
-			pLevel->GetLayers().push_back(ObjectLayer("Main", 0, true));
+			pLevel->AddLayer(ObjectLayer("Main", 0, true));
 		}
 
 		if (rapidxml::xml_node<>* pBrushes = pRootNode->first_node("Brushes"))
@@ -337,6 +337,7 @@ namespace Lamp
 			std::string name = pBrush->first_attribute("name")->value();
 
 			Brush* pB = Brush::Create(path, pos, rot, scale, layerID, name);
+
 			pBrushes.emplace(std::make_pair(pB->GetID(), pB));
 		}
 
@@ -349,8 +350,6 @@ namespace Lamp
 
 		for (rapidxml::xml_node<>* pEntity = pNode->first_node("Entity"); pEntity; pEntity = pEntity->next_sibling())
 		{
-			Entity* pEnt = Entity::Create(true);
-
 			std::string name = pEntity->first_attribute("name")->value();
 
 			glm::vec3 pos(0, 0, 0);
@@ -365,11 +364,12 @@ namespace Lamp
 			int layerId;
 			GetValue(pEntity->first_attribute("layerId")->value(), layerId);
 
+			Entity* pEnt = Entity::Create(true, (uint32_t)layerId);
+
 			pEnt->SetName(name);
 			pEnt->SetPosition(pos);
 			pEnt->SetRotation(rot);
 			pEnt->SetScale(scale);
-			pEnt->SetLayerID(layerId);
 
 			for (rapidxml::xml_node<>* pComponent = pEntity->first_node("Component"); pComponent; pComponent = pComponent->next_sibling())
 			{

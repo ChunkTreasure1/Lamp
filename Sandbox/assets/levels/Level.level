@@ -14,7 +14,7 @@
 				<Param name="Color" type="Color3" value="1.000000,1.000000,1.000000"/>
 			</Component>
 		</Entity>
-		<Entity name="Entity" position="0.000000,3.201024,28.467682" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
+		<Entity name="Entity" position="0.000000,3.201024,28.467682" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="1">
 			<Component name="CameraComponent">
 				<Param name="Is Perspective" type="Bool" value="1"/>
 				<Param name="Is Main" type="Bool" value="0"/>
@@ -22,7 +22,7 @@
 			</Component>
 			<Component name="ControllerComponent"/>
 		</Entity>
-		<Entity name="Entity" position="12.482208,4.783882,16.512543" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="0">
+		<Entity name="Entity" position="10.517098,2.638246,7.036876" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="1">
 			<Component name="MeshComponent">
 				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\cube.lgf"/>
 			</Component>
@@ -42,7 +42,7 @@
 				<Param name="Layer" type="Int" value="0"/>
 			</Component>
 		</Entity>
-		<Entity name="Entity" position="12.605717,12.326134,10.169139" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
+		<Entity name="TestColl" position="12.605717,12.326134,10.169139" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
 			<Component name="MeshComponent">
 				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf"/>
 			</Component>
@@ -65,10 +65,11 @@
 	</Entities>
 	<Layers>
 		<Layer name="Main" id="0" active="1"/>
+		<Layer name="Test" id="1" active="1"/>
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="25.485352,21.713728,6.908778" rotation="511.946014,-36.949871,0.000000" fov="60.000000"/>
+		<CameraValues position="-30.823589,14.522502,25.099154" rotation="343.498108,-21.499861,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

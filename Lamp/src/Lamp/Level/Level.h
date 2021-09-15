@@ -81,6 +81,12 @@ namespace Lamp
 
 		void SetupLights();
 
+		//Layers
+		void AddLayer(const ObjectLayer& layer);
+		void RemoveLayer(uint32_t id);
+		void MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId);
+		void AddToLayer(Object* obj);
+
 	private:
 		std::string m_Name;
 		std::string m_Path;

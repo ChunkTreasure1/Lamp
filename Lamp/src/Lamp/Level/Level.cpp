@@ -62,10 +62,49 @@ namespace Lamp
 				m_RenderUtils.RegisterPointLight(lightComp->GetPointLight());
 			}
 		}
+
+		for (auto& brush : m_Brushes)
+		{
+			for (auto& layer : m_Layers)
+			{
+				if (brush.second->GetLayerID() == layer.ID)
+				{
+					layer.Objects.push_back(brush.second);
+				}
+			}
+		}
+
+		for (auto layer : level.m_Layers)
+		{
+			ObjectLayer l(layer.Name, layer.ID, layer.Active);
+			m_Layers.push_back(l);
+		}
+
+		for (auto& entity : m_Entities)
+		{
+			for (auto& layer : m_Layers)
+			{
+				if (entity.second->GetLayerID() == layer.ID)
+				{
+					layer.Objects.push_back(entity.second);
+				}
+			}
+		}
+
+		for (auto& brush : m_Brushes)
+		{
+			for (auto& layer : m_Layers)
+			{
+				if (brush.second->GetLayerID() == layer.ID)
+				{
+					layer.Objects.push_back(brush.second);
+				}
+			}
+		}
+
 		m_Environment = level.m_Environment;
 		m_Name = level.m_Name;
 		m_Path = level.m_Path;
-		m_Layers = level.m_Layers;
 	}
 
 	void Level::OnEvent(Event& e)
@@ -130,6 +169,83 @@ namespace Lamp
 			if (auto& comp = entity.second->GetComponent<LightComponent>())
 			{
 				m_RenderUtils.RegisterPointLight(comp->GetPointLight());
+			}
+		}
+	}
+
+	void Level::AddLayer(const ObjectLayer& layer)
+	{
+		m_Layers.push_back(layer);
+	}
+
+	void Level::RemoveLayer(uint32_t id)
+	{
+		for (auto& layer : m_Layers)
+		{
+			if (layer.ID == id)
+			{
+				for (auto& obj : layer.Objects)
+				{
+					obj->Destroy();
+				}
+			}
+		}
+
+		if (auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [id](ObjectLayer& layer) { return id == layer.ID; }); it != m_Layers.end())
+		{
+			m_Layers.erase(it);
+		}
+	}
+
+	void Level::MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId)
+	{
+		ObjectLayer* currObjLayer;
+		ObjectLayer* newObjLayer;
+
+		for (auto& layer : m_Layers)
+		{
+			if (layer.ID == currLayer)
+			{
+				currObjLayer = &layer;
+			}
+
+			if (layer.ID == newLayer)
+			{
+				newObjLayer = &layer;
+			}
+		}
+
+		Object* obj;
+		for (auto& objects : currObjLayer->Objects)
+		{
+			if (objects->GetID() == objId)
+			{
+				obj = objects;
+			}
+		}
+
+		if (!obj || !currObjLayer || !newObjLayer)
+		{
+			return;
+		}
+
+		if (auto it = std::find(currObjLayer->Objects.begin(), currObjLayer->Objects.end(), obj); it != currObjLayer->Objects.end())
+		{
+			currObjLayer->Objects.erase(it);
+		}
+
+		obj->SetLayerID(newLayer);
+		newObjLayer->Objects.push_back(obj);
+	}
+
+	void Level::AddToLayer(Object* obj)
+	{
+		for (auto& layer : m_Layers)
+		{
+			if (layer.ID == obj->GetLayerID())
+			{
+				layer.Objects.push_back(obj);
+				return;
 			}
 		}
 	}

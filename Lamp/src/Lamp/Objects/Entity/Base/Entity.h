@@ -150,7 +150,7 @@ namespace Lamp
 		}
 
 	public:
-		static Entity* Create(bool saveable = false);
+		static Entity* Create(bool saveable = false, uint32_t layer = 0);
 		static Entity* Get(uint32_t id);
 		static Entity* Duplicate(Entity* entity, bool addToLevel = true);
 

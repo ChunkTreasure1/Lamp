@@ -84,6 +84,7 @@
     <ClInclude Include="src\Sandbox3D\Windows\RenderGraph.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox3D\Windows\LayerView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -125,6 +126,7 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\Windows\LayerView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\ibl\brdfIntegrate.glsl">

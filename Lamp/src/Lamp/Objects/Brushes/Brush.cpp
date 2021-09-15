@@ -23,14 +23,6 @@ namespace Lamp
 	{
 		g_pEnv->pLevel->GetBrushes().erase(m_Id);
 
-		for (auto& layer : g_pEnv->pLevel->GetLayers())
-		{
-			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), this); it != layer.Objects.end())
-			{
-				layer.Objects.erase(it);
-			}
-		}
-
 		delete this;
 	}
 
@@ -47,7 +39,7 @@ namespace Lamp
 		brush->SetLayerID(0);
 
 		g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
-		g_pEnv->pLevel->GetLayers()[brush->GetLayerID()].Objects.push_back(brush);
+		g_pEnv->pLevel->AddToLayer(brush);
 
 		return brush;
 	}
@@ -64,7 +56,7 @@ namespace Lamp
 		brush->SetName(name);
 
 		g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
-		g_pEnv->pLevel->GetLayers()[brush->GetLayerID()].Objects.push_back(brush);
+		g_pEnv->pLevel->AddToLayer(brush);
 
 		return brush;
 	}
@@ -77,7 +69,7 @@ namespace Lamp
 		if (addToLevel)
 		{
 			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_Id, pBrush));
-			g_pEnv->pLevel->GetLayers()[pBrush->GetLayerID()].Objects.push_back(pBrush);
+			g_pEnv->pLevel->AddToLayer(pBrush);
 		}
 		else
 		{
