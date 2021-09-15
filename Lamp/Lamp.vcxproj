@@ -208,6 +208,7 @@
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysicsLayer.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXInternal.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
@@ -671,6 +672,7 @@
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />

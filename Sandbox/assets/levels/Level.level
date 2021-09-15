@@ -2,6 +2,7 @@
 	<Brushes>
 		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,0.000000,0.000000" rotation="0.000000,0.000000,0.000000" scale="20.000000,1.000000,20.000000" layerID="0" name="Brush"/>
 		<Brush lgfPath="assets\models\cube.lgf" position="0.000000,3.808346,21.462688" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
+		<Brush lgfPath="assets\models\sphere.lgf" position="0.000000,0.848076,11.263736" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Entities>
 		<Entity name="Entity3" position="0.029678,6.490947,22.313959" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
@@ -21,13 +22,53 @@
 			</Component>
 			<Component name="ControllerComponent"/>
 		</Entity>
+		<Entity name="Entity" position="12.482208,4.783882,16.512543" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="0">
+			<Component name="MeshComponent">
+				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\cube.lgf"/>
+			</Component>
+			<Component name="BoxColliderComponent">
+				<Param name="Size" type="Float3" value="5.000000,1.000000,5.000000"/>
+				<Param name="Offset" type="Float3" value="0.000000,0.000000,0.000000"/>
+				<Param name="Is Trigger" type="Bool" value="0"/>
+			</Component>
+			<Component name="RigidbodyComponent">
+				<Param name="Body type" type="Int" value="1"/>
+				<Param name="Collision type" type="Int" value="0"/>
+				<Param name="Mass" type="Float" value="1.000000"/>
+				<Param name="Linear Drag" type="Float" value="1.000000"/>
+				<Param name="Angular Drag" type="Float" value="1.000000"/>
+				<Param name="Disable gravity" type="Bool" value="0"/>
+				<Param name="Is Kinematic" type="Bool" value="1"/>
+				<Param name="Layer" type="Int" value="0"/>
+			</Component>
+		</Entity>
+		<Entity name="Entity" position="12.605717,12.326134,10.169139" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
+			<Component name="MeshComponent">
+				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf"/>
+			</Component>
+			<Component name="RigidbodyComponent">
+				<Param name="Body type" type="Int" value="1"/>
+				<Param name="Collision type" type="Int" value="0"/>
+				<Param name="Mass" type="Float" value="1.000000"/>
+				<Param name="Linear Drag" type="Float" value="1.000000"/>
+				<Param name="Angular Drag" type="Float" value="1.000000"/>
+				<Param name="Disable gravity" type="Bool" value="0"/>
+				<Param name="Is Kinematic" type="Bool" value="0"/>
+				<Param name="Layer" type="Int" value="0"/>
+			</Component>
+			<Component name="BoxColliderComponent">
+				<Param name="Size" type="Float3" value="1.000000,1.000000,1.000000"/>
+				<Param name="Offset" type="Float3" value="0.000000,0.000000,0.000000"/>
+				<Param name="Is Trigger" type="Bool" value="0"/>
+			</Component>
+		</Entity>
 	</Entities>
 	<Layers>
 		<Layer name="Main" id="0" active="1"/>
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="4.344396,14.987556,15.495011" rotation="498.896484,-49.099930,0.000000" fov="60.000000"/>
+		<CameraValues position="25.485352,21.713728,6.908778" rotation="511.946014,-36.949871,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

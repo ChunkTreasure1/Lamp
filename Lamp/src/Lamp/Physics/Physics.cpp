@@ -4,6 +4,8 @@
 #include "PhysXInternal.h"
 #include "Lamp/Level/Level.h"
 
+#include "PhysicsLayer.h"
+
 namespace Lamp
 {
 	PhysicsSettings Physics::s_Settings;
@@ -12,6 +14,7 @@ namespace Lamp
 	void Physics::Initialize()
 	{
 		PhysXInternal::Initialize();
+		PhysicsLayerManager::AddLayer("Default");
 	}
 
 	void Physics::Shutdown()

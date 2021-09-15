@@ -3,6 +3,7 @@
 
 #include "PhysXInternal.h"
 #include "Physics.h"
+#include "PhysicsLayer.h"
 
 namespace Lamp
 {
@@ -301,18 +302,18 @@ namespace Lamp
 
 	void PhysicsActor::SetSimulationData(uint32_t layerId)
 	{
-		//const PhysicsLayer& layerInfo = PhysicsLayerManager::GetLayer(layerId);
-		//
-		//if (layerInfo.CollidesWith == 0)
-		//	return;
-		//
-		//physx::PxFilterData filterData;
-		//filterData.word0 = layerInfo.BitValue;
-		//filterData.word1 = layerInfo.CollidesWith;
-		//filterData.word2 = (uint32_t)m_RigidBodyData.CollisionDetection;
-		//
-		//for (auto& collider : m_Colliders)
-		//	collider->SetFilterData(filterData);
+		const PhysicsLayer& layerInfo = PhysicsLayerManager::GetLayer(layerId);
+
+		if (layerInfo.CollidesWith == 0)
+			return;
+
+		physx::PxFilterData filterData;
+		filterData.word0 = layerInfo.BitValue;
+		filterData.word1 = layerInfo.CollidesWith;
+		filterData.word2 = (uint32_t)m_RigidbodyData->GetSpecification().m_CollisionDetection;
+
+		for (auto& collider : m_Colliders)
+			collider->SetFilterData(filterData);
 	}
 
 	void PhysicsActor::SetKinematic(bool isKinematic)
