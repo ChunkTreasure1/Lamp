@@ -54,11 +54,6 @@ namespace Lamp
 		Material LineMaterial;
 		/////////////////
 
-		/////Grid/////
-		Ref<VertexArray> GridVertexArray;
-		Ref<Shader> GridShader;
-		//////////////
-
 		Ref<CameraBase> Camera;
 
 		Renderer3DStorage()
@@ -72,7 +67,6 @@ namespace Lamp
 		}
 
 		RenderPassSpecification* CurrentRenderPass = nullptr;
-		Ref<VertexArray> SphereArray;
 
 		/////Shadows/////
 		Ref<Shader> DirShadowShader;
@@ -124,28 +118,30 @@ namespace Lamp
 
 		/////Quad/////
 		{
-			std::vector<float> quadVertices =
+			std::vector<Vertex> quadVertices =
 			{
-				// positions       // texture Coords
-				 1.f,  1.f, 0.0f,  1.0f, 1.0f, // top right
-				 1.f, -1.f, 0.0f,  1.0f, 0.0f, // bottom right
-				-1.f, -1.f, 0.0f,  0.0f, 0.0f, // bottom left
-				-1.f,  1.f, 0.0f,  0.0f, 1.0f, // top left
+				Vertex({ 1.f, 1.f, 0.f }, { 1.f, 1.f }),
+				Vertex({ 1.f, -1.f, 0.f }, { 1.f, 0.f }),
+				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 0.f }),
+				Vertex({ -1.f, 1.f, 0.f }, { 0.f, 1.f }),
 			};
 
 			std::vector<uint32_t> quadIndices =
 			{
-				0, 1, 3, //(top left - bottom left - top right)
-				1, 2, 3 //(top left - top right - bottom right)
+				0, 3, 1, //(top right - bottom right - top left)
+				1, 3, 2 //(bottom right - bottom left - top left)
 			};
 
 			s_pData->QuadVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(float) * quadVertices.size()));
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(Vertex) * quadVertices.size()));
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float2, "a_TexCoords" }
-				});
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			});
 			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
@@ -215,7 +211,7 @@ namespace Lamp
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" }
-				});
+			});
 			s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
 
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
@@ -292,8 +288,6 @@ namespace Lamp
 		{
 			return;
 		}
-
-		RenderCommand::SetCullFace(CullFace::Front);
 		s_pData->DeferredShader->Bind();
 
 		s_pData->DeferredShader->UploadInt("u_GBuffer.position", 0);
@@ -457,13 +451,13 @@ namespace Lamp
 	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
-		RenderCommand::SetCullFace(CullFace::Back);
+
+		mat.UploadData();
 
 		switch (s_pData->CurrentRenderPass->type)
 		{
 			case PassType::Forward:
 			{
-				RenderCommand::SetCullFace(CullFace::Back);
 				//Reserve spot 0 for shadow map
 				int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
 				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
@@ -547,18 +541,6 @@ namespace Lamp
 		RenderCommand::DrawIndexed(s_pData->QuadVertexArray, s_pData->QuadVertexArray->GetIndexBuffer()->GetCount());
 	}
 
-	void Renderer3D::DrawGrid()
-	{
-		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
-
-		s_pData->GridShader->Bind();
-		s_pData->GridVertexArray->Bind();
-
-		glm::mat4 viewMat = glm::mat4(glm::mat3(s_pData->Camera->GetViewMatrix()));
-
-		RenderCommand::DrawIndexed(s_pData->GridVertexArray, 0);
-	}
-
 	void Renderer3D::SetEnvironment(const std::string& path)
 	{
 		s_pData->SkyboxBuffer = CreateRef<IBLBuffer>(path);
@@ -590,18 +572,31 @@ namespace Lamp
 		s_RenderBuffer.drawCallsForward.push_back(data);
 	}
 
+	void Renderer3D::SubmitQuadForward(const glm::mat4& transform, const Material& mat, size_t id)
+	{
+		LP_PROFILE_FUNCTION();
+		RenderSubmitData data;
+		data.transform = transform;
+		data.material = mat;
+		data.id = id;
+		data.data = s_pData->QuadVertexArray;
+
+		s_RenderBuffer.drawCallsForward.push_back(data);
+	}
+
 	void Renderer3D::DrawRenderBuffer()
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (s_pData->CurrentRenderPass->type == PassType::Forward)
+		if (s_pData->CurrentRenderPass->type == PassType::Forward || s_pData->CurrentRenderPass->type == PassType::Selection)
 		{
 			for (auto& data : s_RenderBuffer.drawCallsForward)
 			{
 				DrawMeshForward(data.transform, data.data, data.material, data.id);
 			}
 		}
-		else
+		
+		if (s_pData->CurrentRenderPass->type != PassType::Forward)
 		{
 			for (auto& data : s_RenderBuffer.drawCallsDeferred)
 			{
@@ -660,8 +655,6 @@ namespace Lamp
 			return;
 		}
 
-		RenderCommand::SetCullFace(CullFace::Front);
-
 		s_pData->SSAOMainShader->Bind();
 
 		for (uint32_t i = 0; i < s_pData->SSAOKernel.size(); i++)
@@ -696,8 +689,6 @@ namespace Lamp
 		{
 			return;
 		}
-
-		RenderCommand::SetCullFace(CullFace::Front);
 
 		s_pData->SSAOBlurShader->Bind();
 		s_pData->SSAOBlurShader->UploadInt("u_SSAO", 0);

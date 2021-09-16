@@ -43,6 +43,9 @@ namespace Lamp
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
 		static void SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
+
+		static void SubmitQuadForward(const glm::mat4& transform, const Material& mat, size_t id = -1);
+
 		static void DrawRenderBuffer();
 
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
@@ -50,7 +53,6 @@ namespace Lamp
 		static void DrawSkybox();
 		static void DrawCube();
 		static void DrawQuad();
-		static void DrawGrid();
 
 		static void SetEnvironment(const std::string& path);
 		static RendererSettings& GetSettings() { return s_RendererSettings; }

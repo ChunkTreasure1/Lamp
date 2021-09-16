@@ -160,10 +160,8 @@ namespace Lamp
 	private:
 		bool m_ShouldBeSaved = false;
 
-		Ref<Texture2D> m_GizmoTexure = nullptr;
-		Ref<Shader> m_GizmoShader = nullptr;
-		Ref<Shader> m_SelectionShader = nullptr;
 		Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
+		Material m_GizmoMaterial;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

@@ -19,7 +19,6 @@ namespace Lamp
 			}
 			else
 			{
-				m_Materials[m_Meshes[i]->GetMaterialIndex()].UploadData();
 				Renderer3D::SubmitMeshForward(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
 			}
 		}
