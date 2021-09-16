@@ -186,7 +186,8 @@ project "Sandbox"
 	
 	linkoptions
 	{
-		"/WHOLEARCHIVE:Game"
+		"/WHOLEARCHIVE:Game",
+		"/ignore:4099"
 	}
 
 	filter "system:windows"

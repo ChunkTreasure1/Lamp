@@ -24,9 +24,7 @@ namespace Sandbox3D
 		void UpdateMaterialView();
 		void UpdateProperties();
 		void UpdateMaterialList();
-		void UpdateRightClickMenu();
 
-		std::string GetDragDropTarget();
 
 		void Render();
 		void CreateNewMaterial();

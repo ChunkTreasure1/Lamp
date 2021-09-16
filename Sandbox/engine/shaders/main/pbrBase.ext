@@ -216,7 +216,7 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 
 	for(int i = 0; i < u_LightCount; ++i)
 	{
-		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
+		//Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
 	}
 
 	vec3 R = reflect(-V, N);

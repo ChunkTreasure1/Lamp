@@ -123,82 +123,39 @@ namespace Sandbox3D
 	{
 		ImGui::Begin("Properties##Material");
 
-		if (m_pSelectedMaterial)
+		if (!m_MaterialModel)
 		{
-			//ImGui::InputText("Name", &m_pSelectedMaterial->GetName());
+			return;
+		}
 
-			/////Shaders//////
-			static std::vector<const char*> shaders;
-			static int selectedShader = 0;
-			if (shaders.empty())
+		if (!m_pSelectedMaterial)
+		{
+			m_pSelectedMaterial = &m_MaterialModel->GetMaterial(0);
+		}
+
+		static std::string tempName = "";
+		tempName = m_pSelectedMaterial->GetName();
+
+		if (ImGui::InputText("Name", &tempName))
+		{
+			m_pSelectedMaterial->SetName(tempName);
+		}
+
+		for (auto& tex : m_pSelectedMaterial->GetTextures())
+		{
+			if (ImGui::ImageButton(ImTextureID(tex.second->GetID()), { 128, 128 }))
 			{
-				for (auto& shader : Lamp::ShaderLibrary::GetShaders())
+				std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
+				if (!path.empty())
 				{
-					shaders.push_back(shader->GetName().c_str());
+					Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
+					if (newTex->IsValid())
+					{
+						tex.second = newTex;
+					}
 				}
 			}
 
-			for (int i = 0; i < shaders.size(); i++)
-			{
-				if (m_pSelectedMaterial->GetShader()->GetName() == shaders[i])
-				{
-					selectedShader = i;
-				}
-			}
-
-			ImGui::Combo("Shader", &selectedShader, shaders.data(), (int)shaders.size());
-			if (m_pSelectedMaterial->GetShader() != Lamp::ShaderLibrary::GetShader(shaders[selectedShader]))
-			{
-				m_pSelectedMaterial->SetShader(Lamp::ShaderLibrary::GetShader(shaders[selectedShader]));
-				for (auto& tex : m_pSelectedMaterial->GetTextures())
-				{
-					tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
-				}
-			}
-			/////////////////
-
-			for (auto& tex : m_pSelectedMaterial->GetTextures())
-			{
-				if (tex.second)
-				{
-					if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 128, 128 }, { 0, 1 }, { 1,0 }))
-					{
-						std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
-						if (!path.empty())
-						{
-							tex.second = ResourceCache::GetAsset<Texture2D>(path);
-							tex.second->Path.string() = path;
-						}
-					}
-					std::string dragDropPath = GetDragDropTarget();
-					if (!dragDropPath.empty())
-					{
-						tex.second = ResourceCache::GetAsset<Texture2D>(dragDropPath);
-						tex.second->Path.string() = dragDropPath;
-					}
-				}
-				else
-				{
-					if (ImGui::Button(std::string("Load##" + tex.first).c_str(), { 128, 128 }))
-					{
-						std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
-						if (!path.empty())
-						{
-							tex.second = ResourceCache::GetAsset<Texture2D>(path);
-							tex.second->Path.string() = path;
-						}
-					}
-					std::string dragDropPath = GetDragDropTarget();
-					if (!dragDropPath.empty())
-					{
-						tex.second = ResourceCache::GetAsset<Texture2D>(dragDropPath);
-						tex.second->Path.string() = dragDropPath;
-					}
-				}
-
-				std::string texPath;
-				ImGui::InputText(tex.first.c_str(), tex.second ? &tex.second->Path.string() : &texPath);
-			}
 		}
 
 		ImGui::End();
@@ -206,87 +163,23 @@ namespace Sandbox3D
 
 	void MaterialEditor::UpdateMaterialList()
 	{
-		if (!m_IsOpen)
+		ImGui::Begin("Materials##matEd");
+
+		auto& materials = MaterialLibrary::GetMaterials();
+		int i = 0;
+		for (auto& mat : materials)
 		{
-			return;
-		}
-
-		ImGui::Begin("Material List");
-
-		if (ImGui::Button("Create"))
-		{
-
-		}
-
-		std::vector<std::filesystem::path> folders = FileSystem::GetMaterialFolders(s_assetsPath);
-		int id = 0;
-
-		if (ImGui::TreeNode("Assets"))
-		{
-			for (auto& folder : folders)
+			std::string id = mat.GetName() + "###mat" + std::to_string(i);
+			if (ImGui::Selectable(id.c_str()))
 			{
-				if (ImGui::TreeNode(folder.filename().string().c_str()))
-				{
-					for (const auto& entry : std::filesystem::directory_iterator(folder))
-					{
-						if (entry.path().extension() == ".mtl")
-						{
-							std::string filename = entry.path().stem().string();
-
-							id++;
-							ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-							ImGui::TreeNodeEx((void*)(intptr_t)id, nodeFlags, filename.c_str());
-							if (ImGui::IsItemClicked())
-							{
-								m_pSelectedMaterial = &MaterialLibrary::GetMaterial(filename);
-								if (m_MaterialModel)
-								{
-									m_MaterialModel->SetMaterial(*m_pSelectedMaterial, 0);
-								}
-							}
-						}
-					}
-
-					ImGui::TreePop();
-				}
-
+				m_MaterialModel->SetMaterial(mat, 0);
+				m_pSelectedMaterial = &mat;
 			}
-			ImGui::TreePop();
+
+			i++;
 		}
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-		{
-			m_pathOnRightClick = s_assetsPath;
-			ImGui::OpenPopup("RightClick");
-		}
-		
-		UpdateRightClickMenu();
+
 		ImGui::End();
-	}
-
-	void MaterialEditor::UpdateRightClickMenu()
-	{
-		if (ImGui::BeginPopup("RightClick"))
-		{
-			ImGui::EndPopup();
-		}
-	}
-
-	std::string MaterialEditor::GetDragDropTarget()
-
-	{
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-			{
-				const wchar_t* path = (const wchar_t*)pPayload->Data;
-				std::filesystem::path p = std::filesystem::path("assets") / path;
-				return p.string();
-			}
-
-			ImGui::EndDragDropTarget();
-		}
-
-		return "";
 	}
 
 	void MaterialEditor::Render()
@@ -297,6 +190,7 @@ namespace Sandbox3D
 		}
 
 		RenderPassSpecification pass;
+		pass.type = Lamp::PassType::Forward;
 		pass.TargetFramebuffer = m_Framebuffer;
 
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -305,11 +199,11 @@ namespace Sandbox3D
 		m_Framebuffer->Bind();
 		RenderCommand::Clear();
 
-		Renderer3D::Begin(std::dynamic_pointer_cast<CameraBase>(m_Camera));
+		Renderer3D::Begin(m_Camera->GetCamera());
 		Renderer3D::BeginPass(pass);
 		if (m_MaterialModel)
 		{
-			m_MaterialModel->Render(-1);
+			m_MaterialModel->Render(-1, glm::mat4(1.f), true);
 		}
 		Renderer3D::EndPass();
 		Renderer3D::End();

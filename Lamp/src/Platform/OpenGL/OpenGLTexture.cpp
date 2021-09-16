@@ -67,6 +67,7 @@ namespace Lamp
 			}
 			else
 			{
+				SetFlag(AssetFlag::Missing);
 				LP_CORE_WARN("Failed to load texture!");
 			}
 
@@ -94,7 +95,11 @@ namespace Lamp
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, pData);
 				stbi_image_free(pData);
 			}
-
+			else
+			{
+				SetFlag(AssetFlag::Missing);
+			}
+			
 			if (channels == 4)
 			{
 				m_InternalFormat = GL_RGBA8;

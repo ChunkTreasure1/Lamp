@@ -137,9 +137,9 @@ namespace Lamp
 			glm::vec3 bitangent;
 			glm::vec2 texCoords;
 
-			pos.x = pMesh->mVertices[i].x;
-			pos.y = pMesh->mVertices[i].y;
-			pos.z = pMesh->mVertices[i].z;
+			pos.x = pMesh->mVertices[i].x * 0.5f;
+			pos.y = pMesh->mVertices[i].y * 0.5f;
+			pos.z = pMesh->mVertices[i].z * 0.5f;
 
 			normal.x = pMesh->mNormals[i].x;
 			normal.y = pMesh->mNormals[i].y;
