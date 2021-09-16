@@ -143,6 +143,8 @@ namespace Sandbox3D
 			RenderGrid();
 		}
 
+		Renderer3D::DrawRenderBuffer();
+
 		Renderer3D::EndPass();
 		Renderer3D::End();
 		m_Framebuffer->Unbind();

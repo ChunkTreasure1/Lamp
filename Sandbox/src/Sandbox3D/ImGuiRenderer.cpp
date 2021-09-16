@@ -883,10 +883,10 @@ namespace Sandbox3D
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		
 		float size = ImGui::GetWindowHeight() - 4.f;
-		Ref<Lamp::Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+		Ref<Lamp::Texture2D> playIcon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
 		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
-		if (ImGui::ImageButton((ImTextureID)icon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (ImGui::ImageButton((ImTextureID)playIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 			{
@@ -896,6 +896,10 @@ namespace Sandbox3D
 			{
 				OnLevelStop();
 			}
+		}
+
+		if (ImGui::ImageButton())
+		{
 		}
 
 		ImGui::PopStyleVar(2);

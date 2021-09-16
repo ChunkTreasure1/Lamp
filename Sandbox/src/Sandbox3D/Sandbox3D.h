@@ -99,6 +99,7 @@ namespace Sandbox3D
 
 		Ref<Lamp::Texture2D> m_IconPlay;
 		Ref<Lamp::Texture2D> m_IconStop;
+		Ref<Lamp::Texture2D> m_IconPhysicsStart;
 
 		//Perspective
 		bool m_PerspectiveOpen = true;
