@@ -245,10 +245,10 @@ namespace Sandbox3D
 			if (path != "" && std::filesystem::exists(path))
 			{
 				m_pModelToImport = MeshImporter::ImportMesh(path);
-				m_pModelToImport->Path = path;
 
 				savePath = path.substr(0, path.find_last_of('.'));
 				savePath += ".lgf";
+				m_pModelToImport->Path = savePath;
 
 				for (auto& mat : m_pModelToImport->GetMaterials())
 				{
@@ -273,7 +273,13 @@ namespace Sandbox3D
 
 			if (savePath != "")
 			{
+				if (savePath.find(".lgf") == std::string::npos)
+				{
+					savePath += ".lgf";
+				}
+
 				m_pModelToImport->SetName(m_MaterialName);
+				m_pModelToImport->Path = savePath;
 				for (auto& mat : m_pModelToImport->GetMaterials())
 				{
 					mat.second.SetName(m_MaterialName + std::to_string(mat.first));
@@ -286,8 +292,6 @@ namespace Sandbox3D
 						MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
 					}
 				}
-
-
 
 				g_pEnv->pAssetManager->SaveAsset(m_pModelToImport);
 				path = "";

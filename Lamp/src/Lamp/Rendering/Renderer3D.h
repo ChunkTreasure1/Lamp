@@ -5,7 +5,7 @@
 
 #include "Lamp/Rendering/Vertices/Framebuffer.h"
 #include "Lamp/Core/GlobalEnvironment.h"
-
+#include "RenderBuffer.h"
 
 namespace Lamp
 {	
@@ -41,8 +41,10 @@ namespace Lamp
 		static void SSAOBlurPass();
 		static void RegenerateSSAOKernel();
 
-		static void DrawMesh(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id = -1);
-		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id = -1);
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
+		static void SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
+		static void DrawRenderBuffer();
+
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
 
 		static void DrawSkybox();
@@ -57,7 +59,11 @@ namespace Lamp
 		static void StartNewBatch();
 		static void ResetBatchData();
 
+		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id = -1);
+		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id = -1);
+
 	private:
 		static RendererSettings s_RendererSettings;
+		static RenderBuffer s_RenderBuffer;
 	};
 }

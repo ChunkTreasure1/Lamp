@@ -18,6 +18,7 @@ namespace Sandbox3D
 
 	void AssetManagerPanel::OnImGuiRender()
 	{
+		LP_PROFILE_FUNCTION();
 		ImGui::Begin("Asset Browser", &m_isOpen);
 
 		if (m_currentDirectory != std::filesystem::path(s_assetsPath))

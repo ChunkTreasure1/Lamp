@@ -15,12 +15,12 @@ namespace Lamp
 
 			if (!forward)
 			{
-				Renderer3D::DrawMesh(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
+				Renderer3D::SubmitMesh(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
 			}
 			else
 			{
 				m_Materials[m_Meshes[i]->GetMaterialIndex()].UploadData();
-				Renderer3D::DrawMeshForward(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
+				Renderer3D::SubmitMeshForward(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
 			}
 		}
 	}

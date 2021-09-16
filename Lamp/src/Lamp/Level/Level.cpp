@@ -122,6 +122,9 @@ namespace Lamp
 
 	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)
 	{
+		AppRenderEvent e(camera);
+		OnEvent(e);
+
 		RenderPassManager::Get()->RenderPasses(camera);
 	}
 
@@ -144,6 +147,9 @@ namespace Lamp
 
 		if (camera)
 		{
+			AppRenderEvent e(camera);
+			OnEvent(e);
+
 			RenderPassManager::Get()->RenderPasses(camera);
 		}
 	}

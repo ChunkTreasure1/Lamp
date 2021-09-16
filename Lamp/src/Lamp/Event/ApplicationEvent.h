@@ -72,18 +72,16 @@ namespace Lamp
 	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent(const RenderPassSpecification& passInfo, const Ref<CameraBase> camera) 
-			: m_RenderPassInfo(passInfo), m_Camera(camera)
+		AppRenderEvent(const Ref<CameraBase> camera) 
+			: m_Camera(camera)
 		{}
 
-		inline const RenderPassSpecification& GetPassInfo() { return m_RenderPassInfo; }
 		inline const Ref<CameraBase>& GetCamera() { return m_Camera; }
 
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 
 	private:
-		RenderPassSpecification m_RenderPassInfo;
 		Ref<CameraBase> m_Camera;
 	};
 

@@ -281,61 +281,61 @@ namespace Lamp
 				return false;
 			}
 
-			switch (e.GetPassInfo().type)
-			{
-			case PassType::Forward:
-			{
-				m_GizmoShader->Bind();
+			//switch (e.GetPassInfo().type)
+			//{
+			//case PassType::Forward:
+			//{
+			//	m_GizmoShader->Bind();
 
-				m_GizmoShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
+			//	m_GizmoShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
 
-				glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
+			//	glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 
-				float angleXZ = std::atan2f(dir.z, dir.x);
-				float angleY = -std::asin(dir.y);
+			//	float angleXZ = std::atan2f(dir.z, dir.x);
+			//	float angleY = -std::asin(dir.y);
 
-				glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
-					* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
+			//	glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
+			//		* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
 
-				glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
-					* rotation
-					* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-				m_GizmoShader->UploadMat4("u_Model", model);
-				m_GizmoShader->UploadInt("u_Texture", 0);
+			//	glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
+			//		* rotation
+			//		* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
+			//	m_GizmoShader->UploadMat4("u_Model", model);
+			//	m_GizmoShader->UploadInt("u_Texture", 0);
 
-				m_GizmoTexure->Bind(0);
+			//	m_GizmoTexure->Bind(0);
 
-				Renderer3D::DrawQuad();
-				break;
-			}
+			//	Renderer3D::DrawQuad();
+			//	break;
+			//}
 
-			case PassType::Selection:
-			{
-				m_SelectionShader->Bind();
+			//case PassType::Selection:
+			//{
+			//	m_SelectionShader->Bind();
 
-				m_SelectionShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
+			//	m_SelectionShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
 
-				glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
+			//	glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 
-				float angleXZ = std::atan2f(dir.z, dir.x);
-				float angleY = -std::asin(dir.y);
+			//	float angleXZ = std::atan2f(dir.z, dir.x);
+			//	float angleY = -std::asin(dir.y);
 
-				glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
-					* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
+			//	glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
+			//		* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
 
-				glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
-					* rotation
-					* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-				m_SelectionShader->UploadMat4("u_Model", model);
-				m_SelectionShader->UploadInt("u_ObjectId", m_Id);
+			//	glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
+			//		* rotation
+			//		* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
+			//	m_SelectionShader->UploadMat4("u_Model", model);
+			//	m_SelectionShader->UploadInt("u_ObjectId", m_Id);
 
-				Renderer3D::DrawQuad();
-				break;
-			}
+			//	Renderer3D::DrawQuad();
+			//	break;
+			//}
 
-			default:
-				break;
-			}
+			//default:
+			//	break;
+			//}
 		}
 
 		return false;

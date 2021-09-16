@@ -63,7 +63,8 @@ namespace Lamp
 
 		Renderer3DStorage()
 			: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
-		{}
+		{
+		}
 
 		~Renderer3DStorage()
 		{
@@ -109,6 +110,7 @@ namespace Lamp
 
 	static Renderer3DStorage* s_pData;
 	RendererSettings Renderer3D::s_RendererSettings;
+	RenderBuffer Renderer3D::s_RenderBuffer;
 
 	static float Lerp(float a, float b, float f)
 	{
@@ -268,6 +270,8 @@ namespace Lamp
 		uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
+		s_RenderBuffer.drawCallsDeferred.clear();
+		s_RenderBuffer.drawCallsForward.clear();
 		Flush();
 	}
 
@@ -312,7 +316,7 @@ namespace Lamp
 
 		s_pData->DeferredShader->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
 		s_pData->DeferredShader->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
-		
+
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
 		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
 		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
@@ -362,158 +366,157 @@ namespace Lamp
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id)
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
 		switch (s_pData->CurrentRenderPass->type)
 		{
-		case PassType::DirShadow:
-		{
-			RenderCommand::SetCullFace(CullFace::Front);
-			s_pData->DirShadowShader->Bind();
-
-			s_pData->DirShadowShader->UploadMat4("u_Model", modelMatrix);
-			s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-
-			break;
-		}
-
-		case PassType::PointShadow:
-		{
-			LP_PROFILE_SCOPE("PointShadowPass");
-			RenderCommand::SetCullFace(CullFace::Back);
-			s_pData->PointShadowShader->Bind();
-
-			uint32_t j = s_pData->CurrentRenderPass->LightIndex;
-			const PointLight* light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[j];
-
-			for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
+			case PassType::DirShadow:
 			{
-				s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
+				RenderCommand::SetCullFace(CullFace::Front);
+				s_pData->DirShadowShader->Bind();
+
+				s_pData->DirShadowShader->UploadMat4("u_Model", modelMatrix);
+				s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+				data->Bind();
+				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+
+				break;
 			}
 
-			s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-			s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-			s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
-
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-
-			break;
-		}
-
-		case PassType::Selection:
-		{
-			LP_PROFILE_SCOPE("SelectionPass");
-			s_pData->SelectionShader->Bind();
-			s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
-			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			break;
-		}
-
-		case PassType::Geometry:
-		{
-			LP_PROFILE_SCOPE("GeometryPass");
-
-			RenderCommand::SetCullFace(CullFace::Back);
-			s_pData->GBufferShader->Bind();
-			s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
-
-			s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
-			s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
-			s_pData->GBufferShader->UploadInt("u_Material.mro", 2);
-
-			int i = 0;
-			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			case PassType::PointShadow:
 			{
-				if (mat.GetTextures()[name].get() != nullptr)
+				LP_PROFILE_SCOPE("PointShadowPass");
+				RenderCommand::SetCullFace(CullFace::Back);
+				s_pData->PointShadowShader->Bind();
+
+				uint32_t j = s_pData->CurrentRenderPass->LightIndex;
+				const PointLight* light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[j];
+
+				for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
 				{
-					mat.GetTextures()[name]->Bind(i);
-					i++;
+					s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
 				}
+
+				s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
+				s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
+				s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
+
+				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+
+				break;
 			}
 
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
+			case PassType::Selection:
+			{
+				LP_PROFILE_SCOPE("SelectionPass");
+				s_pData->SelectionShader->Bind();
+				s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
+				s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
 
-			s_pData->GBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+				data->Bind();
+				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+				break;
+			}
 
-			break;
-		}
+			case PassType::Geometry:
+			{
+				LP_PROFILE_SCOPE("GeometryPass");
 
+				RenderCommand::SetCullFace(CullFace::Back);
+				s_pData->GBufferShader->Bind();
+				s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
+
+				s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
+				s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
+				s_pData->GBufferShader->UploadInt("u_Material.mro", 2);
+
+				int i = 0;
+				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+				{
+					if (mat.GetTextures()[name].get() != nullptr)
+					{
+						mat.GetTextures()[name]->Bind(i);
+						i++;
+					}
+				}
+
+				data->Bind();
+				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+
+				s_pData->GBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
+
+				break;
+			}
 		}
 	}
 
-	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<SubMesh>& mesh, Material& mat, size_t id)
+	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 		RenderCommand::SetCullFace(CullFace::Back);
 
 		switch (s_pData->CurrentRenderPass->type)
 		{
-		case PassType::Forward:
-		{
-			glCullFace(GL_BACK);
-			//Reserve spot 0 for shadow map
-			int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
-			for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+			case PassType::Forward:
 			{
-				if (mat.GetTextures()[name].get() != nullptr)
+				RenderCommand::SetCullFace(CullFace::Back);
+				//Reserve spot 0 for shadow map
+				int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
+				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
 				{
-					mat.GetTextures()[name]->Bind(i);
-					i++;
+					if (mat.GetTextures()[name].get() != nullptr)
+					{
+						mat.GetTextures()[name]->Bind(i);
+						i++;
+					}
 				}
+
+				mat.GetShader()->Bind();
+				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
+				mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+				mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
+
+				mat.GetShader()->UploadInt("u_ShadowMap", 0);
+				s_pData->ShadowBuffer->BindDepthAttachment(0);
+
+				mat.GetShader()->UploadInt("u_IrradianceMap", 1);
+				mat.GetShader()->UploadInt("u_PrefilterMap", 2);
+				mat.GetShader()->UploadInt("u_BRDFLUT", 3);
+
+				s_pData->SkyboxBuffer->BindTextures(1);
+
+				mat.GetShader()->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
+				mat.GetShader()->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
+				mat.GetShader()->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+
+				for (int i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
+				{
+					g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+				}
+
+				data->Bind();
+				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+
+				break;
 			}
 
-			mat.GetShader()->Bind();
-			mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-			mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
-			mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
-
-			mat.GetShader()->UploadInt("u_ShadowMap", 0);
-			s_pData->ShadowBuffer->BindDepthAttachment(0);
-
-			mat.GetShader()->UploadInt("u_IrradianceMap", 1);
-			mat.GetShader()->UploadInt("u_PrefilterMap", 2);
-			mat.GetShader()->UploadInt("u_BRDFLUT", 3);
-
-			s_pData->SkyboxBuffer->BindTextures(1);
-
-			mat.GetShader()->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
-			mat.GetShader()->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
-			mat.GetShader()->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-
-			for (int i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
+			case PassType::Selection:
 			{
-				g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
+				s_pData->SelectionShader->Bind();
+				s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
+				s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
+
+				data->Bind();
+				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+				break;
 			}
 
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-
-			break;
-		}
-
-		case PassType::Selection:
-		{
-			s_pData->SelectionShader->Bind();
-			s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
-			s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-
-			mesh->GetVertexArray()->Bind();
-			RenderCommand::DrawIndexed(mesh->GetVertexArray(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount());
-			break;
-		}
-
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 
@@ -559,6 +562,52 @@ namespace Lamp
 	void Renderer3D::SetEnvironment(const std::string& path)
 	{
 		s_pData->SkyboxBuffer = CreateRef<IBLBuffer>(path);
+	}
+
+	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id)
+	{
+		LP_PROFILE_FUNCTION();
+
+		RenderSubmitData data;
+		data.transform = transform;
+		data.material = mat;
+		data.id = id;
+		data.data = mesh->GetVertexArray();
+
+		s_RenderBuffer.drawCallsDeferred.push_back(data);
+	}
+
+	void Renderer3D::SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id)
+	{
+		LP_PROFILE_FUNCTION();
+
+		RenderSubmitData data;
+		data.transform = transform;
+		data.material = mat;
+		data.id = id;
+		data.data = mesh->GetVertexArray();
+
+		s_RenderBuffer.drawCallsForward.push_back(data);
+	}
+
+	void Renderer3D::DrawRenderBuffer()
+	{
+		LP_PROFILE_FUNCTION();
+
+		if (s_pData->CurrentRenderPass->type == PassType::Forward)
+		{
+			for (auto& data : s_RenderBuffer.drawCallsForward)
+			{
+				DrawMeshForward(data.transform, data.data, data.material, data.id);
+			}
+		}
+		else
+		{
+			for (auto& data : s_RenderBuffer.drawCallsDeferred)
+			{
+				DrawMesh(data.transform, data.data, data.material, data.id);
+			}
+		}
 	}
 
 	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)

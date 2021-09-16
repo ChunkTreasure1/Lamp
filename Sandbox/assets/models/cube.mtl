@@ -1,6 +1,0 @@
-<Material name="test1">
-	<albedo path="assets/textures/rusted_iron/tex_albedo.png"/>
-	<normal path="assets/textures/rusted_iron/tex_normal.png"/>
-	<mro path="assets/textures/rusted_iron/tex_mro.png"/>
-	<Shader name="pbrForward" path="engine/shaders/3d/main/pbrForward.glsl"/>
-</Material>

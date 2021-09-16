@@ -10,6 +10,7 @@ namespace Lamp
 	class SubMesh
 	{
 	public:
+		SubMesh() = default;
 		SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex);
 
 		inline const Ref<VertexArray>& GetVertexArray() { return m_pVertexArray; }
@@ -26,5 +27,7 @@ namespace Lamp
 
 		Ref<VertexArray> m_pVertexArray;
 		uint32_t m_MaterialIndex;
+
+		friend class Renderer3D;
 	};
 }

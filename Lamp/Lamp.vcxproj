@@ -233,6 +233,7 @@
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />

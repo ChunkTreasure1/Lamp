@@ -36,11 +36,6 @@ namespace Lamp
 
 		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetModelMatrix());
 
-		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().type != PassType::DirShadow || e.GetPassInfo().type != PassType::PointShadow))
-		{
-			m_Model->RenderBoundingBox(m_pEntity->GetModelMatrix());
-		}
-
 		return true;
 	}
 

@@ -105,22 +105,10 @@ namespace Lamp
 	}
 
 	bool Brush::OnRender(AppRenderEvent& e)
-	{
-		if (g_pEnv->ShouldRenderBB && e.GetPassInfo().type == PassType::Forward)
-		{
-			m_Model->RenderBoundingBox(m_ModelMatrix);
-		}
-		
-		if (e.GetPassInfo().type == PassType::Forward)
-		{
-			return true;
-		}
+	{	
+		m_Model->Render(m_Id, m_ModelMatrix);
 
-		bool forward = e.GetPassInfo().type == PassType::Selection ? true : false;
-
-		m_Model->Render(m_Id, m_ModelMatrix, forward);
-
-		return true;
+		return false;
 	}
 
 	bool Brush::OnUpdate(AppUpdateEvent& e)

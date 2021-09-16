@@ -31,17 +31,7 @@ namespace Lamp
 
 					Renderer3D::BeginPass(m_PassSpec);
 
-					AppRenderEvent renderEvent(m_PassSpec, camera);
-					for (auto& entity : g_pEnv->pLevel->GetEntities())
-					{
-						entity.second->OnEvent(renderEvent);
-					}
-
-					for (auto& brush : g_pEnv->pLevel->GetBrushes())
-					{
-						brush.second->OnEvent(renderEvent);
-					}
-
+					Renderer3D::DrawRenderBuffer();
 
 					Renderer3D::EndPass();
 					light->ShadowBuffer->Unbind();
@@ -55,7 +45,9 @@ namespace Lamp
 				m_PassSpec.TargetFramebuffer->Bind();
 				RenderCommand::Clear();
 				Renderer3D::BeginPass(m_PassSpec);
+
 				Renderer3D::CombineLightning();
+				
 				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 
@@ -94,13 +86,7 @@ namespace Lamp
 				m_PassSpec.TargetFramebuffer->Bind();
 				Renderer3D::BeginPass(m_PassSpec);
 
-				AppRenderEvent renderEvent(m_PassSpec, camera);
-				Application::Get().OnEvent(renderEvent);
-
-				for (auto& entity : g_pEnv->pLevel->GetEntities())
-				{
-					entity.second->OnEvent(renderEvent);
-				}
+				Renderer3D::DrawRenderBuffer();
 
 				for (auto& f : m_PassSpec.ExtraRenders)
 				{
@@ -122,18 +108,7 @@ namespace Lamp
 
 				Renderer3D::BeginPass(m_PassSpec);
 
-				AppRenderEvent renderEvent(m_PassSpec, camera);
-				Application::Get().OnEvent(renderEvent);
-
-				for (auto& entity : g_pEnv->pLevel->GetEntities())
-				{
-					entity.second->OnEvent(renderEvent);
-				}
-
-				for (auto& brush : g_pEnv->pLevel->GetBrushes())
-				{
-					brush.second->OnEvent(renderEvent);
-				}
+				Renderer3D::DrawRenderBuffer();
 
 				for (auto& f : m_PassSpec.ExtraRenders)
 				{
@@ -168,6 +143,7 @@ namespace Lamp
 
 	void RenderPassManager::RenderPasses(Ref<CameraBase>& camera)
 	{
+		LP_PROFILE_FUNCTION();
 		Renderer3D::Begin(camera);
 		for (auto& pass : m_RenderPasses)
 		{
