@@ -17,7 +17,6 @@ namespace Lamp
 		template<typename T>
 		static Ref<T> GetAsset(std::filesystem::path path)
 		{
-			//LP_CORE_ASSERT(std::is_base_of<Asset, T>::value, "T is not derived from asset!");
 
 			if (s_AssetCache.find(path.string()) != s_AssetCache.end())
 			{

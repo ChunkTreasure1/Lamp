@@ -21,12 +21,12 @@
 			</Component>
 			<Component name="ControllerComponent"/>
 		</Entity>
-		<Entity name="Entity" position="10.517098,2.638246,1.843092" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="1">
+		<Entity name="Entity" position="19.412140,3.797829,1.334717" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="1">
 			<Component name="MeshComponent">
 				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\cube.lgf"/>
 			</Component>
 			<Component name="BoxColliderComponent">
-				<Param name="Size" type="Float3" value="5.000000,1.000000,5.000000"/>
+				<Param name="Size" type="Float3" value="1.000000,1.000000,1.000000"/>
 				<Param name="Offset" type="Float3" value="0.000000,0.000000,0.000000"/>
 				<Param name="Is Trigger" type="Bool" value="0"/>
 			</Component>
@@ -57,7 +57,7 @@
 			</Component>
 			<Component name="BoxColliderComponent">
 				<Param name="Size" type="Float3" value="1.000000,1.000000,1.000000"/>
-				<Param name="Offset" type="Float3" value="0.000000,0.000000,0.000000"/>
+				<Param name="Offset" type="Float3" value="0.000000,0.500000,0.000000"/>
 				<Param name="Is Trigger" type="Bool" value="0"/>
 			</Component>
 		</Entity>
@@ -68,7 +68,7 @@
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="-26.128214,11.419431,9.523067" rotation="350.697906,-20.749863,0.000000" fov="60.000000"/>
+		<CameraValues position="13.219504,20.811823,17.239882" rotation="623.098328,-44.149921,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

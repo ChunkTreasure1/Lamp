@@ -17,6 +17,8 @@
 #include "Windows\AssetManagerPanel.h"
 #include "Lamp/Event/EditorEvent.h"
 
+#include "UI/AnimatedIcon.h"
+
 #include <Game/Game.h>
 
 namespace Sandbox3D
@@ -45,6 +47,8 @@ namespace Sandbox3D
 
 		void OnLevelPlay();
 		void OnLevelStop();
+		void OnSimulationStart();
+		void OnSimulationStop();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
 		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
@@ -99,7 +103,6 @@ namespace Sandbox3D
 
 		Ref<Lamp::Texture2D> m_IconPlay;
 		Ref<Lamp::Texture2D> m_IconStop;
-		Ref<Lamp::Texture2D> m_IconPhysicsStart;
 
 		//Perspective
 		bool m_PerspectiveOpen = true;
@@ -129,8 +132,7 @@ namespace Sandbox3D
 		std::vector<BaseWindow*> m_pWindows;
 
 		//Play
-		bool m_ShouldPlay = false;
-		bool m_ShouldPlayPhysics = false;
+		AnimatedIcon m_PhysicsIcon;
 
 		//Components
 		bool m_AddComponentOpen = false;
@@ -152,7 +154,8 @@ namespace Sandbox3D
 		enum class SceneState
 		{
 			Edit = 0,
-			Play = 1
+			Play = 1,
+			Simulating = 2
 		};
 
 		SceneState m_SceneState = SceneState::Edit;

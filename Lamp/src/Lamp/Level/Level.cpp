@@ -128,6 +128,16 @@ namespace Lamp
 		RenderPassManager::Get()->RenderPasses(camera);
 	}
 
+	void Level::UpdateSimulation(Timestep ts, Ref<CameraBase>& camera)
+	{
+		AppRenderEvent e(camera);
+		OnEvent(e);
+
+		RenderPassManager::Get()->RenderPasses(camera);
+
+		Physics::GetScene()->Simulate(ts);
+	}
+
 	void Level::UpdateRuntime(Timestep ts)
 	{
 		AppUpdateEvent e(ts);
@@ -166,6 +176,17 @@ namespace Lamp
 	{
 		Physics::DestroyScene();
 		g_pEnv->ShouldRenderGizmos = m_LastShowedGizmos;
+	}
+
+	void Level::OnSimulationStart()
+	{
+		Physics::CreateScene();
+		Physics::CreateActors(this);
+	}
+
+	void Level::OnSimulationEnd()
+	{
+		Physics::DestroyScene();
 	}
 
 	void Level::SetupLights()

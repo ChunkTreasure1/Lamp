@@ -27,7 +27,7 @@ namespace Sandbox3D
 	using namespace Lamp;
 
 	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_DockspaceID(0)
+		: Layer("Sandbox3D"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
 	{
 		g_pEnv->IsEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
@@ -83,7 +83,7 @@ namespace Sandbox3D
 			{
 			case SceneState::Edit:
 			{
-				g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), std::dynamic_pointer_cast<CameraBase>(m_SandboxController->GetCameraController()->GetCamera()));
+				g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
 				break;
 			}
 			case SceneState::Play:
@@ -91,10 +91,19 @@ namespace Sandbox3D
 				g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
 				break;
 			}
+			case SceneState::Simulating:
+			{
+				g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
+			}
 
 			default:
 				break;
 			}
+		}
+
+		{
+			LP_PROFILE_SCOPE("Sandbox3D::Update::UIUpdate");
+			m_PhysicsIcon.OnEvent(e);
 		}
 
 		{
@@ -408,6 +417,28 @@ namespace Sandbox3D
 
 		m_pRuntimeLevel = nullptr;
 		m_pGame = nullptr;
+	}
+
+	void Sandbox3D::OnSimulationStart()
+	{
+		m_SceneState = SceneState::Simulating;
+		m_pSelectedObject = nullptr;
+
+		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
+		m_pRuntimeLevel->SetIsPlaying(true);
+		g_pEnv->pLevel = m_pRuntimeLevel;
+		m_pRuntimeLevel->OnSimulationStart();
+	}
+
+	void Sandbox3D::OnSimulationStop()
+	{
+		m_SceneState = SceneState::Edit;
+		m_pSelectedObject = nullptr;
+
+		m_pRuntimeLevel->OnSimulationEnd();
+		g_pEnv->pLevel = m_pLevel;
+
+		m_pRuntimeLevel = nullptr;
 	}
 
 	void Sandbox3D::CreateRenderPasses()

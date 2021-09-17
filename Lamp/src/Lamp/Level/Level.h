@@ -74,10 +74,14 @@ namespace Lamp
 
 		void OnEvent(Event& e);
 		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);
+		void UpdateSimulation(Timestep ts, Ref<CameraBase>& camera);
 		void UpdateRuntime(Timestep ts);
 
 		void OnRuntimeStart();
 		void OnRuntimeEnd();
+
+		void OnSimulationStart();
+		void OnSimulationEnd();
 
 		void SetupLights();
 

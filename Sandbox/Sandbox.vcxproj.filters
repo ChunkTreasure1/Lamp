@@ -43,6 +43,9 @@
     <Filter Include="src\Sandbox3D\Actions">
       <UniqueIdentifier>{42C75A10-AE33-160B-7727-AE68E3523873}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Sandbox3D\UI">
+      <UniqueIdentifier>{8FBF51FD-7BB8-704F-A4EA-55D49042505B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Sandbox3D\Windows">
       <UniqueIdentifier>{DCA36BBB-4810-27B6-1104-BF137D2F491E}</UniqueIdentifier>
     </Filter>
@@ -62,6 +65,9 @@
     </ClInclude>
     <ClInclude Include="src\Sandbox3D\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox3D\UI\AnimatedIcon.h">
+      <Filter>src\Sandbox3D\UI</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox3D\Windows\AssetManagerPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
@@ -87,7 +93,6 @@
     <ClInclude Include="src\Sandbox3D\Windows\RenderGraph.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\UI\AnimatedIcon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -111,6 +116,9 @@
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\UI\AnimatedIcon.cpp">
+      <Filter>src\Sandbox3D\UI</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sandbox3D\Windows\AssetManagerPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
@@ -132,7 +140,6 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\UI\AnimatedIcon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\ibl\brdfIntegrate.glsl">

@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <memory>
+
 namespace Lamp
 {
 	static int s_PointLightId = 0;

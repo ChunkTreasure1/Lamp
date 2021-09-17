@@ -883,7 +883,12 @@ namespace Sandbox3D
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		
 		float size = ImGui::GetWindowHeight() - 4.f;
-		Ref<Lamp::Texture2D> playIcon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+		Ref<Lamp::Texture2D> playIcon = m_IconPlay;
+		if (m_SceneState == SceneState::Play)
+		{
+			playIcon = m_IconStop;
+		}
+
 		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
 		if (ImGui::ImageButton((ImTextureID)playIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
@@ -898,10 +903,25 @@ namespace Sandbox3D
 			}
 		}
 
-		if (ImGui::ImageButton())
-		{
-		}
+		Ref<Lamp::Texture2D> physicsIcon = m_PhysicsIcon.GetCurrentFrame();
 
+		ImGui::SameLine();
+
+		static uint32_t physicsId = physicsIcon->GetID();
+
+		if (ImGui::ImageButtonAnimated((ImTextureID)physicsId, (ImTextureID)physicsIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		{
+			if (m_SceneState == SceneState::Edit)
+			{
+				OnSimulationStart();
+				m_PhysicsIcon.Play();
+			}
+			else if (m_SceneState == SceneState::Simulating)
+			{
+				OnSimulationStop();
+				m_PhysicsIcon.Stop();
+			}
+		}
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();

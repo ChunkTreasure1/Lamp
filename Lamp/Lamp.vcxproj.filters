@@ -387,6 +387,9 @@
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderBuffer.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -1572,7 +1575,7 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderBuffer.h" />
+    <ClInclude Include="src\Lamp\Utility\UIUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
