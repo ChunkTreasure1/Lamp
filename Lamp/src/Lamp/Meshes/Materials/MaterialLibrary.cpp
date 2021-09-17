@@ -114,7 +114,7 @@ namespace Lamp
 			}
 		}
 
-		return Material(-1);
+		return Material(-1, "");
 	}
 
 	bool MaterialLibrary::IsMaterialLoaded(const std::string& name)

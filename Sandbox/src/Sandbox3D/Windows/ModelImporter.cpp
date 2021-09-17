@@ -31,7 +31,7 @@ namespace Sandbox3D
 				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
 				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 			};
-			mainBuffer.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+			mainBuffer.ClearColor = { 0.1f, 0.15f, 0.15f, 1.f };
 			mainBuffer.Height = 720;
 			mainBuffer.Width = 1280;
 
@@ -335,81 +335,16 @@ namespace Sandbox3D
 			shaders.push_back(shader->GetName().c_str());
 		}
 
-		if (m_pModelToImport.get() != nullptr)
+		if (m_pModelToImport.get())
 		{
-			for (int i = 0; i < shaders.size(); i++)
+			for (auto& mat : m_pModelToImport->GetMaterials())
 			{
-				//if (m_pModelToImport->GetMaterial().GetShader()->GetName() == shaders[i])
-				//{
-				//	selectedItem = i;
-				//}
+				if (ImGui::CollapsingHeader(mat.second.GetName().c_str()))
+				{
+
+				}
 			}
 		}
-
-		ImGui::InputText("Name", &m_MaterialName);
-
-		//ImGui::Combo("Shader", &selectedItem, shaders.data(), shaders.size());
-		//if (m_pModelToImport.get() != nullptr)
-		//{
-		//	if (m_pModelToImport->GetMaterial().GetShader() != ShaderLibrary::GetShader(shaders[selectedItem]))
-		//	{
-		//		paths.clear();
-
-		//		m_pModelToImport->GetMaterial().SetShader(ShaderLibrary::GetShader(shaders[selectedItem]));
-
-		//		for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-		//		{
-		//			tex.second = Texture2D::Create("engine/textures/default/defaultTexture.png");
-		//		}
-		//	}
-		//}
-
-		//if (m_pModelToImport != nullptr)
-		//{
-		//	for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-		//	{
-		//		paths.emplace(tex.first, "");
-		//	}
-		//	for (auto& tex : m_pModelToImport->GetMaterial().GetTextures())
-		//	{
-		//		if (!m_pModelToImport->GetMaterial().GetTextures()[tex.first])
-		//		{
-		//			if (ImGui::Button((std::string("Load##") + tex.first).c_str(), { 128, 128 }))
-		//			{
-		//				paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0*.tga\0");
-		//			}
-		//			std::string dragDropPath = GetDragDropTarget();
-		//			if (!dragDropPath.empty())
-		//			{
-		//				paths[tex.first] = dragDropPath;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 128, 128 }, { 0, 1 }, { 1, 0 }))
-		//			{
-		//				paths[tex.first] = Lamp::FileDialogs::OpenFile("Texture (*.png ...)\0*.png\0*.PNG\0*.jpg\0*.tga\0");
-		//			}
-		//			std::string dragDropPath = GetDragDropTarget();
-		//			if (!dragDropPath.empty())
-		//			{
-		//				paths[tex.first] = dragDropPath;
-		//			}
-		//		}
-
-		//		if (paths[tex.first] != "" && paths[tex.first] != m_pModelToImport->GetMaterial().GetTextures()[tex.first]->GetPath())
-		//		{
-		//			m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create(paths[tex.first]));
-		//		}
-		//		else if (paths[tex.first] == "")
-		//		{
-		//			m_pModelToImport->GetMaterial().SetTexture(tex.first, Lamp::Texture2D::Create("engine/textures/default/defaultTexture.png"));
-		//		}
-
-		//		ImGui::SameLine();
-		//		ImGui::Text(tex.first.c_str());
-		//	}
-		//}
 
 		ImGui::End();
 	}

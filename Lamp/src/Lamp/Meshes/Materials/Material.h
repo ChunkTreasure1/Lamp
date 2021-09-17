@@ -19,8 +19,8 @@ namespace Lamp
 			: m_Index(0)
 		{}
 
-		Material(uint32_t index)
-			: m_Index(index)
+		Material(uint32_t index, const std::string& name)
+			: m_Index(index), m_Name(name)
 		{}
 		//Setting
 		inline void SetTextures(std::unordered_map<std::string, Ref<Texture2D>>& map) { m_pTextures = map; }
