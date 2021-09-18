@@ -37,7 +37,7 @@ namespace Lamp
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Roboto-Regular.ttf", 16.f);
+		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Futura-Light.ttf", 16.f);
 
 		//Setup ImGui style
 		ImGui::StyleColorsDark();
