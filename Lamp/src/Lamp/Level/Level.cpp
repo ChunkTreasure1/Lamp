@@ -130,12 +130,12 @@ namespace Lamp
 
 	void Level::UpdateSimulation(Timestep ts, Ref<CameraBase>& camera)
 	{
+		Physics::GetScene()->Simulate(ts);
+
 		AppRenderEvent e(camera);
 		OnEvent(e);
 
 		RenderPassManager::Get()->RenderPasses(camera);
-
-		Physics::GetScene()->Simulate(ts);
 	}
 
 	void Level::UpdateRuntime(Timestep ts)

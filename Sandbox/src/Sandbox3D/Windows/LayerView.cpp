@@ -1,6 +1,9 @@
 #include "LayerView.h"
 
 #include <imgui/imgui_stdlib.h>
+#include <Lamp/Utility/UIUtility.h>
+
+#include <Lamp/AssetSystem/ResourceCache.h>
 
 namespace Sandbox3D
 {
@@ -9,7 +12,9 @@ namespace Sandbox3D
 	LayerView::LayerView(std::string_view name)
 		: BaseWindow(name)
 	{
+		m_EntityIcon = ResourceCache::GetAsset<Texture2D>("engine/gizmos/gizmoEntity.png");
 	}
+
 	void LayerView::OnEvent(Lamp::Event& e)
 	{
 		EventDispatcher dispatcher(e);
@@ -50,7 +55,7 @@ namespace Sandbox3D
 				{
 					startId++;
 					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-					ImGui::TreeNodeEx((void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
+					UI::ImageTreeNodeEx(m_EntityIcon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
 					if (ImGui::BeginDragDropSource())
 					{
 						const uint32_t values[2] = { layer.ID, obj->GetID() };

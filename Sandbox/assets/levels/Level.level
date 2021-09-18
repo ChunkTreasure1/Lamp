@@ -21,7 +21,7 @@
 			</Component>
 			<Component name="ControllerComponent"/>
 		</Entity>
-		<Entity name="Entity" position="19.412140,3.797829,1.334717" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="1">
+		<Entity name="Entity" position="13.043520,3.797829,1.334717" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="1">
 			<Component name="MeshComponent">
 				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\cube.lgf"/>
 			</Component>
@@ -68,7 +68,7 @@
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="13.219504,20.811823,17.239882" rotation="623.098328,-44.149921,0.000000" fov="60.000000"/>
+		<CameraValues position="13.219504,20.811823,17.239882" rotation="621.598206,-43.399918,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

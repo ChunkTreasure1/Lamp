@@ -1,7 +1,7 @@
 #include "Sandbox3D.h"
 #include <rapidxml/rapidxml_print.hpp>
 
-#include "Windows/ModelImporter.h"
+#include "Windows/SandboxMeshImporter.h"
 
 namespace Sandbox3D
 {

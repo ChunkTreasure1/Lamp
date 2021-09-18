@@ -13,7 +13,7 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 
 #include <Lamp/Math/Math.h>
-#include "Windows/ModelImporter.h"
+#include "Windows/SandboxMeshImporter.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Meshes/Materials/MaterialLibrary.h>
 
@@ -353,20 +353,23 @@ namespace Sandbox3D
 					pBrush->SetScale(glm::make_vec3(s));
 				}
 
-				//TODO: Fix
-				//if (ImGui::CollapsingHeader("Material"))
-				//{
-				//	std::string n = pBrush->GetModel()->GetMaterial().GetName();
-				//	ImGui::InputText("Name##mat", &n);
-				//
-				//	if (n != pBrush->GetModel()->GetMaterial().GetName())
-				//	{
-				//		if (Lamp::MaterialLibrary::GetMaterial(n).GetIndex() != -1)
-				//		{
-				//			pBrush->GetModel()->SetMaterial(Lamp::MaterialLibrary::GetMaterial(n));
-				//		}
-				//	}
-				//}
+				if (ImGui::CollapsingHeader("Materials"))
+				{
+					int i = 0;
+					for (auto& mat : pBrush->GetModel()->GetMaterials())
+					{
+						static std::string lastInput = "";
+						std::string input = mat.second.GetName();
+						
+						ImGui::InputText(std::string("###input" + std::to_string(i)).c_str(), &input);
+						if (input != lastInput)
+						{
+							lastInput = input;
+						}
+
+						i++;
+					}
+				}
 			}
 
 			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))

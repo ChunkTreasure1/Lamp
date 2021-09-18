@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "Material.h"
 
+#include "Lamp/AssetSystem/ResourceCache.h"
+
 namespace Lamp
 {
 	void Material::SetTexture(const std::string& name, Ref<Texture2D> texture)
@@ -16,7 +18,7 @@ namespace Lamp
 		m_pTextures.clear();
 		for (auto& name : shader->GetSpecifications().TextureNames)
 		{
-			m_pTextures.emplace(std::pair<std::string, Ref<Texture2D>>(name, nullptr));
+			m_pTextures.emplace(std::pair<std::string, Ref<Texture2D>>(name, ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png")));
 		}
 
 		m_pShader = shader;

@@ -11,7 +11,7 @@
 
 #include <Lamp/Rendering/RenderPass.h>
 
-#include "Windows/ModelImporter.h"
+#include "Windows/SandboxMeshImporter.h"
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
 #include "Windows/RenderGraph.h"
@@ -39,7 +39,7 @@ namespace Sandbox3D
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
 
-		m_pWindows.push_back(new ModelImporter("Model Importer"));
+		m_pWindows.push_back(new SandboxMeshImporter("Model Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new RenderGraph("Render Graph"));

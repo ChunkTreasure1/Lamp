@@ -1,4 +1,4 @@
-#include "ModelImporter.h"
+#include "SandboxMeshImporter.h"
 
 #include <Lamp/Rendering/RenderCommand.h>
 #include <imgui/imgui.h>
@@ -12,17 +12,23 @@
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
+#include <Lamp/Utility/UIUtility.h>
+
 namespace Sandbox3D
 {
 	using namespace Lamp;
 
-	ModelImporter::ModelImporter(std::string_view name)
+	SandboxMeshImporter::SandboxMeshImporter(std::string_view name)
 		: BaseWindow(name)
 	{
 		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
 		m_Camera->SetPosition({ -3.f, 2.f, 3.f });
 
-		m_RenderFuncs.push_back(LP_EXTRA_RENDER(ModelImporter::Render));
+		m_RenderFuncs.push_back(LP_EXTRA_RENDER(SandboxMeshImporter::Render));
+
+		//Setup icons
+		m_LoadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
+		m_SaveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
 		{
 			FramebufferSpecification mainBuffer;
@@ -39,7 +45,7 @@ namespace Sandbox3D
 		}
 	}
 
-	bool ModelImporter::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
+	bool SandboxMeshImporter::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		if (!m_IsOpen)
 		{
@@ -64,11 +70,13 @@ namespace Sandbox3D
 		UpdatePerspective();
 		UpdateProperties();
 		UpdateMaterial();
+		UpdateToolbar();
+		UpdateMeshConstruction();
 
 		return false;
 	}
 
-	bool ModelImporter::Update(Lamp::AppUpdateEvent& e)
+	bool SandboxMeshImporter::Update(Lamp::AppUpdateEvent& e)
 	{
 		if (m_DefaultShader == nullptr)
 		{
@@ -79,7 +87,7 @@ namespace Sandbox3D
 		return false;
 	}
 
-	std::string ModelImporter::GetDragDropTarget()
+	std::string SandboxMeshImporter::GetDragDropTarget()
 	{
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -96,7 +104,11 @@ namespace Sandbox3D
 		return "";
 	}
 
-	void ModelImporter::UpdateCamera(Lamp::Timestep ts)
+	void SandboxMeshImporter::MaterialPopup()
+	{
+	}
+
+	void SandboxMeshImporter::UpdateCamera(Lamp::Timestep ts)
 	{
 		if (!m_IsOpen)
 		{
@@ -109,7 +121,93 @@ namespace Sandbox3D
 		}
 	}
 
-	void ModelImporter::Render()
+	void SandboxMeshImporter::UpdateToolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.305f, 0.31f, 0.5f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
+
+		ImGui::Begin("##toolbarMeshImporter", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	
+		float size = ImGui::GetWindowHeight() - 4.f;
+
+		if (ImGui::ImageButton((ImTextureID)m_LoadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		{
+			m_SourcePath = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
+			if (m_SourcePath != "" && std::filesystem::exists(m_SourcePath))
+			{
+				m_pModelToImport = MeshImporter::ImportMesh(m_SourcePath);
+
+				m_SavePath = m_SourcePath.substr(0, m_SourcePath.find_last_of('.'));
+				m_SavePath += ".lgf";
+				m_pModelToImport->Path = m_SavePath;
+
+				for (auto& mat : m_pModelToImport->GetMaterials())
+				{
+					mat.second.SetShader(m_DefaultShader);
+
+					for (auto& tex : mat.second.GetTextures())
+					{
+						tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+					}
+				}
+
+				m_ShaderSelectionIds.clear();
+				for (int i = 0; i < m_pModelToImport->GetMaterials().size(); i++)
+				{
+					m_ShaderSelectionIds.push_back(0);
+				}
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::ImageButton((ImTextureID)m_SaveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		{
+			m_SavePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
+
+			std::string matOriginPath = m_SavePath.substr(m_SavePath.find_last_of('\\') + 1, m_SavePath.size() - 1);
+			
+
+			if (m_SavePath != "")
+			{
+				if (m_SavePath.find(".lgf") == std::string::npos)
+				{
+					m_SavePath += ".lgf";
+				}
+
+				m_pModelToImport->Path = m_SavePath;
+
+				for (auto& mat : m_pModelToImport->GetMaterials())
+				{
+					mat.second.SetName(matOriginPath + std::to_string(mat.first));
+					if (!MaterialLibrary::IsMaterialLoaded(matOriginPath + std::to_string(mat.first)))
+					{
+						std::string matPath = m_SavePath.substr(0, m_SavePath.find_last_of('\\') + 1);
+						matPath += matOriginPath + ".mtl";
+						//Add material to library
+						MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial(mat.first));
+						MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
+					}
+				}
+
+				g_pEnv->pAssetManager->SaveAsset(m_pModelToImport);
+				m_SavePath = "";
+			}
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
+	}
+
+	void SandboxMeshImporter::UpdateMeshConstruction()
+	{
+	}
+
+	void SandboxMeshImporter::Render()
 	{
 		if (!m_IsOpen)
 		{
@@ -150,7 +248,7 @@ namespace Sandbox3D
 		m_Framebuffer->Unbind();
 	}
 
-	void ModelImporter::OnEvent(Lamp::Event& e)
+	void SandboxMeshImporter::OnEvent(Lamp::Event& e)
 	{
 		if (!m_IsOpen)
 		{
@@ -178,11 +276,11 @@ namespace Sandbox3D
 		}
 
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(ModelImporter::UpdateImGui));
-		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(ModelImporter::Update));
+		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(SandboxMeshImporter::UpdateImGui));
+		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(SandboxMeshImporter::Update));
 	}
 
-	void ModelImporter::RenderGrid()
+	void SandboxMeshImporter::RenderGrid()
 	{
 		Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.f), glm::vec3(5.f, 0.f, 0.f), 1.f);
 		Renderer3D::DrawLine(glm::vec3(0.f, 0.f, -5.f), glm::vec3(0.f, 0.f, 5.f), 1.f);
@@ -208,7 +306,7 @@ namespace Sandbox3D
 		}
 	}
 
-	void ModelImporter::UpdatePerspective()
+	void SandboxMeshImporter::UpdatePerspective()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Import Perspective");
@@ -233,75 +331,12 @@ namespace Sandbox3D
 		ImGui::PopStyleVar();
 	}
 
-	void ModelImporter::UpdateProperties()
+	void SandboxMeshImporter::UpdateProperties()
 	{
 		ImGui::Begin("Import Settings", &m_IsOpen);
 
-		static std::string path = "";
-		static std::string savePath = "";
-		static std::string matName = "";
-
-		if (ImGui::Button("Load##fbx"))
-		{
-			path = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
-			if (path != "" && std::filesystem::exists(path))
-			{
-				m_pModelToImport = MeshImporter::ImportMesh(path);
-
-				savePath = path.substr(0, path.find_last_of('.'));
-				savePath += ".lgf";
-				m_pModelToImport->Path = savePath;
-
-				for (auto& mat : m_pModelToImport->GetMaterials())
-				{
-					mat.second.SetShader(m_DefaultShader);
-				
-					for (auto& tex : mat.second.GetTextures())
-					{
-						tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png") ;
-					}
-				}
-			}
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Save"))
-		{
-			savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-
-			if (m_MaterialName.empty())
-			{
-				m_MaterialName = savePath.substr(savePath.find_last_of('\\') + 1, savePath.size() - 1);
-			}
-
-			if (savePath != "")
-			{
-				if (savePath.find(".lgf") == std::string::npos)
-				{
-					savePath += ".lgf";
-				}
-
-				m_pModelToImport->SetName(m_MaterialName);
-				m_pModelToImport->Path = savePath;
-				for (auto& mat : m_pModelToImport->GetMaterials())
-				{
-					mat.second.SetName(m_MaterialName + std::to_string(mat.first));
-					if (!MaterialLibrary::IsMaterialLoaded(m_MaterialName + std::to_string(mat.first)))
-					{
-						std::string matPath = savePath.substr(0, savePath.find_last_of('\\') + 1);
-						matPath += m_MaterialName + ".mtl";
-						//Add material to library
-						MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial(mat.first));
-						MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
-					}
-				}
-
-				g_pEnv->pAssetManager->SaveAsset(m_pModelToImport);
-				path = "";
-				savePath = "";
-			}
-		}
-		ImGui::Text(("Source path: " + path).c_str());
-		ImGui::Text(("Destination path: " + savePath).c_str());
+		ImGui::Text(("Source path: " + m_SourcePath).c_str());
+		ImGui::Text(("Destination path: " + m_SavePath).c_str());
 
 		ImGui::Checkbox("Show Skybox", &m_RenderSkybox);
 		ImGui::Checkbox("Show Grid", &m_RenderGrid);
@@ -312,22 +347,22 @@ namespace Sandbox3D
 		if (ImGui::DragFloat("Scale", &m_ImportSettings.MeshScale) && m_pModelToImport)
 		{
 		}
-		
-		static const char* meshDirections[] = {"Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up"};
+
+		static const char* meshDirections[] = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
 		static int currentDirection = 0;
 		ImGui::Combo("Up", &currentDirection, meshDirections, IM_ARRAYSIZE(meshDirections));
 
 		ImGui::End();
 	}
 
-	void ModelImporter::UpdateMaterial()
+	void SandboxMeshImporter::UpdateMaterial()
 	{
 		ImGui::Begin("Materials");
 
 		static std::vector<const char*> shaders;
 		static std::unordered_map<std::string, std::string> paths;
 
-		static int selectedItem = 0;
+		UI::ImageText(m_SaveIcon->GetID(), "test");
 
 		shaders.clear();
 		for (auto& shader : ShaderLibrary::GetShaders())
@@ -337,12 +372,69 @@ namespace Sandbox3D
 
 		if (m_pModelToImport.get())
 		{
+			int matId = 0;
 			for (auto& mat : m_pModelToImport->GetMaterials())
 			{
-				if (ImGui::CollapsingHeader(mat.second.GetName().c_str()))
+				for (size_t i = 0; i < shaders.size(); i++)
 				{
-
+					if (mat.second.GetShader()->GetName() == shaders[i])
+					{
+						m_ShaderSelectionIds[matId] = i;
+					}
 				}
+				matId++;
+			}
+
+			int i = 0;
+			for (auto& mat : m_pModelToImport->GetMaterials())
+			{
+				std::string id = mat.second.GetName() + "###mat" + std::to_string(i);
+				if (ImGui::CollapsingHeader(id.c_str()))
+				{
+					std::string matName = mat.second.GetName();
+					std::string nameId = "Name##matName" + std::to_string(i);
+					if (ImGui::InputText(nameId.c_str(), &matName))
+					{
+						mat.second.SetName(matName);
+					}
+
+					std::string comboId = "Shader##shader" + std::to_string(i);
+					if (ImGui::Combo(comboId.c_str(), &m_ShaderSelectionIds[i], shaders.data(), shaders.size()))
+					{
+						if (mat.second.GetShader() != ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]))
+						{
+							mat.second.SetShader(ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]));
+
+						}
+					}
+
+					ImGui::Separator();
+
+					for (auto& tex : mat.second.GetTextures())
+					{
+						ImGui::Text(tex.first.c_str());
+						if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 64, 64 }, { 0, 1 }, { 1, 0 }))
+						{
+
+						}
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+							{
+								const wchar_t* wPath = (const wchar_t*)pPayload->Data;
+								std::filesystem::path path(wPath);
+								AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+								if (type == AssetType::Texture)
+								{
+									tex.second = ResourceCache::GetAsset<Texture2D>(std::filesystem::path("assets") / path);
+								}
+							}
+						}
+						ImGui::Separator();
+					}
+				}
+
+				i++;
 			}
 		}
 
