@@ -5,6 +5,14 @@
 
 namespace Lamp
 {
+	enum class RenderData
+	{
+		Transform,
+		Data,
+		Material,
+		ID
+	};
+
 	struct RenderSubmitData
 	{
 		RenderSubmitData() {}

@@ -20,6 +20,16 @@ namespace Lamp
 		float Gamma = 2.2f;
 	};
 
+	enum class ERendererSettings
+	{
+		SSAOKernelSize,
+		SSAOMaxKernelSize,
+		SSAORadius,
+		SSAOBias,
+		HDRExposure,
+		Gamma
+	};
+
 	struct RenderPassSpecification;
 	class Renderer3D
 	{

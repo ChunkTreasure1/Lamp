@@ -21,7 +21,8 @@
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
-#include <imnodes.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
+
 namespace Sandbox3D
 {
 	using namespace Lamp;
@@ -496,6 +497,19 @@ namespace Sandbox3D
 
 			m_GBuffer = passSpec.TargetFramebuffer;
 
+			//TESTING
+			passSpec.uniforms =
+			{
+				{ "u_Model", UniformType::Mat4, RenderData::Transform },
+				{ "u_Material.albedo", UniformType::Int, 0 },
+				{ "u_Material.normal", UniformType::Int, 1},
+				{ "u_Material.mro", UniformType::Int, 2}
+			};
+
+			passSpec.clearType = Lamp::ClearType::ColorDepth;
+			passSpec.cullFace = Lamp::CullFace::Back;
+			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("gbuffer");
+
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
 		}
@@ -574,6 +588,37 @@ namespace Sandbox3D
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
 			passSpec.Name = "LightPass";
 			passSpec.type = PassType::Lightning;
+
+			passSpec.uniforms =
+			{
+				{ "u_GBuffer.position", UniformType::Int, 0 },
+				{ "u_GBuffer.normal", UniformType::Int, 1 },
+				{ "u_GBuffer.albedo", UniformType::Int, 2 },
+				{ "u_ShadowMap", UniformType::Int, 3 },
+				{ "u_IrradianceMap", UniformType::Int, 4 },
+				{ "u_PrefilterMap", UniformType::Int, 5 },
+				{ "u_BRDFLUT", UniformType::Int, 6 },
+				{ "u_SSAO", UniformType::Int, 7 },
+				{ "u_Exposure", UniformType::Float, ERendererSettings::HDRExposure },
+				{ "u_Gamma", UniformType::Float, ERendererSettings::Gamma },
+				{ "u_DirectionalLight.direction", UniformType::Float3, glm::normalize(g_pEnv->DirLight.Position)},
+				{ "u_DirectionalLight.color", UniformType::Float3, g_pEnv->DirLight.Color },
+				{ "u_DirectionalLight.intensity", UniformType::Float, g_pEnv->DirLight.Intensity },
+			};
+
+			passSpec.framebuffers =
+			{
+				{ m_GBuffer, 0, 0 },
+				{ m_GBuffer, 1, 1 },
+				{ m_GBuffer, 2, 2 },
+				{ m_SSAOBlurBuffer, 7, 0 }
+			};
+
+			passSpec.clearType = Lamp::ClearType::ColorDepth;
+			passSpec.cullFace = Lamp::CullFace::Back;
+			passSpec.drawType = Lamp::DrawType::Quad;
+			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("deferred");
+
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 
 			m_SandboxBuffer = passSpec.TargetFramebuffer;

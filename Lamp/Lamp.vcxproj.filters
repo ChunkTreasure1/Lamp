@@ -255,7 +255,7 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Level\Layer.h">
+    <ClInclude Include="src\Lamp\Level\ObjectLayer.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Level\Level.h">

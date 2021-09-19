@@ -4,7 +4,7 @@
 #include "Lamp/Objects/Brushes/Brush.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include "Layer.h"
+#include "ObjectLayer.h"
 #include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
 
 namespace Lamp

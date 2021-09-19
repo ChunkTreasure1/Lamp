@@ -5,6 +5,8 @@
 #include "RenderCommand.h"
 #include "Renderer3D.h"
 
+#include <any>
+
 #define LP_EXTRA_RENDER(fn) std::bind(&fn, this)
 
 namespace Lamp
@@ -21,6 +23,21 @@ namespace Lamp
 		Selection = BIT(7),
 	};
 
+	enum class ClearType
+	{
+		None = 0,
+		Color = 1,
+		Depth = 2,
+		ColorDepth = 3
+	};
+
+	enum class DrawType
+	{
+		All,
+		Quad,
+		Line
+	};
+
 	struct RenderPassSpecification
 	{
 		using RenderFunc = std::function<void()>;
@@ -31,6 +48,16 @@ namespace Lamp
 		PassType type;
 		uint32_t LightIndex = 0;
 		std::string Name = "";
+
+		//TESTING
+		ClearType clearType = ClearType::ColorDepth;
+		CullFace cullFace = CullFace::Back;
+		DrawType drawType = DrawType::All;
+		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
+
+		std::vector<std::tuple<std::string, UniformType, std::any>> uniforms;
+		std::vector<std::pair<Ref<Texture2D>, uint32_t>> textures;
+		std::vector<std::tuple<Ref<Framebuffer>, uint32_t, uint32_t>> framebuffers;
 	};
 
 	class RenderPass
@@ -58,10 +85,10 @@ namespace Lamp
 	{
 	public:
 		RenderPassManager() = default;
-		~RenderPassManager() 
+		~RenderPassManager()
 		{
 			m_RenderPasses.clear();
-			s_Instance = nullptr; 
+			s_Instance = nullptr;
 		}
 
 		void AddPass(Ref<RenderPass>& pass);

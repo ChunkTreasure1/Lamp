@@ -190,7 +190,7 @@
     <ClInclude Include="src\Lamp\Input\WindowsInput.h" />
     <ClInclude Include="src\Lamp\Layer\Layer.h" />
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
-    <ClInclude Include="src\Lamp\Level\Layer.h" />
+    <ClInclude Include="src\Lamp\Level\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Level\Level.h" />
     <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />

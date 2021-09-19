@@ -20,6 +20,8 @@
 
 #include <random>
 
+#include "RenderBuffer.h"
+
 namespace Lamp
 {
 	struct LineVertex
@@ -288,33 +290,63 @@ namespace Lamp
 		{
 			return;
 		}
-		s_pData->DeferredShader->Bind();
+		
+		const auto& pass = s_pData->CurrentRenderPass;
+		RenderCommand::SetCullFace(pass->cullFace);
+		Ref<Shader> shaderToUse = pass->renderShader; //? pass->renderShader : mat.GetShader();
 
-		s_pData->DeferredShader->UploadInt("u_GBuffer.position", 0);
-		s_pData->DeferredShader->UploadInt("u_GBuffer.normal", 1);
-		s_pData->DeferredShader->UploadInt("u_GBuffer.albedo", 2);
+		shaderToUse->Bind();
 
-		s_pData->DeferredShader->UploadInt("u_ShadowMap", 3);
-		s_pData->DeferredShader->UploadInt("u_IrradianceMap", 4);
-		s_pData->DeferredShader->UploadInt("u_PrefilterMap", 5);
-		s_pData->DeferredShader->UploadInt("u_BRDFLUT", 6);
-		s_pData->DeferredShader->UploadInt("u_SSAO", 7);
+		//Uniforms
+		for (auto& [name, type, data] : pass->uniforms)
+		{
+			if (data.type() == typeid(ERendererSettings))
+			{
+				ERendererSettings type = std::any_cast<ERendererSettings>(data);
+				switch (type)
+				{
+					case ERendererSettings::HDRExposure:
+						shaderToUse->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+						break;
+					case ERendererSettings::Gamma:
+						shaderToUse->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
+						break;
+				}
 
-		s_pData->GBuffer->BindColorAttachment(0, 0);
-		s_pData->GBuffer->BindColorAttachment(1, 1);
-		s_pData->GBuffer->BindColorAttachment(2, 2);
+				continue;
+			}
+
+			switch (type)
+			{
+				case UniformType::Int:
+					shaderToUse->UploadInt(name, std::any_cast<int>(data));
+					break;
+
+				case UniformType::Float:
+					shaderToUse->UploadFloat(name, std::any_cast<float>(data));
+					break;
+
+				case UniformType::Float3:
+					shaderToUse->UploadFloat3(name, std::any_cast<glm::vec3>(data));
+					break;
+
+				case UniformType::Float4:
+					shaderToUse->UploadFloat4(name, std::any_cast<glm::vec4>(data));
+
+				case UniformType::Mat4:
+					shaderToUse->UploadMat4(name, std::any_cast<glm::mat4>(data));
+					break;
+			}
+		}
+
+		//Framebuffers
+		for (auto& [buffer, id, texLoc] : pass->framebuffers)
+		{
+			buffer->BindColorAttachment(id, texLoc);
+		}
+
 		s_pData->ShadowBuffer->BindDepthAttachment(3);
 		s_pData->SkyboxBuffer->BindTextures(4);
-
-		s_pData->SSAOBlurBuffer->BindColorAttachment(7);
-
-		s_pData->DeferredShader->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
-		s_pData->DeferredShader->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
-
-		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
-		s_pData->DeferredShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
-		s_pData->DeferredShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-
 
 		int lightCount = 0;
 		for (auto& light : g_pEnv->pLevel->GetRenderUtils().GetPointLights())
@@ -420,13 +452,44 @@ namespace Lamp
 			{
 				LP_PROFILE_SCOPE("GeometryPass");
 
-				RenderCommand::SetCullFace(CullFace::Back);
-				s_pData->GBufferShader->Bind();
-				s_pData->GBufferShader->UploadMat4("u_Model", modelMatrix);
+				const auto& pass = s_pData->CurrentRenderPass;
 
-				s_pData->GBufferShader->UploadInt("u_Material.albedo", 0);
-				s_pData->GBufferShader->UploadInt("u_Material.normal", 1);
-				s_pData->GBufferShader->UploadInt("u_Material.mro", 2);
+				RenderCommand::SetCullFace(pass->cullFace);
+				
+				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : mat.GetShader();
+
+				shaderToUse->Bind();
+
+				//Uniforms
+				for (auto[name, type, data] : pass->uniforms)
+				{
+					if (data.type() == typeid(RenderData))
+					{
+						RenderData type = std::any_cast<RenderData>(data);
+						switch (type)
+						{
+							case Lamp::RenderData::Transform:
+								shaderToUse->UploadMat4(name, modelMatrix);
+								break;
+							case Lamp::RenderData::ID:
+								shaderToUse->UploadInt(name, id);
+								break;
+						}
+
+						continue;
+					}
+
+					switch (type)
+					{
+						case UniformType::Int:
+							shaderToUse->UploadInt(name, std::any_cast<int>(data));
+							break;
+
+						case UniformType::Mat4:
+							shaderToUse->UploadMat4(name, std::any_cast<glm::mat4>(data));
+							break;
+					}
+				}
 
 				int i = 0;
 				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
