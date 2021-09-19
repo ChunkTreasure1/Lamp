@@ -21,8 +21,12 @@
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 #include "Sandbox3D/Windows/GraphKey.h"
 
+#include <Lamp/AssetSystem/AssetManager.h>
+
 namespace Sandbox3D
 {
+	using namespace Lamp;
+
 	void Sandbox3D::UpdatePerspective()
 	{
 		LP_PROFILE_FUNCTION();
@@ -68,8 +72,19 @@ namespace Sandbox3D
 			{
 				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
-					const wchar_t* path = (const wchar_t*)pPayload->Data;
-					OpenLevel(std::filesystem::path("assets") / path);
+					const wchar_t* wPath = (const wchar_t*)pPayload->Data;
+					std::filesystem::path path = std::filesystem::path("assets") / std::filesystem::path(wPath);
+
+					AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+					if (type == Lamp::AssetType::Level)
+					{
+						OpenLevel(path);
+					}
+
+					if (type == Lamp::AssetType::Mesh)
+					{
+						m_pSelectedObject = Lamp::Brush::Create(path.string());
+					}
 				}
 
 				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("BRUSH_ITEM"))
@@ -97,29 +112,6 @@ namespace Sandbox3D
 		{
 			transform = m_pSelectedObject->GetModelMatrix();
 
-			// TODO: improve this first part.
-			if (firstTime)
-			{
-				lastTrans = transform;
-				firstTime = false;
-			}
-
-			if (ImGuizmo::IsDragging() && !beginMove)
-			{
-				beginMove = true;
-			}
-
-			if (!ImGuizmo::IsDragging())
-			{
-				hasStarted = false;
-			}
-
-			if (beginMove && !hasStarted)
-			{
-				lastTrans = m_pSelectedObject->GetModelMatrix();
-				beginMove = false;
-				hasStarted = true;
-			}
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
 
@@ -175,16 +167,6 @@ namespace Sandbox3D
 			else
 			{
 				hasDuplicated = false;
-			}
-
-			if (m_pSelectedObject->GetModelMatrix() != lastTrans && !ImGuizmo::IsDragging())
-			{
-				TransformAction action;
-				action.lastData = lastTrans;
-				action.data = m_pSelectedObject->GetModelMatrix();
-				action.pObject = m_pSelectedObject;
-
-				m_ActionHandler.AddAction(action);
 			}
 		}
 
@@ -302,7 +284,7 @@ namespace Sandbox3D
 						if (auto vs = (GraphKey*)(m_pWindows[1]))
 						{
 							vs->SetIsOpen(true);
-							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph());
+							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph(), pEnt->GetID());
 						}
 					}
 					else
@@ -310,7 +292,7 @@ namespace Sandbox3D
 						if (auto vs = (GraphKey*)(m_pWindows[1]))
 						{
 							vs->SetIsOpen(true);
-							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph());
+							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph(), pEnt->GetID());
 						}
 					}
 				}

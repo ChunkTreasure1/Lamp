@@ -57,6 +57,9 @@
     <ClInclude Include="..\Lamp\vendor\imnodes\imnodes.h">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Lamp\vendor\imnodes\imnodes_internal.h">
+      <Filter>Lamp\vendor\imnodes</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox3D\Actions\ActionHandler.h">
       <Filter>src\Sandbox3D\Actions</Filter>
     </ClInclude>
@@ -87,10 +90,10 @@
     <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\SandboxMeshImporter.h">
+    <ClInclude Include="src\Sandbox3D\Windows\RenderGraph.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\RenderGraph.h">
+    <ClInclude Include="src\Sandbox3D\Windows\SandboxMeshImporter.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,10 +134,10 @@
     <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\SandboxMeshImporter.cpp">
+    <ClCompile Include="src\Sandbox3D\Windows\RenderGraph.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\RenderGraph.cpp">
+    <ClCompile Include="src\Sandbox3D\Windows\SandboxMeshImporter.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">

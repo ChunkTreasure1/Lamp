@@ -54,7 +54,9 @@ project "Lamp"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/stb/**.h",
-		"%{prj.name}/vendor/stb_image/stb/**.cpp"
+		"%{prj.name}/vendor/stb_image/stb/**.cpp",
+		"%{prj.name}/vendor/imnodes/**.h",
+		"%{prj.name}/vendor/imnodes/**.cpp"
 	}
 
 	includedirs
@@ -70,7 +72,8 @@ project "Lamp"
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/PhysX/include"
+		"%{prj.name}/vendor/PhysX/include",
+		"%{prj.name}/vendor/imnodes/"
 	}
 	
 	links 

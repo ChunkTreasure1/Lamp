@@ -130,6 +130,9 @@
     <Filter Include="vendor\glm\glm\gtx">
       <UniqueIdentifier>{B3A6A76B-9F8A-68C1-08EB-6214F4ED5243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\imnodes">
+      <UniqueIdentifier>{11E04766-FDAD-3B6C-E641-AC92D2AE17D1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
@@ -220,6 +223,9 @@
       <Filter>src\Lamp\GraphKey</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\GraphKey\Node.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\NodeIncludes.h">
       <Filter>src\Lamp\GraphKey</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h">
@@ -1575,6 +1581,12 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\imnodes\imnodes.h">
+      <Filter>vendor\imnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imnodes\imnodes_internal.h">
+      <Filter>vendor\imnodes</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
@@ -1808,6 +1820,9 @@
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Utility\UIUtility.cpp">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1841,9 +1856,11 @@
     <ClCompile Include="src\lppch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imnodes\imnodes.cpp">
+      <Filter>vendor\imnodes</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
   </ItemGroup>
 </Project>

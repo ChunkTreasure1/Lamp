@@ -5,6 +5,8 @@
 #include "Lamp/Objects/Entity/BaseComponents/LightComponent.h"
 #include "Lamp/Physics/Physics.h"
 
+#include "Lamp/GraphKey/NodeRegistry.h"
+
 namespace Lamp
 {
 	RenderUtils::~RenderUtils()
@@ -167,6 +169,11 @@ namespace Lamp
 	{
 		Physics::CreateScene();
 		Physics::CreateActors(this);
+
+		for (auto& node : NodeRegistry::s_StartNodes())
+		{
+			node->ActivateOutput(0);
+		}
 
 		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
 		g_pEnv->ShouldRenderGizmos = false;

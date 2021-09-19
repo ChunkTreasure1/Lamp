@@ -429,6 +429,8 @@ namespace Sandbox3D
 									tex.second = ResourceCache::GetAsset<Texture2D>(std::filesystem::path("assets") / path);
 								}
 							}
+
+							ImGui::EndDragDropTarget();
 						}
 						ImGui::Separator();
 					}

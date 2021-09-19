@@ -1,5 +1,5 @@
 #include "RenderGraph.h"
-#include <imnodes/imnodes.h>
+#include <ImNodes/ImNodes.h>
 
 namespace Sandbox3D
 {
@@ -53,9 +53,9 @@ namespace Sandbox3D
 	{
 		ImGui::Begin("Graph", &m_IsOpen);
 
-		imnodes::BeginNodeEditor();
+		ImNodes::BeginNodeEditor();
 
-		imnodes::EndNodeEditor();
+		ImNodes::EndNodeEditor();
 
 		ImGui::End();
 	}

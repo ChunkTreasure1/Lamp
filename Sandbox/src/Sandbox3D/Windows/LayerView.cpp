@@ -44,7 +44,7 @@ namespace Sandbox3D
 			ImGui::SameLine();
 
 			std::string id = layer.Name + "###layer" + std::to_string(layer.ID);
-			if (ImGui::CollapsingHeader(id.c_str()))
+			if (ImGui::TreeNode(id.c_str()))
 			{
 				CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
 
@@ -78,6 +78,8 @@ namespace Sandbox3D
 						}
 					}
 				}
+
+				ImGui::TreePop();
 			}
 			else
 			{

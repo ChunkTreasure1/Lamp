@@ -47,8 +47,6 @@ namespace Sandbox3D
 
 		SetupFromConfig();
 		CreateRenderPasses();
-
-		imnodes::Initialize();
 	}
 
 	Sandbox3D::~Sandbox3D()
@@ -60,7 +58,6 @@ namespace Sandbox3D
 
 		m_BufferWindows.clear();
 		m_pWindows.clear();
-		imnodes::Shutdown();
 	}
 
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)

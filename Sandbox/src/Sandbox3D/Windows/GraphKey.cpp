@@ -1,6 +1,6 @@
 #include "GraphKey.h"
 
-#include <imnodes.h>
+#include <ImNodes.h>
 
 #include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
 #include <Lamp/Utility/PlatformUtility.h>
@@ -27,13 +27,14 @@ namespace Sandbox3D
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(GraphKey::OnUpdate));
 	}
 
-	void GraphKey::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph)
+	void GraphKey::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph, uint32_t entity)
 	{
+		m_CurrentEntityId = entity;
 		m_CurrentlyOpenGraph = graph;
 
 		for (auto& n : graph->GetSpecification().nodes)
 		{
-			imnodes::SetNodeEditorSpacePos(n->id, ImVec2{ n->position.x, n->position.y });
+			ImNodes::SetNodeEditorSpacePos(n->id, ImVec2{ n->position.x, n->position.y });
 		}
 	}
 
@@ -70,13 +71,13 @@ namespace Sandbox3D
 	{
 		if (Input::IsKeyPressed(LP_KEY_DELETE))
 		{
-			const int numSelectedNodes = imnodes::NumSelectedNodes();
+			const int numSelectedNodes = ImNodes::NumSelectedNodes();
 			if (numSelectedNodes > 0)
 			{
 				std::vector<int> selectedNodes;
 				selectedNodes.resize(numSelectedNodes);
 
-				imnodes::GetSelectedNodes(selectedNodes.data());
+				ImNodes::GetSelectedNodes(selectedNodes.data());
 
 				for (auto& node : selectedNodes)
 				{
@@ -84,13 +85,13 @@ namespace Sandbox3D
 				}
 			}
 
-			const int numSelectedLinks = imnodes::NumSelectedLinks();
+			const int numSelectedLinks = ImNodes::NumSelectedLinks();
 			if (numSelectedLinks > 0)
 			{
 				std::vector<int> selectedLinks;
 				selectedLinks.resize(numSelectedLinks);
 
-				imnodes::GetSelectedLinks(selectedLinks.data());
+				ImNodes::GetSelectedLinks(selectedLinks.data());
 				for (auto& link : selectedLinks)
 				{
 					RemoveLink(link);
@@ -110,7 +111,7 @@ namespace Sandbox3D
 		}
 
 		bool mainHovered = IsHovered({ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, { ImGui::GetWindowSize().x, ImGui::GetWindowSize().y });
-		imnodes::BeginNodeEditor();
+		ImNodes::BeginNodeEditor();
 		if (m_CurrentlyOpenGraph)
 		{
 			for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
@@ -124,14 +125,39 @@ namespace Sandbox3D
 			//Draw Links
 			for (auto& link : m_CurrentlyOpenGraph->GetSpecification().links)
 			{
-				imnodes::Link(link->id, link->pOutput->id, link->pInput->id);
+				ImNodes::Link(link->id, link->pOutput->id, link->pInput->id);
 			}
 		}
 
-		imnodes::EndNodeEditor();
+		if (m_CurrentlyHovered < 0)
+		{
+			if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_NoOpenOverExistingPopup))
+			{
+				if (ImGui::MenuItem("test"))
+				{
+				}
+
+				ImGui::EndPopup();
+			}
+		}
+
+		ImNodes::EndNodeEditor();
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("NODE_ITEM"))
+			{
+				const char* node = (const char*)pPayload->Data;
+				AddNode(std::string(node));
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		m_CurrentlyHovered = -1;
+		ImNodes::IsNodeHovered(&m_CurrentlyHovered);
 
 		int startAttr, endAttr;
-		if (imnodes::IsLinkCreated(&startAttr, &endAttr))
+		if (ImNodes::IsLinkCreated(&startAttr, &endAttr))
 		{
 			Node* pStartNode = nullptr;
 			Node* pEndNode = nullptr;
@@ -219,11 +245,11 @@ namespace Sandbox3D
 				}
 			}
 
-			const int numSelectedNodes = imnodes::NumSelectedNodes();
+			const int numSelectedNodes = ImNodes::NumSelectedNodes();
 			if (numSelectedNodes == 1)
 			{
 				int selNode = 0;
-				imnodes::GetSelectedNodes(&selNode);
+				ImNodes::GetSelectedNodes(&selNode);
 
 				for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
 				{
@@ -234,14 +260,6 @@ namespace Sandbox3D
 				}
 			}
 		}
-
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && mainHovered)
-		{
-			imnodes::IsNodeHovered(&m_CurrentlyHovered);
-			ImGui::OpenPopup("RightClick");
-		}
-
-		UpdateRightClickPopup();
 
 		ImGui::End();
 	}
@@ -273,25 +291,17 @@ namespace Sandbox3D
 						ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 						ImGui::TreeNodeEx((void*)i, nodeFlags, p.first.c_str());
+						if (ImGui::BeginDragDropSource())
+						{
+							const char* node = p.first.c_str();
+							ImGui::SetDragDropPayload("NODE_ITEM", node, strlen(node) * sizeof(char), ImGuiCond_Once);
+
+							ImGui::EndDragDropSource();
+						}
+
 						if (ImGui::IsItemClicked() && m_CurrentlyOpenGraph)
 						{
-							Ref<Node> n = p.second();
-							n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
-							for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
-							{
-								n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
-							}
-
-							for (int i = 0; i < n->outputAttributes.size(); i++)
-							{
-								n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
-							}
-
-							if (m_CurrentlyOpenGraph)
-							{
-								m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
-							}
 						}
 
 						i++;
@@ -358,32 +368,6 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void GraphKey::UpdateRightClickPopup()
-	{
-		if (ImGui::BeginPopup("RightClick"))
-		{
-			if (m_CurrentlyHovered > -1)
-			{
-				if (ImGui::Selectable("Assign graph entity"))
-				{
-
-				}
-
-				if (ImGui::Selectable("Remove"))
-				{
-					RemoveNode(m_CurrentlyHovered);
-				}
-			}
-
-			if (ImGui::Selectable("Test"))
-			{
-
-			}
-
-			ImGui::EndPopup();
-		}
-	}
-
 	void GraphKey::UpdateGraphList()
 	{
 		if (!m_IsOpen)
@@ -401,7 +385,7 @@ namespace Sandbox3D
 				{
 					if (ImGui::Selectable(pEnt.second->GetName().c_str()))
 					{
-						SetCurrentlyOpenGraph(pEnt.second->GetGraphKeyGraph());
+						SetCurrentlyOpenGraph(pEnt.second->GetGraphKeyGraph(), pEnt.second->GetID());
 					}
 				}
 			}
@@ -461,19 +445,36 @@ namespace Sandbox3D
 
 	void GraphKey::DrawNode(Ref<Lamp::Node>& node)
 	{
-		imnodes::BeginNode(node->id);
+		ImNodes::BeginNode(node->id);
 
-		ImVec2 pos = imnodes::GetNodeEditorSpacePos(node->id);
+		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(node->id);
 		if (pos.x != node->position.x || pos.y != node->position.y)
 		{
 			node->position = { pos.x, pos.y };
 		}
 
-		imnodes::BeginNodeTitleBar();
+		ImNodes::BeginNodeTitleBar();
 		ImGui::Text(node->name.c_str());
-		imnodes::EndNodeTitleBar();
+		ImNodes::EndNodeTitleBar();
 
-		Entity* pEntity = Entity::Get(node->id);
+		std::string popId = "pop" + std::to_string(node->id);
+		if (ImGui::BeginPopupContextItem(popId.c_str(), ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverExistingPopup))
+		{
+			if (node->needsEntity)
+			{
+				if (ImGui::MenuItem("Assign graph entity"))
+				{
+					node->entityId = m_CurrentEntityId;
+				}
+			}
+
+			if (ImGui::MenuItem("Remove"))
+			{
+			}
+			ImGui::EndPopup();
+		}
+
+		Entity* pEntity = Entity::Get(node->entityId);
 
 		if (!pEntity && node->needsEntity)
 		{
@@ -491,7 +492,7 @@ namespace Sandbox3D
 				nodeWidth = 200.f;
 			}
 
-			imnodes::BeginInputAttribute(attr.id);
+			ImNodes::BeginInputAttribute(attr.id);
 			{
 				float labelWidth = ImGui::CalcTextSize(attr.name.c_str()).x;
 				ImGui::PushItemWidth(nodeWidth - labelWidth);
@@ -500,7 +501,7 @@ namespace Sandbox3D
 
 				ImGui::PopItemWidth();
 			}
-			imnodes::EndInputAttribute();
+			ImNodes::EndInputAttribute();
 		}
 
 
@@ -515,7 +516,7 @@ namespace Sandbox3D
 				nodeWidth = 200.f;
 			}
 
-			imnodes::BeginOutputAttribute(attr.id);
+			ImNodes::BeginOutputAttribute(attr.id);
 			{
 				float labelWidth = ImGui::CalcTextSize(attr.name.c_str()).x;
 				ImGui::PushItemWidth(nodeWidth - labelWidth);
@@ -524,11 +525,10 @@ namespace Sandbox3D
 
 				ImGui::PopItemWidth();
 			}
-			imnodes::EndOutputAttribute();
+			ImNodes::EndOutputAttribute();
 		}
 
-
-		imnodes::EndNode();
+		ImNodes::EndNode();
 	}
 
 	void GraphKey::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
@@ -1215,5 +1215,31 @@ namespace Sandbox3D
 		}
 
 		return false;
+	}
+
+	void GraphKey::AddNode(const std::string& name)
+	{
+		if (!m_CurrentlyOpenGraph)
+		{
+			return;
+		}
+
+		Ref<Node> n = NodeRegistry::s_Methods()[name]();
+		n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
+
+		for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+		{
+			n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+		}
+
+		for (int i = 0; i < n->outputAttributes.size(); i++)
+		{
+			n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+		}
+
+		if (m_CurrentlyOpenGraph)
+		{
+			m_CurrentlyOpenGraph->GetSpecification().nodes.push_back(n);
+		}
 	}
 }

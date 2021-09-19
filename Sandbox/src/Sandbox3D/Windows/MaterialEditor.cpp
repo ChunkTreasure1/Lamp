@@ -114,6 +114,22 @@ namespace Sandbox3D
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* wPath = (const wchar_t*)pPayload->Data;
+				std::filesystem::path path(wPath);
+
+				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+				if (type == Lamp::AssetType::Material)
+				{
+					//Todo: set material
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -175,8 +191,27 @@ namespace Sandbox3D
 				m_MaterialModel->SetMaterial(mat, 0);
 				m_pSelectedMaterial = &mat;
 			}
+			std::string popId = mat.GetName() + "##matPop" + std::to_string(i);
+			if (ImGui::BeginPopupContextItem(popId.c_str(), ImGuiPopupFlags_MouseButtonRight))
+			{
+				if (ImGui::MenuItem("Remove"))
+				{
+				}
+
+				ImGui::EndPopup();
+			}
 
 			i++;
+		}
+
+		if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_NoOpenOverExistingPopup))
+		{
+			if (ImGui::MenuItem("New"))
+			{
+				CreateNewMaterial();
+			}
+
+			ImGui::EndPopup();
 		}
 
 		ImGui::End();
@@ -205,6 +240,9 @@ namespace Sandbox3D
 		{
 			m_MaterialModel->Render(-1, glm::mat4(1.f), true);
 		}
+
+		Renderer3D::DrawRenderBuffer();
+
 		Renderer3D::EndPass();
 		Renderer3D::End();
 		m_Framebuffer->Unbind();

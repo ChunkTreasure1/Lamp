@@ -13,7 +13,7 @@ namespace Sandbox3D
 
 		virtual void OnEvent(Lamp::Event& e) override;
 
-		void SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph);
+		void SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph, uint32_t entity);
 		inline Ref<Lamp::GraphKeyGraph>& GetCurrentlyOpenGraph() { return m_CurrentlyOpenGraph; }
 
 	private:
@@ -23,7 +23,6 @@ namespace Sandbox3D
 		void UpdateNodeWindow();
 		void UpdateNodeList();
 		void UpdatePropertiesWindow();
-		void UpdateRightClickPopup();
 		void UpdateGraphList();
 
 		void CreateComponentNodes();
@@ -35,6 +34,7 @@ namespace Sandbox3D
 		void DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties = false);
 
 		bool IsHovered(const glm::vec2& pos, const glm::vec2& size);
+		void AddNode(const std::string& name);
 
 	private:
 		std::vector<Ref<Lamp::Node>> m_ComponentNodes;
@@ -42,6 +42,7 @@ namespace Sandbox3D
 
 		Ref<Lamp::Node> m_SelectedNode = nullptr;
 		Ref<Lamp::GraphKeyGraph> m_CurrentlyOpenGraph = nullptr;
+		uint32_t m_CurrentEntityId = 0;
 
 		bool m_NodeWindowFocused;
 		int m_CurrentlyHovered = -1;
