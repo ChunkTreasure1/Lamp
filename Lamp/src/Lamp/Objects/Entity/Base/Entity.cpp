@@ -48,7 +48,7 @@ namespace Lamp
 	{
 		auto& entites = g_pEnv->pLevel->GetEntities();
 
-		entites.erase(m_Id);
+		entites.erase(m_UUID);
 		delete this;
 	}
 
@@ -256,12 +256,12 @@ namespace Lamp
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetEntities().emplace(copy->m_Id, copy);
+			g_pEnv->pLevel->GetEntities().emplace(copy->m_UUID, copy);
 			g_pEnv->pLevel->AddToLayer(copy);
 		}
 		else
 		{
-			copy->m_Id = entity->m_Id;
+			copy->m_UUID = entity->m_UUID;
 		}
 
 		return copy;
@@ -284,53 +284,7 @@ namespace Lamp
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
 
-			Renderer3D::SubmitQuadForward(transform, m_GizmoMaterial, m_Id);
-
-				//switch (e.GetPassInfo().type)
-				//{
-				//case PassType::Forward:
-				//{
-				//	m_GizmoShader->Bind();
-
-				//	m_GizmoShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
-
-
-				//	m_GizmoShader->UploadMat4("u_Model", model);
-				//	m_GizmoShader->UploadInt("u_Texture", 0);
-
-				//	m_GizmoTexure->Bind(0);
-
-				//	Renderer3D::DrawQuad();
-				//	break;
-				//}
-
-				//case PassType::Selection:
-				//{
-				//	m_SelectionShader->Bind();
-
-				//	m_SelectionShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
-
-				//	glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
-
-				//	float angleXZ = std::atan2f(dir.z, dir.x);
-				//	float angleY = -std::asin(dir.y);
-
-				//	glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
-				//		* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
-
-				//	glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
-				//		* rotation
-				//		* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-				//	m_SelectionShader->UploadMat4("u_Model", model);
-				//	m_SelectionShader->UploadInt("u_ObjectId", m_Id);
-
-				//	Renderer3D::DrawQuad();
-				//	break;
-				//}
-
-				//default:
-				//	break;
-				//}
+			Renderer3D::SubmitQuadForward(transform, m_GizmoMaterial, m_UUID);
 		}
 
 		return false;

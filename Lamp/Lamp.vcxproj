@@ -167,6 +167,7 @@
     <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
+    <ClInclude Include="src\Lamp\Core\UUID.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
@@ -645,6 +646,7 @@
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
+    <ClCompile Include="src\Lamp\Core\UUID.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />

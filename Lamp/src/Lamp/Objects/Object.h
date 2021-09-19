@@ -5,6 +5,7 @@
 #include "Lamp/Event/EntityEvent.h"
 
 #include "Lamp/Math/Math.h"
+#include "Lamp/Core/UUID.h"
 
 namespace Lamp
 {
@@ -41,7 +42,7 @@ namespace Lamp
 		inline bool GetIsFrozen() { return m_IsFrozen; }
 		inline bool GetIsActive() { return m_IsActive; }
 		
-		inline const uint32_t GetID() { return m_Id; }
+		inline const UUID GetID() { return m_UUID; }
 		inline const bool GetIsSelected() { return m_IsSelected; }
 
 		virtual void OnEvent(Event& e) {}
@@ -65,6 +66,6 @@ namespace Lamp
 		std::string m_Name;
 
 		uint32_t m_LayerID = 0;
-		uint32_t m_Id = 0;
+		UUID m_UUID;
 	};
 }

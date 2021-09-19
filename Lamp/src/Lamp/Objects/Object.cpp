@@ -5,12 +5,9 @@
 
 namespace Lamp
 {
-	static uint32_t s_ObjectId = 0;
-
 	Object::Object()
 		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
 	{
-		m_Id = s_ObjectId++;
 	}
 
 	Object::~Object()
