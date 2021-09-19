@@ -1591,6 +1591,8 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\UUID.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysXDebugger.h" />
+    <ClInclude Include="src\Lamp\Core\Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1864,5 +1866,6 @@
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\UUID.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysXDebugger.cpp" />
   </ItemGroup>
 </Project>

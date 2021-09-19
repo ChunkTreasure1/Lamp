@@ -39,7 +39,7 @@ namespace Sandbox3D
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
 
-		m_pWindows.push_back(new SandboxMeshImporter("Model Importer"));
+		m_pWindows.push_back(new SandboxMeshImporter("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new RenderGraph("Render Graph"));
@@ -183,16 +183,10 @@ namespace Sandbox3D
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
-		dispatcher.Dispatch<AppItemClickedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnItemClicked));
 		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
 		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnKeyPressed));
 		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnImGuiBegin));
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnViewportSizeChanged));
-	}
-
-	bool Sandbox3D::OnItemClicked(AppItemClickedEvent& e)
-	{
-		return true;
 	}
 
 	bool Sandbox3D::OnKeyPressed(KeyPressedEvent& e)

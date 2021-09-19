@@ -34,6 +34,7 @@ namespace Lamp
 		struct MeshColliderSpecification
 		{
 			Ref<Mesh> CollisionMesh;
+			std::vector<Ref<Mesh>> ProcessedMeshes;
 			bool IsConvex = false;
 			bool IsTrigger = false;
 			bool OverrideMesh = false;

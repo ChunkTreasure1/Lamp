@@ -281,7 +281,7 @@ namespace Lamp
 
 	void OpenGLFramebuffer::Invalidate()
 	{
-		if (m_RendererID)
+		if (m_RendererID > 0)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
 			

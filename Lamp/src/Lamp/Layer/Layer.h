@@ -17,7 +17,6 @@ namespace Lamp
 
 		virtual void OnImGuiRender(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}
-		virtual void OnItemClicked(File& file) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }
 	private:

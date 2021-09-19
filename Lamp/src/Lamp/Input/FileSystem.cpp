@@ -150,6 +150,39 @@ namespace Lamp
 		return files;
 	}
 
+	bool FileSystem::WriteBytes(const std::filesystem::path& path, const Buffer& buffer)
+	{
+		std::ofstream stream(path, std::ios::binary | std::ios::trunc);
+
+		if (!stream)
+		{
+			stream.close();
+			return false;
+		}
+
+		stream.write((char*)buffer.pData, buffer.Size);
+		stream.close();
+
+		return true;
+	}
+
+	Buffer FileSystem::ReadBytes(const std::filesystem::path& path)
+	{
+		Buffer buffer;
+		std::ifstream stream(path, std::ios::binary | std::ios::ate);
+		LP_CORE_ASSERT(stream, "");
+
+		std::streampos end = stream.tellg();
+		stream.seekg(0, std::ios::beg);
+		uint32_t size = end - stream.tellg();
+		LP_CORE_ASSERT(size != 0, "");
+
+		buffer.Allocate(size);
+		stream.read((char*)buffer.pData, buffer.Size);
+
+		return buffer;
+	}
+
 	void FileSystem::PrintBrushes(std::vector<std::string>& folders, int startID)
 	{
 		if (folders.size() == 0)
@@ -188,12 +221,6 @@ namespace Lamp
 					const char* path = files[j].c_str();
 					ImGui::SetDragDropPayload("BRUSH_ITEM", path, sizeof(char) * (files[j].length() + 1), ImGuiCond_Once);
 					ImGui::EndDragDropSource();
-				}
-				if (ImGui::IsItemClicked())
-				{
-					File f(files[j]);
-					AppItemClickedEvent e(f);
-					Application::Get().OnEvent(e);
 				}
 			}
 			PrintBrushes(GetFolders(folders[i]), startID);

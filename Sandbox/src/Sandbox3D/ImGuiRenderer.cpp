@@ -62,7 +62,6 @@ namespace Sandbox3D
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 				g_pEnv->pLevel->OnEvent(e);
-				OnEvent(e);
 			}
 
 			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID(0);

@@ -5,6 +5,7 @@
 #include "Lamp/Level/Level.h"
 
 #include "PhysicsLayer.h"
+#include "PhysXDebugger.h"
 
 namespace Lamp
 {
@@ -25,10 +26,23 @@ namespace Lamp
 	void Physics::CreateScene()
 	{
 		s_Scene = CreateRef<PhysicsScene>(s_Settings);
+
+#ifdef LP_DEBUG
+		if (s_Settings.DebugOnPlay && !PhysXDebugger::IsDebugging())
+		{
+			PhysXDebugger::StartDebugging("PhysXDebugInfo", Physics::GetSettings().DebugType == DebugType::LiveDebug);
+		}
+#endif
 	}
 
 	void Physics::DestroyScene()
 	{
+#ifdef LP_DEBUG
+		if (s_Settings.DebugOnPlay)
+		{
+			PhysXDebugger::StopDebugging();
+		}
+#endif
 		s_Scene->Destroy();
 	}
 

@@ -159,6 +159,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
+    <ClInclude Include="src\Lamp\Core\Buffer.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
     <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
     <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysXDebugger.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXInternal.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
@@ -685,6 +687,7 @@
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysXDebugger.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />

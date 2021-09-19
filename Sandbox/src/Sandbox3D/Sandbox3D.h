@@ -51,7 +51,6 @@ namespace Sandbox3D
 		void OnSimulationStop();
 
 		bool OnMouseMoved(Lamp::MouseMovedEvent& e);
-		bool OnItemClicked(Lamp::AppItemClickedEvent& e);
 		bool OnWindowClose(Lamp::WindowCloseEvent& e);
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);

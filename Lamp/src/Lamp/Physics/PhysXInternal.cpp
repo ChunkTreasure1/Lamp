@@ -2,6 +2,9 @@
 #include "PhysXInternal.h"
 
 #include "Lamp/Objects/Entity/BaseComponents/Physics/RigidbodyComponent.h"
+#include "PhysXDebugger.h"
+
+#include "CookingFactory.h"
 
 namespace Lamp
 {
@@ -77,7 +80,7 @@ namespace Lamp
 		scale.length = 1.f;
 		scale.speed = 100.f;
 
-		//TODO: Physics debugger
+		PhysXDebugger::Initialize();
 
 #ifdef LP_DEBUG
 		static bool s_TrackMemoryAllocations = true;
@@ -88,25 +91,31 @@ namespace Lamp
 		s_PhysXData->PhysXSDK = PxCreatePhysics(PX_PHYSICS_VERSION, *s_PhysXData->PhysXFoundation, scale, s_TrackMemoryAllocations);
 		LP_CORE_ASSERT(s_PhysXData->PhysXSDK, "PxCreatePhysX failed");
 
-		bool extentionsLoaded = PxInitExtensions(*s_PhysXData->PhysXSDK, nullptr);
+		bool extentionsLoaded = PxInitExtensions(*s_PhysXData->PhysXSDK, PhysXDebugger::GetDebugger());
 		LP_CORE_ASSERT(extentionsLoaded, "Failed to initialize PhysX extentions");
 
 		s_PhysXData->PhysXCPUDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 
 		PxSetAssertHandler(s_PhysXData->AssertHandler);
-		
-		//TODO: Cooking factory
+	
+		CookingFactory::Initialize();
 	}
 
 	void PhysXInternal::Shutdown()
 	{
+		CookingFactory::Shutdown();
+
 		s_PhysXData->PhysXCPUDispatcher->release();
 		s_PhysXData->PhysXCPUDispatcher = nullptr;
 
 		PxCloseExtensions();
 
+		PhysXDebugger::StopDebugging();
+
 		s_PhysXData->PhysXSDK->release();
 		s_PhysXData->PhysXSDK = nullptr;
+
+		PhysXDebugger::Shutdown();
 
 		s_PhysXData->PhysXFoundation->release();
 		s_PhysXData->PhysXFoundation = nullptr;
