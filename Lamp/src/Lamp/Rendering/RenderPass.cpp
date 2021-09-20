@@ -40,124 +40,6 @@ namespace Lamp
 				break;
 			}
 
-			case PassType::Lightning:
-			{
-				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-				m_PassSpec.TargetFramebuffer->Bind();
-
-				//Clear color if i should
-				switch (m_PassSpec.clearType)
-				{
-					case ClearType::None:
-						break;
-
-					case ClearType::Color:
-						RenderCommand::ClearColor();
-						break;
-
-					case ClearType::Depth:
-						RenderCommand::ClearDepth();
-						break;
-
-					case ClearType::ColorDepth:
-						RenderCommand::Clear();
-						break;
-				}
-
-				Renderer3D::BeginPass(m_PassSpec);
-
-				switch (m_PassSpec.drawType)
-				{
-					case DrawType::All:
-						Renderer3D::DrawRenderBuffer();
-						break;
-
-					case DrawType::Line:
-						break;
-
-					case DrawType::Quad:
-						Renderer3D::CombineLightning();
-						break;
-
-					default:
-						break;
-				}
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-
-				Renderer3D::CopyDepth();
-				break;
-			}
-
-			case PassType::SSAO:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
-				RenderCommand::ClearColor();
-				Renderer3D::BeginPass(m_PassSpec);
-
-				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-				m_PassSpec.TargetFramebuffer->Bind();
-
-				//Clear color if i should
-				switch (m_PassSpec.clearType)
-				{
-					case ClearType::None:
-						break;
-
-					case ClearType::Color:
-						RenderCommand::ClearColor();
-						break;
-
-					case ClearType::Depth:
-						RenderCommand::ClearDepth();
-						break;
-
-					case ClearType::ColorDepth:
-						RenderCommand::Clear();
-						break;
-				}
-
-				Renderer3D::BeginPass(m_PassSpec);
-
-				switch (m_PassSpec.drawType)
-				{
-					case DrawType::All:
-						Renderer3D::DrawRenderBuffer();
-						break;
-
-					case DrawType::Line:
-						break;
-
-					case DrawType::Quad:
-						Renderer3D::SSAOMainPass();
-						break;
-
-					default:
-						break;
-				}
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-				break;
-			}
-
-			case PassType::SSAOBlur:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
-				RenderCommand::ClearColor();
-				Renderer3D::BeginPass(m_PassSpec);
-
-				Renderer3D::SSAOBlurPass();
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-				break;
-			}
-
 			case PassType::Forward:
 			{
 				m_PassSpec.TargetFramebuffer->Bind();
@@ -175,11 +57,11 @@ namespace Lamp
 				break;
 			}
 
-			case PassType::Geometry:
+			default:
 			{
 				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
 				m_PassSpec.TargetFramebuffer->Bind();
-				
+
 				//Clear color if i should
 				switch (m_PassSpec.clearType)
 				{
@@ -211,6 +93,7 @@ namespace Lamp
 						break;
 
 					case DrawType::Quad:
+						Renderer3D::RenderQuad();
 						break;
 
 					default:
@@ -219,28 +102,20 @@ namespace Lamp
 
 				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
-				break;
-			}
 
-			default:
-			{
-				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-				RenderCommand::Clear();
-
-				m_PassSpec.TargetFramebuffer->Bind();
-				RenderCommand::Clear();
-
-				Renderer3D::BeginPass(m_PassSpec);
-
-				Renderer3D::DrawRenderBuffer();
-
-				for (auto& f : m_PassSpec.ExtraRenders)
+				for (auto& [main, secondary, command] : m_PassSpec.framebufferCommands)
 				{
-					f();
+					switch (command)
+					{
+						case FramebufferCommand::Copy:
+							main->Copy(secondary->GetRendererID(), { main->GetSpecification().Width, main->GetSpecification().Height }, true);
+							break;
+
+						default:
+							break;
+					}
 				}
 
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
 			}
 		}

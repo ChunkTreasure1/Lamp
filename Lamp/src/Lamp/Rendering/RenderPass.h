@@ -44,6 +44,11 @@ namespace Lamp
 		Depth
 	};
 
+	enum class FramebufferCommand
+	{
+		Copy
+	};
+
 	struct RenderPassSpecification
 	{
 		using RenderFunc = std::function<void()>;
@@ -64,6 +69,7 @@ namespace Lamp
 		std::vector<std::tuple<std::string, UniformType, void*>> dynamicUniforms; // name, type, data
 		std::vector<std::pair<Ref<Texture2D>, uint32_t>> textures; // texture, texBindSlot
 		std::vector<std::tuple<Ref<Framebuffer>, TextureType, uint32_t, uint32_t>> framebuffers; // framebuffer, texture type, texBindSlot, attachId
+		std::vector<std::tuple<Ref<Framebuffer>, Ref<Framebuffer>, FramebufferCommand>> framebufferCommands; // main buffer, secondary buffer, command
 	};
 
 	class RenderPass

@@ -443,8 +443,8 @@ namespace Sandbox3D
 				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
 			};
 			shadowBuffer.ClearColor = m_ClearColor;
-			shadowBuffer.Height = 8192;
 			shadowBuffer.Width = 8192;
+			shadowBuffer.Height = 8192;
 
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
@@ -487,8 +487,8 @@ namespace Sandbox3D
 			};
 
 			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Height = 720;
 			mainBuffer.Width = 1280;
+			mainBuffer.Height = 720;
 			mainBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
@@ -525,12 +525,14 @@ namespace Sandbox3D
 			};
 
 			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Height = 720;
 			mainBuffer.Width = 1280;
+			mainBuffer.Height = 720;
 			mainBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			m_SSAOBuffer = passSpec.TargetFramebuffer;
+
 			passSpec.type = PassType::SSAO;
 			passSpec.Name = "SSAOMain";
 
@@ -538,8 +540,11 @@ namespace Sandbox3D
 			{
 				{ "u_GBuffer.position", UniformType::Int, 0 },
 				{ "u_GBuffer.normal", UniformType::Int, 1 },
-				{ "u_Noise", UniformType::Int, 2 }
+				{ "u_Noise", UniformType::Int, 2 },
+				{ "u_BufferSize", UniformType::Float2, glm::vec2(1024.f) }
 			};
+
+
 
 			passSpec.framebuffers =
 			{
@@ -547,12 +552,16 @@ namespace Sandbox3D
 				{ m_GBuffer, TextureType::Color, 1, 1 }
 			};
 
+			passSpec.textures =
+			{
+				{ Renderer3D::GetSettings().SSAONoiseTexture, 2 }
+			};
+
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
 			passSpec.cullFace = Lamp::CullFace::Back;
 			passSpec.drawType = Lamp::DrawType::Quad;
 			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOMain");
 
-			m_SSAOBuffer = passSpec.TargetFramebuffer;
 
 			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(ssaoPath);
@@ -568,14 +577,29 @@ namespace Sandbox3D
 			};
 
 			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Height = 720;
 			mainBuffer.Width = 1280;
+			mainBuffer.Height = 720;
 			mainBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
 			passSpec.type = PassType::SSAOBlur;
 			passSpec.Name = "SSAOBlur";
+
+			passSpec.staticUniforms =
+			{
+				{ "u_SSAO", UniformType::Int, 0 }
+			};
+
+			passSpec.framebuffers =
+			{
+				{ m_SSAOBuffer, TextureType::Color, 0, 0 }
+			};
+
+			passSpec.clearType = Lamp::ClearType::Color;
+			passSpec.cullFace = Lamp::CullFace::Back;
+			passSpec.drawType = Lamp::DrawType::Quad;
+			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOBlur");
 
 			m_SSAOBlurBuffer = passSpec.TargetFramebuffer;
 
@@ -598,12 +622,14 @@ namespace Sandbox3D
 			};
 
 			lightBuffer.ClearColor = m_ClearColor;
-			lightBuffer.Height = 1280;
-			lightBuffer.Width = 720;
+			lightBuffer.Width = 1280;
+			lightBuffer.Height = 720;
 			lightBuffer.Samples = 1;
 
 			RenderPassSpecification passSpec;
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
+			m_SandboxBuffer = passSpec.TargetFramebuffer;
+
 			passSpec.Name = "LightPass";
 			passSpec.type = PassType::Lightning;
 
@@ -640,15 +666,17 @@ namespace Sandbox3D
 				{ m_SSAOBlurBuffer, TextureType::Color, 7, 0 }
 			};
 
+			passSpec.framebufferCommands =
+			{
+				{ m_SandboxBuffer, m_GBuffer, FramebufferCommand::Copy }
+			};
+
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
 			passSpec.cullFace = Lamp::CullFace::Back;
 			passSpec.drawType = Lamp::DrawType::Quad;
 			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("deferred");
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
-
-			m_SandboxBuffer = passSpec.TargetFramebuffer;
-
 			RenderPassManager::Get()->AddPass(renderPass);
 		}
 		///////////////////
@@ -666,6 +694,10 @@ namespace Sandbox3D
 			passSpec.Name = "ForwardPass";
 			passSpec.type = PassType::Forward;
 
+			passSpec.clearType = Lamp::ClearType::ColorDepth;
+			passSpec.cullFace = Lamp::CullFace::Back;
+			passSpec.drawType = Lamp::DrawType::Quad;
+
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
 		}
@@ -679,8 +711,8 @@ namespace Sandbox3D
 				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
 				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
 			};
-			spec.Height = 720;
 			spec.Width = 1280;
+			spec.Height = 720;
 			spec.Samples = 1;
 
 			RenderPassSpecification passSpec;

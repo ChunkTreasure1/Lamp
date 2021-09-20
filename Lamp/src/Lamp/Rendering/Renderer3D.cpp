@@ -17,6 +17,7 @@
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "UniformBuffer.h"
 #include "Lamp/Level/Level.h"
+#include "Texture2D/IBLBuffer.h"
 
 #include <random>
 
@@ -82,13 +83,12 @@ namespace Lamp
 		Ref<Framebuffer> LightBuffer;
 
 		/////SSAO/////
-		Ref<Texture2D> SSAONoiseTexture;
+		
 		std::vector<glm::vec3> SSAONoise;
 		std::vector<glm::vec3> SSAOKernel;
 		Ref<Shader> SSAOMainShader;
 		Ref<Shader> SSAOBlurShader;
 		Ref<Framebuffer> SSAOBuffer;
-		Ref<Framebuffer> SSAOBlurBuffer;
 		//////////////
 
 		/////Uniform buffers/////
@@ -241,8 +241,8 @@ namespace Lamp
 		/////SSAO/////
 		RegenerateSSAOKernel();
 
-		s_pData->SSAONoiseTexture = Texture2D::Create(4, 4);
-		s_pData->SSAONoiseTexture->SetData(&s_pData->SSAONoise[0], 0);
+		s_RendererSettings.SSAONoiseTexture = Texture2D::Create(4, 4);
+		s_RendererSettings.SSAONoiseTexture->SetData(&s_pData->SSAONoise[0], 0);
 
 		s_pData->SSAOMainShader = ShaderLibrary::GetShader("SSAOMain");
 		s_pData->SSAOBlurShader = ShaderLibrary::GetShader("SSAOBlur");
@@ -262,11 +262,22 @@ namespace Lamp
 
 	void Renderer3D::Begin(Ref<CameraBase>& camera)
 	{
-		s_pData->DataBuffer.CameraPosition = camera->GetPosition();
-		s_pData->DataBuffer.Projection = camera->GetProjectionMatrix();
-		s_pData->DataBuffer.View = camera->GetViewMatrix();
-		s_pData->DataBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
-		s_pData->DataUniformBuffer->SetData(&s_pData->DataBuffer, sizeof(Renderer3DStorage::DataBuffer));
+		//Main
+		{
+			s_pData->DataBuffer.CameraPosition = camera->GetPosition();
+			s_pData->DataBuffer.Projection = camera->GetProjectionMatrix();
+			s_pData->DataBuffer.View = camera->GetViewMatrix();
+			s_pData->DataBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
+			s_pData->DataUniformBuffer->SetData(&s_pData->DataBuffer, sizeof(Renderer3DStorage::DataBuffer));
+		}
+
+		//SSAO
+		{
+			s_pData->SSAODataBuffer.KernelSize = s_RendererSettings.SSAOKernelSize;
+			s_pData->SSAODataBuffer.Radius = s_RendererSettings.SSAORadius;
+			s_pData->SSAODataBuffer.Bias = s_RendererSettings.SSAOBias;
+			s_pData->SSAODataUniformBuffer->SetData(&s_pData->SSAODataBuffer, sizeof(Renderer3DStorage::SSAODataBuffer));
+		}
 
 		s_pData->Camera = camera;
 
@@ -287,60 +298,11 @@ namespace Lamp
 	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
 	{
 		s_pData->CurrentRenderPass = &passSpec;
-
-		s_pData->SSAODataBuffer.KernelSize = s_RendererSettings.SSAOKernelSize;
-		s_pData->SSAODataBuffer.Radius = s_RendererSettings.SSAORadius;
-		s_pData->SSAODataBuffer.Bias = s_RendererSettings.SSAOBias;
-		s_pData->SSAODataBuffer.BufferSize = { s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Width, s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Height };
-		s_pData->SSAODataUniformBuffer->SetData(&s_pData->SSAODataBuffer, sizeof(Renderer3DStorage::SSAODataBuffer));
 	}
 
 	void Renderer3D::EndPass()
 	{
 		s_pData->CurrentRenderPass = nullptr;
-	}
-
-	void Renderer3D::CombineLightning()
-	{
-		LP_PROFILE_FUNCTION();
-		if (!s_pData->GBuffer || !s_pData->SSAOBuffer)
-		{
-			return;
-		}
-		//int lightCount = 0;
-		//for (auto& light : g_pEnv->pLevel->GetRenderUtils().GetPointLights())
-		//{
-		//	if (lightCount > 11)
-		//	{
-		//		LP_CORE_WARN("There are more lights in scene than able to render! Will skip some lights.");
-		//		break;
-		//	}
-		//
-		//	std::string v = std::to_string(lightCount);
-		//
-		//	s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].intensity", light->Intensity);
-		//	s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].radius", light->Radius);
-		//	s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].falloff", light->Falloff);
-		//	s_pData->DeferredShader->UploadFloat("u_PointLights[" + v + "].farPlane", light->FarPlane);
-		//
-		//	s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].position", light->ShadowBuffer->GetPosition());
-		//	s_pData->DeferredShader->UploadFloat3("u_PointLights[" + v + "].color", light->Color);
-		//	s_pData->DeferredShader->UploadInt("u_PointLights[" + v + "].shadowMap", lightCount + 8);
-		//
-		//	light->ShadowBuffer->BindDepthAttachment(8 + lightCount);
-		//
-		//	lightCount++;
-		//}
-		//
-		//for (int i = 0; i < 12; i++)
-		//{
-		//	s_pData->DeferredShader->UploadInt("u_PointLights[" + std::to_string(i) + "].shadowMap", 8 + i);
-		//}
-		//
-		s_pData->LightBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-		//s_pData->DeferredShader->UploadInt("u_LightCount", lightCount);
-
-		RenderQuad();
 	}
 
 	void Renderer3D::Flush()
@@ -444,8 +406,69 @@ namespace Lamp
 							shaderToUse->UploadInt(name, std::any_cast<int>(data));
 							break;
 
+						case UniformType::Float:
+							shaderToUse->UploadFloat(name, std::any_cast<float>(data));
+							break;
+
+						case UniformType::Float2:
+							shaderToUse->UploadFloat2(name, std::any_cast<glm::vec2>(data));
+							break;
+
+						case UniformType::Float3:
+							shaderToUse->UploadFloat3(name, std::any_cast<glm::vec3>(data));
+							break;
+
+						case UniformType::Float4:
+							shaderToUse->UploadFloat4(name, std::any_cast<glm::vec4>(data));
+							break;
+
 						case UniformType::Mat4:
 							shaderToUse->UploadMat4(name, std::any_cast<glm::mat4>(data));
+							break;
+					}
+				}
+
+				//Dynamic Uniforms
+				for (auto& [name, type, data] : pass->dynamicUniforms)
+				{
+					switch (type)
+					{
+						case UniformType::Int:
+							shaderToUse->UploadInt(name, *static_cast<int*>(data));
+							break;
+
+						case UniformType::Float:
+							shaderToUse->UploadFloat(name, *static_cast<float*>(data));
+							break;
+
+						case UniformType::Float3:
+							shaderToUse->UploadFloat3(name, *static_cast<glm::vec3*>(data));
+							break;
+
+						case UniformType::Float4:
+							shaderToUse->UploadFloat4(name, *static_cast<glm::vec4*>(data));
+							break;
+
+						case UniformType::Mat4:
+							shaderToUse->UploadMat4(name, *static_cast<glm::mat4*>(data));
+							break;
+					}
+				}
+
+				//Framebuffers
+				for (auto& [buffer, type, id, texLoc] : pass->framebuffers)
+				{
+					switch (type)
+					{
+						case TextureType::Color:
+							buffer->BindColorAttachment(id, texLoc);
+							break;
+
+						case TextureType::Depth:
+							buffer->BindDepthAttachment(id);
+							break;
+
+						default:
 							break;
 					}
 				}
@@ -584,6 +607,10 @@ namespace Lamp
 
 				case UniformType::Float:
 					shaderToUse->UploadFloat(name, std::any_cast<float>(data));
+					break;
+
+				case UniformType::Float2:
+					shaderToUse->UploadFloat2(name, std::any_cast<glm::vec2>(data));
 					break;
 
 				case UniformType::Float3:
@@ -742,50 +769,6 @@ namespace Lamp
 	{
 		s_pData->LineIndexCount = 0;
 		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
-	}
-
-	void Renderer3D::CopyDepth()
-	{
-		if (!s_pData->GBuffer || !s_pData->LightBuffer)
-		{
-			return;
-		}
-
-		s_pData->LightBuffer->Copy(s_pData->GBuffer->GetRendererID(), { s_pData->LightBuffer->GetSpecification().Width, s_pData->LightBuffer->GetSpecification().Height }, true);
-	}
-
-	void Renderer3D::SSAOMainPass()
-	{
-		LP_PROFILE_FUNCTION();
-		if (!s_pData->GBuffer)
-		{
-			return;
-		}
-
-		s_pData->SSAOMainShader->Bind();
-
-		s_pData->SSAONoiseTexture->Bind(2);
-
-		s_pData->SSAOBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-		RenderQuad();
-	}
-
-	void Renderer3D::SSAOBlurPass()
-	{
-		LP_PROFILE_FUNCTION();
-		if (!s_pData->SSAOBuffer)
-		{
-			return;
-		}
-
-		s_pData->SSAOBlurShader->Bind();
-		s_pData->SSAOBlurShader->UploadInt("u_SSAO", 0);
-		s_pData->SSAOBuffer->BindColorAttachment(0);
-
-		s_pData->SSAOBlurBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-		//DrawQuad();
 	}
 
 	void Renderer3D::RegenerateSSAOKernel()

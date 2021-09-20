@@ -14,8 +14,11 @@ namespace Lamp
 		int SSAOKernelSize = 64;
 		const int SSAOMaxKernelSize = 256; //Needs to be matched with value in ssao shader
 
+		//SSAO
 		float SSAORadius = 0.5f;
 		float SSAOBias = 0.025f;
+		Ref<Texture2D> SSAONoiseTexture;
+		
 		float HDRExposure = 3.f;
 		float Gamma = 2.2f;
 	};
@@ -43,12 +46,8 @@ namespace Lamp
 		static void BeginPass(RenderPassSpecification& passSpec);
 		static void EndPass();
 
-		static void CombineLightning();
 		static void Flush();
-		static void CopyDepth();
 
-		static void SSAOMainPass();
-		static void SSAOBlurPass();
 		static void RegenerateSSAOKernel();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
