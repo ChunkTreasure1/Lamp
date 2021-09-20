@@ -168,6 +168,9 @@
     <ClInclude Include="src\Lamp\Core\Application.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Buffer.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Core.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
@@ -191,6 +194,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h">
       <Filter>src\Lamp\Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\UUID.h">
+      <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
@@ -255,13 +261,13 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Level\ObjectLayer.h">
-      <Filter>src\Lamp\Level</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Level\Level.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Level\LevelSystem.h">
+      <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Level\ObjectLayer.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Math\Math.h">
@@ -334,6 +340,9 @@
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysXDebugger.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysXInternal.h">
@@ -1590,9 +1599,6 @@
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Core\UUID.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysXDebugger.h" />
-    <ClInclude Include="src\Lamp\Core\Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1624,6 +1630,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp">
       <Filter>src\Lamp\Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Core\UUID.cpp">
+      <Filter>src\Lamp\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
@@ -1737,6 +1746,9 @@
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysXDebugger.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp">
@@ -1865,7 +1877,5 @@
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Core\UUID.cpp" />
-    <ClCompile Include="src\Lamp\Physics\PhysXDebugger.cpp" />
   </ItemGroup>
 </Project>

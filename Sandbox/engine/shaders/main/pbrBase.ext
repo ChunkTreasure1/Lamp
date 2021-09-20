@@ -232,10 +232,10 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 
 	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness, shadowCoord);
 
-	for(int i = 0; i < u_LightCount; ++i)
-	{
+	//for(int i = 0; i < u_LightCount; ++i)
+	//{
 		//Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
-	}
+	//}
 
 	vec3 R = reflect(-V, N);
 	

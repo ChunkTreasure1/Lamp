@@ -91,6 +91,7 @@ namespace Sandbox3D
 		Ref<Lamp::Framebuffer> m_SSAOBuffer;
 		Ref<Lamp::Framebuffer> m_SSAOBlurBuffer;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
+		Ref<Lamp::Framebuffer> m_DirShadowBuffer;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

@@ -38,6 +38,12 @@ namespace Lamp
 		Line
 	};
 
+	enum class TextureType
+	{
+		Color,
+		Depth
+	};
+
 	struct RenderPassSpecification
 	{
 		using RenderFunc = std::function<void()>;
@@ -49,15 +55,15 @@ namespace Lamp
 		uint32_t LightIndex = 0;
 		std::string Name = "";
 
-		//TESTING
 		ClearType clearType = ClearType::ColorDepth;
 		CullFace cullFace = CullFace::Back;
 		DrawType drawType = DrawType::All;
 		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
 
-		std::vector<std::tuple<std::string, UniformType, std::any>> uniforms;
-		std::vector<std::pair<Ref<Texture2D>, uint32_t>> textures;
-		std::vector<std::tuple<Ref<Framebuffer>, uint32_t, uint32_t>> framebuffers;
+		std::vector<std::tuple<std::string, UniformType, std::any>> staticUniforms; // name, type, data
+		std::vector<std::tuple<std::string, UniformType, void*>> dynamicUniforms; // name, type, data
+		std::vector<std::pair<Ref<Texture2D>, uint32_t>> textures; // texture, texBindSlot
+		std::vector<std::tuple<Ref<Framebuffer>, TextureType, uint32_t, uint32_t>> framebuffers; // framebuffer, texture type, texBindSlot, attachId
 	};
 
 	class RenderPass

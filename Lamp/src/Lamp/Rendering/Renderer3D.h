@@ -59,10 +59,11 @@ namespace Lamp
 		static void DrawRenderBuffer();
 
 		static void DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width);
-
 		static void DrawSkybox();
 		static void DrawCube();
 		static void DrawQuad();
+
+		static void RenderQuad();
 
 		static void SetEnvironment(const std::string& path);
 		static RendererSettings& GetSettings() { return s_RendererSettings; }

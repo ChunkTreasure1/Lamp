@@ -33,6 +33,15 @@ layout(std140, binding = 0) uniform Main
 	vec3 u_CameraPosition;
 };
 
+layout(std140, binding = 1) uniform SSAO
+{
+	int u_KernelSize;
+	float u_Radius;
+	float u_Bias;
+	vec2 u_BufferSize;
+	vec3 u_Samples[256];
+};
+
 in vec2 v_TexCoords;
 in vec4 v_ShadowCoords;
 
@@ -44,13 +53,6 @@ struct GBuffer
 
 uniform GBuffer u_GBuffer;
 uniform sampler2D u_Noise;
-
-uniform vec3 u_Samples[256];
-uniform vec2 u_BufferSize;
-
-uniform int u_KernelSize;
-uniform float u_Radius;
-uniform float u_Bias;
 
 vec2 noiseScale;
 

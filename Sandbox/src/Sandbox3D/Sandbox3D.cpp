@@ -451,6 +451,8 @@ namespace Sandbox3D
 			shadowSpec.type = PassType::DirShadow;
 			shadowSpec.Name = "DirShadowPass";
 
+			m_DirShadowBuffer = shadowSpec.TargetFramebuffer;
+
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
 			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
@@ -497,8 +499,7 @@ namespace Sandbox3D
 
 			m_GBuffer = passSpec.TargetFramebuffer;
 
-			//TESTING
-			passSpec.uniforms =
+			passSpec.staticUniforms =
 			{
 				{ "u_Model", UniformType::Mat4, RenderData::Transform },
 				{ "u_Material.albedo", UniformType::Int, 0 },
@@ -533,8 +534,25 @@ namespace Sandbox3D
 			passSpec.type = PassType::SSAO;
 			passSpec.Name = "SSAOMain";
 
-			m_SSAOBuffer = passSpec.TargetFramebuffer;
+			passSpec.staticUniforms =
+			{
+				{ "u_GBuffer.position", UniformType::Int, 0 },
+				{ "u_GBuffer.normal", UniformType::Int, 1 },
+				{ "u_Noise", UniformType::Int, 2 }
+			};
 
+			passSpec.framebuffers =
+			{
+				{ m_GBuffer, TextureType::Color, 0, 0 },
+				{ m_GBuffer, TextureType::Color, 1, 1 }
+			};
+
+			passSpec.clearType = Lamp::ClearType::ColorDepth;
+			passSpec.cullFace = Lamp::CullFace::Back;
+			passSpec.drawType = Lamp::DrawType::Quad;
+			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOMain");
+
+			m_SSAOBuffer = passSpec.TargetFramebuffer;
 
 			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(ssaoPath);
@@ -589,7 +607,7 @@ namespace Sandbox3D
 			passSpec.Name = "LightPass";
 			passSpec.type = PassType::Lightning;
 
-			passSpec.uniforms =
+			passSpec.staticUniforms =
 			{
 				{ "u_GBuffer.position", UniformType::Int, 0 },
 				{ "u_GBuffer.normal", UniformType::Int, 1 },
@@ -598,20 +616,28 @@ namespace Sandbox3D
 				{ "u_IrradianceMap", UniformType::Int, 4 },
 				{ "u_PrefilterMap", UniformType::Int, 5 },
 				{ "u_BRDFLUT", UniformType::Int, 6 },
-				{ "u_SSAO", UniformType::Int, 7 },
-				{ "u_Exposure", UniformType::Float, ERendererSettings::HDRExposure },
-				{ "u_Gamma", UniformType::Float, ERendererSettings::Gamma },
-				{ "u_DirectionalLight.direction", UniformType::Float3, glm::normalize(g_pEnv->DirLight.Position)},
-				{ "u_DirectionalLight.color", UniformType::Float3, g_pEnv->DirLight.Color },
-				{ "u_DirectionalLight.intensity", UniformType::Float, g_pEnv->DirLight.Intensity },
+				{ "u_SSAO", UniformType::Int, 7 }
+			};
+
+			passSpec.dynamicUniforms =
+			{
+				{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure) },
+				{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma) },
+				{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position)},
+				{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color) },
+				{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity) },
 			};
 
 			passSpec.framebuffers =
 			{
-				{ m_GBuffer, 0, 0 },
-				{ m_GBuffer, 1, 1 },
-				{ m_GBuffer, 2, 2 },
-				{ m_SSAOBlurBuffer, 7, 0 }
+				{ m_GBuffer, TextureType::Color, 0, 0 },
+				{ m_GBuffer, TextureType::Color, 1, 1 },
+				{ m_GBuffer, TextureType::Color, 2, 2 },
+				{ m_DirShadowBuffer, TextureType::Depth, 3, 0 },
+				{ g_pEnv->pSkyboxBuffer, TextureType::Color, 4, 0 },
+				{ g_pEnv->pSkyboxBuffer, TextureType::Color, 5, 1 },
+				{ g_pEnv->pSkyboxBuffer, TextureType::Color, 6, 2 },
+				{ m_SSAOBlurBuffer, TextureType::Color, 7, 0 }
 			};
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
