@@ -160,7 +160,7 @@
     <ClInclude Include="src\Sandbox3D\Windows\GraphKey.h" />
     <ClInclude Include="src\Sandbox3D\Windows\LayerView.h" />
     <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h" />
-    <ClInclude Include="src\Sandbox3D\Windows\RenderGraph.h" />
+    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h" />
     <ClInclude Include="src\Sandbox3D\Windows\SandboxMeshImporter.h" />
   </ItemGroup>
   <ItemGroup>
@@ -176,7 +176,7 @@
     <ClCompile Include="src\Sandbox3D\Windows\GraphKey.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\LayerView.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp" />
-    <ClCompile Include="src\Sandbox3D\Windows\RenderGraph.cpp" />
+    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\SandboxMeshImporter.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>

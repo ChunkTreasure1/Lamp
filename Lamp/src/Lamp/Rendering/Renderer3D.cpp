@@ -76,19 +76,11 @@ namespace Lamp
 		Ref<Shader> PointShadowShader;
 		/////////////////
 
-		Ref<Shader> GBufferShader;
-		Ref<Shader> DeferredShader;
 		Ref<Shader> SelectionShader;
-		Ref<Framebuffer> GBuffer;
-		Ref<Framebuffer> LightBuffer;
 
 		/////SSAO/////
-		
 		std::vector<glm::vec3> SSAONoise;
 		std::vector<glm::vec3> SSAOKernel;
-		Ref<Shader> SSAOMainShader;
-		Ref<Shader> SSAOBlurShader;
-		Ref<Framebuffer> SSAOBuffer;
 		//////////////
 
 		/////Uniform buffers/////
@@ -234,8 +226,6 @@ namespace Lamp
 		}
 		////////////////
 
-		s_pData->GBufferShader = ShaderLibrary::GetShader("gbuffer");
-		s_pData->DeferredShader = ShaderLibrary::GetShader("deferred");
 		s_pData->SelectionShader = ShaderLibrary::GetShader("selection");
 
 		/////SSAO/////
@@ -243,9 +233,6 @@ namespace Lamp
 
 		s_RendererSettings.SSAONoiseTexture = Texture2D::Create(4, 4);
 		s_RendererSettings.SSAONoiseTexture->SetData(&s_pData->SSAONoise[0], 0);
-
-		s_pData->SSAOMainShader = ShaderLibrary::GetShader("SSAOMain");
-		s_pData->SSAOBlurShader = ShaderLibrary::GetShader("SSAOBlur");
 		//////////////
 
 		/////Uniform Buffer/////
@@ -320,20 +307,6 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		switch (s_pData->CurrentRenderPass->type)
 		{
-			case PassType::DirShadow:
-			{
-				RenderCommand::SetCullFace(CullFace::Front);
-				s_pData->DirShadowShader->Bind();
-
-				s_pData->DirShadowShader->UploadMat4("u_Model", modelMatrix);
-				s_pData->ShadowBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
-				data->Bind();
-				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
-
-				break;
-			}
-
 			case PassType::PointShadow:
 			{
 				LP_PROFILE_SCOPE("PointShadowPass");
@@ -357,19 +330,7 @@ namespace Lamp
 				break;
 			}
 
-			case PassType::Selection:
-			{
-				LP_PROFILE_SCOPE("SelectionPass");
-				s_pData->SelectionShader->Bind();
-				s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
-				s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-
-				data->Bind();
-				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
-				break;
-			}
-
-			case PassType::Geometry:
+			default:
 			{
 				LP_PROFILE_SCOPE("GeometryPass");
 
@@ -486,8 +447,6 @@ namespace Lamp
 				data->Bind();
 				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
 
-				s_pData->GBuffer = s_pData->CurrentRenderPass->TargetFramebuffer;
-
 				break;
 			}
 		}
@@ -519,8 +478,8 @@ namespace Lamp
 				mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
 				mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
 
-				mat.GetShader()->UploadInt("u_ShadowMap", 0);
-				s_pData->ShadowBuffer->BindDepthAttachment(0);
+				//mat.GetShader()->UploadInt("u_ShadowMap", 0);
+				//s_pData->ShadowBuffer->BindDepthAttachment(0);
 
 				mat.GetShader()->UploadInt("u_IrradianceMap", 1);
 				mat.GetShader()->UploadInt("u_PrefilterMap", 2);

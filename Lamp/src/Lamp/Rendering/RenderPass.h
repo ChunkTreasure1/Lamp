@@ -33,20 +33,20 @@ namespace Lamp
 
 	enum class DrawType
 	{
-		All,
-		Quad,
-		Line
+		All = 0,
+		Quad = 1,
+		Line = 2
 	};
 
 	enum class TextureType
 	{
-		Color,
-		Depth
+		Color = 0,
+		Depth = 1
 	};
 
 	enum class FramebufferCommand
 	{
-		Copy
+		Copy = 0
 	};
 
 	struct RenderPassSpecification
@@ -77,11 +77,12 @@ namespace Lamp
 	public:
 		friend class RenderPassManager;
 
+		RenderPass() = default;
 		RenderPass(const RenderPassSpecification& spec);
 		~RenderPass() {}
 
 		inline uint32_t GetID() { return m_ID; }
-		inline const RenderPassSpecification& GetSpecification() const { return m_PassSpec; }
+		inline RenderPassSpecification& GetSpecification() { return m_PassSpec; }
 
 		void Render(Ref<CameraBase>& camera);
 

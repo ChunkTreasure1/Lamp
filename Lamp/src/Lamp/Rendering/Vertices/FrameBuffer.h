@@ -118,7 +118,7 @@ namespace Lamp
 		virtual void BindColorAttachment(uint32_t id = 0, uint32_t i = 0) = 0;
 		virtual void BindDepthAttachment(uint32_t id = 0) = 0;
 
-		virtual const FramebufferSpecification& GetSpecification() const = 0;
+		virtual FramebufferSpecification& GetSpecification() = 0;
 
 	public:
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);

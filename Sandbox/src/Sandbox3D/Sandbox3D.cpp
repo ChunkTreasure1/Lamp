@@ -14,7 +14,7 @@
 #include "Windows/SandboxMeshImporter.h"
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
-#include "Windows/RenderGraph.h"
+#include "Windows/RenderGraphPanel.h"
 #include "Windows/LayerView.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
@@ -43,7 +43,7 @@ namespace Sandbox3D
 		m_pWindows.push_back(new SandboxMeshImporter("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
-		m_pWindows.push_back(new RenderGraph("Render Graph"));
+		m_pWindows.push_back(new RenderGraphPanel("Render Graph"));
 		m_pWindows.push_back(new LayerView("Layer View"));
 
 		SetupFromConfig();
@@ -451,6 +451,14 @@ namespace Sandbox3D
 			shadowSpec.type = PassType::DirShadow;
 			shadowSpec.Name = "DirShadowPass";
 
+			shadowSpec.staticUniforms =
+			{
+				{ "u_Model", UniformType::Mat4, RenderData::Transform }
+			};
+
+			shadowSpec.cullFace = Lamp::CullFace::Front;
+			shadowSpec.renderShader = Lamp::ShaderLibrary::GetShader("dirShadow");
+
 			m_DirShadowBuffer = shadowSpec.TargetFramebuffer;
 
 			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
@@ -696,7 +704,7 @@ namespace Sandbox3D
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
 			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::Quad;
+			passSpec.drawType = Lamp::DrawType::All;
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
@@ -720,6 +728,14 @@ namespace Sandbox3D
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
 			passSpec.Name = "SelectionPass";
 			passSpec.type = PassType::Selection;
+
+			passSpec.staticUniforms =
+			{
+				{ "u_ObjectId", UniformType::Int, RenderData::ID },
+				{ "u_Model", UniformType::Mat4, RenderData::Transform }
+			};
+
+			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("selection");
 
 			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(pass);

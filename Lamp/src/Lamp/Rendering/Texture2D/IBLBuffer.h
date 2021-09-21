@@ -30,7 +30,7 @@ namespace Lamp
 		virtual void BindColorAttachment(uint32_t id, uint32_t i);
 		virtual void BindDepthAttachment(uint32_t id);
 
-		virtual const FramebufferSpecification& GetSpecification() const override { return FramebufferSpecification(); }
+		virtual FramebufferSpecification& GetSpecification() override { return FramebufferSpecification(); }
 
 	private:
 		Ref<Shader> m_EqCubeShader;

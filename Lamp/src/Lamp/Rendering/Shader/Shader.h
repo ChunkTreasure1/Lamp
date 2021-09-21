@@ -17,15 +17,15 @@ namespace Lamp
 {
 	enum class UniformType
 	{
-		Int,
-		Float,
-		Float2,
-		Float3,
-		Float4,
-		Mat3,
-		Mat4,
-		Sampler2D,
-		SamplerCube
+		Int = 0,
+		Float = 1,
+		Float2 = 2,
+		Float3 = 3,
+		Float4 = 4,
+		Mat3 = 5,
+		Mat4 = 6,
+		Sampler2D = 7,
+		SamplerCube = 8
 	};
 
 	enum ShaderType

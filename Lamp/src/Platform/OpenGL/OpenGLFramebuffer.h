@@ -28,7 +28,7 @@ namespace Lamp
 		virtual void BindColorAttachment(uint32_t id, uint32_t i);
 		virtual void BindDepthAttachment(uint32_t id);
 
-		virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification; }
+		virtual FramebufferSpecification& GetSpecification() override { return m_Specification; }
 
 	private:
 		void Invalidate();

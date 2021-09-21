@@ -14,7 +14,7 @@
 				<Param name="Speed" type="Float" value="10.000000"/>
 			</Component>
 		</Entity>
-		<Entity name="TestColl" position="12.605717,4.212146,1.058339" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
+		<Entity name="TestColl" position="12.605717,4.571883,1.058339" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
 			<Component name="MeshComponent">
 				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf"/>
 			</Component>
@@ -61,7 +61,7 @@
 	</Layers>
 	<LevelEnvironment>
 		<GlobalAmbient value="0.000001,0.000001,0.000001"/>
-		<CameraValues position="12.930318,6.516427,5.992765" rotation="603.889282,-29.449993,0.000000" fov="60.000000"/>
+		<CameraValues position="12.930318,6.516427,5.992765" rotation="622.189270,-27.799997,0.000000" fov="60.000000"/>
 	</LevelEnvironment>
 </Level>
 

@@ -90,7 +90,7 @@
     <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\RenderGraph.h">
+    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox3D\Windows\SandboxMeshImporter.h">
@@ -134,7 +134,7 @@
     <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\RenderGraph.cpp">
+    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox3D\Windows\SandboxMeshImporter.cpp">
