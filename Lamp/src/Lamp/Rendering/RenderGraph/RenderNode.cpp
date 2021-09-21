@@ -250,11 +250,51 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		
+		if (ImGui::TreeNode("Framebuffers"))
+		{
+			if (ImGui::Button("Add"))
+			{
+				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0 });
+			}
+
+			uint32_t bufferId = 0;
+			for (auto& [buffer, type, bind, attach] : specification.framebuffers)
+			{
+				std::string bufferTreeId = "Framebuffer##buffer" + std::to_string(bufferId);
+				if (ImGui::TreeNode(bufferTreeId.c_str()))
+				{
+					static const char* textureTypes[] = { "Color", "Depth" };
+					int currentlySelectedType = (int)type;
+					std::string texTypeId = "Texure Type##" + std::to_string(bufferId);
+					if (ImGui::Combo(texTypeId.c_str(), &currentlySelectedType, textureTypes, IM_ARRAYSIZE(textureTypes)))
+					{
+						type = (TextureType)currentlySelectedType;
+					}
+
+					int currBind = bind;
+					if (ImGui::InputInt("Bind slot", &currBind))
+					{
+						bind = (uint32_t)currBind;
+					}
+
+					ImGui::TreePop();
+				}
+
+				bufferId++;
+			}
+
+			ImGui::TreePop();
+		}
 
 		ImGui::PopItemWidth();
 
 		ImNodes::EndNode();
+	}
+
+	void RenderNodePass::Activate(std::any value)
+	{
+		Ref<CameraBase> camera = std::any_cast<Ref<CameraBase>>(value);
+		renderPass->Render(camera);
 	}
 
 	void RenderNodeFramebuffer::DrawNode()
@@ -299,8 +339,6 @@ namespace Lamp
 			if (ImGui::Button("Add"))
 			{
 				specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
-				outputIds.push_back(currId);
-				currId++;
 			}
 
 			ImGui::PushItemWidth(200.f);
@@ -360,16 +398,13 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		int attIndex = 0;
-		for (auto& att : specification.Attachments.Attachments)
+		for (int i = 0; i < outputAttributes.size(); i++)
 		{
-			ImNodes::BeginOutputAttribute(outputIds[attIndex]);
+			ImNodes::BeginOutputAttribute(id + i);
 
-			std::string text = "Attribute" + std::to_string(attIndex);
-			ImGui::Text(text.c_str());
+			ImGui::Text("Output");
 
 			ImNodes::EndOutputAttribute();
-			attIndex++;
 		}
 
 		ImNodes::EndNode();
@@ -378,5 +413,10 @@ namespace Lamp
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();
+	}
+
+
+	void RenderNodeFramebuffer::Activate(std::any value)
+	{
 	}
 }

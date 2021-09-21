@@ -76,7 +76,7 @@ namespace Sandbox3D
 
 			for (auto& link : m_CurrentlyOpenGraph->GetSpecification().links)
 			{
-				ImNodes::Link(link->id, link->outputPass->id, link->inputPass->id);
+				//ImNodes::Link(link->id, link->outputPass->id, link->inputPass->id);
 			}
 		}
 
