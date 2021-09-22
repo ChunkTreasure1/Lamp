@@ -24,5 +24,6 @@ namespace Sandbox3D
 	private:
 		Lamp::Object* m_pSelectedObject = nullptr;
 		Ref<Lamp::Texture2D> m_EntityIcon;
+		Ref<Lamp::Texture2D> m_BrushIcon;
 	};
 }

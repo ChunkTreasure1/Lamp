@@ -73,11 +73,6 @@ namespace Sandbox3D
 			{
 				DrawNode(node);
 			}
-
-			for (auto& link : m_CurrentlyOpenGraph->GetSpecification().links)
-			{
-				//ImNodes::Link(link->id, link->outputPass->id, link->inputPass->id);
-			}
 		}
 
 		ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);

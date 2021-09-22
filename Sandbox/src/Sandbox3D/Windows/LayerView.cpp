@@ -12,7 +12,8 @@ namespace Sandbox3D
 	LayerView::LayerView(std::string_view name)
 		: BaseWindow(name)
 	{
-		m_EntityIcon = ResourceCache::GetAsset<Texture2D>("engine/gizmos/gizmoEntity.png");
+		m_EntityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
+		m_BrushIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/AssetIcons/iconMesh.png");
 	}
 
 	void LayerView::OnEvent(Lamp::Event& e)
@@ -55,7 +56,18 @@ namespace Sandbox3D
 				{
 					startId++;
 					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-					UI::ImageTreeNodeEx(m_EntityIcon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
+
+					Ref<Texture2D> icon;
+					if (auto* brush = dynamic_cast<Lamp::Brush*>(obj))
+					{
+						icon = m_BrushIcon;
+					}
+					else
+					{
+						icon = m_EntityIcon;
+					}
+
+					UI::ImageTreeNodeEx(icon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
 					if (ImGui::BeginDragDropSource())
 					{
 						const uint32_t values[2] = { layer.ID, obj->GetID() };

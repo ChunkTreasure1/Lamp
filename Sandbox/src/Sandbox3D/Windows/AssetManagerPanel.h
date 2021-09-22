@@ -17,5 +17,6 @@ namespace Sandbox3D
 		std::filesystem::path m_currentDirectory;
 		Ref<Lamp::Texture2D> m_directoryTexture;
 		Ref<Lamp::Texture2D> m_fileTexture;
+		std::unordered_map<Lamp::AssetType, Ref<Lamp::Texture2D>> m_Icons;
 	};
 }

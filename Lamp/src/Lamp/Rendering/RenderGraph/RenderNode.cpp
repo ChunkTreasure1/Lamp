@@ -398,14 +398,9 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		for (int i = 0; i < outputAttributes.size(); i++)
-		{
-			ImNodes::BeginOutputAttribute(id + i);
-
-			ImGui::Text("Output");
-
-			ImNodes::EndOutputAttribute();
-		}
+		ImNodes::BeginOutputAttribute(currId + 1);
+		ImGui::Text("Output");
+		ImNodes::EndOutputAttribute();
 
 		ImNodes::EndNode();
 
@@ -414,7 +409,6 @@ namespace Lamp
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();
 	}
-
 
 	void RenderNodeFramebuffer::Activate(std::any value)
 	{

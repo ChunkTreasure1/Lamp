@@ -7,13 +7,17 @@
 
 namespace Sandbox3D
 {
+	using namespace Lamp;
 	static const std::filesystem::path s_assetsPath = "assets";
 
 	AssetManagerPanel::AssetManagerPanel()
 		: m_currentDirectory(s_assetsPath)
 	{
-		m_directoryTexture = Lamp::ResourceCache::GetAsset<Lamp::Texture2D>("engine/textures/ui/directoryIcon.png");
-		m_fileTexture = Lamp::ResourceCache::GetAsset<Lamp::Texture2D>("engine/textures/ui/files.png");
+		m_directoryTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/directoryIcon.png");
+		m_fileTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/files.png");
+
+		m_Icons.emplace(std::make_pair(AssetType::Material, ResourceCache::GetAsset<Texture2D>("engine/textures/ui/assetIcons/iconMaterial.png")));
+		m_Icons.emplace(std::make_pair(AssetType::Mesh, ResourceCache::GetAsset<Texture2D>("engine/textures/ui/assetIcons/iconMesh.png")));
 	}
 
 	void AssetManagerPanel::OnImGuiRender()
@@ -50,7 +54,24 @@ namespace Sandbox3D
 
 			ImGui::PushID(filenameString.c_str());
 
-			Ref<Lamp::Texture2D> icon = directoryEntry.is_directory() ? m_directoryTexture : m_fileTexture;
+			Ref<Lamp::Texture2D> icon;
+			if (directoryEntry.is_directory())
+			{
+				icon = m_directoryTexture;
+			}
+			else
+			{
+				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+				if (m_Icons.find(type) != m_Icons.end())
+				{
+					icon = m_Icons[type];
+				}
+				else
+				{
+					icon = m_fileTexture;
+				}
+			}
+
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 0.f, 0.f, 0.f });
 
 			ImGui::ImageButton((ImTextureID)icon->GetID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
@@ -73,6 +94,7 @@ namespace Sandbox3D
 				}
 				else
 				{
+					//Open asset viewer of editor
 				}
 			}
 

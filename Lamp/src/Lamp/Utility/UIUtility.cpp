@@ -12,7 +12,7 @@ void UI::ImageText(uint32_t texId, const std::string& text)
 bool UI::ImageTreeNodeEx(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
 {
 	ImVec2 size = ImGui::CalcTextSize(fmt);
-	ImGui::Image((ImTextureID)texId, { size.y, size.y });
+	ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
 	ImGui::SameLine();
 	return ImGui::TreeNodeEx(ptr_id, flags, fmt);
 }
