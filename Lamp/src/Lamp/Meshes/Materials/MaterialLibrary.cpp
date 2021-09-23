@@ -31,6 +31,11 @@ namespace Lamp
 		m_Materials.push_back(mat);
 	}
 
+	void MaterialLibrary::AddMaterial(const std::filesystem::path& path)
+	{
+		LoadMaterial(path);
+	}
+
 	void MaterialLibrary::SaveMaterial(const std::string& path, Material& mat)
 	{
 		using namespace rapidxml;
@@ -64,43 +69,19 @@ namespace Lamp
 
 	void MaterialLibrary::LoadMaterials()
 	{
-		using namespace rapidxml;
 		std::vector<std::string> paths;
 		FileSystem::GetAllFilesOfType(paths, ".mtl", "assets");
 
 		for (std::string& path : paths)
 		{
-			xml_document<> file;
-			xml_node<>* pRoot;
+			LoadMaterial(path);
+		}
 
-			std::ifstream matFile(path);
-			std::vector<char> buffer((std::istreambuf_iterator<char>(matFile)), std::istreambuf_iterator<char>());
-			buffer.push_back('\0');
-
-			file.parse<0>(&buffer[0]);
-			pRoot = file.first_node("Material");
-
-			std::string shaderName;
-			std::string name = pRoot->first_attribute("name")->value();
-
-			if (xml_node<>* pShader = pRoot->first_node("Shader"))
-			{
-				shaderName = pShader->first_attribute("name")->value();
-			}
-
-			Material mat(ShaderLibrary::GetShader(shaderName), 0);
-			mat.SetName(name);
-
-			for (auto& texName : mat.GetShader()->GetSpecifications().TextureNames)
-			{
-				if (xml_node<>* pTex = pRoot->first_node(texName.c_str()))
-				{
-					mat.SetTexture(texName, ResourceCache::GetAsset<Texture2D>(pTex->first_attribute("path")->value()));
-				}
-			}
-
-			mat.SetPath(std::filesystem::path(path));
-			AddMaterial(mat);
+		paths.clear();
+		FileSystem::GetAllFilesOfType(paths, ".mtl", "engine");
+		for (std::string& path : paths)
+		{
+			LoadMaterial(path);
 		}
 	}
 
@@ -128,5 +109,42 @@ namespace Lamp
 		}
 
 		return false;
+	}
+
+	void MaterialLibrary::LoadMaterial(const std::filesystem::path& path)
+	{
+		using namespace rapidxml;
+
+		xml_document<> file;
+		xml_node<>* pRoot;
+
+		std::ifstream matFile(path);
+		std::vector<char> buffer((std::istreambuf_iterator<char>(matFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+
+		file.parse<0>(&buffer[0]);
+		pRoot = file.first_node("Material");
+
+		std::string shaderName;
+		std::string name = pRoot->first_attribute("name")->value();
+
+		if (xml_node<>* pShader = pRoot->first_node("Shader"))
+		{
+			shaderName = pShader->first_attribute("name")->value();
+		}
+
+		Material mat(ShaderLibrary::GetShader(shaderName), 0);
+		mat.SetName(name);
+
+		for (auto& texName : mat.GetShader()->GetSpecifications().TextureNames)
+		{
+			if (xml_node<>* pTex = pRoot->first_node(texName.c_str()))
+			{
+				mat.SetTexture(texName, ResourceCache::GetAsset<Texture2D>(pTex->first_attribute("path")->value()));
+			}
+		}
+
+		mat.SetPath(path);
+		AddMaterial(mat);
 	}
 }

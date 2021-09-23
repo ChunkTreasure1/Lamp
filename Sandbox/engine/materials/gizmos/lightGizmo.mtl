@@ -1,0 +1,4 @@
+<Material name="gizmoLight">
+	<gizmo path="engine/textures/gizmos/gizmoLight.png"/>
+	<Shader name="Sprite" path="engine/shaders/sprite.glsl"/>
+</Material>

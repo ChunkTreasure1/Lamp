@@ -17,7 +17,7 @@ namespace Lamp
 	{
 		m_Name = "Entity";
 
-		m_GizmoMaterial = MaterialLibrary::GetMaterial("gizmo");
+		m_GizmoMaterial = MaterialLibrary::GetMaterial("gizmoEntity");
 	}
 
 	void Entity::OnEvent(Event& e)

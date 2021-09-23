@@ -12,7 +12,7 @@ namespace Lamp
 	struct RendererSettings
 	{
 		int SSAOKernelSize = 64;
-		const int SSAOMaxKernelSize = 256; //Needs to be matched with value in ssao shader
+		const int SSAOMaxKernelSize = 64; //Needs to be matched with value in ssao shader
 
 		//SSAO
 		float SSAORadius = 0.5f;

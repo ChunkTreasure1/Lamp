@@ -38,7 +38,8 @@ layout(std140, binding = 1) uniform SSAO
 	int u_KernelSize;
 	float u_Radius;
 	float u_Bias;
-	vec3 u_Samples[256];
+	vec2 u_BufferSize;
+	vec3 u_Samples[64];
 };
 
 in vec2 v_TexCoords;
@@ -52,7 +53,6 @@ struct GBuffer
 
 uniform GBuffer u_GBuffer;
 uniform sampler2D u_Noise;
-uniform vec2 u_BufferSize;
 
 vec2 noiseScale;
 

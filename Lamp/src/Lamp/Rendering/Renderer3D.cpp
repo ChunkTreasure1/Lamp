@@ -83,6 +83,8 @@ namespace Lamp
 		std::vector<glm::vec3> SSAOKernel;
 		//////////////
 
+		glm::vec2 LastViewportSize = glm::vec2(0.f);
+
 		/////Uniform buffers/////
 		struct UBuffer
 		{
@@ -100,7 +102,7 @@ namespace Lamp
 			float Bias;
 			glm::vec2 BufferSize;
 
-			glm::vec3 Samplers[256];
+			glm::vec3 Samplers[64];
 
 		} SSAODataBuffer;
 		Ref<UniformBuffer> SSAODataUniformBuffer;
@@ -263,6 +265,7 @@ namespace Lamp
 			s_pData->SSAODataBuffer.KernelSize = s_RendererSettings.SSAOKernelSize;
 			s_pData->SSAODataBuffer.Radius = s_RendererSettings.SSAORadius;
 			s_pData->SSAODataBuffer.Bias = s_RendererSettings.SSAOBias;
+			s_pData->SSAODataBuffer.BufferSize = s_pData->LastViewportSize;
 			s_pData->SSAODataUniformBuffer->SetData(&s_pData->SSAODataBuffer, sizeof(Renderer3DStorage::SSAODataBuffer));
 		}
 
@@ -285,6 +288,7 @@ namespace Lamp
 	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
 	{
 		s_pData->CurrentRenderPass = &passSpec;
+		s_pData->LastViewportSize = { s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Width, s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Height };
 	}
 
 	void Renderer3D::EndPass()
@@ -643,7 +647,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		RenderSubmitData data;
+		RenderCommandData data;
 		data.transform = transform;
 		data.material = mat;
 		data.id = id;
@@ -656,7 +660,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		RenderSubmitData data;
+		RenderCommandData data;
 		data.transform = transform;
 		data.material = mat;
 		data.id = id;
@@ -668,7 +672,7 @@ namespace Lamp
 	void Renderer3D::SubmitQuadForward(const glm::mat4& transform, const Material& mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
-		RenderSubmitData data;
+		RenderCommandData data;
 		data.transform = transform;
 		data.material = mat;
 		data.id = id;

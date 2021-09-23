@@ -13,9 +13,9 @@ namespace Lamp
 		ID
 	};
 
-	struct RenderSubmitData
+	struct RenderCommandData
 	{
-		RenderSubmitData() {}
+		RenderCommandData() {}
 
 		glm::mat4 transform;
 		Ref<VertexArray> data;
@@ -25,7 +25,7 @@ namespace Lamp
 
 	struct RenderBuffer
 	{
-		std::vector<RenderSubmitData> drawCallsDeferred;
-		std::vector<RenderSubmitData> drawCallsForward;
+		std::vector<RenderCommandData> drawCallsDeferred;
+		std::vector<RenderCommandData> drawCallsForward;
 	};
 }

@@ -31,8 +31,12 @@ namespace Lamp
 
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
 		inline bool GetSaveable() { return m_ShouldBeSaved; }
+
 		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_GraphKeyGraph = graph; }
 		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }
+
+		inline void SetGizmoMaterial(const Material& mat) { m_GizmoMaterial = mat; }
+		inline const Material& GetGizmoMaterial() { return m_GizmoMaterial; }
 
 		//Getting
 		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }

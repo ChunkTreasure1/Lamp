@@ -548,8 +548,7 @@ namespace Sandbox3D
 			{
 				{ "u_GBuffer.position", UniformType::Int, 0 },
 				{ "u_GBuffer.normal", UniformType::Int, 1 },
-				{ "u_Noise", UniformType::Int, 2 },
-				{ "u_BufferSize", UniformType::Float2, glm::vec2(1024.f) }
+				{ "u_Noise", UniformType::Int, 2 }
 			};
 
 

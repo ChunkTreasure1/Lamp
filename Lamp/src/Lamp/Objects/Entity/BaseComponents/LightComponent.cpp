@@ -28,7 +28,7 @@ namespace Lamp
 			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->Falloff) },
 			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->ShadowBuffer->GetNearPlane()) },
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->Color) }
-			});
+		});
 	}
 
 	LightComponent::~LightComponent()
