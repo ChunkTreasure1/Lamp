@@ -255,6 +255,13 @@ namespace Lamp
 			if (ImGui::Button("Add"))
 			{
 				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0 });
+				RenderInputAttribute input;
+				input.data = (uint32_t)(specification.framebuffers.size() - 1);
+				input.pNode = this;
+				input.name = "Framebuffer" + std::to_string(specification.framebuffers.size());
+				input.id = ++currId;
+
+				inputs.push_back(input);
 			}
 
 			uint32_t bufferId = 0;
@@ -286,6 +293,15 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
+		for (auto& input : inputs)
+		{
+			ImNodes::BeginInputAttribute(input.id);
+
+			ImGui::Text(input.name.c_str());
+
+			ImNodes::EndInputAttribute();
+		}
+
 		ImGui::PopItemWidth();
 
 		ImNodes::EndNode();
@@ -295,6 +311,19 @@ namespace Lamp
 	{
 		Ref<CameraBase> camera = std::any_cast<Ref<CameraBase>>(value);
 		renderPass->Render(camera);
+	}
+
+	void RenderNodeFramebuffer::Start()
+	{
+		for (auto& link : links)
+		{
+			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+			{
+				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
+				auto& [buffer, type, bindId, attachId] = passNode->renderPass->GetSpecification().framebuffers[index];
+				buffer = framebuffer;
+			}
+		}
 	}
 
 	void RenderNodeFramebuffer::DrawNode()
@@ -398,9 +427,12 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		ImNodes::BeginOutputAttribute(currId + 1);
-		ImGui::Text("Output");
-		ImNodes::EndOutputAttribute();
+		for (auto& output : outputs)
+		{
+			ImNodes::BeginOutputAttribute(output.id);
+			ImGui::Text(output.name.c_str());
+			ImNodes::EndOutputAttribute();
+		}
 
 		ImNodes::EndNode();
 
@@ -408,9 +440,5 @@ namespace Lamp
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();
-	}
-
-	void RenderNodeFramebuffer::Activate(std::any value)
-	{
 	}
 }

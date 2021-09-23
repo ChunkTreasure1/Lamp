@@ -28,6 +28,14 @@ namespace Sandbox3D
 		m_CurrentlyOpenGraph = graph;
 	}
 
+	void RenderGraphPanel::Start()
+	{
+		for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
+		{
+			node->Start();
+		}
+	}
+
 	bool RenderGraphPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		if (!m_IsOpen)
@@ -73,10 +81,16 @@ namespace Sandbox3D
 			{
 				DrawNode(node);
 			}
+
+			for (auto& link : m_CurrentlyOpenGraph->GetSpecification().links)
+			{
+				ImNodes::Link(link->id, link->pOutput->id, link->pInput->id);
+			}
 		}
 
 		ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);
 		ImNodes::EndNodeEditor();
+		CheckLinkCreated();
 
 		ImGui::End();
 	}
@@ -109,5 +123,96 @@ namespace Sandbox3D
 	void RenderGraphPanel::DrawNode(Ref<Lamp::RenderNode> node)
 	{
 		node->DrawNode();
+	}
+
+	void RenderGraphPanel::CheckLinkCreated()
+	{
+		if (!m_CurrentlyOpenGraph)
+		{
+			return;
+		}
+
+		int startAttr, endAttr;
+		if (ImNodes::IsLinkCreated(&startAttr, &endAttr))
+		{
+			RenderNode* pStartNode = nullptr;
+			RenderNode* pEndNode = nullptr;
+
+			RenderAttribute* pStartAttr = nullptr;
+			RenderAttribute* pEndAttr = nullptr;
+
+			for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
+			{
+				for (uint32_t i = 0; i < node->inputs.size(); i++)
+				{
+					if (node->inputs[i].id == startAttr)
+					{
+						pStartNode = node.get();
+						pStartAttr = &node->inputs[i];
+
+						break;
+					}
+
+					if (node->inputs[i].id == endAttr)
+					{
+						pEndNode = node.get();
+						pEndAttr = &node->inputs[i];
+
+						break;
+					}
+				}
+
+				for (uint32_t i = 0; i < node->outputs.size(); i++)
+				{
+					if (node->outputs[i].id == startAttr)
+					{
+						pStartNode = node.get();
+						pStartAttr = &node->outputs[i];
+
+						break;
+					}
+
+					if (node->outputs[i].id == endAttr)
+					{
+						pEndNode = node.get();
+						pEndAttr = &node->outputs[i];
+
+						break;
+					}
+				}
+			}
+
+			if (pStartAttr && pEndAttr)
+			{
+				Ref<RenderLink> link = CreateRef<RenderLink>();
+				link->id = m_CurrentlyOpenGraph->GetCurrentId()++;
+
+				if (auto p = dynamic_cast<RenderInputAttribute*>(pStartAttr))
+				{
+					link->pInput = p;
+				}
+				if (auto p = dynamic_cast<RenderOutputAttribute*>(pStartAttr))
+				{
+					link->pOutput = p;
+				}
+
+				if (auto p = dynamic_cast<RenderInputAttribute*>(pEndAttr))
+				{
+					link->pInput = p;
+				}
+				if (auto p = dynamic_cast<RenderOutputAttribute*>(pEndAttr))
+				{
+					link->pOutput = p;
+				}
+
+				pStartNode->links.push_back(link);
+				pEndNode->links.push_back(link);
+
+				pStartAttr->links.push_back(link);
+				pEndAttr->links.push_back(link);
+
+				m_CurrentlyOpenGraph->GetSpecification().links.push_back(link);
+			}
+		}
 	}
 }

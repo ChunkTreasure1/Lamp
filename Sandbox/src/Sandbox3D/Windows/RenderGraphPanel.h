@@ -13,6 +13,7 @@ namespace Sandbox3D
 		virtual void OnEvent(Lamp::Event& e) override;
 
 		void Open(Ref<Lamp::RenderGraph> graph);
+		void Start();
 		inline Ref<Lamp::RenderGraph> GetOpenGraph() { return m_CurrentlyOpenGraph; }
 
 	private:
@@ -23,6 +24,7 @@ namespace Sandbox3D
 		void UpdateNodeWindow();
 
 		void DrawNode(Ref<Lamp::RenderNode> node);
+		void CheckLinkCreated();
 
 	private:
 		Ref<Lamp::RenderGraph> m_CurrentlyOpenGraph;
