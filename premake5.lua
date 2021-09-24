@@ -56,7 +56,11 @@ project "Lamp"
 		"%{prj.name}/vendor/stb_image/stb/**.h",
 		"%{prj.name}/vendor/stb_image/stb/**.cpp",
 		"%{prj.name}/vendor/imnodes/**.h",
-		"%{prj.name}/vendor/imnodes/**.cpp"
+		"%{prj.name}/vendor/imnodes/**.cpp",
+		
+		"%{prj.name}/vendor/yaml-cpp/src/**.cpp",
+		"%{prj.name}/vendor/yaml-cpp/src/**.h",
+		"%{prj.name}/vendor/yaml-cpp/include/**.h",
 	}
 
 	includedirs
@@ -73,7 +77,8 @@ project "Lamp"
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
 		"%{prj.name}/vendor/PhysX/include",
-		"%{prj.name}/vendor/imnodes/"
+		"%{prj.name}/vendor/imnodes/",
+		"%{prj.name}/vendor/yaml-cpp/include/",
 	}
 	
 	links 
@@ -168,7 +173,8 @@ project "Sandbox"
 		"Game/src",
 		"Lamp/vendor/ImGuizmo/include",
 		"Lamp/vendor/bullet/src",
-		"Lamp/vendor/imnodes/"
+		"Lamp/vendor/imnodes/",
+		"Lamp/vendor/yaml-cpp/include/",
 	}
 	
 	libdirs

@@ -105,6 +105,7 @@ namespace Sandbox3D
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
+			node->Initialize();
 			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
@@ -114,6 +115,30 @@ namespace Sandbox3D
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
+			node->Initialize();
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+		}
+
+		if (ImGui::Button("Create texture") && m_CurrentlyOpenGraph)
+		{
+			Ref<RenderNode> node = CreateRef<RenderNodeTexture>();
+			m_CurrentlyOpenGraph->AddNode(node);
+			node->id = m_CurrentlyOpenGraph->GetCurrentId();
+			node->currId = node->id;
+			node->Initialize();
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+		}
+
+		if (ImGui::Button("Create Dynamic Uniform") && m_CurrentlyOpenGraph)
+		{
+			Ref<RenderNodeDynamicUniform> node = CreateRef<RenderNodeDynamicUniform>();
+			m_CurrentlyOpenGraph->AddNode(node);
+			node->dataName = "Exposure";
+			node->pData = RegisterData(&Renderer3D::GetSettings().HDRExposure);
+			node->uniformType = Lamp::UniformType::Float;
+			node->id = m_CurrentlyOpenGraph->GetCurrentId();
+			node->currId = node->id;
+			node->Initialize();
 			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
@@ -145,18 +170,18 @@ namespace Sandbox3D
 			{
 				for (uint32_t i = 0; i < node->inputs.size(); i++)
 				{
-					if (node->inputs[i].id == startAttr)
+					if (node->inputs[i]->id == startAttr)
 					{
 						pStartNode = node.get();
-						pStartAttr = &node->inputs[i];
+						pStartAttr = node->inputs[i].get();
 
 						break;
 					}
 
-					if (node->inputs[i].id == endAttr)
+					if (node->inputs[i]->id == endAttr)
 					{
 						pEndNode = node.get();
-						pEndAttr = &node->inputs[i];
+						pEndAttr = node->inputs[i].get();
 
 						break;
 					}
@@ -164,18 +189,18 @@ namespace Sandbox3D
 
 				for (uint32_t i = 0; i < node->outputs.size(); i++)
 				{
-					if (node->outputs[i].id == startAttr)
+					if (node->outputs[i]->id == startAttr)
 					{
 						pStartNode = node.get();
-						pStartAttr = &node->outputs[i];
+						pStartAttr = node->outputs[i].get();
 
 						break;
 					}
 
-					if (node->outputs[i].id == endAttr)
+					if (node->outputs[i]->id == endAttr)
 					{
 						pEndNode = node.get();
-						pEndAttr = &node->outputs[i];
+						pEndAttr = node->outputs[i].get();
 
 						break;
 					}
@@ -184,34 +209,37 @@ namespace Sandbox3D
 
 			if (pStartAttr && pEndAttr)
 			{
-				Ref<RenderLink> link = CreateRef<RenderLink>();
-				link->id = m_CurrentlyOpenGraph->GetCurrentId()++;
-
-				if (auto p = dynamic_cast<RenderInputAttribute*>(pStartAttr))
+				if (pStartAttr->type == pEndAttr->type)
 				{
-					link->pInput = p;
-				}
-				if (auto p = dynamic_cast<RenderOutputAttribute*>(pStartAttr))
-				{
-					link->pOutput = p;
-				}
+					Ref<RenderLink> link = CreateRef<RenderLink>();
+					link->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
-				if (auto p = dynamic_cast<RenderInputAttribute*>(pEndAttr))
-				{
-					link->pInput = p;
+					if (auto p = dynamic_cast<RenderInputAttribute*>(pStartAttr))
+					{
+						link->pInput = p;
+					}
+					if (auto p = dynamic_cast<RenderOutputAttribute*>(pStartAttr))
+					{
+						link->pOutput = p;
+					}
+
+					if (auto p = dynamic_cast<RenderInputAttribute*>(pEndAttr))
+					{
+						link->pInput = p;
+					}
+					if (auto p = dynamic_cast<RenderOutputAttribute*>(pEndAttr))
+					{
+						link->pOutput = p;
+					}
+
+					pStartNode->links.push_back(link);
+					pEndNode->links.push_back(link);
+
+					pStartAttr->links.push_back(link);
+					pEndAttr->links.push_back(link);
+
+					m_CurrentlyOpenGraph->GetSpecification().links.push_back(link);
 				}
-				if (auto p = dynamic_cast<RenderOutputAttribute*>(pEndAttr))
-				{
-					link->pOutput = p;
-				}
-
-				pStartNode->links.push_back(link);
-				pEndNode->links.push_back(link);
-
-				pStartAttr->links.push_back(link);
-				pEndAttr->links.push_back(link);
-
-				m_CurrentlyOpenGraph->GetSpecification().links.push_back(link);
 			}
 		}
 	}

@@ -9,6 +9,13 @@ namespace Lamp
 	struct RenderNode;
 	struct RenderLink;
 
+	enum class RenderAttributeType
+	{
+		Texture,
+		Framebuffer,
+		DynamicUniform
+	};
+
 	struct RenderAttribute
 	{
 		virtual ~RenderAttribute() {}
@@ -17,6 +24,7 @@ namespace Lamp
 		RenderNode* pNode;
 		uint32_t id;
 		std::string name;
+		RenderAttributeType type;
 	};
 
 	struct RenderOutputAttribute : public RenderAttribute
@@ -25,6 +33,7 @@ namespace Lamp
 	struct RenderInputAttribute : public RenderAttribute
 	{
 		std::any data;
+		void* pData = nullptr;
 	};
 
 	struct RenderLink
@@ -44,12 +53,13 @@ namespace Lamp
 		glm::vec2 position;
 	
 		std::vector<Ref<RenderLink>> links;
-		std::vector<RenderOutputAttribute> outputs;
-		std::vector<RenderInputAttribute> inputs;
+		std::vector<Ref<RenderOutputAttribute>> outputs;
+		std::vector<Ref<RenderInputAttribute>> inputs;
 
 		uint32_t currId;
 		uint32_t id;
 
+		virtual void Initialize() = 0;
 		virtual void Start() = 0;
 		virtual void DrawNode() = 0;
 		virtual void Activate(std::any value) = 0;
@@ -59,7 +69,6 @@ namespace Lamp
 	{
 		RenderNodePass()
 		{
-			renderPass = CreateRef<RenderPass>();
 		}
 
 		virtual ~RenderNodePass() override {}
@@ -67,7 +76,8 @@ namespace Lamp
 		std::string name;
 		Ref<RenderPass> renderPass;
 
-		virtual void Start() override {}
+		virtual void Initialize() override;
+		virtual void Start() override;
 		virtual void DrawNode() override;
 		virtual void Activate(std::any value) override; 
 	
@@ -79,22 +89,50 @@ namespace Lamp
 	{
 		RenderNodeFramebuffer()
 		{
-			framebuffer = Framebuffer::Create(FramebufferSpecification());
-			
-			RenderOutputAttribute output;
-			output.pNode = this;
-			output.name = "Output";
-			output.id = ++currId;
 
-			outputs.push_back(output);
 		}
 
 		virtual ~RenderNodeFramebuffer() override {}
 
 		Ref<Framebuffer> framebuffer;
 
+		virtual void Initialize() override;
 		virtual void Start() override;
 		virtual void DrawNode() override;
 		virtual void Activate(std::any value) override {}
+	};
+
+	struct RenderNodeTexture : public RenderNode
+	{
+		RenderNodeTexture()
+		{
+
+		}
+
+		virtual void Initialize() override;
+		virtual void Start() override;
+		virtual void DrawNode() override;
+		virtual void Activate(std::any value) override {}
+
+		Ref<Texture2D> texture;
+
+	private:
+		void GetTexture();
+	};
+
+	struct RenderNodeDynamicUniform : public RenderNode
+	{
+		virtual void Initialize() override;
+		virtual void Start() override;
+		virtual void DrawNode() override;
+		virtual void Activate(std::any value) override {}
+
+		void* pData = nullptr;
+		UniformType uniformType;
+		std::string dataName;
+		
+	private:
+		std::vector<const char*> m_Uniforms;
+		int m_CurrentlySelectedUniform = 0;
 	};
 }

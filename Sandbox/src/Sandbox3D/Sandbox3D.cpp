@@ -554,8 +554,6 @@ namespace Sandbox3D
 				{ "u_Noise", UniformType::Int, 2 }
 			};
 
-
-
 			passSpec.framebuffers =
 			{
 				{ m_GBuffer, TextureType::Color, 0, 0 },

@@ -6,6 +6,9 @@
 #include <imnodes.h>
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Utility/PlatformUtility.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
+#include "DynamicUniformRegistry.h"
 
 namespace Lamp
 {
@@ -37,6 +40,23 @@ namespace Lamp
 					return -1;
 			}
 		}
+	}
+
+	void RenderNodePass::Initialize()
+	{
+		renderPass = CreateRef<RenderPass>();
+
+		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
+		output->id = ++currId;
+		output->name = "Framebuffer";
+		output->pNode = this;
+		output->type = RenderAttributeType::Framebuffer;
+
+		outputs.push_back(output);
+	}
+
+	void RenderNodePass::Start()
+	{
 	}
 
 	void RenderNodePass::DrawNode()
@@ -158,12 +178,14 @@ namespace Lamp
 
 				ImGui::SameLine();
 
+				std::string inId = "##value" + std::to_string(i);
 				switch (type)
 				{
 					case UniformType::Int:
 					{
 						int data = std::any_cast<int>(value);
-						if (ImGui::InputInt("##int", &data))
+						
+						if (ImGui::InputInt(inId.c_str(), &data))
 						{
 							value = data;
 						}
@@ -173,7 +195,7 @@ namespace Lamp
 					case UniformType::Float:
 					{
 						float data = std::any_cast<float>(value);
-						if (ImGui::InputFloat("##float", &data))
+						if (ImGui::InputFloat(inId.c_str(), &data))
 						{
 							value = data;
 						}
@@ -183,7 +205,7 @@ namespace Lamp
 					case UniformType::Float2:
 					{
 						glm::vec2 data = std::any_cast<glm::vec2>(value);
-						if (ImGui::InputFloat2("##float2", glm::value_ptr(data)))
+						if (ImGui::InputFloat2(inId.c_str(), glm::value_ptr(data)))
 						{
 							value = data;
 						}
@@ -193,7 +215,7 @@ namespace Lamp
 					case UniformType::Float3:
 					{
 						glm::vec3 data = std::any_cast<glm::vec3>(value);
-						if (ImGui::InputFloat3("##float3", glm::value_ptr(data)))
+						if (ImGui::InputFloat3(inId.c_str(), glm::value_ptr(data)))
 						{
 							value = data;
 						}
@@ -203,7 +225,7 @@ namespace Lamp
 					case UniformType::Float4:
 					{
 						glm::vec4 data = std::any_cast<glm::vec4>(value);
-						if (ImGui::InputFloat4("##float4", glm::value_ptr(data)))
+						if (ImGui::InputFloat4(inId.c_str(), glm::value_ptr(data)))
 						{
 							value = data;
 						}
@@ -227,7 +249,7 @@ namespace Lamp
 					case UniformType::Sampler2D:
 					{
 						int data = std::any_cast<int>(value);
-						if (ImGui::InputInt("##int", &data))
+						if (ImGui::InputInt(inId.c_str(), &data))
 						{
 							value = data;
 						}
@@ -237,7 +259,7 @@ namespace Lamp
 					case UniformType::SamplerCube:
 					{
 						int data = std::any_cast<int>(value);
-						if (ImGui::InputInt("##int", &data))
+						if (ImGui::InputInt(inId.c_str(), &data))
 						{
 							value = data;
 						}
@@ -249,17 +271,83 @@ namespace Lamp
 
 			ImGui::TreePop();
 		}
+		
+		if (ImGui::TreeNode("Dynamic Uniforms"))
+		{
+			if (ImGui::Button("Create"))
+			{
+				specification.dynamicUniforms.push_back(std::make_tuple("Uniform", UniformType::Int, nullptr));
+				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+
+				input->pNode = this;
+				input->name = "Unifrom" + std::to_string(specification.dynamicUniforms.size() - 1);
+				input->id = ++currId;
+				input->type = RenderAttributeType::DynamicUniform;
+
+				inputs.push_back(input);
+			}
+
+			for (int i = 0; i < specification.dynamicUniforms.size(); i++)
+			{
+				ImGui::PushItemWidth(100.f);
+
+				auto& [name, type, data] = specification.dynamicUniforms[i];
+
+				std::string nameId = "##dynUniformName" + std::to_string(i);
+				ImGui::InputText(nameId.c_str(), &name);
+
+				ImGui::PopItemWidth();
+			}
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Textures"))
+		{
+			if (ImGui::Button("Add"))
+			{
+				specification.textures.push_back(std::make_pair(nullptr, 0));
+				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				input->data = (uint32_t)(specification.textures.size() - 1);
+				input->pNode = this;
+				input->name = "Texture" + std::to_string(specification.textures.size() - 1);
+				input->id = ++currId;
+				input->type = RenderAttributeType::Texture;
+
+				inputs.push_back(input);
+			}
+
+			uint32_t texId = 0;
+			for (auto& [texture, bindId] : specification.textures)
+			{
+				std::string texTreeId = "Texture##tex" + std::to_string(texId);
+				if (ImGui::TreeNode(texTreeId.c_str()))
+				{
+					int currBindSlot = bindId;
+					if (ImGui::InputInt("Bind slot", &currBindSlot))
+					{
+						bindId = currBindSlot;
+					}
+
+					ImGui::TreePop();
+				}
+
+				texId++;
+			}
+
+			ImGui::TreePop();
+		}
 
 		if (ImGui::TreeNode("Framebuffers"))
 		{
 			if (ImGui::Button("Add"))
 			{
 				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0 });
-				RenderInputAttribute input;
-				input.data = (uint32_t)(specification.framebuffers.size() - 1);
-				input.pNode = this;
-				input.name = "Framebuffer" + std::to_string(specification.framebuffers.size());
-				input.id = ++currId;
+				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				input->data = (uint32_t)(specification.framebuffers.size() - 1);
+				input->pNode = this;
+				input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
+				input->id = ++currId;
+				input->type = RenderAttributeType::Framebuffer;
 
 				inputs.push_back(input);
 			}
@@ -293,13 +381,42 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
+		if (ImGui::TreeNode("Framebuffer commands"))
+		{
+			if (ImGui::Button("Add"))
+			{
+				//specification.framebufferCommands.push_back(std::make_tuple(nullptr, nullptr, FramebufferCommand::Copy));
+
+			}
+
+			for (auto&[main, secondary, command] : specification.framebufferCommands)
+			{
+
+			}
+
+			ImGui::TreePop();
+		}
+
+		ImGui::TextColored(ImVec4(0.38, 0.42, 1, 1), "Inputs");
+
 		for (auto& input : inputs)
 		{
-			ImNodes::BeginInputAttribute(input.id);
+			ImNodes::BeginInputAttribute(input->id);
 
-			ImGui::Text(input.name.c_str());
+			ImGui::Text(input->name.c_str());
 
 			ImNodes::EndInputAttribute();
+		}
+
+		ImGui::TextColored(ImVec4(0.101, 1, 0.313, 1), "Outputs");
+
+		for (auto& output : outputs)
+		{
+			ImNodes::BeginOutputAttribute(output->id);
+
+			ImGui::Text(output->name.c_str());
+
+			ImNodes::EndOutputAttribute();
 		}
 
 		ImGui::PopItemWidth();
@@ -311,6 +428,19 @@ namespace Lamp
 	{
 		Ref<CameraBase> camera = std::any_cast<Ref<CameraBase>>(value);
 		renderPass->Render(camera);
+	}
+
+	void RenderNodeFramebuffer::Initialize()
+	{
+		framebuffer = Framebuffer::Create(FramebufferSpecification());
+
+		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
+		output->pNode = this;
+		output->name = "Output";
+		output->id = ++currId;
+		output->type = RenderAttributeType::Framebuffer;
+
+		outputs.push_back(output);
 	}
 
 	void RenderNodeFramebuffer::Start()
@@ -429,14 +559,165 @@ namespace Lamp
 
 		for (auto& output : outputs)
 		{
-			ImNodes::BeginOutputAttribute(output.id);
-			ImGui::Text(output.name.c_str());
+			ImNodes::BeginOutputAttribute(output->id);
+			ImGui::Text(output->name.c_str());
 			ImNodes::EndOutputAttribute();
 		}
 
 		ImNodes::EndNode();
 
 		ImGui::PopItemWidth();
+		ImNodes::PopColorStyle();
+		ImNodes::PopColorStyle();
+		ImNodes::PopColorStyle();
+	}
+
+	void RenderNodeTexture::Initialize()
+	{
+		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
+		output->pNode = this;
+		output->name = "Output";
+		output->id = ++currId;
+		output->type = RenderAttributeType::Texture;
+
+		outputs.push_back(output);
+	}
+
+	void RenderNodeTexture::Start()
+	{
+		for (auto& link : links)
+		{
+			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+			{
+				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
+				auto& [passTex, bindId] = passNode->renderPass->GetSpecification().textures[index];
+				passTex = texture;
+			}
+		}
+	}
+
+	void RenderNodeTexture::DrawNode()
+	{
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(62, 189, 100, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(100, 181, 124, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(100, 181, 124, 255));
+
+		ImNodes::BeginNode(id);
+
+		ImNodes::BeginNodeTitleBar();
+		ImGui::Text("Texture node");
+		ImNodes::EndNodeTitleBar();
+
+		ImGui::Text("Texture:");
+		if (texture)
+		{
+			if (ImGui::ImageButton((ImTextureID)texture->GetID(), { 100, 100 }, { 0, 1 }, { 1, 0 }))
+			{
+				GetTexture();
+			}
+		}
+		else
+		{
+			if (ImGui::Button("Choose a texture!", { 128, 128 }))
+			{
+				GetTexture();
+			}
+		}
+
+		for (auto& output : outputs)
+		{
+			ImNodes::BeginOutputAttribute(output->id);
+			ImGui::Text("Output");
+			ImNodes::EndOutputAttribute();
+		}
+
+		ImNodes::EndNode();
+
+		ImNodes::PopColorStyle();
+		ImNodes::PopColorStyle();
+		ImNodes::PopColorStyle();
+	}
+
+	void RenderNodeTexture::GetTexture()
+	{
+		std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
+		if (!path.empty())
+		{
+			Ref<Texture2D> tex = ResourceCache::GetAsset<Texture2D>(path);
+			if (tex->IsValid())
+			{
+				texture = tex;
+			}
+		}
+	}
+
+	void RenderNodeDynamicUniform::Initialize()
+	{
+		auto& uniforms = DynamicUniformRegistry::s_Uniforms();
+		for (auto& uniform : uniforms)
+		{
+			auto& [name, type, data] = uniform;
+
+			m_Uniforms.push_back(name.c_str());
+		}
+
+		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
+		output->pNode = this;
+		output->name = "Output";
+		output->id = ++currId;
+		output->type = RenderAttributeType::DynamicUniform;
+
+		outputs.push_back(output);
+	}
+
+	void RenderNodeDynamicUniform::Start()
+	{
+		for (auto& link : links)
+		{
+			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+			{
+				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
+				auto& [name, type, data] = passNode->renderPass->GetSpecification().dynamicUniforms[index];
+				data = pData;
+				type = uniformType;
+			}
+		}
+	}
+
+	void RenderNodeDynamicUniform::DrawNode()
+	{
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(153, 64, 173, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(159, 94, 173, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(159, 94, 173, 255));
+
+		ImNodes::BeginNode(id);
+
+		ImNodes::BeginNodeTitleBar();
+		ImGui::Text("Dynamic Uniform node");
+		ImNodes::EndNodeTitleBar();
+
+		ImGui::PushItemWidth(150.f);
+
+		if (ImGui::Combo("Uniform", &m_CurrentlySelectedUniform, m_Uniforms.data(), m_Uniforms.size()))
+		{
+			auto& [name, uType, data] = DynamicUniformRegistry::s_Uniforms()[m_CurrentlySelectedUniform];
+			uniformType = uType;
+			pData = data;
+		}
+
+		for (auto& output : outputs)
+		{
+			ImNodes::BeginOutputAttribute(output->id);
+
+			ImGui::Text(output->name.c_str());
+
+			ImNodes::EndOutputAttribute();
+		}
+
+		ImGui::PopItemWidth();
+
+		ImNodes::EndNode();
+
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();

@@ -18,6 +18,7 @@
 #include "UniformBuffer.h"
 #include "Lamp/Level/Level.h"
 #include "Texture2D/IBLBuffer.h"
+#include "RenderGraph/DynamicUniformRegistry.h"
 
 #include <random>
 
@@ -241,6 +242,13 @@ namespace Lamp
 		s_pData->DataUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DStorage::UBuffer), 0);
 		s_pData->SSAODataUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DStorage::SSAOUniformBuffer), 1);
 		////////////////////////
+
+		//Setup dynamic uniforms
+		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure));
+		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma));
+		DynamicUniformRegistry::AddUniform("Directional light direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position));
+		DynamicUniformRegistry::AddUniform("Directional light color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color));
+		DynamicUniformRegistry::AddUniform("Directional light intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity));
 	}
 
 	void Renderer3D::Shutdown()

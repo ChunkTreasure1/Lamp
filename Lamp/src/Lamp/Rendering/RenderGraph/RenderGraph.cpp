@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "RenderGraph.h"
 
+#include <yaml-cpp/yaml.h>
+
 namespace Lamp
 {
 	RenderGraph::RenderGraph()
