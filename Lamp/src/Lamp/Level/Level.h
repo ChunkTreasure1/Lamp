@@ -46,7 +46,7 @@ namespace Lamp
 		LevelEnvironment env;
 	};
 
-	class Level
+	class Level : public Asset
 	{
 	public:
 		Level(const std::string& name, const std::string& path)

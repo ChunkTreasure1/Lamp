@@ -9,6 +9,14 @@ namespace Lamp
 	struct RenderNode;
 	struct RenderLink;
 
+	enum class RenderNodeType
+	{
+		Pass = 0,
+		Framebuffer = 1,
+		Texture = 2,
+		DynamicUniform = 3
+	};
+
 	enum class RenderAttributeType
 	{
 		Texture,
@@ -51,7 +59,7 @@ namespace Lamp
 		virtual ~RenderNode() {}
 
 		glm::vec2 position;
-	
+
 		std::vector<Ref<RenderLink>> links;
 		std::vector<Ref<RenderOutputAttribute>> outputs;
 		std::vector<Ref<RenderInputAttribute>> inputs;
@@ -63,6 +71,7 @@ namespace Lamp
 		virtual void Start() = 0;
 		virtual void DrawNode() = 0;
 		virtual void Activate(std::any value) = 0;
+		virtual RenderNodeType GetNodeType() = 0;
 	};
 
 	struct RenderNodePass : public RenderNode
@@ -79,8 +88,9 @@ namespace Lamp
 		virtual void Initialize() override;
 		virtual void Start() override;
 		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override; 
-	
+		virtual void Activate(std::any value) override;
+		virtual RenderNodeType GetNodeType() { return RenderNodeType::Pass; }
+
 	private:
 		std::vector<const char*> m_Shaders;
 	};
@@ -100,6 +110,7 @@ namespace Lamp
 		virtual void Start() override;
 		virtual void DrawNode() override;
 		virtual void Activate(std::any value) override {}
+		virtual RenderNodeType GetNodeType() { return RenderNodeType::Framebuffer; }
 	};
 
 	struct RenderNodeTexture : public RenderNode
@@ -113,6 +124,7 @@ namespace Lamp
 		virtual void Start() override;
 		virtual void DrawNode() override;
 		virtual void Activate(std::any value) override {}
+		virtual RenderNodeType GetNodeType() { return RenderNodeType::Texture; }
 
 		Ref<Texture2D> texture;
 
@@ -126,11 +138,12 @@ namespace Lamp
 		virtual void Start() override;
 		virtual void DrawNode() override;
 		virtual void Activate(std::any value) override {}
+		virtual RenderNodeType GetNodeType() { return RenderNodeType::DynamicUniform; }
 
 		void* pData = nullptr;
 		UniformType uniformType;
 		std::string dataName;
-		
+
 	private:
 		std::vector<const char*> m_Uniforms;
 		int m_CurrentlySelectedUniform = 0;

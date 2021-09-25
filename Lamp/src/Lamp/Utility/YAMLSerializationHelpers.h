@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <filesystem>
 #include "yaml-cpp/yaml.h"
+#include "Lamp/AssetSystem/Asset.h"
 
 namespace YAML
 {
@@ -82,6 +83,23 @@ namespace YAML
 			rhs.w = node[3].as<float>();
 			return true;
 		}
+	};
+
+	template<>
+	struct convert<Lamp::AssetHandle>
+	{
+		static Node encode(const Lamp::AssetHandle& rhs)
+		{
+			Node node;
+			node.push_back((uint64_t)rhs);
+			return node;
+		};
+
+		static bool decode(const Node& node, Lamp::AssetHandle& v)
+		{
+			v = node.as<uint64_t>();
+			return true;
+		};
 	};
 }
 

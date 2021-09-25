@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Lamp/Core/UUID.h"
 #include "Lamp/Core/Core.h"
 
 #include <filesystem>
@@ -41,11 +42,13 @@ namespace Lamp
 		{ ".rendergraph", AssetType::RenderGraph }
 	};
 
+	using AssetHandle = UUID;
 
 	class Asset
 	{
 	public:
-		uint64_t Handle;
+		AssetHandle Handle;
+
 		uint16_t Flags = (uint16_t)AssetFlag::None;
 		std::filesystem::path Path;
 	

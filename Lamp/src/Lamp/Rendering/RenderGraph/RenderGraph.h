@@ -9,7 +9,6 @@ namespace Lamp
 		std::vector<Ref<Lamp::RenderLink>> links;
 		std::vector<Ref<Lamp::RenderNode>> nodes;
 		std::string name;
-		std::filesystem::path path;
 	};
 
 	class RenderGraph : public Asset

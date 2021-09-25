@@ -11,6 +11,8 @@
 
 #include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Meshes/Materials/MaterialLibrary.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
 {
@@ -98,11 +100,11 @@ namespace Lamp
 		using namespace rapidxml;
 
 		LP_CORE_INFO("Saving mesh {0}", mesh->GetName());
-		
+
 		std::ofstream file;
 		file.open(asset->Path.string() + ".spec");
 
-		xml_document<> doc;		
+		xml_document<> doc;
 		xml_node<>* pRoot = doc.allocate_node(node_element, "Geometry");
 		pRoot->append_attribute(doc.allocate_attribute("name", mesh->GetName().c_str()));
 
@@ -158,7 +160,7 @@ namespace Lamp
 
 		file << doc;
 		file.close();
-	
+
 		LP_CORE_INFO("Saved model {0}!", mesh->GetName());
 	}
 
@@ -199,7 +201,7 @@ namespace Lamp
 		AABB boundingBox;
 
 		name = pRootNode->first_attribute("name")->value();
-		
+
 		//Read meshes
 		if (xml_node<>* pMeshes = pRootNode->first_node("Meshes"))
 		{
@@ -254,7 +256,7 @@ namespace Lamp
 				std::string name;
 				name = pMaterial->first_attribute("name")->value();
 
-				int id; 
+				int id;
 				GetValue(pMaterial->first_attribute("id")->value(), id);
 				if (MaterialLibrary::IsMaterialLoaded(name))
 				{
@@ -282,7 +284,7 @@ namespace Lamp
 			boundingBox.Max = boundingBox.StartMax;
 			boundingBox.Min = boundingBox.StartMin;
 		}
-		
+
 		asset = CreateRef<Mesh>(name, meshes, materials, boundingBox);
 		asset->Path = path;
 
@@ -294,7 +296,27 @@ namespace Lamp
 		asset = Texture2D::Create(path);
 		asset->Path = path;
 
+
 		return true;
+	}
+
+	void TextureLoader::Save(const Ref<Asset>& asset) const
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "TextureData" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+
+			LP_SERIALIZE_PROPERTY(handle, asset->Handle, out);
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndMap;
+		std::ofstream fout(asset->Path / ".spec");
+		fout << out.c_str();
+		fout.close();
 	}
 
 	bool EnvironmentLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
@@ -311,6 +333,25 @@ namespace Lamp
 		out << YAML::Key << "RenderGraph" << YAML::Value;
 		{
 			out << YAML::BeginMap;
+		
+			LP_SERIALIZE_PROPERTY(name, graph->GetSpecification().name, out);
+
+			out << YAML::BeginMap;
+			out << YAML::Key << "Nodes" << YAML::Value;
+			int i = 0;
+			for (auto& node : graph->GetSpecification().nodes)
+			{
+				std::string id = std::to_string(i);
+				out << YAML::BeginMap;
+				out << YAML::Key << "Node" + id << YAML::Value;
+				{
+
+				}
+				out << YAML::EndMap;
+			}
+			out << YAML::EndMap;
+
+			out << YAML::EndMap;
 		}
 	}
 
@@ -330,17 +371,19 @@ namespace Lamp
 			out << YAML::BeginMap;
 
 			LP_SERIALIZE_PROPERTY(name, mat->GetName(), out);
+			LP_SERIALIZE_PROPERTY(handle, mat->Handle, out);
 
+			out << YAML::BeginMap;
+			out << YAML::Key << "Textures" << YAML::Value;
 			for (auto& tex : mat->GetTextures())
 			{
-				out << YAML::BeginMap;
 				LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Path.string(), out);
-			
-				out << YAML::EndMap;
-			}
 
-			LP_SERIALIZE_PROPERTY(Shader, mat->GetShader()->GetName(), out);
-			LP_SERIALIZE_PROPERTY(Shader, mat->GetShader()->GetPath(), out);
+			}
+			out << YAML::EndMap;
+
+
+			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
 
 			out << YAML::EndMap;
 		}
@@ -349,6 +392,7 @@ namespace Lamp
 
 		std::ofstream fout(asset->Path);
 		fout << out.c_str();
+		fout.close();
 	}
 
 	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
@@ -367,10 +411,17 @@ namespace Lamp
 
 		Ref<Material> material = CreateRef<Material>();
 
-		std::string tempName;
-		LP_DESERIALIZE_PROPERTY(name, tempName, materialNode, "Material");
-		material->SetName(tempName);
+		material->SetName(root["name"].as<std::string>());
+		material->Handle = root["handle"].as<AssetHandle>();
+		material->SetShader(ShaderLibrary::GetShader(root["shader"].as<std::string>()));
 
-		return false;
+		YAML::Node textureNode = materialNode["Textures"];
+		
+		for (auto& texName : material->GetShader()->GetSpecifications().TextureNames)
+		{
+			material->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(textureNode[texName].as<std::string>()));
+		}
+
+		return true;
 	}
 }
