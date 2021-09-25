@@ -31,4 +31,18 @@ namespace Lamp
 		virtual void Save(const Ref<Asset>& asset) const override {}
 		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
 	};
+
+	class RenderGraphLoader : public AssetLoader
+	{
+	public:
+		virtual void Save(const Ref<Asset>& asset) const override;
+		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
+	};
+
+	class MaterialLoader : public AssetLoader
+	{
+	public:
+		virtual void Save(const Ref<Asset>& asset) const override;
+		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
+	};
 }

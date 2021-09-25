@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderNode.h"
+#include "Lamp/AssetSystem/Asset.h"
 namespace Lamp
 {
 	struct RenderGraphSpecification
@@ -11,7 +12,7 @@ namespace Lamp
 		std::filesystem::path path;
 	};
 
-	class RenderGraph
+	class RenderGraph : public Asset
 	{
 	public:
 		RenderGraph();
@@ -28,6 +29,9 @@ namespace Lamp
 
 		void RemoveNode(uint32_t id);
 		void RemoveLink(uint32_t id);
+
+		static AssetType GetStaticType() { return AssetType::RenderGraph; }
+		virtual AssetType GetType() override { return GetStaticType(); }
 
 	private:
 		RenderGraphSpecification m_Specification;

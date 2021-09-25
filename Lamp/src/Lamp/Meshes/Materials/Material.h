@@ -3,10 +3,11 @@
 #include "Lamp/Rendering/Shader/Shader.h"
 
 #include <unordered_map>
+#include "Lamp/AssetSystem/Asset.h"
 
 namespace Lamp
 {
-	class Material
+	class Material : public Asset
 	{
 	public:
 		Material(Ref<Shader> shader, uint32_t id)
@@ -37,6 +38,9 @@ namespace Lamp
 		inline const std::filesystem::path& GetPath() { return m_Path; }
 
 		void UploadData();
+
+		static AssetType GetStaticType() { return AssetType::Material; }
+		virtual AssetType GetType() override { return GetStaticType(); }
 
 	private:
 		std::unordered_map<std::string, Ref<Texture2D>> m_pTextures;

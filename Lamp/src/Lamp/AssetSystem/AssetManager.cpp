@@ -40,6 +40,8 @@ namespace Lamp
 		m_AssetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
 		m_AssetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
 		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
+		m_AssetLoaders[AssetType::RenderGraph] = CreateScope<RenderGraphLoader>();
+		m_AssetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
 	}
 
 	void AssetManager::Shutdown()
@@ -71,7 +73,7 @@ namespace Lamp
 	{
 		if (m_AssetLoaders.find(asset->GetType()) == m_AssetLoaders.end())
 		{
-			LP_CORE_ERROR("No importer found for asset!");
+			LP_CORE_ERROR("No exporter for asset exists!");
 			return;
 		}
 

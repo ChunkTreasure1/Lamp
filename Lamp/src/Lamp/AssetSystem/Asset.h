@@ -22,7 +22,8 @@ namespace Lamp
 		Material = 3,
 		Texture = 4,
 		Audio = 5,
-		EnvironmentMap = 6
+		EnvironmentMap = 6,
+		RenderGraph = 7
 	};
 
 	inline static std::unordered_map<std::string, AssetType> s_AssetExtensionMap =
@@ -36,7 +37,8 @@ namespace Lamp
 		{ ".tga", AssetType::Texture },
 		{ ".wav", AssetType::Audio },
 		{ ".ogg", AssetType::Audio },
-		{ ".hdr", AssetType::EnvironmentMap }
+		{ ".hdr", AssetType::EnvironmentMap },
+		{ ".rendergraph", AssetType::RenderGraph }
 	};
 
 

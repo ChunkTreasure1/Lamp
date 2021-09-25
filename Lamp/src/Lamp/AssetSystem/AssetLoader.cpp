@@ -1,8 +1,13 @@
 #include "lppch.h"
 #include "AssetLoader.h"
 
+#include "Lamp/Utility/SerializeMacros.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraph.h"
+
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_print.hpp>
+
+#include "yaml-cpp/yaml.h"
 
 #include "Lamp/Meshes/Mesh.h"
 #include "Lamp/Meshes/Materials/MaterialLibrary.h"
@@ -156,9 +161,12 @@ namespace Lamp
 	
 		LP_CORE_INFO("Saved model {0}!", mesh->GetName());
 	}
+
 	bool MeshLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
 		using namespace rapidxml;
+
+		asset = CreateRef<Mesh>();
 
 		//Check if file exists
 		struct stat b;
@@ -291,6 +299,78 @@ namespace Lamp
 
 	bool EnvironmentLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
+		return false;
+	}
+
+	void RenderGraphLoader::Save(const Ref<Asset>& asset) const
+	{
+		Ref<RenderGraph> graph = std::dynamic_pointer_cast<RenderGraph>(asset);
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "RenderGraph" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+		}
+	}
+
+	bool RenderGraphLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	{
+		return false;
+	}
+
+	void MaterialLoader::Save(const Ref<Asset>& asset) const
+	{
+		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "Material" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+
+			LP_SERIALIZE_PROPERTY(name, mat->GetName(), out);
+
+			for (auto& tex : mat->GetTextures())
+			{
+				out << YAML::BeginMap;
+				LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Path.string(), out);
+			
+				out << YAML::EndMap;
+			}
+
+			LP_SERIALIZE_PROPERTY(Shader, mat->GetShader()->GetName(), out);
+			LP_SERIALIZE_PROPERTY(Shader, mat->GetShader()->GetPath(), out);
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndMap;
+
+		std::ofstream fout(asset->Path);
+		fout << out.c_str();
+	}
+
+	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	{
+		std::ifstream stream(path);
+		if (!stream.is_open())
+		{
+			return false;
+		}
+
+		std::stringstream strStream;
+		strStream << stream.rdbuf();
+
+		YAML::Node root = YAML::Load(strStream.str());
+		YAML::Node materialNode = root["Material"];
+
+		Ref<Material> material = CreateRef<Material>();
+
+		std::string tempName;
+		LP_DESERIALIZE_PROPERTY(name, tempName, materialNode, "Material");
+		material->SetName(tempName);
+
 		return false;
 	}
 }
