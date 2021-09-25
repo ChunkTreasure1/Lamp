@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "yaml-cpp/depthguard.h"
 
 namespace YAML {

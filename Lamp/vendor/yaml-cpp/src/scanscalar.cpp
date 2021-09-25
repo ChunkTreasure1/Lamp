@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "scanscalar.h"
 
 #include <algorithm>

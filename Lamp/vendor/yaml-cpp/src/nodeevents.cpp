@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "nodeevents.h"
 #include "yaml-cpp/eventhandler.h"
 #include "yaml-cpp/mark.h"

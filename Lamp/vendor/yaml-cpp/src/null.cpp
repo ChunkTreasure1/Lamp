@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "yaml-cpp/null.h"
 
 namespace YAML {

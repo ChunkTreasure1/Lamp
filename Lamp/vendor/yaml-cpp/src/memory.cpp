@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "yaml-cpp/node/detail/memory.h"
 #include "yaml-cpp/node/detail/node.h"  // IWYU pragma: keep
 #include "yaml-cpp/node/ptr.h"

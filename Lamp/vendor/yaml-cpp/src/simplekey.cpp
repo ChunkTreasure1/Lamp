@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "scanner.h"
 #include "token.h"
 
