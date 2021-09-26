@@ -48,7 +48,7 @@ namespace Lamp
 	class Mesh : public Asset
 	{
 	public:
-		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Material> mats, AABB bb)
+		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb)
 			: m_Materials(mats), m_Name(name), m_BoundingBox(bb), m_Meshes(meshes)
 		{
 		}
@@ -63,7 +63,7 @@ namespace Lamp
 
 		//Setting
 		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetMaterial(const Material& mat, uint32_t id) 
+		inline void SetMaterial(Ref<Material> mat, uint32_t id) 
 		{
 			if (m_Materials.find(id) == m_Materials.end())
 			{
@@ -74,7 +74,7 @@ namespace Lamp
 		}
 
 		//Getting
-		inline Material& GetMaterial(uint32_t id) 
+		inline Ref<Material> GetMaterial(uint32_t id) 
 		{
 			if (m_Materials.find(id) == m_Materials.end())
 			{
@@ -82,7 +82,7 @@ namespace Lamp
 			}
 			return m_Materials[id]; 
 		}
-		inline std::map<uint32_t, Material>& GetMaterials() { return m_Materials; }
+		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_Materials; }
 		inline const std::string& GetName() { return m_Name; }
 		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_Meshes; }
 		inline AABB& GetBoundingBox() { return m_BoundingBox; }
@@ -92,7 +92,7 @@ namespace Lamp
 		
 	private:
 		std::vector<Ref<SubMesh>> m_Meshes;
-		std::map<uint32_t, Material> m_Materials;
+		std::map<uint32_t, Ref<Material>> m_Materials;
 		std::string m_Name;
 
 		AABB m_BoundingBox;

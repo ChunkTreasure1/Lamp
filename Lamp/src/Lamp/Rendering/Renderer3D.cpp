@@ -312,7 +312,7 @@ namespace Lamp
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id)
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
@@ -350,7 +350,7 @@ namespace Lamp
 
 				RenderCommand::SetCullFace(pass->cullFace);
 				
-				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : mat.GetShader();
+				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : mat->GetShader();
 
 				shaderToUse->Bind();
 
@@ -447,11 +447,11 @@ namespace Lamp
 				}
 
 				int i = 0;
-				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+				for (auto& name : mat->GetShader()->GetSpecifications().TextureNames)
 				{
-					if (mat.GetTextures()[name].get() != nullptr)
+					if (mat->GetTextures()[name].get() != nullptr)
 					{
-						mat.GetTextures()[name]->Bind(i);
+						mat->GetTextures()[name]->Bind(i);
 						i++;
 					}
 				}
@@ -464,11 +464,11 @@ namespace Lamp
 		}
 	}
 
-	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id)
+	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 
-		mat.UploadData();
+		mat->UploadData();
 
 		switch (s_pData->CurrentRenderPass->type)
 		{
@@ -476,34 +476,34 @@ namespace Lamp
 			{
 				//Reserve spot 0 for shadow map
 				int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
-				for (auto& name : mat.GetShader()->GetSpecifications().TextureNames)
+				for (auto& name : mat->GetShader()->GetSpecifications().TextureNames)
 				{
-					if (mat.GetTextures()[name].get() != nullptr)
+					if (mat->GetTextures()[name].get() != nullptr)
 					{
-						mat.GetTextures()[name]->Bind(i);
+						mat->GetTextures()[name]->Bind(i);
 						i++;
 					}
 				}
 
-				mat.GetShader()->Bind();
-				mat.GetShader()->UploadMat4("u_Model", modelMatrix);
-				mat.GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
-				mat.GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
+				mat->GetShader()->Bind();
+				mat->GetShader()->UploadMat4("u_Model", modelMatrix);
+				mat->GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
+				mat->GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
 
 				//mat.GetShader()->UploadInt("u_ShadowMap", 0);
 				//s_pData->ShadowBuffer->BindDepthAttachment(0);
 
-				mat.GetShader()->UploadInt("u_IrradianceMap", 1);
-				mat.GetShader()->UploadInt("u_PrefilterMap", 2);
-				mat.GetShader()->UploadInt("u_BRDFLUT", 3);
+				mat->GetShader()->UploadInt("u_IrradianceMap", 1);
+				mat->GetShader()->UploadInt("u_PrefilterMap", 2);
+				mat->GetShader()->UploadInt("u_BRDFLUT", 3);
 
 				g_pEnv->pSkyboxBuffer->BindColorAttachment(1, 0);
 				g_pEnv->pSkyboxBuffer->BindColorAttachment(2, 1);
 				g_pEnv->pSkyboxBuffer->BindColorAttachment(3, 2);
 
-				mat.GetShader()->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
-				mat.GetShader()->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
-				mat.GetShader()->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
+				mat->GetShader()->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
+				mat->GetShader()->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
+				mat->GetShader()->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
 
 				for (int i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
 				{
@@ -651,7 +651,7 @@ namespace Lamp
 		g_pEnv->pSkyboxBuffer = CreateRef<IBLBuffer>(path);
 	}
 
-	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id)
+	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -664,7 +664,7 @@ namespace Lamp
 		s_RenderBuffer.drawCallsDeferred.push_back(data);
 	}
 
-	void Renderer3D::SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id)
+	void Renderer3D::SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -677,7 +677,7 @@ namespace Lamp
 		s_RenderBuffer.drawCallsForward.push_back(data);
 	}
 
-	void Renderer3D::SubmitQuadForward(const glm::mat4& transform, const Material& mat, size_t id)
+	void Renderer3D::SubmitQuadForward(const glm::mat4& transform, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 		RenderCommandData data;

@@ -492,10 +492,16 @@
     <ClInclude Include="src\Lamp\Utility\Random.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\SerializeMacros.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\UIUtility.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
@@ -1806,8 +1812,7 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Utility\SerializeMacros.h" />
-    <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2188,5 +2193,6 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp" />
   </ItemGroup>
 </Project>

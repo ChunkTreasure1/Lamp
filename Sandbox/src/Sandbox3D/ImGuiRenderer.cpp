@@ -340,7 +340,7 @@ namespace Sandbox3D
 					for (auto& mat : pBrush->GetModel()->GetMaterials())
 					{
 						static std::string lastInput = "";
-						std::string input = mat.second.GetName();
+						std::string input = mat.second->GetName();
 						
 						ImGui::InputText(std::string("###input" + std::to_string(i)).c_str(), &input);
 						if (input != lastInput)

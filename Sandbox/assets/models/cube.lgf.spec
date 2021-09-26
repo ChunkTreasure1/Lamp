@@ -1,16 +1,14 @@
-<Geometry name="cube">
-	<Meshes>
-		<Mesh matId="0">
-			<VerticeCount count="24"/>
-			<IndiceCount count="36"/>
-		</Mesh>
-	</Meshes>
-	<Materials>
-		<Material name="base" id="0"/>
-	</Materials>
-	<BoundingBox>
-		<Max position="0.500000,0.500000,0.500000"/>
-		<Min position="-0.500000,-0.500000,-0.500000"/>
-	</BoundingBox>
-</Geometry>
-
+geometry:
+  name: cube
+  meshes:
+    mesh0:
+      matId: 0
+      verticeCount: 24
+      indiceCount: 36
+  materials:
+    material0:
+      name: base
+      id: 0
+  boundingBox:
+    maxPos: [0.5, 0.5, 0.5]
+    minPos: [-0.5, -0.5, -0.5]

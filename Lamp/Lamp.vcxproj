@@ -156,6 +156,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
@@ -705,6 +706,7 @@
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp" />
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />

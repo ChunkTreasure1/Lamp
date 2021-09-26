@@ -19,7 +19,7 @@ namespace Lamp
 
 		glm::mat4 transform;
 		Ref<VertexArray> data;
-		Material material;
+		Ref<Material> material;
 		size_t id;
 	};
 

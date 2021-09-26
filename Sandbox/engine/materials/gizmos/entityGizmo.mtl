@@ -1,4 +1,6 @@
-<Material name="gizmoEntity">
-	<gizmo path="engine/textures/gizmos/gizmoEntity.png"/>
-	<Shader name="Sprite" path="engine/shaders/sprite.glsl"/>
-</Material>
+material:
+  name: gizmoEntity
+  handle: 4069686199
+  textures:
+    gizmo: engine/textures/gizmos/gizmoEntity.png
+  shader: Sprite

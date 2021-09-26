@@ -1,7 +1,8 @@
-<Material name="teddy">
-	<albedo path="assets\textures\TeddyTextures\DJTeddy_final_albedo.tga"/>
-	<normal path="assets\textures\TeddyTextures\DJTeddy_final_normal.tga"/>
-	<mro path="assets\textures\TeddyTextures\DJTeddy_final_mro.tga"/>
-	<Shader name="pbrForward" path="engine/shaders/3d/main/pbrForward.glsl"/>
-</Material>
-
+material:
+  name: teddy
+  handle: 1087971385
+  textures:
+    albedo: assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
+    normal: assets\textures\TeddyTextures\DJTeddy_final_normal.tga
+    mro: assets\textures\TeddyTextures\DJTeddy_final_mro.tga
+  shader: pbrForward

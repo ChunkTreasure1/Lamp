@@ -18,7 +18,7 @@ namespace Lamp
 
 	Ref<Mesh> MeshImporter::ImportMesh(const std::filesystem::path& path)
 	{
-		std::map<uint32_t, Material> materials;
+		std::map<uint32_t, Ref<Material>> materials;
 		std::vector<Ref<SubMesh>> meshes = LoadMesh(path, materials);
 		if (meshes.empty())
 		{
@@ -78,7 +78,7 @@ namespace Lamp
 		return mesh;
 	}
 
-	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const std::filesystem::path& path, std::map<uint32_t, Material>& materials)
+	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const std::filesystem::path& path, std::map<uint32_t, Ref<Material>>& materials)
 	{
 		Assimp::Importer importer;
 		std::vector<Ref<SubMesh>> meshes;
@@ -100,7 +100,7 @@ namespace Lamp
 
 		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace(std::make_pair(i, Material(i, pScene->mMaterials[i]->GetName().C_Str())));
+			materials.emplace(std::make_pair(i, CreateRef<Material>(i, pScene->mMaterials[i]->GetName().C_Str())));
 		}
 
 		return meshes;

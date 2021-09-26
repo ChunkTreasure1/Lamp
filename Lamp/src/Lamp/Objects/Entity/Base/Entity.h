@@ -35,8 +35,8 @@ namespace Lamp
 		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_GraphKeyGraph = graph; }
 		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }
 
-		inline void SetGizmoMaterial(const Material& mat) { m_GizmoMaterial = mat; }
-		inline const Material& GetGizmoMaterial() { return m_GizmoMaterial; }
+		inline void SetGizmoMaterial(Ref<Material> mat) { m_GizmoMaterial = mat; }
+		inline const Ref<Material> GetGizmoMaterial() { return m_GizmoMaterial; }
 
 		//Getting
 		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
@@ -164,7 +164,7 @@ namespace Lamp
 		bool m_ShouldBeSaved = false;
 
 		Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
-		Material m_GizmoMaterial;
+		Ref<Material> m_GizmoMaterial;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

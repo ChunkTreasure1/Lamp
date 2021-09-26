@@ -50,10 +50,10 @@ namespace Lamp
 
 		static void RegenerateSSAOKernel();
 
-		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
-		static void SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, const Material& mat, size_t id = -1);
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id = -1);
+		static void SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id = -1);
 
-		static void SubmitQuadForward(const glm::mat4& transform, const Material& mat, size_t id = -1);
+		static void SubmitQuadForward(const glm::mat4& transform, Ref<Material> mat, size_t id = -1);
 
 		static void DrawRenderBuffer();
 
@@ -71,8 +71,8 @@ namespace Lamp
 		static void StartNewBatch();
 		static void ResetBatchData();
 
-		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id = -1);
-		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Material& mat, size_t id = -1);
+		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
+		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
 
 	private:
 		static RendererSettings s_RendererSettings;

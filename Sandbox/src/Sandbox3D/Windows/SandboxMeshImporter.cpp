@@ -146,9 +146,9 @@ namespace Sandbox3D
 
 				for (auto& mat : m_pModelToImport->GetMaterials())
 				{
-					mat.second.SetShader(m_DefaultShader);
+					mat.second->SetShader(m_DefaultShader);
 
-					for (auto& tex : mat.second.GetTextures())
+					for (auto& tex : mat.second->GetTextures())
 					{
 						tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 					}
@@ -182,14 +182,16 @@ namespace Sandbox3D
 
 				for (auto& mat : m_pModelToImport->GetMaterials())
 				{
-					mat.second.SetName(matOriginPath + std::to_string(mat.first));
+					mat.second->SetName(matOriginPath + std::to_string(mat.first));
 					if (!MaterialLibrary::IsMaterialLoaded(matOriginPath + std::to_string(mat.first)))
 					{
 						std::string matPath = m_SavePath.substr(0, m_SavePath.find_last_of('\\') + 1);
 						matPath += matOriginPath + ".mtl";
 						//Add material to library
-						MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial(mat.first));
-						MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
+						
+						//TODO: fix
+						//MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial(mat.first));
+						//MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
 					}
 				}
 
@@ -377,7 +379,7 @@ namespace Sandbox3D
 			{
 				for (size_t i = 0; i < shaders.size(); i++)
 				{
-					if (mat.second.GetShader()->GetName() == shaders[i])
+					if (mat.second->GetShader()->GetName() == shaders[i])
 					{
 						m_ShaderSelectionIds[matId] = i;
 					}
@@ -388,29 +390,29 @@ namespace Sandbox3D
 			int i = 0;
 			for (auto& mat : m_pModelToImport->GetMaterials())
 			{
-				std::string id = mat.second.GetName() + "###mat" + std::to_string(i);
+				std::string id = mat.second->GetName() + "###mat" + std::to_string(i);
 				if (ImGui::CollapsingHeader(id.c_str()))
 				{
-					std::string matName = mat.second.GetName();
+					std::string matName = mat.second->GetName();
 					std::string nameId = "Name##matName" + std::to_string(i);
 					if (ImGui::InputText(nameId.c_str(), &matName))
 					{
-						mat.second.SetName(matName);
+						mat.second->SetName(matName);
 					}
 
 					std::string comboId = "Shader##shader" + std::to_string(i);
 					if (ImGui::Combo(comboId.c_str(), &m_ShaderSelectionIds[i], shaders.data(), shaders.size()))
 					{
-						if (mat.second.GetShader() != ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]))
+						if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]))
 						{
-							mat.second.SetShader(ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]));
+							mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]));
 
 						}
 					}
 
 					ImGui::Separator();
 
-					for (auto& tex : mat.second.GetTextures())
+					for (auto& tex : mat.second->GetTextures())
 					{
 						ImGui::Text(tex.first.c_str());
 						if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 64, 64 }, { 0, 1 }, { 1, 0 }))

@@ -30,7 +30,7 @@ namespace Sandbox3D
 		void CreateNewMaterial();
 
 	private:
-		Lamp::Material* m_pSelectedMaterial = nullptr;
+		Ref<Lamp::Material> m_pSelectedMaterial = nullptr;
 		Ref<Lamp::Framebuffer> m_Framebuffer;
 		Ref<Lamp::Mesh> m_MaterialModel;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;

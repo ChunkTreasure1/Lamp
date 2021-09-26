@@ -91,13 +91,13 @@ namespace YAML
 		static Node encode(const Lamp::AssetHandle& rhs)
 		{
 			Node node;
-			node.push_back((uint64_t)rhs);
+			node.push_back((uint32_t)rhs);
 			return node;
 		};
 
 		static bool decode(const Node& node, Lamp::AssetHandle& v)
 		{
-			v = node.as<uint64_t>();
+			v = node.as<uint32_t>();
 			return true;
 		};
 	};

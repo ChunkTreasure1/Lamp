@@ -89,8 +89,8 @@ namespace Sandbox3D
 				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
 				if (control && m_pSelectedMaterial)
 				{
-					MaterialLibrary::SaveMaterial(m_pSelectedMaterial->GetPath().string(), *m_pSelectedMaterial);
-					LP_CORE_INFO("Saved materil {0}", m_pSelectedMaterial->GetName());
+					g_pEnv->pAssetManager->SaveAsset(m_pSelectedMaterial);
+					LP_CORE_INFO("Saved material {0}", m_pSelectedMaterial->GetName());
 				}
 			}
 		}
@@ -146,7 +146,7 @@ namespace Sandbox3D
 
 		if (!m_pSelectedMaterial)
 		{
-			m_pSelectedMaterial = &m_MaterialModel->GetMaterial(0);
+			m_pSelectedMaterial = m_MaterialModel->GetMaterial(0);
 		}
 
 		static std::string tempName = "";
@@ -185,13 +185,13 @@ namespace Sandbox3D
 		int i = 0;
 		for (auto& mat : materials)
 		{
-			std::string id = mat.GetName() + "###mat" + std::to_string(i);
+			std::string id = mat->GetName() + "###mat" + std::to_string(i);
 			if (ImGui::Selectable(id.c_str()))
 			{
 				m_MaterialModel->SetMaterial(mat, 0);
-				m_pSelectedMaterial = &mat;
+				m_pSelectedMaterial = mat;
 			}
-			std::string popId = mat.GetName() + "##matPop" + std::to_string(i);
+			std::string popId = mat->GetName() + "##matPop" + std::to_string(i);
 			if (ImGui::BeginPopupContextItem(popId.c_str(), ImGuiPopupFlags_MouseButtonRight))
 			{
 				if (ImGui::MenuItem("Remove"))
