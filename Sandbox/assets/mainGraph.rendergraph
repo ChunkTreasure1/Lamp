@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     Node0:
       id: 1001
-      position: [44, 145]
+      position: [55.7233887, 261.195923]
       type: 0
       name: Main
       clearType: 3
@@ -51,7 +51,7 @@ RenderGraph:
         type: 3
     Node1:
       id: 2002
-      position: [551, 121]
+      position: [570.723389, 215.195923]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -124,7 +124,7 @@ RenderGraph:
         type: 3
     Node2:
       id: 3004
-      position: [361, 118]
+      position: [356.723389, 251.195923]
       type: 2
       path: ""
       attribute0:
@@ -134,7 +134,7 @@ RenderGraph:
         type: 0
     Node3:
       id: 4007
-      position: [873, 145]
+      position: [892.723389, 239.195923]
       type: 0
       name: SSAOBlur
       clearType: 1
@@ -177,7 +177,7 @@ RenderGraph:
         type: 3
     Node4:
       id: 5010
-      position: [1548, 75]
+      position: [1567.72339, 169.195923]
       type: 0
       name: LightPass
       clearType: 3
@@ -279,7 +279,7 @@ RenderGraph:
         type: 3
     Node5:
       id: 6012
-      position: [1193, 75]
+      position: [1212.72339, 169.195923]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -290,7 +290,7 @@ RenderGraph:
         type: 2
     Node6:
       id: 7014
-      position: [1191, 213]
+      position: [1210.72339, 307.195923]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -301,7 +301,7 @@ RenderGraph:
         type: 2
     Node7:
       id: 8015
-      position: [1190, 368]
+      position: [1209.72339, 462.195923]
       type: 3
       uniformType: 3
       dataName: Directional light direction
@@ -312,7 +312,7 @@ RenderGraph:
         type: 2
     Node8:
       id: 9016
-      position: [1198, 521]
+      position: [1217.72339, 615.195923]
       type: 3
       uniformType: 3
       dataName: Directional light color
@@ -323,7 +323,7 @@ RenderGraph:
         type: 2
     Node9:
       id: 10020
-      position: [1199, 644]
+      position: [1218.72339, 738.195923]
       type: 3
       uniformType: 1
       dataName: Directional light intensity
@@ -332,6 +332,21 @@ RenderGraph:
         id: 10021
         name: Output
         type: 2
+    Node10:
+      id: 11023
+      position: [297.723389, 0.195915222]
+      type: 1
+      width: 1280
+      height: 720
+      samples: 1
+      clearColor: [1, 1, 1, 1]
+      attachments:
+        {}
+      attribute0:
+        attrType: output
+        id: 11024
+        name: Output
+        type: 1
   Links:
     Link0:
       id: 2002
@@ -377,3 +392,7 @@ RenderGraph:
       id: 10020
       from: 10021
       to: 5018
+    Link11:
+      id: 10021
+      from: 1002
+      to: 2007
