@@ -85,6 +85,9 @@
     <Filter Include="src\Lamp\Rendering\RenderGraph">
       <UniqueIdentifier>{74024CD3-6028-163A-496E-9B0535333B06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\RenderGraph\Nodes">
+      <UniqueIdentifier>{3C8B8D65-2872-4F5D-D1C2-B57ABD88C8C3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
@@ -181,6 +184,9 @@
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h">
@@ -433,7 +439,19 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
@@ -1812,11 +1830,8 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1829,6 +1844,9 @@
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp">
@@ -2012,7 +2030,19 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderGraph.cpp">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
@@ -2197,10 +2227,7 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp" />
   </ItemGroup>
 </Project>

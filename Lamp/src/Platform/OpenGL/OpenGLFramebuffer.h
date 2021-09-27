@@ -18,6 +18,7 @@ namespace Lamp
 		virtual void Resize(const uint32_t width, const uint32_t height) override;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override;
+		virtual void Invalidate() override;
 
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
 		virtual inline const uint32_t GetDepthAttachmentID() override;
@@ -29,9 +30,6 @@ namespace Lamp
 		virtual void BindDepthAttachment(uint32_t id);
 
 		virtual FramebufferSpecification& GetSpecification() override { return m_Specification; }
-
-	private:
-		void Invalidate();
 
 	private:
 		uint32_t m_RendererID;

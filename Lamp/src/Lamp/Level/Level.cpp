@@ -6,6 +6,7 @@
 #include "Lamp/Physics/Physics.h"
 
 #include "Lamp/GraphKey/NodeRegistry.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraph.h"
 
 namespace Lamp
 {
@@ -127,9 +128,8 @@ namespace Lamp
 		AppRenderEvent e(camera);
 		OnEvent(e);
 
-		RenderPassManager::Get()->RenderPasses(camera);
+		RenderLevel(camera);
 	}
-
 	void Level::UpdateSimulation(Timestep ts, Ref<CameraBase>& camera)
 	{
 		Physics::GetScene()->Simulate(ts);
@@ -137,7 +137,7 @@ namespace Lamp
 		AppRenderEvent e(camera);
 		OnEvent(e);
 
-		RenderPassManager::Get()->RenderPasses(camera);
+		RenderLevel(camera);
 	}
 
 	void Level::UpdateRuntime(Timestep ts)
@@ -162,23 +162,25 @@ namespace Lamp
 			AppRenderEvent e(camera);
 			OnEvent(e);
 
-			RenderPassManager::Get()->RenderPasses(camera);
+			RenderLevel(camera);
 		}
 	}
+
 	void Level::OnRuntimeStart()
 	{
 		Physics::CreateScene();
 		Physics::CreateActors(this);
 
-		for (auto& node : NodeRegistry::s_StartNodes())
+		for (const auto& node : NodeRegistry::s_StartNodes())
 		{
 			node->ActivateOutput(0);
 		}
 
+		Renderer3D::GetSettings().RenderGraph->Start();
+
 		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
 		g_pEnv->ShouldRenderGizmos = false;
 	}
-
 	void Level::OnRuntimeEnd()
 	{
 		Physics::DestroyScene();
@@ -190,7 +192,6 @@ namespace Lamp
 		Physics::CreateScene();
 		Physics::CreateActors(this);
 	}
-
 	void Level::OnSimulationEnd()
 	{
 		Physics::DestroyScene();
@@ -281,6 +282,18 @@ namespace Lamp
 				layer.Objects.push_back(obj);
 				return;
 			}
+		}
+	}
+
+	void Level::RenderLevel(Ref<CameraBase> camera)
+	{
+		if (const auto& graph = Renderer3D::GetSettings().RenderGraph)
+		{
+			graph->Run(camera);
+		}
+		else
+		{
+			RenderPassManager::Get()->RenderPasses(camera);
 		}
 	}
 }

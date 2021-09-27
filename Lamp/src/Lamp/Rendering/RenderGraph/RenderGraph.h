@@ -4,10 +4,15 @@
 #include "Lamp/AssetSystem/Asset.h"
 namespace Lamp
 {
+	struct RenderNodeEnd;
+
 	struct RenderGraphSpecification
 	{
 		std::vector<Ref<Lamp::RenderLink>> links;
 		std::vector<Ref<Lamp::RenderNode>> nodes;
+		std::vector<Ref<Lamp::RenderNode>> startNodes;
+
+		Ref<RenderNodeEnd> endNode;
 		std::string name;
 	};
 
@@ -28,6 +33,9 @@ namespace Lamp
 
 		void RemoveNode(uint32_t id);
 		void RemoveLink(uint32_t id);
+
+		void Run(Ref<CameraBase> camera);
+		void Start();
 
 		static AssetType GetStaticType() { return AssetType::RenderGraph; }
 		virtual AssetType GetType() override { return GetStaticType(); }

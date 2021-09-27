@@ -5,6 +5,8 @@
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeFramebuffer.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeTexture.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeDynamicUniform.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeStart.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
 
@@ -25,7 +27,6 @@ namespace Sandbox3D
 
 		RenderGraphSpecification spec;
 		spec.name = "test";
-		Open(ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph"));
 	}
 
 	void RenderGraphPanel::OnEvent(Lamp::Event& e)
@@ -161,6 +162,33 @@ namespace Sandbox3D
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
 			node->Initialize();
+		}
+
+		if (ImGui::Button("Create Start") && m_CurrentlyOpenGraph)
+		{
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+
+			Ref<RenderNodeStart> node = CreateRef<RenderNodeStart>();
+			m_CurrentlyOpenGraph->AddNode(node);
+			node->id = m_CurrentlyOpenGraph->GetCurrentId();
+			node->currId = node->id;
+			node->Initialize();
+		}
+
+		if (ImGui::Button("Create End") && m_CurrentlyOpenGraph)
+		{
+			if (!m_CurrentlyOpenGraph->GetSpecification().endNode)
+			{
+				m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+
+				Ref<RenderNodeEnd> node = CreateRef<RenderNodeEnd>();
+				m_CurrentlyOpenGraph->AddNode(node);
+				node->id = m_CurrentlyOpenGraph->GetCurrentId();
+				node->currId = node->id;
+				node->Initialize();
+
+				m_CurrentlyOpenGraph->GetSpecification().endNode = node;
+			}
 		}
 
 		if (ImGui::Button("Save") && m_CurrentlyOpenGraph)

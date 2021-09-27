@@ -108,6 +108,7 @@ namespace Lamp
 		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth = false) = 0;
+		virtual void Invalidate() = 0;
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 

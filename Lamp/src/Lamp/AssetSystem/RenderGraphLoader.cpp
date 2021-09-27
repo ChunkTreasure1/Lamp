@@ -9,6 +9,8 @@
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeFramebuffer.h"
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeDynamicUniform.h"
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodePass.h"
+#include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeStart.h"
+#include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h"
 #include "ResourceCache.h"
 
 namespace Lamp
@@ -147,6 +149,28 @@ namespace Lamp
 					break;
 				}
 
+				case RenderNodeType::Start:
+				{
+					Ref<RenderNodeStart> node = CreateRef<RenderNodeStart>();
+					node->Initialize();
+					node->Deserialize(nodeNode);
+
+					specification.nodes.push_back(node);
+					specification.startNodes.push_back(node);
+					break;
+				}
+
+				case RenderNodeType::End:
+				{
+					Ref<RenderNodeEnd> node = CreateRef<RenderNodeEnd>();
+					node->Initialize();
+					node->Deserialize(nodeNode);
+
+					specification.nodes.push_back(node);
+					specification.endNode = node;
+					break;
+				}
+
 				default:
 					LP_CORE_ASSERT(false, "Node type not found!");
 					break;
@@ -185,6 +209,7 @@ namespace Lamp
 					if (input->id == to)
 					{
 						link->pInput = input.get();
+						input->pNode->links.push_back(link);
 
 						break;
 					}
@@ -195,7 +220,7 @@ namespace Lamp
 					if (output->id == from)
 					{
 						link->pOutput = output.get();
-
+						output->pNode->links.push_back(link);
 						break;
 					}
 				}

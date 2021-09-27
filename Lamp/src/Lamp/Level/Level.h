@@ -92,6 +92,9 @@ namespace Lamp
 		void AddToLayer(Object* obj);
 
 	private:
+		void RenderLevel(Ref<CameraBase> camera);
+
+	private:
 		std::string m_Name;
 		std::string m_Path;
 		LevelEnvironment m_Environment;

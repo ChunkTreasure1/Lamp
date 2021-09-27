@@ -391,9 +391,6 @@ namespace Sandbox3D
 		m_pSelectedObject = nullptr;
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
 
-		auto p = dynamic_cast<RenderGraphPanel*>(m_pWindows[3]);
-		p->Start();
-
 		g_pEnv->pLevel = m_pRuntimeLevel;
 		m_pRuntimeLevel->SetIsPlaying(true);
 		m_pRuntimeLevel->OnRuntimeStart();

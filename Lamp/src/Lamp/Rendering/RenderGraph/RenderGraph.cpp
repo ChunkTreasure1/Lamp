@@ -33,4 +33,21 @@ namespace Lamp
 	void RenderGraph::RemoveLink(uint32_t id)
 	{
 	}
+
+	void RenderGraph::Run(Ref<CameraBase> camera)
+	{
+		LP_PROFILE_FUNCTION();
+		for (const auto& node : m_Specification.startNodes)
+		{
+			node->Activate(camera);
+		}
+	}
+
+	void RenderGraph::Start()
+	{
+		for (const auto& node : m_Specification.startNodes)
+		{
+			node->Start();
+		}
+	}
 }

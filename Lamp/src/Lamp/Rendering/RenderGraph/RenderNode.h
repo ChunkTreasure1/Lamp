@@ -15,7 +15,10 @@ namespace Lamp
 		Pass = 0,
 		Framebuffer = 1,
 		Texture = 2,
-		DynamicUniform = 3
+		DynamicUniform = 3,
+		Start = 4,
+		RenderData = 5,
+		End
 	};
 
 	enum class RenderAttributeType : uint32_t

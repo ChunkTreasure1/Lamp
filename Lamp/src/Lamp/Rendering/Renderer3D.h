@@ -9,16 +9,21 @@
 
 namespace Lamp
 {	
+	class RenderGraph;
+
 	struct RendererSettings
 	{
+		Ref<RenderGraph> RenderGraph;
+
+		//SSAO
 		int SSAOKernelSize = 64;
 		const int SSAOMaxKernelSize = 64; //Needs to be matched with value in ssao shader
 
-		//SSAO
 		float SSAORadius = 0.5f;
 		float SSAOBias = 0.025f;
 		Ref<Texture2D> SSAONoiseTexture;
 		
+		//Camera
 		float HDRExposure = 3.f;
 		float Gamma = 2.2f;
 	};

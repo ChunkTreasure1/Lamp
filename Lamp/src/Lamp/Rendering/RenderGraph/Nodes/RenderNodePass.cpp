@@ -4,6 +4,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
+#include "RenderNodeEnd.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -35,6 +36,8 @@ namespace Lamp
 					return 0;
 				case UniformType::SamplerCube:
 					return 0;
+				case UniformType::RenderData:
+					return RenderData::Transform;
 				default:
 					return -1;
 			}
@@ -107,6 +110,17 @@ namespace Lamp
 		std::string nameId = "Name##node" + nodeId;
 		ImGui::InputText(nameId.c_str(), &specification.Name);
 
+		ImGui::TextColored(ImVec4(0.38, 0.42, 1, 1), "Inputs");
+
+		for (auto& input : inputs)
+		{
+			ImNodes::BeginInputAttribute(input->id);
+
+			ImGui::Text(input->name.c_str());
+
+			ImNodes::EndInputAttribute();
+		}
+
 		if (ImGui::TreeNode("Settings"))
 		{
 			//ClearType
@@ -174,6 +188,28 @@ namespace Lamp
 		{
 			auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
 
+			int width = static_cast<int>(specification.Width);
+			if (ImGui::InputInt("Width", &width))
+			{
+				specification.Width = width;
+			}
+
+			int height = static_cast<int>(specification.Height);
+			if (ImGui::InputInt("Height", &width))
+			{
+				specification.Height = height;
+			}
+
+			int samples = static_cast<int>(specification.Samples);
+			if (ImGui::InputInt("Samples", &samples))
+			{
+				specification.Samples = samples;
+			}
+
+			ImGui::PushItemWidth(200.f);
+			ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
+			ImGui::PopItemWidth();
+
 			if (ImGui::TreeNode("Attachments"))
 			{
 				if (ImGui::Button("Add"))
@@ -192,7 +228,7 @@ namespace Lamp
 					std::string treeId = "Attachment##" + attId;
 					if (ImGui::TreeNode(treeId.c_str()))
 					{
-						ImGui::InputFloat4("Border Color", glm::value_ptr(att.BorderColor));
+						ImGui::ColorEdit4("Border Color", glm::value_ptr(att.BorderColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
 
 						ImGui::Checkbox("Is multisampled", &att.MultiSampled);
 
@@ -225,7 +261,7 @@ namespace Lamp
 
 						if (changed)
 						{
-							renderPass->GetSpecification().TargetFramebuffer = Framebuffer::Create(renderPass->GetSpecification().TargetFramebuffer->GetSpecification());
+							renderPass->GetSpecification().TargetFramebuffer->Invalidate();
 						}
 
 
@@ -258,11 +294,11 @@ namespace Lamp
 				ImGui::InputText(uNameId.c_str(), &name);
 				ImGui::SameLine();
 
-				static const char* uTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube" };
+				static const char* uTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
 
 				std::string uTypeId = "##uniformType" + std::to_string(i);
 				int currentlySelectedType = (int)type;
-				if (ImGui::Combo(uTypeId.c_str(), &currentlySelectedType, uTypes, 9))
+				if (ImGui::Combo(uTypeId.c_str(), &currentlySelectedType, uTypes, 10))
 				{
 					type = (UniformType)currentlySelectedType;
 					value = Utils::GetResetValue(type);
@@ -272,95 +308,110 @@ namespace Lamp
 
 				ImGui::SameLine();
 
-				std::string inId = "##value" + std::to_string(i);
-				switch (type)
+				ImGui::PushItemWidth(100.f);
+				if (type != UniformType::RenderData)
 				{
-					case UniformType::Int:
+					std::string inId = "##value" + std::to_string(i);
+					switch (type)
 					{
-						int data = std::any_cast<int>(value);
-
-						if (ImGui::InputInt(inId.c_str(), &data))
+						case UniformType::Int:
 						{
-							value = data;
-						}
-						break;
-					}
+							int data = std::any_cast<int>(value);
 
-					case UniformType::Float:
-					{
-						float data = std::any_cast<float>(value);
-						if (ImGui::InputFloat(inId.c_str(), &data))
+							if (ImGui::InputInt(inId.c_str(), &data))
+							{
+								value = data;
+							}
+							break;
+						}
+
+						case UniformType::Float:
 						{
-							value = data;
+							float data = std::any_cast<float>(value);
+							if (ImGui::InputFloat(inId.c_str(), &data))
+							{
+								value = data;
+							}
+							break;
 						}
-						break;
-					}
 
-					case UniformType::Float2:
-					{
-						glm::vec2 data = std::any_cast<glm::vec2>(value);
-						if (ImGui::InputFloat2(inId.c_str(), glm::value_ptr(data)))
+						case UniformType::Float2:
 						{
-							value = data;
+							glm::vec2 data = std::any_cast<glm::vec2>(value);
+							if (ImGui::InputFloat2(inId.c_str(), glm::value_ptr(data)))
+							{
+								value = data;
+							}
+							break;
 						}
-						break;
-					}
 
-					case UniformType::Float3:
-					{
-						glm::vec3 data = std::any_cast<glm::vec3>(value);
-						if (ImGui::InputFloat3(inId.c_str(), glm::value_ptr(data)))
+						case UniformType::Float3:
 						{
-							value = data;
+							glm::vec3 data = std::any_cast<glm::vec3>(value);
+							if (ImGui::InputFloat3(inId.c_str(), glm::value_ptr(data)))
+							{
+								value = data;
+							}
+							break;
 						}
-						break;
-					}
 
-					case UniformType::Float4:
-					{
-						glm::vec4 data = std::any_cast<glm::vec4>(value);
-						if (ImGui::InputFloat4(inId.c_str(), glm::value_ptr(data)))
+						case UniformType::Float4:
 						{
-							value = data;
+							glm::vec4 data = std::any_cast<glm::vec4>(value);
+							if (ImGui::InputFloat4(inId.c_str(), glm::value_ptr(data)))
+							{
+								value = data;
+							}
+							break;
 						}
-						break;
-					}
 
-					case UniformType::Mat3:
-					{
-						glm::mat3 data = std::any_cast<glm::mat3>(value);
-
-						break;
-					}
-
-					case UniformType::Mat4:
-					{
-						glm::mat4 data = std::any_cast<glm::mat4>(value);
-
-						break;
-					}
-
-					case UniformType::Sampler2D:
-					{
-						int data = std::any_cast<int>(value);
-						if (ImGui::InputInt(inId.c_str(), &data))
+						case UniformType::Mat3:
 						{
-							value = data;
-						}
-						break;
-					}
+							glm::mat3 data = std::any_cast<glm::mat3>(value);
 
-					case UniformType::SamplerCube:
-					{
-						int data = std::any_cast<int>(value);
-						if (ImGui::InputInt(inId.c_str(), &data))
+							break;
+						}
+
+						case UniformType::Mat4:
 						{
-							value = data;
-						}
-						break;
-					}
+							glm::mat4 data = std::any_cast<glm::mat4>(value);
 
+							break;
+						}
+
+						case UniformType::Sampler2D:
+						{
+							int data = std::any_cast<int>(value);
+							if (ImGui::InputInt(inId.c_str(), &data))
+							{
+								value = data;
+							}
+							break;
+						}
+
+						case UniformType::SamplerCube:
+						{
+							int data = std::any_cast<int>(value);
+							if (ImGui::InputInt(inId.c_str(), &data))
+							{
+								value = data;
+							}
+							break;
+						}
+
+					}
 				}
+				else
+				{
+					static const char* dTypes[] = { "Transform", "Data", "Material", "Id" };
+					std::string dTypeId = "##dataType" + std::to_string(i);
+					int currentlySelectedData = (int)std::any_cast<RenderData>(value);
+					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, dTypes, 4))
+					{
+						value = (RenderData)currentlySelectedData;
+					}
+				}
+				ImGui::PopItemWidth();
 			}
 
 			ImGui::TreePop();
@@ -491,25 +542,12 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		ImGui::TextColored(ImVec4(0.38, 0.42, 1, 1), "Inputs");
-
-		for (auto& input : inputs)
-		{
-			ImNodes::BeginInputAttribute(input->id);
-
-			ImGui::Text(input->name.c_str());
-
-			ImNodes::EndInputAttribute();
-		}
-
 		ImGui::TextColored(ImVec4(0.101, 1, 0.313, 1), "Outputs");
 
 		for (auto& output : outputs)
 		{
 			ImNodes::BeginOutputAttribute(output->id);
-
 			ImGui::Text(output->name.c_str());
-
 			ImNodes::EndOutputAttribute();
 		}
 
@@ -520,8 +558,26 @@ namespace Lamp
 
 	void RenderNodePass::Activate(std::any value)
 	{
+		LP_PROFILE_FUNCTION();
+
 		Ref<CameraBase> camera = std::any_cast<Ref<CameraBase>>(value);
 		renderPass->Render(camera);
+
+		for (const auto& link : links)
+		{
+			if (link->pInput->pNode->id == id)
+			{
+				continue;
+			}
+			if (link->pInput->pNode->GetNodeType() == RenderNodeType::Framebuffer)
+			{
+				link->pInput->pNode->Activate(value);
+			}
+			else if (link->pInput->pNode->GetNodeType() == RenderNodeType::End)
+			{
+				link->pInput->pNode->Activate(renderPass->GetSpecification().TargetFramebuffer);
+			}
+		}
 	}
 
 	void RenderNodePass::Serialize(YAML::Emitter& out)
@@ -533,6 +589,40 @@ namespace Lamp
 		LP_SERIALIZE_PROPERTY(drawType, (uint32_t)specification.drawType, out);
 		LP_SERIALIZE_PROPERTY(cullFace, (uint32_t)specification.cullFace, out);
 		LP_SERIALIZE_PROPERTY(renderShader, (specification.renderShader ? specification.renderShader->GetName() : ""), out);
+
+		out << YAML::Key << "targetFramebuffer" << YAML::Value;
+		out << YAML::BeginMap;
+		{
+			const auto& targetBuffSpec = specification.TargetFramebuffer->GetSpecification();
+
+			LP_SERIALIZE_PROPERTY(width, targetBuffSpec.Width, out);
+			LP_SERIALIZE_PROPERTY(height, targetBuffSpec.Height, out);
+			LP_SERIALIZE_PROPERTY(samples, targetBuffSpec.Samples, out);
+			LP_SERIALIZE_PROPERTY(clearColor, targetBuffSpec.ClearColor, out);
+
+			out << YAML::Key << "attachments" << YAML::Value;
+			out << YAML::BeginMap;
+			{
+				uint32_t attCount = 0;
+				for (auto& att : targetBuffSpec.Attachments.Attachments)
+				{
+					out << YAML::Key << "attachment" + std::to_string(attCount) << YAML::Value;
+					out << YAML::BeginMap;
+					{
+						LP_SERIALIZE_PROPERTY(borderColor, att.BorderColor, out);
+						LP_SERIALIZE_PROPERTY(multisampled, att.MultiSampled, out);
+						LP_SERIALIZE_PROPERTY(format, (uint32_t)att.TextureFormat, out);
+						LP_SERIALIZE_PROPERTY(filtering, (uint32_t)att.TextureFiltering, out);
+						LP_SERIALIZE_PROPERTY(wrap, (uint32_t)att.TextureWrap, out);
+					}
+					out << YAML::EndMap;
+
+					attCount++;
+				}
+			}
+			out << YAML::EndMap; //attachments
+		}
+		out << YAML::EndMap; //target framebuffer
 
 		out << YAML::Key << "staticUniforms" << YAML::Value;
 		out << YAML::BeginMap;
@@ -690,6 +780,34 @@ namespace Lamp
 		{
 			specification.renderShader = ShaderLibrary::GetShader(shaderName);
 		}
+
+		YAML::Node bufferNode = node["targetFramebuffer"];
+
+		//target buffer
+		auto& targetBufferSpec = specification.TargetFramebuffer->GetSpecification();
+		LP_DESERIALIZE_PROPERTY(width, targetBufferSpec.Width, bufferNode, 0);
+		LP_DESERIALIZE_PROPERTY(height, targetBufferSpec.Height, bufferNode, 0);
+		LP_DESERIALIZE_PROPERTY(samples, targetBufferSpec.Samples, bufferNode, 0);
+		LP_DESERIALIZE_PROPERTY(clearColor, targetBufferSpec.ClearColor, bufferNode, glm::vec4(0.f));
+		
+		YAML::Node attachmentsNode = bufferNode["attachments"];
+		uint32_t attachmentCount = 0;
+		while (YAML::Node attachmentNode = attachmentsNode["attachment" + std::to_string(attachmentCount)])
+		{
+			FramebufferTextureSpecification att;
+		
+			LP_DESERIALIZE_PROPERTY(borderColor, att.BorderColor, attachmentNode, glm::vec4(0.f));
+			LP_DESERIALIZE_PROPERTY(multisampled, att.MultiSampled, attachmentNode, false);
+		
+			att.TextureFormat = (FramebufferTextureFormat)attachmentNode["format"].as<uint32_t>();
+			att.TextureFiltering = (FramebufferTexureFiltering)attachmentNode["filtering"].as<uint32_t>();
+			att.TextureWrap = (FramebufferTextureWrap)attachmentNode["wrap"].as<uint32_t>();
+		
+			targetBufferSpec.Attachments.Attachments.push_back(att);
+			attachmentCount++;
+		}
+
+		specification.TargetFramebuffer = Framebuffer::Create(specification.TargetFramebuffer->GetSpecification());
 
 		//static uniforms
 		YAML::Node staticUniformsNode = node["staticUniforms"];

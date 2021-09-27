@@ -77,7 +77,7 @@ namespace Lamp
 		}
 
 		ImGui::PushItemWidth(200.f);
-		ImGui::InputFloat4("Clear Color", glm::value_ptr(specification.ClearColor));
+		ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
 		ImGui::PopItemWidth();
 
 		if (ImGui::TreeNode("Attachments"))
@@ -98,7 +98,7 @@ namespace Lamp
 				std::string treeId = "Attachment##" + attId;
 				if (ImGui::TreeNode(treeId.c_str()))
 				{
-					ImGui::InputFloat4("Border Color", glm::value_ptr(att.BorderColor));
+					ImGui::ColorEdit4("Border Color", glm::value_ptr(att.BorderColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
 
 					ImGui::Checkbox("Is multisampled", &att.MultiSampled);
 
@@ -131,7 +131,7 @@ namespace Lamp
 
 					if (changed)
 					{
-						framebuffer = Framebuffer::Create(framebuffer->GetSpecification());
+						framebuffer->Invalidate();
 					}
 
 
@@ -189,6 +189,8 @@ namespace Lamp
 			}
 		}
 		out << YAML::EndMap; //attachments
+
+		framebuffer->Invalidate();
 
 		uint32_t attrId = 0;
 		for (auto& input : inputs)

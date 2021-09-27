@@ -1,0 +1,75 @@
+RenderGraph:
+  name: New
+  handle: 2155472084
+  Nodes:
+    Node0:
+      id: 1001
+      position: [299, 61]
+      type: 0
+      name: ""
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: gbuffer
+      targetFramebuffer:
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        attachments:
+          attachment0:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 1
+            filtering: 0
+            wrap: 0
+      staticUniforms:
+        {}
+      dynamicUniforms:
+        {}
+      textures:
+        {}
+      framebuffers:
+        {}
+      attribute0:
+        attrType: input
+        id: 1004
+        name: Activate
+        type: 3
+      attribute1:
+        attrType: output
+        id: 1002
+        name: Framebuffer
+        type: 1
+      attribute2:
+        attrType: output
+        id: 1003
+        name: Activated
+        type: 3
+    Node1:
+      id: 2002
+      position: [0, 0]
+      type: 4
+      attribute0:
+        attrType: output
+        id: 2003
+        name: Start
+        type: 3
+    Node2:
+      id: 3003
+      position: [0, 0]
+      type: 6
+      attribute0:
+        attrType: input
+        id: 3004
+        name: End
+        type: 3
+  Links:
+    Link0:
+      id: 3003
+      from: 1003
+      to: 3004
+    Link1:
+      id: 3004
+      from: 2003
+      to: 1004

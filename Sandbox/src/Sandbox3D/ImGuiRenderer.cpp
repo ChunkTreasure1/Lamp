@@ -21,7 +21,10 @@
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 #include "Sandbox3D/Windows/GraphKey.h"
 
-#include <Lamp/AssetSystem/AssetManager.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
+#include <Lamp/Utility/PlatformUtility.h>
+#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 
 namespace Sandbox3D
 {
@@ -64,7 +67,15 @@ namespace Sandbox3D
 				g_pEnv->pLevel->OnEvent(e);
 			}
 
-			uint32_t textureID = m_SandboxBuffer->GetColorAttachmentID(0);
+			uint32_t textureID;
+			if (Renderer3D::GetSettings().RenderGraph)
+			{
+				textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+			}
+			else
+			{
+				textureID = m_SandboxBuffer->GetColorAttachmentID(0);
+			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if (ImGui::BeginDragDropTarget())
@@ -769,9 +780,25 @@ namespace Sandbox3D
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
+		ImGui::Text("RenderGraph");
+
+		std::string graphPath = Renderer3D::GetSettings().RenderGraph ? Renderer3D::GetSettings().RenderGraph->Path.string() : "";
+		if (ImGui::InputText("##graph", &graphPath))
+		{
+			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Open"))
+		{
+			graphPath = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
+			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
+		}
+
+		ImGui::Separator();
+
 		ImGui::Text("HDR");
 
-		static std::string path;
+		static std::string path = "";
 		ImGui::DragFloat("HDR Exposure", &Lamp::Renderer3D::GetSettings().HDRExposure);
 		ImGui::InputText("HDR environment", &path);
 		ImGui::SameLine();

@@ -25,7 +25,8 @@ namespace Lamp
 		Mat3 = 5,
 		Mat4 = 6,
 		Sampler2D = 7,
-		SamplerCube = 8
+		SamplerCube = 8,
+		RenderData = 9
 	};
 
 	enum ShaderType
