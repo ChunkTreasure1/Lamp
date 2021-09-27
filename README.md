@@ -2,7 +2,7 @@
 
 ### Getting Started
 #### Cloning
-To clone use: `git clone --recursive https://github.com/SGS-Ivar/Lamp`.
+To clone use: `git clone --recursive https://github.com/ChunkTreasure1/Lamp`.
 
 #### Generating
 To generate the project use `scripts/Win-GenProjects.bat`. 
