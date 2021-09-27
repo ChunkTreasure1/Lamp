@@ -3,13 +3,14 @@
 #include <string>
 
 #include "Lamp/Rendering/RenderPass.h"
+#include <yaml-cpp/yaml.h>
 
 namespace Lamp
 {
 	struct RenderNode;
 	struct RenderLink;
 
-	enum class RenderNodeType
+	enum class RenderNodeType : uint32_t
 	{
 		Pass = 0,
 		Framebuffer = 1,
@@ -17,11 +18,11 @@ namespace Lamp
 		DynamicUniform = 3
 	};
 
-	enum class RenderAttributeType
+	enum class RenderAttributeType : uint32_t
 	{
-		Texture,
-		Framebuffer,
-		DynamicUniform
+		Texture = 0,
+		Framebuffer = 1,
+		DynamicUniform = 2
 	};
 
 	struct RenderAttribute
@@ -58,7 +59,7 @@ namespace Lamp
 		{}
 		virtual ~RenderNode() {}
 
-		glm::vec2 position;
+		glm::vec2 position = { 0.f, 0.f };
 
 		std::vector<Ref<RenderLink>> links;
 		std::vector<Ref<RenderOutputAttribute>> outputs;
@@ -72,80 +73,10 @@ namespace Lamp
 		virtual void DrawNode() = 0;
 		virtual void Activate(std::any value) = 0;
 		virtual RenderNodeType GetNodeType() = 0;
-	};
+		virtual void Serialize(YAML::Emitter& out) = 0;
+		virtual void Deserialize(YAML::Node& node) = 0;
 
-	struct RenderNodePass : public RenderNode
-	{
-		RenderNodePass()
-		{
-		}
-
-		virtual ~RenderNodePass() override {}
-
-		std::string name;
-		Ref<RenderPass> renderPass;
-
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override;
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::Pass; }
-
-	private:
-		std::vector<const char*> m_Shaders;
-	};
-
-	struct RenderNodeFramebuffer : public RenderNode
-	{
-		RenderNodeFramebuffer()
-		{
-
-		}
-
-		virtual ~RenderNodeFramebuffer() override {}
-
-		Ref<Framebuffer> framebuffer;
-
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override {}
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::Framebuffer; }
-	};
-
-	struct RenderNodeTexture : public RenderNode
-	{
-		RenderNodeTexture()
-		{
-
-		}
-
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override {}
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::Texture; }
-
-		Ref<Texture2D> texture;
-
-	private:
-		void GetTexture();
-	};
-
-	struct RenderNodeDynamicUniform : public RenderNode
-	{
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override {}
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::DynamicUniform; }
-
-		void* pData = nullptr;
-		UniformType uniformType;
-		std::string dataName;
-
-	private:
-		std::vector<const char*> m_Uniforms;
-		int m_CurrentlySelectedUniform = 0;
+		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out, uint32_t id);
+		std::pair<Ref<RenderAttribute>, std::string> DeserializeBaseAttribute(const YAML::Node& node);
 	};
 }

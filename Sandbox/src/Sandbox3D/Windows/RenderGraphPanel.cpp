@@ -1,8 +1,14 @@
 #include "RenderGraphPanel.h"
-#include <ImNodes/ImNodes.h>
 
-#include <imgui/imgui_stdlib.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodePass.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeFramebuffer.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeTexture.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeDynamicUniform.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
+
+#include <ImNodes/ImNodes.h>
+#include <imgui/imgui_stdlib.h>
 
 namespace Sandbox3D
 {
@@ -13,7 +19,7 @@ namespace Sandbox3D
 	{
 		RenderGraphSpecification spec;
 		spec.name = "test";
-		m_CurrentlyOpenGraph = CreateRef<RenderGraph>(spec);
+		Open(ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph"));
 	}
 
 	void RenderGraphPanel::OnEvent(Lamp::Event& e)
@@ -26,6 +32,11 @@ namespace Sandbox3D
 	void RenderGraphPanel::Open(Ref<Lamp::RenderGraph> graph)
 	{
 		m_CurrentlyOpenGraph = graph;
+
+		for (const auto& node : graph->GetSpecification().nodes)
+		{
+			ImNodes::SetNodeEditorSpacePos(node->id, ImVec2{ node->position.x, node->position.y });
+		}
 	}
 
 	void RenderGraphPanel::Start()
@@ -142,11 +153,22 @@ namespace Sandbox3D
 			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
+		if (ImGui::Button("Save") && m_CurrentlyOpenGraph)
+		{
+			g_pEnv->pAssetManager->SaveAsset(m_CurrentlyOpenGraph);
+		}
+
 		ImGui::End();
 	}
 
 	void RenderGraphPanel::DrawNode(Ref<Lamp::RenderNode> node)
 	{
+		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(node->id);
+		if (pos.x != node->position.x || pos.y != node->position.y)
+		{
+			node->position = { pos.x, pos.y };
+		}
+
 		node->DrawNode();
 	}
 

@@ -1,12 +1,6 @@
 #include "lppch.h"
 #include "Renderer3D.h"
 
-#include <glad/glad.h>
-#include <stb/stb_image.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "Lamp/Core/Application.h"
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 
@@ -18,11 +12,16 @@
 #include "UniformBuffer.h"
 #include "Lamp/Level/Level.h"
 #include "Texture2D/IBLBuffer.h"
-#include "RenderGraph/DynamicUniformRegistry.h"
+#include "RenderGraph/Nodes/DynamicUniformRegistry.h"
+#include "RenderBuffer.h"
 
 #include <random>
+#include <glad/glad.h>
+#include <stb/stb_image.h>
 
-#include "RenderBuffer.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Lamp
 {

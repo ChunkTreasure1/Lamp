@@ -1,0 +1,101 @@
+RenderGraph:
+  name: test
+  handle: 773954761
+  Nodes:
+    Node0:
+      id: 1
+      position: [837, 27]
+      type: 0
+      name: testPass
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: deferred
+      staticUniforms:
+        {}
+      dynamicUniforms:
+        dynamicUniform0:
+          name: u_Exposure
+          type: 0
+      textures:
+        texture0:
+          bindSlot: 0
+      framebuffers:
+        framebuffer0:
+          textureType: 0
+          bindSlot: 0
+          attachmentId: 0
+      attribute0:
+        attrType: input
+        id: 3
+        name: Unifrom0
+        type: 2
+      attribute1:
+        attrType: input
+        id: 4
+        name: Texture0
+        type: 0
+      attribute2:
+        attrType: input
+        id: 5
+        name: Framebuffer0
+        type: 1
+      attribute3:
+        attrType: output
+        id: 2
+        name: Framebuffer
+        type: 1
+    Node1:
+      id: 1002
+      position: [346, 58]
+      type: 3
+      uniformType: 1
+      dataName: Exposure
+      attribute0:
+        attrType: output
+        id: 1003
+        name: Output
+        type: 2
+    Node2:
+      id: 2003
+      position: [253, 178]
+      type: 2
+      path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_normal.tga
+      attribute0:
+        attrType: output
+        id: 2004
+        name: Output
+        type: 0
+    Node3:
+      id: 3004
+      position: [220, 410]
+      type: 1
+      width: 1280
+      height: 720
+      samples: 1
+      clearColor: [1, 1, 1, 1]
+      attachments:
+        attachment0:
+          borderColor: [1, 1, 1, 1]
+          multisampled: false
+          format: 1
+          filtering: 0
+          wrap: 0
+      attribute0:
+        attrType: output
+        id: 3005
+        name: Output
+        type: 1
+  Links:
+    Link0:
+      id: 3005
+      from: 1003
+      to: 3
+    Link1:
+      id: 3006
+      from: 3005
+      to: 5
+    Link2:
+      id: 3007
+      from: 2004
+      to: 4

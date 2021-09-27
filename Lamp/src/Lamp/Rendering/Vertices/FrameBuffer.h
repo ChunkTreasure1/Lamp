@@ -2,7 +2,7 @@
 
 namespace Lamp
 {
-	enum class FramebufferTextureFormat
+	enum class FramebufferTextureFormat : uint32_t
 	{
 		None = 0,
 
@@ -20,13 +20,13 @@ namespace Lamp
 		Depth = DEPTH24STENCIL8
 	};
 
-	enum class FramebufferRenderbufferType
+	enum class FramebufferRenderbufferType : uint32_t
 	{
 		Color = 0,
 		Depth
 	};
 
-	enum class FramebufferTexureFiltering
+	enum class FramebufferTexureFiltering : uint32_t
 	{
 		Nearest = 0,
 		Linear = 1,
@@ -36,7 +36,7 @@ namespace Lamp
 		LinearMipMapLinear = 5
 	};
 
-	enum class FramebufferTextureWrap
+	enum class FramebufferTextureWrap : uint32_t
 	{
 		Repeat = 0,
 		MirroredRepeat = 1,

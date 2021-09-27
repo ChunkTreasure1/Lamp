@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Lamp/AssetSystem/Asset.h"
+
 #include <glm/glm.hpp>
 #include <filesystem>
-#include "yaml-cpp/yaml.h"
-#include "Lamp/AssetSystem/Asset.h"
+#include <yaml-cpp/yaml.h>
 
 namespace YAML
 {
@@ -100,7 +101,7 @@ namespace YAML
 			v = node.as<uint32_t>();
 			return true;
 		};
-	};
+	};	
 }
 
 namespace Lamp

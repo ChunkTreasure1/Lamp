@@ -432,7 +432,7 @@
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\DynamicUniformRegistry.h">
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
@@ -1813,6 +1813,10 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2007,7 +2011,7 @@
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\DynamicUniformRegistry.cpp">
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderGraph.cpp">
@@ -2194,5 +2198,9 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp" />
   </ItemGroup>
 </Project>

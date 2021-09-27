@@ -4,16 +4,6 @@
 		<Brush lgfPath="assets\models\sphere.lgf" position="0.000000,0.848076,-0.163935" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerID="0" name="Brush"/>
 	</Brushes>
 	<Entities>
-		<Entity name="PlayerEntity" position="0.026386,4.147990,9.292670" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
-			<Component name="CameraComponent">
-				<Param name="Is Perspective" type="Bool" value="1"/>
-				<Param name="Is Main" type="Bool" value="0"/>
-				<Param name="Field Of View" type="Float" value="60.000000"/>
-			</Component>
-			<Component name="ControllerComponent">
-				<Param name="Speed" type="Float" value="10.000000"/>
-			</Component>
-		</Entity>
 		<Entity name="TestColl" position="12.605717,4.571883,1.058339" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
 			<Component name="MeshComponent">
 				<Param name="Path" type="Path" value="C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf"/>
@@ -32,6 +22,16 @@
 				<Param name="Size" type="Float3" value="1.000000,1.000000,1.000000"/>
 				<Param name="Offset" type="Float3" value="0.000000,0.500000,0.000000"/>
 				<Param name="Is Trigger" type="Bool" value="0"/>
+			</Component>
+		</Entity>
+		<Entity name="PlayerEntity" position="0.026386,4.147990,9.292670" rotation="0.000000,0.000000,0.000000" scale="1.000000,1.000000,1.000000" layerId="0">
+			<Component name="CameraComponent">
+				<Param name="Is Perspective" type="Bool" value="1"/>
+				<Param name="Is Main" type="Bool" value="0"/>
+				<Param name="Field Of View" type="Float" value="60.000000"/>
+			</Component>
+			<Component name="ControllerComponent">
+				<Param name="Speed" type="Float" value="10.000000"/>
 			</Component>
 		</Entity>
 		<Entity name="Entity" position="13.043520,3.797829,1.334717" rotation="0.000000,0.000000,0.000000" scale="5.000000,1.000000,5.000000" layerId="1">

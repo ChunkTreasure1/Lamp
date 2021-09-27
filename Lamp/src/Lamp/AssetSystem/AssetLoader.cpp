@@ -31,9 +31,6 @@ namespace Lamp
 
 		rout.close();
 
-		//Save spec file
-		using namespace rapidxml;
-
 		LP_CORE_INFO("Saving mesh {0}", mesh->GetName());
 
 		YAML::Emitter out;

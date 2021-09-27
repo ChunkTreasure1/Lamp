@@ -15,7 +15,7 @@
 
 namespace Lamp
 {
-	enum class UniformType
+	enum class UniformType : uint32_t
 	{
 		Int = 0,
 		Float = 1,

@@ -23,7 +23,7 @@ namespace Lamp
 		Selection = BIT(7),
 	};
 
-	enum class ClearType
+	enum class ClearType : uint32_t
 	{
 		None = 0,
 		Color = 1,
@@ -31,20 +31,20 @@ namespace Lamp
 		ColorDepth = 3
 	};
 
-	enum class DrawType
+	enum class DrawType : uint32_t
 	{
 		All = 0,
 		Quad = 1,
 		Line = 2
 	};
 
-	enum class TextureType
+	enum class TextureType : uint32_t
 	{
 		Color = 0,
 		Depth = 1
 	};
 
-	enum class FramebufferCommand
+	enum class FramebufferCommand : uint32_t
 	{
 		Copy = 0
 	};
