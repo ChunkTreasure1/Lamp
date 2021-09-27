@@ -43,6 +43,11 @@ namespace Lamp
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(100, 181, 124, 255));
 
 		ImNodes::BeginNode(id);
+		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
+		if (pos.x != position.x || pos.y != position.y)
+		{
+			position = { pos.x, pos.y };
+		}
 
 		ImNodes::BeginNodeTitleBar();
 		ImGui::Text("Texture node");

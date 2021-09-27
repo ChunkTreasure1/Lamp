@@ -44,6 +44,8 @@ namespace Lamp
 	void RenderNodePass::Initialize()
 	{
 		renderPass = CreateRef<RenderPass>();
+		FramebufferSpecification spec;
+		renderPass->GetSpecification().TargetFramebuffer = Framebuffer::Create(spec);
 
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
 		output->id = ++currId;
@@ -52,6 +54,22 @@ namespace Lamp
 		output->type = RenderAttributeType::Framebuffer;
 
 		outputs.push_back(output);
+
+		Ref<RenderOutputAttribute> activated = CreateRef<RenderOutputAttribute>();
+		activated->id = ++currId;
+		activated->name = "Activated";
+		activated->pNode = this;
+		activated->type = RenderAttributeType::Pass;
+
+		outputs.push_back(activated);
+
+		Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+		input->id = ++currId;
+		input->name = "Activate";
+		input->pNode = this;
+		input->type = RenderAttributeType::Pass;
+
+		inputs.push_back(input);
 	}
 
 	void RenderNodePass::Start()
@@ -70,6 +88,12 @@ namespace Lamp
 		auto& specification = renderPass->GetSpecification();
 
 		ImNodes::BeginNode(id);
+
+		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
+		if (pos.x != position.x || pos.y != position.y)
+		{
+			position = { pos.x, pos.y };
+		}
 
 		ImNodes::BeginNodeTitleBar();
 
@@ -141,6 +165,77 @@ namespace Lamp
 						specification.renderShader = ShaderLibrary::GetShader(m_Shaders[currentlySelectedShader]);
 					}
 				}
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Target Framebuffer"))
+		{
+			auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
+
+			if (ImGui::TreeNode("Attachments"))
+			{
+				if (ImGui::Button("Add"))
+				{
+					specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
+				}
+
+				ImGui::PushItemWidth(200.f);
+
+				int attIndex = 0;
+				for (auto& att : specification.Attachments.Attachments)
+				{
+					std::string attId = std::to_string(attIndex);
+					bool changed = false;
+
+					std::string treeId = "Attachment##" + attId;
+					if (ImGui::TreeNode(treeId.c_str()))
+					{
+						ImGui::InputFloat4("Border Color", glm::value_ptr(att.BorderColor));
+
+						ImGui::Checkbox("Is multisampled", &att.MultiSampled);
+
+						static const char* texFormats[] = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
+						int currentlySelectedFormat = (int)att.TextureFormat;
+						std::string formatId = "Texture format##format" + attId;
+						if (ImGui::Combo(formatId.c_str(), &currentlySelectedFormat, texFormats, IM_ARRAYSIZE(texFormats)))
+						{
+							att.TextureFormat = (FramebufferTextureFormat)currentlySelectedFormat;
+							changed = true;
+						}
+
+						static const char* texFiltering[] = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
+						int currentlySelectedFiltering = (int)att.TextureFiltering;
+						std::string filteringId = "Texture filtering##filtering" + attId;
+						if (ImGui::Combo(filteringId.c_str(), &currentlySelectedFiltering, texFiltering, IM_ARRAYSIZE(texFiltering)))
+						{
+							att.TextureFiltering = (FramebufferTexureFiltering)currentlySelectedFiltering;
+							changed = true;
+						}
+
+						static const char* texWrap[] = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
+						int currentlySelectedWrap = (int)att.TextureWrap;
+						std::string wrapId = "Texture wrap##wrap" + attId;
+						if (ImGui::Combo(wrapId.c_str(), &currentlySelectedWrap, texWrap, IM_ARRAYSIZE(texWrap)))
+						{
+							att.TextureWrap = (FramebufferTextureWrap)currentlySelectedWrap;
+							changed = true;
+						}
+
+						if (changed)
+						{
+							renderPass->GetSpecification().TargetFramebuffer = Framebuffer::Create(renderPass->GetSpecification().TargetFramebuffer->GetSpecification());
+						}
+
+
+						ImGui::TreePop();
+					}
+					attIndex++;
+				}
+				ImGui::PopItemWidth();
+
+				ImGui::TreePop();
 			}
 
 			ImGui::TreePop();

@@ -22,7 +22,8 @@ namespace Lamp
 	{
 		Texture = 0,
 		Framebuffer = 1,
-		DynamicUniform = 2
+		DynamicUniform = 2,
+		Pass = 3
 	};
 
 	struct RenderAttribute

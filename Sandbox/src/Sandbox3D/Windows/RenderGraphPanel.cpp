@@ -6,6 +6,7 @@
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeTexture.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeDynamicUniform.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
+#include <Lamp/Utility/PlatformUtility.h>
 
 #include <ImNodes/ImNodes.h>
 #include <imgui/imgui_stdlib.h>
@@ -17,6 +18,11 @@ namespace Sandbox3D
 	RenderGraphPanel::RenderGraphPanel(std::string_view name)
 		: BaseWindow(name)
 	{
+		//Setup icons
+		m_LoadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
+		m_SaveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
+		m_NewIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/newIcon.png");
+
 		RenderGraphSpecification spec;
 		spec.name = "test";
 		Open(ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph"));
@@ -54,7 +60,6 @@ namespace Sandbox3D
 			return false;
 		}
 
-
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -71,6 +76,7 @@ namespace Sandbox3D
 
 		UpdateGraphWindow();
 		UpdateNodeWindow();
+		UpdateToolbar();
 
 		return false;
 	}
@@ -112,36 +118,41 @@ namespace Sandbox3D
 
 		if (ImGui::Button("Create pass") && m_CurrentlyOpenGraph)
 		{
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+
 			Ref<RenderNode> node = CreateRef<RenderNodePass>();
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
 			node->Initialize();
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
 		if (ImGui::Button("Create buffer") && m_CurrentlyOpenGraph)
 		{
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+
 			Ref<RenderNode> node = CreateRef<RenderNodeFramebuffer>();
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
 			node->Initialize();
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
 		if (ImGui::Button("Create texture") && m_CurrentlyOpenGraph)
 		{
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+
 			Ref<RenderNode> node = CreateRef<RenderNodeTexture>();
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
 			node->Initialize();
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
 		if (ImGui::Button("Create Dynamic Uniform") && m_CurrentlyOpenGraph)
 		{
+			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
+
 			Ref<RenderNodeDynamicUniform> node = CreateRef<RenderNodeDynamicUniform>();
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->dataName = "Exposure";
@@ -150,7 +161,6 @@ namespace Sandbox3D
 			node->id = m_CurrentlyOpenGraph->GetCurrentId();
 			node->currId = node->id;
 			node->Initialize();
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
 		}
 
 		if (ImGui::Button("Save") && m_CurrentlyOpenGraph)
@@ -161,14 +171,59 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void RenderGraphPanel::DrawNode(Ref<Lamp::RenderNode> node)
+	void RenderGraphPanel::UpdateToolbar()
 	{
-		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(node->id);
-		if (pos.x != node->position.x || pos.y != node->position.y)
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.305f, 0.31f, 0.5f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
+
+		ImGui::Begin("##toolbarRenderGraph", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		float size = ImGui::GetWindowHeight() - 4.f;
+
+		if (ImGui::ImageButton((ImTextureID)m_NewIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
-			node->position = { pos.x, pos.y };
+			Ref<RenderGraph> graph = CreateRef<RenderGraph>();
+			graph->GetSpecification().name = "New";
+
+			Open(graph);
 		}
 
+		ImGui::SameLine();
+
+		if (ImGui::ImageButton((ImTextureID)m_LoadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		{
+			std::string path = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
+			if (!path.empty() && std::filesystem::exists(path))
+			{
+				Open(ResourceCache::GetAsset<RenderGraph>(path));
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::ImageButton((ImTextureID)m_SaveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		{
+			if (m_CurrentlyOpenGraph)
+			{
+				if (m_CurrentlyOpenGraph->Path.empty())
+				{
+					std::string path = FileDialogs::SaveFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
+					m_CurrentlyOpenGraph->Path = path;
+				}
+
+				g_pEnv->pAssetManager->SaveAsset(m_CurrentlyOpenGraph);
+			}
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
+	}
+
+	void RenderGraphPanel::DrawNode(Ref<Lamp::RenderNode> node)
+	{
 		node->DrawNode();
 	}
 

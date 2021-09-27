@@ -22,11 +22,17 @@ namespace Sandbox3D
 
 		void UpdateGraphWindow();
 		void UpdateNodeWindow();
+		void UpdateToolbar();
 
 		void DrawNode(Ref<Lamp::RenderNode> node);
 		void CheckLinkCreated();
 
 	private:
 		Ref<Lamp::RenderGraph> m_CurrentlyOpenGraph;
+		
+		//Icons
+		Ref<Lamp::Texture2D> m_LoadIcon;
+		Ref<Lamp::Texture2D> m_SaveIcon;
+		Ref<Lamp::Texture2D> m_NewIcon;
 	};
 }

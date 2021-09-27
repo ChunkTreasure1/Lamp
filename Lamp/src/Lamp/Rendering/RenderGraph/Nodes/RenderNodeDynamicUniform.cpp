@@ -53,6 +53,12 @@ namespace Lamp
 
 		ImNodes::BeginNode(id);
 
+		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
+		if (pos.x != position.x || pos.y != position.y)
+		{
+			position = { pos.x, pos.y };
+		}
+
 		ImNodes::BeginNodeTitleBar();
 		ImGui::Text("Dynamic Uniform node");
 		ImNodes::EndNodeTitleBar();
