@@ -19,8 +19,8 @@ namespace Lamp
 
 	private:
 		LevelSystem() = delete;
-		static std::map<UUID, Brush*> LoadBrushes(rapidxml::xml_node<>* pNode);
-		static std::map<UUID, Entity*> LoadEntities(rapidxml::xml_node<>* pNode);
+		static std::map<uint32_t, Brush*> LoadBrushes(rapidxml::xml_node<>* pNode);
+		static std::map<uint32_t, Entity*> LoadEntities(rapidxml::xml_node<>* pNode);
 		static std::vector<ObjectLayer> LoadLayers(rapidxml::xml_node<>* pNode);
 
 	private:

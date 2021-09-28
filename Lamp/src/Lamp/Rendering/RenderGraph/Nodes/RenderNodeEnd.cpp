@@ -12,7 +12,6 @@ namespace Lamp
 		Ref<RenderInputAttribute> endAttr = CreateRef<RenderInputAttribute>();
 		endAttr->pNode = this;
 		endAttr->name = "End";
-		endAttr->id = ++currId;
 		endAttr->type = RenderAttributeType::Pass;
 
 		inputs.push_back(endAttr);
@@ -95,7 +94,6 @@ namespace Lamp
 				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
 			}
 
-			currId = attr->id;
 			attributeCount++;
 		}
 	}

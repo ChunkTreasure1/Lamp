@@ -5,14 +5,16 @@
 namespace Lamp
 {
 	struct RenderNodeEnd;
+	struct RenderNodeStart;
 
 	struct RenderGraphSpecification
 	{
 		std::vector<Ref<Lamp::RenderLink>> links;
 		std::vector<Ref<Lamp::RenderNode>> nodes;
-		std::vector<Ref<Lamp::RenderNode>> startNodes;
 
 		Ref<RenderNodeEnd> endNode;
+		Ref<RenderNodeStart> startNode;
+
 		std::string name;
 	};
 
@@ -25,14 +27,12 @@ namespace Lamp
 		~RenderGraph() = default;
 
 		inline RenderGraphSpecification& GetSpecification() { return m_Specification; }
-		inline uint32_t& GetCurrentId() { return m_CurrentId; }
-		inline void SetCurrentId(uint32_t id) { m_CurrentId = id; }
 
 		void AddNode(Ref<RenderNode> node);
 		void AddLink(Ref<RenderLink> link);
 
-		void RemoveNode(uint32_t id);
-		void RemoveLink(uint32_t id);
+		void RemoveNode(GraphUUID id);
+		void RemoveLink(GraphUUID id);
 
 		void Run(Ref<CameraBase> camera);
 		void Start();
@@ -42,6 +42,5 @@ namespace Lamp
 
 	private:
 		RenderGraphSpecification m_Specification;
-		uint32_t m_CurrentId = 0;
 	};
 }

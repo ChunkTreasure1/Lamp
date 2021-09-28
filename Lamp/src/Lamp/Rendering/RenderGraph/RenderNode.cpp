@@ -6,7 +6,7 @@
 
 namespace Lamp
 {
-    void RenderNode::SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrTypeS, YAML::Emitter& out, uint32_t id)
+    void RenderNode::SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrTypeS, YAML::Emitter& out, GraphUUID id)
     {
         out << YAML::Key << "attribute" + std::to_string(id) << YAML::Value;
         out << YAML::BeginMap;

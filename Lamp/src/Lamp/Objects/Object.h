@@ -42,7 +42,7 @@ namespace Lamp
 		inline bool GetIsFrozen() { return m_IsFrozen; }
 		inline bool GetIsActive() { return m_IsActive; }
 		
-		inline const UUID GetID() { return m_UUID; }
+		inline const uint32_t GetID() { return m_Id; }
 		inline const bool GetIsSelected() { return m_IsSelected; }
 
 		virtual void OnEvent(Event& e) {}
@@ -66,6 +66,6 @@ namespace Lamp
 		std::string m_Name;
 
 		uint32_t m_LayerID = 0;
-		UUID m_UUID;
+		uint32_t m_Id;
 	};
 }

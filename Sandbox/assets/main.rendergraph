@@ -1,10 +1,28 @@
 RenderGraph:
   name: New
-  handle: 2155472084
+  handle: 14577190750808890867
   Nodes:
     Node0:
-      id: 1001
-      position: [-478.167725, 142.408981]
+      id: 1058688088
+      position: [-58.7894135, 77.1398926]
+      type: 4
+      attribute0:
+        attrType: output
+        id: 1750787857
+        name: Start
+        type: 3
+    Node1:
+      id: 1066979554
+      position: [1027.21057, 221.139893]
+      type: 6
+      attribute0:
+        attrType: input
+        id: 1713313048
+        name: End
+        type: 3
+    Node2:
+      id: 352861005
+      position: [64.210556, -12.8601074]
       type: 0
       name: GBuffer
       clearType: 3
@@ -15,7 +33,7 @@ RenderGraph:
         width: 1280
         height: 720
         samples: 1
-        clearColor: [0.334883749, 0.334880382, 0.334880382, 1]
+        clearColor: [0.297674417, 0.297671437, 0.297671437, 1]
         attachments:
           attachment0:
             borderColor: [1, 1, 1, 1]
@@ -38,15 +56,9 @@ RenderGraph:
           attachment3:
             borderColor: [1, 1, 1, 1]
             multisampled: false
-            format: 2
-            filtering: 0
-            wrap: 2
-          attachment4:
-            borderColor: [1, 1, 1, 1]
-            multisampled: false
             format: 7
             filtering: 0
-            wrap: 2
+            wrap: 0
       staticUniforms:
         staticUniform0:
           name: u_Model
@@ -72,42 +84,24 @@ RenderGraph:
         {}
       attribute0:
         attrType: input
-        id: 1004
+        id: 115646770
         name: Activate
         type: 3
       attribute1:
         attrType: output
-        id: 1002
+        id: 972663169
         name: Framebuffer
         type: 1
       attribute2:
         attrType: output
-        id: 1003
+        id: 331203353
         name: Activated
         type: 3
-    Node1:
-      id: 2002
-      position: [-735.167725, 139.408981]
-      type: 4
-      attribute0:
-        attrType: output
-        id: 2003
-        name: Start
-        type: 3
-    Node2:
-      id: 3003
-      position: [1146.91089, 442.358765]
-      type: 6
-      attribute0:
-        attrType: input
-        id: 3004
-        name: End
-        type: 3
     Node3:
-      id: 4005
-      position: [781.678345, 41.9346466]
+      id: 1285808998
+      position: [683.680908, 2.55795288]
       type: 0
-      name: Lightning
+      name: Deferred
       clearType: 3
       drawType: 1
       cullFace: 1
@@ -116,7 +110,7 @@ RenderGraph:
         width: 1280
         height: 720
         samples: 1
-        clearColor: [0.274418592, 0.274415851, 0.274415851, 1]
+        clearColor: [0.265116274, 0.265113622, 0.265113622, 1]
         attachments:
           attachment0:
             borderColor: [1, 1, 1, 1]
@@ -129,7 +123,7 @@ RenderGraph:
             multisampled: false
             format: 7
             filtering: 0
-            wrap: 2
+            wrap: 0
       staticUniforms:
         staticUniform0:
           name: u_GBuffer.position
@@ -144,37 +138,33 @@ RenderGraph:
           type: 0
           data: 2
         staticUniform3:
-          name: u_SSAO
+          name: u_IrradianceMap
           type: 0
           data: 3
         staticUniform4:
-          name: u_IrradianceMap
+          name: u_PrefilterMap
           type: 0
           data: 4
         staticUniform5:
-          name: u_PrefilterMap
-          type: 0
-          data: 5
-        staticUniform6:
           name: u_BRDFLUT
           type: 0
-          data: 6
+          data: 5
       dynamicUniforms:
         dynamicUniform0:
           name: u_Exposure
-          type: 1
+          type: 0
         dynamicUniform1:
           name: u_Gamma
-          type: 1
+          type: 0
         dynamicUniform2:
           name: u_DirectionalLight.direction
-          type: 3
+          type: 0
         dynamicUniform3:
           name: u_DirectionalLight.color
-          type: 3
+          type: 0
         dynamicUniform4:
           name: u_DirectionalLight.intensity
-          type: 1
+          type: 0
       textures:
         {}
       framebuffers:
@@ -197,342 +187,207 @@ RenderGraph:
         framebuffer4:
           textureType: 0
           bindSlot: 4
-          attachmentId: 0
+          attachmentId: 1
         framebuffer5:
           textureType: 0
           bindSlot: 5
-          attachmentId: 1
-        framebuffer6:
-          textureType: 0
-          bindSlot: 6
           attachmentId: 2
       attribute0:
         attrType: input
-        id: 4008
+        id: 325136778
         name: Activate
         type: 3
       attribute1:
         attrType: input
-        id: 4009
-        name: Unifrom0
-        type: 2
+        id: 1435207610
+        name: Framebuffer0
+        type: 1
       attribute2:
         attrType: input
-        id: 4010
-        name: Unifrom1
-        type: 2
+        id: 1555387423
+        name: Framebuffer1
+        type: 1
       attribute3:
         attrType: input
-        id: 4011
-        name: Unifrom2
-        type: 2
+        id: 1955005643
+        name: Framebuffer2
+        type: 1
       attribute4:
         attrType: input
-        id: 4012
-        name: Unifrom3
+        id: 1808248934
+        name: Unifrom0
         type: 2
       attribute5:
         attrType: input
-        id: 4013
-        name: Unifrom4
+        id: 2142360337
+        name: Unifrom1
         type: 2
       attribute6:
         attrType: input
-        id: 4014
-        name: Framebuffer0
-        type: 1
+        id: 494780887
+        name: Unifrom2
+        type: 2
       attribute7:
         attrType: input
-        id: 4015
-        name: Framebuffer1
-        type: 1
+        id: 1229197717
+        name: Unifrom3
+        type: 2
       attribute8:
         attrType: input
-        id: 4016
-        name: Framebuffer2
-        type: 1
+        id: 977196488
+        name: Unifrom4
+        type: 2
       attribute9:
         attrType: input
-        id: 4017
+        id: 703563434
         name: Framebuffer3
         type: 1
       attribute10:
         attrType: input
-        id: 4020
+        id: 1410899621
         name: Framebuffer4
         type: 1
       attribute11:
         attrType: input
-        id: 4021
+        id: 921527075
         name: Framebuffer5
         type: 1
       attribute12:
-        attrType: input
-        id: 4022
-        name: Framebuffer6
+        attrType: output
+        id: 833959564
+        name: Framebuffer
         type: 1
       attribute13:
         attrType: output
-        id: 4018
-        name: Framebuffer
-        type: 1
-      attribute14:
-        attrType: output
-        id: 4019
+        id: 835679084
         name: Activated
         type: 3
     Node4:
-      id: 5006
-      position: [191.678345, 31.9346466]
+      id: 1476645557
+      position: [401.680908, -129.442047]
       type: 3
       uniformType: 1
       dataName: Directional light intensity
       attribute0:
         attrType: output
-        id: 5007
+        id: 833982848
         name: Output
         type: 2
     Node5:
-      id: 6007
-      position: [433.678345, -77.0653534]
-      type: 3
-      uniformType: 3
-      dataName: Directional light color
-      attribute0:
-        attrType: output
-        id: 6008
-        name: Output
-        type: 2
-    Node6:
-      id: 7008
-      position: [188.678345, -80.0653534]
+      id: 211910852
+      position: [403.680908, -239.442047]
       type: 3
       uniformType: 3
       dataName: Directional light direction
       attribute0:
         attrType: output
-        id: 7009
+        id: 435531530
+        name: Output
+        type: 2
+    Node6:
+      id: 595862877
+      position: [130.680893, -237.442047]
+      type: 3
+      uniformType: 3
+      dataName: Directional light color
+      attribute0:
+        attrType: output
+        id: 1910102777
         name: Output
         type: 2
     Node7:
-      id: 8009
-      position: [180.678345, -194.065353]
+      id: 1591504191
+      position: [133.036697, -345.840668]
       type: 3
       uniformType: 1
       dataName: Gamma
       attribute0:
         attrType: output
-        id: 8010
+        id: 1211415303
         name: Output
         type: 2
     Node8:
-      id: 9010
-      position: [420.678345, -194.065353]
+      id: 1055408669
+      position: [398.680908, -348.442047]
       type: 3
       uniformType: 1
       dataName: Exposure
       attribute0:
         attrType: output
-        id: 9011
+        id: 382733098
         name: Output
         type: 2
     Node9:
-      id: 10012
-      position: [-135.32164, -50.0653534]
-      type: 0
-      name: SSAOMain
-      clearType: 3
-      drawType: 1
-      cullFace: 1
-      renderShader: SSAOMain
-      targetFramebuffer:
-        width: 1280
-        height: 720
-        samples: 1
-        clearColor: [0.320930243, 0.320927024, 0.320927024, 1]
-        attachments:
-          attachment0:
-            borderColor: [1, 1, 1, 1]
-            multisampled: false
-            format: 6
-            filtering: 0
-            wrap: 2
-      staticUniforms:
-        staticUniform0:
-          name: u_GBuffer.position
-          type: 0
-          data: 0
-        staticUniform1:
-          name: u_GBuffer.normal
-          type: 0
-          data: 1
-        staticUniform2:
-          name: u_Noise
-          type: 0
-          data: 2
-      dynamicUniforms:
-        {}
-      textures:
-        texture0:
-          bindSlot: 2
-      framebuffers:
-        framebuffer0:
-          textureType: 0
-          bindSlot: 0
-          attachmentId: 0
-        framebuffer1:
-          textureType: 0
-          bindSlot: 1
-          attachmentId: 1
-      attribute0:
-        attrType: input
-        id: 10015
-        name: Activate
-        type: 3
-      attribute1:
-        attrType: input
-        id: 10016
-        name: Framebuffer0
-        type: 1
-      attribute2:
-        attrType: input
-        id: 10017
-        name: Framebuffer1
-        type: 1
-      attribute3:
-        attrType: input
-        id: 10018
-        name: Texture0
-        type: 0
-      attribute4:
-        attrType: output
-        id: 10013
-        name: Framebuffer
-        type: 1
-      attribute5:
-        attrType: output
-        id: 10014
-        name: Activated
-        type: 3
-    Node10:
-      id: 11013
-      position: [-412.321655, -72.0653534]
-      type: 2
-      path: ""
-      usingInternal: true
-      selectedTexture: ""
-      attribute0:
-        attrType: output
-        id: 11014
-        name: Output
-        type: 0
-    Node11:
-      id: 12015
-      position: [382.449341, 451.803223]
+      id: 152313433
+      position: [236, 401]
       type: 1
       usingInternal: true
-      selectedTexture: Skybox
-      width: 1280
-      height: 720
-      samples: 1
-      clearColor: [1, 1, 2.03685651e+21, 1.24715563e-43]
+      selectedBuffer: Skybox
+      width: 3435973836
+      height: 3435973836
+      samples: 3435973836
+      clearColor: [-107374176, -107374176, -107374176, -107374176]
       attachments:
         {}
       attribute0:
         attrType: output
-        id: 12016
+        id: 428860746
         name: Output
         type: 1
   Links:
     Link0:
-      id: 11014
-      from: 2003
-      to: 1004
+      id: 1560149917
+      from: 1750787857
+      to: 115646770
     Link1:
-      id: 11015
-      from: 1003
-      to: 10015
+      id: 1027313636
+      from: 972663169
+      to: 1435207610
     Link2:
-      id: 11016
-      from: 10014
-      to: 4008
+      id: 1085785631
+      from: 972663169
+      to: 1555387423
     Link3:
-      id: 11017
-      from: 9011
-      to: 4009
+      id: 41023974
+      from: 835679084
+      to: 1713313048
     Link4:
-      id: 11018
-      from: 8010
-      to: 4010
+      id: 104320908
+      from: 972663169
+      to: 1955005643
     Link5:
-      id: 11019
-      from: 7009
-      to: 4011
+      id: 1387708445
+      from: 331203353
+      to: 325136778
     Link6:
-      id: 11020
-      from: 6008
-      to: 4012
+      id: 210127105
+      from: 382733098
+      to: 1808248934
     Link7:
-      id: 11021
-      from: 5007
-      to: 4013
+      id: 883945358
+      from: 1211415303
+      to: 2142360337
     Link8:
-      id: 11022
-      from: 10013
-      to: 4017
+      id: 1343713120
+      from: 435531530
+      to: 494780887
     Link9:
-      id: 11023
-      from: 1002
-      to: 4014
+      id: 1689756978
+      from: 1910102777
+      to: 1229197717
     Link10:
-      id: 11024
-      from: 1002
-      to: 4015
+      id: 386898409
+      from: 833982848
+      to: 977196488
     Link11:
-      id: 11025
-      from: 1002
-      to: 4016
+      id: 1008871640
+      from: 428860746
+      to: 703563434
     Link12:
-      id: 11026
-      from: 1002
-      to: 10017
+      id: 174424706
+      from: 428860746
+      to: 1410899621
     Link13:
-      id: 11027
-      from: 1002
-      to: 10016
-    Link14:
-      id: 11028
-      from: 11014
-      to: 10018
-    Link15:
-      id: 11014
-      from: 4019
-      to: 3004
-    Link16:
-      id: 12016
-      from: 12016
-      to: 4020
-    Link17:
-      id: 12017
-      from: 12016
-      to: 4021
-    Link18:
-      id: 12018
-      from: 12016
-      to: 4022
-    Link19:
-      id: 12016
-      from: 2003
-      to: 1004
-    Link20:
-      id: 12017
-      from: 12016
-      to: 4020
-    Link21:
-      id: 12018
-      from: 12016
-      to: 4021
-    Link22:
-      id: 12019
-      from: 12016
-      to: 4022
+      id: 1186380301
+      from: 428860746
+      to: 921527075

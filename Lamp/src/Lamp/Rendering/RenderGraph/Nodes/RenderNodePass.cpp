@@ -51,7 +51,6 @@ namespace Lamp
 		renderPass->GetSpecification().TargetFramebuffer = Framebuffer::Create(spec);
 
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
-		output->id = ++currId;
 		output->name = "Framebuffer";
 		output->pNode = this;
 		output->type = RenderAttributeType::Framebuffer;
@@ -59,7 +58,6 @@ namespace Lamp
 		outputs.push_back(output);
 
 		Ref<RenderOutputAttribute> activated = CreateRef<RenderOutputAttribute>();
-		activated->id = ++currId;
 		activated->name = "Activated";
 		activated->pNode = this;
 		activated->type = RenderAttributeType::Pass;
@@ -67,7 +65,6 @@ namespace Lamp
 		outputs.push_back(activated);
 
 		Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-		input->id = ++currId;
 		input->name = "Activate";
 		input->pNode = this;
 		input->type = RenderAttributeType::Pass;
@@ -127,7 +124,7 @@ namespace Lamp
 		std::string nameId = "Name##node" + nodeId;
 		ImGui::InputText(nameId.c_str(), &specification.Name);
 
-		ImGui::TextColored(ImVec4(0.38, 0.42, 1, 1), "Inputs");
+		ImGui::TextColored(ImVec4(0.38f, 0.42f, 1.f, 1.f), "Inputs");
 
 		for (auto& input : inputs)
 		{
@@ -212,7 +209,7 @@ namespace Lamp
 			}
 
 			int height = static_cast<int>(specification.Height);
-			if (ImGui::InputInt("Height", &width))
+			if (ImGui::InputInt("Height", &height))
 			{
 				specification.Height = height;
 			}
@@ -443,7 +440,6 @@ namespace Lamp
 
 				input->pNode = this;
 				input->name = "Unifrom" + std::to_string(specification.dynamicUniforms.size() - 1);
-				input->id = ++currId;
 				input->type = RenderAttributeType::DynamicUniform;
 				input->data = (uint32_t)(specification.dynamicUniforms.size() - 1);
 
@@ -473,7 +469,6 @@ namespace Lamp
 				input->data = (uint32_t)(specification.textures.size() - 1);
 				input->pNode = this;
 				input->name = "Texture" + std::to_string(specification.textures.size() - 1);
-				input->id = ++currId;
 				input->type = RenderAttributeType::Texture;
 
 				inputs.push_back(input);
@@ -509,7 +504,6 @@ namespace Lamp
 				input->data = (uint32_t)(specification.framebuffers.size() - 1);
 				input->pNode = this;
 				input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
-				input->id = ++currId;
 				input->type = RenderAttributeType::Framebuffer;
 
 				inputs.push_back(input);
@@ -566,7 +560,7 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		ImGui::TextColored(ImVec4(0.101, 1, 0.313, 1), "Outputs");
+		ImGui::TextColored(ImVec4(0.101f, 1.f, 0.313f, 1.f), "Outputs");
 
 		for (auto& output : outputs)
 		{
@@ -997,7 +991,6 @@ namespace Lamp
 				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
 			}
 
-			currId = attr->id;
 			attributeCount++;
 		}
 	}

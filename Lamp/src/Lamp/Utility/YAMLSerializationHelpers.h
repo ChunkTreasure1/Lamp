@@ -92,16 +92,33 @@ namespace YAML
 		static Node encode(const Lamp::AssetHandle& rhs)
 		{
 			Node node;
-			node.push_back((uint32_t)rhs);
+			node.push_back((uint64_t)rhs);
 			return node;
 		};
 
 		static bool decode(const Node& node, Lamp::AssetHandle& v)
 		{
-			v = node.as<uint32_t>();
+			v = node.as<uint64_t>();
 			return true;
 		};
 	};	
+
+	template<>
+	struct convert<Lamp::GraphUUID>
+	{
+		static Node encode(const Lamp::GraphUUID& rhs)
+		{
+			Node node;
+			node.push_back((int)rhs);
+			return node;
+		};
+
+		static bool decode(const Node& node, Lamp::GraphUUID& v)
+		{
+			v = node.as<int>();
+			return true;
+		};
+	};
 }
 
 namespace Lamp

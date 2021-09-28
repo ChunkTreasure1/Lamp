@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "RenderGraph.h"
 
+#include "Nodes/RenderNodeStart.h"
+
 #include <yaml-cpp/yaml.h>
 
 namespace Lamp
@@ -17,29 +19,55 @@ namespace Lamp
 	void RenderGraph::AddNode(Ref<RenderNode> node)
 	{
 		m_Specification.nodes.push_back(node);
-		node->id = m_CurrentId++;
 	}
 
 	void RenderGraph::AddLink(Ref<RenderLink> link)
 	{
 		m_Specification.links.push_back(link);
-		link->id = m_CurrentId++;
 	}
 
-	void RenderGraph::RemoveNode(uint32_t id)
+	void RenderGraph::RemoveNode(GraphUUID id)
 	{
+		auto func = [&id, this](Ref<RenderNode>& node)
+		{
+			if (id == node->id)
+			{
+				for (const auto& link : node->links)
+				{
+					RemoveLink(link->id);
+				}
+
+				if (node->GetNodeType() == RenderNodeType::Start)
+				{
+					m_Specification.startNode = nullptr;
+				}
+				else if (node->GetNodeType() == RenderNodeType::End)
+				{
+					m_Specification.endNode = nullptr;
+				}
+				return true;
+			}
+			return false;
+		};
+		m_Specification.nodes.erase(std::remove_if(m_Specification.nodes.begin(), m_Specification.nodes.end(), func), m_Specification.nodes.end());
 	}
 
-	void RenderGraph::RemoveLink(uint32_t id)
+	void RenderGraph::RemoveLink(GraphUUID id)
 	{
+		auto func = [&id](Ref<RenderLink>& link)
+		{
+			return id == link->id;
+		};
+
+		m_Specification.links.erase(std::remove_if(m_Specification.links.begin(), m_Specification.links.end(), func), m_Specification.links.end());
 	}
 
 	void RenderGraph::Run(Ref<CameraBase> camera)
 	{
 		LP_PROFILE_FUNCTION();
-		for (const auto& node : m_Specification.startNodes)
+		if (m_Specification.startNode)
 		{
-			node->Activate(camera);
+			m_Specification.startNode->Activate(camera);
 		}
 	}
 

@@ -34,6 +34,7 @@ namespace Sandbox3D
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(RenderGraphPanel::UpdateImGui));
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(RenderGraphPanel::OnUpdate));
+		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(RenderGraphPanel::OnKeyPressed));
 	}
 
 	void RenderGraphPanel::Open(Ref<Lamp::RenderGraph> graph)
@@ -87,6 +88,36 @@ namespace Sandbox3D
 		return false;
 	}
 
+	bool RenderGraphPanel::OnKeyPressed(Lamp::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+			case LP_KEY_DELETE:
+			{
+				if (!m_CurrentlyOpenGraph)
+				{
+					break;
+				}
+
+				for (uint32_t i = 0; i < m_SelectedNodes.size(); i++)
+				{
+					m_CurrentlyOpenGraph->RemoveNode((GraphUUID)m_SelectedNodes[i]);
+				}
+				m_SelectedNodes.clear();
+
+				for (uint32_t i = 0; i < m_SelectedLinks.size(); i++)
+				{
+					m_CurrentlyOpenGraph->RemoveLink((GraphUUID)m_SelectedLinks[i]);
+				}
+				m_SelectedLinks.clear();
+
+				break;
+			}
+		}
+
+		return false;
+	}
+
 	void RenderGraphPanel::UpdateGraphWindow()
 	{
 		ImGui::Begin("Graph", &m_IsOpen);
@@ -108,7 +139,26 @@ namespace Sandbox3D
 
 		ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);
 		ImNodes::EndNodeEditor();
+
 		CheckLinkCreated();
+
+		const int numSelectedNodes = ImNodes::NumSelectedNodes();
+		if (numSelectedNodes > 0)
+		{
+			m_SelectedNodes.clear();
+			m_SelectedNodes.resize(numSelectedNodes);
+
+			ImNodes::GetSelectedNodes(m_SelectedNodes.data());
+		}
+
+		const int numSelectedLinks = ImNodes::NumSelectedLinks();
+		if (numSelectedLinks > 0)
+		{
+			m_SelectedLinks.clear();
+			m_SelectedLinks.resize(numSelectedLinks);
+
+			ImNodes::GetSelectedLinks(m_SelectedLinks.data());
+		}
 
 		ImGui::End();
 	}
@@ -119,74 +169,53 @@ namespace Sandbox3D
 
 		if (ImGui::Button("Create pass") && m_CurrentlyOpenGraph)
 		{
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
-
 			Ref<RenderNode> node = CreateRef<RenderNodePass>();
 			m_CurrentlyOpenGraph->AddNode(node);
-			node->id = m_CurrentlyOpenGraph->GetCurrentId();
-			node->currId = node->id;
 			node->Initialize();
 		}
 
 		if (ImGui::Button("Create buffer") && m_CurrentlyOpenGraph)
 		{
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
-
 			Ref<RenderNode> node = CreateRef<RenderNodeFramebuffer>();
 			m_CurrentlyOpenGraph->AddNode(node);
-			node->id = m_CurrentlyOpenGraph->GetCurrentId();
-			node->currId = node->id;
 			node->Initialize();
 		}
 
 		if (ImGui::Button("Create texture") && m_CurrentlyOpenGraph)
 		{
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
-
 			Ref<RenderNode> node = CreateRef<RenderNodeTexture>();
 			m_CurrentlyOpenGraph->AddNode(node);
-			node->id = m_CurrentlyOpenGraph->GetCurrentId();
-			node->currId = node->id;
 			node->Initialize();
 		}
 
 		if (ImGui::Button("Create Dynamic Uniform") && m_CurrentlyOpenGraph)
 		{
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
-
 			Ref<RenderNodeDynamicUniform> node = CreateRef<RenderNodeDynamicUniform>();
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->dataName = "Exposure";
 			node->pData = RegisterData(&Renderer3D::GetSettings().HDRExposure);
 			node->uniformType = Lamp::UniformType::Float;
-			node->id = m_CurrentlyOpenGraph->GetCurrentId();
-			node->currId = node->id;
 			node->Initialize();
 		}
 
 		if (ImGui::Button("Create Start") && m_CurrentlyOpenGraph)
 		{
-			m_CurrentlyOpenGraph->GetCurrentId() += 1000;
-
-			Ref<RenderNodeStart> node = CreateRef<RenderNodeStart>();
-			m_CurrentlyOpenGraph->AddNode(node);
-			node->id = m_CurrentlyOpenGraph->GetCurrentId();
-			node->currId = node->id;
-			node->Initialize();
+			if (!m_CurrentlyOpenGraph->GetSpecification().startNode)
+			{
+				Ref<RenderNodeStart> node = CreateRef<RenderNodeStart>();
+				m_CurrentlyOpenGraph->AddNode(node);
+				node->Initialize();
+				m_CurrentlyOpenGraph->GetSpecification().startNode = node;
+			}
 		}
 
 		if (ImGui::Button("Create End") && m_CurrentlyOpenGraph)
 		{
 			if (!m_CurrentlyOpenGraph->GetSpecification().endNode)
 			{
-				m_CurrentlyOpenGraph->GetCurrentId() += 1000;
-
 				Ref<RenderNodeEnd> node = CreateRef<RenderNodeEnd>();
 				m_CurrentlyOpenGraph->AddNode(node);
-				node->id = m_CurrentlyOpenGraph->GetCurrentId();
-				node->currId = node->id;
 				node->Initialize();
-
 				m_CurrentlyOpenGraph->GetSpecification().endNode = node;
 			}
 		}
@@ -317,7 +346,6 @@ namespace Sandbox3D
 				if (pStartAttr->type == pEndAttr->type)
 				{
 					Ref<RenderLink> link = CreateRef<RenderLink>();
-					link->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
 					if (auto p = dynamic_cast<RenderInputAttribute*>(pStartAttr))
 					{
@@ -339,9 +367,6 @@ namespace Sandbox3D
 
 					pStartNode->links.push_back(link);
 					pEndNode->links.push_back(link);
-
-					pStartAttr->links.push_back(link);
-					pEndAttr->links.push_back(link);
 
 					m_CurrentlyOpenGraph->GetSpecification().links.push_back(link);
 				}

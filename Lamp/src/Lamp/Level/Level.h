@@ -63,9 +63,9 @@ namespace Lamp
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
 		inline const std::string& GetPath() { return m_Path; }
-		inline std::map<UUID, Brush*>& GetBrushes() { return m_Brushes; }
-		inline std::map<UUID, Entity*>& GetEntities() { return m_Entities; }
-		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers;  }
+		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
+		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities; }
+		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
 		inline bool GetIsPlaying() { return m_IsPlaying; }
 		inline RenderUtils& GetRenderUtils() { return m_RenderUtils; }
 
@@ -101,8 +101,8 @@ namespace Lamp
 		bool m_IsPlaying = false;
 		bool m_LastShowedGizmos = false;
 
-		std::map<UUID, Brush*> m_Brushes;
-		std::map<UUID, Entity*> m_Entities;
+		std::map<uint32_t, Brush*> m_Brushes;
+		std::map<uint32_t, Entity*> m_Entities;
 		std::vector<ObjectLayer> m_Layers;
 		RenderUtils m_RenderUtils;
 	};

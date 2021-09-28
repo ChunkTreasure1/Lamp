@@ -21,7 +21,7 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
-		g_pEnv->pLevel->GetBrushes().erase(m_UUID);
+		g_pEnv->pLevel->GetBrushes().erase(m_Id);
 
 		delete this;
 	}
@@ -68,12 +68,12 @@ namespace Lamp
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_UUID, pBrush));
+			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_Id, pBrush));
 			g_pEnv->pLevel->AddToLayer(pBrush);
 		}
 		else
 		{
-			pBrush->m_UUID = main->m_UUID;
+			pBrush->m_Id = main->m_Id;
 		}
 
 		pBrush->SetLayerID(main->GetLayerID());
@@ -106,7 +106,7 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{	
-		m_Model->Render(m_UUID, m_ModelMatrix);
+		m_Model->Render(m_Id, m_ModelMatrix);
 
 		return false;
 	}

@@ -48,7 +48,7 @@ namespace Lamp
 	{
 		auto& entites = g_pEnv->pLevel->GetEntities();
 
-		entites.erase(m_UUID);
+		entites.erase(m_Id);
 		delete this;
 	}
 
@@ -256,12 +256,12 @@ namespace Lamp
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetEntities().emplace(copy->m_UUID, copy);
+			g_pEnv->pLevel->GetEntities().emplace(copy->m_Id, copy);
 			g_pEnv->pLevel->AddToLayer(copy);
 		}
 		else
 		{
-			copy->m_UUID = entity->m_UUID;
+			copy->m_Id = entity->m_Id;
 		}
 
 		return copy;
@@ -284,7 +284,7 @@ namespace Lamp
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
 
-			Renderer3D::SubmitQuadForward(transform, m_GizmoMaterial, m_UUID);
+			Renderer3D::SubmitQuadForward(transform, m_GizmoMaterial, m_Id);
 		}
 
 		return false;

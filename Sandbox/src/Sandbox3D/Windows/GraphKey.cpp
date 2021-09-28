@@ -244,19 +244,19 @@ namespace Sandbox3D
 					}
 				}
 			}
+		}
 
-			const int numSelectedNodes = ImNodes::NumSelectedNodes();
-			if (numSelectedNodes == 1)
+		const int numSelectedNodes = ImNodes::NumSelectedNodes();
+		if (numSelectedNodes == 1)
+		{
+			int selNode = 0;
+			ImNodes::GetSelectedNodes(&selNode);
+
+			for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
 			{
-				int selNode = 0;
-				ImNodes::GetSelectedNodes(&selNode);
-
-				for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
+				if (node->id == selNode)
 				{
-					if (node->id == selNode)
-					{
-						m_SelectedNode = node;
-					}
+					m_SelectedNode = node;
 				}
 			}
 		}

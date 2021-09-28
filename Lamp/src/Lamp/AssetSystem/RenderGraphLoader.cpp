@@ -101,7 +101,6 @@ namespace Lamp
 		//Nodes
 		YAML::Node nodesNode = graphNode["Nodes"];
 		uint32_t nodeCount = 0;
-		uint32_t currentId = 0;
 
 		while (YAML::Node nodeNode = nodesNode["Node" + std::to_string(nodeCount)])
 		{
@@ -156,7 +155,7 @@ namespace Lamp
 					node->Deserialize(nodeNode);
 
 					specification.nodes.push_back(node);
-					specification.startNodes.push_back(node);
+					specification.startNode = node;
 					break;
 				}
 
@@ -181,10 +180,6 @@ namespace Lamp
 			LP_DESERIALIZE_PROPERTY(id, node->id, nodeNode, 0);
 			LP_DESERIALIZE_PROPERTY(position, node->position, nodeNode, glm::vec2(0.f));
 
-			if (node->currId > currentId)
-			{
-				currentId = node->currId;
-			}
 			nodeCount++;
 		}
 
@@ -230,7 +225,6 @@ namespace Lamp
 			linkCount++;
 		}
 
-		graph->SetCurrentId(currentId++);
 		graph->Path = path;
 
 		return true;

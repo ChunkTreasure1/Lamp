@@ -17,7 +17,6 @@ namespace Lamp
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
 		output->pNode = this;
 		output->name = "Output";
-		output->id = ++currId;
 		output->type = RenderAttributeType::Texture;
 
 		outputs.push_back(output);
@@ -164,7 +163,6 @@ namespace Lamp
 				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
 			}
 
-			currId = attr->id;
 			attributeCount++;
 		}
 	}

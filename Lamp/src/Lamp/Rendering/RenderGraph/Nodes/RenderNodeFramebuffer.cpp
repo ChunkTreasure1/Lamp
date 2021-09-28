@@ -18,7 +18,6 @@ namespace Lamp
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
 		output->pNode = this;
 		output->name = "Output";
-		output->id = ++currId;
 		output->type = RenderAttributeType::Framebuffer;
 
 		outputs.push_back(output);
@@ -62,7 +61,20 @@ namespace Lamp
 
 		ImGui::PushItemWidth(100.f);
 
-		ImGui::Checkbox("Use internal framebuffer", &m_UseInternalBuffers);
+		if (ImGui::Checkbox("Use internal framebuffer", &m_UseInternalBuffers))
+		{
+			if (!m_UseInternalBuffers)
+			{
+				FramebufferSpecification spec;
+				framebuffer = Framebuffer::Create(spec);
+			}
+			else
+			{
+				framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
+				m_SelectedBufferName = m_BufferNames[m_CurrentlySelectedBuffer];
+			}
+		}
+
 		if (m_UseInternalBuffers)
 		{
 			ImGui::PushItemWidth(150.f);
@@ -183,7 +195,7 @@ namespace Lamp
 		const auto& specification = framebuffer->GetSpecification();
 
 		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, out);
-		LP_SERIALIZE_PROPERTY(selectedTexture, m_SelectedBufferName, out);
+		LP_SERIALIZE_PROPERTY(selectedBuffer, m_SelectedBufferName, out);
 
 		LP_SERIALIZE_PROPERTY(width, specification.Width, out);
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
@@ -231,7 +243,7 @@ namespace Lamp
 	void RenderNodeFramebuffer::Deserialize(YAML::Node& node)
 	{
 		LP_DESERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, node, false);
-		m_SelectedBufferName = node["selectedTexture"].as<std::string>();
+		m_SelectedBufferName = node["selectedBuffer"].as<std::string>();
 
 		if (m_UseInternalBuffers)
 		{
@@ -282,7 +294,6 @@ namespace Lamp
 				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
 			}
 			
-			currId = attr->id;
 			attributeCount++;
 		}
 	}

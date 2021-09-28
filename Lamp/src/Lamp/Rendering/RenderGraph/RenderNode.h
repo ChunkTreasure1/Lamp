@@ -33,9 +33,8 @@ namespace Lamp
 	{
 		virtual ~RenderAttribute() {}
 
-		std::vector<Ref<RenderLink>> links;
 		RenderNode* pNode;
-		uint32_t id;
+		GraphUUID id;
 		std::string name;
 		RenderAttributeType type;
 	};
@@ -53,13 +52,12 @@ namespace Lamp
 	{
 		RenderOutputAttribute* pOutput;
 		RenderInputAttribute* pInput;
-		uint32_t id;
+		GraphUUID id;
 	};
 
 	struct RenderNode
 	{
 		RenderNode()
-			: currId(UINT32_MAX - 1000)
 		{}
 		virtual ~RenderNode() {}
 
@@ -69,8 +67,7 @@ namespace Lamp
 		std::vector<Ref<RenderOutputAttribute>> outputs;
 		std::vector<Ref<RenderInputAttribute>> inputs;
 
-		uint32_t currId;
-		uint32_t id;
+		GraphUUID id;
 
 		virtual void Initialize() = 0;
 		virtual void Start() = 0;
@@ -80,7 +77,7 @@ namespace Lamp
 		virtual void Serialize(YAML::Emitter& out) = 0;
 		virtual void Deserialize(YAML::Node& node) = 0;
 
-		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out, uint32_t id);
+		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out, GraphUUID id);
 		std::pair<Ref<RenderAttribute>, std::string> DeserializeBaseAttribute(const YAML::Node& node);
 	};
 }

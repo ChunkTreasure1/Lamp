@@ -314,9 +314,9 @@ namespace Lamp
 		return SaveLevel(level->GetPath(), level);
 	}
 
-	std::map<UUID, Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode)
+	std::map<uint32_t, Brush*> LevelSystem::LoadBrushes(rapidxml::xml_node<>* pNode)
 	{
-		std::map<UUID, Brush*> pBrushes;
+		std::map<uint32_t, Brush*> pBrushes;
 
 		for (rapidxml::xml_node<>* pBrush = pNode->first_node("Brush"); pBrush; pBrush = pBrush->next_sibling())
 		{
@@ -344,9 +344,9 @@ namespace Lamp
 		return pBrushes;
 	}
 
-	std::map<UUID, Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode)
+	std::map<uint32_t, Entity*> LevelSystem::LoadEntities(rapidxml::xml_node<>* pNode)
 	{
-		std::map<UUID, Entity*> pEntities;
+		std::map<uint32_t, Entity*> pEntities;
 
 		for (rapidxml::xml_node<>* pEntity = pNode->first_node("Entity"); pEntity; pEntity = pEntity->next_sibling())
 		{

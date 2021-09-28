@@ -19,6 +19,7 @@ namespace Sandbox3D
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
+		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 
 		void UpdateGraphWindow();
 		void UpdateNodeWindow();
@@ -29,6 +30,8 @@ namespace Sandbox3D
 
 	private:
 		Ref<Lamp::RenderGraph> m_CurrentlyOpenGraph;
+		std::vector<int> m_SelectedNodes;
+		std::vector<int> m_SelectedLinks;
 		
 		//Icons
 		Ref<Lamp::Texture2D> m_LoadIcon;
