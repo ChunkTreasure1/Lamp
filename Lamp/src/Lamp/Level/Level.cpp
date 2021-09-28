@@ -176,8 +176,6 @@ namespace Lamp
 			node->ActivateOutput(0);
 		}
 
-		Renderer3D::GetSettings().RenderGraph->Start();
-
 		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
 		g_pEnv->ShouldRenderGizmos = false;
 	}
