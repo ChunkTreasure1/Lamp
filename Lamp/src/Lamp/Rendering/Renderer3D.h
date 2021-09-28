@@ -21,11 +21,14 @@ namespace Lamp
 
 		float SSAORadius = 0.5f;
 		float SSAOBias = 0.025f;
-		Ref<Texture2D> SSAONoiseTexture;
 		
 		//Camera
 		float HDRExposure = 3.f;
 		float Gamma = 2.2f;
+
+		//Textures
+		std::map<std::string, Ref<Texture2D>> InternalTextures;
+		std::map<std::string, Ref<Framebuffer>> InternalFramebuffers;
 	};
 
 	enum class ERendererSettings

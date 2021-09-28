@@ -559,7 +559,7 @@ namespace Sandbox3D
 
 			passSpec.textures =
 			{
-				{ Renderer3D::GetSettings().SSAONoiseTexture, 2 }
+				{ Renderer3D::GetSettings().InternalTextures["SSAONoise"], 2}
 			};
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
@@ -665,9 +665,9 @@ namespace Sandbox3D
 				{ m_GBuffer, TextureType::Color, 1, 1 },
 				{ m_GBuffer, TextureType::Color, 2, 2 },
 				{ m_DirShadowBuffer, TextureType::Depth, 3, 0 },
-				{ g_pEnv->pSkyboxBuffer, TextureType::Color, 4, 0 },
-				{ g_pEnv->pSkyboxBuffer, TextureType::Color, 5, 1 },
-				{ g_pEnv->pSkyboxBuffer, TextureType::Color, 6, 2 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 4, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 5, 1 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 6, 2 },
 				{ m_SSAOBlurBuffer, TextureType::Color, 7, 0 }
 			};
 

@@ -598,13 +598,19 @@ namespace Lamp
 			{
 				case RenderNodeType::Pass:
 				{
-					link->pInput->pNode->Activate(value);
+					if (link->pInput->type == RenderAttributeType::Pass)
+					{
+						link->pInput->pNode->Activate(value);
+					}
 					break;
 				}
 
 				case RenderNodeType::End:
 				{
-					link->pInput->pNode->Activate(renderPass->GetSpecification().TargetFramebuffer);
+					if (link->pInput->type == RenderAttributeType::Pass)
+					{
+						link->pInput->pNode->Activate(renderPass->GetSpecification().TargetFramebuffer);
+					}
 					break;
 				}
 
@@ -959,6 +965,7 @@ namespace Lamp
 		uint32_t attributeCount = 0;
 		uint32_t uniformIndex = 0;
 		uint32_t bufferIndex = 0;
+		uint32_t textureIndex = 0;
 
 		while (YAML::Node attribute = node["attribute" + std::to_string(attributeCount)])
 		{
@@ -966,6 +973,7 @@ namespace Lamp
 			attr->pNode = this;
 			if (attrType == "input")
 			{
+				//TODO: fix this mess
 				auto ptr = std::dynamic_pointer_cast<RenderInputAttribute>(attr);
 				if (ptr->type == RenderAttributeType::DynamicUniform)
 				{
@@ -976,6 +984,11 @@ namespace Lamp
 				{
 					ptr->data = bufferIndex;
 					bufferIndex++;
+				}
+				else if (ptr->type == RenderAttributeType::Texture)
+				{
+					ptr->data = textureIndex;
+					textureIndex++;
 				}
 				inputs.push_back(ptr);
 			}

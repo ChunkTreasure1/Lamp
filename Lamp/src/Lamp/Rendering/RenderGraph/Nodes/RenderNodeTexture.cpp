@@ -21,17 +21,25 @@ namespace Lamp
 		output->type = RenderAttributeType::Texture;
 
 		outputs.push_back(output);
+
+		for (const auto &[uName, uTexture] : Renderer3D::GetSettings().InternalTextures)
+		{
+			m_TextureNames.push_back(uName.c_str());
+		}
 	}
 
 	void RenderNodeTexture::Start()
 	{
-		for (auto& link : links)
+		for (const auto& link : links)
 		{
-			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+			if (link->pInput->type == RenderAttributeType::Texture)
 			{
-				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-				auto& [passTex, bindId] = passNode->renderPass->GetSpecification().textures[index];
-				passTex = texture;
+				if (RenderNodePass *passNode = dynamic_cast<RenderNodePass *>(link->pInput->pNode))
+				{
+					uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
+					auto &[passTex, bindId] = passNode->renderPass->GetSpecification().textures[index];
+					passTex = texture;
+				}
 			}
 		}
 	}
@@ -53,21 +61,37 @@ namespace Lamp
 		ImGui::Text("Texture node");
 		ImNodes::EndNodeTitleBar();
 
+		ImGui::Checkbox("Use internal texture", &m_UseInternalTextures);
 		ImGui::Text("Texture:");
-		if (texture)
+
+		if (m_UseInternalTextures)
 		{
-			if (ImGui::ImageButton((ImTextureID)texture->GetID(), { 100, 100 }, { 0, 1 }, { 1, 0 }))
+			ImGui::PushItemWidth(150.f);
+			if (ImGui::Combo("##textures", &m_CurrentlySelectedTexture, m_TextureNames.data(), m_TextureNames.size()))
 			{
-				GetTexture();
+				texture = Renderer3D::GetSettings().InternalTextures[m_TextureNames[m_CurrentlySelectedTexture]];
+				m_SelectedTextureName = m_TextureNames[m_CurrentlySelectedTexture];
 			}
+			ImGui::PopItemWidth();
 		}
 		else
 		{
-			if (ImGui::Button("Choose a texture!", { 128, 128 }))
+			if (texture)
 			{
-				GetTexture();
+				if (ImGui::ImageButton((ImTextureID)texture->GetID(), { 100, 100 }, { 0, 1 }, { 1, 0 }))
+				{
+					GetTexture();
+				}
+			}
+			else
+			{
+				if (ImGui::Button("Choose a texture!", { 128, 128 }))
+				{
+					GetTexture();
+				}
 			}
 		}
+
 
 		for (auto& output : outputs)
 		{
@@ -87,6 +111,8 @@ namespace Lamp
 	{
 		//TODO: change to use asset handle
 		LP_SERIALIZE_PROPERTY(path, (texture ? texture->Path.string() : ""), out);
+		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalTextures, out);
+		LP_SERIALIZE_PROPERTY(selectedTexture, m_SelectedTextureName, out);
 
 		uint32_t attrId = 0;
 		for (auto &input : inputs)
@@ -104,10 +130,20 @@ namespace Lamp
 
 	void RenderNodeTexture::Deserialize(YAML::Node& node)
 	{
-		std::string texPath = node["path"].as<std::string>();
-		if (!texPath.empty())
+		LP_DESERIALIZE_PROPERTY(usingInternal, m_UseInternalTextures, node, false);
+		m_SelectedTextureName = node["selectedTexture"].as<std::string>();
+
+		if (!m_UseInternalTextures)
 		{
-			texture = ResourceCache::GetAsset<Texture2D>(texPath);
+			std::string texPath = node["path"].as<std::string>();
+			if (!texPath.empty())
+			{
+				texture = ResourceCache::GetAsset<Texture2D>(texPath);
+			}
+		}
+		else
+		{
+			texture = Renderer3D::GetSettings().InternalTextures[m_SelectedTextureName];
 		}
 
 		//attributes

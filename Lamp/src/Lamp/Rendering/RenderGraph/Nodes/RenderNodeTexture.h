@@ -22,5 +22,11 @@ namespace Lamp
 
 	private:
 		void GetTexture();
+
+	private:
+		bool m_UseInternalTextures = false;
+		int m_CurrentlySelectedTexture = 0;
+		std::string m_SelectedTextureName = "";
+		std::vector<const char *> m_TextureNames;
 	};
 }

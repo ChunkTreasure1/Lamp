@@ -20,5 +20,11 @@ namespace Lamp
 		virtual RenderNodeType GetNodeType() { return RenderNodeType::Framebuffer; }
 		virtual void Serialize(YAML::Emitter& node) override;
 		virtual void Deserialize(YAML::Node& node) override;
+	
+	private:
+		bool m_UseInternalBuffers = false;
+		int m_CurrentlySelectedBuffer = 0;
+		std::string m_SelectedBufferName = "";
+		std::vector<const char *> m_BufferNames;
 	};
 }

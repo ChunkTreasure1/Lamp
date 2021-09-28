@@ -22,6 +22,11 @@ namespace Lamp
 		output->type = RenderAttributeType::Framebuffer;
 
 		outputs.push_back(output);
+
+		for (const auto &[uName, uBuffer] : Renderer3D::GetSettings().InternalFramebuffers)
+		{
+			m_BufferNames.push_back(uName.c_str());
+		}
 	}
 
 	void RenderNodeFramebuffer::Start()
@@ -57,91 +62,105 @@ namespace Lamp
 
 		ImGui::PushItemWidth(100.f);
 
-		auto& specification = framebuffer->GetSpecification();
-		int width = static_cast<int>(specification.Width);
-		if (ImGui::InputInt("Width", &width))
+		ImGui::Checkbox("Use internal framebuffer", &m_UseInternalBuffers);
+		if (m_UseInternalBuffers)
 		{
-			specification.Width = width;
-		}
-
-		int height = static_cast<int>(specification.Height);
-		if (ImGui::InputInt("Height", &height))
-		{
-			specification.Height = height;
-		}
-
-		int samples = static_cast<int>(specification.Samples);
-		if (ImGui::InputInt("Samples", &samples))
-		{
-			specification.Samples = samples;
-		}
-
-		ImGui::PushItemWidth(200.f);
-		ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
-		ImGui::PopItemWidth();
-
-		if (ImGui::TreeNode("Attachments"))
-		{
-			if (ImGui::Button("Add"))
+			ImGui::PushItemWidth(150.f);
+			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), m_BufferNames.size()))
 			{
-				specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
+				framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
+				m_SelectedBufferName = m_BufferNames[m_CurrentlySelectedBuffer];
+			}
+			ImGui::PopItemWidth();
+		}
+		else
+		{
+			auto &specification = framebuffer->GetSpecification();
+			int width = static_cast<int>(specification.Width);
+			if (ImGui::InputInt("Width", &width))
+			{
+				specification.Width = width;
+			}
+
+			int height = static_cast<int>(specification.Height);
+			if (ImGui::InputInt("Height", &height))
+			{
+				specification.Height = height;
+			}
+
+			int samples = static_cast<int>(specification.Samples);
+			if (ImGui::InputInt("Samples", &samples))
+			{
+				specification.Samples = samples;
 			}
 
 			ImGui::PushItemWidth(200.f);
-
-			int attIndex = 0;
-			for (auto& att : specification.Attachments.Attachments)
-			{
-				std::string attId = std::to_string(attIndex);
-				bool changed = false;
-
-				std::string treeId = "Attachment##" + attId;
-				if (ImGui::TreeNode(treeId.c_str()))
-				{
-					ImGui::ColorEdit4("Border Color", glm::value_ptr(att.BorderColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
-
-					ImGui::Checkbox("Is multisampled", &att.MultiSampled);
-
-					static const char* texFormats[] = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
-					int currentlySelectedFormat = (int)att.TextureFormat;
-					std::string formatId = "Texture format##format" + attId;
-					if (ImGui::Combo(formatId.c_str(), &currentlySelectedFormat, texFormats, IM_ARRAYSIZE(texFormats)))
-					{
-						att.TextureFormat = (FramebufferTextureFormat)currentlySelectedFormat;
-						changed = true;
-					}
-
-					static const char* texFiltering[] = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
-					int currentlySelectedFiltering = (int)att.TextureFiltering;
-					std::string filteringId = "Texture filtering##filtering" + attId;
-					if (ImGui::Combo(filteringId.c_str(), &currentlySelectedFiltering, texFiltering, IM_ARRAYSIZE(texFiltering)))
-					{
-						att.TextureFiltering = (FramebufferTexureFiltering)currentlySelectedFiltering;
-						changed = true;
-					}
-
-					static const char* texWrap[] = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
-					int currentlySelectedWrap = (int)att.TextureWrap;
-					std::string wrapId = "Texture wrap##wrap" + attId;
-					if (ImGui::Combo(wrapId.c_str(), &currentlySelectedWrap, texWrap, IM_ARRAYSIZE(texWrap)))
-					{
-						att.TextureWrap = (FramebufferTextureWrap)currentlySelectedWrap;
-						changed = true;
-					}
-
-					if (changed)
-					{
-						framebuffer->Invalidate();
-					}
-
-
-					ImGui::TreePop();
-				}
-				attIndex++;
-			}
+			ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
 			ImGui::PopItemWidth();
 
-			ImGui::TreePop();
+			if (ImGui::TreeNode("Attachments"))
+			{
+				if (ImGui::Button("Add"))
+				{
+					specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
+				}
+
+				ImGui::PushItemWidth(200.f);
+
+				int attIndex = 0;
+				for (auto &att : specification.Attachments.Attachments)
+				{
+					std::string attId = std::to_string(attIndex);
+					bool changed = false;
+
+					std::string treeId = "Attachment##" + attId;
+					if (ImGui::TreeNode(treeId.c_str()))
+					{
+						ImGui::ColorEdit4("Border Color", glm::value_ptr(att.BorderColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
+
+						ImGui::Checkbox("Is multisampled", &att.MultiSampled);
+
+						static const char *texFormats[] = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
+						int currentlySelectedFormat = (int)att.TextureFormat;
+						std::string formatId = "Texture format##format" + attId;
+						if (ImGui::Combo(formatId.c_str(), &currentlySelectedFormat, texFormats, IM_ARRAYSIZE(texFormats)))
+						{
+							att.TextureFormat = (FramebufferTextureFormat)currentlySelectedFormat;
+							changed = true;
+						}
+
+						static const char *texFiltering[] = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
+						int currentlySelectedFiltering = (int)att.TextureFiltering;
+						std::string filteringId = "Texture filtering##filtering" + attId;
+						if (ImGui::Combo(filteringId.c_str(), &currentlySelectedFiltering, texFiltering, IM_ARRAYSIZE(texFiltering)))
+						{
+							att.TextureFiltering = (FramebufferTexureFiltering)currentlySelectedFiltering;
+							changed = true;
+						}
+
+						static const char *texWrap[] = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
+						int currentlySelectedWrap = (int)att.TextureWrap;
+						std::string wrapId = "Texture wrap##wrap" + attId;
+						if (ImGui::Combo(wrapId.c_str(), &currentlySelectedWrap, texWrap, IM_ARRAYSIZE(texWrap)))
+						{
+							att.TextureWrap = (FramebufferTextureWrap)currentlySelectedWrap;
+							changed = true;
+						}
+
+						if (changed)
+						{
+							framebuffer->Invalidate();
+						}
+
+
+						ImGui::TreePop();
+					}
+					attIndex++;
+				}
+				ImGui::PopItemWidth();
+
+				ImGui::TreePop();
+			}
 		}
 
 		for (auto& output : outputs)
@@ -162,6 +181,9 @@ namespace Lamp
 	void RenderNodeFramebuffer::Serialize(YAML::Emitter& out)
 	{
 		const auto& specification = framebuffer->GetSpecification();
+
+		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, out);
+		LP_SERIALIZE_PROPERTY(selectedTexture, m_SelectedBufferName, out);
 
 		LP_SERIALIZE_PROPERTY(width, specification.Width, out);
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
@@ -208,27 +230,38 @@ namespace Lamp
 
 	void RenderNodeFramebuffer::Deserialize(YAML::Node& node)
 	{
-		auto& specification = framebuffer->GetSpecification();
-		LP_DESERIALIZE_PROPERTY(width, specification.Width, node, 0);
-		LP_DESERIALIZE_PROPERTY(height, specification.Height, node, 0);
-		LP_DESERIALIZE_PROPERTY(samples, specification.Samples, node, 0);
-		LP_DESERIALIZE_PROPERTY(clearColor, specification.ClearColor, node, glm::vec4(0.f));
-		
-		YAML::Node attachmentsNode = node["attachments"];
-		uint32_t attachmentCount = 0;
-		while (YAML::Node attachmentNode = attachmentsNode["attachment" + std::to_string(attachmentCount)])
+		LP_DESERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, node, false);
+		m_SelectedBufferName = node["selectedTexture"].as<std::string>();
+
+		if (m_UseInternalBuffers)
 		{
-			FramebufferTextureSpecification att;
-			
-			LP_DESERIALIZE_PROPERTY(borderColor, att.BorderColor, attachmentNode, glm::vec4(0.f));
-			LP_DESERIALIZE_PROPERTY(multisampled, att.MultiSampled, attachmentNode, false);
+			framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_SelectedBufferName];
+		}
+		else
+		{
+			auto &specification = framebuffer->GetSpecification();
+			LP_DESERIALIZE_PROPERTY(width, specification.Width, node, 0);
+			LP_DESERIALIZE_PROPERTY(height, specification.Height, node, 0);
+			LP_DESERIALIZE_PROPERTY(samples, specification.Samples, node, 0);
+			LP_DESERIALIZE_PROPERTY(clearColor, specification.ClearColor, node, glm::vec4(0.f));
 
-			att.TextureFormat = (FramebufferTextureFormat)attachmentNode["format"].as<uint32_t>();
-			att.TextureFiltering = (FramebufferTexureFiltering)attachmentNode["filtering"].as<uint32_t>();
-			att.TextureWrap = (FramebufferTextureWrap)attachmentNode["wrap"].as<uint32_t>();
+			YAML::Node attachmentsNode = node["attachments"];
+			uint32_t attachmentCount = 0;
+			while (YAML::Node attachmentNode = attachmentsNode["attachment" + std::to_string(attachmentCount)])
+			{
+				FramebufferTextureSpecification att;
 
-			specification.Attachments.Attachments.push_back(att);
-			attachmentCount++;
+				LP_DESERIALIZE_PROPERTY(borderColor, att.BorderColor, attachmentNode, glm::vec4(0.f));
+				LP_DESERIALIZE_PROPERTY(multisampled, att.MultiSampled, attachmentNode, false);
+
+				att.TextureFormat = (FramebufferTextureFormat)attachmentNode["format"].as<uint32_t>();
+				att.TextureFiltering = (FramebufferTexureFiltering)attachmentNode["filtering"].as<uint32_t>();
+				att.TextureWrap = (FramebufferTextureWrap)attachmentNode["wrap"].as<uint32_t>();
+
+				specification.Attachments.Attachments.push_back(att);
+				attachmentCount++;
+			}
+			framebuffer->Invalidate();
 		}
 
 		//attributes

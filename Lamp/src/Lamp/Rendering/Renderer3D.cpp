@@ -224,7 +224,8 @@ namespace Lamp
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
 			s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
 			s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-			g_pEnv->pSkyboxBuffer = CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr");
+
+			s_RendererSettings.InternalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
 		}
 		////////////////
 
@@ -233,8 +234,9 @@ namespace Lamp
 		/////SSAO/////
 		RegenerateSSAOKernel();
 
-		s_RendererSettings.SSAONoiseTexture = Texture2D::Create(4, 4);
-		s_RendererSettings.SSAONoiseTexture->SetData(&s_pData->SSAONoise[0], 0);
+		Ref<Texture2D> ssaoNoise = Texture2D::Create(4, 4);
+		ssaoNoise->SetData(&s_pData->SSAONoise[0], 0);
+		s_RendererSettings.InternalTextures.emplace(std::make_pair("SSAONoise", ssaoNoise));
 		//////////////
 
 		/////Uniform Buffer/////
@@ -496,9 +498,9 @@ namespace Lamp
 				mat->GetShader()->UploadInt("u_PrefilterMap", 2);
 				mat->GetShader()->UploadInt("u_BRDFLUT", 3);
 
-				g_pEnv->pSkyboxBuffer->BindColorAttachment(1, 0);
-				g_pEnv->pSkyboxBuffer->BindColorAttachment(2, 1);
-				g_pEnv->pSkyboxBuffer->BindColorAttachment(3, 2);
+				s_RendererSettings.InternalFramebuffers["Skybox"]->BindColorAttachment(1, 0);
+				s_RendererSettings.InternalFramebuffers["Skybox"]->BindColorAttachment(2, 1);
+				s_RendererSettings.InternalFramebuffers["Skybox"]->BindColorAttachment(3, 2);
 
 				mat->GetShader()->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
 				mat->GetShader()->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
@@ -541,7 +543,7 @@ namespace Lamp
 		s_pData->SkyboxShader->Bind();
 		s_pData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
 
-		g_pEnv->pSkyboxBuffer->Bind();
+		s_RendererSettings.InternalFramebuffers["Skybox"]->Bind();
 
 		DrawCube();
 	}
@@ -647,7 +649,7 @@ namespace Lamp
 
 	void Renderer3D::SetEnvironment(const std::string& path)
 	{
-		g_pEnv->pSkyboxBuffer = CreateRef<IBLBuffer>(path);
+		s_RendererSettings.InternalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
 	}
 
 	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id)
