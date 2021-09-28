@@ -121,6 +121,7 @@ namespace Lamp
 			if (uName == dataName)
 			{
 				m_CurrentlySelectedUniform = i;
+				pData = uData;
 				break;
 			}
 			i++;

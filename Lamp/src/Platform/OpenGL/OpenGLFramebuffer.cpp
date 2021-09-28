@@ -177,18 +177,6 @@ namespace Lamp
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
-		for (auto& format : m_Specification.Attachments.Attachments)
-		{
-			if (!Utils::IsDepthFormat(format.TextureFormat))
-			{
-				m_ColorAttachmentSpecs.emplace_back(format);
-			}
-			else
-			{
-				m_DepthAttachmentFormatSpec = format;
-			}
-		}
-
 		Invalidate();
 	}
 
@@ -281,6 +269,19 @@ namespace Lamp
 
 	void OpenGLFramebuffer::Invalidate()
 	{
+		m_ColorAttachmentSpecs.clear();
+		for (auto& format : m_Specification.Attachments.Attachments)
+		{
+			if (!Utils::IsDepthFormat(format.TextureFormat))
+			{
+				m_ColorAttachmentSpecs.emplace_back(format);
+			}
+			else
+			{
+				m_DepthAttachmentFormatSpec = format;
+			}
+		}
+
 		if (m_RendererID > 0)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);

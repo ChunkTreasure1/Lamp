@@ -67,10 +67,13 @@ namespace Sandbox3D
 				g_pEnv->pLevel->OnEvent(e);
 			}
 
-			uint32_t textureID;
+			uint32_t textureID = 0;
 			if (Renderer3D::GetSettings().RenderGraph)
 			{
-				textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+				if (Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer)
+				{
+					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+				}
 			}
 			else
 			{
@@ -792,6 +795,8 @@ namespace Sandbox3D
 		{
 			graphPath = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
 			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
+
+			Lamp::Renderer3D::GetSettings().RenderGraph->Start();
 		}
 
 		ImGui::Separator();

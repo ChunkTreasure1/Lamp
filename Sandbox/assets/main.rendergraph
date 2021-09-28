@@ -4,9 +4,9 @@ RenderGraph:
   Nodes:
     Node0:
       id: 1001
-      position: [299, 61]
+      position: [271, 143]
       type: 0
-      name: ""
+      name: GBuffer
       clearType: 3
       drawType: 0
       cullFace: 1
@@ -15,16 +15,55 @@ RenderGraph:
         width: 1280
         height: 720
         samples: 1
-        clearColor: [1, 1, 1, 1]
+        clearColor: [0.334883749, 0.334880382, 0.334880382, 1]
         attachments:
           attachment0:
             borderColor: [1, 1, 1, 1]
             multisampled: false
-            format: 1
+            format: 2
             filtering: 0
-            wrap: 0
+            wrap: 2
+          attachment1:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 2
+            filtering: 0
+            wrap: 2
+          attachment2:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 2
+            filtering: 0
+            wrap: 2
+          attachment3:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 2
+            filtering: 0
+            wrap: 2
+          attachment4:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 0
+            wrap: 2
       staticUniforms:
-        {}
+        staticUniform0:
+          name: u_Model
+          type: 9
+          data: 0
+        staticUniform1:
+          name: u_Material.albedo
+          type: 0
+          data: 0
+        staticUniform2:
+          name: u_Material.normal
+          type: 0
+          data: 1
+        staticUniform3:
+          name: u_Material.mro
+          type: 0
+          data: 2
       dynamicUniforms:
         {}
       textures:
@@ -48,7 +87,7 @@ RenderGraph:
         type: 3
     Node1:
       id: 2002
-      position: [0, 0]
+      position: [110, 148]
       type: 4
       attribute0:
         attrType: output
@@ -57,19 +96,264 @@ RenderGraph:
         type: 3
     Node2:
       id: 3003
-      position: [0, 0]
+      position: [1421, 257]
       type: 6
       attribute0:
         attrType: input
         id: 3004
         name: End
         type: 3
+    Node3:
+      id: 4005
+      position: [926, -150]
+      type: 0
+      name: Lightning
+      clearType: 3
+      drawType: 1
+      cullFace: 1
+      renderShader: deferred
+      targetFramebuffer:
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [0.274418592, 0.274415851, 0.274415851, 1]
+        attachments:
+          attachment0:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 1
+            filtering: 0
+            wrap: 2
+          attachment1:
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 0
+            wrap: 2
+      staticUniforms:
+        staticUniform0:
+          name: u_GBuffer.position
+          type: 0
+          data: 0
+        staticUniform1:
+          name: u_GBuffer.normal
+          type: 0
+          data: 1
+        staticUniform2:
+          name: u_GBuffer.albedo
+          type: 0
+          data: 2
+      dynamicUniforms:
+        dynamicUniform0:
+          name: u_Exposure
+          type: 0
+        dynamicUniform1:
+          name: u_Gamma
+          type: 0
+        dynamicUniform2:
+          name: u_DirectionalLight.direction
+          type: 0
+        dynamicUniform3:
+          name: u_DirectionalLight.color
+          type: 0
+        dynamicUniform4:
+          name: u_DirectionalLight.intensity
+          type: 0
+      textures:
+        {}
+      framebuffers:
+        framebuffer0:
+          textureType: 0
+          bindSlot: 0
+          attachmentId: 0
+        framebuffer1:
+          textureType: 0
+          bindSlot: 1
+          attachmentId: 1
+        framebuffer2:
+          textureType: 0
+          bindSlot: 2
+          attachmentId: 2
+      attribute0:
+        attrType: input
+        id: 4008
+        name: Activate
+        type: 3
+      attribute1:
+        attrType: input
+        id: 4009
+        name: Unifrom0
+        type: 2
+      attribute2:
+        attrType: input
+        id: 4010
+        name: Unifrom1
+        type: 2
+      attribute3:
+        attrType: input
+        id: 4011
+        name: Unifrom2
+        type: 2
+      attribute4:
+        attrType: input
+        id: 4012
+        name: Unifrom3
+        type: 2
+      attribute5:
+        attrType: input
+        id: 4013
+        name: Unifrom4
+        type: 2
+      attribute6:
+        attrType: input
+        id: 4014
+        name: Framebuffer0
+        type: 1
+      attribute7:
+        attrType: input
+        id: 4015
+        name: Framebuffer1
+        type: 1
+      attribute8:
+        attrType: input
+        id: 4016
+        name: Framebuffer2
+        type: 1
+      attribute9:
+        attrType: output
+        id: 4006
+        name: Framebuffer
+        type: 1
+      attribute10:
+        attrType: output
+        id: 4007
+        name: Activated
+        type: 3
+    Node4:
+      id: 5006
+      position: [532, -165]
+      type: 3
+      uniformType: 1
+      dataName: Directional light intensity
+      attribute0:
+        attrType: output
+        id: 5007
+        name: Output
+        type: 2
+    Node5:
+      id: 6007
+      position: [774, -274]
+      type: 3
+      uniformType: 3
+      dataName: Directional light color
+      attribute0:
+        attrType: output
+        id: 6008
+        name: Output
+        type: 2
+    Node6:
+      id: 7008
+      position: [529, -277]
+      type: 3
+      uniformType: 3
+      dataName: Directional light direction
+      attribute0:
+        attrType: output
+        id: 7009
+        name: Output
+        type: 2
+    Node7:
+      id: 8009
+      position: [521, -391]
+      type: 3
+      uniformType: 1
+      dataName: Gamma
+      attribute0:
+        attrType: output
+        id: 8010
+        name: Output
+        type: 2
+    Node8:
+      id: 9010
+      position: [761, -391]
+      type: 3
+      uniformType: 1
+      dataName: Exposure
+      attribute0:
+        attrType: output
+        id: 9011
+        name: Output
+        type: 2
   Links:
     Link0:
-      id: 3003
-      from: 1003
-      to: 3004
+      id: 9010
+      from: 9011
+      to: 4009
     Link1:
-      id: 3004
+      id: 9011
+      from: 8010
+      to: 4010
+    Link2:
+      id: 9012
+      from: 7009
+      to: 4011
+    Link3:
+      id: 9013
+      from: 6008
+      to: 4012
+    Link4:
+      id: 9014
+      from: 5007
+      to: 4013
+    Link5:
+      id: 9015
+      from: 1002
+      to: 4014
+    Link6:
+      id: 9016
+      from: 1002
+      to: 4015
+    Link7:
+      id: 9017
+      from: 1002
+      to: 4016
+    Link8:
+      id: 9011
       from: 2003
       to: 1004
+    Link9:
+      id: 9012
+      from: 1003
+      to: 4008
+    Link10:
+      id: 9013
+      from: 4007
+      to: 3004
+    Link11:
+      id: 9014
+      from: 8010
+      to: 4010
+    Link12:
+      id: 9015
+      from: 7009
+      to: 4011
+    Link13:
+      id: 9016
+      from: 6008
+      to: 4012
+    Link14:
+      id: 9017
+      from: 5007
+      to: 4013
+    Link15:
+      id: 9018
+      from: 1002
+      to: 4014
+    Link16:
+      id: 9019
+      from: 1002
+      to: 4015
+    Link17:
+      id: 9020
+      from: 1002
+      to: 4016

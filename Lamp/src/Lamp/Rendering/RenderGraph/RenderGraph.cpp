@@ -45,7 +45,7 @@ namespace Lamp
 
 	void RenderGraph::Start()
 	{
-		for (const auto& node : m_Specification.startNodes)
+		for (const auto& node : m_Specification.nodes)
 		{
 			node->Start();
 		}

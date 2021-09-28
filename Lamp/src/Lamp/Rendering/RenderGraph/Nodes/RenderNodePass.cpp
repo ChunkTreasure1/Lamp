@@ -77,6 +77,23 @@ namespace Lamp
 
 	void RenderNodePass::Start()
 	{
+		for (const auto& link : links)
+		{
+			if (link->pInput->pNode->id == id)
+			{
+				continue;
+			}
+
+			if (link->pInput->type == RenderAttributeType::Framebuffer)
+			{
+				if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+				{
+					uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
+					auto& [buffer, type, bindId, attachId] = passNode->renderPass->GetSpecification().framebuffers[index];
+					buffer = renderPass->GetSpecification().TargetFramebuffer;
+				}
+			}
+		}
 	}
 
 	void RenderNodePass::DrawNode()
@@ -428,6 +445,7 @@ namespace Lamp
 				input->name = "Unifrom" + std::to_string(specification.dynamicUniforms.size() - 1);
 				input->id = ++currId;
 				input->type = RenderAttributeType::DynamicUniform;
+				input->data = (uint32_t)(specification.dynamicUniforms.size() - 1);
 
 				inputs.push_back(input);
 			}
@@ -517,6 +535,12 @@ namespace Lamp
 						bind = (uint32_t)currBind;
 					}
 
+					int currAttach = attach;
+					if (ImGui::InputInt("Attachment slot", &currAttach))
+					{
+						attach = (uint32_t)currAttach;
+					}
+
 					ImGui::TreePop();
 				}
 
@@ -569,13 +593,23 @@ namespace Lamp
 			{
 				continue;
 			}
-			if (link->pInput->pNode->GetNodeType() == RenderNodeType::Framebuffer)
+
+			switch (link->pInput->pNode->GetNodeType())
 			{
-				link->pInput->pNode->Activate(value);
-			}
-			else if (link->pInput->pNode->GetNodeType() == RenderNodeType::End)
-			{
-				link->pInput->pNode->Activate(renderPass->GetSpecification().TargetFramebuffer);
+				case RenderNodeType::Pass:
+				{
+					link->pInput->pNode->Activate(value);
+					break;
+				}
+
+				case RenderNodeType::End:
+				{
+					link->pInput->pNode->Activate(renderPass->GetSpecification().TargetFramebuffer);
+					break;
+				}
+
+				default:
+					break;
 			}
 		}
 	}
@@ -690,6 +724,11 @@ namespace Lamp
 						break;
 					}
 
+					case UniformType::RenderData:
+					{
+						LP_SERIALIZE_PROPERTY(data, (uint32_t)std::any_cast<RenderData>(uData), out);
+						break;
+					}
 				}
 
 				out << YAML::EndMap;
@@ -774,7 +813,7 @@ namespace Lamp
 		specification.clearType = (ClearType)node["clearType"].as<uint32_t>();
 		specification.drawType = (DrawType)node["drawType"].as<uint32_t>();
 		specification.cullFace = (CullFace)node["cullFace"].as<uint32_t>();
-		
+
 		std::string shaderName = node["renderShader"].as<std::string>();
 		if (!shaderName.empty())
 		{
@@ -789,20 +828,20 @@ namespace Lamp
 		LP_DESERIALIZE_PROPERTY(height, targetBufferSpec.Height, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(samples, targetBufferSpec.Samples, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(clearColor, targetBufferSpec.ClearColor, bufferNode, glm::vec4(0.f));
-		
+
 		YAML::Node attachmentsNode = bufferNode["attachments"];
 		uint32_t attachmentCount = 0;
 		while (YAML::Node attachmentNode = attachmentsNode["attachment" + std::to_string(attachmentCount)])
 		{
 			FramebufferTextureSpecification att;
-		
+
 			LP_DESERIALIZE_PROPERTY(borderColor, att.BorderColor, attachmentNode, glm::vec4(0.f));
 			LP_DESERIALIZE_PROPERTY(multisampled, att.MultiSampled, attachmentNode, false);
-		
+
 			att.TextureFormat = (FramebufferTextureFormat)attachmentNode["format"].as<uint32_t>();
 			att.TextureFiltering = (FramebufferTexureFiltering)attachmentNode["filtering"].as<uint32_t>();
 			att.TextureWrap = (FramebufferTextureWrap)attachmentNode["wrap"].as<uint32_t>();
-		
+
 			targetBufferSpec.Attachments.Attachments.push_back(att);
 			attachmentCount++;
 		}
@@ -812,7 +851,7 @@ namespace Lamp
 		//static uniforms
 		YAML::Node staticUniformsNode = node["staticUniforms"];
 		uint32_t statUniformCount = 0;
-		
+
 		while (YAML::Node uniformNode = staticUniformsNode["staticUniform" + std::to_string(statUniformCount)])
 		{
 			std::string uName = uniformNode["name"].as<std::string>();
@@ -854,6 +893,15 @@ namespace Lamp
 				case Lamp::UniformType::SamplerCube:
 					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, 0);
 					break;
+
+				case Lamp::UniformType::RenderData:
+				{
+					uint32_t data;
+					LP_DESERIALIZE_PROPERTY(data, data, uniformNode, 0);
+					uData = (RenderData)data;
+					break;
+				}
+
 				default:
 					break;
 			}
@@ -897,7 +945,7 @@ namespace Lamp
 			TextureType type = (TextureType)bufferNode["textureType"].as<uint32_t>();
 			uint32_t bindSlot;
 			uint32_t attachId;
-			
+
 			LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, bufferNode, 0);
 			LP_DESERIALIZE_PROPERTY(attachmentId, attachId, bufferNode, 0);
 
@@ -909,6 +957,8 @@ namespace Lamp
 		outputs.clear();
 		inputs.clear();
 		uint32_t attributeCount = 0;
+		uint32_t uniformIndex = 0;
+		uint32_t bufferIndex = 0;
 
 		while (YAML::Node attribute = node["attribute" + std::to_string(attributeCount)])
 		{
@@ -916,7 +966,18 @@ namespace Lamp
 			attr->pNode = this;
 			if (attrType == "input")
 			{
-				inputs.push_back(std::dynamic_pointer_cast<RenderInputAttribute>(attr));
+				auto ptr = std::dynamic_pointer_cast<RenderInputAttribute>(attr);
+				if (ptr->type == RenderAttributeType::DynamicUniform)
+				{
+					ptr->data = uniformIndex;
+					uniformIndex++;
+				}
+				else if (ptr->type == RenderAttributeType::Framebuffer)
+				{
+					ptr->data = bufferIndex;
+					bufferIndex++;
+				}
+				inputs.push_back(ptr);
 			}
 			else
 			{
