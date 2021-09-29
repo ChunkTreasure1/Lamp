@@ -7,7 +7,6 @@ namespace Lamp
 	class VertexArray
 	{
 	public:
-		//VertexArray();
 		virtual ~VertexArray() = default;
 
 		virtual void Bind() = 0;
@@ -21,11 +20,5 @@ namespace Lamp
 
 	public:
 		static Ref<VertexArray> Create();
-
-	//private:
-	//	uint32_t m_RendererID;
-	//	uint32_t m_NumAttributes = 0;
-	//	std::vector<Ref<VertexBuffer>> m_VertexBuffers;
-	//	Ref<IndexBuffer> m_pIndexBuffer;
 	};
 }

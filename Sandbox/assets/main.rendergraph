@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     Node0:
       id: 1058688088
-      position: [-1261.95361, 216.396881]
+      position: [-1893.67578, 328.165924]
       type: 4
       attribute0:
         attrType: output
@@ -13,7 +13,7 @@ RenderGraph:
         type: 3
     Node1:
       id: 1911522947
-      position: [-818.164062, 192.256958]
+      position: [-1200.88611, 276.026001]
       type: 0
       name: GBuffer
       clearType: 3
@@ -91,7 +91,7 @@ RenderGraph:
         type: 3
     Node2:
       id: 359919451
-      position: [468.835938, -34.7430115]
+      position: [86.1138916, 49.0260315]
       type: 0
       name: Lighting
       clearType: 3
@@ -290,7 +290,7 @@ RenderGraph:
         type: 3
     Node3:
       id: 1247423031
-      position: [-192.403564, -38.3880005]
+      position: [-575.12561, 45.3810425]
       type: 3
       uniformType: 1
       dataName: Directional light intensity
@@ -301,7 +301,7 @@ RenderGraph:
         type: 2
     Node4:
       id: 1230130465
-      position: [-197.403534, -172.388123]
+      position: [-580.12561, -88.6190796]
       type: 3
       uniformType: 3
       dataName: Directional light color
@@ -312,7 +312,7 @@ RenderGraph:
         type: 2
     Node5:
       id: 848579
-      position: [98.596405, -163.388062]
+      position: [-284.125641, -79.6190186]
       type: 3
       uniformType: 3
       dataName: Directional light direction
@@ -323,7 +323,7 @@ RenderGraph:
         type: 2
     Node6:
       id: 975586042
-      position: [-195.403564, -300.387817]
+      position: [-578.12561, -216.618774]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -334,7 +334,7 @@ RenderGraph:
         type: 2
     Node7:
       id: 430849123
-      position: [97.596405, -299.387817]
+      position: [-285.125641, -215.618774]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -345,7 +345,7 @@ RenderGraph:
         type: 2
     Node8:
       id: 673456811
-      position: [-480.506653, 163.923462]
+      position: [-863.22876, 247.692505]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -427,7 +427,7 @@ RenderGraph:
         type: 3
     Node9:
       id: 906095705
-      position: [-148.11084, 158.604767]
+      position: [-530.832886, 242.37381]
       type: 0
       name: SSAOBlur
       clearType: 1
@@ -484,7 +484,7 @@ RenderGraph:
         type: 3
     Node10:
       id: 1982909490
-      position: [1043.49341, 473.923462]
+      position: [950.771362, 284.692505]
       type: 6
       attribute0:
         attrType: input
@@ -493,7 +493,7 @@ RenderGraph:
         type: 3
     Node11:
       id: 527987580
-      position: [-795.506592, -23.0765381]
+      position: [-1178.22864, 60.6925049]
       type: 2
       path: ""
       usingInternal: true
@@ -505,15 +505,15 @@ RenderGraph:
         type: 0
     Node12:
       id: 1276571145
-      position: [483.862305, 616.786621]
+      position: [-193.859741, 625.555664]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
       useViewportSize: false
-      width: 1280
-      height: 720
-      samples: 1
-      clearColor: [1, 1, 9.4041208e+14, 2.74654499e-43]
+      width: 3435973836
+      height: 3435973836
+      samples: 3435973836
+      clearColor: [-107374176, -107374176, -107374176, -107374176]
       attachments:
         {}
       attribute0:
@@ -523,7 +523,7 @@ RenderGraph:
         type: 1
     Node13:
       id: 1701868312
-      position: [-1179.1377, 156.786621]
+      position: [-1561.85974, 240.555664]
       type: 0
       name: DirShadow
       clearType: 3
@@ -570,8 +570,8 @@ RenderGraph:
         name: Activated
         type: 3
     Node14:
-      id: 1268911447
-      position: [1034.45544, -21.0666504]
+      id: 1531187691
+      position: [536.999878, 155]
       type: 0
       name: Forward
       clearType: 3
@@ -607,23 +607,23 @@ RenderGraph:
         dynamicUniform0:
           name: u_Exposure
           type: 0
-          attrId: 1764553241
+          attrId: 1900400543
         dynamicUniform1:
           name: u_Gamma
           type: 0
-          attrId: 1677186707
+          attrId: 413010433
         dynamicUniform2:
           name: u_DirectionalLight.direction
           type: 0
-          attrId: 1732424656
+          attrId: 1470211045
         dynamicUniform3:
           name: u_DirectionalLight.color
           type: 0
-          attrId: 1691667259
+          attrId: 728293202
         dynamicUniform4:
           name: u_DirectionalLight.intensity
           type: 0
-          attrId: 1825844127
+          attrId: 1203679977
       textures:
         {}
       framebuffers:
@@ -631,70 +631,75 @@ RenderGraph:
           textureType: 0
           bindSlot: 0
           attachmentId: 0
-          attrId: 1386934956
+          attrId: 254956821
         framebuffer1:
           textureType: 0
           bindSlot: 1
           attachmentId: 1
-          attrId: 59630481
+          attrId: 1506213016
         framebuffer2:
           textureType: 0
           bindSlot: 2
           attachmentId: 2
-          attrId: 460422899
+          attrId: 693227999
       attribute0:
         attrType: input
-        id: 1293580907
+        id: 1695273537
         name: Activate
         type: 3
       attribute1:
         attrType: input
-        id: 1764553241
-        name: Uniform0
-        type: 2
+        id: 1535662174
+        name: Target framebuffer
+        type: 1
       attribute2:
         attrType: input
-        id: 1677186707
-        name: Uniform1
+        id: 1900400543
+        name: Uniform0
         type: 2
       attribute3:
         attrType: input
-        id: 1732424656
-        name: Uniform2
+        id: 413010433
+        name: Uniform1
         type: 2
       attribute4:
         attrType: input
-        id: 1691667259
-        name: Uniform3
+        id: 1470211045
+        name: Uniform2
         type: 2
       attribute5:
         attrType: input
-        id: 1825844127
-        name: Uniform4
+        id: 728293202
+        name: Uniform3
         type: 2
       attribute6:
         attrType: input
-        id: 1386934956
-        name: Framebuffer0
-        type: 1
+        id: 1203679977
+        name: Uniform4
+        type: 2
       attribute7:
         attrType: input
-        id: 59630481
-        name: Framebuffer1
+        id: 254956821
+        name: Framebuffer0
         type: 1
       attribute8:
         attrType: input
-        id: 460422899
-        name: Framebuffer2
+        id: 1506213016
+        name: Framebuffer1
         type: 1
       attribute9:
-        attrType: output
-        id: 930093862
-        name: Framebuffer
+        attrType: input
+        id: 693227999
+        name: Framebuffer2
         type: 1
       attribute10:
         attrType: output
-        id: 1203351110
+        id: 1895788539
+        name: Framebuffer
+        type: 1
+      attribute11:
+        attrType: output
+        id: 541340192
         name: Activated
         type: 3
   Links:
@@ -771,54 +776,54 @@ RenderGraph:
       from: 184417937
       to: 192649342
     Link18:
-      id: 642675790
-      from: 1598988263
-      to: 1371223822
-    Link19:
       id: 48346269
       from: 1039855004
       to: 1901125811
-    Link20:
+    Link19:
       id: 358869723
       from: 1750787857
       to: 1041370122
-    Link21:
+    Link20:
       id: 14389385
       from: 1707741893
       to: 229258557
-    Link22:
+    Link21:
       id: 1507810860
       from: 748267878
       to: 1687662867
-    Link23:
-      id: 1315899106
-      from: 69624873
-      to: 1764553241
-    Link24:
-      id: 958440766
+    Link22:
+      id: 1119560536
       from: 2024024926
-      to: 1677186707
-    Link25:
-      id: 948809590
+      to: 413010433
+    Link23:
+      id: 1993235393
       from: 109742370
-      to: 1732424656
-    Link26:
-      id: 537695458
+      to: 1470211045
+    Link24:
+      id: 1715433893
       from: 1163087316
-      to: 1691667259
-    Link27:
-      id: 1189306909
+      to: 728293202
+    Link25:
+      id: 1016051316
       from: 1947470005
-      to: 1825844127
+      to: 1203679977
+    Link26:
+      id: 1116248996
+      from: 1978471730
+      to: 254956821
+    Link27:
+      id: 1607089326
+      from: 1978471730
+      to: 1506213016
     Link28:
-      id: 1632883359
+      id: 590868833
       from: 1978471730
-      to: 1386934956
+      to: 693227999
     Link29:
-      id: 527555404
-      from: 1978471730
-      to: 59630481
+      id: 126353040
+      from: 1240745391
+      to: 1535662174
     Link30:
-      id: 1239085013
-      from: 1978471730
-      to: 460422899
+      id: 419471661
+      from: 1598988263
+      to: 1371223822

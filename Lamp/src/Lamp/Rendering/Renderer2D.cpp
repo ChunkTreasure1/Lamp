@@ -215,7 +215,7 @@ namespace Lamp
 
 		const float texIndex = 0.f; // white texture
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[0];
+		s_pData->QuadVertexBufferPtr->Position = (tm * s_pData->QuadVertexPositions[0]);
 		s_pData->QuadVertexBufferPtr->Color = color;
 		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 0.f };
 		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;

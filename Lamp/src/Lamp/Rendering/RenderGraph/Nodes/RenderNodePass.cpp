@@ -71,10 +71,33 @@ namespace Lamp
 		input->type = RenderAttributeType::Pass;
 
 		inputs.push_back(input);
+
+		Ref<RenderInputAttribute> targetBuffer = CreateRef<RenderInputAttribute>();
+		targetBuffer->name = "Target framebuffer";
+		targetBuffer->pNode = this;
+		targetBuffer->type = RenderAttributeType::Framebuffer;
+
+		inputs.push_back(targetBuffer);
 	}
 
 	void RenderNodePass::Start()
 	{
+		for (const auto& link : links)
+		{
+			if (link->pOutput->pNode->id == id)
+			{
+				continue;
+			}
+
+			if (link->pOutput->type == RenderAttributeType::Framebuffer)
+			{
+				if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pOutput->pNode))
+				{
+					renderPass->GetSpecification().TargetFramebuffer = passNode->renderPass->GetSpecification().TargetFramebuffer;
+				}
+			}
+		}
+
 		for (const auto& link : links)
 		{
 			if (link->pInput->pNode->id == id)
@@ -606,8 +629,15 @@ namespace Lamp
 		{
 			if (ImGui::Button("Add"))
 			{
-				//specification.framebufferCommands.push_back(std::make_tuple(nullptr, nullptr, FramebufferCommand::Copy));
+				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				specification.framebufferCommands.push_back(std::make_tuple(renderPass->GetSpecification().TargetFramebuffer, nullptr, FramebufferCommand::Copy, input->id));
 
+				input->data = (uint32_t)(specification.framebufferCommands.size() - 1);
+				input->pNode = this;
+				input->name = "FramebufferCmd" + std::to_string(specification.framebuffers.size() - 1);
+				input->type = RenderAttributeType::Framebuffer;
+
+				inputs.push_back(input);
 			}
 
 			for (auto& [main, secondary, command, attrId] : specification.framebufferCommands)
@@ -1053,7 +1083,7 @@ namespace Lamp
 					ptr->data = uniformIndex;
 					uniformIndex++;
 				}
-				else if (ptr->type == RenderAttributeType::Framebuffer)
+				else if (ptr->type == RenderAttributeType::Framebuffer && ptr->name != "Target framebuffer")
 				{
 					ptr->data = bufferIndex;
 					bufferIndex++;
