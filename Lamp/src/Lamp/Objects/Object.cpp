@@ -1,36 +1,22 @@
 #include "lppch.h"
 #include "Object.h"
-#include "Lamp/Physics/Rigidbody.h"
-#include "Lamp/Physics/PhysicsEngine.h"
 
 namespace Lamp
 {
 	static uint32_t s_ObjectId = 0;
 
 	Object::Object()
-		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0),
-		m_PickingCollider({ -0.5f, -0.5f, -0.5f }, { 0.5f, 0.5f, 0.5f }, m_Position)
+		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
 	{
 		m_Id = s_ObjectId++;
 	}
 
 	Object::~Object()
-	{
-		PhysicsEngine::Get()->RemoveRigidBody(this);
-		if (m_pRigidBody)
-		{
-			delete m_pRigidBody;
-		}
-	}
+	{}
 
 	void Object::SetPosition(const glm::vec3& pos)
 	{
-		m_PickingCollider.Transform(pos - m_Position);
 		m_Position = pos;
-		if (m_pRigidBody)
-		{
-			m_pRigidBody->SetPosition(pos);
-		}
 
 		CalculateModelMatrix();
 		UpdatedMatrix();
@@ -53,11 +39,6 @@ namespace Lamp
 		CalculateModelMatrix();
 		UpdatedMatrix();
 		ScaleChanged();
-
-		if (m_pRigidBody)
-		{
-			m_pRigidBody->SetScale(m_Scale);
-		}
 	}
 
 	void Object::SetModelMatrix(const glm::mat4& mat)
@@ -74,10 +55,6 @@ namespace Lamp
 
 		m_Rotation += rotation;
 		m_Position = position;
-		if (!m_pRigidBody)
-		{
-			m_pRigidBody->SetPosition(position);
-		}
 
 		m_Scale = scale;
 	}

@@ -1,8 +1,6 @@
 #include "lppch.h"
 #include "ObjectLayer.h"
 
-#include "Lamp/Physics/PhysicsEngine.h"
-
 namespace Lamp
 {
 	ObjectLayerManager* ObjectLayerManager::s_ObjectLayerManager = nullptr;
@@ -153,16 +151,6 @@ namespace Lamp
 
 	Object* ObjectLayerManager::GetObjectFromPoint(const glm::vec3& origin, const glm::vec3& dir)
 	{
-			Ray r;
-		r.dir = dir;
-		r.origin = origin;
-
-		for (auto& layer : m_Layers)
-		{
-			for (auto& obj : layer.Objects)
-			{
-			}
-		}
 
 		return nullptr;
 	}

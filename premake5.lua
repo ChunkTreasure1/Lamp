@@ -13,14 +13,13 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
-include "Lamp/vendor/bullet"
 
 project "Lamp"
 	location "Lamp"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -57,16 +56,14 @@ project "Lamp"
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
 		"%{prj.name}/vendor/ImGuizmo/include",
-		"%{prj.name}/vendor/dxerr",
-		"%{prj.name}/vendor/bullet/src"
+		"%{prj.name}/vendor/dxerr"
 	}
 	
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",
-		"Bullet"
+		"Glad"
 	}
 
 	filter "system:windows"
@@ -100,7 +97,7 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -130,16 +127,14 @@ project "Sandbox"
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
 		"Game/src",
-		"Lamp/vendor/ImGuizmo/include",
-		"Lamp/vendor/bullet/src"
+		"Lamp/vendor/ImGuizmo/include"
 	}
 
 	libdirs
 	{
 		gamedir,
 		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod",
-		"Lamp/vendor/bullet"
+		"Lamp/vendor/fmod"
 	}
 
 	links
@@ -189,7 +184,7 @@ project "Game"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -212,8 +207,7 @@ project "Game"
 		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
-		"Lamp/vendor/fmod/include",
-		"Lamp/vendor/bullet/src"
+		"Lamp/vendor/fmod/include"
 	}
 	
 	filter "system:windows"
@@ -244,7 +238,7 @@ project "GameLauncher"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .."/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
@@ -269,8 +263,7 @@ project "GameLauncher"
 		"%{prj.name}/src",
 		"Lamp/vendor/assimp/include",
 		"Lamp/vendor/fmod/include",
-		"Game/src",
-		"Lamp/vendor/bullet/src"
+		"Game/src"
 	}
 
 	libdirs

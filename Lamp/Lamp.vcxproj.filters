@@ -55,18 +55,6 @@
     <Filter Include="src\Lamp\Objects\Entity\BaseComponents">
       <UniqueIdentifier>{DBFEA38A-C750-7B7A-B06F-B88A9C609463}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Physics">
-      <UniqueIdentifier>{5810C594-4409-E4E6-6D3B-C96B5993C3F2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Physics\Components">
-      <UniqueIdentifier>{6D0E5056-D91B-7E3C-6202-7A27CE0E4AF3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Physics\Components\Colliders">
-      <UniqueIdentifier>{7DA5E37C-E969-E26C-B2CF-12371E537EA2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Physics\Internal">
-      <UniqueIdentifier>{84F937BA-F0BB-6B44-396C-FAD0A56D4422}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
     </Filter>
@@ -275,30 +263,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h">
       <Filter>src\Lamp\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Collision.h">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h">
-      <Filter>src\Lamp\Physics\Components\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h">
-      <Filter>src\Lamp\Physics\Components\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h">
-      <Filter>src\Lamp\Physics\Components\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h">
-      <Filter>src\Lamp\Physics\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Physics\Rigidbody.h">
-      <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffer.h">
       <Filter>src\Lamp\Rendering</Filter>
@@ -1627,27 +1591,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp">
       <Filter>src\Lamp\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp">
-      <Filter>src\Lamp\Physics\Components\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp">
-      <Filter>src\Lamp\Physics\Components\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp">
-      <Filter>src\Lamp\Physics\Components\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp">
-      <Filter>src\Lamp\Physics\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp">
-      <Filter>src\Lamp\Physics\Internal</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp">
-      <Filter>src\Lamp\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp">
-      <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
       <Filter>src\Lamp\Rendering\Cameras</Filter>

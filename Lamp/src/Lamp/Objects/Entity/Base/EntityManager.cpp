@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "EntityManager.h"
 
-#include "Lamp/Physics/PhysicsEngine.h"
 #include "Lamp/Objects/ObjectLayer.h"
 
 namespace Lamp

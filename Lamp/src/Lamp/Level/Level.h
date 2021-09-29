@@ -6,7 +6,6 @@
 #include "Lamp/Objects/Brushes/BrushManager.h"
 #include "Lamp/Objects/Entity/Base/EntityManager.h"
 #include "Lamp/Objects/ObjectLayer.h"
-#include <btBulletDynamicsCommon.h>
 
 namespace Lamp
 {

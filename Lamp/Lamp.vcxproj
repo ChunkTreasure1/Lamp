@@ -77,10 +77,10 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_LEFT_HANDED;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\ImGuizmo\include;vendor\dxerr;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\ImGuizmo\include;vendor\dxerr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -94,13 +94,13 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_LEFT_HANDED;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\ImGuizmo\include;vendor\dxerr;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\ImGuizmo\include;vendor\dxerr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,13 +115,13 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_LEFT_HANDED;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\ImGuizmo\include;vendor\dxerr;vendor\bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\ImGuizmo\include;vendor\dxerr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -179,14 +179,6 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Objects\ObjectLayer.h" />
-    <ClInclude Include="src\Lamp\Physics\Collision.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Components\RigidbodyComponent.h" />
-    <ClInclude Include="src\Lamp\Physics\Internal\Picking.h" />
-    <ClInclude Include="src\Lamp\Physics\PhysicsEngine.h" />
-    <ClInclude Include="src\Lamp\Physics\Rigidbody.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
@@ -631,13 +623,6 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Objects\ObjectLayer.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\BoxColliderComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\CapsuleColliderComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\Colliders\SphereColliderComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Components\RigidbodyComponent.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Internal\Picking.cpp" />
-    <ClCompile Include="src\Lamp\Physics\PhysicsEngine.cpp" />
-    <ClCompile Include="src\Lamp\Physics\Rigidbody.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
@@ -689,9 +674,6 @@
     </ProjectReference>
     <ProjectReference Include="vendor\glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="vendor\bullet\Bullet\Bullet.vcxproj">
-      <Project>{0DC355AA-F964-8080-E21F-94D4CE6007D1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

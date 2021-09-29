@@ -7,7 +7,6 @@
 #include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
-#include <Lamp/Physics/PhysicsEngine.h>
 
 #include <Lamp/Objects/ObjectLayer.h>
 #include <Lamp/Core/Game.h>
