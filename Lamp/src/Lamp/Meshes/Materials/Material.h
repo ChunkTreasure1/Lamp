@@ -37,8 +37,6 @@ namespace Lamp
 		inline const std::string& GetName() { return m_Name; }
 		inline const std::filesystem::path& GetPath() { return m_Path; }
 
-		void UploadData();
-
 		static AssetType GetStaticType() { return AssetType::Material; }
 		virtual AssetType GetType() override { return GetStaticType(); }
 

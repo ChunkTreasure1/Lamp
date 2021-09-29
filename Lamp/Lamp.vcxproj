@@ -267,6 +267,7 @@
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Lamp\Utility\SerializeMacros.h" />
+    <ClInclude Include="src\Lamp\Utility\StandardUtilities.h" />
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
     <ClInclude Include="src\Lamp\Utility\UIUtility.h" />
     <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h" />

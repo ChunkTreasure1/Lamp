@@ -31,6 +31,9 @@ namespace Lamp
 
 	struct RenderAttribute
 	{
+		RenderAttribute()
+			: pNode(nullptr), type(RenderAttributeType::Pass)
+		{}
 		virtual ~RenderAttribute() {}
 
 		RenderNode* pNode;
@@ -53,6 +56,8 @@ namespace Lamp
 		RenderOutputAttribute* pOutput;
 		RenderInputAttribute* pInput;
 		GraphUUID id;
+
+		bool markedForDelete = false;
 	};
 
 	struct RenderNode
@@ -77,6 +82,7 @@ namespace Lamp
 		virtual void Serialize(YAML::Emitter& out) = 0;
 		virtual void Deserialize(YAML::Node& node) = 0;
 
+		void DrawAttributes();
 		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out, GraphUUID id);
 		std::pair<Ref<RenderAttribute>, std::string> DeserializeBaseAttribute(const YAML::Node& node);
 	};

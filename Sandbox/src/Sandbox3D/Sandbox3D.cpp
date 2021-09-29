@@ -305,6 +305,11 @@ namespace Sandbox3D
 		m_SSAOBuffer->Resize(width, height);
 		m_SSAOBlurBuffer->Resize(width, height);
 
+		for (const auto& buffer : Renderer3D::GetSettings().UseViewportSize)
+		{
+			buffer->Resize(width, height);
+		}
+
 		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
 
 		return false;
@@ -448,7 +453,7 @@ namespace Sandbox3D
 
 			RenderPassSpecification shadowSpec;
 			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
-			shadowSpec.type = PassType::DirShadow;
+			shadowSpec.type = PassType::Geometry;
 			shadowSpec.Name = "DirShadowPass";
 
 			shadowSpec.staticUniforms =
@@ -457,6 +462,7 @@ namespace Sandbox3D
 			};
 
 			shadowSpec.cullFace = Lamp::CullFace::Front;
+			shadowSpec.drawType = Lamp::DrawType::Deferred;
 			shadowSpec.renderShader = Lamp::ShaderLibrary::GetShader("dirShadow");
 
 			m_DirShadowBuffer = shadowSpec.TargetFramebuffer;
@@ -517,6 +523,7 @@ namespace Sandbox3D
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
 			passSpec.cullFace = Lamp::CullFace::Back;
+			passSpec.drawType = Lamp::DrawType::Deferred;
 			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("gbuffer");
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
@@ -553,13 +560,13 @@ namespace Sandbox3D
 
 			passSpec.framebuffers =
 			{
-				{ m_GBuffer, TextureType::Color, 0, 0 },
-				{ m_GBuffer, TextureType::Color, 1, 1 }
+				{ m_GBuffer, TextureType::Color, 0, 0, 0 },
+				{ m_GBuffer, TextureType::Color, 1, 1, 0 }
 			};
 
 			passSpec.textures =
 			{
-				{ Renderer3D::GetSettings().InternalTextures["SSAONoise"], 2}
+				{ Renderer3D::GetSettings().InternalTextures["SSAONoise"], 2, 0 }
 			};
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
@@ -598,7 +605,7 @@ namespace Sandbox3D
 
 			passSpec.framebuffers =
 			{
-				{ m_SSAOBuffer, TextureType::Color, 0, 0 }
+				{ m_SSAOBuffer, TextureType::Color, 0, 0, 0 }
 			};
 
 			passSpec.clearType = Lamp::ClearType::Color;
@@ -652,28 +659,28 @@ namespace Sandbox3D
 
 			passSpec.dynamicUniforms =
 			{
-				{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure) },
-				{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma) },
-				{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position)},
-				{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color) },
-				{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity) },
+				{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure), 0 },
+				{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma), 0 },
+				{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position), 0 },
+				{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color), 0 },
+				{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity), 0 },
 			};
 
 			passSpec.framebuffers =
 			{
-				{ m_GBuffer, TextureType::Color, 0, 0 },
-				{ m_GBuffer, TextureType::Color, 1, 1 },
-				{ m_GBuffer, TextureType::Color, 2, 2 },
-				{ m_DirShadowBuffer, TextureType::Depth, 3, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 4, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 5, 1 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 6, 2 },
-				{ m_SSAOBlurBuffer, TextureType::Color, 7, 0 }
+				{ m_GBuffer, TextureType::Color, 0, 0, 0 },
+				{ m_GBuffer, TextureType::Color, 1, 1, 0 },
+				{ m_GBuffer, TextureType::Color, 2, 2, 0 },
+				{ m_DirShadowBuffer, TextureType::Depth, 3, 0, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 4, 0, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 5, 1, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 6, 2, 0 },
+				{ m_SSAOBlurBuffer, TextureType::Color, 7, 0, 0 }
 			};
 
 			passSpec.framebufferCommands =
 			{
-				{ m_SandboxBuffer, m_GBuffer, FramebufferCommand::Copy }
+				{ m_SandboxBuffer, m_GBuffer, FramebufferCommand::Copy, 0 }
 			};
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
@@ -701,7 +708,31 @@ namespace Sandbox3D
 
 			passSpec.clearType = Lamp::ClearType::ColorDepth;
 			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::All;
+			passSpec.drawType = Lamp::DrawType::Forward;
+
+			passSpec.staticUniforms =
+			{
+				{ "u_Model", UniformType::Mat4, RenderData::Transform },
+				{ "u_IrradianceMap", UniformType::Int, 0 },
+				{ "u_PrefilterMap", UniformType::Int, 1 },
+				{ "u_BRDFLUT", UniformType::Int, 2 }
+			};
+
+			passSpec.dynamicUniforms =
+			{
+				{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure), 0 },
+				{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma), 0 },
+				{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position), 0 },
+				{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color), 0 },
+				{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity), 0 },
+			};
+
+			passSpec.framebuffers =
+			{
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 1, 0, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 2, 1, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 3, 2, 0 },
+			};
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(renderPass);
@@ -724,7 +755,7 @@ namespace Sandbox3D
 			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
 			m_SelectionBuffer = passSpec.TargetFramebuffer;
 			passSpec.Name = "SelectionPass";
-			passSpec.type = PassType::Selection;
+			passSpec.drawType = Lamp::DrawType::All;
 
 			passSpec.staticUniforms =
 			{

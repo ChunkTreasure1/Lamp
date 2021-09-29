@@ -31,6 +31,17 @@ namespace Lamp
 			return std::dynamic_pointer_cast<T>(asset);
 		}
 
+		template<typename T>
+		static Ref<T> ReloadAsset(Ref<Asset>& asset)
+		{
+			Ref<Asset> newAsset;
+			g_pEnv->pAssetManager->LoadAsset(asset->Path, newAsset);
+
+			s_AssetCache[asset->Path.string()] = newAsset;
+
+			return std::dynamic_pointer_cast<T>(newAsset);
+		}
+
 	private:
 		ResourceCache() = delete;
 

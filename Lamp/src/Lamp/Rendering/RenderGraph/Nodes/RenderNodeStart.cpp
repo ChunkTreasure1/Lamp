@@ -37,12 +37,7 @@ namespace Lamp
 		ImGui::Text("Start");
 		ImNodes::EndNodeTitleBar();
 
-		for (auto& output : outputs)
-		{
-			ImNodes::BeginOutputAttribute(output->id);
-			ImGui::Text(output->name.c_str());
-			ImNodes::EndOutputAttribute();
-		}
+		DrawAttributes();
 
 		ImNodes::EndNode();
 

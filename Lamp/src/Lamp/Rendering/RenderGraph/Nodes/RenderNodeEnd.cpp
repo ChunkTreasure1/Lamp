@@ -38,12 +38,7 @@ namespace Lamp
 		ImGui::Text("End");
 		ImNodes::EndNodeTitleBar();
 
-		for (auto& input : inputs)
-		{
-			ImNodes::BeginInputAttribute(input->id);
-			ImGui::Text(input->name.c_str());
-			ImNodes::EndInputAttribute();
-		}
+		DrawAttributes();
 
 		ImNodes::EndNode();
 

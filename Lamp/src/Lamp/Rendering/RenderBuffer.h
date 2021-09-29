@@ -15,7 +15,9 @@ namespace Lamp
 
 	struct RenderCommandData
 	{
-		RenderCommandData() {}
+		RenderCommandData() 
+			: id(0), transform(glm::mat4(1.f))
+		{}
 
 		glm::mat4 transform;
 		Ref<VertexArray> data;

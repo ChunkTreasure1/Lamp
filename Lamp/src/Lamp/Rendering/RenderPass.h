@@ -35,7 +35,9 @@ namespace Lamp
 	{
 		All = 0,
 		Quad = 1,
-		Line = 2
+		Line = 2,
+		Forward = 3,
+		Deferred = 4
 	};
 
 	enum class TextureType : uint32_t
@@ -56,7 +58,7 @@ namespace Lamp
 
 		Ref<Framebuffer> TargetFramebuffer;
 
-		PassType type;
+		PassType type = PassType::Geometry;
 		uint32_t LightIndex = 0;
 		std::string Name = "";
 
@@ -66,10 +68,10 @@ namespace Lamp
 		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
 
 		std::vector<std::tuple<std::string, UniformType, std::any>> staticUniforms; // name, type, data
-		std::vector<std::tuple<std::string, UniformType, void*>> dynamicUniforms; // name, type, data
-		std::vector<std::pair<Ref<Texture2D>, uint32_t>> textures; // texture, texBindSlot
-		std::vector<std::tuple<Ref<Framebuffer>, TextureType, uint32_t, uint32_t>> framebuffers; // framebuffer, texture type, texBindSlot, attachId
-		std::vector<std::tuple<Ref<Framebuffer>, Ref<Framebuffer>, FramebufferCommand>> framebufferCommands; // main buffer, secondary buffer, command
+		std::vector<std::tuple<std::string, UniformType, void*, GraphUUID>> dynamicUniforms; // name, type, data, attrId
+		std::vector<std::tuple<Ref<Texture2D>, uint32_t, GraphUUID>> textures; // texture, texBindSlot, attrId
+		std::vector<std::tuple<Ref<Framebuffer>, TextureType, uint32_t, uint32_t, GraphUUID>> framebuffers; // framebuffer, texture type, texBindSlot, attachId, attrId
+		std::vector<std::tuple<Ref<Framebuffer>, Ref<Framebuffer>, FramebufferCommand, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 
 	class RenderPass
@@ -77,7 +79,9 @@ namespace Lamp
 	public:
 		friend class RenderPassManager;
 
-		RenderPass() = default;
+		RenderPass()
+			: m_ID(0)
+		{}
 		RenderPass(const RenderPassSpecification& spec);
 		~RenderPass() {}
 

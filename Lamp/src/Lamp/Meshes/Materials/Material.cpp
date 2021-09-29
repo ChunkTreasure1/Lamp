@@ -23,22 +23,4 @@ namespace Lamp
 
 		m_pShader = shader;
 	}
-
-	void Material::UploadData()
-	{
-		m_pShader->Bind();
-
-		/////Lighting/////
-		m_pShader->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-		m_pShader->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
-		m_pShader->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
-
-		int lightCount = 0;
-
-		//Reserve spot 0 for shadow map
-		for (int i = 4 + lightCount; i < m_pShader->GetSpecifications().TextureCount + (4 + lightCount); i++)
-		{
-			m_pShader->UploadInt("u_Material." + m_pShader->GetSpecifications().TextureNames[i - (4 + lightCount)], i);
-		}
-	}
 }

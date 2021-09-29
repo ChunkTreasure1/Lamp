@@ -26,9 +26,10 @@ namespace Lamp
 		float HDRExposure = 3.f;
 		float Gamma = 2.2f;
 
-		//Textures
+		//Internal lists
 		std::map<std::string, Ref<Texture2D>> InternalTextures;
 		std::map<std::string, Ref<Framebuffer>> InternalFramebuffers;
+		std::vector<Ref<Framebuffer>> UseViewportSize;
 	};
 
 	enum class ERendererSettings
@@ -80,6 +81,7 @@ namespace Lamp
 		static void ResetBatchData();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
+		static void DrawMeshDeferred(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
 		static void DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
 
 	private:

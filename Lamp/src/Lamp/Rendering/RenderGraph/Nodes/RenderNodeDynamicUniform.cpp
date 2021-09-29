@@ -37,7 +37,7 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-				auto& [name, type, data] = passNode->renderPass->GetSpecification().dynamicUniforms[index];
+				auto& [name, type, data, attrId] = passNode->renderPass->GetSpecification().dynamicUniforms[index];
 				data = pData;
 				type = uniformType;
 			}
@@ -64,7 +64,7 @@ namespace Lamp
 
 		ImGui::PushItemWidth(150.f);
 
-		if (ImGui::Combo("Uniform", &m_CurrentlySelectedUniform, m_Uniforms.data(), m_Uniforms.size()))
+		if (ImGui::Combo("Uniform", &m_CurrentlySelectedUniform, m_Uniforms.data(), (int)m_Uniforms.size()))
 		{
 			auto& [name, uType, data] = DynamicUniformRegistry::s_Uniforms()[m_CurrentlySelectedUniform];
 			uniformType = uType;
@@ -72,14 +72,7 @@ namespace Lamp
 			dataName = name;
 		}
 
-		for (auto& output : outputs)
-		{
-			ImNodes::BeginOutputAttribute(output->id);
-
-			ImGui::Text(output->name.c_str());
-
-			ImNodes::EndOutputAttribute();
-		}
+		DrawAttributes();
 
 		ImGui::PopItemWidth();
 

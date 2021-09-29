@@ -126,6 +126,8 @@ namespace Sandbox3D
 
 		if (m_CurrentlyOpenGraph)
 		{
+
+
 			for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
 			{
 				DrawNode(node);
@@ -142,19 +144,19 @@ namespace Sandbox3D
 
 		CheckLinkCreated();
 
+		m_SelectedNodes.clear();
 		const int numSelectedNodes = ImNodes::NumSelectedNodes();
 		if (numSelectedNodes > 0)
 		{
-			m_SelectedNodes.clear();
 			m_SelectedNodes.resize(numSelectedNodes);
 
 			ImNodes::GetSelectedNodes(m_SelectedNodes.data());
 		}
 
+		m_SelectedLinks.clear();
 		const int numSelectedLinks = ImNodes::NumSelectedLinks();
 		if (numSelectedLinks > 0)
 		{
-			m_SelectedLinks.clear();
 			m_SelectedLinks.resize(numSelectedLinks);
 
 			ImNodes::GetSelectedLinks(m_SelectedLinks.data());
@@ -254,7 +256,9 @@ namespace Sandbox3D
 			std::string path = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
 			if (!path.empty() && std::filesystem::exists(path))
 			{
-				Open(ResourceCache::GetAsset<RenderGraph>(path));
+				Ref<Asset> graph;
+				g_pEnv->pAssetManager->LoadAsset(path, graph);
+				Open(std::dynamic_pointer_cast<RenderGraph>(graph));
 			}
 		}
 
@@ -370,6 +374,29 @@ namespace Sandbox3D
 
 					m_CurrentlyOpenGraph->GetSpecification().links.push_back(link);
 				}
+			}
+		}
+	}
+
+	void RenderGraphPanel::DeleteMarkedLinks()
+	{
+		for (const auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
+		{
+			for (int i = 0; i < node->links.size(); i++)
+			{
+				if (node->links[i]->markedForDelete)
+				{
+					node->links.erase(node->links.begin() + i);
+				}
+			}
+		}
+
+		for (int i = 0; i < m_CurrentlyOpenGraph->GetSpecification().links.size(); i++)
+		{
+			if (m_CurrentlyOpenGraph->GetSpecification().links[i]->markedForDelete)
+			{
+				m_CurrentlyOpenGraph->GetSpecification().links.erase(m_CurrentlyOpenGraph->GetSpecification().links.begin() + i);
+				break;
 			}
 		}
 	}

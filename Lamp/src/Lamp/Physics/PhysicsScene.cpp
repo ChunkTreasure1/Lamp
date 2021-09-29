@@ -82,7 +82,7 @@ namespace Lamp
 			}
 		}
 
-		return nullptr;
+		return Ref<PhysicsActor>(nullptr);
 	}
 
 	Ref<PhysicsActor> PhysicsScene::CreateActor(Entity* pEnt)

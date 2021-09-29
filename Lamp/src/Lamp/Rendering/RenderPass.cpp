@@ -89,6 +89,14 @@ namespace Lamp
 						Renderer3D::DrawRenderBuffer();
 						break;
 
+					case DrawType::Deferred:
+						Renderer3D::DrawRenderBuffer();
+						break;
+
+					case DrawType::Forward:
+						Renderer3D::DrawRenderBuffer();
+						break;
+
 					case DrawType::Line:
 						break;
 
@@ -103,7 +111,7 @@ namespace Lamp
 				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 
-				for (auto& [main, secondary, command] : m_PassSpec.framebufferCommands)
+				for (auto& [main, secondary, command, attrId] : m_PassSpec.framebufferCommands)
 				{
 					switch (command)
 					{

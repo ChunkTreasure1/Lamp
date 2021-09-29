@@ -6,6 +6,7 @@
 namespace Lamp
 {
 	static std::random_device s_RandomDevice;
+	static std::mt19937_64 s_RandomEngine64(s_RandomDevice());
 	static std::mt19937 s_RandomEngine(s_RandomDevice());
 	static std::uniform_int_distribution<uint64_t> s_UniformDistribution64;
 
@@ -13,7 +14,7 @@ namespace Lamp
 
 	
 	UUID::UUID()
-		: m_UUID(s_UniformDistribution64(s_RandomEngine))
+		: m_UUID(s_UniformDistribution64(s_RandomEngine64))
 	{
 	}
 

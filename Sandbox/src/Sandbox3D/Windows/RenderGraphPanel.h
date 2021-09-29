@@ -27,6 +27,7 @@ namespace Sandbox3D
 
 		void DrawNode(Ref<Lamp::RenderNode> node);
 		void CheckLinkCreated();
+		void DeleteMarkedLinks();
 
 	private:
 		Ref<Lamp::RenderGraph> m_CurrentlyOpenGraph;

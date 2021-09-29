@@ -35,7 +35,7 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-				auto& [buffer, type, bindId, attachId] = passNode->renderPass->GetSpecification().framebuffers[index];
+				auto& [buffer, type, bindId, attachId, attrId] = passNode->renderPass->GetSpecification().framebuffers[index];
 				buffer = framebuffer;
 			}
 		}
@@ -78,7 +78,7 @@ namespace Lamp
 		if (m_UseInternalBuffers)
 		{
 			ImGui::PushItemWidth(150.f);
-			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), m_BufferNames.size()))
+			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), (int)m_BufferNames.size()))
 			{
 				framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
 				m_SelectedBufferName = m_BufferNames[m_CurrentlySelectedBuffer];
@@ -87,17 +87,36 @@ namespace Lamp
 		}
 		else
 		{
-			auto &specification = framebuffer->GetSpecification();
-			int width = static_cast<int>(specification.Width);
-			if (ImGui::InputInt("Width", &width))
+			if (ImGui::Checkbox("Use viewport size", &m_UseScreenSize))
 			{
-				specification.Width = width;
+				if (m_UseScreenSize)
+				{
+					Renderer3D::GetSettings().UseViewportSize.push_back(framebuffer);
+				}
+				else
+				{
+					auto& vector = Renderer3D::GetSettings().UseViewportSize;
+					if (auto it = std::find(vector.begin(), vector.end(), framebuffer); it != vector.end())
+					{
+						vector.erase(it);
+					}
+				}
 			}
 
-			int height = static_cast<int>(specification.Height);
-			if (ImGui::InputInt("Height", &height))
+			auto& specification = framebuffer->GetSpecification();
+			if (!m_UseScreenSize)
 			{
-				specification.Height = height;
+				int width = static_cast<int>(specification.Width);
+				if (ImGui::InputInt("Width", &width))
+				{
+					specification.Width = width;
+				}
+
+				int height = static_cast<int>(specification.Height);
+				if (ImGui::InputInt("Height", &height))
+				{
+					specification.Height = height;
+				}
 			}
 
 			int samples = static_cast<int>(specification.Samples);
@@ -175,12 +194,7 @@ namespace Lamp
 			}
 		}
 
-		for (auto& output : outputs)
-		{
-			ImNodes::BeginOutputAttribute(output->id);
-			ImGui::Text(output->name.c_str());
-			ImNodes::EndOutputAttribute();
-		}
+		DrawAttributes();
 
 		ImNodes::EndNode();
 
@@ -196,6 +210,7 @@ namespace Lamp
 
 		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, out);
 		LP_SERIALIZE_PROPERTY(selectedBuffer, m_SelectedBufferName, out);
+		LP_SERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, out);
 
 		LP_SERIALIZE_PROPERTY(width, specification.Width, out);
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
@@ -252,10 +267,16 @@ namespace Lamp
 		else
 		{
 			auto &specification = framebuffer->GetSpecification();
+			LP_DESERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, node, false);
 			LP_DESERIALIZE_PROPERTY(width, specification.Width, node, 0);
 			LP_DESERIALIZE_PROPERTY(height, specification.Height, node, 0);
 			LP_DESERIALIZE_PROPERTY(samples, specification.Samples, node, 0);
 			LP_DESERIALIZE_PROPERTY(clearColor, specification.ClearColor, node, glm::vec4(0.f));
+			
+			if (m_UseScreenSize)
+			{
+				Renderer3D::GetSettings().UseViewportSize.push_back(framebuffer);
+			}
 
 			YAML::Node attachmentsNode = node["attachments"];
 			uint32_t attachmentCount = 0;

@@ -1832,6 +1832,7 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h" />
+    <ClInclude Include="src\Lamp\Utility\StandardUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">

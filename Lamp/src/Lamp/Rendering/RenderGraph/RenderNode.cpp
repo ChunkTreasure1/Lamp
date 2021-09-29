@@ -4,8 +4,47 @@
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Utility/SerializeMacros.h"
 
+#include <imnodes.h>
+
 namespace Lamp
 {
+    void RenderNode::DrawAttributes()
+    {
+		ImVec2 cursorPos = ImGui::GetCursorPos();
+		cursorPos.x += 150.f;
+
+        if (!inputs.empty())
+        {
+			ImGui::TextColored(ImVec4(0.38f, 0.42f, 1.f, 1.f), "Inputs");
+        }
+
+		for (auto& input : inputs)
+		{
+			ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
+
+			ImGui::Text(input->name.c_str());
+
+			ImNodes::EndInputAttribute();
+		}
+
+		ImGui::SetCursorPos(cursorPos);
+
+        if (!outputs.empty())
+        {
+			ImGui::TextColored(ImVec4(0.101f, 1.f, 0.313f, 1.f), "Outputs");
+        }
+
+		for (auto& output : outputs)
+		{
+			cursorPos.y += 20.f;
+			ImGui::SetCursorPos(cursorPos);
+
+			ImNodes::BeginOutputAttribute(output->id);
+			ImGui::Text(output->name.c_str());
+			ImNodes::EndOutputAttribute();
+		}
+    }
+
     void RenderNode::SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrTypeS, YAML::Emitter& out, GraphUUID id)
     {
         out << YAML::Key << "attribute" + std::to_string(id) << YAML::Value;

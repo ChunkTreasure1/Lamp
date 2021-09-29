@@ -36,7 +36,7 @@ namespace Lamp
 				if (RenderNodePass *passNode = dynamic_cast<RenderNodePass *>(link->pInput->pNode))
 				{
 					uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-					auto &[passTex, bindId] = passNode->renderPass->GetSpecification().textures[index];
+					auto &[passTex, bindId, attrId] = passNode->renderPass->GetSpecification().textures[index];
 					passTex = texture;
 				}
 			}
@@ -66,7 +66,7 @@ namespace Lamp
 		if (m_UseInternalTextures)
 		{
 			ImGui::PushItemWidth(150.f);
-			if (ImGui::Combo("##textures", &m_CurrentlySelectedTexture, m_TextureNames.data(), m_TextureNames.size()))
+			if (ImGui::Combo("##textures", &m_CurrentlySelectedTexture, m_TextureNames.data(), (int)m_TextureNames.size()))
 			{
 				texture = Renderer3D::GetSettings().InternalTextures[m_TextureNames[m_CurrentlySelectedTexture]];
 				m_SelectedTextureName = m_TextureNames[m_CurrentlySelectedTexture];
@@ -91,13 +91,7 @@ namespace Lamp
 			}
 		}
 
-
-		for (auto& output : outputs)
-		{
-			ImNodes::BeginOutputAttribute(output->id);
-			ImGui::Text("Output");
-			ImNodes::EndOutputAttribute();
-		}
+		DrawAttributes();
 
 		ImNodes::EndNode();
 

@@ -53,6 +53,8 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			}
+
+			return GL_NONE;
 		}
 
 		static GLint FormatToType(FramebufferTextureFormat format)
@@ -69,6 +71,8 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_INT;
 			}
+
+			return GL_NONE;
 		}
 
 		static GLint FilteringToGL(FramebufferTexureFiltering filtering)
@@ -83,7 +87,7 @@ namespace Lamp
 			case Lamp::FramebufferTexureFiltering::LinearMipMapLinear: return GL_LINEAR_MIPMAP_LINEAR;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static GLint WrapToGL(FramebufferTextureWrap wrap)
@@ -97,7 +101,7 @@ namespace Lamp
 			case Lamp::FramebufferTextureWrap::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static GLint RenderbufferTypeGL(FramebufferRenderbufferType type)
@@ -111,7 +115,7 @@ namespace Lamp
 				break;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static GLint RenderbufferTypeAttachment(FramebufferRenderbufferType type)
@@ -124,7 +128,7 @@ namespace Lamp
 				break;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static void AttachTexture(FramebufferSpecification spec, FramebufferTextureSpecification textureSpec, uint32_t id, bool multisample)

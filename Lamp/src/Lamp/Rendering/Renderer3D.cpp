@@ -403,7 +403,7 @@ namespace Lamp
 				}
 
 				//Dynamic Uniforms
-				for (auto& [name, type, data] : pass->dynamicUniforms)
+				for (auto& [name, type, data, attrId] : pass->dynamicUniforms)
 				{
 					switch (type)
 					{
@@ -430,7 +430,7 @@ namespace Lamp
 				}
 
 				//Framebuffers
-				for (auto& [buffer, type, id, texLoc] : pass->framebuffers)
+				for (auto& [buffer, type, id, texLoc, attrId] : pass->framebuffers)
 				{
 					switch (type)
 					{
@@ -465,72 +465,17 @@ namespace Lamp
 		}
 	}
 
+	void Renderer3D::DrawMeshDeferred(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id /* = -1 */)
+	{
+		DrawMesh(modelMatrix, data, mat, id);
+	}
+
 	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 
-		mat->UploadData();
-
-		switch (s_pData->CurrentRenderPass->type)
-		{
-			case PassType::Forward:
-			{
-				//Reserve spot 0 for shadow map
-				int i = 4;// +g_pEnv->pRenderUtils->GetPointLights().size();
-				for (auto& name : mat->GetShader()->GetSpecifications().TextureNames)
-				{
-					if (mat->GetTextures()[name].get() != nullptr)
-					{
-						mat->GetTextures()[name]->Bind(i);
-						i++;
-					}
-				}
-
-				mat->GetShader()->Bind();
-				mat->GetShader()->UploadMat4("u_Model", modelMatrix);
-				mat->GetShader()->UploadFloat("u_Exposure", s_RendererSettings.HDRExposure);
-				mat->GetShader()->UploadFloat("u_Gamma", s_RendererSettings.Gamma);
-
-				//mat.GetShader()->UploadInt("u_ShadowMap", 0);
-				//s_pData->ShadowBuffer->BindDepthAttachment(0);
-
-				mat->GetShader()->UploadInt("u_IrradianceMap", 1);
-				mat->GetShader()->UploadInt("u_PrefilterMap", 2);
-				mat->GetShader()->UploadInt("u_BRDFLUT", 3);
-
-				s_RendererSettings.InternalFramebuffers["Skybox"]->BindColorAttachment(1, 0);
-				s_RendererSettings.InternalFramebuffers["Skybox"]->BindColorAttachment(2, 1);
-				s_RendererSettings.InternalFramebuffers["Skybox"]->BindColorAttachment(3, 2);
-
-				mat->GetShader()->UploadFloat3("u_DirectionalLight.direction", glm::normalize(g_pEnv->DirLight.Position));
-				mat->GetShader()->UploadFloat3("u_DirectionalLight.color", g_pEnv->DirLight.Color);
-				mat->GetShader()->UploadFloat("u_DirectionalLight.intensity", g_pEnv->DirLight.Intensity);
-
-				for (int i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
-				{
-					g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i]->ShadowBuffer->BindDepthAttachment(4 + i);
-				}
-
-				data->Bind();
-				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
-
-				break;
-			}
-
-			case PassType::Selection:
-			{
-				s_pData->SelectionShader->Bind();
-				s_pData->SelectionShader->UploadInt("u_ObjectId", (int)id);
-				s_pData->SelectionShader->UploadMat4("u_Model", modelMatrix);
-
-				data->Bind();
-				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
-				break;
-			}
-
-			default:
-				break;
-		}
+		
+		DrawMesh(modelMatrix, data, mat, id);
 	}
 
 	void Renderer3D::DrawSkybox()
@@ -600,7 +545,7 @@ namespace Lamp
 		}
 
 		//Dynamic Uniforms
-		for (auto& [name, type, data] : pass->dynamicUniforms)
+		for (auto& [name, type, data, attrId] : pass->dynamicUniforms)
 		{
 			switch (type)
 			{
@@ -627,7 +572,7 @@ namespace Lamp
 		}
 
 		//Framebuffers
-		for (auto& [buffer, type, id, texLoc] : pass->framebuffers)
+		for (auto& [buffer, type, id, texLoc, attrId] : pass->framebuffers)
 		{
 			switch (type)
 			{
@@ -694,7 +639,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (s_pData->CurrentRenderPass->type == PassType::Forward || s_pData->CurrentRenderPass->type == PassType::Selection)
+		if (s_pData->CurrentRenderPass->drawType == DrawType::Forward || s_pData->CurrentRenderPass->drawType == DrawType::All)
 		{
 			for (auto& data : s_RenderBuffer.drawCallsForward)
 			{
@@ -702,11 +647,11 @@ namespace Lamp
 			}
 		}
 		
-		if (s_pData->CurrentRenderPass->type != PassType::Forward)
+		if (s_pData->CurrentRenderPass->drawType == DrawType::Deferred || s_pData->CurrentRenderPass->drawType == DrawType::All)
 		{
 			for (auto& data : s_RenderBuffer.drawCallsDeferred)
 			{
-				DrawMesh(data.transform, data.data, data.material, data.id);
+				DrawMeshDeferred(data.transform, data.data, data.material, data.id);
 			}
 		}
 	}
@@ -749,7 +694,7 @@ namespace Lamp
 
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
 		std::default_random_engine generator;
-		for (uint32_t i = 0; i < s_RendererSettings.SSAOKernelSize; i++)
+		for (size_t i = 0; i < s_RendererSettings.SSAOKernelSize; i++)
 		{
 			glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
 			sample = glm::normalize(sample);

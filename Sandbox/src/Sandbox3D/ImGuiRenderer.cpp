@@ -790,6 +790,7 @@ namespace Sandbox3D
 		{
 			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
 		}
+
 		ImGui::SameLine();
 		if (ImGui::Button("Open"))
 		{
@@ -797,6 +798,16 @@ namespace Sandbox3D
 			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
 
 			Lamp::Renderer3D::GetSettings().RenderGraph->Start();
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Reload"))
+		{
+			if (Renderer3D::GetSettings().RenderGraph)
+			{
+				Renderer3D::GetSettings().RenderGraph = ResourceCache::ReloadAsset<RenderGraph>(std::dynamic_pointer_cast<Asset>(Renderer3D::GetSettings().RenderGraph));
+				Renderer3D::GetSettings().RenderGraph->Start();
+			}
 		}
 
 		ImGui::Separator();

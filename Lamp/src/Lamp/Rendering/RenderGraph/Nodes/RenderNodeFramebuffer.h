@@ -23,6 +23,8 @@ namespace Lamp
 	
 	private:
 		bool m_UseInternalBuffers = false;
+		bool m_UseScreenSize = false;
+
 		int m_CurrentlySelectedBuffer = 0;
 		std::string m_SelectedBufferName = "";
 		std::vector<const char *> m_BufferNames;

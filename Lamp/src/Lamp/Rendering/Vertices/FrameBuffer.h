@@ -47,7 +47,9 @@ namespace Lamp
 
 	struct FramebufferTextureSpecification
 	{
-		FramebufferTextureSpecification() = default;
+		FramebufferTextureSpecification() 
+			: TextureFiltering(FramebufferTexureFiltering::Linear), TextureWrap(FramebufferTextureWrap::Repeat)
+		{}
 		FramebufferTextureSpecification(
 			FramebufferTextureFormat format,
 			FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear,

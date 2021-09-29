@@ -24,6 +24,10 @@ namespace Lamp
 		virtual RenderNodeType GetNodeType() { return RenderNodeType::Pass; }
 
 	private:
+		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
+
+	private:
+		bool m_UseViewportSize = false;
 		std::vector<const char*> m_Shaders;
 	};
 }

@@ -6,6 +6,10 @@ namespace Lamp
 {
 	struct RenderNodeDynamicUniform : public RenderNode
 	{
+		RenderNodeDynamicUniform()
+			: uniformType(UniformType::Int)
+		{}
+
 		virtual void Initialize() override;
 		virtual void Start() override;
 		virtual void DrawNode() override;

@@ -5,6 +5,7 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "RenderNodeEnd.h"
+#include "Lamp/Utility/StandardUtilities.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -86,7 +87,7 @@ namespace Lamp
 				if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 				{
 					uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-					auto& [buffer, type, bindId, attachId] = passNode->renderPass->GetSpecification().framebuffers[index];
+					auto& [buffer, type, bindId, attachId, attrId] = passNode->renderPass->GetSpecification().framebuffers[index];
 					buffer = renderPass->GetSpecification().TargetFramebuffer;
 				}
 			}
@@ -124,22 +125,11 @@ namespace Lamp
 		std::string nameId = "Name##node" + nodeId;
 		ImGui::InputText(nameId.c_str(), &specification.Name);
 
-		ImGui::TextColored(ImVec4(0.38f, 0.42f, 1.f, 1.f), "Inputs");
-
-		for (auto& input : inputs)
-		{
-			ImNodes::BeginInputAttribute(input->id);
-
-			ImGui::Text(input->name.c_str());
-
-			ImNodes::EndInputAttribute();
-		}
-
 		if (ImGui::TreeNode("Settings"))
 		{
 			//ClearType
 			{
-				static const char* clearTypes[4] = { "None", "Color", "Depth", "ColorDepth" };
+				static const char* clearTypes[] = { "None", "Color", "Depth", "ColorDepth" };
 				int currentlySelectedClearType = (int)specification.clearType;
 				std::string clearTypeId = "Clear Type##node" + nodeId;
 
@@ -151,11 +141,11 @@ namespace Lamp
 
 			//DrawType
 			{
-				static const char* drawTypes[3] = { "All", "Quad", "Line" };
+				static const char* drawTypes[] = { "All", "Quad", "Line", "Forward", "Deferred" };
 				int currentlySelectedDrawType = (int)specification.drawType;
 				std::string drawTypeId = "Draw Type##node" + nodeId;
 
-				if (ImGui::Combo(drawTypeId.c_str(), &currentlySelectedDrawType, drawTypes, 3))
+				if (ImGui::Combo(drawTypeId.c_str(), &currentlySelectedDrawType, drawTypes, 5))
 				{
 					specification.drawType = (DrawType)currentlySelectedDrawType;
 				}
@@ -163,7 +153,7 @@ namespace Lamp
 
 			//Cull face
 			{
-				static const char* cullFaces[2] = { "Front", "Back" };
+				static const char* cullFaces[] = { "Front", "Back" };
 				int currentlySelectedCullFace = (int)specification.cullFace;
 				std::string cullfaceId = "Cull Face##node" + nodeId;
 
@@ -179,10 +169,10 @@ namespace Lamp
 				if (specification.renderShader)
 				{
 					auto it = std::find(m_Shaders.begin(), m_Shaders.end(), specification.renderShader->GetName().c_str());
-					currentlySelectedShader = std::distance(m_Shaders.begin(), it);
+					currentlySelectedShader = (int)std::distance(m_Shaders.begin(), it);
 				}
 				std::string shaderId = "Render Shader##node" + nodeId;
-				if (ImGui::Combo(shaderId.c_str(), &currentlySelectedShader, m_Shaders.data(), m_Shaders.size()))
+				if (ImGui::Combo(shaderId.c_str(), &currentlySelectedShader, m_Shaders.data(), (int)m_Shaders.size()))
 				{
 					if (currentlySelectedShader == 0)
 					{
@@ -202,16 +192,35 @@ namespace Lamp
 		{
 			auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
 
-			int width = static_cast<int>(specification.Width);
-			if (ImGui::InputInt("Width", &width))
+			if (ImGui::Checkbox("Use viewport size", &m_UseViewportSize))
 			{
-				specification.Width = width;
+				if (m_UseViewportSize)
+				{
+					Renderer3D::GetSettings().UseViewportSize.push_back(renderPass->GetSpecification().TargetFramebuffer);
+				}
+				else
+				{
+					auto& vector = Renderer3D::GetSettings().UseViewportSize;
+					if (auto it = std::find(vector.begin(), vector.end(), renderPass->GetSpecification().TargetFramebuffer); it != vector.end())
+					{
+						vector.erase(it);
+					}
+				}
 			}
 
-			int height = static_cast<int>(specification.Height);
-			if (ImGui::InputInt("Height", &height))
+			if (!m_UseViewportSize)
 			{
-				specification.Height = height;
+				int width = static_cast<int>(specification.Width);
+				if (ImGui::InputInt("Width", &width))
+				{
+					specification.Width = width;
+				}
+
+				int height = static_cast<int>(specification.Height);
+				if (ImGui::InputInt("Height", &height))
+				{
+					specification.Height = height;
+				}
 			}
 
 			int samples = static_cast<int>(specification.Samples);
@@ -302,6 +311,15 @@ namespace Lamp
 			{
 				auto& [name, type, value] = specification.staticUniforms[i];
 
+				std::string butId = "-##statRm" + std::to_string(i);
+				if (ImGui::Button(butId.c_str()))
+				{
+					std::string sName = name;
+					Utility::RemoveFromContainerIf(specification.staticUniforms, [&sName](const std::tuple<std::string, UniformType, std::any>& t) { return std::get<0>(t) == sName; });
+				}
+
+				ImGui::SameLine();
+
 				ImGui::PushItemWidth(100.f);
 
 				std::string uNameId = "##uniformName" + std::to_string(i);
@@ -323,108 +341,112 @@ namespace Lamp
 				ImGui::SameLine();
 
 				ImGui::PushItemWidth(100.f);
-				if (type != UniformType::RenderData)
+				if (value.has_value())
 				{
-					std::string inId = "##value" + std::to_string(i);
-					switch (type)
+					if (type != UniformType::RenderData)
 					{
-						case UniformType::Int:
+						std::string inId = "##value" + std::to_string(i);
+						switch (type)
 						{
-							int data = std::any_cast<int>(value);
-
-							if (ImGui::InputInt(inId.c_str(), &data))
+							case UniformType::Int:
 							{
-								value = data;
-							}
-							break;
-						}
+								int data = std::any_cast<int>(value);
 
-						case UniformType::Float:
-						{
-							float data = std::any_cast<float>(value);
-							if (ImGui::InputFloat(inId.c_str(), &data))
+								if (ImGui::InputInt(inId.c_str(), &data))
+								{
+									value = data;
+								}
+								break;
+							}
+
+							case UniformType::Float:
 							{
-								value = data;
+								float data = std::any_cast<float>(value);
+								if (ImGui::InputFloat(inId.c_str(), &data))
+								{
+									value = data;
+								}
+								break;
 							}
-							break;
-						}
 
-						case UniformType::Float2:
-						{
-							glm::vec2 data = std::any_cast<glm::vec2>(value);
-							if (ImGui::InputFloat2(inId.c_str(), glm::value_ptr(data)))
+							case UniformType::Float2:
 							{
-								value = data;
+								glm::vec2 data = std::any_cast<glm::vec2>(value);
+								if (ImGui::InputFloat2(inId.c_str(), glm::value_ptr(data)))
+								{
+									value = data;
+								}
+								break;
 							}
-							break;
-						}
 
-						case UniformType::Float3:
-						{
-							glm::vec3 data = std::any_cast<glm::vec3>(value);
-							if (ImGui::InputFloat3(inId.c_str(), glm::value_ptr(data)))
+							case UniformType::Float3:
 							{
-								value = data;
+								glm::vec3 data = std::any_cast<glm::vec3>(value);
+								if (ImGui::InputFloat3(inId.c_str(), glm::value_ptr(data)))
+								{
+									value = data;
+								}
+								break;
 							}
-							break;
-						}
 
-						case UniformType::Float4:
-						{
-							glm::vec4 data = std::any_cast<glm::vec4>(value);
-							if (ImGui::InputFloat4(inId.c_str(), glm::value_ptr(data)))
+							case UniformType::Float4:
 							{
-								value = data;
+								glm::vec4 data = std::any_cast<glm::vec4>(value);
+								if (ImGui::InputFloat4(inId.c_str(), glm::value_ptr(data)))
+								{
+									value = data;
+								}
+								break;
 							}
-							break;
-						}
 
-						case UniformType::Mat3:
-						{
-							glm::mat3 data = std::any_cast<glm::mat3>(value);
-
-							break;
-						}
-
-						case UniformType::Mat4:
-						{
-							glm::mat4 data = std::any_cast<glm::mat4>(value);
-
-							break;
-						}
-
-						case UniformType::Sampler2D:
-						{
-							int data = std::any_cast<int>(value);
-							if (ImGui::InputInt(inId.c_str(), &data))
+							case UniformType::Mat3:
 							{
-								value = data;
-							}
-							break;
-						}
+								glm::mat3 data = std::any_cast<glm::mat3>(value);
 
-						case UniformType::SamplerCube:
-						{
-							int data = std::any_cast<int>(value);
-							if (ImGui::InputInt(inId.c_str(), &data))
+								break;
+							}
+
+							case UniformType::Mat4:
 							{
-								value = data;
-							}
-							break;
-						}
+								glm::mat4 data = std::any_cast<glm::mat4>(value);
 
+								break;
+							}
+
+							case UniformType::Sampler2D:
+							{
+								int data = std::any_cast<int>(value);
+								if (ImGui::InputInt(inId.c_str(), &data))
+								{
+									value = data;
+								}
+								break;
+							}
+
+							case UniformType::SamplerCube:
+							{
+								int data = std::any_cast<int>(value);
+								if (ImGui::InputInt(inId.c_str(), &data))
+								{
+									value = data;
+								}
+								break;
+							}
+
+						}
+					}
+					else
+					{
+						static const char* dTypes[] = { "Transform", "Data", "Material", "Id" };
+						std::string dTypeId = "##dataType" + std::to_string(i);
+						int currentlySelectedData = (int)std::any_cast<RenderData>(value);
+						if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, dTypes, 4))
+						{
+							value = (RenderData)currentlySelectedData;
+						}
 					}
 				}
-				else
-				{
-					static const char* dTypes[] = { "Transform", "Data", "Material", "Id" };
-					std::string dTypeId = "##dataType" + std::to_string(i);
-					int currentlySelectedData = (int)std::any_cast<RenderData>(value);
-					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, dTypes, 4))
-					{
-						value = (RenderData)currentlySelectedData;
-					}
-				}
+
 				ImGui::PopItemWidth();
 			}
 
@@ -435,11 +457,11 @@ namespace Lamp
 		{
 			if (ImGui::Button("Create"))
 			{
-				specification.dynamicUniforms.push_back(std::make_tuple("Uniform", UniformType::Int, nullptr));
 				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				specification.dynamicUniforms.push_back(std::make_tuple("Uniform", UniformType::Int, nullptr, input->id));
 
 				input->pNode = this;
-				input->name = "Unifrom" + std::to_string(specification.dynamicUniforms.size() - 1);
+				input->name = "Uniform" + std::to_string(specification.dynamicUniforms.size() - 1);
 				input->type = RenderAttributeType::DynamicUniform;
 				input->data = (uint32_t)(specification.dynamicUniforms.size() - 1);
 
@@ -448,10 +470,20 @@ namespace Lamp
 
 			for (int i = 0; i < specification.dynamicUniforms.size(); i++)
 			{
+				auto& [name, type, data, attrId] = specification.dynamicUniforms[i];
+
+				std::string butId = "-##dynRm" + std::to_string(i);
+				if (ImGui::Button(butId.c_str()))
+				{
+					RemoveAttribute(RenderAttributeType::DynamicUniform, attrId);
+
+					std::string sName = name;
+					Utility::RemoveFromContainerIf(specification.dynamicUniforms, [&sName](const std::tuple<std::string, UniformType, std::any, GraphUUID>& t) { return std::get<0>(t) == sName; });
+				}
+
+				ImGui::SameLine();
+
 				ImGui::PushItemWidth(100.f);
-
-				auto& [name, type, data] = specification.dynamicUniforms[i];
-
 				std::string nameId = "##dynUniformName" + std::to_string(i);
 				ImGui::InputText(nameId.c_str(), &name);
 
@@ -464,8 +496,9 @@ namespace Lamp
 		{
 			if (ImGui::Button("Add"))
 			{
-				specification.textures.push_back(std::make_pair(nullptr, 0));
 				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				specification.textures.push_back(std::make_tuple(nullptr, 0, input->id));
+
 				input->data = (uint32_t)(specification.textures.size() - 1);
 				input->pNode = this;
 				input->name = "Texture" + std::to_string(specification.textures.size() - 1);
@@ -475,9 +508,21 @@ namespace Lamp
 			}
 
 			uint32_t texId = 0;
-			for (auto& [texture, bindId] : specification.textures)
+			for (auto& pair : specification.textures)
 			{
+				auto& [texture, bindId, attrId] = pair;
+
 				std::string texTreeId = "Texture##tex" + std::to_string(texId);
+
+				std::string butId = "-##texRm" + std::to_string(texId);
+				if (ImGui::Button(butId.c_str()))
+				{
+					RemoveAttribute(RenderAttributeType::Texture, attrId);
+
+					Utility::RemoveFromContainer(specification.textures, pair);
+				}
+				ImGui::SameLine();
+				
 				if (ImGui::TreeNode(texTreeId.c_str()))
 				{
 					int currBindSlot = bindId;
@@ -499,8 +544,9 @@ namespace Lamp
 		{
 			if (ImGui::Button("Add"))
 			{
-				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0 });
 				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0, input->id });
+
 				input->data = (uint32_t)(specification.framebuffers.size() - 1);
 				input->pNode = this;
 				input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
@@ -510,9 +556,21 @@ namespace Lamp
 			}
 
 			uint32_t bufferId = 0;
-			for (auto& [buffer, type, bind, attach] : specification.framebuffers)
+			for (auto& frameBuf : specification.framebuffers)
 			{
+				auto& [buffer, type, bind, attach, attrId] = frameBuf;
 				std::string bufferTreeId = "Framebuffer##buffer" + std::to_string(bufferId);
+
+				std::string butId = "-##frameRm" + std::to_string(bufferId);
+				if (ImGui::Button(butId.c_str()))
+				{
+					RemoveAttribute(RenderAttributeType::Framebuffer, attrId);
+
+					Utility::RemoveFromContainer(specification.framebuffers, frameBuf);
+				}
+
+				ImGui::SameLine();
+
 				if (ImGui::TreeNode(bufferTreeId.c_str()))
 				{
 					static const char* textureTypes[] = { "Color", "Depth" };
@@ -552,7 +610,7 @@ namespace Lamp
 
 			}
 
-			for (auto& [main, secondary, command] : specification.framebufferCommands)
+			for (auto& [main, secondary, command, attrId] : specification.framebufferCommands)
 			{
 
 			}
@@ -560,14 +618,7 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		ImGui::TextColored(ImVec4(0.101f, 1.f, 0.313f, 1.f), "Outputs");
-
-		for (auto& output : outputs)
-		{
-			ImNodes::BeginOutputAttribute(output->id);
-			ImGui::Text(output->name.c_str());
-			ImNodes::EndOutputAttribute();
-		}
+		DrawAttributes();
 
 		ImGui::PopItemWidth();
 
@@ -585,6 +636,17 @@ namespace Lamp
 		{
 			if (link->pInput->pNode->id == id)
 			{
+				continue;
+			}
+
+			if (link->pInput == nullptr)
+			{
+				LP_CORE_ERROR("Input attribute is null!");
+				continue;
+			}
+			if (link->pInput->pNode == nullptr)
+			{
+				LP_CORE_ERROR("Input node is null!");
 				continue;
 			}
 
@@ -629,6 +691,7 @@ namespace Lamp
 		{
 			const auto& targetBuffSpec = specification.TargetFramebuffer->GetSpecification();
 
+			LP_SERIALIZE_PROPERTY(useViewportSize, m_UseViewportSize, out);
 			LP_SERIALIZE_PROPERTY(width, targetBuffSpec.Width, out);
 			LP_SERIALIZE_PROPERTY(height, targetBuffSpec.Height, out);
 			LP_SERIALIZE_PROPERTY(samples, targetBuffSpec.Samples, out);
@@ -741,13 +804,14 @@ namespace Lamp
 		out << YAML::BeginMap;
 		{
 			uint32_t dynUniformCount = 0;
-			for (const auto& [uName, uType, uData] : specification.dynamicUniforms)
+			for (const auto& [uName, uType, uData, attrId] : specification.dynamicUniforms)
 			{
 				out << YAML::Key << "dynamicUniform" + std::to_string(dynUniformCount) << YAML::Value;
 				out << YAML::BeginMap;
 
 				LP_SERIALIZE_PROPERTY(name, uName, out);
 				LP_SERIALIZE_PROPERTY(type, (uint32_t)uType, out);
+				LP_SERIALIZE_PROPERTY(attrId, attrId, out);
 
 				out << YAML::EndMap;
 				dynUniformCount++;
@@ -759,12 +823,13 @@ namespace Lamp
 		out << YAML::BeginMap;
 		{
 			uint32_t texCount = 0;
-			for (const auto& [uTexture, uBindSlot] : specification.textures)
+			for (const auto& [uTexture, uBindSlot, attrId] : specification.textures)
 			{
 				out << YAML::Key << "texture" + std::to_string(texCount) << YAML::Value;
 				out << YAML::BeginMap;
 
 				LP_SERIALIZE_PROPERTY(bindSlot, uBindSlot, out);
+				LP_SERIALIZE_PROPERTY(attrId, attrId, out);
 
 				out << YAML::EndMap;
 				texCount++;
@@ -776,7 +841,7 @@ namespace Lamp
 		out << YAML::BeginMap;
 		{
 			uint32_t bufferCount = 0;
-			for (const auto& [buffer, texType, bindSlot, attachId] : specification.framebuffers)
+			for (const auto& [buffer, texType, bindSlot, attachId, attrId] : specification.framebuffers)
 			{
 				out << YAML::Key << "framebuffer" + std::to_string(bufferCount) << YAML::Value;
 				out << YAML::BeginMap;
@@ -784,6 +849,7 @@ namespace Lamp
 				LP_SERIALIZE_PROPERTY(textureType, (uint32_t)texType, out);
 				LP_SERIALIZE_PROPERTY(bindSlot, bindSlot, out);
 				LP_SERIALIZE_PROPERTY(attachmentId, attachId, out);
+				LP_SERIALIZE_PROPERTY(attrId, attrId, out);
 
 				out << YAML::EndMap;
 				bufferCount++;
@@ -824,6 +890,7 @@ namespace Lamp
 
 		//target buffer
 		auto& targetBufferSpec = specification.TargetFramebuffer->GetSpecification();
+		LP_DESERIALIZE_PROPERTY(useViewportSize, m_UseViewportSize, bufferNode, false);
 		LP_DESERIALIZE_PROPERTY(width, targetBufferSpec.Width, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(height, targetBufferSpec.Height, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(samples, targetBufferSpec.Samples, bufferNode, 0);
@@ -847,6 +914,11 @@ namespace Lamp
 		}
 
 		specification.TargetFramebuffer = Framebuffer::Create(specification.TargetFramebuffer->GetSpecification());
+
+		if (m_UseViewportSize)
+		{
+			Renderer3D::GetSettings().UseViewportSize.push_back(specification.TargetFramebuffer);
+		}
 
 		//static uniforms
 		YAML::Node staticUniformsNode = node["staticUniforms"];
@@ -918,8 +990,11 @@ namespace Lamp
 		{
 			std::string uName = uniformNode["name"].as<std::string>();
 			UniformType uType = (UniformType)uniformNode["type"].as<uint32_t>();
+			
+			GraphUUID attrId;
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, uniformNode, 0);
 
-			specification.dynamicUniforms.push_back(std::make_tuple(uName, uType, nullptr));
+			specification.dynamicUniforms.push_back(std::make_tuple(uName, uType, nullptr, attrId));
 			dynUniformCount++;
 		}
 
@@ -930,9 +1005,11 @@ namespace Lamp
 		while (YAML::Node texNode = texturesNode["texture" + std::to_string(texCount)])
 		{
 			uint32_t bindSlot;
+			GraphUUID attrId;
 			LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, texNode, 0);
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, texNode, 0);
 
-			specification.textures.push_back(std::make_pair(nullptr, bindSlot));
+			specification.textures.push_back(std::make_tuple(nullptr, bindSlot, attrId));
 			texCount++;
 		}
 
@@ -945,11 +1022,13 @@ namespace Lamp
 			TextureType type = (TextureType)bufferNode["textureType"].as<uint32_t>();
 			uint32_t bindSlot;
 			uint32_t attachId;
+			GraphUUID attrId;
 
 			LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, bufferNode, 0);
 			LP_DESERIALIZE_PROPERTY(attachmentId, attachId, bufferNode, 0);
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, bufferNode, 0);
 
-			specification.framebuffers.push_back(std::make_tuple(nullptr, type, bindSlot, attachId));
+			specification.framebuffers.push_back(std::make_tuple(nullptr, type, bindSlot, attachId, attrId));
 			bufferCount++;
 		}
 
@@ -994,4 +1073,41 @@ namespace Lamp
 			attributeCount++;
 		}
 	}
+
+	void RenderNodePass::RemoveAttribute(RenderAttributeType type, GraphUUID compId)
+	{
+		for (int i = 0; i < inputs.size(); i++)
+		{
+			if (inputs[i]->type != type)
+			{
+				continue;
+			}
+
+			if (compId == inputs[i]->id)
+			{
+				for (size_t j = 0; j < links.size(); j++)
+				{
+					if (links[j]->pInput->id == inputs[i]->id)
+					{
+						links[j]->markedForDelete = true;
+						break;
+					}
+				}
+
+				inputs.erase(inputs.begin() + i);
+
+				int newIndex = 0;
+				for (int i = 0; i < inputs.size(); i++)
+				{
+					if (inputs[i]->type == RenderAttributeType::Texture)
+					{
+						inputs[i]->data = newIndex;
+						newIndex++;
+					}
+				}
+				break;
+			}
+		}
+	}
+
 }
