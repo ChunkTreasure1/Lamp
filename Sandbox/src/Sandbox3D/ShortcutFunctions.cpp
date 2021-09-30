@@ -2,6 +2,7 @@
 #include "Sandbox3D.h"
 
 #include "Lamp/Utility/PlatformUtility.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Sandbox3D
 {
@@ -10,7 +11,8 @@ namespace Sandbox3D
 		std::string filepath = Lamp::FileDialogs::SaveFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
-			Lamp::LevelSystem::SaveLevel(filepath, Lamp::LevelSystem::GetCurrentLevel());
+			g_pEnv->pLevel->Path = filepath;
+			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
 		}
 	}
 
@@ -25,19 +27,19 @@ namespace Sandbox3D
 
 	void Sandbox3D::OpenLevel(const std::filesystem::path& path)
 	{
-		Lamp::LevelSystem::LoadLevel(path.string());
+		m_pLevel = Lamp::ResourceCache::GetAsset<Lamp::Level>(path);
 		m_pSelectedObject = nullptr;
 	}
 
 	void Sandbox3D::NewLevel()
 	{
-		if (!Lamp::LevelSystem::GetCurrentLevel()->GetPath().empty())
+		if (!g_pEnv->pLevel->Path.empty())
 		{
-			Lamp::LevelSystem::SaveLevel(Lamp::LevelSystem::GetCurrentLevel());
+			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
 		}
 
-		Ref<Lamp::Level> pLevel = CreateRef<Lamp::Level>("New Level", "");
-		Lamp::LevelSystem::SetCurrentLevel(pLevel);
+		m_pLevel = CreateRef<Lamp::Level>("New Level");
+		g_pEnv->pLevel = m_pLevel;
 		m_pSelectedObject = nullptr;
 	}
 

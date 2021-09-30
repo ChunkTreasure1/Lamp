@@ -1,5 +1,6 @@
 geometry:
   name: cube
+  handle: 10335344246315033883
   meshes:
     mesh0:
       matId: 0

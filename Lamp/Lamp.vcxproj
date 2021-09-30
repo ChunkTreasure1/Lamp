@@ -192,7 +192,6 @@
     <ClInclude Include="src\Lamp\Layer\Layer.h" />
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
     <ClInclude Include="src\Lamp\Level\Level.h" />
-    <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
     <ClInclude Include="src\Lamp\Level\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />
     <ClInclude Include="src\Lamp\Meshes\Materials\Material.h" />
@@ -737,7 +736,6 @@
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\Level.cpp" />
-    <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
     <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
@@ -859,4 +857,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

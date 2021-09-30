@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "Sandbox3D.h"
 
-#include <Lamp/Level/LevelSystem.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include <Lamp/Objects/Entity/Base/Entity.h>
@@ -1031,13 +1030,13 @@ namespace Sandbox3D
 
 				if (ImGui::MenuItem("Save", "Ctrl + S"))
 				{
-					if (Lamp::LevelSystem::GetCurrentLevel()->GetPath().empty())
+					if (g_pEnv->pLevel->Path.empty())
 					{
 						SaveLevelAs();
 					}
 					else
 					{
-						Lamp::LevelSystem::SaveLevel(Lamp::LevelSystem::GetCurrentLevel());
+						g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
 					}
 				}
 

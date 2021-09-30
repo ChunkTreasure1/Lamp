@@ -15,5 +15,4 @@
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <Lamp/Objects/Entity/Base/BaseComponent.h>
 #include <Lamp/Objects/Brushes/Brush.h>
-
-#include <Lamp/Level/LevelSystem.h>
+#include <Lamp/Level/Level.h>

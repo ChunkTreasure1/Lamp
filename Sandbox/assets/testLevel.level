@@ -3,20 +3,44 @@ level:
   handle: 14311675356115887053
   brushes:
     - brush: Brush
-      meshHandle: 14864075499425419478
+      meshHandle: 10335344246315033883
       position: [0, 0, 0]
       rotation: [0, 0, 0]
-      scale: [20, 1, 20]
+      scale: [30, 1, 30]
       layerId: 0
     - brush: Brush
-      meshHandle: 17278596707763262522
+      meshHandle: 13551055251788859933
       position: [0, 0.848075986, -0.163935006]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
+    - brush: Brush
+      meshHandle: 10335344246315033883
+      position: [-14.5140333, 3.7758646, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 6.80206537, 30]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 10335344246315033883
+      position: [14.5138855, 3.7758646, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 6.80206537, 30]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 10335344246315033883
+      position: [-0.320364475, 3.7758646, -14.5667343]
+      rotation: [0, 0, 0]
+      scale: [29.5076294, 6.80206823, 1]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 10335344246315033883
+      position: [-0.320364475, 3.7758646, 14.4801054]
+      rotation: [0, 0, 0]
+      scale: [29.5076294, 6.80206823, 1]
+      layerId: 0
   entities:
-    - entity: TestColl
-      position: [12.6057167, 4.5718832, 1.058339]
+    - entity: Entity
+      position: [7.38819599, 4.5718832, 1.058339]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
@@ -63,8 +87,8 @@ level:
             - param: Is Trigger
               type: Bool
               value: false
-    - entity: PlayerEntity
-      position: [0.0263860002, 4.14799023, 9.29267025]
+    - entity: Entity
+      position: [0.0732657462, 4.17157841, 9.29640961]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
@@ -86,7 +110,7 @@ level:
               type: Float
               value: 10
     - entity: Entity
-      position: [13.04352, 3.79782891, 1.33471704]
+      position: [6.75680351, 3.79782891, 1.33471704]
       rotation: [0, 0, 0]
       scale: [5, 1, 5]
       layerId: 1
@@ -142,6 +166,6 @@ level:
       active: true
   LevelEnvironment:
     globalAmbient: [9.99999997e-07, 9.99999997e-07, 9.99999997e-07]
-    cameraPosition: [12.9303179, 6.51642704, 5.99276495]
-    cameraRotation: [-0.0180645343, 0.96912992, -0.0747340843, -0.234255627]
+    cameraPosition: [-18.1144047, 14.7654057, 13.2261858]
+    cameraRotation: [-0.650168896, 0.31769976, 0.59728545, 0.345828384]
     cameraFOV: 60

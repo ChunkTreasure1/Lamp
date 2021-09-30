@@ -4,7 +4,6 @@
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
 
-#include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
 #include <Lamp/Core/Game.h>
@@ -34,7 +33,7 @@ namespace Sandbox3D
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
-		m_pLevel = LevelSystem::LoadLevel("assets/levels/Level.level");
+		m_pLevel = ResourceCache::GetAsset<Level>("assets/testLevel.level");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
 		//Make sure the sandbox controller is created after level has been loaded
@@ -212,14 +211,14 @@ namespace Sandbox3D
 				else if (control && !shift)
 				{
 
-					if (LevelSystem::GetCurrentLevel()->GetPath().empty())
+					if (g_pEnv->pLevel->Path.empty())
 					{
 						SaveLevelAs();
 						break;
 					}
 					else
 					{
-						LevelSystem::SaveLevel(LevelSystem::GetCurrentLevel());
+						g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
 					}
 				}
 				break;

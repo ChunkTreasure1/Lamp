@@ -1,5 +1,6 @@
 geometry:
   name: teddy
+  handle: 2625564280194159711
   meshes:
     mesh0:
       matId: 0

@@ -15,16 +15,14 @@ namespace Lamp
 		static void Update();
 
 		template<typename T>
-		static Ref<T> GetAsset(std::filesystem::path path)
+		static Ref<T> GetAsset(const std::filesystem::path& path)
 		{
-
 			if (s_AssetCache.find(path.string()) != s_AssetCache.end())
 			{
 				return std::dynamic_pointer_cast<T>(s_AssetCache.at(path.string()));
 			}
 
-			Ref<Asset> asset;
-			g_pEnv->pAssetManager->LoadAsset(path, asset);
+			Ref<Asset> asset = g_pEnv->pAssetManager->GetAsset<T>(path);
 
 			AddAsset(path, asset);
 

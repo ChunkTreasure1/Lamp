@@ -1,5 +1,6 @@
 geometry:
   name: sphere
+  handle: 13551055251788859933
   meshes:
     mesh0:
       matId: 0

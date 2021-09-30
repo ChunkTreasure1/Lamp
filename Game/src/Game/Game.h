@@ -1,6 +1,5 @@
 #include <Lamp/Core/Game.h>
 
-#include <Lamp/Level/LevelSystem.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
 class Game : public Lamp::GameBase

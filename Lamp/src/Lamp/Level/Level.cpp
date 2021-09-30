@@ -107,7 +107,6 @@ namespace Lamp
 
 		m_Environment = level.m_Environment;
 		m_Name = level.m_Name;
-		m_Path = level.m_Path;
 	}
 
 	void Level::OnEvent(Event& e)

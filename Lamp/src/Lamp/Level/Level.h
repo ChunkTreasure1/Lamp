@@ -49,10 +49,13 @@ namespace Lamp
 	class Level : public Asset
 	{
 	public:
-		Level(const std::string& name, const std::string& path)
-			: m_Name(name), m_Path(path)
+		Level(const std::string& name)
+			: m_Name(name)
 		{
 		}
+
+		Level()
+		{}
 
 		Level(const Level& level);
 
@@ -62,14 +65,12 @@ namespace Lamp
 
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
-		inline const std::string& GetPath() { return m_Path; }
 		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
 		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities; }
 		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
 		inline bool GetIsPlaying() { return m_IsPlaying; }
 		inline RenderUtils& GetRenderUtils() { return m_RenderUtils; }
 
-		inline void SetPath(const std::string& path) { m_Path = path; }
 		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
 
 		static AssetType GetStaticType() { return AssetType::Level; }
@@ -94,12 +95,13 @@ namespace Lamp
 		void MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId);
 		void AddToLayer(Object* obj);
 
+		friend class LevelLoader;
+
 	private:
 		void RenderLevel(Ref<CameraBase> camera);
 
 	private:
 		std::string m_Name;
-		std::string m_Path;
 		LevelEnvironment m_Environment;
 		bool m_IsPlaying = false;
 		bool m_LastShowedGizmos = false;

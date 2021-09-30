@@ -41,5 +41,6 @@ namespace Lamp
 	private:
 		friend class Entity;
 		friend class LevelSystem;
+		friend class LevelLoader;
 	};
 }
