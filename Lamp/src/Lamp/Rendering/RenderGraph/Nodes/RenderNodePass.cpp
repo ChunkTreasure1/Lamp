@@ -84,22 +84,6 @@ namespace Lamp
 	{
 		for (const auto& link : links)
 		{
-			if (link->pOutput->pNode->id == id)
-			{
-				continue;
-			}
-
-			if (link->pOutput->type == RenderAttributeType::Framebuffer)
-			{
-				if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pOutput->pNode))
-				{
-					renderPass->GetSpecification().TargetFramebuffer = passNode->renderPass->GetSpecification().TargetFramebuffer;
-				}
-			}
-		}
-
-		for (const auto& link : links)
-		{
 			if (link->pInput->pNode->id == id)
 			{
 				continue;
@@ -109,9 +93,7 @@ namespace Lamp
 			{
 				if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 				{
-					uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-					auto& [buffer, type, bindId, attachId, attrId] = passNode->renderPass->GetSpecification().framebuffers[index];
-					buffer = renderPass->GetSpecification().TargetFramebuffer;
+					
 				}
 			}
 		}
@@ -570,7 +552,7 @@ namespace Lamp
 				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
 				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0, input->id });
 
-				input->data = (uint32_t)(specification.framebuffers.size() - 1);
+				input->pData = &specification.framebuffers[specification.framebuffers.size() - 1];
 				input->pNode = this;
 				input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
 				input->type = RenderAttributeType::Framebuffer;
@@ -1076,24 +1058,7 @@ namespace Lamp
 			attr->pNode = this;
 			if (attrType == "input")
 			{
-				//TODO: fix this mess
-				auto ptr = std::dynamic_pointer_cast<RenderInputAttribute>(attr);
-				if (ptr->type == RenderAttributeType::DynamicUniform)
-				{
-					ptr->data = uniformIndex;
-					uniformIndex++;
-				}
-				else if (ptr->type == RenderAttributeType::Framebuffer && ptr->name != "Target framebuffer")
-				{
-					ptr->data = bufferIndex;
-					bufferIndex++;
-				}
-				else if (ptr->type == RenderAttributeType::Texture)
-				{
-					ptr->data = textureIndex;
-					textureIndex++;
-				}
-				inputs.push_back(ptr);
+				inputs.push_back(std::dynamic_pointer_cast<RenderInputAttribute>(attr));
 			}
 			else
 			{

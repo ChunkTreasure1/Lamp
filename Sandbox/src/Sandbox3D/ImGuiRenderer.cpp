@@ -769,6 +769,12 @@ namespace Sandbox3D
 			ImGui::DragFloat("Sun Intensity", &g_pEnv->DirLight.Intensity);
 		}
 
+		if (ImGui::Button("TestSave"))
+		{
+			g_pEnv->pLevel->Path = "assets/testLevel.level";
+			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+		}
+
 		ImGui::End();
 	}
 

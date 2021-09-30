@@ -43,6 +43,7 @@ namespace Lamp
 		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
 		m_AssetLoaders[AssetType::RenderGraph] = CreateScope<RenderGraphLoader>();
 		m_AssetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
+		m_AssetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
 	}
 
 	void AssetManager::Shutdown()

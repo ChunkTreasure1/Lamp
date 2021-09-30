@@ -1,15 +1,14 @@
 #pragma once
 
 #include <string>
-#include "Lamp/Level/Level.h"
+#include "AssetLoader.h"
 
 namespace Lamp
 {
-	class LevelLoader
+	class LevelLoader : public AssetLoader
 	{
 	public:
-		static void LoadLevel(LevelLoadData& data, const std::string& path);
-
-	private:
+		virtual void Save(const Ref<Asset>& asset) const override;
+		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
 	};
 }

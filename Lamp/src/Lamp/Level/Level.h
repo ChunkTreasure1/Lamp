@@ -33,7 +33,7 @@ namespace Lamp
 	{
 		glm::vec3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
 		glm::vec3 CameraPosition{ 0.f, 0.f, 0.f };
-		glm::vec3 CameraRotation{ 0.f, 0.f, 0.f };
+		glm::quat CameraRotation;
 
 		float CameraFOV = 60.f;
 	};
@@ -71,6 +71,9 @@ namespace Lamp
 
 		inline void SetPath(const std::string& path) { m_Path = path; }
 		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
+
+		static AssetType GetStaticType() { return AssetType::Level; }
+		virtual AssetType GetType() override { return GetStaticType(); }
 
 		void OnEvent(Event& e);
 		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);

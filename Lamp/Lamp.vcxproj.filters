@@ -444,10 +444,16 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h">
@@ -511,6 +517,9 @@
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\SerializeMacros.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\StandardUtilities.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h">
@@ -1830,9 +1839,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h" />
-    <ClInclude Include="src\Lamp\Utility\StandardUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2036,10 +2042,16 @@
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp">
@@ -2228,7 +2240,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp" />
   </ItemGroup>
 </Project>

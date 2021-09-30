@@ -3,6 +3,8 @@
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 #include <Lamp/Audio/AudioEngine.h>
 
+#include <glm/gtc/quaternion.hpp>
+
 namespace Sandbox3D
 {
 	class SandboxController
@@ -13,7 +15,7 @@ namespace Sandbox3D
 		{
 			m_CameraController = CreateRef<Lamp::PerspectiveCameraController>(Lamp::LevelSystem::GetEnvironment().CameraFOV, 0.1f, 100.f);
 			m_CameraController->SetPosition(Lamp::LevelSystem::GetEnvironment().CameraPosition);
-			m_CameraController->SetRotation(Lamp::LevelSystem::GetEnvironment().CameraRotation);
+			m_CameraController->SetRotation(glm::eulerAngles(Lamp::LevelSystem::GetEnvironment().CameraRotation));
 		}
 
 		//Getting
@@ -23,7 +25,7 @@ namespace Sandbox3D
 		{
 			m_CameraController->Update(ts);
 			Lamp::LevelSystem::GetEnvironment().CameraPosition = m_CameraController->GetCamera()->GetPosition();
-			Lamp::LevelSystem::GetEnvironment().CameraRotation = m_CameraController->GetCamera()->GetRotation();
+			Lamp::LevelSystem::GetEnvironment().CameraRotation = glm::quat(m_CameraController->GetCamera()->GetRotation());
 			Lamp::LevelSystem::GetEnvironment().CameraFOV = m_CameraController->GetFOV();
 
 			Lamp::ListenerAttributes attr(m_CameraController->GetPosition(), glm::vec3(0.f), -std::dynamic_pointer_cast<Lamp::PerspectiveCamera>(m_CameraController->GetCamera())->GetFront(), std::dynamic_pointer_cast<Lamp::PerspectiveCamera>(m_CameraController->GetCamera())->GetUp());

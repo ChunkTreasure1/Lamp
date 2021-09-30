@@ -1,0 +1,147 @@
+level:
+  name: Level
+  handle: 14311675356115887053
+  brushes:
+    - brush: Brush
+      meshHandle: 14864075499425419478
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [20, 1, 20]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 17278596707763262522
+      position: [0, 0.848075986, -0.163935006]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+  entities:
+    - entity: TestColl
+      position: [12.6057167, 4.5718832, 1.058339]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: MeshComponent
+          params:
+            - param: Path
+              type: Path
+              value: C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf
+        - name: RigidbodyComponent
+          params:
+            - param: Body type
+              type: Int
+              value: 1
+            - param: Collision type
+              type: Int
+              value: 0
+            - param: Mass
+              type: Float
+              value: 1
+            - param: Linear Drag
+              type: Float
+              value: 1
+            - param: Angular Drag
+              type: Float
+              value: 1
+            - param: Disable gravity
+              type: Bool
+              value: false
+            - param: Is Kinematic
+              type: Bool
+              value: false
+            - param: Layer
+              type: Int
+              value: 0
+        - name: BoxColliderComponent
+          params:
+            - param: Size
+              type: Float3
+              value: [1, 1, 1]
+            - param: Offset
+              type: Float3
+              value: [0, 0.5, 0]
+            - param: Is Trigger
+              type: Bool
+              value: false
+    - entity: PlayerEntity
+      position: [0.0263860002, 4.14799023, 9.29267025]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: CameraComponent
+          params:
+            - param: Is Perspective
+              type: Bool
+              value: true
+            - param: Is Main
+              type: Bool
+              value: false
+            - param: Field Of View
+              type: Float
+              value: 60
+        - name: ControllerComponent
+          params:
+            - param: Speed
+              type: Float
+              value: 10
+    - entity: Entity
+      position: [13.04352, 3.79782891, 1.33471704]
+      rotation: [0, 0, 0]
+      scale: [5, 1, 5]
+      layerId: 1
+      components:
+        - name: MeshComponent
+          params:
+            - param: Path
+              type: Path
+              value: C:\Programming\Lamp\Sandbox\assets\models\cube.lgf
+        - name: BoxColliderComponent
+          params:
+            - param: Size
+              type: Float3
+              value: [1, 1, 1]
+            - param: Offset
+              type: Float3
+              value: [0, 0, 0]
+            - param: Is Trigger
+              type: Bool
+              value: false
+        - name: RigidbodyComponent
+          params:
+            - param: Body type
+              type: Int
+              value: 1
+            - param: Collision type
+              type: Int
+              value: 0
+            - param: Mass
+              type: Float
+              value: 1
+            - param: Linear Drag
+              type: Float
+              value: 1
+            - param: Angular Drag
+              type: Float
+              value: 1
+            - param: Disable gravity
+              type: Bool
+              value: false
+            - param: Is Kinematic
+              type: Bool
+              value: true
+            - param: Layer
+              type: Int
+              value: 0
+  layers:
+    - layer: Main
+      id: 0
+      active: true
+    - layer: Test
+      id: 1
+      active: true
+  LevelEnvironment:
+    globalAmbient: [9.99999997e-07, 9.99999997e-07, 9.99999997e-07]
+    cameraPosition: [12.9303179, 6.51642704, 5.99276495]
+    cameraRotation: [-0.0180645343, 0.96912992, -0.0747340843, -0.234255627]
+    cameraFOV: 60

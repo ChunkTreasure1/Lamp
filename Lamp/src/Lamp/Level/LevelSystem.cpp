@@ -289,9 +289,6 @@ namespace Lamp
 		char* pCP = doc.allocate_string(ToString(level->GetEnvironment().CameraPosition).c_str());
 		cameraValues->append_attribute(doc.allocate_attribute("position", pCP));
 
-		char* pCR = doc.allocate_string(ToString(level->GetEnvironment().CameraRotation).c_str());
-		cameraValues->append_attribute(doc.allocate_attribute("rotation", pCR));
-
 		char* pCF = doc.allocate_string(ToString(level->GetEnvironment().CameraFOV).c_str());
 		cameraValues->append_attribute(doc.allocate_attribute("fov", pCF));
 
