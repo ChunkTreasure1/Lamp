@@ -4,7 +4,7 @@ level:
   brushes:
     - brush: Brush
       meshHandle: 10335344246315033883
-      position: [0, 0, 0]
+      position: [0, -0.0167996287, 0]
       rotation: [0, 0, 0]
       scale: [30, 1, 30]
       layerId: 0
@@ -166,6 +166,9 @@ level:
       active: true
   LevelEnvironment:
     globalAmbient: [9.99999997e-07, 9.99999997e-07, 9.99999997e-07]
-    cameraPosition: [-18.1144047, 14.7654057, 13.2261858]
-    cameraRotation: [-0.650168896, 0.31769976, 0.59728545, 0.345828384]
+    cameraPosition: [-11.8630762, 18.0254116, 12.6981897]
+    cameraRotation: [0.633243561, 0.193514869, 0.730344057, -0.167786196]
     cameraFOV: 60
+    dirLightPos: [50, 50, 65]
+    dirLightColor: [1, 1, 1]
+    dirLightIntensity: 1

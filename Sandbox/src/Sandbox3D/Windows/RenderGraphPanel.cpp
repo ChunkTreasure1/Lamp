@@ -126,8 +126,6 @@ namespace Sandbox3D
 
 		if (m_CurrentlyOpenGraph)
 		{
-
-
 			for (auto& node : m_CurrentlyOpenGraph->GetSpecification().nodes)
 			{
 				DrawNode(node);

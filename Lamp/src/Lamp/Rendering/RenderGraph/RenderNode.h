@@ -66,13 +66,13 @@ namespace Lamp
 		{}
 		virtual ~RenderNode() {}
 
-		glm::vec2 position = { 0.f, 0.f };
 
 		std::vector<Ref<RenderLink>> links;
 		std::vector<Ref<RenderOutputAttribute>> outputs;
 		std::vector<Ref<RenderInputAttribute>> inputs;
 
 		GraphUUID id;
+		glm::vec2 position = { 0.f, 0.f };
 
 		virtual void Initialize() = 0;
 		virtual void Start() = 0;
@@ -83,7 +83,10 @@ namespace Lamp
 		virtual void Deserialize(YAML::Node& node) = 0;
 
 		void DrawAttributes();
-		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out, GraphUUID id);
+		void SerializeAttributes(YAML::Emitter& out);
+		void DeserializeAttributes(YAML::Node& node);
+
+		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out);
 		std::pair<Ref<RenderAttribute>, std::string> DeserializeBaseAttribute(const YAML::Node& node);
 	};
 }

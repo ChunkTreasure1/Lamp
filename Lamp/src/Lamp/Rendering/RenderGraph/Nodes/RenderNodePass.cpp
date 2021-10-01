@@ -89,13 +89,7 @@ namespace Lamp
 				continue;
 			}
 
-			if (link->pInput->type == RenderAttributeType::Framebuffer)
-			{
-				if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
-				{
-					
-				}
-			}
+
 		}
 	}
 
@@ -527,7 +521,7 @@ namespace Lamp
 					Utility::RemoveFromContainer(specification.textures, pair);
 				}
 				ImGui::SameLine();
-				
+
 				if (ImGui::TreeNode(texTreeId.c_str()))
 				{
 					int currBindSlot = bindId;
@@ -550,9 +544,9 @@ namespace Lamp
 			if (ImGui::Button("Add"))
 			{
 				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-				specification.framebuffers.push_back({ nullptr, TextureType::Color, 0, 0, input->id });
+				specification.framebuffers.push_back({ nullptr, {}, input->id });
 
-				input->pData = &specification.framebuffers[specification.framebuffers.size() - 1];
+				input->data = std::get<0>(specification.framebuffers[specification.framebuffers.size() - 1]);
 				input->pNode = this;
 				input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
 				input->type = RenderAttributeType::Framebuffer;
@@ -563,7 +557,7 @@ namespace Lamp
 			uint32_t bufferId = 0;
 			for (auto& frameBuf : specification.framebuffers)
 			{
-				auto& [buffer, type, bind, attach, attrId] = frameBuf;
+				auto& [buffer, attachments, attrId] = frameBuf;
 				std::string bufferTreeId = "Framebuffer##buffer" + std::to_string(bufferId);
 
 				std::string butId = "-##frameRm" + std::to_string(bufferId);
@@ -571,31 +565,57 @@ namespace Lamp
 				{
 					RemoveAttribute(RenderAttributeType::Framebuffer, attrId);
 
-					Utility::RemoveFromContainer(specification.framebuffers, frameBuf);
+					GraphUUID id = attrId;
+					Utility::RemoveFromContainerIf(specification.framebuffers, [&id](const std::tuple<Ref<Framebuffer>, std::vector<GraphFramebufferAttachmentSpec>, GraphUUID>& t) { return id == std::get<2>(t); });
 				}
 
 				ImGui::SameLine();
 
 				if (ImGui::TreeNode(bufferTreeId.c_str()))
 				{
-					static const char* textureTypes[] = { "Color", "Depth" };
-					int currentlySelectedType = (int)type;
-					std::string texTypeId = "Texure Type##" + std::to_string(bufferId);
-					if (ImGui::Combo(texTypeId.c_str(), &currentlySelectedType, textureTypes, IM_ARRAYSIZE(textureTypes)))
+					if (ImGui::Button("Add##att"))
 					{
-						type = (TextureType)currentlySelectedType;
+						attachments.push_back(GraphFramebufferAttachmentSpec());
 					}
 
-					int currBind = bind;
-					if (ImGui::InputInt("Bind slot", &currBind))
+					uint32_t attId = 0;
+					for (auto& attachment : attachments)
 					{
-						bind = (uint32_t)currBind;
-					}
+						std::string butId = "-##attRm" + std::to_string(attId);
+						if (ImGui::Button(butId.c_str()))
+						{
+							Utility::RemoveFromContainer(attachments, attachment);
+						}
 
-					int currAttach = attach;
-					if (ImGui::InputInt("Attachment slot", &currAttach))
-					{
-						attach = (uint32_t)currAttach;
+						ImGui::SameLine();
+
+						std::string attachmentString = "Attachment##buffAtt" + std::to_string(attId);
+						if (ImGui::TreeNode(attachmentString.c_str()))
+						{
+							static const char* textureTypes[] = { "Color", "Depth" };
+							int currentlySelectedType = (int)attachment.type;
+							std::string texTypeId = "Texure Type##" + std::to_string(bufferId);
+							if (ImGui::Combo(texTypeId.c_str(), &currentlySelectedType, textureTypes, IM_ARRAYSIZE(textureTypes)))
+							{
+								attachment.type = (TextureType)currentlySelectedType;
+							}
+
+							int currBind = attachment.bindId;
+							if (ImGui::InputInt("Bind slot", &currBind))
+							{
+								attachment.bindId = (uint32_t)currBind;
+							}
+
+							int currAttach = attachment.attachmentId;
+							if (ImGui::InputInt("Attachment slot", &currAttach))
+							{
+								attachment.attachmentId = (uint32_t)currAttach;
+							}
+
+							ImGui::TreePop();
+						}
+
+						attId++;
 					}
 
 					ImGui::TreePop();
@@ -709,15 +729,14 @@ namespace Lamp
 			LP_SERIALIZE_PROPERTY(samples, targetBuffSpec.Samples, out);
 			LP_SERIALIZE_PROPERTY(clearColor, targetBuffSpec.ClearColor, out);
 
-			out << YAML::Key << "attachments" << YAML::Value;
-			out << YAML::BeginMap;
+			out << YAML::Key << "attachments" << YAML::BeginSeq;
 			{
-				uint32_t attCount = 0;
 				for (auto& att : targetBuffSpec.Attachments.Attachments)
 				{
-					out << YAML::Key << "attachment" + std::to_string(attCount) << YAML::Value;
 					out << YAML::BeginMap;
 					{
+						out << YAML::Key << "attachment" << YAML::Value << "";
+
 						LP_SERIALIZE_PROPERTY(borderColor, att.BorderColor, out);
 						LP_SERIALIZE_PROPERTY(multisampled, att.MultiSampled, out);
 						LP_SERIALIZE_PROPERTY(format, (uint32_t)att.TextureFormat, out);
@@ -726,23 +745,19 @@ namespace Lamp
 					}
 					out << YAML::EndMap;
 
-					attCount++;
 				}
 			}
-			out << YAML::EndMap; //attachments
+			out << YAML::EndSeq; //attachments
 		}
 		out << YAML::EndMap; //target framebuffer
 
-		out << YAML::Key << "staticUniforms" << YAML::Value;
-		out << YAML::BeginMap;
+		out << YAML::Key << "staticUniforms" << YAML::BeginSeq;
 		{
-			uint32_t statUniformCount = 0;
 			for (const auto& [uName, uType, uData] : specification.staticUniforms)
 			{
-				out << YAML::Key << "staticUniform" + std::to_string(statUniformCount) << YAML::Value;
 				out << YAML::BeginMap;
+				out << YAML::Key << "staticUniform" << YAML::Value << uName;
 
-				LP_SERIALIZE_PROPERTY(name, uName, out);
 				LP_SERIALIZE_PROPERTY(type, (uint32_t)uType, out);
 
 				switch (uType)
@@ -807,38 +822,32 @@ namespace Lamp
 				}
 
 				out << YAML::EndMap;
-				statUniformCount++;
 			}
 		}
-		out << YAML::EndMap; //static uniforms
+		out << YAML::EndSeq; //static uniforms
 
-		out << YAML::Key << "dynamicUniforms" << YAML::Value;
-		out << YAML::BeginMap;
+		out << YAML::Key << "dynamicUniforms" << YAML::BeginSeq;
 		{
-			uint32_t dynUniformCount = 0;
 			for (const auto& [uName, uType, uData, attrId] : specification.dynamicUniforms)
 			{
-				out << YAML::Key << "dynamicUniform" + std::to_string(dynUniformCount) << YAML::Value;
 				out << YAML::BeginMap;
+				out << YAML::Key << "dynamicUniform" << YAML::Value << uName;
 
-				LP_SERIALIZE_PROPERTY(name, uName, out);
 				LP_SERIALIZE_PROPERTY(type, (uint32_t)uType, out);
 				LP_SERIALIZE_PROPERTY(attrId, attrId, out);
 
 				out << YAML::EndMap;
-				dynUniformCount++;
 			}
 		}
-		out << YAML::EndMap; //dynamic uniforms
+		out << YAML::EndSeq; //dynamic uniforms
 
-		out << YAML::Key << "textures" << YAML::Value;
-		out << YAML::BeginMap;
+		out << YAML::Key << "textures" << YAML::BeginSeq;
 		{
 			uint32_t texCount = 0;
 			for (const auto& [uTexture, uBindSlot, attrId] : specification.textures)
 			{
-				out << YAML::Key << "texture" + std::to_string(texCount) << YAML::Value;
 				out << YAML::BeginMap;
+				out << YAML::Key << "texture" << YAML::Value << "";
 
 				LP_SERIALIZE_PROPERTY(bindSlot, uBindSlot, out);
 				LP_SERIALIZE_PROPERTY(attrId, attrId, out);
@@ -847,40 +856,35 @@ namespace Lamp
 				texCount++;
 			}
 		}
-		out << YAML::EndMap; //textures
+		out << YAML::EndSeq; //textures
 
-		out << YAML::Key << "framebuffers" << YAML::Value;
-		out << YAML::BeginMap;
+		out << YAML::Key << "framebuffers" << YAML::BeginSeq;
+		for (const auto& framebuffer : specification.framebuffers)
 		{
-			uint32_t bufferCount = 0;
-			for (const auto& [buffer, texType, bindSlot, attachId, attrId] : specification.framebuffers)
+			out << YAML::BeginMap;
+			out << YAML::Key << "framebuffer" << YAML::Value << "";
+
+			const auto& [buffer, attachments, attrId] = framebuffer;
+
+			LP_SERIALIZE_PROPERTY(attrId, attrId, out);
+
+			out << YAML::Key << "attachments" << YAML::BeginSeq;
+			for (const auto& attachment : attachments)
 			{
-				out << YAML::Key << "framebuffer" + std::to_string(bufferCount) << YAML::Value;
 				out << YAML::BeginMap;
-
-				LP_SERIALIZE_PROPERTY(textureType, (uint32_t)texType, out);
-				LP_SERIALIZE_PROPERTY(bindSlot, bindSlot, out);
-				LP_SERIALIZE_PROPERTY(attachmentId, attachId, out);
-				LP_SERIALIZE_PROPERTY(attrId, attrId, out);
-
+				out << YAML::Key << "attachment" << YAML::Value << "";
+				LP_SERIALIZE_PROPERTY(textureType, (uint32_t)attachment.type, out);
+				LP_SERIALIZE_PROPERTY(bindId, attachment.bindId, out);
+				LP_SERIALIZE_PROPERTY(attachmentId, attachment.attachmentId, out);
 				out << YAML::EndMap;
-				bufferCount++;
 			}
-		}
-		out << YAML::EndMap; //framebuffers
+			out << YAML::EndSeq;
 
-		uint32_t attrId = 0;
-		for (auto& input : inputs)
-		{
-			SerializeBaseAttribute(input, "input", out, attrId);
-			attrId++;
+			out << YAML::EndMap;
 		}
+		out << YAML::EndSeq; //framebuffers
 
-		for (auto& output : outputs)
-		{
-			SerializeBaseAttribute(output, "output", out, attrId);
-			attrId++;
-		}
+		SerializeAttributes(out);
 	}
 
 	void RenderNodePass::Deserialize(YAML::Node& node)
@@ -934,34 +938,33 @@ namespace Lamp
 
 		//static uniforms
 		YAML::Node staticUniformsNode = node["staticUniforms"];
-		uint32_t statUniformCount = 0;
 
-		while (YAML::Node uniformNode = staticUniformsNode["staticUniform" + std::to_string(statUniformCount)])
+		for (const auto entry : staticUniformsNode)
 		{
-			std::string uName = uniformNode["name"].as<std::string>();
-			UniformType uType = (UniformType)uniformNode["type"].as<uint32_t>();
+			std::string uName = entry["staticUniform"].as<std::string>();
+			UniformType uType = (UniformType)entry["type"].as<uint32_t>();
 			std::any uData;
 
 			switch (uType)
 			{
 				case Lamp::UniformType::Int:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, 0);
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0);
 					break;
 
 				case Lamp::UniformType::Float:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, 0.f);
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0.f);
 					break;
 
 				case Lamp::UniformType::Float2:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, glm::vec2(0.f));
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec2(0.f));
 					break;
 
 				case Lamp::UniformType::Float3:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, glm::vec3(0.f));
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec3(0.f));
 					break;
 
 				case Lamp::UniformType::Float4:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, glm::vec4(0.f));
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec4(0.f));
 					break;
 
 				case Lamp::UniformType::Mat3:
@@ -971,17 +974,17 @@ namespace Lamp
 					break;
 
 				case Lamp::UniformType::Sampler2D:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, 0);
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0);
 					break;
 
 				case Lamp::UniformType::SamplerCube:
-					LP_DESERIALIZE_PROPERTY(data, uData, uniformNode, 0);
+					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0);
 					break;
 
 				case Lamp::UniformType::RenderData:
 				{
 					uint32_t data;
-					LP_DESERIALIZE_PROPERTY(data, data, uniformNode, 0);
+					LP_DESERIALIZE_PROPERTY(data, data, entry, 0);
 					uData = (RenderData)data;
 					break;
 				}
@@ -991,82 +994,64 @@ namespace Lamp
 			}
 
 			specification.staticUniforms.push_back(std::make_tuple(uName, uType, uData));
-			statUniformCount++;
 		}
-
+	
 		//dynamic uniforms
 		YAML::Node dynamicUniformsNode = node["dynamicUniforms"];
-		uint32_t dynUniformCount = 0;
-
-		while (YAML::Node uniformNode = dynamicUniformsNode["dynamicUniform" + std::to_string(dynUniformCount)])
+		for (const auto entry : dynamicUniformsNode)
 		{
-			std::string uName = uniformNode["name"].as<std::string>();
-			UniformType uType = (UniformType)uniformNode["type"].as<uint32_t>();
-			
+			std::string uName = entry["dynamicUniform"].as<std::string>();
+			UniformType uType = (UniformType)entry["type"].as<uint32_t>();
+
 			GraphUUID attrId;
-			LP_DESERIALIZE_PROPERTY(attrId, attrId, uniformNode, 0);
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
 
 			specification.dynamicUniforms.push_back(std::make_tuple(uName, uType, nullptr, attrId));
-			dynUniformCount++;
 		}
 
 		//textures
 		YAML::Node texturesNode = node["textures"];
-		uint32_t texCount = 0;
-
-		while (YAML::Node texNode = texturesNode["texture" + std::to_string(texCount)])
+		for (const auto entry : texturesNode)
 		{
 			uint32_t bindSlot;
 			GraphUUID attrId;
-			LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, texNode, 0);
-			LP_DESERIALIZE_PROPERTY(attrId, attrId, texNode, 0);
+			LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, entry, 0);
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
 
 			specification.textures.push_back(std::make_tuple(nullptr, bindSlot, attrId));
-			texCount++;
 		}
 
 		//framebuffers
 		YAML::Node framebuffersNode = node["framebuffers"];
-		uint32_t bufferCount = 0;
-
-		while (YAML::Node bufferNode = framebuffersNode["framebuffer" + std::to_string(bufferCount)])
+		for (const auto entry : framebuffersNode)
 		{
-			TextureType type = (TextureType)bufferNode["textureType"].as<uint32_t>();
-			uint32_t bindSlot;
-			uint32_t attachId;
+			YAML::Node attachmentsNode = framebuffersNode["attachments"];
 			GraphUUID attrId;
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
 
-			LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, bufferNode, 0);
-			LP_DESERIALIZE_PROPERTY(attachmentId, attachId, bufferNode, 0);
-			LP_DESERIALIZE_PROPERTY(attrId, attrId, bufferNode, 0);
+			std::vector<GraphFramebufferAttachmentSpec> attachmentSpecs;
+			for (const auto entry : attachmentsNode)
+			{
+				TextureType type = (TextureType)entry["textureType"].as<uint32_t>();
+				uint32_t bindSlot;
+				uint32_t attachId;
 
-			specification.framebuffers.push_back(std::make_tuple(nullptr, type, bindSlot, attachId, attrId));
-			bufferCount++;
+				LP_DESERIALIZE_PROPERTY(bindSlot, bindSlot, entry, 0);
+				LP_DESERIALIZE_PROPERTY(attachmentId, attachId, entry, 0);
+
+				attachmentSpecs.push_back({ type, bindSlot, attachId });
+			}
+
+			specification.framebuffers.push_back(std::make_tuple(nullptr, attachmentSpecs, attrId));
 		}
+
 
 		//attributes
 		outputs.clear();
 		inputs.clear();
-		uint32_t attributeCount = 0;
-		uint32_t uniformIndex = 0;
-		uint32_t bufferIndex = 0;
-		uint32_t textureIndex = 0;
 
-		while (YAML::Node attribute = node["attribute" + std::to_string(attributeCount)])
-		{
-			const auto& [attr, attrType] = DeserializeBaseAttribute(attribute);
-			attr->pNode = this;
-			if (attrType == "input")
-			{
-				inputs.push_back(std::dynamic_pointer_cast<RenderInputAttribute>(attr));
-			}
-			else
-			{
-				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
-			}
-
-			attributeCount++;
-		}
+		YAML::Node attributesNode = node["attributes"];
+		DeserializeAttributes(attributesNode);
 	}
 
 	void RenderNodePass::RemoveAttribute(RenderAttributeType type, GraphUUID compId)
@@ -1104,5 +1089,4 @@ namespace Lamp
 			}
 		}
 	}
-
 }

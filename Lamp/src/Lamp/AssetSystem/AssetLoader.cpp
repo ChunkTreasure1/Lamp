@@ -213,7 +213,6 @@ namespace Lamp
 		asset = Texture2D::Create(path);
 		asset->Path = path;
 
-
 		return true;
 	}
 
@@ -259,7 +258,7 @@ namespace Lamp
 			{
 				for (auto& tex : mat->GetTextures())
 				{
-					LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Path.string(), out);
+					LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Handle, out);
 				}
 			}
 			out << YAML::EndMap;
@@ -301,7 +300,8 @@ namespace Lamp
 		
 		for (auto& texName : mat->GetShader()->GetSpecifications().TextureNames)
 		{
-			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(textureNode[texName].as<std::string>()));
+			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
+			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
 		}
 
 		asset->Path = path;

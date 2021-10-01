@@ -430,20 +430,23 @@ namespace Lamp
 				}
 
 				//Framebuffers
-				for (auto& [buffer, type, id, texLoc, attrId] : pass->framebuffers)
+				for (const auto& [framebuffer, attachments, attrId] : pass->framebuffers)
 				{
-					switch (type)
+					for (const auto& attachment : attachments)
 					{
-						case TextureType::Color:
-							buffer->BindColorAttachment(id, texLoc);
-							break;
+						switch (attachment.type)
+						{
+							case TextureType::Color:
+								framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+								break;
 
-						case TextureType::Depth:
-							buffer->BindDepthAttachment(id);
-							break;
+							case TextureType::Depth:
+								framebuffer->BindDepthAttachment(attachment.bindId);
+								break;
 
-						default:
-							break;
+							default:
+								break;
+						}
 					}
 				}
 
@@ -572,20 +575,23 @@ namespace Lamp
 		}
 
 		//Framebuffers
-		for (auto& [buffer, type, id, texLoc, attrId] : pass->framebuffers)
+		for (const auto& [framebuffer, attachments, attrId] : pass->framebuffers)
 		{
-			switch (type)
+			for (const auto& attachment : attachments)
 			{
-				case TextureType::Color:
-					buffer->BindColorAttachment(id, texLoc);
-					break;
+				switch (attachment.type)
+				{
+					case TextureType::Color:
+						framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+						break;
 
-				case TextureType::Depth:
-					buffer->BindDepthAttachment(id);
-					break;
+					case TextureType::Depth:
+						framebuffer->BindDepthAttachment(attachment.bindId);
+						break;
 
-				default:
-					break;
+					default:
+						break;
+				}
 			}
 		}
 
@@ -691,6 +697,7 @@ namespace Lamp
 	void Renderer3D::RegenerateSSAOKernel()
 	{
 		s_pData->SSAONoise.clear();
+		s_pData->SSAOKernel.clear();
 
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
 		std::default_random_engine generator;

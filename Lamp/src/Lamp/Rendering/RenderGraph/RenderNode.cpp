@@ -45,18 +45,49 @@ namespace Lamp
 		}
     }
 
-    void RenderNode::SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrTypeS, YAML::Emitter& out, GraphUUID id)
+    void RenderNode::SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrTypeS, YAML::Emitter& out)
     {
-        out << YAML::Key << "attribute" + std::to_string(id) << YAML::Value;
         out << YAML::BeginMap;
         {
 			//Base
+			out << YAML::Key << "attribute" << YAML::Value << attr->name;
 			LP_SERIALIZE_PROPERTY(attrType, attrTypeS, out);
 			LP_SERIALIZE_PROPERTY(id, attr->id, out);
-			LP_SERIALIZE_PROPERTY(name, attr->name, out);
 			LP_SERIALIZE_PROPERTY(type, (uint32_t)attr->type, out);
         }
         out << YAML::EndMap;
+    }
+
+    void RenderNode::SerializeAttributes(YAML::Emitter& out)
+    {
+		out << YAML::Key << "attributes" << YAML::BeginSeq;
+		for (auto& input : inputs)
+		{
+			SerializeBaseAttribute(input, "input", out);
+		}
+
+		for (auto& output : outputs)
+		{
+			SerializeBaseAttribute(output, "output", out);
+		}
+		out << YAML::EndSeq;
+    }
+
+    void RenderNode::DeserializeAttributes(YAML::Node& node)
+    {
+		for (const auto entry : node)
+		{
+			const auto& [attr, attrType] = DeserializeBaseAttribute(entry);
+			attr->pNode = this;
+			if (attrType == "input")
+			{
+				inputs.push_back(std::dynamic_pointer_cast<RenderInputAttribute>(attr));
+			}
+			else
+			{
+				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
+			}
+		}
     }
 
     std::pair<Ref<RenderAttribute>, std::string> RenderNode::DeserializeBaseAttribute(const YAML::Node& node)
@@ -73,7 +104,7 @@ namespace Lamp
         }
 
         LP_DESERIALIZE_PROPERTY(id, attr->id, node, 0);
-        attr->name = node["name"].as<std::string>();
+        attr->name = node["attribute"].as<std::string>();
         attr->type = (RenderAttributeType)node["type"].as<uint32_t>();
 
         return std::make_pair(attr, nodeType);

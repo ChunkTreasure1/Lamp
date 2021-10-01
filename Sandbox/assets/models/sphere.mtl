@@ -2,7 +2,7 @@ material:
   name: sphere
   handle: 3370775300
   textures:
-    albedo: assets/textures/wornMetal/tex_albedo.png
-    normal: assets/textures/wornMetal/tex_normal.png
-    mro: assets/textures/wornMetal/tex_mro.png
+    albedo: 3536854313384504482
+    normal: 16027289893487307791
+    mro: 4157263279336200044
   shader: pbrForward

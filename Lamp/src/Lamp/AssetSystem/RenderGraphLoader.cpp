@@ -28,15 +28,12 @@ namespace Lamp
 			LP_SERIALIZE_PROPERTY(name, graph->GetSpecification().name, out);
 			LP_SERIALIZE_PROPERTY(handle, graph->Handle, out);
 
-			out << YAML::Key << "Nodes" << YAML::Value;
-			out << YAML::BeginMap;
-			uint32_t i = 0;
+			out << YAML::Key << "Nodes" << YAML::BeginSeq;
 			for (const auto& node : graph->GetSpecification().nodes)
 			{
-				std::string id = std::to_string(i);
-				out << YAML::Key << "Node" + id << YAML::Value;
 				out << YAML::BeginMap;
 				{
+					out << YAML::Key << "Node" << YAML::Value << "";
 					LP_SERIALIZE_PROPERTY(id, node->id, out);
 					LP_SERIALIZE_PROPERTY(position, node->position, out);
 					LP_SERIALIZE_PROPERTY(type, (uint32_t)node->GetNodeType(), out);
@@ -45,28 +42,23 @@ namespace Lamp
 
 				}
 				out << YAML::EndMap; //Node
-				i++;
 			}
-			out << YAML::EndMap; //Nodes
+			out << YAML::EndSeq; //Nodes
 
-			out << YAML::Key << "Links" << YAML::Value;
-			out << YAML::BeginMap;
+			out << YAML::Key << "Links" << YAML::BeginSeq;
 			{
-				uint32_t linkCount = 0;
 				for (const auto& link : graph->GetSpecification().links)
 				{
-					out << YAML::Key << "Link" + std::to_string(linkCount) << YAML::Value;
 					out << YAML::BeginMap;
-
+					out << YAML::Key << "Link" << YAML::Value << "";
 					LP_SERIALIZE_PROPERTY(id, link->id, out);
 					LP_SERIALIZE_PROPERTY(from, (link->pOutput ? link->pOutput->id : -1), out);
 					LP_SERIALIZE_PROPERTY(to, (link->pInput ? link->pInput->id : -1), out);
 
 					out << YAML::EndMap;
-					linkCount++;
 				}
 			}
-			out << YAML::EndMap; //Links
+			out << YAML::EndSeq; //Links
 
 			out << YAML::EndMap;
 		}
@@ -102,9 +94,9 @@ namespace Lamp
 		YAML::Node nodesNode = graphNode["Nodes"];
 		uint32_t nodeCount = 0;
 
-		while (YAML::Node nodeNode = nodesNode["Node" + std::to_string(nodeCount)])
+		for (auto entry : nodesNode)
 		{
-			RenderNodeType type = (RenderNodeType)nodeNode["type"].as<uint32_t>();
+			RenderNodeType type = (RenderNodeType)entry["type"].as<uint32_t>();
 
 			switch (type)
 			{
@@ -112,7 +104,7 @@ namespace Lamp
 				{
 					Ref<RenderNodePass> node = CreateRef<RenderNodePass>();
 					node->Initialize();
-					node->Deserialize(nodeNode);
+					node->Deserialize(entry);
 
 					specification.nodes.push_back(node);
 					break;
@@ -122,7 +114,7 @@ namespace Lamp
 				{
 					Ref<RenderNodeTexture> node = CreateRef<RenderNodeTexture>();
 					node->Initialize();
-					node->Deserialize(nodeNode);
+					node->Deserialize(entry);
 
 					specification.nodes.push_back(node);
 					break;
@@ -132,7 +124,7 @@ namespace Lamp
 				{
 					Ref<RenderNodeFramebuffer> node = CreateRef<RenderNodeFramebuffer>();
 					node->Initialize();
-					node->Deserialize(nodeNode);
+					node->Deserialize(entry);
 
 					specification.nodes.push_back(node);
 					break;
@@ -142,7 +134,7 @@ namespace Lamp
 				{
 					Ref<RenderNodeDynamicUniform> node = CreateRef<RenderNodeDynamicUniform>();
 					node->Initialize();
-					node->Deserialize(nodeNode);
+					node->Deserialize(entry);
 
 					specification.nodes.push_back(node);
 					break;
@@ -152,7 +144,7 @@ namespace Lamp
 				{
 					Ref<RenderNodeStart> node = CreateRef<RenderNodeStart>();
 					node->Initialize();
-					node->Deserialize(nodeNode);
+					node->Deserialize(entry);
 
 					specification.nodes.push_back(node);
 					specification.startNode = node;
@@ -163,7 +155,7 @@ namespace Lamp
 				{
 					Ref<RenderNodeEnd> node = CreateRef<RenderNodeEnd>();
 					node->Initialize();
-					node->Deserialize(nodeNode);
+					node->Deserialize(entry);
 
 					specification.nodes.push_back(node);
 					specification.endNode = node;
@@ -177,25 +169,22 @@ namespace Lamp
 
 
 			Ref<RenderNode> node = specification.nodes[specification.nodes.size() - 1];
-			LP_DESERIALIZE_PROPERTY(id, node->id, nodeNode, 0);
-			LP_DESERIALIZE_PROPERTY(position, node->position, nodeNode, glm::vec2(0.f));
-
-			nodeCount++;
+			LP_DESERIALIZE_PROPERTY(id, node->id, entry, 0);
+			LP_DESERIALIZE_PROPERTY(position, node->position, entry, glm::vec2(0.f));
 		}
 
 		//Links
 		YAML::Node linksNode = graphNode["Links"];
-		uint32_t linkCount = 0;
 		
-		while (YAML::Node linkNode = linksNode["Link" + std::to_string(linkCount)])
+		for (auto entry : linksNode)
 		{
 			Ref<RenderLink> link = CreateRef<RenderLink>();
-			LP_DESERIALIZE_PROPERTY(id, link->id, linkNode, 0);
+			LP_DESERIALIZE_PROPERTY(id, link->id, entry, 0);
 
 			uint32_t from = 0;
 			uint32_t to = 0;
-			LP_DESERIALIZE_PROPERTY(from, from, linkNode, 0);
-			LP_DESERIALIZE_PROPERTY(to, to, linkNode, 0);
+			LP_DESERIALIZE_PROPERTY(from, from, entry, 0);
+			LP_DESERIALIZE_PROPERTY(to, to, entry, 0);
 
 			for (const auto& node : specification.nodes)
 			{
@@ -222,7 +211,6 @@ namespace Lamp
 			}
 
 			specification.links.push_back(link);
-			linkCount++;
 		}
 
 		graph->Path = path;

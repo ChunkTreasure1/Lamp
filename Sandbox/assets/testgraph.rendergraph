@@ -1,0 +1,77 @@
+RenderGraph:
+  name: New
+  handle: 16443402282772595470
+  Nodes:
+    - Node: ""
+      id: 1492868582
+      position: [453, 98]
+      type: 0
+      name: ""
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: ""
+      targetFramebuffer:
+        useViewportSize: false
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        attachments:
+          []
+      staticUniforms:
+        - staticUniform: u_Static
+          type: 2
+          data: [4, 0]
+      dynamicUniforms:
+        - dynamicUniform: u_Test
+          type: 0
+          attrId: 626240831
+      textures:
+        []
+      framebuffers:
+        []
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 665727951
+          type: 3
+        - attribute: Target framebuffer
+          attrType: input
+          id: 1689235532
+          type: 1
+        - attribute: Uniform0
+          attrType: input
+          id: 626240831
+          type: 2
+        - attribute: Framebuffer
+          attrType: output
+          id: 173198784
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 952658443
+          type: 3
+    - Node: ""
+      id: 1111875547
+      position: [100, 88]
+      type: 1
+      usingInternal: true
+      selectedBuffer: Skybox
+      useViewportSize: false
+      width: 1280
+      height: 720
+      samples: 1
+      clearColor: [1, 1, -1.61932499e+17, 1.10702579e-43]
+      attachments:
+        {}
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 1596916740
+          type: 1
+  Links:
+    - Link: ""
+      id: 377764626
+      from: 1596916740
+      to: 1689235532

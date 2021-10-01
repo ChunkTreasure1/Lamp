@@ -9,6 +9,8 @@
 #include <imgui.h>
 #include <imgui_stdlib.h>
 
+#include <memory>
+
 namespace Lamp
 {
 	void RenderNodeFramebuffer::Initialize()
@@ -34,9 +36,8 @@ namespace Lamp
 		{
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
-				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-				auto& [buffer, type, bindId, attachId, attrId] = passNode->renderPass->GetSpecification().framebuffers[index];
-				buffer = framebuffer;
+				Ref<Framebuffer> buf = std::any_cast<Ref<Framebuffer>&>(link->pInput->data);
+				buf = framebuffer;
 			}
 		}
 	}
@@ -241,18 +242,7 @@ namespace Lamp
 
 		framebuffer->Invalidate();
 
-		uint32_t attrId = 0;
-		for (auto& input : inputs)
-		{
-			SerializeBaseAttribute(input, "input", out, attrId);
-			attrId++;
-		}
-
-		for (auto& output : outputs)
-		{
-			SerializeBaseAttribute(output, "output", out, attrId);
-			attrId++;
-		}
+		SerializeAttributes(out);
 	}
 
 	void RenderNodeFramebuffer::Deserialize(YAML::Node& node)
@@ -300,22 +290,8 @@ namespace Lamp
 		//attributes
 		outputs.clear();
 		inputs.clear();
-		uint32_t attributeCount = 0;
 
-		while (YAML::Node attribute = node["attribute" + std::to_string(attributeCount)])
-		{
-			const auto& [attr, attrType] = DeserializeBaseAttribute(attribute);
-			attr->pNode = this;
-			if (attrType == "input")
-			{
-				inputs.push_back(std::dynamic_pointer_cast<RenderInputAttribute>(attr));
-			}
-			else
-			{
-				outputs.push_back(std::dynamic_pointer_cast<RenderOutputAttribute>(attr));
-			}
-			
-			attributeCount++;
-		}
+		YAML::Node attributesNode = node["attributes"];
+		DeserializeAttributes(attributesNode);
 	}
 }

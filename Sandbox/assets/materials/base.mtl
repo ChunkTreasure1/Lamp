@@ -2,7 +2,7 @@ material:
   name: base
   handle: 3596698544
   textures:
-    albedo: assets/textures/base/base_albedo.png
-    normal: assets/textures/base/base_normal.png
-    mro: assets/textures/base/base_mro.png
+    albedo: 9024159386129981965
+    normal: 16748793907619626814
+    mro: 14789578748660744105
   shader: pbrForward

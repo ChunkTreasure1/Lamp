@@ -51,6 +51,18 @@ namespace Lamp
 		Copy = 0
 	};
 
+	struct GraphFramebufferAttachmentSpec
+	{
+		bool operator==(const GraphFramebufferAttachmentSpec& rhs) 
+		{ 
+			return type == rhs.type && bindId == rhs.bindId && attachmentId == rhs.attachmentId;
+		}
+
+		TextureType type = TextureType::Color;
+		uint32_t bindId = 0;
+		uint32_t attachmentId = 0;
+	};
+
 	struct RenderPassSpecification
 	{
 		using RenderFunc = std::function<void()>;
@@ -70,7 +82,7 @@ namespace Lamp
 		std::vector<std::tuple<std::string, UniformType, std::any>> staticUniforms; // name, type, data
 		std::vector<std::tuple<std::string, UniformType, void*, GraphUUID>> dynamicUniforms; // name, type, data, attrId
 		std::vector<std::tuple<Ref<Texture2D>, uint32_t, GraphUUID>> textures; // texture, texBindSlot, attrId
-		std::vector<std::tuple<Ref<Framebuffer>, TextureType, uint32_t, uint32_t, GraphUUID>> framebuffers; // framebuffer, texture type, texBindSlot, attachId, attrId
+		std::vector<std::tuple<Ref<Framebuffer>, std::vector<GraphFramebufferAttachmentSpec>, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
 		std::vector<std::tuple<Ref<Framebuffer>, Ref<Framebuffer>, FramebufferCommand, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 

@@ -76,26 +76,26 @@ namespace Sandbox3D
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::LevelUpdate")
-			switch (m_SceneState)
-			{
-			case SceneState::Edit:
-			{
-				g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
-				break;
-			}
-			case SceneState::Play:
-			{
-				g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
-				break;
-			}
-			case SceneState::Simulating:
-			{
-				g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
-			}
+				switch (m_SceneState)
+				{
+					case SceneState::Edit:
+					{
+						g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
+						break;
+					}
+					case SceneState::Play:
+					{
+						g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
+						break;
+					}
+					case SceneState::Simulating:
+					{
+						g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
+					}
 
-			default:
-				break;
-			}
+					default:
+						break;
+				}
 		}
 
 		{
@@ -136,14 +136,14 @@ namespace Sandbox3D
 		UpdateToolbar();
 		m_assetManager.OnImGuiRender();
 
-		for	(auto& window : m_BufferWindows)
+		for (auto& window : m_BufferWindows)
 		{
 			window.Update();
 		}
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);
-	}	
+	}
 
 	void Sandbox3D::OnEvent(Event& e)
 	{
@@ -559,8 +559,7 @@ namespace Sandbox3D
 
 			passSpec.framebuffers =
 			{
-				{ m_GBuffer, TextureType::Color, 0, 0, 0 },
-				{ m_GBuffer, TextureType::Color, 1, 1, 0 }
+				{ m_GBuffer, {{TextureType::Color, 0, 0}, {TextureType::Color, 1, 1}}, 0 },
 			};
 
 			passSpec.textures =
@@ -576,7 +575,7 @@ namespace Sandbox3D
 
 			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
 			RenderPassManager::Get()->AddPass(ssaoPath);
-		} 
+		}
 		//////////////////
 
 		/////SSAOBlur/////
@@ -604,7 +603,7 @@ namespace Sandbox3D
 
 			passSpec.framebuffers =
 			{
-				{ m_SSAOBuffer, TextureType::Color, 0, 0, 0 }
+				{ m_SSAOBuffer, { { TextureType::Color, 0, 0 } }, 0 }
 			};
 
 			passSpec.clearType = Lamp::ClearType::Color;
@@ -667,14 +666,10 @@ namespace Sandbox3D
 
 			passSpec.framebuffers =
 			{
-				{ m_GBuffer, TextureType::Color, 0, 0, 0 },
-				{ m_GBuffer, TextureType::Color, 1, 1, 0 },
-				{ m_GBuffer, TextureType::Color, 2, 2, 0 },
-				{ m_DirShadowBuffer, TextureType::Depth, 3, 0, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 4, 0, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 5, 1, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 6, 2, 0 },
-				{ m_SSAOBlurBuffer, TextureType::Color, 7, 0, 0 }
+				{ m_GBuffer, {{TextureType::Color, 0, 0}, {TextureType::Color, 1, 1}, {TextureType::Color, 2, 2}}, 0 },
+				{ m_DirShadowBuffer, {{TextureType::Depth, 3, 0}}, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], {{TextureType::Color, 4, 0}, {TextureType::Color, 5, 1}, {TextureType::Color, 6, 2}}, 0 },
+				{ m_SSAOBlurBuffer, {{TextureType::Color, 7, 0}}, 0 }
 			};
 
 			passSpec.framebufferCommands =
@@ -728,9 +723,7 @@ namespace Sandbox3D
 
 			passSpec.framebuffers =
 			{
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 1, 0, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 2, 1, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], TextureType::Color, 3, 2, 0 },
+				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], {{TextureType::Color, 1, 0}, {TextureType::Color, 2, 1}, {TextureType::Color, 3, 2}}, 0 },
 			};
 
 			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
