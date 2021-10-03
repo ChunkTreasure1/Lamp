@@ -36,8 +36,8 @@ namespace Lamp
 		{
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
-				Ref<Framebuffer> buf = std::any_cast<Ref<Framebuffer>&>(link->pInput->data);
-				buf = framebuffer;
+				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
+				passNode->renderPass->GetSpecification().framebuffers[id].first.framebuffer = framebuffer;
 			}
 		}
 	}

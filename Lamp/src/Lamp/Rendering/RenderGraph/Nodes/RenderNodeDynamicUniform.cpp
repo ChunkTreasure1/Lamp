@@ -32,14 +32,13 @@ namespace Lamp
 
 	void RenderNodeDynamicUniform::Start()
 	{
-		for (auto& link : links)
+		for (const auto& link : links)
 		{
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
-				uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-				auto& [name, type, data, attrId] = passNode->renderPass->GetSpecification().dynamicUniforms[index];
-				data = pData;
-				type = uniformType;
+				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
+				passNode->renderPass->GetSpecification().dynamicUniforms[id].first.data = pData;
+				passNode->renderPass->GetSpecification().dynamicUniforms[id].first.type = uniformType;
 			}
 		}
 	}

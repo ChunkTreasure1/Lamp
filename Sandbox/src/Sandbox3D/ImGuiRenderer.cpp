@@ -71,12 +71,8 @@ namespace Sandbox3D
 			{
 				if (Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer)
 				{
-					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+ 					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
 				}
-			}
-			else
-			{
-				textureID = m_SandboxBuffer->GetColorAttachmentID(0);
 			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
@@ -216,7 +212,6 @@ namespace Sandbox3D
 				mousePos -= windowPos;
 
 				/////Mouse picking/////
-				m_SelectionBuffer->Bind();
 
 				auto [mx, my] = ImGui::GetMousePos();
 				mx -= m_PerspectiveBounds[0].x;
@@ -230,7 +225,7 @@ namespace Sandbox3D
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 				{
-					int pixelData = m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
+					int pixelData = 0;//m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
@@ -249,7 +244,7 @@ namespace Sandbox3D
 					}
 				}
 
-				m_SelectionBuffer->Unbind();
+				//m_SelectionBuffer->Unbind();
 				////////////////////////
 			}
 

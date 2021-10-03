@@ -38,6 +38,8 @@ namespace Sandbox3D
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
+		Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph");
+		Renderer3D::GetSettings().RenderGraph->Start();
 
 		m_pWindows.push_back(new SandboxMeshImporter("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
@@ -63,7 +65,6 @@ namespace Sandbox3D
 	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
-		m_SelectionBuffer->ClearAttachment(0, 0);
 
 		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
 		{
@@ -71,8 +72,6 @@ namespace Sandbox3D
 		}
 
 		GetInput();
-
-		m_SelectionBuffer->ClearAttachment(0, -1);
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::LevelUpdate")
@@ -298,12 +297,6 @@ namespace Sandbox3D
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 
-		m_SandboxBuffer->Resize(width, height);
-		m_GBuffer->Resize(width, height);
-		m_SelectionBuffer->Resize(width, height);
-		m_SSAOBuffer->Resize(width, height);
-		m_SSAOBlurBuffer->Resize(width, height);
-
 		for (const auto& buffer : Renderer3D::GetSettings().UseViewportSize)
 		{
 			buffer->Resize(width, height);
@@ -439,327 +432,327 @@ namespace Sandbox3D
 
 	void Sandbox3D::CreateRenderPasses()
 	{
-		/////Shadow pass/////
-		{
-			FramebufferSpecification shadowBuffer;
-			shadowBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
-			};
-			shadowBuffer.ClearColor = m_ClearColor;
-			shadowBuffer.Width = 8192;
-			shadowBuffer.Height = 8192;
+		///////Shadow pass/////
+		//{
+		//	FramebufferSpecification shadowBuffer;
+		//	shadowBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToBorder }
+		//	};
+		//	shadowBuffer.ClearColor = m_ClearColor;
+		//	shadowBuffer.Width = 8192;
+		//	shadowBuffer.Height = 8192;
 
-			RenderPassSpecification shadowSpec;
-			shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
-			shadowSpec.type = PassType::Geometry;
-			shadowSpec.Name = "DirShadowPass";
+		//	RenderPassSpecification shadowSpec;
+		//	shadowSpec.TargetFramebuffer = Lamp::Framebuffer::Create(shadowBuffer);
+		//	shadowSpec.type = PassType::Geometry;
+		//	shadowSpec.Name = "DirShadowPass";
 
-			shadowSpec.staticUniforms =
-			{
-				{ "u_Model", UniformType::Mat4, RenderData::Transform }
-			};
+		//	shadowSpec.staticUniforms =
+		//	{
+		//		{ "u_Model", UniformType::Mat4, RenderData::Transform }
+		//	};
 
-			shadowSpec.cullFace = Lamp::CullFace::Front;
-			shadowSpec.drawType = Lamp::DrawType::Deferred;
-			shadowSpec.renderShader = Lamp::ShaderLibrary::GetShader("dirShadow");
+		//	shadowSpec.cullFace = Lamp::CullFace::Front;
+		//	shadowSpec.drawType = Lamp::DrawType::Deferred;
+		//	shadowSpec.renderShader = Lamp::ShaderLibrary::GetShader("dirShadow");
 
-			m_DirShadowBuffer = shadowSpec.TargetFramebuffer;
+		//	m_DirShadowBuffer = shadowSpec.TargetFramebuffer;
 
-			m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
+		//	m_BufferWindows.push_back(BufferWindow(shadowSpec.TargetFramebuffer, "DirShadowBuffer"));
 
-			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			RenderPassManager::Get()->AddPass(shadowPass);
-		}
-		///////////////////////
+		//	Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+		//	RenderPassManager::Get()->AddPass(shadowPass);
+		//}
+		/////////////////////////
 
-		/////////Point shadow pass/////
-		{
-			RenderPassSpecification shadowSpec;
-			shadowSpec.type = PassType::PointShadow;
-			shadowSpec.Name = "PointShadowPass";
+		///////////Point shadow pass/////
+		//{
+		//	RenderPassSpecification shadowSpec;
+		//	shadowSpec.type = PassType::PointShadow;
+		//	shadowSpec.Name = "PointShadowPass";
 
-			Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
-			RenderPassManager::Get()->AddPass(shadowPass);
-		}
+		//	Ref<RenderPass> shadowPass = CreateRef<RenderPass>(shadowSpec);
+		//	RenderPassManager::Get()->AddPass(shadowPass);
+		//}
+		///////////////////////////////
+
+		///////Main//////
+		//{
+		//	FramebufferSpecification mainBuffer;
+		//	mainBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position + metallic
+		//		{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + roughness
+		//		{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo + ao
+		//	};
+
+		//	mainBuffer.Attachments.Renderbuffers =
+		//	{
+		//		{ FramebufferRenderbufferType::Depth }
+		//	};
+
+		//	mainBuffer.ClearColor = m_ClearColor;
+		//	mainBuffer.Width = 1280;
+		//	mainBuffer.Height = 720;
+		//	mainBuffer.Samples = 1;
+
+		//	RenderPassSpecification passSpec;
+
+		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+		//	passSpec.Name = "MainPass";
+		//	passSpec.type = PassType::Geometry;
+
+		//	m_GBuffer = passSpec.TargetFramebuffer;
+
+		//	passSpec.staticUniforms =
+		//	{
+		//		{ "u_Model", UniformType::Mat4, RenderData::Transform },
+		//		{ "u_Material.albedo", UniformType::Int, 0 },
+		//		{ "u_Material.normal", UniformType::Int, 1},
+		//		{ "u_Material.mro", UniformType::Int, 2}
+		//	};
+
+		//	passSpec.clearType = Lamp::ClearType::ColorDepth;
+		//	passSpec.cullFace = Lamp::CullFace::Back;
+		//	passSpec.drawType = Lamp::DrawType::Deferred;
+		//	passSpec.renderShader = Lamp::ShaderLibrary::GetShader("gbuffer");
+
+		//	Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(renderPass);
+		//}
+		/////////////////
+
+		///////SSAOMain/////
+		//{
+		//	FramebufferSpecification mainBuffer;
+		//	mainBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RED, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+		//	};
+
+		//	mainBuffer.ClearColor = m_ClearColor;
+		//	mainBuffer.Width = 1280;
+		//	mainBuffer.Height = 720;
+		//	mainBuffer.Samples = 1;
+
+		//	RenderPassSpecification passSpec;
+		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+		//	m_SSAOBuffer = passSpec.TargetFramebuffer;
+
+		//	passSpec.type = PassType::SSAO;
+		//	passSpec.Name = "SSAOMain";
+
+		//	passSpec.staticUniforms =
+		//	{
+		//		{ "u_GBuffer.position", UniformType::Int, 0 },
+		//		{ "u_GBuffer.normal", UniformType::Int, 1 },
+		//		{ "u_Noise", UniformType::Int, 2 }
+		//	};
+
+		//	passSpec.framebuffers =
+		//	{
+		//		{ m_GBuffer, {{TextureType::Color, 0, 0}, {TextureType::Color, 1, 1}}, 0 },
+		//	};
+
+		//	passSpec.textures =
+		//	{
+		//		{ Renderer3D::GetSettings().InternalTextures["SSAONoise"], 2, 0 }
+		//	};
+
+		//	passSpec.clearType = Lamp::ClearType::ColorDepth;
+		//	passSpec.cullFace = Lamp::CullFace::Back;
+		//	passSpec.drawType = Lamp::DrawType::Quad;
+		//	passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOMain");
+
+
+		//	Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(ssaoPath);
+		//}
+		////////////////////
+
+		///////SSAOBlur/////
+		//{
+		//	FramebufferSpecification mainBuffer;
+		//	mainBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RED, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+		//	};
+
+		//	mainBuffer.ClearColor = m_ClearColor;
+		//	mainBuffer.Width = 1280;
+		//	mainBuffer.Height = 720;
+		//	mainBuffer.Samples = 1;
+
+		//	RenderPassSpecification passSpec;
+		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+		//	passSpec.type = PassType::SSAOBlur;
+		//	passSpec.Name = "SSAOBlur";
+
+		//	passSpec.staticUniforms =
+		//	{
+		//		{ "u_SSAO", UniformType::Int, 0 }
+		//	};
+
+		//	passSpec.framebuffers =
+		//	{
+		//		{ m_SSAOBuffer, { { TextureType::Color, 0, 0 } }, 0 }
+		//	};
+
+		//	passSpec.clearType = Lamp::ClearType::Color;
+		//	passSpec.cullFace = Lamp::CullFace::Back;
+		//	passSpec.drawType = Lamp::DrawType::Quad;
+		//	passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOBlur");
+
+		//	m_SSAOBlurBuffer = passSpec.TargetFramebuffer;
+
+		//	Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(ssaoPath);
+		//}
+		////////////////////
+
+		///////Lightning/////
+		//{
+		//	FramebufferSpecification lightBuffer;
+		//	lightBuffer.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+		//	};
+
+		//	lightBuffer.Attachments.Renderbuffers =
+		//	{
+		//		{ FramebufferRenderbufferType::Depth }
+		//	};
+
+		//	lightBuffer.ClearColor = m_ClearColor;
+		//	lightBuffer.Width = 1280;
+		//	lightBuffer.Height = 720;
+		//	lightBuffer.Samples = 1;
+
+		//	RenderPassSpecification passSpec;
+		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
+		//	m_SandboxBuffer = passSpec.TargetFramebuffer;
+
+		//	passSpec.Name = "LightPass";
+		//	passSpec.type = PassType::Lightning;
+
+		//	passSpec.staticUniforms =
+		//	{
+		//		{ "u_GBuffer.position", UniformType::Int, 0 },
+		//		{ "u_GBuffer.normal", UniformType::Int, 1 },
+		//		{ "u_GBuffer.albedo", UniformType::Int, 2 },
+		//		{ "u_ShadowMap", UniformType::Int, 3 },
+		//		{ "u_IrradianceMap", UniformType::Int, 4 },
+		//		{ "u_PrefilterMap", UniformType::Int, 5 },
+		//		{ "u_BRDFLUT", UniformType::Int, 6 },
+		//		{ "u_SSAO", UniformType::Int, 7 }
+		//	};
+
+		//	passSpec.dynamicUniforms =
+		//	{
+		//		{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure), 0 },
+		//		{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma), 0 },
+		//		{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position), 0 },
+		//		{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color), 0 },
+		//		{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity), 0 },
+		//	};
+
+		//	passSpec.framebuffers =
+		//	{
+		//		{ m_GBuffer, {{TextureType::Color, 0, 0}, {TextureType::Color, 1, 1}, {TextureType::Color, 2, 2}}, 0 },
+		//		{ m_DirShadowBuffer, {{TextureType::Depth, 3, 0}}, 0 },
+		//		{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], {{TextureType::Color, 4, 0}, {TextureType::Color, 5, 1}, {TextureType::Color, 6, 2}}, 0 },
+		//		{ m_SSAOBlurBuffer, {{TextureType::Color, 7, 0}}, 0 }
+		//	};
+
+		//	passSpec.framebufferCommands =
+		//	{
+		//		{ m_SandboxBuffer, m_GBuffer, FramebufferCommand::Copy, 0 }
+		//	};
+
+		//	passSpec.clearType = Lamp::ClearType::ColorDepth;
+		//	passSpec.cullFace = Lamp::CullFace::Back;
+		//	passSpec.drawType = Lamp::DrawType::Quad;
+		//	passSpec.renderShader = Lamp::ShaderLibrary::GetShader("deferred");
+
+		//	Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(renderPass);
+		//}
+		/////////////////////
+
+		///////Forward Rendering/////
+		//{
+		//	std::vector<std::function<void()>> ptrs;
+		//	ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
+		//	ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
+
+		//	RenderPassSpecification passSpec;
+		//	passSpec.ExtraRenders = ptrs;
+
+		//	passSpec.TargetFramebuffer = m_SandboxBuffer;
+		//	passSpec.Name = "ForwardPass";
+		//	passSpec.type = PassType::Forward;
+
+		//	passSpec.clearType = Lamp::ClearType::ColorDepth;
+		//	passSpec.cullFace = Lamp::CullFace::Back;
+		//	passSpec.drawType = Lamp::DrawType::Forward;
+
+		//	passSpec.staticUniforms =
+		//	{
+		//		{ "u_Model", UniformType::Mat4, RenderData::Transform },
+		//		{ "u_IrradianceMap", UniformType::Int, 0 },
+		//		{ "u_PrefilterMap", UniformType::Int, 1 },
+		//		{ "u_BRDFLUT", UniformType::Int, 2 }
+		//	};
+
+		//	passSpec.dynamicUniforms =
+		//	{
+		//		{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure), 0 },
+		//		{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma), 0 },
+		//		{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position), 0 },
+		//		{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color), 0 },
+		//		{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity), 0 },
+		//	};
+
+		//	passSpec.framebuffers =
+		//	{
+		//		{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], {{TextureType::Color, 1, 0}, {TextureType::Color, 2, 1}, {TextureType::Color, 3, 2}}, 0 },
+		//	};
+
+		//	Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(renderPass);
+		//}
 		/////////////////////////////
 
-		/////Main//////
-		{
-			FramebufferSpecification mainBuffer;
-			mainBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //position + metallic
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //normal + roughness
-				{ FramebufferTextureFormat::RGBA16F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }, //albedo + ao
-			};
+		///////Selection/////
+		//{
+		//	FramebufferSpecification spec;
+		//	spec.Attachments =
+		//	{
+		//		{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
+		//		{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
+		//	};
+		//	spec.Width = 1280;
+		//	spec.Height = 720;
+		//	spec.Samples = 1;
 
-			mainBuffer.Attachments.Renderbuffers =
-			{
-				{ FramebufferRenderbufferType::Depth }
-			};
+		//	RenderPassSpecification passSpec;
+		//	passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
+		//	m_SelectionBuffer = passSpec.TargetFramebuffer;
+		//	passSpec.Name = "SelectionPass";
+		//	passSpec.drawType = Lamp::DrawType::All;
 
-			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Width = 1280;
-			mainBuffer.Height = 720;
-			mainBuffer.Samples = 1;
+		//	passSpec.staticUniforms =
+		//	{
+		//		{ "u_ObjectId", UniformType::Int, RenderData::ID },
+		//		{ "u_Model", UniformType::Mat4, RenderData::Transform }
+		//	};
 
-			RenderPassSpecification passSpec;
+		//	passSpec.renderShader = Lamp::ShaderLibrary::GetShader("selection");
 
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
-			passSpec.Name = "MainPass";
-			passSpec.type = PassType::Geometry;
-
-			m_GBuffer = passSpec.TargetFramebuffer;
-
-			passSpec.staticUniforms =
-			{
-				{ "u_Model", UniformType::Mat4, RenderData::Transform },
-				{ "u_Material.albedo", UniformType::Int, 0 },
-				{ "u_Material.normal", UniformType::Int, 1},
-				{ "u_Material.mro", UniformType::Int, 2}
-			};
-
-			passSpec.clearType = Lamp::ClearType::ColorDepth;
-			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::Deferred;
-			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("gbuffer");
-
-			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(renderPass);
-		}
-		///////////////
-
-		/////SSAOMain/////
-		{
-			FramebufferSpecification mainBuffer;
-			mainBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::RED, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
-			};
-
-			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Width = 1280;
-			mainBuffer.Height = 720;
-			mainBuffer.Samples = 1;
-
-			RenderPassSpecification passSpec;
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
-			m_SSAOBuffer = passSpec.TargetFramebuffer;
-
-			passSpec.type = PassType::SSAO;
-			passSpec.Name = "SSAOMain";
-
-			passSpec.staticUniforms =
-			{
-				{ "u_GBuffer.position", UniformType::Int, 0 },
-				{ "u_GBuffer.normal", UniformType::Int, 1 },
-				{ "u_Noise", UniformType::Int, 2 }
-			};
-
-			passSpec.framebuffers =
-			{
-				{ m_GBuffer, {{TextureType::Color, 0, 0}, {TextureType::Color, 1, 1}}, 0 },
-			};
-
-			passSpec.textures =
-			{
-				{ Renderer3D::GetSettings().InternalTextures["SSAONoise"], 2, 0 }
-			};
-
-			passSpec.clearType = Lamp::ClearType::ColorDepth;
-			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::Quad;
-			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOMain");
-
-
-			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(ssaoPath);
-		}
-		//////////////////
-
-		/////SSAOBlur/////
-		{
-			FramebufferSpecification mainBuffer;
-			mainBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::RED, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
-			};
-
-			mainBuffer.ClearColor = m_ClearColor;
-			mainBuffer.Width = 1280;
-			mainBuffer.Height = 720;
-			mainBuffer.Samples = 1;
-
-			RenderPassSpecification passSpec;
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
-			passSpec.type = PassType::SSAOBlur;
-			passSpec.Name = "SSAOBlur";
-
-			passSpec.staticUniforms =
-			{
-				{ "u_SSAO", UniformType::Int, 0 }
-			};
-
-			passSpec.framebuffers =
-			{
-				{ m_SSAOBuffer, { { TextureType::Color, 0, 0 } }, 0 }
-			};
-
-			passSpec.clearType = Lamp::ClearType::Color;
-			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::Quad;
-			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("SSAOBlur");
-
-			m_SSAOBlurBuffer = passSpec.TargetFramebuffer;
-
-			Ref<RenderPass> ssaoPath = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(ssaoPath);
-		}
-		//////////////////
-
-		/////Lightning/////
-		{
-			FramebufferSpecification lightBuffer;
-			lightBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
-			};
-
-			lightBuffer.Attachments.Renderbuffers =
-			{
-				{ FramebufferRenderbufferType::Depth }
-			};
-
-			lightBuffer.ClearColor = m_ClearColor;
-			lightBuffer.Width = 1280;
-			lightBuffer.Height = 720;
-			lightBuffer.Samples = 1;
-
-			RenderPassSpecification passSpec;
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(lightBuffer);
-			m_SandboxBuffer = passSpec.TargetFramebuffer;
-
-			passSpec.Name = "LightPass";
-			passSpec.type = PassType::Lightning;
-
-			passSpec.staticUniforms =
-			{
-				{ "u_GBuffer.position", UniformType::Int, 0 },
-				{ "u_GBuffer.normal", UniformType::Int, 1 },
-				{ "u_GBuffer.albedo", UniformType::Int, 2 },
-				{ "u_ShadowMap", UniformType::Int, 3 },
-				{ "u_IrradianceMap", UniformType::Int, 4 },
-				{ "u_PrefilterMap", UniformType::Int, 5 },
-				{ "u_BRDFLUT", UniformType::Int, 6 },
-				{ "u_SSAO", UniformType::Int, 7 }
-			};
-
-			passSpec.dynamicUniforms =
-			{
-				{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure), 0 },
-				{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma), 0 },
-				{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position), 0 },
-				{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color), 0 },
-				{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity), 0 },
-			};
-
-			passSpec.framebuffers =
-			{
-				{ m_GBuffer, {{TextureType::Color, 0, 0}, {TextureType::Color, 1, 1}, {TextureType::Color, 2, 2}}, 0 },
-				{ m_DirShadowBuffer, {{TextureType::Depth, 3, 0}}, 0 },
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], {{TextureType::Color, 4, 0}, {TextureType::Color, 5, 1}, {TextureType::Color, 6, 2}}, 0 },
-				{ m_SSAOBlurBuffer, {{TextureType::Color, 7, 0}}, 0 }
-			};
-
-			passSpec.framebufferCommands =
-			{
-				{ m_SandboxBuffer, m_GBuffer, FramebufferCommand::Copy, 0 }
-			};
-
-			passSpec.clearType = Lamp::ClearType::ColorDepth;
-			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::Quad;
-			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("deferred");
-
-			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(renderPass);
-		}
-		///////////////////
-
-		/////Forward Rendering/////
-		{
-			std::vector<std::function<void()>> ptrs;
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderGrid));
-			ptrs.push_back(LP_EXTRA_RENDER(Sandbox3D::RenderSkybox));
-
-			RenderPassSpecification passSpec;
-			passSpec.ExtraRenders = ptrs;
-
-			passSpec.TargetFramebuffer = m_SandboxBuffer;
-			passSpec.Name = "ForwardPass";
-			passSpec.type = PassType::Forward;
-
-			passSpec.clearType = Lamp::ClearType::ColorDepth;
-			passSpec.cullFace = Lamp::CullFace::Back;
-			passSpec.drawType = Lamp::DrawType::Forward;
-
-			passSpec.staticUniforms =
-			{
-				{ "u_Model", UniformType::Mat4, RenderData::Transform },
-				{ "u_IrradianceMap", UniformType::Int, 0 },
-				{ "u_PrefilterMap", UniformType::Int, 1 },
-				{ "u_BRDFLUT", UniformType::Int, 2 }
-			};
-
-			passSpec.dynamicUniforms =
-			{
-				{ "u_Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure), 0 },
-				{ "u_Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma), 0 },
-				{ "u_DirectionalLight.direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position), 0 },
-				{ "u_DirectionalLight.color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color), 0 },
-				{ "u_DirectionalLight.intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity), 0 },
-			};
-
-			passSpec.framebuffers =
-			{
-				{ Renderer3D::GetSettings().InternalFramebuffers["Skybox"], {{TextureType::Color, 1, 0}, {TextureType::Color, 2, 1}, {TextureType::Color, 3, 2}}, 0 },
-			};
-
-			Ref<RenderPass> renderPass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(renderPass);
-		}
-		///////////////////////////
-
-		/////Selection/////
-		{
-			FramebufferSpecification spec;
-			spec.Attachments =
-			{
-				{ FramebufferTextureFormat::RED_INTEGER, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat },
-				{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::Repeat }
-			};
-			spec.Width = 1280;
-			spec.Height = 720;
-			spec.Samples = 1;
-
-			RenderPassSpecification passSpec;
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(spec);
-			m_SelectionBuffer = passSpec.TargetFramebuffer;
-			passSpec.Name = "SelectionPass";
-			passSpec.drawType = Lamp::DrawType::All;
-
-			passSpec.staticUniforms =
-			{
-				{ "u_ObjectId", UniformType::Int, RenderData::ID },
-				{ "u_Model", UniformType::Mat4, RenderData::Transform }
-			};
-
-			passSpec.renderShader = Lamp::ShaderLibrary::GetShader("selection");
-
-			Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
-			RenderPassManager::Get()->AddPass(pass);
-		}
-		///////////////////
+		//	Ref<RenderPass> pass = CreateRef<RenderPass>(passSpec);
+		//	RenderPassManager::Get()->AddPass(pass);
+		//}
+		/////////////////////
 	}
 }

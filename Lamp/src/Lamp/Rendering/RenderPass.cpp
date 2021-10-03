@@ -111,12 +111,13 @@ namespace Lamp
 				Renderer3D::EndPass();
 				m_PassSpec.TargetFramebuffer->Unbind();
 
-				for (auto& [main, secondary, command, attrId] : m_PassSpec.framebufferCommands)
+				for (const auto& commandPair : m_PassSpec.framebufferCommands)
 				{
-					switch (command)
+					const auto& commandSpec = commandPair.second.first;
+					switch (commandSpec.command)
 					{
 						case FramebufferCommand::Copy:
-							main->Copy(secondary->GetRendererID(), { main->GetSpecification().Width, main->GetSpecification().Height }, true);
+							commandSpec.primary->Copy(commandSpec.secondary->GetRendererID(), { commandSpec.primary->GetSpecification().Width, commandSpec.primary->GetSpecification().Height }, true);
 							break;
 
 						default:

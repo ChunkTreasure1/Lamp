@@ -462,6 +462,9 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>

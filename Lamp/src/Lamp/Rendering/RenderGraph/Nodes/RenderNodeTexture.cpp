@@ -21,7 +21,7 @@ namespace Lamp
 
 		outputs.push_back(output);
 
-		for (const auto &[uName, uTexture] : Renderer3D::GetSettings().InternalTextures)
+		for (const auto& [uName, uTexture] : Renderer3D::GetSettings().InternalTextures)
 		{
 			m_TextureNames.push_back(uName.c_str());
 		}
@@ -31,14 +31,10 @@ namespace Lamp
 	{
 		for (const auto& link : links)
 		{
-			if (link->pInput->type == RenderAttributeType::Texture)
+			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
-				if (RenderNodePass *passNode = dynamic_cast<RenderNodePass *>(link->pInput->pNode))
-				{
-					uint32_t index = std::any_cast<uint32_t>(link->pInput->data);
-					auto &[passTex, bindId, attrId] = passNode->renderPass->GetSpecification().textures[index];
-					passTex = texture;
-				}
+				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
+				passNode->renderPass->GetSpecification().textures[id].first.texture = texture;
 			}
 		}
 	}

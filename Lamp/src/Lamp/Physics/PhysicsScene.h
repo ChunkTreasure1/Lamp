@@ -24,7 +24,7 @@ namespace Lamp
 		void Simulate(float ts, bool callFixedUpdate = true);
 
 		Ref<PhysicsActor> GetActor(Entity* pEnt);
-		const Ref<PhysicsActor>& GetActor(Entity* pEnt) const;
+		const Ref<PhysicsActor> GetActor(Entity* pEnt) const;
 
 		Ref<PhysicsActor> CreateActor(Entity* pEnt);
 		void RemoveActor(Ref<PhysicsActor> actor);

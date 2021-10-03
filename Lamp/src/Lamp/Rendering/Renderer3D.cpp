@@ -313,7 +313,7 @@ namespace Lamp
 		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& vertexData, Ref<Material> material, size_t objectId)
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
@@ -338,7 +338,8 @@ namespace Lamp
 				s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
 				s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
 
-				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+				vertexData->Bind();
+				RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
 
 				break;
 			}
@@ -351,97 +352,108 @@ namespace Lamp
 
 				RenderCommand::SetCullFace(pass->cullFace);
 				
-				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : mat->GetShader();
+				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : material->GetShader();
 
 				shaderToUse->Bind();
 
 				//Static Uniforms
-				for (auto[name, type, data] : pass->staticUniforms)
+				for (const auto& staticUniformPair : pass->staticUniforms)
 				{
-					if (data.type() == typeid(RenderData))
+					const auto& staticUniformSpec = staticUniformPair.second;
+
+					if (staticUniformSpec.data.type() == typeid(RenderData))
 					{
-						RenderData type = std::any_cast<RenderData>(data);
+						RenderData type = std::any_cast<RenderData>(staticUniformSpec.data);
 						switch (type)
 						{
 							case Lamp::RenderData::Transform:
-								shaderToUse->UploadMat4(name, modelMatrix);
+								shaderToUse->UploadMat4(staticUniformSpec.name, modelMatrix);
 								break;
 							case Lamp::RenderData::ID:
-								shaderToUse->UploadInt(name, id);
+								shaderToUse->UploadInt(staticUniformSpec.name, objectId);
 								break;
 						}
 
 						continue;
 					}
 
-					switch (type)
+					switch (staticUniformSpec.type)
 					{
 						case UniformType::Int:
-							shaderToUse->UploadInt(name, std::any_cast<int>(data));
+							shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
 							break;
 
 						case UniformType::Float:
-							shaderToUse->UploadFloat(name, std::any_cast<float>(data));
+							shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
 							break;
 
 						case UniformType::Float2:
-							shaderToUse->UploadFloat2(name, std::any_cast<glm::vec2>(data));
+							shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
 							break;
 
 						case UniformType::Float3:
-							shaderToUse->UploadFloat3(name, std::any_cast<glm::vec3>(data));
+							shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
 							break;
 
 						case UniformType::Float4:
-							shaderToUse->UploadFloat4(name, std::any_cast<glm::vec4>(data));
+							shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
 							break;
 
 						case UniformType::Mat4:
-							shaderToUse->UploadMat4(name, std::any_cast<glm::mat4>(data));
+							shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
 							break;
 					}
 				}
 
 				//Dynamic Uniforms
-				for (auto& [name, type, data, attrId] : pass->dynamicUniforms)
+				for (const auto& dynamicUniformPair : pass->dynamicUniforms)
 				{
-					switch (type)
+					const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
+
+					if (dynamicUniformSpec.data == nullptr)
+					{
+						LP_CORE_ERROR("Dynamic uniform data is nullptr at {0}", dynamicUniformSpec.name);
+						continue;
+					}
+
+					switch (dynamicUniformSpec.type)
 					{
 						case UniformType::Int:
-							shaderToUse->UploadInt(name, *static_cast<int*>(data));
+							shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
 							break;
 
 						case UniformType::Float:
-							shaderToUse->UploadFloat(name, *static_cast<float*>(data));
+							shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
 							break;
 
 						case UniformType::Float3:
-							shaderToUse->UploadFloat3(name, *static_cast<glm::vec3*>(data));
+							shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
 							break;
 
 						case UniformType::Float4:
-							shaderToUse->UploadFloat4(name, *static_cast<glm::vec4*>(data));
+							shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
 							break;
 
 						case UniformType::Mat4:
-							shaderToUse->UploadMat4(name, *static_cast<glm::mat4*>(data));
+							shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
 							break;
 					}
 				}
 
 				//Framebuffers
-				for (const auto& [framebuffer, attachments, attrId] : pass->framebuffers)
+				for (const auto& framebufferPair : pass->framebuffers)
 				{
-					for (const auto& attachment : attachments)
+					const auto& spec = framebufferPair.second.first;
+					for (const auto& attachment : spec.attachments)
 					{
 						switch (attachment.type)
 						{
 							case TextureType::Color:
-								framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+								spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
 								break;
 
 							case TextureType::Depth:
-								framebuffer->BindDepthAttachment(attachment.bindId);
+								spec.framebuffer->BindDepthAttachment(attachment.bindId);
 								break;
 
 							default:
@@ -451,17 +463,17 @@ namespace Lamp
 				}
 
 				int i = 0;
-				for (auto& name : mat->GetShader()->GetSpecifications().TextureNames)
+				for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
 				{
-					if (mat->GetTextures()[name].get() != nullptr)
+					if (material->GetTextures()[textureName].get() != nullptr)
 					{
-						mat->GetTextures()[name]->Bind(i);
+						material->GetTextures()[textureName]->Bind(i);
 						i++;
 					}
 				}
 
-				data->Bind();
-				RenderCommand::DrawIndexed(data, data->GetIndexBuffer()->GetCount());
+				vertexData->Bind();
+				RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
 
 				break;
 			}
@@ -517,80 +529,84 @@ namespace Lamp
 		shaderToUse->Bind();
 
 		//Static Uniforms
-		for (auto& [name, type, data] : pass->staticUniforms)
+		for (const auto& staticUniformPair : pass->staticUniforms)
 		{
-			switch (type)
+			const auto& staticUniformSpec = staticUniformPair.second;
+
+			switch (staticUniformSpec.type)
 			{
-				case UniformType::Int:
-					shaderToUse->UploadInt(name, std::any_cast<int>(data));
-					break;
+			case UniformType::Int:
+				shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
+				break;
 
-				case UniformType::Float:
-					shaderToUse->UploadFloat(name, std::any_cast<float>(data));
-					break;
+			case UniformType::Float:
+				shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
+				break;
 
-				case UniformType::Float2:
-					shaderToUse->UploadFloat2(name, std::any_cast<glm::vec2>(data));
-					break;
+			case UniformType::Float2:
+				shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
+				break;
 
-				case UniformType::Float3:
-					shaderToUse->UploadFloat3(name, std::any_cast<glm::vec3>(data));
-					break;
+			case UniformType::Float3:
+				shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
+				break;
 
-				case UniformType::Float4:
-					shaderToUse->UploadFloat4(name, std::any_cast<glm::vec4>(data));
-					break;
+			case UniformType::Float4:
+				shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
+				break;
 
-				case UniformType::Mat4:
-					shaderToUse->UploadMat4(name, std::any_cast<glm::mat4>(data));
-					break;
+			case UniformType::Mat4:
+				shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
+				break;
 			}
 		}
 
 		//Dynamic Uniforms
-		for (auto& [name, type, data, attrId] : pass->dynamicUniforms)
+		for (const auto& dynamicUniformPair : pass->dynamicUniforms)
 		{
-			switch (type)
+			const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
+			switch (dynamicUniformSpec.type)
 			{
-				case UniformType::Int:
-					shaderToUse->UploadInt(name, *static_cast<int*>(data));
-					break;
+			case UniformType::Int:
+				shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
+				break;
 
-				case UniformType::Float:
-					shaderToUse->UploadFloat(name, *static_cast<float*>(data));
-					break;
+			case UniformType::Float:
+				shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
+				break;
 
-				case UniformType::Float3:
-					shaderToUse->UploadFloat3(name, *static_cast<glm::vec3*>(data));
-					break;
+			case UniformType::Float3:
+				shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
+				break;
 
-				case UniformType::Float4:
-					shaderToUse->UploadFloat4(name, *static_cast<glm::vec4*>(data));
-					break;
+			case UniformType::Float4:
+				shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
+				break;
 
-				case UniformType::Mat4:
-					shaderToUse->UploadMat4(name, *static_cast<glm::mat4*>(data));
-					break;
+			case UniformType::Mat4:
+				shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
+				break;
 			}
 		}
 
 		//Framebuffers
-		for (const auto& [framebuffer, attachments, attrId] : pass->framebuffers)
+		for (const auto& framebufferPair : pass->framebuffers)
 		{
-			for (const auto& attachment : attachments)
+			const auto& spec = framebufferPair.second.first;
+			for (const auto& attachment : spec.attachments)
 			{
 				switch (attachment.type)
 				{
-					case TextureType::Color:
-						framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
-						break;
+				case TextureType::Color:
+					spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+					break;
 
-					case TextureType::Depth:
-						framebuffer->BindDepthAttachment(attachment.bindId);
-						break;
+				case TextureType::Depth:
+					spec.framebuffer->BindDepthAttachment(attachment.bindId);
+					break;
 
-					default:
-						break;
+				default:
+					break;
 				}
 			}
 		}

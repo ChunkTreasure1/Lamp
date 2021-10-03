@@ -5,7 +5,7 @@
 #include "RenderCommand.h"
 #include "Renderer3D.h"
 
-#include <any>
+#include "RenderGraph/RenderPassSpecifications.h"
 
 #define LP_EXTRA_RENDER(fn) std::bind(&fn, this)
 
@@ -40,29 +40,6 @@ namespace Lamp
 		Deferred = 4
 	};
 
-	enum class TextureType : uint32_t
-	{
-		Color = 0,
-		Depth = 1
-	};
-
-	enum class FramebufferCommand : uint32_t
-	{
-		Copy = 0
-	};
-
-	struct GraphFramebufferAttachmentSpec
-	{
-		bool operator==(const GraphFramebufferAttachmentSpec& rhs) 
-		{ 
-			return type == rhs.type && bindId == rhs.bindId && attachmentId == rhs.attachmentId;
-		}
-
-		TextureType type = TextureType::Color;
-		uint32_t bindId = 0;
-		uint32_t attachmentId = 0;
-	};
-
 	struct RenderPassSpecification
 	{
 		using RenderFunc = std::function<void()>;
@@ -79,11 +56,11 @@ namespace Lamp
 		DrawType drawType = DrawType::All;
 		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
 
-		std::vector<std::tuple<std::string, UniformType, std::any>> staticUniforms; // name, type, data
-		std::vector<std::tuple<std::string, UniformType, void*, GraphUUID>> dynamicUniforms; // name, type, data, attrId
-		std::vector<std::tuple<Ref<Texture2D>, uint32_t, GraphUUID>> textures; // texture, texBindSlot, attrId
-		std::vector<std::tuple<Ref<Framebuffer>, std::vector<GraphFramebufferAttachmentSpec>, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
-		std::vector<std::tuple<Ref<Framebuffer>, Ref<Framebuffer>, FramebufferCommand, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
+		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
+		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
+		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId
+		std::map<GraphUUID, std::pair<PassFramebufferSpecification, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
+		std::map<GraphUUID, std::pair<PassFramebufferCommandSpecification, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 
 	class RenderPass

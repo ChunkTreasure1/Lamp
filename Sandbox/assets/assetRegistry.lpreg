@@ -3,6 +3,8 @@ Assets:
     Path: assets\models\cube.lgf
   - Handle: 13551055251788859933
     Path: assets\models\sphere.lgf
+  - Handle: 14877024273708001692
+    Path: assets/testGraph.rendergraph
   - Handle: 14311675356115887053
     Path: assets/testLevel.level
   - Handle: 3775480950542812265
@@ -113,3 +115,5 @@ Assets:
     Path: C:\Programming\Lamp\Sandbox\assets\models\cube.lgf
   - Handle: 2625564280194159711
     Path: C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf
+  - Handle: 14877024273708001692
+    Path: C:\Programming\Lamp\Sandbox\assets\testGraph.rendergraph
