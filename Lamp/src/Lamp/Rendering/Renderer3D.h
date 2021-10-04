@@ -22,6 +22,8 @@ namespace Lamp
 		float SSAORadius = 0.5f;
 		float SSAOBias = 0.025f;
 		
+		glm::vec2 BufferSize = { 1280, 720 };
+
 		//Camera
 		float HDRExposure = 3.f;
 		float Gamma = 2.2f;

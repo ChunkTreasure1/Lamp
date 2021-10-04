@@ -38,7 +38,6 @@ layout(std140, binding = 1) uniform SSAO
 	int u_KernelSize;
 	float u_Radius;
 	float u_Bias;
-	vec2 u_BufferSize;
 	vec3 u_Samples[64];
 };
 
@@ -53,6 +52,7 @@ struct GBuffer
 
 uniform GBuffer u_GBuffer;
 uniform sampler2D u_Noise;
+uniform vec2 u_BufferSize;
 
 vec2 noiseScale;
 

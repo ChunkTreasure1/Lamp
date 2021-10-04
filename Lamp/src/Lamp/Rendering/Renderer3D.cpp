@@ -100,7 +100,6 @@ namespace Lamp
 			int KernelSize;
 			float Radius;
 			float Bias;
-			glm::vec2 BufferSize;
 
 			glm::vec3 Samplers[64];
 
@@ -235,7 +234,7 @@ namespace Lamp
 		RegenerateSSAOKernel();
 
 		Ref<Texture2D> ssaoNoise = Texture2D::Create(4, 4);
-		ssaoNoise->SetData(&s_pData->SSAONoise[0], 0);
+		ssaoNoise->SetData(s_pData->SSAONoise.data(), 0);
 		s_RendererSettings.InternalTextures.emplace(std::make_pair("SSAONoise", ssaoNoise));
 		//////////////
 
@@ -250,6 +249,7 @@ namespace Lamp
 		DynamicUniformRegistry::AddUniform("Directional light direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position));
 		DynamicUniformRegistry::AddUniform("Directional light color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color));
 		DynamicUniformRegistry::AddUniform("Directional light intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity));
+		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&Renderer3D::GetSettings().BufferSize));
 	}
 
 	void Renderer3D::Shutdown()
@@ -274,11 +274,11 @@ namespace Lamp
 			s_pData->SSAODataBuffer.KernelSize = s_RendererSettings.SSAOKernelSize;
 			s_pData->SSAODataBuffer.Radius = s_RendererSettings.SSAORadius;
 			s_pData->SSAODataBuffer.Bias = s_RendererSettings.SSAOBias;
-			s_pData->SSAODataBuffer.BufferSize = s_pData->LastViewportSize;
 			s_pData->SSAODataUniformBuffer->SetData(&s_pData->SSAODataBuffer, sizeof(Renderer3DStorage::SSAODataBuffer));
 		}
 
 		s_pData->Camera = camera;
+		s_RendererSettings.BufferSize = s_pData->LastViewportSize;
 
 		ResetBatchData();
 	}
@@ -495,7 +495,6 @@ namespace Lamp
 	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
-
 		
 		DrawMesh(modelMatrix, data, mat, id);
 	}
@@ -729,11 +728,16 @@ namespace Lamp
 		s_pData->SSAONoise.clear();
 		s_pData->SSAOKernel.clear();
 
-		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+		std::uniform_real_distribution<GLfloat> randomFloats(0.f, 1.f); // generates random floats between 0.0 and 1.0
 		std::default_random_engine generator;
+
 		for (size_t i = 0; i < s_RendererSettings.SSAOKernelSize; i++)
 		{
-			glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+			glm::vec3 sample(
+				randomFloats(generator) * 2.0 - 1.0, 
+				randomFloats(generator) * 2.0 - 1.0, 
+				randomFloats(generator));
+		
 			sample = glm::normalize(sample);
 			sample *= randomFloats(generator);
 

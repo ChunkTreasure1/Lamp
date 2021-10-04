@@ -73,6 +73,10 @@ namespace Lamp
 
 	struct PassFramebufferCommandSpecification
 	{
+		PassFramebufferCommandSpecification(Ref<Framebuffer> aPrimary = nullptr, Ref<Framebuffer> aSecondary = nullptr, FramebufferCommand aCommand = FramebufferCommand::Copy, const std::string& aName = "Command")
+			: primary(aPrimary), secondary(aSecondary), command(aCommand), name(aName)
+		{}
+
 		Ref<Framebuffer> primary;
 		Ref<Framebuffer> secondary;
 

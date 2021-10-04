@@ -53,7 +53,7 @@ namespace Lamp
 
 		ClearType clearType = ClearType::ColorDepth;
 		CullFace cullFace = CullFace::Back;
-		DrawType drawType = DrawType::All;
+	 	DrawType drawType = DrawType::All;
 		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
 
 		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data

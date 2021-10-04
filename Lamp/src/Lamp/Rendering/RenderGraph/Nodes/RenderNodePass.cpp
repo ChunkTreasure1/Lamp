@@ -106,7 +106,15 @@ namespace Lamp
 						}
 						else
 						{
-							passNode->renderPass->GetSpecification().framebuffers[id].first.framebuffer = renderPass->GetSpecification().TargetFramebuffer;
+							if (passNode->renderPass->GetSpecification().framebuffers.find(id) != passNode->renderPass->GetSpecification().framebuffers.end())
+							{
+								passNode->renderPass->GetSpecification().framebuffers[id].first.framebuffer = renderPass->GetSpecification().TargetFramebuffer;
+							}
+
+							if (passNode->renderPass->GetSpecification().framebufferCommands.find(id) != passNode->renderPass->GetSpecification().framebufferCommands.end())
+							{
+								passNode->renderPass->GetSpecification().framebufferCommands[id].first.secondary = renderPass->GetSpecification().TargetFramebuffer;
+							}
 						}
 					}
 					break;
@@ -694,28 +702,31 @@ namespace Lamp
 			ImGui::TreePop();
 		}
 
-		//if (ImGui::TreeNode("Framebuffer commands"))
-		//{
-		//	if (ImGui::Button("Add"))
-		//	{
-		//		Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-		//		specification.framebufferCommands.push_back(std::make_tuple(renderPass->GetSpecification().TargetFramebuffer, nullptr, FramebufferCommand::Copy, input->id));
+		if (ImGui::TreeNode("Framebuffer commands"))
+		{
+			if (ImGui::Button("Add"))
+			{
+				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				GraphUUID cmdId = GraphUUID();
+				specification.framebufferCommands.emplace(cmdId, std::make_pair(PassFramebufferCommandSpecification(renderPass->GetSpecification().TargetFramebuffer), input->id));
 
-		//		input->data = (uint32_t)(specification.framebufferCommands.size() - 1);
-		//		input->pNode = this;
-		//		input->name = "FramebufferCmd" + std::to_string(specification.framebuffers.size() - 1);
-		//		input->type = RenderAttributeType::Framebuffer;
+				input->data = cmdId;
+				input->pNode = this;
+				input->name = "FramebufferCmd" + std::to_string(specification.framebuffers.size() - 1);
+				input->type = RenderAttributeType::Framebuffer;
 
-		//		inputs.push_back(input);
-		//	}
+				inputs.push_back(input);
+			}
 
-		//	for (auto& [main, secondary, command, attrId] : specification.framebufferCommands)
-		//	{
+			for (auto& commandPair : specification.framebufferCommands)
+			{
+				auto& commandSpec = commandPair.second.first;
 
-		//	}
 
-		//	ImGui::TreePop();
-		//}
+			}
+
+			ImGui::TreePop();
+		}
 
 		DrawAttributes();
 
@@ -961,6 +972,22 @@ namespace Lamp
 		}
 		out << YAML::EndSeq; //framebuffers
 
+		out << YAML::Key << "framebufferCommands" << YAML::BeginSeq;
+		for (const auto& commandPair : specification.framebufferCommands)
+		{
+			const auto& commandSpec = commandPair.second.first;
+
+			out << YAML::BeginMap;
+			out << YAML::Key << "command" << YAML::Value << commandSpec.name;
+
+			LP_SERIALIZE_PROPERTY(guuid, commandPair.first, out);
+			LP_SERIALIZE_PROPERTY(attrId, commandPair.second.second, out);
+			LP_SERIALIZE_PROPERTY(commandType, (uint32_t)commandSpec.command, out);
+
+			out << YAML::EndMap;
+		}
+		out << YAML::EndSeq;
+
 		SerializeAttributes(out);
 	}
 
@@ -1134,6 +1161,21 @@ namespace Lamp
 			specification.framebuffers.emplace(guuid, std::make_pair(PassFramebufferSpecification(nullptr, attachmentSpecs, name), attrId));
 		}
 
+		//framebuffer commands
+		YAML::Node framebufferCommandsNode = node["framebufferCommands"];
+		for (const auto entry : framebufferCommandsNode)
+		{
+			std::string name = entry["command"].as<std::string>();
+			GraphUUID guuid;
+			GraphUUID attrId;
+			FramebufferCommand command;
+
+			LP_DESERIALIZE_PROPERTY(guuid, guuid, entry, (GraphUUID)0);
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, (GraphUUID)0);
+			command = (FramebufferCommand)entry["commandType"].as<uint32_t>();
+
+			specification.framebufferCommands.emplace(guuid, std::make_pair(PassFramebufferCommandSpecification(specification.TargetFramebuffer, nullptr, command, name), attrId));
+		}
 
 		//attributes
 		outputs.clear();

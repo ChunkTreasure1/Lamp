@@ -40,23 +40,6 @@ namespace Lamp
 				break;
 			}
 
-			case PassType::Forward:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
-				Renderer3D::BeginPass(m_PassSpec);
-
-				Renderer3D::DrawRenderBuffer();
-
-				for (auto& f : m_PassSpec.ExtraRenders)
-				{
-					f();
-				}
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-				break;
-			}
-
 			default:
 			{
 				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
@@ -114,6 +97,12 @@ namespace Lamp
 				for (const auto& commandPair : m_PassSpec.framebufferCommands)
 				{
 					const auto& commandSpec = commandPair.second.first;
+					if (!commandSpec.primary || !commandSpec.secondary)
+					{
+						LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);
+						continue;
+					}
+
 					switch (commandSpec.command)
 					{
 						case FramebufferCommand::Copy:
