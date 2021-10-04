@@ -238,7 +238,7 @@ namespace Sandbox3D
 		Renderer3D::BeginPass(pass);
 		if (m_MaterialModel)
 		{
-			m_MaterialModel->Render(-1, glm::mat4(1.f), true);
+			m_MaterialModel->Render(-1, glm::mat4(1.f));
 		}
 
 		Renderer3D::DrawRenderBuffer();

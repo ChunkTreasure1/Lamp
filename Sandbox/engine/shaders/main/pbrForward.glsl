@@ -78,7 +78,24 @@ struct Material
 uniform Material u_Material;
 
 #include pbrBase.ext
-#include pbrForwardBase.ext
+
+vec3 CalculateNormal()
+{
+	vec3 tangentNormal = texture(u_Material.normal, v_In.TexCoord).xyz * 2.0 - 1.0;
+	return normalize(v_In.TBN * tangentNormal);
+}
+
+vec4 CalculateForward()
+{
+	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(u_Gamma));
+	float metallic = texture(u_Material.mro, v_In.TexCoord).r;
+	float roughness = texture(u_Material.mro, v_In.TexCoord).g;
+	float ao = 0.5;
+
+	vec3 N = normalize(CalculateNormal());
+
+	return CalculateColor(albedo, metallic, roughness, ao, v_In.FragPos, v_In.ShadowCoord, N);
+}
 
 void main()
 {

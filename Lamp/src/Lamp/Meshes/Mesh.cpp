@@ -8,19 +8,11 @@
 
 namespace Lamp
 {
-	void Mesh::Render(size_t id, const glm::mat4& transform, bool forward)
+	void Mesh::Render(size_t id, const glm::mat4& transform)
 	{
 		for (size_t i = 0; i < m_Meshes.size(); i++)
 		{
-
-			if (!forward)
-			{
-				Renderer3D::SubmitMesh(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
-			}
-			else
-			{
-				Renderer3D::SubmitMeshForward(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
-			}
+			Renderer3D::SubmitMesh(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
 		}
 	}
 

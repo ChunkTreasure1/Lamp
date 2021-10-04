@@ -27,7 +27,6 @@ namespace Lamp
 
 	struct RenderBuffer
 	{
-		std::vector<RenderCommandData> drawCallsDeferred;
-		std::vector<RenderCommandData> drawCallsForward;
+		std::vector<RenderCommandData> drawCalls;
 	};
 }

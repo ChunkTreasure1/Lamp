@@ -58,7 +58,7 @@ namespace Lamp
 
 		friend class ResourceCache;
 
-		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f), bool forward = false);
+		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f));
 		void RenderBoundingBox(const glm::mat4& transform);
 
 		//Setting

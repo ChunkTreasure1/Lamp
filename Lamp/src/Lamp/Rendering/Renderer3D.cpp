@@ -147,7 +147,7 @@ namespace Lamp
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
-			});
+				});
 			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
@@ -217,7 +217,7 @@ namespace Lamp
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" }
-			});
+				});
 			s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
 
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
@@ -289,8 +289,7 @@ namespace Lamp
 		uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
 		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
 
-		s_RenderBuffer.drawCallsDeferred.clear();
-		s_RenderBuffer.drawCallsForward.clear();
+		s_RenderBuffer.drawCalls.clear();
 		Flush();
 	}
 
@@ -351,7 +350,7 @@ namespace Lamp
 				const auto& pass = s_pData->CurrentRenderPass;
 
 				RenderCommand::SetCullFace(pass->cullFace);
-				
+
 				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : material->GetShader();
 
 				shaderToUse->Bind();
@@ -487,18 +486,6 @@ namespace Lamp
 		}
 	}
 
-	void Renderer3D::DrawMeshDeferred(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id /* = -1 */)
-	{
-		DrawMesh(modelMatrix, data, mat, id);
-	}
-
-	void Renderer3D::DrawMeshForward(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id)
-	{
-		LP_PROFILE_FUNCTION();
-		
-		DrawMesh(modelMatrix, data, mat, id);
-	}
-
 	void Renderer3D::DrawSkybox()
 	{
 		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
@@ -541,29 +528,29 @@ namespace Lamp
 
 			switch (staticUniformSpec.type)
 			{
-			case UniformType::Int:
-				shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
-				break;
+				case UniformType::Int:
+					shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
+					break;
 
-			case UniformType::Float:
-				shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
-				break;
+				case UniformType::Float:
+					shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
+					break;
 
-			case UniformType::Float2:
-				shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
-				break;
+				case UniformType::Float2:
+					shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
+					break;
 
-			case UniformType::Float3:
-				shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
-				break;
+				case UniformType::Float3:
+					shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
+					break;
 
-			case UniformType::Float4:
-				shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
-				break;
+				case UniformType::Float4:
+					shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
+					break;
 
-			case UniformType::Mat4:
-				shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
-				break;
+				case UniformType::Mat4:
+					shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
+					break;
 			}
 		}
 
@@ -573,25 +560,25 @@ namespace Lamp
 			const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
 			switch (dynamicUniformSpec.type)
 			{
-			case UniformType::Int:
-				shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
-				break;
+				case UniformType::Int:
+					shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
+					break;
 
-			case UniformType::Float:
-				shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
-				break;
+				case UniformType::Float:
+					shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
+					break;
 
-			case UniformType::Float3:
-				shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
-				break;
+				case UniformType::Float3:
+					shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
+					break;
 
-			case UniformType::Float4:
-				shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
-				break;
+				case UniformType::Float4:
+					shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
+					break;
 
-			case UniformType::Mat4:
-				shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
-				break;
+				case UniformType::Mat4:
+					shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
+					break;
 			}
 		}
 
@@ -610,16 +597,16 @@ namespace Lamp
 			{
 				switch (attachment.type)
 				{
-				case TextureType::Color:
-					spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
-					break;
+					case TextureType::Color:
+						spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+						break;
 
-				case TextureType::Depth:
-					spec.framebuffer->BindDepthAttachment(attachment.bindId);
-					break;
+					case TextureType::Depth:
+						spec.framebuffer->BindDepthAttachment(attachment.bindId);
+						break;
 
-				default:
-					break;
+					default:
+						break;
 				}
 			}
 		}
@@ -642,23 +629,10 @@ namespace Lamp
 		data.id = id;
 		data.data = mesh->GetVertexArray();
 
-		s_RenderBuffer.drawCallsDeferred.push_back(data);
+		s_RenderBuffer.drawCalls.push_back(data);
 	}
 
-	void Renderer3D::SubmitMeshForward(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id)
-	{
-		LP_PROFILE_FUNCTION();
-
-		RenderCommandData data;
-		data.transform = transform;
-		data.material = mat;
-		data.id = id;
-		data.data = mesh->GetVertexArray();
-
-		s_RenderBuffer.drawCallsForward.push_back(data);
-	}
-
-	void Renderer3D::SubmitQuadForward(const glm::mat4& transform, Ref<Material> mat, size_t id)
+	void Renderer3D::SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 		RenderCommandData data;
@@ -667,27 +641,16 @@ namespace Lamp
 		data.id = id;
 		data.data = s_pData->QuadVertexArray;
 
-		s_RenderBuffer.drawCallsForward.push_back(data);
+		s_RenderBuffer.drawCalls.push_back(data);
 	}
 
 	void Renderer3D::DrawRenderBuffer()
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (s_pData->CurrentRenderPass->drawType == DrawType::Forward || s_pData->CurrentRenderPass->drawType == DrawType::All)
+		for (auto& data : s_RenderBuffer.drawCalls)
 		{
-			for (auto& data : s_RenderBuffer.drawCallsForward)
-			{
-				DrawMeshForward(data.transform, data.data, data.material, data.id);
-			}
-		}
-		
-		if (s_pData->CurrentRenderPass->drawType == DrawType::Deferred || s_pData->CurrentRenderPass->drawType == DrawType::All)
-		{
-			for (auto& data : s_RenderBuffer.drawCallsDeferred)
-			{
-				DrawMeshDeferred(data.transform, data.data, data.material, data.id);
-			}
+			DrawMesh(data.transform, data.data, data.material, data.id);
 		}
 	}
 
@@ -734,10 +697,10 @@ namespace Lamp
 		for (size_t i = 0; i < s_RendererSettings.SSAOKernelSize; i++)
 		{
 			glm::vec3 sample(
-				randomFloats(generator) * 2.0 - 1.0, 
-				randomFloats(generator) * 2.0 - 1.0, 
+				randomFloats(generator) * 2.0 - 1.0,
+				randomFloats(generator) * 2.0 - 1.0,
 				randomFloats(generator));
-		
+
 			sample = glm::normalize(sample);
 			sample *= randomFloats(generator);
 

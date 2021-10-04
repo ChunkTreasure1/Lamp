@@ -284,7 +284,7 @@ namespace Lamp
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
 
-			Renderer3D::SubmitQuadForward(transform, m_GizmoMaterial, m_Id);
+			Renderer3D::SubmitQuad(transform, m_GizmoMaterial, m_Id);
 		}
 
 		return false;

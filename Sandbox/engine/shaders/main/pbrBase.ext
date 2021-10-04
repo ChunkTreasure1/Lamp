@@ -85,7 +85,10 @@ float DirectionalShadowCalculation(vec4 pos)
 	vec3 projCoords = pos.xyz / pos.w;
 	projCoords = projCoords * 0.5 + 0.5;
 
+	float closestDepth = texture(u_ShadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
+
+	vec3 normal = normalize(v_In.Normal);
 
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
@@ -94,11 +97,11 @@ float DirectionalShadowCalculation(vec4 pos)
 		for (int y = -1; y <= 1; y++)
 		{
 			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
+			shadow += currentDepth > closestDepth ? 1.0 : 0.0;
 		}
 	}
 
-	shadow = (0.5 + (shadow / 18));
+	shadow /= 9.0;
 
 	if (projCoords.z > 1.0)
 	{
