@@ -22,6 +22,7 @@ layout(std140, binding = 0) uniform Main
 	mat4 u_Projection;
 	mat4 u_ShadowVP;
 	vec3 u_CameraPosition;
+	float padding;
 };
 
 out Out
@@ -58,6 +59,7 @@ void main()
 #version 440 core
 
 layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int ObjectId;
 
 in Out
 {
@@ -76,6 +78,7 @@ struct Material
 };
 
 uniform Material u_Material;
+uniform int u_ObjectId;
 
 #include pbrBase.ext
 
@@ -102,4 +105,5 @@ void main()
 	vec4 color = CalculateForward();
 
 	FragColor = color;
+	ObjectId = u_ObjectId;
 }

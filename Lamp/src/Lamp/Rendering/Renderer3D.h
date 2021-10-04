@@ -59,8 +59,6 @@ namespace Lamp
 
 		static void Flush();
 
-		static void RegenerateSSAOKernel();
-
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id = -1);
 		static void SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id = -1);
 

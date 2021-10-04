@@ -20,6 +20,7 @@ layout(std140, binding = 0) uniform Main
 	mat4 u_Projection;
 	mat4 u_ShadowVP;
 	vec3 u_CameraPosition;
+	float padding;
 };
 
 out vec2 v_TexCoords;
@@ -36,6 +37,7 @@ void main()
 #type fragment
 #version 440 core
 layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int ObjectId;
 
 in vec2 v_TexCoords;
 
@@ -45,8 +47,16 @@ struct Material
 };
 
 uniform Material u_Material;
+uniform int u_ObjectId;
 
 void main()
 {
-	FragColor = texture(u_Material.gizmo, v_TexCoords);
+	vec4 color = texture(u_Material.gizmo, v_TexCoords);
+	if (color.a < 0.1)
+	{
+		discard;
+	}
+	
+	FragColor = color;
+	ObjectId = u_ObjectId;
 }

@@ -21,6 +21,11 @@
 
 #include <Game/Game.h>
 
+namespace Lamp
+{
+	class Framebuffer;
+}
+
 namespace Sandbox3D
 {
 	class BaseWindow;
@@ -77,10 +82,10 @@ namespace Sandbox3D
 		void Undo();
 		void Redo();
 
-
 	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_SandboxController;
+		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 
 		Ref<Lamp::Level> m_pLevel = nullptr;
 		Ref<Lamp::Level> m_pRuntimeLevel = nullptr;

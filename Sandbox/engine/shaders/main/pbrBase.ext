@@ -1,22 +1,17 @@
 struct DirectionalLight
 {
 	vec3 direction;
-	vec3 color;
-
 	float intensity;
+	vec3 color;
+	float padding;
 };
 
 struct PointLight
 {
 	vec3 position;
-	vec3 color;
-	
 	float radius;
+	vec3 color;
 	float intensity;
-	float falloff;
-	float farPlane;
-
-	samplerCube shadowMap;
 };
 
 layout(std140, binding = 0) uniform Main
@@ -25,11 +20,15 @@ layout(std140, binding = 0) uniform Main
 	mat4 u_Projection;
 	mat4 u_ShadowVP;
 	vec3 u_CameraPosition;
+	float padding;
 };
 
-uniform PointLight u_PointLights[2];
-uniform int u_LightCount;
-uniform DirectionalLight u_DirectionalLight;
+layout(std140, binding = 1) uniform Lights
+{
+	DirectionalLight u_DirectionalLight;
+	PointLight u_PointLights[1];
+	int u_LightCount;
+};
 
 uniform sampler2D u_ShadowMap;
 uniform samplerCube u_IrradianceMap;
@@ -114,7 +113,7 @@ float DirectionalShadowCalculation(vec4 pos)
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, vec4 shadowCoord)
 {
-	float shadow = DirectionalShadowCalculation(shadowCoord);
+	float shadow = 0.0; //DirectionalShadowCalculation(shadowCoord);
 
 	vec3 L = normalize(light.direction);
 	vec3 H = normalize(V + L);
@@ -151,12 +150,12 @@ float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 	int samples = 20;
 	float offset = 0.1;
 
-	float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
+	//float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
 
 	for(int i = 0; i < samples; ++i)
     {
-        float closestDepth = texture(light.shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-        closestDepth *= light.farPlane;   
+        float closestDepth = 0.0; //texture(light.shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+       // closestDepth *= light.farPlane;   
         if(currentDepth - bias > closestDepth)
             shadow += 1.0;
     }
@@ -169,7 +168,7 @@ float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
 {
 	float distance = length(light.position - fragPos);
-	float shadow = PointShadowCalculation(fragPos, light, distance);
+	float shadow = 0.0; //PointShadowCalculation(fragPos, light, distance);
 
 	if(distance > light.radius)
 	{
@@ -235,10 +234,10 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 
 	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness, shadowCoord);
 
-	//for(int i = 0; i < u_LightCount; ++i)
-	//{
-		//Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
-	//}
+	for(int i = 0; i < u_LightCount; ++i)
+	{
+		Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
+	}
 
 	vec3 R = reflect(-V, N);
 	

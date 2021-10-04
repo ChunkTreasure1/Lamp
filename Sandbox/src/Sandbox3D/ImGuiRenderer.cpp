@@ -24,6 +24,7 @@
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
+#include <Lamp/Rendering/Vertices/FrameBuffer.h>
 
 namespace Sandbox3D
 {
@@ -72,6 +73,7 @@ namespace Sandbox3D
 				if (Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer)
 				{
  					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+					m_SelectionBuffer = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer;
 				}
 			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -225,7 +227,7 @@ namespace Sandbox3D
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 				{
-					int pixelData = 0;//m_SelectionBuffer->ReadPixel(0, mouseX, mouseY);
+					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
 					if (m_pSelectedObject)
 					{
@@ -244,7 +246,7 @@ namespace Sandbox3D
 					}
 				}
 
-				//m_SelectionBuffer->Unbind();
+				m_SelectionBuffer->Unbind();
 				////////////////////////
 			}
 
@@ -831,11 +833,6 @@ namespace Sandbox3D
 		ImGui::SliderInt("Kernel Size", &Lamp::Renderer3D::GetSettings().SSAOKernelSize, 16, Lamp::Renderer3D::GetSettings().SSAOMaxKernelSize, "%d");
 		ImGui::SliderFloat("Radius", &Lamp::Renderer3D::GetSettings().SSAORadius, 0.f, 10.f, "%.3f");
 		ImGui::SliderFloat("Bias", &Lamp::Renderer3D::GetSettings().SSAOBias, 0.f, 1.f, "%.3f");
-
-		if (Lamp::Renderer3D::GetSettings().SSAOKernelSize != preKernelSize)
-		{
-			Lamp::Renderer3D::RegenerateSSAOKernel();
-		}
 
 		ImGui::Separator();
 		ImGui::Text("General");

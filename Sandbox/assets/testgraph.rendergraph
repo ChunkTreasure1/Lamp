@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-409.530701, 108.73642]
+      position: [-463.530701, 55.7364197]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [978.681885, 156.715973]
+      position: [872.681885, 312.715973]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [436.820435, 9.44325256]
+      position: [306.820435, -49.5567474]
       type: 0
       name: Forward
       clearType: 3
@@ -49,6 +49,12 @@ RenderGraph:
             format: 7
             filtering: 1
             wrap: 0
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 5
+            filtering: 0
+            wrap: 2
       staticUniforms:
         - staticUniform: u_Model
           guuid: 414905022
@@ -78,6 +84,10 @@ RenderGraph:
           guuid: 1471275545
           type: 0
           data: 5
+        - staticUniform: u_ObjectId
+          guuid: 1999005063
+          type: 9
+          data: 3
         - staticUniform: u_BRDFLUT
           guuid: 2143930172
           type: 0
@@ -188,7 +198,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 899417152
-      position: [-114.388489, 47.6950989]
+      position: [-168.388489, -5.30490112]
       type: 0
       name: Shadow
       clearType: 3
@@ -242,7 +252,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [-86.3884888, 408.695099]
+      position: [-216.388489, 349.695099]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -250,7 +260,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -1.67441202e-14, 1.40129846e-45]
+      clearColor: [1, 1, 1.27920075e-09, 2.76055797e-43]
       attachments:
         {}
       attributes:
@@ -260,7 +270,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 657769445
-      position: [140.611511, -105.304901]
+      position: [10.6115112, -164.304901]
       type: 3
       uniformType: 1
       dataName: Directional light intensity
@@ -271,7 +281,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1300775580
-      position: [156.611511, -242.304901]
+      position: [26.6115112, -301.304901]
       type: 3
       uniformType: 3
       dataName: Directional light direction
@@ -282,7 +292,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 545592275
-      position: [-98.3884888, -247.304901]
+      position: [-228.388489, -306.304901]
       type: 3
       uniformType: 3
       dataName: Directional light color
@@ -293,7 +303,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 757978825
-      position: [154.611511, -368.304901]
+      position: [24.6115112, -427.304901]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -304,7 +314,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [-94.3884888, -368.304901]
+      position: [-224.388489, -427.304901]
       type: 3
       uniformType: 1
       dataName: Gamma

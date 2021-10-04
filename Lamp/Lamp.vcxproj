@@ -260,6 +260,7 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\UniformBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />

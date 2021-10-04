@@ -14,6 +14,7 @@
 #include "Texture2D/IBLBuffer.h"
 #include "RenderGraph/Nodes/DynamicUniformRegistry.h"
 #include "RenderBuffer.h"
+#include "UniformBuffers.h"
 
 #include <random>
 #include <glad/glad.h>
@@ -86,25 +87,11 @@ namespace Lamp
 		glm::vec2 LastViewportSize = glm::vec2(0.f);
 
 		/////Uniform buffers/////
-		struct UBuffer
-		{
-			glm::mat4 View;
-			glm::mat4 Projection;
-			glm::mat4 ShadowVP;
-			glm::vec3 CameraPosition;
-		} DataBuffer;
-		Ref<UniformBuffer> DataUniformBuffer;
+		CommonBuffer CommonBuffer;
+		Ref<UniformBuffer> CommonUniformBuffer;
 
-		struct SSAOUniformBuffer
-		{
-			int KernelSize;
-			float Radius;
-			float Bias;
-
-			glm::vec3 Samplers[64];
-
-		} SSAODataBuffer;
-		Ref<UniformBuffer> SSAODataUniformBuffer;
+		LightBuffer LightBuffer;
+		Ref<UniformBuffer> LightUniformBuffer;
 		////////////////////////
 	};
 
@@ -147,7 +134,7 @@ namespace Lamp
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
-				});
+			});
 			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
@@ -162,7 +149,7 @@ namespace Lamp
 			({
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float4, "a_Color" }
-				});
+			});
 			s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
 			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
 
@@ -228,19 +215,9 @@ namespace Lamp
 		}
 		////////////////
 
-		s_pData->SelectionShader = ShaderLibrary::GetShader("selection");
-
-		/////SSAO/////
-		RegenerateSSAOKernel();
-
-		Ref<Texture2D> ssaoNoise = Texture2D::Create(4, 4);
-		ssaoNoise->SetData(s_pData->SSAONoise.data(), 0);
-		s_RendererSettings.InternalTextures.emplace(std::make_pair("SSAONoise", ssaoNoise));
-		//////////////
-
 		/////Uniform Buffer/////
-		s_pData->DataUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DStorage::UBuffer), 0);
-		s_pData->SSAODataUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DStorage::SSAOUniformBuffer), 1);
+		s_pData->CommonUniformBuffer = UniformBuffer::Create(sizeof(CommonBuffer), 0);
+		s_pData->LightUniformBuffer = UniformBuffer::Create(sizeof(LightBuffer), 1);
 		////////////////////////
 
 		//Setup dynamic uniforms
@@ -262,19 +239,40 @@ namespace Lamp
 	{
 		//Main
 		{
-			s_pData->DataBuffer.CameraPosition = camera->GetPosition();
-			s_pData->DataBuffer.Projection = camera->GetProjectionMatrix();
-			s_pData->DataBuffer.View = camera->GetViewMatrix();
-			s_pData->DataBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
-			s_pData->DataUniformBuffer->SetData(&s_pData->DataBuffer, sizeof(Renderer3DStorage::DataBuffer));
+			s_pData->CommonBuffer.CameraPosition = camera->GetPosition();
+			s_pData->CommonBuffer.Projection = camera->GetProjectionMatrix();
+			s_pData->CommonBuffer.View = camera->GetViewMatrix();
+			s_pData->CommonBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
+			s_pData->CommonUniformBuffer->SetData(&s_pData->CommonBuffer, sizeof(CommonBuffer));
 		}
 
-		//SSAO
+		//Lights
 		{
-			s_pData->SSAODataBuffer.KernelSize = s_RendererSettings.SSAOKernelSize;
-			s_pData->SSAODataBuffer.Radius = s_RendererSettings.SSAORadius;
-			s_pData->SSAODataBuffer.Bias = s_RendererSettings.SSAOBias;
-			s_pData->SSAODataUniformBuffer->SetData(&s_pData->SSAODataBuffer, sizeof(Renderer3DStorage::SSAODataBuffer));
+			s_pData->LightBuffer.dirLight.direction = glm::normalize(g_pEnv->DirLight.Position);
+			s_pData->LightBuffer.dirLight.color = g_pEnv->DirLight.Color;
+			s_pData->LightBuffer.dirLight.intensity = g_pEnv->DirLight.Intensity;
+			s_pData->LightBuffer.lightCount = 0;
+			
+			for (uint32_t lightIndex = 0; lightIndex < 1; lightIndex++)
+			{
+				if (lightIndex > 1)
+				{
+					LP_CORE_WARN("Too many lights in scene! Not rendering all");
+					break;
+				}
+				//const auto& pointLight = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[lightIndex];
+
+				s_pData->LightBuffer.pointLights[lightIndex].color = glm::vec3(1.f);//pointLight->Color;
+				s_pData->LightBuffer.pointLights[lightIndex].position = glm::vec3(0.f);
+				s_pData->LightBuffer.pointLights[lightIndex].radius = 10.f;
+				s_pData->LightBuffer.pointLights[lightIndex].intensity = 2.f;
+				//s_pData->LightBuffer.pointLights[lightIndex].falloff = 0.1f;
+				//s_pData->LightBuffer.pointLights[lightIndex].farPlane = 20.f;
+
+				s_pData->LightBuffer.lightCount++;
+			}
+
+			s_pData->LightUniformBuffer->SetData(&s_pData->LightBuffer, sizeof(LightBuffer));
 		}
 
 		s_pData->Camera = camera;
@@ -684,37 +682,5 @@ namespace Lamp
 	{
 		s_pData->LineIndexCount = 0;
 		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
-	}
-
-	void Renderer3D::RegenerateSSAOKernel()
-	{
-		s_pData->SSAONoise.clear();
-		s_pData->SSAOKernel.clear();
-
-		std::uniform_real_distribution<GLfloat> randomFloats(0.f, 1.f); // generates random floats between 0.0 and 1.0
-		std::default_random_engine generator;
-
-		for (size_t i = 0; i < s_RendererSettings.SSAOKernelSize; i++)
-		{
-			glm::vec3 sample(
-				randomFloats(generator) * 2.0 - 1.0,
-				randomFloats(generator) * 2.0 - 1.0,
-				randomFloats(generator));
-
-			sample = glm::normalize(sample);
-			sample *= randomFloats(generator);
-
-			float scale = float(i) / s_RendererSettings.SSAOKernelSize;
-
-			scale = Lerp(0.1f, 1.0f, scale * scale);
-			sample *= scale;
-			s_pData->SSAODataBuffer.Samplers[i] = sample;
-		}
-
-		for (uint32_t i = 0; i < 16; i++)
-		{
-			glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.f);
-			s_pData->SSAONoise.push_back(noise);
-		}
 	}
 }
