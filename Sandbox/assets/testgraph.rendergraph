@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-662.369019, 130.082397]
+      position: [-1876.802, 226.865356]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [863.630859, 195.082397]
+      position: [877.197876, 249.865356]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 1046863562
-      position: [-356.369019, 19.0823975]
+      position: [-1160.802, 105.865356]
       type: 0
       name: GBuffer
       clearType: 3
@@ -53,6 +53,12 @@ RenderGraph:
             borderColor: [1, 1, 1, 1]
             multisampled: false
             format: 2
+            filtering: 0
+            wrap: 2
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
             filtering: 0
             wrap: 2
       staticUniforms:
@@ -99,7 +105,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 837209065
-      position: [-4.73919678, 1.10675049]
+      position: [-795.172119, 100.889709]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -135,12 +141,12 @@ RenderGraph:
       dynamicUniforms:
         []
       textures:
-        - texture: ""
+        - texture: Noise
           guuid: 124715147
           bindSlot: 2
           attrId: 1474281837
       framebuffers:
-        - framebuffer: ""
+        - framebuffer: Framebuffer
           guuid: 2097486174
           attrId: 1022168367
           attachments:
@@ -150,7 +156,7 @@ RenderGraph:
               attachmentId: 0
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 1
               attachmentId: 1
       attributes:
         - attribute: Activate
@@ -163,12 +169,12 @@ RenderGraph:
           id: 332556006
           type: 1
           data: 0
-        - attribute: Texture0
+        - attribute: Noise
           attrType: input
           id: 1474281837
           type: 0
           data: 0
-        - attribute: Framebuffer0
+        - attribute: GBuffer
           attrType: input
           id: 1022168367
           type: 1
@@ -183,7 +189,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 838240849
-      position: [-304.739197, 349.10675]
+      position: [-1122.17212, 419.889709]
       type: 2
       path: ""
       usingInternal: true
@@ -195,7 +201,7 @@ RenderGraph:
           type: 0
     - Node: ""
       id: 1421352711
-      position: [459.260803, 14.1067505]
+      position: [35.8277588, 25.8897095]
       type: 0
       name: Lighting
       clearType: 3
@@ -278,7 +284,7 @@ RenderGraph:
       textures:
         []
       framebuffers:
-        - framebuffer: ""
+        - framebuffer: GBuffer
           guuid: 1275132041
           attrId: 1237945671
           attachments:
@@ -288,35 +294,43 @@ RenderGraph:
               attachmentId: 0
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 1
               attachmentId: 1
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 2
               attachmentId: 2
-        - framebuffer: ""
+        - framebuffer: Skybox
           guuid: 1275166071
           attrId: 1689721758
           attachments:
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 4
               attachmentId: 0
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 5
               attachmentId: 1
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 6
               attachmentId: 2
-        - framebuffer: ""
+        - framebuffer: SSAO
           guuid: 1522562144
           attrId: 987286530
           attachments:
             - attachment: ""
               textureType: 0
-              bindId: 0
+              bindId: 7
+              attachmentId: 0
+        - framebuffer: ShadowMap
+          guuid: 1656748159
+          attrId: 1815491014
+          attachments:
+            - attachment: ""
+              textureType: 1
+              bindId: 3
               attachmentId: 0
       attributes:
         - attribute: Activate
@@ -354,21 +368,26 @@ RenderGraph:
           id: 1322866439
           type: 2
           data: 1934387654
-        - attribute: Framebuffer0
+        - attribute: Skybox
           attrType: input
           id: 1689721758
           type: 1
           data: 1275166071
-        - attribute: Framebuffer1
+        - attribute: GBuffer
           attrType: input
           id: 1237945671
           type: 1
           data: 1275132041
-        - attribute: Framebuffer2
+        - attribute: SSAO
           attrType: input
           id: 987286530
           type: 1
           data: 1522562144
+        - attribute: ShadowMap
+          attrType: input
+          id: 1815491014
+          type: 1
+          data: 1656748159
         - attribute: Framebuffer
           attrType: output
           id: 1606833392
@@ -379,7 +398,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1933251594
-      position: [-42.2939606, 489.302124]
+      position: [60.2730713, 632.085083]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -387,7 +406,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -5.06294716e-23, 2.11596068e-43]
+      clearColor: [1, 1, -3.90381629e-14, 3.09686961e-43]
       attachments:
         {}
       attributes:
@@ -397,7 +416,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1873527671
-      position: [272.260803, -318.89325]
+      position: [-129.172119, -308.110291]
       type: 3
       uniformType: 3
       dataName: Directional light direction
@@ -408,7 +427,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 814785978
-      position: [10.2608032, -316.89325]
+      position: [-391.172119, -306.110291]
       type: 3
       uniformType: 3
       dataName: Directional light color
@@ -419,7 +438,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 883234324
-      position: [14.2608032, -455.89325]
+      position: [-387.172119, -445.11026]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -430,7 +449,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 52240155
-      position: [266.509583, -454.81189]
+      position: [-134.92334, -444.028961]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -441,7 +460,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1611459607
-      position: [7.26080322, -198.89325]
+      position: [-394.172119, -188.110291]
       type: 3
       uniformType: 1
       dataName: Directional light intensity
@@ -450,5 +469,352 @@ RenderGraph:
           attrType: output
           id: 793854501
           type: 2
+    - Node: ""
+      id: 1341430769
+      position: [-461.723755, 100.189148]
+      type: 0
+      name: SSAOBlur
+      clearType: 1
+      drawType: 1
+      cullFace: 1
+      renderShader: SSAOBlur
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [0.223255813, 0.223253578, 0.223253578, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 6
+            filtering: 0
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_SSAO
+          guuid: 1717590878
+          type: 0
+          data: 0
+      dynamicUniforms:
+        []
+      textures:
+        []
+      framebuffers:
+        - framebuffer: Framebuffer
+          guuid: 1932219957
+          attrId: 151534469
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 0
+              attachmentId: 0
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 488427421
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 139067356
+          type: 1
+          data: 0
+        - attribute: SSAOBuffer
+          attrType: input
+          id: 151534469
+          type: 1
+          data: 1932219957
+        - attribute: Framebuffer
+          attrType: output
+          id: 1162015356
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 1372750882
+          type: 3
+    - Node: ""
+      id: 431641862
+      position: [-1585.70032, 93.3305664]
+      type: 0
+      name: DirectionalShadow
+      clearType: 3
+      drawType: 4
+      cullFace: 0
+      renderShader: dirShadow
+      targetFramebuffer:
+        useViewportSize: false
+        width: 8128
+        height: 8128
+        samples: 1
+        clearColor: [0.316279054, 0.316275895, 0.316275895, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 1
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_Model
+          guuid: 1441953351
+          type: 9
+          data: 0
+      dynamicUniforms:
+        []
+      textures:
+        []
+      framebuffers:
+        []
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 214405290
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 620976199
+          type: 1
+          data: 0
+        - attribute: Framebuffer
+          attrType: output
+          id: 402287404
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 903482473
+          type: 3
+    - Node: ""
+      id: 1135779668
+      position: [489.795044, 54.2726135]
+      type: 0
+      name: Forward
+      clearType: 0
+      drawType: 3
+      cullFace: 1
+      renderShader: ""
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 1
+            filtering: 0
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_Model
+          guuid: 634094746
+          type: 9
+          data: 0
+        - staticUniform: u_IrradianceMap
+          guuid: 707516026
+          type: 0
+          data: 0
+        - staticUniform: u_PrefilterMap
+          guuid: 1032611365
+          type: 0
+          data: 0
+        - staticUniform: u_BRDFLUT
+          guuid: 1280631225
+          type: 0
+          data: 0
+      dynamicUniforms:
+        - dynamicUniform: u_DirectionalLight.intensity
+          guuid: 123593535
+          type: 0
+          attrId: 130582662
+        - dynamicUniform: u_Exposure
+          guuid: 898952875
+          type: 0
+          attrId: 1099780337
+        - dynamicUniform: u_Gamma
+          guuid: 1175741790
+          type: 0
+          attrId: 712186694
+        - dynamicUniform: u_DirectionalLight.direction
+          guuid: 1541687492
+          type: 0
+          attrId: 1713593380
+        - dynamicUniform: u_DirectionalLight.color
+          guuid: 1969145618
+          type: 0
+          attrId: 972166958
+      textures:
+        []
+      framebuffers:
+        - framebuffer: Skybox
+          guuid: 1330114969
+          attrId: 396907601
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 0
+              attachmentId: 0
+            - attachment: ""
+              textureType: 0
+              bindId: 1
+              attachmentId: 0
+            - attachment: ""
+              textureType: 0
+              bindId: 2
+              attachmentId: 0
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 882992706
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 174196705
+          type: 1
+          data: 1
+        - attribute: u_Gamma
+          attrType: input
+          id: 712186694
+          type: 2
+          data: 1175741790
+        - attribute: u_DirectionalLight.color
+          attrType: input
+          id: 972166958
+          type: 2
+          data: 1969145618
+        - attribute: u_Exposure
+          attrType: input
+          id: 1099780337
+          type: 2
+          data: 898952875
+        - attribute: u_DirectionalLight.direction
+          attrType: input
+          id: 1713593380
+          type: 2
+          data: 1541687492
+        - attribute: u_DirectionalLight.intensity
+          attrType: input
+          id: 130582662
+          type: 2
+          data: 123593535
+        - attribute: Skybox
+          attrType: input
+          id: 396907601
+          type: 1
+          data: 1330114969
+        - attribute: Framebuffer
+          attrType: output
+          id: 676172124
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 2001405773
+          type: 3
   Links:
-    []
+    - Link: ""
+      id: 2030302768
+      from: 1819191468
+      to: 802435701
+    - Link: ""
+      id: 1683728965
+      from: 1455822627
+      to: 1474281837
+    - Link: ""
+      id: 736902216
+      from: 1761627692
+      to: 1022168367
+    - Link: ""
+      id: 1172918619
+      from: 1761627692
+      to: 1237945671
+    - Link: ""
+      id: 2023883247
+      from: 876767755
+      to: 1689721758
+    - Link: ""
+      id: 984262810
+      from: 1020323070
+      to: 1808364157
+    - Link: ""
+      id: 452958232
+      from: 1188824946
+      to: 1809783801
+    - Link: ""
+      id: 1425765818
+      from: 1498765526
+      to: 848059492
+    - Link: ""
+      id: 111410120
+      from: 2110235949
+      to: 2125685938
+    - Link: ""
+      id: 355824429
+      from: 793854501
+      to: 1322866439
+    - Link: ""
+      id: 1629687435
+      from: 143430860
+      to: 488427421
+    - Link: ""
+      id: 1234611718
+      from: 2144711175
+      to: 151534469
+    - Link: ""
+      id: 1260226365
+      from: 1372750882
+      to: 308712454
+    - Link: ""
+      id: 27182158
+      from: 1162015356
+      to: 987286530
+    - Link: ""
+      id: 43714976
+      from: 352811382
+      to: 214405290
+    - Link: ""
+      id: 861775453
+      from: 903482473
+      to: 1751134696
+    - Link: ""
+      id: 1169050247
+      from: 402287404
+      to: 1815491014
+    - Link: ""
+      id: 944828089
+      from: 1606833392
+      to: 174196705
+    - Link: ""
+      id: 1245466345
+      from: 1020323070
+      to: 1099780337
+    - Link: ""
+      id: 1751445092
+      from: 1188824946
+      to: 712186694
+    - Link: ""
+      id: 1195969910
+      from: 2110235949
+      to: 972166958
+    - Link: ""
+      id: 2128454755
+      from: 1498765526
+      to: 1713593380
+    - Link: ""
+      id: 607575570
+      from: 793854501
+      to: 130582662
+    - Link: ""
+      id: 1232871736
+      from: 876767755
+      to: 396907601
+    - Link: ""
+      id: 501767790
+      from: 1255938032
+      to: 882992706
+    - Link: ""
+      id: 2075454787
+      from: 2001405773
+      to: 1978010946

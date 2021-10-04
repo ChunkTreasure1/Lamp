@@ -12,6 +12,8 @@ namespace Sandbox3D
 
 		void OnImGuiRender();
 
+		bool& GetIsOpen() { return m_isOpen; }
+
 	private:
 		bool m_isOpen = true;
 		std::filesystem::path m_currentDirectory;

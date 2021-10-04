@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "UIUtility.h"
 
+#include <imgui_stdlib.h>
+
 void UI::ImageText(uint32_t texId, const std::string& text)
 {
 	ImVec2 size = ImGui::CalcTextSize(text.c_str());
@@ -16,3 +18,10 @@ bool UI::ImageTreeNodeEx(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags 
 	ImGui::SameLine();
 	return ImGui::TreeNodeEx(ptr_id, flags, fmt);
 }
+
+bool UI::InputTextOnSameline(std::string& string, const std::string& id)
+{
+	ImGui::SameLine();
+	return ImGui::InputText(id.c_str(), &string);
+}
+

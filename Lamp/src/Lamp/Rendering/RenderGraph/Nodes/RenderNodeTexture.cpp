@@ -41,6 +41,8 @@ namespace Lamp
 
 	void RenderNodeTexture::DrawNode()
 	{
+		LP_PROFILE_FUNCTION();
+
 		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(62, 189, 100, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(100, 181, 124, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(100, 181, 124, 255));

@@ -7,8 +7,7 @@ namespace Lamp
 	struct RenderNodePass : public RenderNode
 	{
 		RenderNodePass()
-		{
-		}
+		{}
 
 		virtual ~RenderNodePass() override {}
 
@@ -25,9 +24,12 @@ namespace Lamp
 
 	private:
 		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
+		void SetAttributeName(const std::string& name, GraphUUID id);
+		bool IsAttributeLinked(Ref<RenderAttribute> attr);
 
 	private:
 		bool m_UseViewportSize = false;
 		std::vector<const char*> m_Shaders;
+		Ref<RenderInputAttribute> m_TargetBufferAttribute;
 	};
 }

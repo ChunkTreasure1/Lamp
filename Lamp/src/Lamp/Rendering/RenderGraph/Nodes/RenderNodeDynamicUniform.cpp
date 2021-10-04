@@ -45,6 +45,7 @@ namespace Lamp
 
 	void RenderNodeDynamicUniform::DrawNode()
 	{
+		LP_PROFILE_FUNCTION();
 		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(153, 64, 173, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(159, 94, 173, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(159, 94, 173, 255));

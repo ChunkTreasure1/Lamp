@@ -22,6 +22,11 @@ namespace Sandbox3D
 
 	void AssetManagerPanel::OnImGuiRender()
 	{
+		if (!m_isOpen)
+		{
+			return;
+		}
+
 		LP_PROFILE_FUNCTION();
 		ImGui::Begin("Asset Browser", &m_isOpen);
 

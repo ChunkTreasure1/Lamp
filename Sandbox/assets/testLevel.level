@@ -166,8 +166,8 @@ level:
       active: true
   LevelEnvironment:
     globalAmbient: [9.99999997e-07, 9.99999997e-07, 9.99999997e-07]
-    cameraPosition: [-11.8630762, 18.0254116, 12.6981897]
-    cameraRotation: [0.633243561, 0.193514869, 0.730344057, -0.167786196]
+    cameraPosition: [-16.1848984, 16.684515, 15.6135569]
+    cameraRotation: [0.680726826, -0.305102736, -0.547262669, -0.379508823]
     cameraFOV: 60
     dirLightPos: [50, 50, 65]
     dirLightColor: [1, 1, 1]

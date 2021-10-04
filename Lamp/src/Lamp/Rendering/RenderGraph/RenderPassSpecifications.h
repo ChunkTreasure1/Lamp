@@ -39,12 +39,13 @@ namespace Lamp
 
 	struct PassTextureSpecification
 	{
-		PassTextureSpecification(Ref<Texture2D> aTexture = nullptr, uint32_t aBindSlot = 0)
-			: texture(aTexture), bindSlot(aBindSlot)
+		PassTextureSpecification(Ref<Texture2D> aTexture = nullptr, uint32_t aBindSlot = 0, const std::string& aName = "Texture")
+			: texture(aTexture), bindSlot(aBindSlot), name(aName)
 		{}
 
 		Ref<Texture2D> texture;
 		uint32_t bindSlot;
+		std::string name;
 	};
 
 	struct PassFramebufferAttachmentSpec
@@ -61,12 +62,13 @@ namespace Lamp
 
 	struct PassFramebufferSpecification
 	{
-		PassFramebufferSpecification(Ref<Framebuffer> aFramebuffer = nullptr, std::vector<PassFramebufferAttachmentSpec> aAttachments = std::vector<PassFramebufferAttachmentSpec>())
-			: framebuffer(aFramebuffer), attachments(aAttachments)
+		PassFramebufferSpecification(Ref<Framebuffer> aFramebuffer = nullptr, std::vector<PassFramebufferAttachmentSpec> aAttachments = std::vector<PassFramebufferAttachmentSpec>(), const std::string& aName = "Framebuffer")
+			: framebuffer(aFramebuffer), attachments(aAttachments), name(aName)
 		{}
 
 		Ref<Framebuffer> framebuffer;
 		std::vector<PassFramebufferAttachmentSpec> attachments;
+		std::string name;
 	};
 
 	struct PassFramebufferCommandSpecification
@@ -75,5 +77,6 @@ namespace Lamp
 		Ref<Framebuffer> secondary;
 
 		FramebufferCommand command;
+		std::string name;
 	};
 }

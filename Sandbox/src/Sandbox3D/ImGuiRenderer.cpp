@@ -1061,6 +1061,7 @@ namespace Sandbox3D
 				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
+				ImGui::MenuItem("Asset Manager", NULL, &m_assetManager.GetIsOpen());
 
 				for (auto pWindow : m_pWindows)
 				{

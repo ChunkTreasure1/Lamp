@@ -33,5 +33,8 @@ public:
 
 	static void ImageText(uint32_t texId, const std::string& text);
 	static bool ImageTreeNodeEx(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...);
+	static bool InputTextOnSameline(std::string& string, const std::string& id);
 
+private:
+	UI() = delete;
 };

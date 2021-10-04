@@ -444,6 +444,13 @@ namespace Lamp
 				for (const auto& framebufferPair : pass->framebuffers)
 				{
 					const auto& spec = framebufferPair.second.first;
+
+					if (spec.framebuffer == nullptr)
+					{
+						LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
+						continue;
+					}
+
 					for (const auto& attachment : spec.attachments)
 					{
 						switch (attachment.type)
@@ -593,6 +600,13 @@ namespace Lamp
 		for (const auto& framebufferPair : pass->framebuffers)
 		{
 			const auto& spec = framebufferPair.second.first;
+
+			if (spec.framebuffer == nullptr)
+			{
+				LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
+				continue;
+			}
+
 			for (const auto& attachment : spec.attachments)
 			{
 				switch (attachment.type)
