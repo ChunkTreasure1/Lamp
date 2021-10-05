@@ -11,6 +11,7 @@
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodePass.h"
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeStart.h"
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h"
+#include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeCompute.h"
 #include "ResourceCache.h"
 
 namespace Lamp
@@ -159,6 +160,17 @@ namespace Lamp
 
 					specification.nodes.push_back(node);
 					specification.endNode = node;
+					break;
+				}
+
+				case RenderNodeType::Compute:
+				{
+					Ref<RenderNodeCompute> node = CreateRef<RenderNodeCompute>();
+					node->Initialize();
+					node->Deserialize(entry);
+
+					specification.nodes.push_back(node);
+
 					break;
 				}
 

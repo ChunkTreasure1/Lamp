@@ -1,5 +1,5 @@
 #ShaderSpec
-Name: dirShadow
+Name: depthPass
 TextureCount: 0
 TextureNames
 {
@@ -25,7 +25,7 @@ uniform mat4 u_Model;
 
 void main()
 {
-	gl_Position = u_ShadowVP * u_Model * vec4(a_Position, 1.0);
+	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
 }
 
 #type fragment

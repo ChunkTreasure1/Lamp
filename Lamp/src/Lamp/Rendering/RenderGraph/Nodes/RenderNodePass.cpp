@@ -5,6 +5,8 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "RenderNodeEnd.h"
+#include "RenderNodeCompute.h"
+
 #include "Lamp/Utility/StandardUtilities.h"
 #include "Lamp/Utility/UIUtility.h"
 
@@ -117,6 +119,12 @@ namespace Lamp
 							}
 						}
 					}
+
+					if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+					{
+						computeNode->framebuffer = renderPass->GetSpecification().TargetFramebuffer;
+					}
+
 					break;
 				}
 
@@ -763,6 +771,15 @@ namespace Lamp
 			switch (link->pInput->pNode->GetNodeType())
 			{
 				case RenderNodeType::Pass:
+				{
+					if (link->pInput->type == RenderAttributeType::Pass)
+					{
+						link->pInput->pNode->Activate(value);
+					}
+					break;
+				}
+
+				case RenderNodeType::Compute:
 				{
 					if (link->pInput->type == RenderAttributeType::Pass)
 					{

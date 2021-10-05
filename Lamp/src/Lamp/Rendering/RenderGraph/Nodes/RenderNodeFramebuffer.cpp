@@ -2,6 +2,7 @@
 #include "RenderNodeFramebuffer.h"
 
 #include "RenderNodePass.h"
+#include "RenderNodeCompute.h"
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 
@@ -38,6 +39,10 @@ namespace Lamp
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
 				passNode->renderPass->GetSpecification().framebuffers[id].first.framebuffer = framebuffer;
+			}
+			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+			{
+				computeNode->framebuffer = framebuffer;
 			}
 		}
 	}

@@ -33,7 +33,8 @@ namespace Lamp
 	{
 		VertexShader = BIT(1),
 		FragmentShader = BIT(2),
-		GeometryShader = BIT(3)
+		GeometryShader = BIT(3),
+		ComputeShader = BIT(4)
 	};
 
 	struct ShaderSpec

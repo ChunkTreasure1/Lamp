@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Rendering/UniformBuffer.h"
+#include "Lamp/Rendering/Buffers/UniformBuffer.h"
 
 namespace Lamp
 {

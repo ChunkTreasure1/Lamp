@@ -303,6 +303,7 @@ namespace Sandbox3D
 		}
 
 		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
+		Renderer3D::GetSettings().BufferSize = { width, height };
 
 		return false;
 	}

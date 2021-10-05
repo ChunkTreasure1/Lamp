@@ -7,6 +7,7 @@
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeDynamicUniform.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeStart.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeCompute.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
 
@@ -218,6 +219,13 @@ namespace Sandbox3D
 				node->Initialize();
 				m_CurrentlyOpenGraph->GetSpecification().endNode = node;
 			}
+		}
+
+		if (ImGui::Button("Create Compute") && m_CurrentlyOpenGraph)
+		{
+			Ref<RenderNodeCompute> node = CreateRef<RenderNodeCompute>();
+			m_CurrentlyOpenGraph->AddNode(node);
+			node->Initialize();
 		}
 
 		if (ImGui::Button("Save") && m_CurrentlyOpenGraph)

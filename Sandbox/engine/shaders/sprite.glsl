@@ -19,8 +19,7 @@ layout(std140, binding = 0) uniform Main
 	mat4 u_View;
 	mat4 u_Projection;
 	mat4 u_ShadowVP;
-	vec3 u_CameraPosition;
-	float padding;
+	vec4 u_CameraPosition;
 };
 
 out vec2 v_TexCoords;

@@ -9,11 +9,12 @@
 #include "Lamp/Rendering/Texture2D/IBLBuffer.h"
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-#include "UniformBuffer.h"
 #include "Lamp/Level/Level.h"
 #include "Texture2D/IBLBuffer.h"
 #include "RenderGraph/Nodes/DynamicUniformRegistry.h"
-#include "RenderBuffer.h"
+
+#include "Buffers/UniformBuffer.h"
+#include "Buffers/ShaderStorageBuffer.h"
 #include "UniformBuffers.h"
 
 #include <random>
@@ -37,6 +38,8 @@ namespace Lamp
 		static const uint32_t MaxLines = 10000;
 		static const uint32_t MaxLineVerts = MaxLines * 2;
 		static const uint32_t MaxLineIndices = MaxLines * 2;
+
+		static const uint32_t MaxLights = 1024;
 
 		/////Skybox//////
 		Ref<Shader> SkyboxShader;
@@ -90,13 +93,21 @@ namespace Lamp
 		CommonBuffer CommonBuffer;
 		Ref<UniformBuffer> CommonUniformBuffer;
 
-		LightBuffer LightBuffer;
-		Ref<UniformBuffer> LightUniformBuffer;
+		DirectionalLightBuffer DirectionalLightDataBuffer;
+		Ref<UniformBuffer> DirectionalLightUniformBuffer;
 		////////////////////////
+
+		/////Forward plus/////
+		uint32_t ForwardTileCount = 1;
+
+		Ref<ShaderStorageBuffer> VisibleLightsBuffer;
+
+		Ref<ShaderStorageBuffer> PointLightStorageBuffer;
+		//////////////////////
 	};
 
-	static Renderer3DStorage* s_pData;
-	RendererSettings Renderer3D::s_RendererSettings;
+	static Renderer3DStorage* s_pRenderData;
+	RendererSettings* Renderer3D::s_RendererSettings;
 	RenderBuffer Renderer3D::s_RenderBuffer;
 
 	static float Lerp(float a, float b, float f)
@@ -107,7 +118,8 @@ namespace Lamp
 	void Renderer3D::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
-		s_pData = new Renderer3DStorage();
+		s_pRenderData = new Renderer3DStorage();
+		s_RendererSettings = new RendererSettings();
 
 		/////Quad/////
 		{
@@ -125,7 +137,7 @@ namespace Lamp
 				1, 3, 2 //(bottom right - bottom left - top left)
 			};
 
-			s_pData->QuadVertexArray = VertexArray::Create();
+			s_pRenderData->QuadVertexArray = VertexArray::Create();
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(Vertex) * quadVertices.size()));
 			pBuffer->SetBufferLayout
 			({
@@ -135,27 +147,27 @@ namespace Lamp
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
 			});
-			s_pData->QuadVertexArray->AddVertexBuffer(pBuffer);
+			s_pRenderData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
-			s_pData->QuadVertexArray->SetIndexBuffer(indexBuffer);
+			s_pRenderData->QuadVertexArray->SetIndexBuffer(indexBuffer);
 		}
 		//////////////
 
 		///////Line///////
 		{
-			s_pData->LineVertexArray = VertexArray::Create();
-			s_pData->LineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
-			s_pData->LineVertexBuffer->SetBufferLayout
+			s_pRenderData->LineVertexArray = VertexArray::Create();
+			s_pRenderData->LineVertexBuffer = VertexBuffer::Create(s_pRenderData->MaxLineVerts * sizeof(LineVertex));
+			s_pRenderData->LineVertexBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float4, "a_Color" }
 			});
-			s_pData->LineVertexArray->AddVertexBuffer(s_pData->LineVertexBuffer);
-			s_pData->LineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
+			s_pRenderData->LineVertexArray->AddVertexBuffer(s_pRenderData->LineVertexBuffer);
+			s_pRenderData->LineVertexBufferBase = new LineVertex[s_pRenderData->MaxLineVerts];
 
-			uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
+			uint32_t* pLineIndices = new uint32_t[s_pRenderData->MaxLineIndices];
 			uint32_t offset = 0;
-			for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
+			for (uint32_t i = 0; i < s_pRenderData->MaxLineIndices; i += 2)
 			{
 				pLineIndices[i + 0] = offset + 0;
 				pLineIndices[i + 1] = offset + 1;
@@ -163,16 +175,16 @@ namespace Lamp
 				offset += 2;
 			}
 
-			Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
-			s_pData->LineVertexArray->SetIndexBuffer(pLineIB);
+			Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pRenderData->MaxLineIndices);
+			s_pRenderData->LineVertexArray->SetIndexBuffer(pLineIB);
 
 			delete[] pLineIndices;
 		}
 		//////////////////
 
 		/////Shadows/////
-		s_pData->DirShadowShader = ShaderLibrary::GetShader("dirShadow");
-		s_pData->PointShadowShader = ShaderLibrary::GetShader("pointShadow");
+		s_pRenderData->DirShadowShader = ShaderLibrary::GetShader("dirShadow");
+		s_pRenderData->PointShadowShader = ShaderLibrary::GetShader("pointShadow");
 		/////////////////
 
 		/////Skybox/////
@@ -199,25 +211,34 @@ namespace Lamp
 				4, 5, 0, 0, 5, 1
 			};
 
-			s_pData->SkyboxVertexArray = VertexArray::Create();
+			s_pRenderData->SkyboxVertexArray = VertexArray::Create();
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" }
 				});
-			s_pData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
+			s_pRenderData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
 
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-			s_pData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
-			s_pData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
+			s_pRenderData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
+			s_pRenderData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
 
-			s_RendererSettings.InternalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
+			s_RendererSettings->InternalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
 		}
 		////////////////
 
 		/////Uniform Buffer/////
-		s_pData->CommonUniformBuffer = UniformBuffer::Create(sizeof(CommonBuffer), 0);
-		s_pData->LightUniformBuffer = UniformBuffer::Create(sizeof(LightBuffer), 1);
+		s_pRenderData->CommonUniformBuffer = UniformBuffer::Create(sizeof(CommonBuffer), 0);
+		s_pRenderData->DirectionalLightUniformBuffer = UniformBuffer::Create(sizeof(DirectionalLightBuffer), 1);
+		////////////////////////
+
+		/////Storage buffer/////
+		s_pRenderData->PointLightStorageBuffer = ShaderStorageBuffer::Create(s_pRenderData->MaxLights * sizeof(PointLightData), 2);
+
+		s_RendererSettings->ForwardGroupX = (2000 + (2000 % 16)) / 16;
+		s_RendererSettings->ForwardGroupY = (2000 + (2000 % 16)) / 16;
+
+		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3);
 		////////////////////////
 
 		//Setup dynamic uniforms
@@ -227,56 +248,63 @@ namespace Lamp
 		DynamicUniformRegistry::AddUniform("Directional light color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color));
 		DynamicUniformRegistry::AddUniform("Directional light intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity));
 		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&Renderer3D::GetSettings().BufferSize));
+		DynamicUniformRegistry::AddUniform("ForwardTileX", UniformType::Int, RegisterData(&Renderer3D::GetSettings().ForwardGroupX));
 	}
 
 	void Renderer3D::Shutdown()
 	{
 		LP_PROFILE_FUNCTION();
-		delete s_pData;
+		delete s_pRenderData;
+		delete s_RendererSettings;
 	}
 
 	void Renderer3D::Begin(Ref<CameraBase>& camera)
 	{
 		//Main
 		{
-			s_pData->CommonBuffer.CameraPosition = camera->GetPosition();
-			s_pData->CommonBuffer.Projection = camera->GetProjectionMatrix();
-			s_pData->CommonBuffer.View = camera->GetViewMatrix();
-			s_pData->CommonBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
-			s_pData->CommonUniformBuffer->SetData(&s_pData->CommonBuffer, sizeof(CommonBuffer));
+			s_pRenderData->CommonBuffer.CameraPosition = glm::vec4(camera->GetPosition(), 0.f);
+			s_pRenderData->CommonBuffer.Projection = camera->GetProjectionMatrix();
+			s_pRenderData->CommonBuffer.View = camera->GetViewMatrix();
+			s_pRenderData->CommonBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
+			s_pRenderData->CommonUniformBuffer->SetData(&s_pRenderData->CommonBuffer, sizeof(CommonBuffer));
 		}
 
-		//Lights
+		//Directional light
 		{
-			s_pData->LightBuffer.dirLight.direction = glm::normalize(g_pEnv->DirLight.Position);
-			s_pData->LightBuffer.dirLight.color = g_pEnv->DirLight.Color;
-			s_pData->LightBuffer.dirLight.intensity = g_pEnv->DirLight.Intensity;
-			s_pData->LightBuffer.lightCount = 0;
-			
-			for (uint32_t lightIndex = 0; lightIndex < 1; lightIndex++)
+			s_pRenderData->DirectionalLightDataBuffer.dirLight.direction = glm::vec4(glm::normalize(g_pEnv->DirLight.Position), 0.f);
+			s_pRenderData->DirectionalLightDataBuffer.dirLight.color = glm::vec4(g_pEnv->DirLight.Color, 0.f);
+			s_pRenderData->DirectionalLightDataBuffer.dirLight.intensity = g_pEnv->DirLight.Intensity;
+
+			s_pRenderData->DirectionalLightUniformBuffer->SetData(&s_pRenderData->DirectionalLightDataBuffer, sizeof(DirectionalLightBuffer));
+		}
+
+		//Point light
+		{
+			PointLightData* buffer = (PointLightData*)s_pRenderData->PointLightStorageBuffer->Map();
+			s_RendererSettings->LightCount = 0;
+
+			for (uint32_t i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
 			{
-				if (lightIndex > 1)
-				{
-					LP_CORE_WARN("Too many lights in scene! Not rendering all");
-					break;
-				}
-				//const auto& pointLight = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[lightIndex];
+				const auto& light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i];
 
-				s_pData->LightBuffer.pointLights[lightIndex].color = glm::vec3(1.f);//pointLight->Color;
-				s_pData->LightBuffer.pointLights[lightIndex].position = glm::vec3(0.f);
-				s_pData->LightBuffer.pointLights[lightIndex].radius = 10.f;
-				s_pData->LightBuffer.pointLights[lightIndex].intensity = 2.f;
-				//s_pData->LightBuffer.pointLights[lightIndex].falloff = 0.1f;
-				//s_pData->LightBuffer.pointLights[lightIndex].farPlane = 20.f;
+				buffer[i].position = glm::vec4(light->ShadowBuffer->GetPosition(), 0.f);
+				buffer[i].color = glm::vec4(light->Color, 0.f);
+				buffer[i].intensity = light->Intensity;
+				buffer[i].falloff = light->Falloff;
+				buffer[i].farPlane = light->FarPlane;
+				buffer[i].radius = light->Radius;
 
-				s_pData->LightBuffer.lightCount++;
+				s_RendererSettings->LightCount++;
 			}
 
-			s_pData->LightUniformBuffer->SetData(&s_pData->LightBuffer, sizeof(LightBuffer));
+			s_pRenderData->PointLightStorageBuffer->Unmap();
 		}
 
-		s_pData->Camera = camera;
-		s_RendererSettings.BufferSize = s_pData->LastViewportSize;
+		s_pRenderData->Camera = camera;
+
+		s_RendererSettings->ForwardGroupX = ((uint32_t)s_pRenderData->LastViewportSize.x + ((uint32_t)s_pRenderData->LastViewportSize.x % 16)) / 16;
+		s_RendererSettings->ForwardGroupY = ((uint32_t)s_pRenderData->LastViewportSize.y + ((uint32_t)s_pRenderData->LastViewportSize.y % 16)) / 16;
+		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
 
 		ResetBatchData();
 	}
@@ -284,8 +312,8 @@ namespace Lamp
 	void Renderer3D::End()
 	{
 		LP_PROFILE_FUNCTION();
-		uint32_t dataSize = (uint8_t*)s_pData->LineVertexBufferPtr - (uint8_t*)s_pData->LineVertexBufferBase;
-		s_pData->LineVertexBuffer->SetData(s_pData->LineVertexBufferBase, dataSize);
+		uint32_t dataSize = (uint8_t*)s_pRenderData->LineVertexBufferPtr - (uint8_t*)s_pRenderData->LineVertexBufferBase;
+		s_pRenderData->LineVertexBuffer->SetData(s_pRenderData->LineVertexBufferBase, dataSize);
 
 		s_RenderBuffer.drawCalls.clear();
 		Flush();
@@ -293,47 +321,46 @@ namespace Lamp
 
 	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
 	{
-		s_pData->CurrentRenderPass = &passSpec;
-		s_pData->LastViewportSize = { s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Width, s_pData->CurrentRenderPass->TargetFramebuffer->GetSpecification().Height };
+		s_pRenderData->CurrentRenderPass = &passSpec;
 	}
 
 	void Renderer3D::EndPass()
 	{
-		s_pData->CurrentRenderPass = nullptr;
+		s_pRenderData->CurrentRenderPass = nullptr;
 	}
 
 	void Renderer3D::Flush()
 	{
 		LP_PROFILE_FUNCTION();
-		s_pData->LineMaterial.GetShader()->Bind();
+		s_pRenderData->LineMaterial.GetShader()->Bind();
 
-		RenderCommand::DrawIndexedLines(s_pData->LineVertexArray, s_pData->LineIndexCount);
+		RenderCommand::DrawIndexedLines(s_pRenderData->LineVertexArray, s_pRenderData->LineIndexCount);
 	}
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& vertexData, Ref<Material> material, size_t objectId)
 	{
-		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+		LP_ASSERT(s_pRenderData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
-		switch (s_pData->CurrentRenderPass->type)
+		switch (s_pRenderData->CurrentRenderPass->type)
 		{
 			case PassType::PointShadow:
 			{
 				LP_PROFILE_SCOPE("PointShadowPass");
 				RenderCommand::SetCullFace(CullFace::Back);
-				s_pData->PointShadowShader->Bind();
+				s_pRenderData->PointShadowShader->Bind();
 
-				uint32_t j = s_pData->CurrentRenderPass->LightIndex;
+				uint32_t j = s_pRenderData->CurrentRenderPass->LightIndex;
 				const PointLight* light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[j];
 
 				for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
 				{
-					s_pData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
+					s_pRenderData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
 				}
 
-				s_pData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-				s_pData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-				s_pData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
+				s_pRenderData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
+				s_pRenderData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
+				s_pRenderData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
 
 				vertexData->Bind();
 				RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
@@ -345,7 +372,7 @@ namespace Lamp
 			{
 				LP_PROFILE_SCOPE("GeometryPass");
 
-				const auto& pass = s_pData->CurrentRenderPass;
+				const auto& pass = s_pRenderData->CurrentRenderPass;
 
 				RenderCommand::SetCullFace(pass->cullFace);
 
@@ -486,34 +513,34 @@ namespace Lamp
 
 	void Renderer3D::DrawSkybox()
 	{
-		LP_ASSERT(s_pData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+		LP_ASSERT(s_pRenderData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		RenderCommand::SetCullFace(CullFace::Back);
 
 		LP_PROFILE_FUNCTION();
-		s_pData->SkyboxShader->Bind();
-		s_pData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
+		s_pRenderData->SkyboxShader->Bind();
+		s_pRenderData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
 
-		s_RendererSettings.InternalFramebuffers["Skybox"]->Bind();
+		s_RendererSettings->InternalFramebuffers["Skybox"]->Bind();
 
 		DrawCube();
 	}
 
 	void Renderer3D::DrawCube()
 	{
-		s_pData->SkyboxVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_pData->SkyboxVertexArray, s_pData->SkyboxVertexArray->GetIndexBuffer()->GetCount());
+		s_pRenderData->SkyboxVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pRenderData->SkyboxVertexArray, s_pRenderData->SkyboxVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::DrawQuad()
 	{
-		s_pData->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_pData->QuadVertexArray, s_pData->QuadVertexArray->GetIndexBuffer()->GetCount());
+		s_pRenderData->QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pRenderData->QuadVertexArray, s_pRenderData->QuadVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::RenderQuad()
 	{
-		const auto& pass = s_pData->CurrentRenderPass;
+		const auto& pass = s_pRenderData->CurrentRenderPass;
 		RenderCommand::SetCullFace(pass->cullFace);
 		Ref<Shader> shaderToUse = pass->renderShader; //? pass->renderShader : mat.GetShader();
 
@@ -614,7 +641,7 @@ namespace Lamp
 
 	void Renderer3D::SetEnvironment(const std::string& path)
 	{
-		s_RendererSettings.InternalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
+		s_RendererSettings->InternalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
 	}
 
 	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id)
@@ -637,7 +664,7 @@ namespace Lamp
 		data.transform = transform;
 		data.material = mat;
 		data.id = id;
-		data.data = s_pData->QuadVertexArray;
+		data.data = s_pRenderData->QuadVertexArray;
 
 		s_RenderBuffer.drawCalls.push_back(data);
 	}
@@ -656,20 +683,20 @@ namespace Lamp
 	{
 		glLineWidth(width);
 
-		if (s_pData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
+		if (s_pRenderData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
 		{
 			StartNewBatch();
 		}
 
-		s_pData->LineVertexBufferPtr->Position = posA;
-		s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->LineVertexBufferPtr++;
+		s_pRenderData->LineVertexBufferPtr->Position = posA;
+		s_pRenderData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		s_pRenderData->LineVertexBufferPtr++;
 
-		s_pData->LineVertexBufferPtr->Position = posB;
-		s_pData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->LineVertexBufferPtr++;
+		s_pRenderData->LineVertexBufferPtr->Position = posB;
+		s_pRenderData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
+		s_pRenderData->LineVertexBufferPtr++;
 
-		s_pData->LineIndexCount += 2;
+		s_pRenderData->LineIndexCount += 2;
 	}
 
 	void Renderer3D::StartNewBatch()
@@ -680,7 +707,7 @@ namespace Lamp
 
 	void Renderer3D::ResetBatchData()
 	{
-		s_pData->LineIndexCount = 0;
-		s_pData->LineVertexBufferPtr = s_pData->LineVertexBufferBase;
+		s_pRenderData->LineIndexCount = 0;
+		s_pRenderData->LineVertexBufferPtr = s_pRenderData->LineVertexBufferBase;
 	}
 }

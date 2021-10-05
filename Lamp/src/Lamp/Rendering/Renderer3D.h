@@ -5,7 +5,7 @@
 
 #include "Lamp/Rendering/Vertices/Framebuffer.h"
 #include "Lamp/Core/GlobalEnvironment.h"
-#include "RenderBuffer.h"
+#include "Buffers/RenderBuffer.h"
 
 namespace Lamp
 {	
@@ -18,6 +18,11 @@ namespace Lamp
 		//SSAO
 		int SSAOKernelSize = 64;
 		const int SSAOMaxKernelSize = 64; //Needs to be matched with value in ssao shader
+
+		//Lights
+		int LightCount = 0;
+		uint32_t ForwardGroupX = 1;
+		uint32_t ForwardGroupY = 1;
 
 		float SSAORadius = 0.5f;
 		float SSAOBias = 0.025f;
@@ -72,7 +77,7 @@ namespace Lamp
 		static void RenderQuad();
 
 		static void SetEnvironment(const std::string& path);
-		static RendererSettings& GetSettings() { return s_RendererSettings; }
+		static RendererSettings& GetSettings() { return *s_RendererSettings; }
 
 	private:
 		static void StartNewBatch();
@@ -81,7 +86,7 @@ namespace Lamp
 		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
 
 	private:
-		static RendererSettings s_RendererSettings;
+		static RendererSettings* s_RendererSettings;
 		static RenderBuffer s_RenderBuffer;
 	};
 }

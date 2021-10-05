@@ -2,6 +2,7 @@
 #include "RenderNodeTexture.h"
 
 #include "RenderNodePass.h"
+#include "RenderNodeCompute.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/Utility/SerializeMacros.h"
@@ -35,6 +36,10 @@ namespace Lamp
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
 				passNode->renderPass->GetSpecification().textures[id].first.texture = texture;
+			}
+			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+			{
+				//computeNode->texture = texture;
 			}
 		}
 	}

@@ -40,7 +40,7 @@ level:
       layerId: 0
   entities:
     - entity: Entity
-      position: [7.38819599, 4.5718832, 1.058339]
+      position: [-1.69397044, 4.27135849, 1.058339]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
@@ -87,6 +87,26 @@ level:
             - param: Is Trigger
               type: Bool
               value: false
+        - name: LightComponent
+          params:
+            - param: Intensity
+              type: Float
+              value: 0.0500000007
+            - param: Radius
+              type: Float
+              value: 8
+            - param: Falloff
+              type: Float
+              value: 0
+            - param: Near plane
+              type: Float
+              value: 0.100000001
+            - param: Far plane
+              type: Float
+              value: 100
+            - param: Color
+              type: Color3
+              value: [1, 1, 1]
     - entity: Entity
       position: [0.0732657462, 4.17157841, 9.29640961]
       rotation: [0, 0, 0]
@@ -166,8 +186,8 @@ level:
       active: true
   LevelEnvironment:
     globalAmbient: [9.99999997e-07, 9.99999997e-07, 9.99999997e-07]
-    cameraPosition: [-16.1848984, 16.684515, 15.6135569]
-    cameraRotation: [0.680726826, -0.305102736, -0.547262669, -0.379508823]
+    cameraPosition: [-16.3491707, 15.7569761, 16.8639889]
+    cameraRotation: [0.264794677, 0.349260122, 0.103583857, -0.892844617]
     cameraFOV: 60
     dirLightPos: [50, 50, 65]
     dirLightColor: [1, 1, 1]

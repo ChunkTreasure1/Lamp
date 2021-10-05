@@ -27,8 +27,11 @@ namespace Lamp
 			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->Radius) },
 			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->Falloff) },
 			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->ShadowBuffer->GetNearPlane()) },
+			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->FarPlane) },
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->Color) }
 		});
+
+		g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
 	}
 
 	LightComponent::~LightComponent()

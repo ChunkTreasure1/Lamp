@@ -18,7 +18,8 @@ namespace Lamp
 		DynamicUniform = 3,
 		Start = 4,
 		RenderData = 5,
-		End
+		End = 6,
+		Compute = 7
 	};
 
 	enum class RenderAttributeType : uint32_t

@@ -399,7 +399,7 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h">
@@ -429,7 +429,7 @@
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
@@ -495,7 +495,7 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\UniformBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
@@ -1840,6 +1840,9 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2091,7 +2094,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
@@ -2238,5 +2241,8 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp" />
   </ItemGroup>
 </Project>
