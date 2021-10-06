@@ -145,6 +145,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="engine\shaders\depthPass.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
     <None Include="engine\shaders\ibl\brdfIntegrate.glsl">
       <Filter>engine\shaders\ibl</Filter>
     </None>
@@ -163,19 +166,10 @@
     <None Include="engine\shaders\lineShader.glsl">
       <Filter>engine\shaders</Filter>
     </None>
-    <None Include="engine\shaders\main\deferredShading.glsl">
-      <Filter>engine\shaders\main</Filter>
-    </None>
-    <None Include="engine\shaders\main\gBuffer.glsl">
+    <None Include="engine\shaders\main\lightCulling.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
     <None Include="engine\shaders\main\pbrForward.glsl">
-      <Filter>engine\shaders\main</Filter>
-    </None>
-    <None Include="engine\shaders\main\ssao.glsl">
-      <Filter>engine\shaders\main</Filter>
-    </None>
-    <None Include="engine\shaders\main\ssaoBlur.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
     <None Include="engine\shaders\selection.glsl">

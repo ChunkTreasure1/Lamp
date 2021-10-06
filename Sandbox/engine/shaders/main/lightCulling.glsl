@@ -41,6 +41,7 @@ layout(std430, binding = 2) readonly buffer LightBuffer
 layout(std430, binding = 3) writeonly buffer VisibleLightsBuffer
 {
     LightIndex data[];
+	
 } visibleIndices;
 
 uniform sampler2D u_DepthMap;

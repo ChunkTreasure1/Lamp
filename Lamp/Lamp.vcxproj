@@ -228,7 +228,9 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
@@ -238,7 +240,6 @@
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h" />
@@ -261,7 +262,6 @@
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
@@ -771,6 +771,7 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
@@ -798,7 +799,6 @@
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />

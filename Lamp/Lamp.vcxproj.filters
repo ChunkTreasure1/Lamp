@@ -76,6 +76,9 @@
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\Buffers">
+      <UniqueIdentifier>{2F6A2E8D-1B7A-DA5D-8433-3F7C7062C9F6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Cameras">
       <UniqueIdentifier>{9ECEFFAB-8ADE-AB7C-F397-109BDFC69A15}</UniqueIdentifier>
     </Filter>
@@ -400,7 +403,16 @@
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h">
-      <Filter>src\Lamp\Rendering</Filter>
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
@@ -429,13 +441,13 @@
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h">
@@ -495,7 +507,7 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
@@ -544,6 +556,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
@@ -1839,10 +1854,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2016,6 +2027,12 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClCompile>
@@ -2038,6 +2055,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp">
       <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp">
@@ -2094,9 +2114,6 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
@@ -2122,6 +2139,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
@@ -2241,8 +2261,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp" />
   </ItemGroup>
 </Project>

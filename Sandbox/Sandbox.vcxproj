@@ -181,17 +181,15 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="engine\shaders\depthPass.glsl" />
     <None Include="engine\shaders\ibl\brdfIntegrate.glsl" />
     <None Include="engine\shaders\ibl\convolution.glsl" />
     <None Include="engine\shaders\ibl\eqCube.glsl" />
     <None Include="engine\shaders\ibl\prefilter.glsl" />
     <None Include="engine\shaders\ibl\skybox.glsl" />
     <None Include="engine\shaders\lineShader.glsl" />
-    <None Include="engine\shaders\main\deferredShading.glsl" />
-    <None Include="engine\shaders\main\gBuffer.glsl" />
+    <None Include="engine\shaders\main\lightCulling.glsl" />
     <None Include="engine\shaders\main\pbrForward.glsl" />
-    <None Include="engine\shaders\main\ssao.glsl" />
-    <None Include="engine\shaders\main\ssaoBlur.glsl" />
     <None Include="engine\shaders\selection.glsl" />
     <None Include="engine\shaders\shadows\dirShadow.glsl" />
     <None Include="engine\shaders\shadows\pointShadow.glsl" />
