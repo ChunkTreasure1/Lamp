@@ -97,11 +97,11 @@ namespace Lamp
 
 		struct SSAOUniformBuffer
 		{
+			glm::vec4 Samplers[64];
+
 			int KernelSize;
 			float Radius;
 			float Bias;
-
-			glm::vec3 Samplers[64];
 
 		} SSAODataBuffer;
 		Ref<UniformBuffer> SSAODataUniformBuffer;
@@ -745,7 +745,7 @@ namespace Lamp
 
 			scale = Lerp(0.1f, 1.0f, scale * scale);
 			sample *= scale;
-			s_pData->SSAODataBuffer.Samplers[i] = sample;
+			s_pData->SSAODataBuffer.Samplers[i] = glm::vec4(sample, 0.f);
 		}
 
 		for (uint32_t i = 0; i < 16; i++)

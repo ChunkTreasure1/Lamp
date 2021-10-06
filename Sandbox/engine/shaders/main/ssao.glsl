@@ -30,15 +30,15 @@ layout(std140, binding = 0) uniform Main
 	mat4 u_View;
 	mat4 u_Projection;
 	mat4 u_ShadowVP;
-	vec3 u_CameraPosition;
+	vec4 u_CameraPosition;
 };
 
 layout(std140, binding = 1) uniform SSAO
 {
+	vec4 u_Samples[64];
 	int u_KernelSize;
 	float u_Radius;
 	float u_Bias;
-	vec3 u_Samples[64];
 };
 
 in vec2 v_TexCoords;
@@ -73,7 +73,7 @@ void main()
 	float positionDepth = (u_View * vec4(fragPos, 1.0)).z;
 	for (int i = 0; i < u_KernelSize; i++)
 	{
-		vec4 samplePos = u_View * vec4(fragPos + TBN * u_Samples[i] * u_Radius, 1.0);
+		vec4 samplePos = u_View * vec4(fragPos + TBN * u_Samples[i].xyz * u_Radius, 1.0);
 
 		vec4 offset = u_Projection * samplePos;
 		offset.xyz /= offset.w;

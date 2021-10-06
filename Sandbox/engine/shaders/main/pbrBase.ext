@@ -24,7 +24,7 @@ layout(std140, binding = 0) uniform Main
 	mat4 u_View;
 	mat4 u_Projection;
 	mat4 u_ShadowVP;
-	vec3 u_CameraPosition;
+	vec4 u_CameraPosition;
 };
 
 uniform PointLight u_PointLights[2];
@@ -225,7 +225,7 @@ vec3 ACESTonemap(vec3 color)
 
 vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3 fragPos, vec4 shadowCoord, vec3 N)
 {
-	vec3 V = normalize(u_CameraPosition - fragPos);
+	vec3 V = normalize(u_CameraPosition.xyz - fragPos);
 
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
