@@ -6,11 +6,11 @@
 
 namespace Lamp
 {
-	Ref<ShaderStorageBuffer> ShaderStorageBuffer::Create(uint32_t size, uint32_t binding)
+	Ref<ShaderStorageBuffer> ShaderStorageBuffer::Create(uint32_t size, uint32_t binding, DrawAccess access)
 	{
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShaderStorageBuffer>(size, binding);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShaderStorageBuffer>(size, binding, access);
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported") return nullptr;
 
 			default:

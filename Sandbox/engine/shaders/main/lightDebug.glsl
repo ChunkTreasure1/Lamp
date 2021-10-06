@@ -107,6 +107,6 @@ void main()
 	uint i;
 	for (i = 0; i < 1024 && visibleIndices.data[offset + i].index != -1; i++);
 	
-	float ratio = float(i) / float(20);
+	float ratio = float(i) / float(10);
 	FragColor = vec4(vec3(ratio, ratio, ratio), 1.0);
 }

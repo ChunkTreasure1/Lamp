@@ -91,10 +91,10 @@ level:
           params:
             - param: Intensity
               type: Float
-              value: 0.0500000007
+              value: 21.0499992
             - param: Radius
               type: Float
-              value: 8
+              value: 18
             - param: Falloff
               type: Float
               value: 0
@@ -186,8 +186,8 @@ level:
       active: true
   LevelEnvironment:
     globalAmbient: [9.99999997e-07, 9.99999997e-07, 9.99999997e-07]
-    cameraPosition: [-16.3491707, 15.7569761, 16.8639889]
-    cameraRotation: [0.264794677, 0.349260122, 0.103583857, -0.892844617]
+    cameraPosition: [-15.643445, 14.1278791, 12.4610243]
+    cameraRotation: [0.475916058, 0.477067947, 0.651510954, -0.348487526]
     cameraFOV: 60
     dirLightPos: [50, 50, 65]
     dirLightColor: [1, 1, 1]

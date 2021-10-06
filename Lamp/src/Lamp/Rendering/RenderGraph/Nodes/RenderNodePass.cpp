@@ -745,8 +745,6 @@ namespace Lamp
 
 	void RenderNodePass::Activate(std::any value)
 	{
-		LP_PROFILE_FUNCTION();
-
 		Ref<CameraBase> camera = std::any_cast<Ref<CameraBase>>(value);
 		renderPass->Render(camera);
 

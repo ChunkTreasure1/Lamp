@@ -5,6 +5,12 @@
 
 namespace Lamp
 {
+	enum class DrawAccess
+	{
+		Static,
+		Dynamic
+	};
+
 	class ShaderStorageBuffer
 	{
 	public:
@@ -14,6 +20,6 @@ namespace Lamp
 		virtual void* Map() = 0;
 		virtual void Unmap() = 0;
 
-		static Ref<ShaderStorageBuffer> Create(uint32_t size, uint32_t binding);
+		static Ref<ShaderStorageBuffer> Create(uint32_t size, uint32_t binding, DrawAccess access = DrawAccess::Static);
 	};
 }

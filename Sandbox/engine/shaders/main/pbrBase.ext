@@ -257,7 +257,7 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 	uint index = tileId.y * u_TilesX + tileId.x;
 	
 	uint offset = index * 1024;
-	for(int i = 0; i < 1024 && visibleIndices.data[offset + i].index != -1; ++i)
+	for(int i = 0; i < 500 && visibleIndices.data[offset + i].index != -1; ++i)
 	{
 		uint index = visibleIndices.data[offset + i].index;
 		Lo += CalculatePointLight(lightBuffer.pointLights[index], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);

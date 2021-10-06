@@ -101,7 +101,6 @@ namespace Lamp
 		uint32_t ForwardTileCount = 1;
 
 		Ref<ShaderStorageBuffer> VisibleLightsBuffer;
-
 		Ref<ShaderStorageBuffer> PointLightStorageBuffer;
 		//////////////////////
 	};
@@ -238,7 +237,9 @@ namespace Lamp
 		s_RendererSettings->ForwardGroupX = (2000 + (2000 % 16)) / 16;
 		s_RendererSettings->ForwardGroupY = (2000 + (2000 % 16)) / 16;
 
-		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3);
+		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
+
+		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3, DrawAccess::Static);
 		////////////////////////
 
 		//Setup dynamic uniforms
@@ -302,8 +303,8 @@ namespace Lamp
 
 		s_pRenderData->Camera = camera;
 
-		s_RendererSettings->ForwardGroupX = ((uint32_t)s_pRenderData->LastViewportSize.x + ((uint32_t)s_pRenderData->LastViewportSize.x % 16)) / 16;
-		s_RendererSettings->ForwardGroupY = ((uint32_t)s_pRenderData->LastViewportSize.y + ((uint32_t)s_pRenderData->LastViewportSize.y % 16)) / 16;
+		s_RendererSettings->ForwardGroupX = ((uint32_t)s_RendererSettings->BufferSize.x + ((uint32_t)s_RendererSettings->BufferSize.x % 16)) / 16;
+		s_RendererSettings->ForwardGroupY = ((uint32_t)s_RendererSettings->BufferSize.y + ((uint32_t)s_RendererSettings->BufferSize.y % 16)) / 16;
 		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
 
 		ResetBatchData();
