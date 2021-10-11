@@ -1,4 +1,4 @@
-#include "lppch.h"
+	#include "lppch.h"
 #include "OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
@@ -314,10 +314,7 @@ namespace Lamp
 		{
 			m_ColorAttachmentIDs.resize(m_ColorAttachmentSpecs.size());
 
-			for (int i = 0; i < m_ColorAttachmentSpecs.size(); i++)
-			{
-				Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), (uint32_t)m_ColorAttachmentIDs.size());
-			}
+			Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), (uint32_t)m_ColorAttachmentIDs.size());
 
 			for (size_t i = 0; i < m_ColorAttachmentIDs.size(); i++)
 			{

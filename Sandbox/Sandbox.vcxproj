@@ -189,6 +189,7 @@
     <None Include="engine\shaders\ibl\skybox.glsl" />
     <None Include="engine\shaders\lineShader.glsl" />
     <None Include="engine\shaders\main\lightCulling.glsl" />
+    <None Include="engine\shaders\main\lightDebug.glsl" />
     <None Include="engine\shaders\main\pbrForward.glsl" />
     <None Include="engine\shaders\selection.glsl" />
     <None Include="engine\shaders\shadows\dirShadow.glsl" />

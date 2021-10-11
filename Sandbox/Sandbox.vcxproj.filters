@@ -169,6 +169,9 @@
     <None Include="engine\shaders\main\lightCulling.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
+    <None Include="engine\shaders\main\lightDebug.glsl">
+      <Filter>engine\shaders\main</Filter>
+    </None>
     <None Include="engine\shaders\main\pbrForward.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>

@@ -88,8 +88,6 @@ namespace Lamp
 		std::vector<FramebufferRenderbufferSpecification> Renderbuffers;
 	};
 
-
-
 	struct FramebufferSpecification
 	{
 		uint32_t Width = 1280;
