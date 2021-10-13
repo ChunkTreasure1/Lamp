@@ -49,6 +49,7 @@ namespace Lamp
 
 		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
 		{
+			std::filesystem::create_directory("profiling");
 			m_OutputStream.open(filepath);
 			WriteHeader();
 			m_CurrentSession = new InstrumentationSession{ name };

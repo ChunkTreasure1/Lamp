@@ -24,6 +24,23 @@ namespace Lamp
 		EVENT_CLASS_TYPE(EntityPositionChanged);
 	};
 
+	class EntityRotationChangedEvent : public Event
+	{
+	public:
+		EntityRotationChangedEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "EntityRotationChanged";
+			return ss.str();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(EntityRotationChanged);
+	};
+
 	class EntityPropertyChangedEvent : public Event
 	{
 	public:

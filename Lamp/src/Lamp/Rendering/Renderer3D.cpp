@@ -75,9 +75,7 @@ namespace Lamp
 		RenderPassSpecification* CurrentRenderPass = nullptr;
 
 		/////Shadows/////
-		Ref<Shader> DirShadowShader;
 		Ref<Framebuffer> ShadowBuffer;
-		Ref<Shader> PointShadowShader;
 		/////////////////
 
 		Ref<Shader> SelectionShader;
@@ -145,7 +143,7 @@ namespace Lamp
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
-			});
+				});
 			s_pRenderData->QuadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pRenderData->QuadVertexArray->SetIndexBuffer(indexBuffer);
@@ -160,7 +158,7 @@ namespace Lamp
 			({
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float4, "a_Color" }
-			});
+				});
 			s_pRenderData->LineVertexArray->AddVertexBuffer(s_pRenderData->LineVertexBuffer);
 			s_pRenderData->LineVertexBufferBase = new LineVertex[s_pRenderData->MaxLineVerts];
 
@@ -180,11 +178,6 @@ namespace Lamp
 			delete[] pLineIndices;
 		}
 		//////////////////
-
-		/////Shadows/////
-		s_pRenderData->DirShadowShader = ShaderLibrary::GetShader("dirShadow");
-		s_pRenderData->PointShadowShader = ShaderLibrary::GetShader("pointShadow");
-		/////////////////
 
 		/////Skybox/////
 		{
@@ -245,9 +238,6 @@ namespace Lamp
 		//Setup dynamic uniforms
 		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure));
 		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma));
-		DynamicUniformRegistry::AddUniform("Directional light direction", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Position));
-		DynamicUniformRegistry::AddUniform("Directional light color", UniformType::Float3, RegisterData(&g_pEnv->DirLight.Color));
-		DynamicUniformRegistry::AddUniform("Directional light intensity", UniformType::Float, RegisterData(&g_pEnv->DirLight.Intensity));
 		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&Renderer3D::GetSettings().BufferSize));
 		DynamicUniformRegistry::AddUniform("ForwardTileX", UniformType::Int, RegisterData(&Renderer3D::GetSettings().ForwardGroupX));
 	}
@@ -266,16 +256,19 @@ namespace Lamp
 			s_pRenderData->CommonBuffer.CameraPosition = glm::vec4(camera->GetPosition(), 0.f);
 			s_pRenderData->CommonBuffer.Projection = camera->GetProjectionMatrix();
 			s_pRenderData->CommonBuffer.View = camera->GetViewMatrix();
-			s_pRenderData->CommonBuffer.ShadowVP = g_pEnv->DirLight.ViewProjection;
 			s_pRenderData->CommonUniformBuffer->SetData(&s_pRenderData->CommonBuffer, sizeof(CommonBuffer));
 		}
 
 		//Directional light
 		{
-			s_pRenderData->DirectionalLightDataBuffer.dirLight.direction = glm::vec4(glm::normalize(g_pEnv->DirLight.Position), 0.f);
-			s_pRenderData->DirectionalLightDataBuffer.dirLight.color = glm::vec4(g_pEnv->DirLight.Color, 0.f);
-			s_pRenderData->DirectionalLightDataBuffer.dirLight.intensity = g_pEnv->DirLight.Intensity;
+			uint32_t index = 0;
+			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+			{
+				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].direction = glm::vec4(glm::normalize(light->Direction), 0.f);
+				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->Color, light->Intensity);
 
+				index++;
+			}
 			s_pRenderData->DirectionalLightUniformBuffer->SetData(&s_pRenderData->DirectionalLightDataBuffer, sizeof(DirectionalLightBuffer));
 		}
 
@@ -343,173 +336,141 @@ namespace Lamp
 		LP_ASSERT(s_pRenderData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
-		switch (s_pRenderData->CurrentRenderPass->type)
+
+		const auto& pass = s_pRenderData->CurrentRenderPass;
+
+		RenderCommand::SetCullFace(pass->cullFace);
+
+		Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : material->GetShader();
+
+		shaderToUse->Bind();
+
+		//Static Uniforms
+		for (const auto& staticUniformPair : pass->staticUniforms)
 		{
-			case PassType::PointShadow:
+			const auto& staticUniformSpec = staticUniformPair.second;
+
+			if (staticUniformSpec.data.type() == typeid(RenderData))
 			{
-				LP_PROFILE_SCOPE("PointShadowPass");
-				RenderCommand::SetCullFace(CullFace::Back);
-				s_pRenderData->PointShadowShader->Bind();
-
-				uint32_t j = s_pRenderData->CurrentRenderPass->LightIndex;
-				const PointLight* light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[j];
-
-				for (int i = 0; i < light->ShadowBuffer->GetTransforms().size(); i++)
+				RenderData type = std::any_cast<RenderData>(staticUniformSpec.data);
+				switch (type)
 				{
-					s_pRenderData->PointShadowShader->UploadMat4("u_Transforms[" + std::to_string(i) + "]", light->ShadowBuffer->GetTransforms()[i]);
+					case Lamp::RenderData::Transform:
+						shaderToUse->UploadMat4(staticUniformSpec.name, modelMatrix);
+						break;
+					case Lamp::RenderData::ID:
+						shaderToUse->UploadInt(staticUniformSpec.name, objectId);
+						break;
 				}
 
-				s_pRenderData->PointShadowShader->UploadFloat("u_FarPlane", light->FarPlane);
-				s_pRenderData->PointShadowShader->UploadFloat3("u_LightPosition", light->ShadowBuffer->GetPosition());
-				s_pRenderData->PointShadowShader->UploadMat4("u_Model", modelMatrix);
-
-				vertexData->Bind();
-				RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
-
-				break;
+				continue;
 			}
 
-			default:
+			switch (staticUniformSpec.type)
 			{
-				LP_PROFILE_SCOPE("GeometryPass");
+				case UniformType::Int:
+					shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
+					break;
 
-				const auto& pass = s_pRenderData->CurrentRenderPass;
+				case UniformType::Float:
+					shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
+					break;
 
-				RenderCommand::SetCullFace(pass->cullFace);
+				case UniformType::Float2:
+					shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
+					break;
 
-				Ref<Shader> shaderToUse = pass->renderShader ? pass->renderShader : material->GetShader();
+				case UniformType::Float3:
+					shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
+					break;
 
-				shaderToUse->Bind();
+				case UniformType::Float4:
+					shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
+					break;
 
-				//Static Uniforms
-				for (const auto& staticUniformPair : pass->staticUniforms)
-				{
-					const auto& staticUniformSpec = staticUniformPair.second;
-
-					if (staticUniformSpec.data.type() == typeid(RenderData))
-					{
-						RenderData type = std::any_cast<RenderData>(staticUniformSpec.data);
-						switch (type)
-						{
-							case Lamp::RenderData::Transform:
-								shaderToUse->UploadMat4(staticUniformSpec.name, modelMatrix);
-								break;
-							case Lamp::RenderData::ID:
-								shaderToUse->UploadInt(staticUniformSpec.name, objectId);
-								break;
-						}
-
-						continue;
-					}
-
-					switch (staticUniformSpec.type)
-					{
-						case UniformType::Int:
-							shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
-							break;
-
-						case UniformType::Float:
-							shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
-							break;
-
-						case UniformType::Float2:
-							shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
-							break;
-
-						case UniformType::Float3:
-							shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
-							break;
-
-						case UniformType::Float4:
-							shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
-							break;
-
-						case UniformType::Mat4:
-							shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
-							break;
-					}
-				}
-
-				//Dynamic Uniforms
-				for (const auto& dynamicUniformPair : pass->dynamicUniforms)
-				{
-					const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
-
-					if (dynamicUniformSpec.data == nullptr)
-					{
-						LP_CORE_ERROR("Dynamic uniform data is nullptr at {0}", dynamicUniformSpec.name);
-						continue;
-					}
-
-					switch (dynamicUniformSpec.type)
-					{
-						case UniformType::Int:
-							shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
-							break;
-
-						case UniformType::Float:
-							shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
-							break;
-
-						case UniformType::Float3:
-							shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
-							break;
-
-						case UniformType::Float4:
-							shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
-							break;
-
-						case UniformType::Mat4:
-							shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
-							break;
-					}
-				}
-
-				//Framebuffers
-				for (const auto& framebufferPair : pass->framebuffers)
-				{
-					const auto& spec = framebufferPair.second.first;
-
-					if (spec.framebuffer == nullptr)
-					{
-						LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
-						continue;
-					}
-
-					for (const auto& attachment : spec.attachments)
-					{
-						switch (attachment.type)
-						{
-							case TextureType::Color:
-								spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
-								break;
-
-							case TextureType::Depth:
-								spec.framebuffer->BindDepthAttachment(attachment.bindId);
-								break;
-
-							default:
-								break;
-						}
-					}
-				}
-
-				int i = 0;
-				for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
-				{
-					if (material->GetTextures()[textureName].get() != nullptr)
-					{
-						material->GetTextures()[textureName]->Bind(i);
-						i++;
-					}
-				}
-
-				vertexData->Bind();
-				RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
-
-				break;
+				case UniformType::Mat4:
+					shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
+					break;
 			}
 		}
+
+		//Dynamic Uniforms
+		for (const auto& dynamicUniformPair : pass->dynamicUniforms)
+		{
+			const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
+
+			if (dynamicUniformSpec.data == nullptr)
+			{
+				LP_CORE_ERROR("Dynamic uniform data is nullptr at {0}", dynamicUniformSpec.name);
+				continue;
+			}
+
+			switch (dynamicUniformSpec.type)
+			{
+				case UniformType::Int:
+					shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
+					break;
+
+				case UniformType::Float:
+					shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
+					break;
+
+				case UniformType::Float3:
+					shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
+					break;
+
+				case UniformType::Float4:
+					shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
+					break;
+
+				case UniformType::Mat4:
+					shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
+					break;
+			}
+		}
+
+		//Framebuffers
+		for (const auto& framebufferPair : pass->framebuffers)
+		{
+			const auto& spec = framebufferPair.second.first;
+
+			if (spec.framebuffer == nullptr)
+			{
+				LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
+				continue;
+			}
+
+			for (const auto& attachment : spec.attachments)
+			{
+				switch (attachment.type)
+				{
+					case TextureType::Color:
+						spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+						break;
+
+					case TextureType::Depth:
+						spec.framebuffer->BindDepthAttachment(attachment.bindId);
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+
+		int i = 0;
+		for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
+		{
+			if (material->GetTextures()[textureName].get() != nullptr)
+			{
+				material->GetTextures()[textureName]->Bind(i);
+				i++;
+			}
+		}
+
+		vertexData->Bind();
+		RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
+
 	}
 
 	void Renderer3D::DrawSkybox()
@@ -710,5 +671,11 @@ namespace Lamp
 	{
 		s_pRenderData->LineIndexCount = 0;
 		s_pRenderData->LineVertexBufferPtr = s_pRenderData->LineVertexBufferBase;
+	}
+	void Renderer3D::SetupBuffers()
+	{
+	}
+	void Renderer3D::CreateBuffers()
+	{
 	}
 }

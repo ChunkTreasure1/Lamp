@@ -199,6 +199,7 @@
     <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
     <ClInclude Include="src\Lamp\Meshes\SubMesh.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
@@ -206,7 +207,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.h" />
@@ -747,12 +748,13 @@
     <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Meshes\SubMesh.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.cpp" />

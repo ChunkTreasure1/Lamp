@@ -13,20 +13,13 @@ namespace Lamp
 	enum EventType : uint64_t
 	{
 		None = 0,
-		WindowClose = 0b00000001, WindowResize = 0b00000010, WindowFocus = 0b00000011, WindowLostFocus = 0b00000100, WindowMoved = 0b00000101,
-		AppTick = 0b00000110, AppUpdate = 0b00000111, AppRender = 0b00001000, AppLog = 0b00001001, AppItemClicked = 0b00001010,
-		KeyPressed = 0b00001100, KeyReleased = 0b00001101, KeyTyped = 0b00001110,
-		MouseButtonPressed = 0b00001111, MouseButtonReleased = 0b00010000, MouseMoved = 0b00010001, MouseScrolled = 0b00010010,
-		EntityCollision = 0b00010011, EntityStoppedCollision = 0b00010100, EntityPositionChanged = 0b00010101, ImGuiBegin = 0b0010110, EntityPropertyChanged = 0b0011000,
-		EntityComponentAdded = 0b0011001, ImGuiUpdate = 0b0011011, EditorViewportSizeChanged = 0b0011100, EntityPhysicsUpdate = 0b0011101, EntityCollisionStart = 0b0011110,
-		EntityCollisionEnd = 0b0011111, EntityTriggerBegin = 0b0100000, EntityTriggerEnd = 0b0100001,
-
-		All = WindowClose | WindowResize | WindowFocus | WindowLostFocus | WindowMoved |
-		AppTick | AppUpdate | AppRender | AppLog | AppItemClicked | ImGuiBegin | ImGuiUpdate |
-		KeyPressed | KeyReleased | KeyTyped |
-		MouseButtonPressed | MouseButtonReleased | MouseMoved | MouseScrolled |
-		EntityCollision | EntityStoppedCollision | EntityPositionChanged | ImGuiBegin | EntityPropertyChanged | EntityComponentAdded | EntityPhysicsUpdate |
-		EditorViewportSizeChanged | EntityCollisionStart | EntityCollisionEnd
+		WindowClose = 1, WindowResize = 2, WindowFocus = 3, WindowLostFocus = 4, WindowMoved = 5,
+		AppTick = 6, AppUpdate = 7, AppRender = 8, AppLog = 9, AppItemClicked = 10,
+		KeyPressed = 11, KeyReleased = 12, KeyTyped = 13,
+		MouseButtonPressed = 14, MouseButtonReleased = 15, MouseMoved = 16, MouseScrolled = 17,
+		EntityCollision = 18, EntityStoppedCollision = 19, EntityPositionChanged = 20, ImGuiBegin = 21, EntityPropertyChanged = 22,
+		EntityComponentAdded = 23, ImGuiUpdate = 24, EditorViewportSizeChanged = 25, EntityPhysicsUpdate = 26, EntityCollisionStart = 27,
+		EntityCollisionEnd = 28, EntityTriggerBegin = 29, EntityTriggerEnd = 30, EntityRotationChanged = 31
 	};
 
 

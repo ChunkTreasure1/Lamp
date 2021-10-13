@@ -339,7 +339,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
@@ -1854,6 +1854,7 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1973,7 +1974,7 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp">
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp">
@@ -2261,5 +2262,6 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp" />
   </ItemGroup>
 </Project>

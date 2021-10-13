@@ -1,26 +1,21 @@
 #pragma once
 
 #include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
-
-#include "Lamp/Meshes/Mesh.h"
-#include "Lamp/Rendering/LightBase.h"
 
 namespace Lamp
 {
-	class LightComponent final : public EntityComponent
+	struct PointLight;
+	class PointLightComponent final : public EntityComponent
 	{
 	public:
 
-		LightComponent();
-		~LightComponent();
+		PointLightComponent();
+		~PointLightComponent();
 
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint32_t GetSize() { return sizeof(*this); }
-		virtual uint64_t GetEventMask() override { return EventType::EntityPositionChanged; }
 		////////////////
 
 		//Getting
@@ -30,7 +25,7 @@ namespace Lamp
 
 		inline const glm::vec3& GetColor() { return m_pPointLight->Color; }
 		inline const float GetFarPlane() { return m_pPointLight->FarPlane; }
-		inline PointLight* GetPointLight() { return m_pPointLight; }
+		inline PointLight* GetLight() { return m_pPointLight; }
 
 		//Setting
 		inline void SetIntensity(float val) { m_pPointLight->Intensity = val; }
@@ -41,7 +36,7 @@ namespace Lamp
 		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
 
 	public:
-		static Ref<EntityComponent> Create() { return CreateRef<LightComponent>(); }
+		static Ref<EntityComponent> Create() { return CreateRef<PointLightComponent>(); }
 		static std::string GetFactoryName() { return "LightComponent"; }
 
 	private:

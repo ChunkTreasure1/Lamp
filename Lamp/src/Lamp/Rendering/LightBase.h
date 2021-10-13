@@ -7,7 +7,7 @@
 
 namespace Lamp
 {
-	static int s_PointLightId = 0;
+	static int s_LightId = 0;
 	class PointShadowBuffer;
 
 	struct DirectionalLight
@@ -15,9 +15,10 @@ namespace Lamp
 		DirectionalLight()
 		{
 			ViewProjection = m_Projection * m_View;
+			Id = s_LightId++;
 		}
 
-		glm::vec3 Position{ 50.f, 50.f, 0.f };
+		glm::vec3 Direction{ 50.f, 50.f, 0.f };
 
 		glm::mat4 ViewProjection = glm::mat4(1.f);
 
@@ -26,7 +27,7 @@ namespace Lamp
 
 		void UpdateView()
 		{
-			m_View = glm::lookAt(Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+			m_View = glm::lookAt(Direction, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 			ViewProjection = m_Projection * m_View;
 		}
 
@@ -36,17 +37,19 @@ namespace Lamp
 			ViewProjection = m_Projection * m_View;
 		}
 
+		uint32_t Id;
+
 	private:
 		glm::mat4 m_Projection = glm::ortho(-25.f, 25.f, -25.f, 25.f, 0.1f, 1000.f);
-		glm::mat4 m_View = glm::lookAt(Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 m_View = glm::lookAt(Direction, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 
 		glm::vec2 m_Size = { 25.f, 25.f };
 
 		inline void SetPosition(const glm::vec3& pos)
 		{
-			Position = pos; 
+			Direction = pos;
 
-			m_View = glm::lookAt(Position, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+			m_View = glm::lookAt(Direction, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 			ViewProjection = m_Projection * m_View;
 		}
 	};
@@ -55,7 +58,7 @@ namespace Lamp
 	{
 		PointLight()
 		{
-			Id = s_PointLightId++;
+			Id = s_LightId++;
 		}
 
 		glm::vec3 Color{ 1.f, 1.f, 1.f };

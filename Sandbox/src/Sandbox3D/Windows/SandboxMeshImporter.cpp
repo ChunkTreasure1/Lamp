@@ -218,7 +218,6 @@ namespace Sandbox3D
 
 		RenderPassSpecification pass;
 		pass.TargetFramebuffer = m_Framebuffer;
-		pass.type = PassType::Forward;
 
 		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));
 		RenderCommand::Clear();

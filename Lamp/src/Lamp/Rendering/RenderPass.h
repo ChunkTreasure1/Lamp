@@ -11,18 +11,6 @@
 
 namespace Lamp
 {
-	enum class PassType
-	{
-		DirShadow = 0,
-		PointShadow = BIT(1),
-		Lightning = BIT(2),
-		Geometry = BIT(3),
-		SSAO = BIT(4),
-		SSAOBlur = BIT(5),
-		Forward = BIT(6),
-		Selection = BIT(7),
-	};
-
 	enum class ClearType : uint32_t
 	{
 		None = 0,
@@ -47,7 +35,6 @@ namespace Lamp
 
 		Ref<Framebuffer> TargetFramebuffer;
 
-		PassType type = PassType::Geometry;
 		uint32_t LightIndex = 0;
 		std::string Name = "";
 

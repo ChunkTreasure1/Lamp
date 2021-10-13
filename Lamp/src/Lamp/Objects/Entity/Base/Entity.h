@@ -27,7 +27,6 @@ namespace Lamp
 
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
-		virtual uint64_t GetEventMask() override { return EventType::All; }
 
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
 		inline bool GetSaveable() { return m_ShouldBeSaved; }

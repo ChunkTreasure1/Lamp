@@ -33,6 +33,24 @@ namespace Lamp
 		CalculateModelMatrix(); 
 	}
 
+	void Object::SetRotation(const glm::vec3& rot)
+	{
+		m_Rotation = rot;
+		CalculateModelMatrix();
+
+		EntityRotationChangedEvent e;
+		OnEvent(e);
+	}
+
+	void Object::AddRotation(const glm::vec3& rot)
+	{
+		m_Rotation += rot; 
+		CalculateModelMatrix();
+
+		EntityRotationChangedEvent e;
+		OnEvent(e);
+	}
+
 	void Object::SetScale(const glm::vec3& scale)
 	{
 		m_Scale = scale;

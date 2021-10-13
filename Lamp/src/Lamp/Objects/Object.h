@@ -18,8 +18,8 @@ namespace Lamp
 		//Setting
 		void SetPosition(const glm::vec3& pos);
 		void SetPhysicsPosition(const glm::vec3& pos);
-		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; CalculateModelMatrix(); }
-		inline void AddRotation(const glm::vec3& rot) { m_Rotation += rot; CalculateModelMatrix(); }
+		void SetRotation(const glm::vec3& rot);
+		void AddRotation(const glm::vec3& rot);
 		void SetScale(const glm::vec3& scale);
 
 		void SetModelMatrix(const glm::mat4& mat);
@@ -46,7 +46,6 @@ namespace Lamp
 		inline const bool GetIsSelected() { return m_IsSelected; }
 
 		virtual void OnEvent(Event& e) {}
-		virtual uint64_t GetEventMask() = 0;
 		virtual void Destroy() = 0;
 
 	protected:

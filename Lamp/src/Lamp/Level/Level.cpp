@@ -2,7 +2,7 @@
 #include "Level.h"
 
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
-#include "Lamp/Objects/Entity/BaseComponents/LightComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
 #include "Lamp/Physics/Physics.h"
 
 #include "Lamp/GraphKey/NodeRegistry.h"
@@ -27,6 +27,25 @@ namespace Lamp
 			if (m_PointLights[i]->Id == light->Id)
 			{
 				m_PointLights.erase(m_PointLights.begin() + i);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void RenderUtils::RegisterDirectionalLight(DirectionalLight* light)
+	{
+		m_DirectionalLights.push_back(light);
+	}
+
+	bool RenderUtils::UnregisterDirectionalLight(DirectionalLight* light)
+	{
+		for (int i = 0; i < m_DirectionalLights.size(); i++)
+		{
+			if (m_DirectionalLights[i]->Id == light->Id)
+			{
+				m_DirectionalLights.erase(m_DirectionalLights.begin() + i);
 				return true;
 			}
 		}
@@ -60,9 +79,9 @@ namespace Lamp
 		{
 			std::pair pair = std::make_pair(entity.first, Entity::Duplicate(entity.second, false));
 			m_Entities.emplace(pair);
-			if (auto lightComp = pair.second->GetComponent<LightComponent>())
+			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(lightComp->GetPointLight());
+				m_RenderUtils.RegisterPointLight(lightComp->GetLight());
 			}
 		}
 
@@ -198,11 +217,13 @@ namespace Lamp
 	{
 		for (auto& entity : m_Entities)
 		{
-			if (auto& comp = entity.second->GetComponent<LightComponent>())
+			if (auto& comp = entity.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(comp->GetPointLight());
+				m_RenderUtils.RegisterPointLight(comp->GetLight());
 			}
 		}
+
+
 	}
 
 	void Level::AddLayer(const ObjectLayer& layer)

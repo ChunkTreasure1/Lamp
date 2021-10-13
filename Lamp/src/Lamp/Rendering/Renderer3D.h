@@ -83,6 +83,9 @@ namespace Lamp
 		static void StartNewBatch();
 		static void ResetBatchData();
 
+		static void SetupBuffers();
+		static void CreateBuffers();
+
 		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
 
 	private:

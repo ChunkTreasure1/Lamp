@@ -22,17 +22,9 @@ namespace Lamp
 
 	void Entity::OnEvent(Event& e)
 	{
-		for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+		for (const auto& comp : m_pComponents)
 		{
-			if (m_pComponents.size() == 0)
-			{
-				return;
-			}
-
-			if (it->get()->GetEventMask() & e.GetEventType())
-			{
-				it->get()->OnEvent(e);
-			}
+			comp->OnEvent(e);
 		}
 
 		if (m_GraphKeyGraph)

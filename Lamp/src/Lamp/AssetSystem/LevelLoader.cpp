@@ -147,13 +147,9 @@ namespace Lamp
 			out << YAML::BeginMap;
 			{
 
-				LP_SERIALIZE_PROPERTY(globalAmbient, level->GetEnvironment().GlobalAmbient, out);
 				LP_SERIALIZE_PROPERTY(cameraPosition, level->GetEnvironment().CameraPosition, out);
 				LP_SERIALIZE_PROPERTY(cameraRotation, level->GetEnvironment().CameraRotation, out);
 				LP_SERIALIZE_PROPERTY(cameraFOV, level->GetEnvironment().CameraFOV, out);
-				LP_SERIALIZE_PROPERTY(dirLightPos, g_pEnv->DirLight.Position, out);
-				LP_SERIALIZE_PROPERTY(dirLightColor, g_pEnv->DirLight.Color, out);
-				LP_SERIALIZE_PROPERTY(dirLightIntensity, g_pEnv->DirLight.Intensity, out);
 			}
 			out << YAML::EndMap;
 
@@ -367,15 +363,9 @@ namespace Lamp
 		}
 
 		YAML::Node envNode = levelNode["LevelEnvironment"];
-		LP_DESERIALIZE_PROPERTY(globalAmbient, level->m_Environment.GlobalAmbient, envNode, glm::vec3(0.f));
 		LP_DESERIALIZE_PROPERTY(cameraPosition, level->m_Environment.CameraPosition, envNode, glm::vec3(0.f));
 		LP_DESERIALIZE_PROPERTY(cameraRotation, level->m_Environment.CameraRotation, envNode, glm::quat());
 		LP_DESERIALIZE_PROPERTY(cameraFOV, level->m_Environment.CameraFOV, envNode, 60.f);
-		LP_DESERIALIZE_PROPERTY(dirLightPos, g_pEnv->DirLight.Position, envNode, glm::vec3(0.f));
-		LP_DESERIALIZE_PROPERTY(dirLightColor, g_pEnv->DirLight.Color, envNode, glm::vec3(0.f));
-		LP_DESERIALIZE_PROPERTY(dirLightIntensity, g_pEnv->DirLight.Intensity, envNode, 1.f);
-
-		g_pEnv->DirLight.UpdateView();
 
 		level->Path = path;
 

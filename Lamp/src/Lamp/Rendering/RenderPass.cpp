@@ -19,104 +19,78 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
-		switch (m_PassSpec.type)
+		RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
+		m_PassSpec.TargetFramebuffer->Bind();
+
+		//Clear color if i should
+		switch (m_PassSpec.clearType)
 		{
-			case PassType::PointShadow:
-			{
-				m_PassSpec.LightIndex = 0;
-				for (auto& light : g_pEnv->pLevel->GetRenderUtils().GetPointLights())
-				{
-					light->ShadowBuffer->Bind();
-					RenderCommand::Clear();
-
-					Renderer3D::BeginPass(m_PassSpec);
-
-					Renderer3D::DrawRenderBuffer();
-
-					Renderer3D::EndPass();
-					light->ShadowBuffer->Unbind();
-					m_PassSpec.LightIndex++;
-				}
+			case ClearType::None:
 				break;
-			}
+
+			case ClearType::Color:
+				RenderCommand::ClearColor();
+				break;
+
+			case ClearType::Depth:
+				RenderCommand::ClearDepth();
+				break;
+
+			case ClearType::ColorDepth:
+				RenderCommand::Clear();
+				break;
+		}
+
+		Renderer3D::BeginPass(m_PassSpec);
+
+		switch (m_PassSpec.drawType)
+		{
+			case DrawType::All:
+				Renderer3D::DrawRenderBuffer();
+				break;
+
+			case DrawType::Deferred:
+				Renderer3D::DrawRenderBuffer();
+				break;
+
+			case DrawType::Forward:
+				Renderer3D::DrawRenderBuffer();
+				break;
+
+			case DrawType::Line:
+				break;
+
+			case DrawType::Quad:
+				Renderer3D::RenderQuad();
+				break;
 
 			default:
-			{
-				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-				m_PassSpec.TargetFramebuffer->Bind();
-
-				//Clear color if i should
-				switch (m_PassSpec.clearType)
-				{
-					case ClearType::None:
-						break;
-
-					case ClearType::Color:
-						RenderCommand::ClearColor();
-						break;
-
-					case ClearType::Depth:
-						RenderCommand::ClearDepth();
-						break;
-
-					case ClearType::ColorDepth:
-						RenderCommand::Clear();
-						break;
-				}
-
-				Renderer3D::BeginPass(m_PassSpec);
-
-				switch (m_PassSpec.drawType)
-				{
-					case DrawType::All:
-						Renderer3D::DrawRenderBuffer();
-						break;
-
-					case DrawType::Deferred:
-						Renderer3D::DrawRenderBuffer();
-						break;
-
-					case DrawType::Forward:
-						Renderer3D::DrawRenderBuffer();
-						break;
-
-					case DrawType::Line:
-						break;
-
-					case DrawType::Quad:
-						Renderer3D::RenderQuad();
-						break;
-
-					default:
-						break;
-				}
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-
-				for (const auto& commandPair : m_PassSpec.framebufferCommands)
-				{
-					const auto& commandSpec = commandPair.second.first;
-					if (!commandSpec.primary || !commandSpec.secondary)
-					{
-						LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);
-						continue;
-					}
-
-					switch (commandSpec.command)
-					{
-						case FramebufferCommand::Copy:
-							commandSpec.primary->Copy(commandSpec.secondary->GetRendererID(), { commandSpec.primary->GetSpecification().Width, commandSpec.primary->GetSpecification().Height }, true);
-							break;
-
-						default:
-							break;
-					}
-				}
-
 				break;
+		}
+
+		Renderer3D::EndPass();
+		m_PassSpec.TargetFramebuffer->Unbind();
+
+		for (const auto& commandPair : m_PassSpec.framebufferCommands)
+		{
+			const auto& commandSpec = commandPair.second.first;
+			if (!commandSpec.primary || !commandSpec.secondary)
+			{
+				LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);
+				continue;
+			}
+
+			switch (commandSpec.command)
+			{
+				case FramebufferCommand::Copy:
+					commandSpec.primary->Copy(commandSpec.secondary->GetRendererID(), { commandSpec.primary->GetSpecification().Width, commandSpec.primary->GetSpecification().Height }, true);
+					break;
+
+				default:
+					break;
 			}
 		}
+
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)

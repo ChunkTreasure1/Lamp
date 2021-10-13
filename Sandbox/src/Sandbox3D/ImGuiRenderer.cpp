@@ -755,16 +755,6 @@ namespace Sandbox3D
 
 		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
 
-		if (ImGui::CollapsingHeader("Environment"))
-		{
-			ImGui::Text("Sun Settings");
-			ImGui::DragFloat3("Sun direction", glm::value_ptr(g_pEnv->DirLight.Position));
-			g_pEnv->DirLight.UpdateView();
-
-			ImGui::ColorEdit3("Sun Color", glm::value_ptr(g_pEnv->DirLight.Color));
-			ImGui::DragFloat("Sun Intensity", &g_pEnv->DirLight.Intensity);
-		}
-
 		ImGui::End();
 	}
 

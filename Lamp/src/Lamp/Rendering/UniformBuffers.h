@@ -6,8 +6,7 @@ namespace Lamp
 	struct DirectionalLightData
 	{
 		glm::vec4 direction;
-		glm::vec4 color;
-		float intensity;
+		glm::vec4 colorIntensity;
 	};
 
 	struct PointLightData
@@ -31,7 +30,8 @@ namespace Lamp
 
 	struct DirectionalLightBuffer
 	{
-		DirectionalLightData dirLight;
+		DirectionalLightData dirLights[10];
+		uint32_t lightCount = 0;
 	};
 
 	struct LightIndex

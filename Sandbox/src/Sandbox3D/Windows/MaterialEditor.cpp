@@ -225,7 +225,6 @@ namespace Sandbox3D
 		}
 
 		RenderPassSpecification pass;
-		pass.type = Lamp::PassType::Forward;
 		pass.TargetFramebuffer = m_Framebuffer;
 
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });

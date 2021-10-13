@@ -1,14 +1,16 @@
 #include "lppch.h"
-#include "LightComponent.h"
+#include "PointLightComponent.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Rendering/LightBase.h"
 #include "Lamp/Level/Level.h"
 
 namespace Lamp
 {
-	LP_REGISTER_COMPONENT(LightComponent);
+	LP_REGISTER_COMPONENT(PointLightComponent);
 
-	LightComponent::LightComponent()
+	PointLightComponent::PointLightComponent()
 		: EntityComponent("LightComponent")
 	{
 		{
@@ -34,33 +36,33 @@ namespace Lamp
 		g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
 	}
 
-	LightComponent::~LightComponent()
+	PointLightComponent::~PointLightComponent()
 	{
 		g_pEnv->pLevel->GetRenderUtils().UnregisterPointLight(m_pPointLight);
 
 		delete m_pPointLight;
 	}
 
-	void LightComponent::Initialize()
+	void PointLightComponent::Initialize()
 	{
 		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
 	}
 
-	void LightComponent::OnEvent(Event& e)
+	void PointLightComponent::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<EntityPositionChangedEvent>(LP_BIND_EVENT_FN(LightComponent::OnPositionChanged));
-		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(LightComponent::OnPropertyChanged));
+		dispatcher.Dispatch<EntityPositionChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPositionChanged));
+		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPropertyChanged));
 	}
 
-	bool LightComponent::OnPositionChanged(EntityPositionChangedEvent& e)
+	bool PointLightComponent::OnPositionChanged(EntityPositionChangedEvent& e)
 	{
 		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
 
 		return false;
 	}
 
-	bool LightComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
+	bool PointLightComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
 	{
 		m_pPointLight->ShadowBuffer->UpdateProjection();
 

@@ -1,9 +1,7 @@
 struct DirectionalLight
 {
 	vec4 direction;
-	vec4 color;
-	
-	float intensity;
+	vec4 colorIntensity;
 };
 
 struct PointLight
@@ -32,7 +30,8 @@ layout(std140, binding = 0) uniform Main
 
 layout(std140, binding = 1) uniform DirectionalLights
 {
-	DirectionalLight u_DirectionalLight;
+	DirectionalLight u_DirectionalLights[10];
+	uint u_DirLightCount;
 };
 
 layout(std430, binding = 2) readonly buffer LightBuffer
@@ -220,7 +219,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.intensity * light.color.xyz;
+	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
 	return lightStrength;
 }
 
@@ -249,7 +248,10 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
 
-	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness, shadowCoord);
+	for (uint i = 0; i < u_DirLightCount; i++)
+	{
+		Lo += CalculateDirectionalLight(u_DirectionalLights[i], V, N, baseReflectivity, albedo, metallic, roughness, shadowCoord);
+	}
 
 	//Calculate light indices
 	ivec2 location = ivec2(gl_FragCoord.xy);
@@ -257,7 +259,7 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 	uint index = tileId.y * u_TilesX + tileId.x;
 	
 	uint offset = index * 1024;
-	for(int i = 0; i < 500 && visibleIndices.data[offset + i].index != -1; ++i)
+	for(int i = 0; i < 1024 && visibleIndices.data[offset + i].index != -1; ++i)
 	{
 		uint index = visibleIndices.data[offset + i].index;
 		Lo += CalculatePointLight(lightBuffer.pointLights[index], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
