@@ -779,6 +779,7 @@
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp" />

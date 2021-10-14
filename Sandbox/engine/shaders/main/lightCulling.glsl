@@ -28,7 +28,6 @@ layout(std140, binding = 0) uniform Main
 {
 	mat4 u_View;
 	mat4 u_Projection;
-	mat4 u_ShadowVP;
 	vec4 u_CameraPosition;
 };
 

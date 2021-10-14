@@ -24,7 +24,6 @@ namespace Lamp
 	{
 		glm::mat4 View;
 		glm::mat4 Projection;
-		glm::mat4 ShadowVP;
 		glm::vec4 CameraPosition;
 	};
 

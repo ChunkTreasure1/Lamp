@@ -50,15 +50,6 @@ namespace Lamp
 
 		RenderPassSpecification* CurrentRenderPass = nullptr;
 
-		/////Shadows/////
-		Ref<Framebuffer> ShadowBuffer;
-		/////////////////
-
-		/////SSAO/////
-		std::vector<glm::vec3> SSAONoise;
-		std::vector<glm::vec3> SSAOKernel;
-		//////////////
-
 		glm::vec2 LastViewportSize = glm::vec2(0.f);
 
 		/////Uniform buffers/////
@@ -75,16 +66,14 @@ namespace Lamp
 		Ref<ShaderStorageBuffer> VisibleLightsBuffer;
 		Ref<ShaderStorageBuffer> PointLightStorageBuffer;
 		//////////////////////
+
+		//Shadows
+		Ref<Shader> DirectionalShadowShader;
 	};
 
 	static Renderer3DStorage* s_pRenderData;
 	RendererSettings* Renderer3D::s_RendererSettings;
 	RenderBuffer Renderer3D::s_RenderBuffer;
-
-	static float Lerp(float a, float b, float f)
-	{
-		return a + f * (b - a);
-	}
 
 	void Renderer3D::Initialize()
 	{
@@ -110,6 +99,9 @@ namespace Lamp
 		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3, DrawAccess::Static);
 		////////////////////////
 
+		s_pRenderData->DirectionalShadowShader = ShaderLibrary::GetShader("dirShadow");
+		s_RenderBuffer.drawCalls.reserve(100);
+
 		//Setup dynamic uniforms
 		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure));
 		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma));
@@ -127,6 +119,19 @@ namespace Lamp
 	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
 		SetupUniformBuffers(camera);
+
+		//Draw shadow maps 
+		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+		{
+			light->ShadowBuffer->Bind();
+			RenderCommand::ClearDepth();
+			BeginPass(light->ShadowPass->GetSpecification());
+
+			DrawRenderBuffer();
+
+			EndPass();
+			light->ShadowBuffer->Unbind();
+		}
 	}
 
 	void Renderer3D::End()

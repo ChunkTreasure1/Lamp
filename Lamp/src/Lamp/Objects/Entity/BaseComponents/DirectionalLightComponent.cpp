@@ -54,7 +54,8 @@ namespace Lamp
 
 	bool DirectionalLightComponent::OnRotationChanged(EntityRotationChangedEvent& e)
 	{
-		m_pDirectionalLight->Direction = glm::normalize(glm::quat(m_pEntity->GetRotation()) * glm::vec3(0.f, 0.f, -1.f));
+		glm::vec3 rot = { glm::radians(m_pEntity->GetRotation().x), glm::radians(m_pEntity->GetRotation().y), glm::radians(m_pEntity->GetRotation().z) };
+		m_pDirectionalLight->Direction = glm::normalize(glm::vec3(0.f, 0.f, -1.f) * glm::quat(rot));
 
 		return false;
 	}

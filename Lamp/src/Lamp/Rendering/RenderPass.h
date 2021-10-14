@@ -25,7 +25,6 @@ namespace Lamp
 		Quad = 1,
 		Line = 2,
 		Forward = 3,
-		Deferred = 4
 	};
 
 	struct RenderPassSpecification

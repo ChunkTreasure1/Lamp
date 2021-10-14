@@ -49,10 +49,6 @@ namespace Lamp
 				Renderer3D::DrawRenderBuffer();
 				break;
 
-			case DrawType::Deferred:
-				Renderer3D::DrawRenderBuffer();
-				break;
-
 			case DrawType::Forward:
 				Renderer3D::DrawRenderBuffer();
 				break;

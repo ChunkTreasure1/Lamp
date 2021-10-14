@@ -10,20 +10,19 @@ namespace Lamp
 	static int s_LightId = 0;
 	class PointShadowBuffer;
 	class Framebuffer;
+	class RenderPass;
 
 	struct DirectionalLight
 	{
-		DirectionalLight()
-		{
-			Id = s_LightId++;
-		}
+		DirectionalLight();
 
-		glm::vec3 Direction{ 0.5f, 0.5f, 0.f };
+		glm::vec3 Direction{ 50.f, 50.f, 0.f };
 		glm::vec3 Color{ 1.f, 1.f, 1.f };
 		float Intensity = 1.f;
 		bool CastShadows = true;
 
-		uint32_t Id;
+		uint32_t Id = s_LightId++;
+		std::unique_ptr<RenderPass> ShadowPass;
 		std::shared_ptr<Framebuffer> ShadowBuffer;
 	};
 

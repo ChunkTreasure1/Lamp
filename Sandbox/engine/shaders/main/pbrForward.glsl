@@ -20,7 +20,6 @@ layout(std140, binding = 0) uniform Main
 {
 	mat4 u_View;
 	mat4 u_Projection;
-	mat4 u_ShadowVP;
 	vec4 u_CameraPosition;
 };
 
@@ -49,7 +48,7 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	//Shadow calculation
-	v_Out.ShadowCoord = u_ShadowVP * u_Model * vec4(a_Position, 1.0);
+	v_Out.ShadowCoord = vec4(0);
 
 	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
 }
