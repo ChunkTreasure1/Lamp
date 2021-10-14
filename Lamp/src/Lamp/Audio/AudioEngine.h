@@ -2,13 +2,13 @@
 
 #include "fmod/fmod_studio.hpp"
 #include "fmod/fmod.hpp"
+#include "Lamp/Core/Log.h"
+#include "Lamp/Core/Core.h"
+
 #include <string>
 #include <map>
 #include <vector>
 #include <math.h>
-#include "Lamp/Core/Log.h"
-#include "Lamp/Core/Core.h"
-
 #include <glm/glm.hpp>
 
 namespace Lamp

@@ -1,14 +1,24 @@
 #pragma once
 
-#include <string>
-#include "Lamp/Objects/Brushes/Brush.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
-
 #include "ObjectLayer.h"
+#include "Lamp/AssetSystem/Asset.h"
+#include "Lamp/Event/Event.h"
+#include "Lamp/Core/Time/Timestep.h"
+
 #include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
+
+#include <string>
+#include <glm/gtc/quaternion.hpp>
+#include <unordered_map>
 
 namespace Lamp
 {
+	struct DirectionalLight;
+	struct PointLight;
+	class Brush;
+	class Entity;
+	class CameraBase;
+
 	class RenderUtils
 	{
 	public:

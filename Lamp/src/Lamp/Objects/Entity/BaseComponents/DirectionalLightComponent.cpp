@@ -15,10 +15,21 @@ namespace Lamp
 	{
 		m_pDirectionalLight = new DirectionalLight();
 
+		FramebufferSpecification spec;
+		spec.Height = 4096;
+		spec.Width = 4096;
+		spec.Attachments =
+		{
+			{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+		};
+
+		m_pDirectionalLight->ShadowBuffer = Framebuffer::Create(spec);
+
 		SetComponentProperties
 		({
 			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->Intensity) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->Color) }
+			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->Color) },
+			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->CastShadows) }
 		});
 
 		g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight);

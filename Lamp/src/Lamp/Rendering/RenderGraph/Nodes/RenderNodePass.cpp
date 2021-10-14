@@ -531,6 +531,7 @@ namespace Lamp
 
 					std::string sName = name;
 					specification.dynamicUniforms.erase(dynUniformPair.first);
+					break;
 				}
 
 				ImGui::SameLine();

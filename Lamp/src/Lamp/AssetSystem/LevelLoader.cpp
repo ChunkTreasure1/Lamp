@@ -5,6 +5,8 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Level/Level.h"
 #include "AssetManager.h"
+#include "Lamp/Objects/Brushes/Brush.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
 
 #include <yaml-cpp/yaml.h>
 

@@ -6,6 +6,8 @@
 #include "Lamp/AssetSystem/AssetManager.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
+#include "Lamp/Level/Level.h"
+
 namespace Lamp
 {
 	LP_REGISTER_COMPONENT(MeshComponent);

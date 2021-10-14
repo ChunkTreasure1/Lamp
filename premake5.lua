@@ -115,7 +115,6 @@ project "Lamp"
 			symbols "on"
 
 		filter "configurations:Release"
-			defines "LP_RELEASE"
 			runtime "Release"
 			optimize "on"
 			
@@ -126,9 +125,10 @@ project "Lamp"
 			}
 
 		filter "configurations:Dist"
-			defines "LP_DIST"
+			defines { "LP_DIST", "LP_ENABLE_ASSERTS", "NDEBUG" }
 			runtime "Release"
 			optimize "on"
+			
 			
 project "Sandbox"
 	location "Sandbox"
@@ -205,6 +205,7 @@ project "Sandbox"
 		defines 
 		{
 			"LP_PLATFORM_WINDOWS",
+			"_CRT_SECURE_NO_WARNINGS"
 		}
 
 		filter "configurations:Debug"

@@ -3,6 +3,8 @@ Assets:
     Path: assets\models\cube.lgf
   - Handle: 13551055251788859933
     Path: assets\models\sphere.lgf
+  - Handle: 9317505486348122308
+    Path: assets\models\sponza.lgf
   - Handle: 14877024273708001692
     Path: assets/testGraph.rendergraph
   - Handle: 14311675356115887053

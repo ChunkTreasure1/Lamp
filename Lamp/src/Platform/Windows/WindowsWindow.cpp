@@ -2,6 +2,7 @@
 #include "WindowsWindow.h"
 
 #include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Event/KeyEvent.h"
 
 namespace Lamp
 {
@@ -82,24 +83,24 @@ namespace Lamp
 
 				switch (action)
 				{
-				case GLFW_PRESS:
-				{
-					KeyPressedEvent event(key, 0);
-					data.EventCallback(event);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					KeyReleasedEvent event(key);
-					data.EventCallback(event);
-					break;
-				}
-				case GLFW_REPEAT:
-				{
-					KeyPressedEvent event(key, 1);
-					data.EventCallback(event);
-					break;
-				}
+					case GLFW_PRESS:
+					{
+						KeyPressedEvent event(key, 0);
+						data.EventCallback(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						KeyReleasedEvent event(key);
+						data.EventCallback(event);
+						break;
+					}
+					case GLFW_REPEAT:
+					{
+						KeyPressedEvent event(key, 1);
+						data.EventCallback(event);
+						break;
+					}
 				}
 			});
 
@@ -115,18 +116,18 @@ namespace Lamp
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(pWindow);
 				switch (action)
 				{
-				case GLFW_PRESS:
-				{
-					MouseButtonPressedEvent event(button);
-					data.EventCallback(event);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					MouseButtonReleasedEvent event(button);
-					data.EventCallback(event);
-					break;
-				}
+					case GLFW_PRESS:
+					{
+						MouseButtonPressedEvent event(button);
+						data.EventCallback(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						MouseButtonReleasedEvent event(button);
+						data.EventCallback(event);
+						break;
+					}
 				}
 			});
 
@@ -158,6 +159,11 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_pContext->SwapBuffers();
+	}
+
+	void WindowsWindow::Maximize()
+	{
+		glfwMaximizeWindow(m_pWindow);
 	}
 
 	inline void WindowsWindow::SetIsVSync(bool state)

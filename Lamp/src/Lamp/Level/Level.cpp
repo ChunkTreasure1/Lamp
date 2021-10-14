@@ -4,6 +4,8 @@
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
 #include "Lamp/Physics/Physics.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Brushes/Brush.h"
 
 #include "Lamp/GraphKey/NodeRegistry.h"
 #include "Lamp/Rendering/RenderGraph/RenderGraph.h"

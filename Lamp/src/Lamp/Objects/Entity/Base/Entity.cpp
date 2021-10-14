@@ -9,7 +9,7 @@
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "ComponentRegistry.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/BoxColliderComponent.h"
-#include "Lamp/Meshes/Materials/MaterialLibrary.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
 
 namespace Lamp
 {

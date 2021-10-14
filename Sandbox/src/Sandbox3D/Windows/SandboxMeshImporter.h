@@ -21,7 +21,6 @@ namespace Sandbox3D
 		inline const Ref<Lamp::PerspectiveCameraController>& GetCamera() { return m_Camera; }
 
 	private:
-		void RenderGrid();
 		void UpdatePerspective();
 		void UpdateProperties();
 		void UpdateMaterial();

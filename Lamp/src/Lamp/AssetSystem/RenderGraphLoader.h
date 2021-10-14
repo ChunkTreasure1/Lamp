@@ -2,8 +2,6 @@
 
 #include "AssetLoader.h"
 
-#include <yaml-cpp/yaml.h>
-
 namespace Lamp
 {
 	struct RenderNode;

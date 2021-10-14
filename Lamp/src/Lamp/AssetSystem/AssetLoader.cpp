@@ -4,15 +4,12 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 
-#include <rapidxml/rapidxml.hpp>
-#include <rapidxml/rapidxml_print.hpp>
-
-#include "yaml-cpp/yaml.h"
-
-#include "Lamp/Meshes/Mesh.h"
-#include "Lamp/Meshes/Materials/MaterialLibrary.h"
+#include "Lamp/Mesh/Mesh.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
+
+#include <yaml-cpp/yaml.h>
 
 namespace Lamp
 {

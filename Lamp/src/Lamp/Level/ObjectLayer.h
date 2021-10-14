@@ -2,9 +2,11 @@
 
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 namespace Lamp
 {
+	class Object;
 	struct ObjectLayer
 	{
 		ObjectLayer(const std::string& name, uint32_t id, bool active)

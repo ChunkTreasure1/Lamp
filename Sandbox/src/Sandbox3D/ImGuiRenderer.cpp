@@ -14,7 +14,7 @@
 #include <Lamp/Math/Math.h>
 #include "Windows/SandboxMeshImporter.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
-#include <Lamp/Meshes/Materials/MaterialLibrary.h>
+#include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
 #include <Lamp/Core/Application.h>
 #include <Lamp/GraphKey/GraphKeyGraph.h>

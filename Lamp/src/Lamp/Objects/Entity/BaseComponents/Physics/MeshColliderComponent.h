@@ -3,7 +3,7 @@
 #include "Lamp/Physics/PhysicsMaterial.h"
 #include "Lamp/Objects/Entity/Base/BaseComponent.h"
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Meshes/Mesh.h"
+#include "Lamp/Mesh/Mesh.h"
 
 namespace Lamp
 {

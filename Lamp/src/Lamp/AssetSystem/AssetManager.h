@@ -1,13 +1,11 @@
 #pragma once
 
+#include "AssetLoader.h"
+
 #include <thread>
 #include <vector>
 #include <unordered_map>
-
-#include "Lamp/Utility/ThreadSafeQueue.h"
-#include "Lamp/Meshes/Mesh.h"
-#include "Lamp/Level/Level.h"
-#include "AssetLoader.h"
+#include <map>
 
 namespace Lamp
 {

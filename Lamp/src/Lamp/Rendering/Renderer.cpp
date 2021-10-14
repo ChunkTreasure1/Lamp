@@ -6,7 +6,7 @@
 
 #include "RenderCommand.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
-#include "Lamp/Meshes/Materials/MaterialLibrary.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
 
 namespace Lamp
 {

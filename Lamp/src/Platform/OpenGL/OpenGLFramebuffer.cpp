@@ -175,6 +175,8 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_ATTACHMENT;
 			}
+
+			return 0;
 		}
 	}
 

@@ -35,10 +35,6 @@ namespace Lamp
 
 	struct Renderer3DStorage
 	{
-		static const uint32_t MaxLines = 10000;
-		static const uint32_t MaxLineVerts = MaxLines * 2;
-		static const uint32_t MaxLineIndices = MaxLines * 2;
-
 		static const uint32_t MaxLights = 1024;
 
 		/////Skybox//////
@@ -50,35 +46,13 @@ namespace Lamp
 		Ref<VertexArray> QuadVertexArray;
 		//////////////
 
-		//////Lines//////
-		Ref<VertexArray> LineVertexArray;
-		Ref<VertexBuffer> LineVertexBuffer;
-		uint32_t LineIndexCount = 1;
-
-		LineVertex* LineVertexBufferBase = nullptr;
-		LineVertex* LineVertexBufferPtr = nullptr;
-		Material LineMaterial;
-		/////////////////
-
 		Ref<CameraBase> Camera;
-
-		Renderer3DStorage()
-			: LineMaterial(Lamp::ShaderLibrary::GetShader("Line"), 0)
-		{
-		}
-
-		~Renderer3DStorage()
-		{
-			delete[] LineVertexBufferBase;
-		}
 
 		RenderPassSpecification* CurrentRenderPass = nullptr;
 
 		/////Shadows/////
 		Ref<Framebuffer> ShadowBuffer;
 		/////////////////
-
-		Ref<Shader> SelectionShader;
 
 		/////SSAO/////
 		std::vector<glm::vec3> SSAONoise;
@@ -118,106 +92,7 @@ namespace Lamp
 		s_pRenderData = new Renderer3DStorage();
 		s_RendererSettings = new RendererSettings();
 
-		/////Quad/////
-		{
-			std::vector<Vertex> quadVertices =
-			{
-				Vertex({ 1.f, 1.f, 0.f }, { 1.f, 1.f }),
-				Vertex({ 1.f, -1.f, 0.f }, { 1.f, 0.f }),
-				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 0.f }),
-				Vertex({ -1.f, 1.f, 0.f }, { 0.f, 1.f }),
-			};
-
-			std::vector<uint32_t> quadIndices =
-			{
-				0, 3, 1, //(top right - bottom right - top left)
-				1, 3, 2 //(bottom right - bottom left - top left)
-			};
-
-			s_pRenderData->QuadVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(Vertex) * quadVertices.size()));
-			pBuffer->SetBufferLayout
-			({
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-				});
-			s_pRenderData->QuadVertexArray->AddVertexBuffer(pBuffer);
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
-			s_pRenderData->QuadVertexArray->SetIndexBuffer(indexBuffer);
-		}
-		//////////////
-
-		///////Line///////
-		{
-			s_pRenderData->LineVertexArray = VertexArray::Create();
-			s_pRenderData->LineVertexBuffer = VertexBuffer::Create(s_pRenderData->MaxLineVerts * sizeof(LineVertex));
-			s_pRenderData->LineVertexBuffer->SetBufferLayout
-			({
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float4, "a_Color" }
-				});
-			s_pRenderData->LineVertexArray->AddVertexBuffer(s_pRenderData->LineVertexBuffer);
-			s_pRenderData->LineVertexBufferBase = new LineVertex[s_pRenderData->MaxLineVerts];
-
-			uint32_t* pLineIndices = new uint32_t[s_pRenderData->MaxLineIndices];
-			uint32_t offset = 0;
-			for (uint32_t i = 0; i < s_pRenderData->MaxLineIndices; i += 2)
-			{
-				pLineIndices[i + 0] = offset + 0;
-				pLineIndices[i + 1] = offset + 1;
-
-				offset += 2;
-			}
-
-			Ref<IndexBuffer> pLineIB = IndexBuffer::Create(pLineIndices, s_pRenderData->MaxLineIndices);
-			s_pRenderData->LineVertexArray->SetIndexBuffer(pLineIB);
-
-			delete[] pLineIndices;
-		}
-		//////////////////
-
-		/////Skybox/////
-		{
-			std::vector<float> boxPositions =
-			{
-				-1, -1, -1,
-				 1, -1, -1,
-				 1,  1, -1,
-				-1,  1, -1,
-				-1, -1,  1,
-				 1, -1,  1,
-				 1,  1,  1,
-				-1,  1,  1
-			};
-
-			std::vector<uint32_t> boxIndicies =
-			{
-				0, 1, 3, 3, 1, 2,
-				1, 5, 2, 2, 5, 6,
-				5, 4, 6, 6, 4, 7,
-				4, 0, 7, 7, 0, 3,
-				3, 2, 7, 7, 2, 6,
-				4, 5, 0, 0, 5, 1
-			};
-
-			s_pRenderData->SkyboxVertexArray = VertexArray::Create();
-			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
-			pBuffer->SetBufferLayout
-			({
-				{ ElementType::Float3, "a_Position" }
-				});
-			s_pRenderData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
-
-			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-			s_pRenderData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
-			s_pRenderData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-
-			s_RendererSettings->InternalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
-		}
-		////////////////
+		CreateBaseMeshes();
 
 		/////Uniform Buffer/////
 		s_pRenderData->CommonUniformBuffer = UniformBuffer::Create(sizeof(CommonBuffer), 0);
@@ -249,68 +124,15 @@ namespace Lamp
 		delete s_RendererSettings;
 	}
 
-	void Renderer3D::Begin(Ref<CameraBase>& camera)
+	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
-		//Main
-		{
-			s_pRenderData->CommonBuffer.CameraPosition = glm::vec4(camera->GetPosition(), 0.f);
-			s_pRenderData->CommonBuffer.Projection = camera->GetProjectionMatrix();
-			s_pRenderData->CommonBuffer.View = camera->GetViewMatrix();
-			s_pRenderData->CommonUniformBuffer->SetData(&s_pRenderData->CommonBuffer, sizeof(CommonBuffer));
-		}
-
-		//Directional light
-		{
-			uint32_t index = 0;
-			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
-			{
-				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].direction = glm::vec4(glm::normalize(light->Direction), 0.f);
-				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->Color, light->Intensity);
-
-				index++;
-			}
-			s_pRenderData->DirectionalLightUniformBuffer->SetData(&s_pRenderData->DirectionalLightDataBuffer, sizeof(DirectionalLightBuffer));
-		}
-
-		//Point light
-		{
-			PointLightData* buffer = (PointLightData*)s_pRenderData->PointLightStorageBuffer->Map();
-			s_RendererSettings->LightCount = 0;
-
-			for (uint32_t i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
-			{
-				const auto& light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i];
-
-				buffer[i].position = glm::vec4(light->ShadowBuffer->GetPosition(), 0.f);
-				buffer[i].color = glm::vec4(light->Color, 0.f);
-				buffer[i].intensity = light->Intensity;
-				buffer[i].falloff = light->Falloff;
-				buffer[i].farPlane = light->FarPlane;
-				buffer[i].radius = light->Radius;
-
-				s_RendererSettings->LightCount++;
-			}
-
-			s_pRenderData->PointLightStorageBuffer->Unmap();
-		}
-
-		s_pRenderData->Camera = camera;
-
-		s_RendererSettings->ForwardGroupX = ((uint32_t)s_RendererSettings->BufferSize.x + ((uint32_t)s_RendererSettings->BufferSize.x % 16)) / 16;
-		s_RendererSettings->ForwardGroupY = ((uint32_t)s_RendererSettings->BufferSize.y + ((uint32_t)s_RendererSettings->BufferSize.y % 16)) / 16;
-		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
-
-		ResetBatchData();
+		SetupUniformBuffers(camera);
 	}
 
 	void Renderer3D::End()
 	{
 		LP_PROFILE_FUNCTION();
-		uint32_t dataSize = (uint8_t*)s_pRenderData->LineVertexBufferPtr - (uint8_t*)s_pRenderData->LineVertexBufferBase;
-		s_pRenderData->LineVertexBuffer->SetData(s_pRenderData->LineVertexBufferBase, dataSize);
-
 		s_RenderBuffer.drawCalls.clear();
-		Flush();
 	}
 
 	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
@@ -321,14 +143,6 @@ namespace Lamp
 	void Renderer3D::EndPass()
 	{
 		s_pRenderData->CurrentRenderPass = nullptr;
-	}
-
-	void Renderer3D::Flush()
-	{
-		LP_PROFILE_FUNCTION();
-		s_pRenderData->LineMaterial.GetShader()->Bind();
-
-		RenderCommand::DrawIndexedLines(s_pRenderData->LineVertexArray, s_pRenderData->LineIndexCount);
 	}
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& vertexData, Ref<Material> material, size_t objectId)
@@ -345,132 +159,139 @@ namespace Lamp
 
 		shaderToUse->Bind();
 
-		//Static Uniforms
-		for (const auto& staticUniformPair : pass->staticUniforms)
 		{
-			const auto& staticUniformSpec = staticUniformPair.second;
-
-			if (staticUniformSpec.data.type() == typeid(RenderData))
+			LP_PROFILE_SCOPE("StaticUniorms");
+			//Static Uniforms
+			for (const auto& staticUniformPair : pass->staticUniforms)
 			{
-				RenderData type = std::any_cast<RenderData>(staticUniformSpec.data);
-				switch (type)
+				const auto& staticUniformSpec = staticUniformPair.second;
+
+				if (staticUniformSpec.data.type() == typeid(RenderData))
 				{
-					case Lamp::RenderData::Transform:
-						shaderToUse->UploadMat4(staticUniformSpec.name, modelMatrix);
-						break;
-					case Lamp::RenderData::ID:
-						shaderToUse->UploadInt(staticUniformSpec.name, objectId);
-						break;
+					RenderData type = std::any_cast<RenderData>(staticUniformSpec.data);
+					switch (type)
+					{
+						case Lamp::RenderData::Transform:
+							shaderToUse->UploadMat4(staticUniformSpec.name, modelMatrix);
+							break;
+						case Lamp::RenderData::ID:
+							shaderToUse->UploadInt(staticUniformSpec.name, objectId);
+							break;
+					}
+
+					continue;
 				}
 
-				continue;
-			}
-
-			switch (staticUniformSpec.type)
-			{
-				case UniformType::Int:
-					shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
-					break;
-
-				case UniformType::Float:
-					shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
-					break;
-
-				case UniformType::Float2:
-					shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
-					break;
-
-				case UniformType::Float3:
-					shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
-					break;
-
-				case UniformType::Float4:
-					shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
-					break;
-
-				case UniformType::Mat4:
-					shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
-					break;
-			}
-		}
-
-		//Dynamic Uniforms
-		for (const auto& dynamicUniformPair : pass->dynamicUniforms)
-		{
-			const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
-
-			if (dynamicUniformSpec.data == nullptr)
-			{
-				LP_CORE_ERROR("Dynamic uniform data is nullptr at {0}", dynamicUniformSpec.name);
-				continue;
-			}
-
-			switch (dynamicUniformSpec.type)
-			{
-				case UniformType::Int:
-					shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
-					break;
-
-				case UniformType::Float:
-					shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
-					break;
-
-				case UniformType::Float3:
-					shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
-					break;
-
-				case UniformType::Float4:
-					shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
-					break;
-
-				case UniformType::Mat4:
-					shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
-					break;
-			}
-		}
-
-		//Framebuffers
-		for (const auto& framebufferPair : pass->framebuffers)
-		{
-			const auto& spec = framebufferPair.second.first;
-
-			if (spec.framebuffer == nullptr)
-			{
-				LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
-				continue;
-			}
-
-			for (const auto& attachment : spec.attachments)
-			{
-				switch (attachment.type)
+				switch (staticUniformSpec.type)
 				{
-					case TextureType::Color:
-						spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+					case UniformType::Int:
+						shaderToUse->UploadInt(staticUniformSpec.name, std::any_cast<int>(staticUniformSpec.data));
 						break;
 
-					case TextureType::Depth:
-						spec.framebuffer->BindDepthAttachment(attachment.bindId);
+					case UniformType::Float:
+						shaderToUse->UploadFloat(staticUniformSpec.name, std::any_cast<float>(staticUniformSpec.data));
 						break;
 
-					default:
+					case UniformType::Float2:
+						shaderToUse->UploadFloat2(staticUniformSpec.name, std::any_cast<glm::vec2>(staticUniformSpec.data));
+						break;
+
+					case UniformType::Float3:
+						shaderToUse->UploadFloat3(staticUniformSpec.name, std::any_cast<glm::vec3>(staticUniformSpec.data));
+						break;
+
+					case UniformType::Float4:
+						shaderToUse->UploadFloat4(staticUniformSpec.name, std::any_cast<glm::vec4>(staticUniformSpec.data));
+						break;
+
+					case UniformType::Mat4:
+						shaderToUse->UploadMat4(staticUniformSpec.name, std::any_cast<glm::mat4>(staticUniformSpec.data));
 						break;
 				}
 			}
 		}
-
-		int i = 0;
-		for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
 		{
-			if (material->GetTextures()[textureName].get() != nullptr)
+			LP_PROFILE_SCOPE("DynamicUniorms");
+			//Dynamic Uniforms
+			for (const auto& dynamicUniformPair : pass->dynamicUniforms)
+			{
+				const auto& dynamicUniformSpec = dynamicUniformPair.second.first;
+
+				if (dynamicUniformSpec.data == nullptr)
+				{
+					LP_CORE_ERROR("Dynamic uniform data is nullptr at {0}", dynamicUniformSpec.name);
+					continue;
+				}
+
+				switch (dynamicUniformSpec.type)
+				{
+					case UniformType::Int:
+						shaderToUse->UploadInt(dynamicUniformSpec.name, *static_cast<int*>(dynamicUniformSpec.data));
+						break;
+
+					case UniformType::Float:
+						shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
+						break;
+
+					case UniformType::Float3:
+						shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
+						break;
+
+					case UniformType::Float4:
+						shaderToUse->UploadFloat4(dynamicUniformSpec.name, *static_cast<glm::vec4*>(dynamicUniformSpec.data));
+						break;
+
+					case UniformType::Mat4:
+						shaderToUse->UploadMat4(dynamicUniformSpec.name, *static_cast<glm::mat4*>(dynamicUniformSpec.data));
+						break;
+				}
+			}
+		}
+		{
+			LP_PROFILE_SCOPE("Framebuffers");
+			//Framebuffers
+			for (const auto& framebufferPair : pass->framebuffers)
+			{
+				const auto& spec = framebufferPair.second.first;
+
+				if (spec.framebuffer == nullptr)
+				{
+					LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
+					continue;
+				}
+
+				for (const auto& attachment : spec.attachments)
+				{
+					switch (attachment.type)
+					{
+						case TextureType::Color:
+							spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId);
+							break;
+
+						case TextureType::Depth:
+							spec.framebuffer->BindDepthAttachment(attachment.bindId);
+							break;
+
+						default:
+							break;
+					}
+				}
+			}
+		}
+		{
+			LP_PROFILE_SCOPE("Textures");
+			int i = 0;
+			for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
 			{
 				material->GetTextures()[textureName]->Bind(i);
 				i++;
 			}
 		}
 
-		vertexData->Bind();
-		RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
-
+		{
+			vertexData->Bind();
+			RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
+		}
 	}
 
 	void Renderer3D::DrawSkybox()
@@ -641,41 +462,132 @@ namespace Lamp
 		}
 	}
 
-	void Renderer3D::DrawLine(const glm::vec3& posA, const glm::vec3& posB, float width)
+	void Renderer3D::CreateBaseMeshes()
 	{
-		glLineWidth(width);
-
-		if (s_pRenderData->LineIndexCount >= Renderer3DStorage::MaxLineIndices)
+		/////Quad/////
 		{
-			StartNewBatch();
+			std::vector<Vertex> quadVertices =
+			{
+				Vertex({ 1.f, 1.f, 0.f }, { 1.f, 1.f }),
+				Vertex({ 1.f, -1.f, 0.f }, { 1.f, 0.f }),
+				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 0.f }),
+				Vertex({ -1.f, 1.f, 0.f }, { 0.f, 1.f }),
+			};
+
+			std::vector<uint32_t> quadIndices =
+			{
+				0, 3, 1, //(top right - bottom right - top left)
+				1, 3, 2 //(bottom right - bottom left - top left)
+			};
+
+			s_pRenderData->QuadVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(Vertex) * quadVertices.size()));
+			pBuffer->SetBufferLayout
+			({
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+				});
+			s_pRenderData->QuadVertexArray->AddVertexBuffer(pBuffer);
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
+			s_pRenderData->QuadVertexArray->SetIndexBuffer(indexBuffer);
+		}
+		//////////////
+
+		/////Skybox/////
+		{
+			std::vector<float> boxPositions =
+			{
+				-1, -1, -1,
+				 1, -1, -1,
+				 1,  1, -1,
+				-1,  1, -1,
+				-1, -1,  1,
+				 1, -1,  1,
+				 1,  1,  1,
+				-1,  1,  1
+			};
+
+			std::vector<uint32_t> boxIndicies =
+			{
+				0, 1, 3, 3, 1, 2,
+				1, 5, 2, 2, 5, 6,
+				5, 4, 6, 6, 4, 7,
+				4, 0, 7, 7, 0, 3,
+				3, 2, 7, 7, 2, 6,
+				4, 5, 0, 0, 5, 1
+			};
+
+			s_pRenderData->SkyboxVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
+			pBuffer->SetBufferLayout
+			({
+				{ ElementType::Float3, "a_Position" }
+				});
+			s_pRenderData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
+
+			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
+			s_pRenderData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
+			s_pRenderData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
+
+			s_RendererSettings->InternalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
+		}
+		////////////////
+	}
+
+	void Renderer3D::SetupUniformBuffers(const Ref<CameraBase> camera)
+	{
+		//Main
+		{
+			s_pRenderData->CommonBuffer.CameraPosition = glm::vec4(camera->GetPosition(), 0.f);
+			s_pRenderData->CommonBuffer.Projection = camera->GetProjectionMatrix();
+			s_pRenderData->CommonBuffer.View = camera->GetViewMatrix();
+			s_pRenderData->CommonUniformBuffer->SetData(&s_pRenderData->CommonBuffer, sizeof(CommonBuffer));
 		}
 
-		s_pRenderData->LineVertexBufferPtr->Position = posA;
-		s_pRenderData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pRenderData->LineVertexBufferPtr++;
+		//Directional light
+		{
+			uint32_t index = 0;
+			s_pRenderData->DirectionalLightDataBuffer.lightCount = 0;
+			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+			{
+				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].direction = glm::vec4(glm::normalize(light->Direction), 0.f);
+				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->Color, light->Intensity);
 
-		s_pRenderData->LineVertexBufferPtr->Position = posB;
-		s_pRenderData->LineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pRenderData->LineVertexBufferPtr++;
+				index++;
+				s_pRenderData->DirectionalLightDataBuffer.lightCount++;
+			}
+			s_pRenderData->DirectionalLightUniformBuffer->SetData(&s_pRenderData->DirectionalLightDataBuffer, sizeof(DirectionalLightBuffer));
+		}
 
-		s_pRenderData->LineIndexCount += 2;
-	}
+		//Point light
+		{
+			PointLightData* buffer = (PointLightData*)s_pRenderData->PointLightStorageBuffer->Map();
+			s_RendererSettings->LightCount = 0;
 
-	void Renderer3D::StartNewBatch()
-	{
-		End();
-		ResetBatchData();
-	}
+			for (uint32_t i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
+			{
+				const auto& light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i];
 
-	void Renderer3D::ResetBatchData()
-	{
-		s_pRenderData->LineIndexCount = 0;
-		s_pRenderData->LineVertexBufferPtr = s_pRenderData->LineVertexBufferBase;
-	}
-	void Renderer3D::SetupBuffers()
-	{
-	}
-	void Renderer3D::CreateBuffers()
-	{
+				buffer[i].position = glm::vec4(light->ShadowBuffer->GetPosition(), 0.f);
+				buffer[i].color = glm::vec4(light->Color, 0.f);
+				buffer[i].intensity = light->Intensity;
+				buffer[i].falloff = light->Falloff;
+				buffer[i].farPlane = light->FarPlane;
+				buffer[i].radius = light->Radius;
+
+				s_RendererSettings->LightCount++;
+			}
+
+			s_pRenderData->PointLightStorageBuffer->Unmap();
+		}
+
+		s_pRenderData->Camera = camera;
+
+		s_RendererSettings->ForwardGroupX = ((uint32_t)s_RendererSettings->BufferSize.x + ((uint32_t)s_RendererSettings->BufferSize.x % 16)) / 16;
+		s_RendererSettings->ForwardGroupY = ((uint32_t)s_RendererSettings->BufferSize.y + ((uint32_t)s_RendererSettings->BufferSize.y % 16)) / 16;
+		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
 	}
 }

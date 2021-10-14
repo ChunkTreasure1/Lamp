@@ -343,32 +343,6 @@ namespace Sandbox3D
 		}
 	}
 
-	void Sandbox3D::RenderGrid()
-	{
-		Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.f), glm::vec3(5.f, 0.f, 0.f), 1.f);
-		Renderer3D::DrawLine(glm::vec3(0.f, 0.f, -5.f), glm::vec3(0.f, 0.f, 5.f), 1.f);
-
-		for (size_t x = 1; x <= 10; x++)
-		{
-			Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.5f * (float)x), glm::vec3(5.f, 0.f, 0.5f * (float)x), 1.f);
-		}
-
-		for (size_t x = 1; x <= 10; x++)
-		{
-			Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, -0.5f * (float)x), glm::vec3(5.f, 0.f, -0.5f * (float)x), 1.f);
-		}
-
-		for (size_t z = 1; z <= 10; z++)
-		{
-			Renderer3D::DrawLine(glm::vec3(0.5f * (float)z, 0.f, -5.f), glm::vec3(0.5f * (float)z, 0.f, 5.f), 1.f);
-		}
-
-		for (size_t z = 1; z <= 10; z++)
-		{
-			Renderer3D::DrawLine(glm::vec3(-0.5f * (float)z, 0.f, -5.f), glm::vec3(-0.5f * (float)z, 0.f, 5.f), 1.f);
-		}
-	}
-
 	void Sandbox3D::RenderSkybox()
 	{
 		Renderer3D::DrawSkybox();
@@ -378,7 +352,6 @@ namespace Sandbox3D
 	{
 		for (auto& p : m_Lines)
 		{
-			Renderer3D::DrawLine(p.first, p.second, 1.f);
 		}
 	}
 

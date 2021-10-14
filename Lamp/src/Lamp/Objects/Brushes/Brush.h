@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Lamp/Meshes/Mesh.h"
+#include "Lamp/Mesh/Mesh.h"
 #include "Lamp/Objects/Object.h"
 
 namespace Lamp

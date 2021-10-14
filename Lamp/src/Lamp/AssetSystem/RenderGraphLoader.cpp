@@ -14,6 +14,8 @@
 #include "Lamp/Rendering/RenderGraph/Nodes/RenderNodeCompute.h"
 #include "ResourceCache.h"
 
+#include <yaml-cpp/yaml.h>
+
 namespace Lamp
 {
 	void RenderGraphLoader::Save(const Ref<Asset>& asset) const

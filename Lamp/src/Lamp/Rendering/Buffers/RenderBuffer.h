@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lamp/Meshes/SubMesh.h"
-#include "Lamp/Meshes/Materials/Material.h"
+#include "Lamp/Mesh/SubMesh.h"
+#include "Lamp/Mesh/Materials/Material.h"
 
 namespace Lamp
 {

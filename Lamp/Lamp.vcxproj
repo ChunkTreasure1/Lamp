@@ -128,7 +128,7 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;LP_ENABLE_ASSERTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -194,12 +194,11 @@
     <ClInclude Include="src\Lamp\Level\Level.h" />
     <ClInclude Include="src\Lamp\Level\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />
-    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h" />
-    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
-    <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
-    <ClInclude Include="src\Lamp\Meshes\SubMesh.h" />
+    <ClInclude Include="src\Lamp\Mesh\Materials\Material.h" />
+    <ClInclude Include="src\Lamp\Mesh\Materials\MaterialLibrary.h" />
+    <ClInclude Include="src\Lamp\Mesh\Mesh.h" />
+    <ClInclude Include="src\Lamp\Mesh\SubMesh.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
@@ -207,13 +206,14 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
@@ -265,7 +265,7 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\Framebuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
@@ -743,24 +743,24 @@
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\Level.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\SubMesh.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\Materials\Material.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\Materials\MaterialLibrary.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\SubMesh.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
@@ -801,7 +801,7 @@
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />

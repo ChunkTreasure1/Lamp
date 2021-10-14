@@ -16,6 +16,7 @@
 #include "Windows/BufferWindow.h"
 #include "Windows\AssetManagerPanel.h"
 #include "Lamp/Event/EditorEvent.h"
+#include "Lamp/Event/KeyEvent.h"
 
 #include "UI/AnimatedIcon.h"
 

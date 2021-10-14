@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <filesystem>
 
+#include <Lamp/Debug/Instrumentor.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
 namespace Sandbox3D

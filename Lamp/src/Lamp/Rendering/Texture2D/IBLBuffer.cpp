@@ -64,7 +64,6 @@ namespace Lamp
 			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
 		};
 
-
 		//Render to cubemap
 		m_EqCubeShader->Bind();
 		m_EqCubeShader->UploadInt("u_EquirectangularMap", 0);

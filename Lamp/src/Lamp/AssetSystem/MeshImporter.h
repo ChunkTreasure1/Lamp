@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Lamp/Meshes/Mesh.h"
+#include "Lamp/Mesh/Mesh.h"
 
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+struct aiMesh;
+struct aiScene;
+struct aiNode;
 
 namespace Lamp
 {

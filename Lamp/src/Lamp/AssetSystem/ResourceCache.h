@@ -1,9 +1,9 @@
 #pragma once
 
-#include <unordered_map>
-#include "Lamp/Meshes/Mesh.h"
-
 #include "Lamp/AssetSystem/AssetManager.h"
+
+#include <unordered_map>
+#include <mutex>
 
 namespace Lamp
 {

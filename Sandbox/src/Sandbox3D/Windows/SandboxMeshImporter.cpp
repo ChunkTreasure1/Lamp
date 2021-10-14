@@ -4,7 +4,7 @@
 #include <imgui/imgui.h>
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
-#include <Lamp/Meshes/Materials/MaterialLibrary.h>
+#include <Lamp/Mesh/Materials/MaterialLibrary.h>
 #include <imgui/imgui_stdlib.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
@@ -239,7 +239,7 @@ namespace Sandbox3D
 		}
 		if (m_RenderGrid)
 		{
-			RenderGrid();
+			//TODO: Add grid rendering
 		}
 
 		Renderer3D::DrawRenderBuffer();
@@ -279,32 +279,6 @@ namespace Sandbox3D
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(SandboxMeshImporter::UpdateImGui));
 		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(SandboxMeshImporter::Update));
-	}
-
-	void SandboxMeshImporter::RenderGrid()
-	{
-		Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.f), glm::vec3(5.f, 0.f, 0.f), 1.f);
-		Renderer3D::DrawLine(glm::vec3(0.f, 0.f, -5.f), glm::vec3(0.f, 0.f, 5.f), 1.f);
-
-		for (size_t x = 1; x <= 10; x++)
-		{
-			Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, 0.5f * (float)x), glm::vec3(5.f, 0.f, 0.5f * (float)x), 1.f);
-		}
-
-		for (size_t x = 1; x <= 10; x++)
-		{
-			Renderer3D::DrawLine(glm::vec3(-5.f, 0.f, -0.5f * (float)x), glm::vec3(5.f, 0.f, -0.5f * (float)x), 1.f);
-		}
-
-		for (size_t z = 1; z <= 10; z++)
-		{
-			Renderer3D::DrawLine(glm::vec3(0.5f * (float)z, 0.f, -5.f), glm::vec3(0.5f * (float)z, 0.f, 5.f), 1.f);
-		}
-
-		for (size_t z = 1; z <= 10; z++)
-		{
-			Renderer3D::DrawLine(glm::vec3(-0.5f * (float)z, 0.f, -5.f), glm::vec3(-0.5f * (float)z, 0.f, 5.f), 1.f);
-		}
 	}
 
 	void SandboxMeshImporter::UpdatePerspective()

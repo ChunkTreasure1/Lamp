@@ -116,6 +116,9 @@
     <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox3D\SandboxController.cpp">
+      <Filter>src\Sandbox3D</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>

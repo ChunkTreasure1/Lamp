@@ -1,8 +1,6 @@
 #include "lppch.h"
 #include "AssetManager.h"
 
-#include "Lamp/Rendering/Texture2D/Texture2D.h"
-
 #include "Lamp/AssetSystem/LevelLoader.h"
 #include "Lamp/AssetSystem/RenderGraphLoader.h"
 #include "ResourceCache.h"

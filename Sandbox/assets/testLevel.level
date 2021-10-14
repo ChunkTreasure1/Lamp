@@ -157,6 +157,23 @@ level:
             - param: Layer
               type: Int
               value: 0
+    - entity: Entity
+      position: [0, 5.18794203, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: DirectionalLightComponent
+          params:
+            - param: Intensity
+              type: Float
+              value: 1
+            - param: Color
+              type: Color3
+              value: [1, 1, 1]
+            - param: Cast Shadows
+              type: Bool
+              value: true
   layers:
     - layer: Main
       id: 0
@@ -165,6 +182,6 @@ level:
       id: 1
       active: true
   LevelEnvironment:
-    cameraPosition: [0.352890819, 15.7103252, 18.377264]
-    cameraRotation: [0.764047086, 0.0511617027, 0.640223742, -0.0610574745]
+    cameraPosition: [-1.87704909, 14.5296268, 14.7401409]
+    cameraRotation: [-0.094048962, -0.825279534, -0.537812114, 0.144314393]
     cameraFOV: 60

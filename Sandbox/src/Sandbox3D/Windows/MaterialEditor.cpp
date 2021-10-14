@@ -2,7 +2,7 @@
 
 #include <imgui/imgui_stdlib.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Meshes/Materials/MaterialLibrary.h>
+#include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>

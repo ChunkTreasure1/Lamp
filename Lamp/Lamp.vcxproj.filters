@@ -46,11 +46,11 @@
     <Filter Include="src\Lamp\Math">
       <UniqueIdentifier>{7F2B061B-EBEB-8151-B426-CBCE20A6C62D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Meshes">
-      <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Mesh">
+      <UniqueIdentifier>{623C061B-CEFC-8151-9737-CBCE03B7C62D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Meshes\Materials">
-      <UniqueIdentifier>{AB25E2D6-17E8-1561-6098-A4EDCC99EE3E}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Mesh\Materials">
+      <UniqueIdentifier>{B3A11504-1FD9-5D9B-28E3-C1BE94998494}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Objects">
       <UniqueIdentifier>{9FABB438-8BA4-D38A-B4D6-B80FA02EB396}</UniqueIdentifier>
@@ -303,17 +303,17 @@
     <ClInclude Include="src\Lamp\Math\Math.h">
       <Filter>src\Lamp\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClInclude Include="src\Lamp\Mesh\Materials\Material.h">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClInclude Include="src\Lamp\Mesh\Materials\MaterialLibrary.h">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Mesh.h">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClInclude Include="src\Lamp\Mesh\Mesh.h">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\SubMesh.h">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClInclude Include="src\Lamp\Mesh\SubMesh.h">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
       <Filter>src\Lamp\Objects\Brushes</Filter>
@@ -339,7 +339,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
@@ -359,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h">
       <Filter>src\Lamp\Objects\Entity</Filter>
@@ -513,7 +516,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Vertices\Framebuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
@@ -1854,7 +1857,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1944,17 +1946,17 @@
     <ClCompile Include="src\Lamp\Math\Math.cpp">
       <Filter>src\Lamp\Math</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClCompile Include="src\Lamp\Mesh\Materials\Material.cpp">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClCompile Include="src\Lamp\Mesh\Materials\MaterialLibrary.cpp">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClCompile Include="src\Lamp\Mesh\Mesh.cpp">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\SubMesh.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClCompile Include="src\Lamp\Mesh\SubMesh.cpp">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
@@ -1974,7 +1976,7 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp">
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp">
@@ -1994,6 +1996,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
       <Filter>src\Lamp\Objects</Filter>
@@ -2115,7 +2120,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
@@ -2262,6 +2267,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp" />
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 #define LP_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 #ifdef LP_DEBUG
-	//#define LP_PROFILING
+	#define LP_PROFILING
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define LP_DEBUGBREAK() __debugbreak()
 		#define GLFW_EXPOSE_NATIVE_WIN32	
@@ -31,7 +31,6 @@
 
 #define RegisterData(x) static_cast<void*>(x)
 #define DEFAULT_BANK_PATH "assets\\audio\\banks"
-#define DEFAULT_SHADER_PATH "engine\\shaders\\3d"
 
 template<typename T>
 using Scope = std::unique_ptr<T>;
