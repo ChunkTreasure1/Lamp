@@ -16,6 +16,7 @@
 #include "Buffers/UniformBuffer.h"
 #include "Buffers/ShaderStorageBuffer.h"
 #include "UniformBuffers.h"
+#include "LightBase.h"
 
 #include <random>
 #include <glad/glad.h>
@@ -58,6 +59,9 @@ namespace Lamp
 
 		DirectionalLightBuffer DirectionalLightDataBuffer;
 		Ref<UniformBuffer> DirectionalLightUniformBuffer;
+
+		DirectionalLightVPs LightDataBuffer;
+		Ref<UniformBuffer> LightDataUniformBuffer;
 		////////////////////////
 
 		/////Forward plus/////
@@ -86,6 +90,7 @@ namespace Lamp
 		/////Uniform Buffer/////
 		s_pRenderData->CommonUniformBuffer = UniformBuffer::Create(sizeof(CommonBuffer), 0);
 		s_pRenderData->DirectionalLightUniformBuffer = UniformBuffer::Create(sizeof(DirectionalLightBuffer), 1);
+		s_pRenderData->LightDataUniformBuffer = UniformBuffer::Create(sizeof(DirectionalLightVPs), 4);
 		////////////////////////
 
 		/////Storage buffer/////
@@ -558,9 +563,9 @@ namespace Lamp
 			s_pRenderData->DirectionalLightDataBuffer.lightCount = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 			{
-				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].direction = glm::vec4(glm::normalize(light->Direction), 0.f);
+				glm::vec3 direction = glm::normalize(glm::mat3(light->Transform) * glm::vec3(1.f));
+				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].direction = glm::vec4(direction, 1.f);
 				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->Color, light->Intensity);
-
 				index++;
 				s_pRenderData->DirectionalLightDataBuffer.lightCount++;
 			}
@@ -587,6 +592,17 @@ namespace Lamp
 			}
 
 			s_pRenderData->PointLightStorageBuffer->Unmap();
+		}
+
+		//Light data
+		{
+			uint32_t index = 0;
+			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+			{
+				s_pRenderData->LightDataBuffer.viewProjections[index] = light->ViewProjection;
+				index++;
+			}
+			s_pRenderData->LightDataUniformBuffer->SetData(&s_pRenderData->LightDataUniformBuffer, sizeof(DirectionalLightVPs));
 		}
 
 		s_pRenderData->Camera = camera;

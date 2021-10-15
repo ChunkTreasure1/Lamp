@@ -32,6 +32,13 @@ namespace Lamp
 			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->CastShadows) }
 		});
 
+		const float size = 20.f;
+		glm::vec3 dir = glm::normalize(glm::mat3(m_pDirectionalLight->Transform) * glm::vec3(1.f)) * -1.f;
+
+		glm::mat4 view = glm::lookAt(glm::vec3(0.f) - dir * size, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 projection = glm::ortho(-size, size, -size, size, 0.1f, 100.f);
+		m_pDirectionalLight->ViewProjection = projection * view;
+
 		g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight);
 	}
 
@@ -54,8 +61,14 @@ namespace Lamp
 
 	bool DirectionalLightComponent::OnRotationChanged(EntityRotationChangedEvent& e)
 	{
-		glm::vec3 rot = { glm::radians(m_pEntity->GetRotation().x), glm::radians(m_pEntity->GetRotation().y), glm::radians(m_pEntity->GetRotation().z) };
-		m_pDirectionalLight->Direction = glm::normalize(glm::vec3(0.f, 0.f, -1.f) * glm::quat(rot));
+		m_pDirectionalLight->Transform = m_pEntity->GetModelMatrix();
+
+		const float size = 10.f;
+		glm::vec3 dir = glm::normalize(glm::mat3(m_pDirectionalLight->Transform) * glm::vec3(1.f)) * -1.f;
+
+		glm::mat4 view = glm::lookAt(glm::vec3(0.f) - dir * size, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 projection = glm::ortho(-size, size, -size, size, 0.1f, 100.f);
+		m_pDirectionalLight->ViewProjection = projection * view;
 
 		return false;
 	}

@@ -23,11 +23,17 @@ layout(std140, binding = 0) uniform Main
 	vec4 u_CameraPosition;
 };
 
+layout(std140, binding = 4) uniform DirLightData
+{
+	mat4 dirLightVPs[10];
+	uint count;
+} u_LightData;
+
 out Out
 {
 	vec3 FragPos;
 	vec2 TexCoord;
-	vec4 ShadowCoord;
+	vec4 ShadowCoord[10];
 	vec3 Normal;
 	mat3 TBN;
 } v_Out;
@@ -40,6 +46,7 @@ void main()
 	v_Out.TexCoord = a_TexCoords;
 	v_Out.Normal = a_Normal;
 
+
 	//TBN creation
     vec3 T = normalize(vec3(u_Model * vec4(a_Tangent, 0.0)));
 	vec3 B = normalize(vec3(u_Model * vec4(a_Bitangent, 0.0)));
@@ -48,7 +55,12 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	//Shadow calculation
-	v_Out.ShadowCoord = vec4(0);
+	
+	for(int i = 0; i < u_LightData.count; i++)
+	{
+		//v_Out
+	}
+	//v_Out.ShadowCoord = vec4(0);
 
 	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
 }
@@ -63,7 +75,7 @@ in Out
 {
 	vec3 FragPos;
 	vec2 TexCoord;
-	vec4 ShadowCoord;
+	vec4 ShadowCoord[10];
 	vec3 Normal;
 	mat3 TBN;
 } v_In;
@@ -95,7 +107,7 @@ vec4 CalculateForward()
 
 	vec3 N = normalize(CalculateNormal());
 
-	return CalculateColor(albedo, metallic, roughness, ao, v_In.FragPos, v_In.ShadowCoord, N);
+	return CalculateColor(albedo, metallic, roughness, ao, v_In.FragPos, vec4(0.0), N);
 }
 
 void main()

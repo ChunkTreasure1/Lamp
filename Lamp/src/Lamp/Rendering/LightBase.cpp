@@ -8,9 +8,6 @@ namespace Lamp
 {
 	DirectionalLight::DirectionalLight()
 	{
-		const float size = 10.f;
-		glm::mat4 viewProjection = glm::ortho(-size * Direction.x, size * Direction.x, -size * Direction.z, size * Direction.z, 0.1f, 1000.f) * glm::lookAt(Direction, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
-
 		RenderPassSpecification spec;
 		spec.clearType = ClearType::ColorDepth;
 		spec.cullFace = CullFace::Front;
@@ -19,7 +16,11 @@ namespace Lamp
 		spec.staticUniforms =
 		{
 			{ 0, { "u_Model", UniformType::RenderData, RenderData::Transform }},
-			{ 1, { "u_ViewProjection", UniformType::Mat4, viewProjection }}
+		};
+
+		spec.dynamicUniforms =
+		{
+			{ 1, { { "u_ViewProjection", UniformType::Mat4, RegisterData(&ViewProjection) }, 2 } }
 		};
 
 		spec.renderShader = ShaderLibrary::GetShader("dirShadow");

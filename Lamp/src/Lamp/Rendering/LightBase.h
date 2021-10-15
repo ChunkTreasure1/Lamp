@@ -16,10 +16,12 @@ namespace Lamp
 	{
 		DirectionalLight();
 
-		glm::vec3 Direction{ 50.f, 50.f, 0.f };
 		glm::vec3 Color{ 1.f, 1.f, 1.f };
 		float Intensity = 1.f;
 		bool CastShadows = true;
+
+		glm::mat4 Transform = glm::mat4(1.f);
+		glm::mat4 ViewProjection = glm::mat4(1.f);
 
 		uint32_t Id = s_LightId++;
 		std::unique_ptr<RenderPass> ShadowPass;

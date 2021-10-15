@@ -21,6 +21,7 @@
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/Core/Application.h>
 
 namespace Sandbox3D
 {
@@ -46,6 +47,8 @@ namespace Sandbox3D
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new RenderGraphPanel("Render Graph"));
 		m_pWindows.push_back(new LayerView("Layer View"));
+
+		Application::Get().GetWindow().Maximize();
 
 		SetupFromConfig();
 	}

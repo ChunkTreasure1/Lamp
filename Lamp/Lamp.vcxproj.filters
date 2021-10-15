@@ -2054,6 +2054,9 @@
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\LightBase.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClCompile>
@@ -2267,6 +2270,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
   </ItemGroup>
 </Project>
