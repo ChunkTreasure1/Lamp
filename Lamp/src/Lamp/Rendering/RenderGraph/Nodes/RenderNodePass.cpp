@@ -361,8 +361,9 @@ namespace Lamp
 				if (ImGui::Button(butId.c_str()))
 				{
 					std::string sName = name;
-					//Utility::RemoveFromContainerIf(specification.staticUniforms,
-					//	[&sName](const std::tuple<std::string, UniformType, std::any>& t) { return std::get<0>(t) == sName; });
+					specification.staticUniforms.erase(staticUniformPair.first);
+					
+					break;
 				}
 
 				ImGui::SameLine();
@@ -639,6 +640,7 @@ namespace Lamp
 					RemoveAttribute(RenderAttributeType::Framebuffer, framebufferPair.second.second);
 
 					specification.framebuffers.erase(framebufferPair.first);
+					break;
 				}
 
 				ImGui::SameLine();

@@ -170,7 +170,7 @@ level:
               value: 1
             - param: Color
               type: Color3
-              value: [1, 1, 1]
+              value: [1, 0.999989986, 0.999989986]
             - param: Cast Shadows
               type: Bool
               value: true
@@ -182,6 +182,6 @@ level:
       id: 1
       active: true
   LevelEnvironment:
-    cameraPosition: [-1.87704909, 14.5296268, 14.7401409]
-    cameraRotation: [-0.094048962, -0.825279534, -0.537812114, 0.144314393]
+    cameraPosition: [-4.10314512, 17.2108994, 14.2991858]
+    cameraRotation: [-0.491182119, 0.131920248, 0.0755450875, 0.857688844]
     cameraFOV: 60

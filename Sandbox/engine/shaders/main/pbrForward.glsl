@@ -26,7 +26,7 @@ layout(std140, binding = 0) uniform Main
 layout(std140, binding = 4) uniform DirLightData
 {
 	mat4 dirLightVPs[10];
-	uint count;
+	int count;
 } u_LightData;
 
 out Out
@@ -39,6 +39,7 @@ out Out
 } v_Out;
 
 uniform mat4 u_Model;
+uniform mat4 u_ShadowVP;
 
 void main()
 {
@@ -55,12 +56,10 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	//Shadow calculation
-	
 	for(int i = 0; i < u_LightData.count; i++)
 	{
-		//v_Out
+		v_Out.ShadowCoord[i] = u_LightData.dirLightVPs[i] * u_Model * vec4(a_Position, 1.0);
 	}
-	//v_Out.ShadowCoord = vec4(0);
 
 	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
 }
@@ -107,7 +106,7 @@ vec4 CalculateForward()
 
 	vec3 N = normalize(CalculateNormal());
 
-	return CalculateColor(albedo, metallic, roughness, ao, v_In.FragPos, vec4(0.0), N);
+	return CalculateColor(albedo, metallic, roughness, ao, v_In.FragPos, N);
 }
 
 void main()

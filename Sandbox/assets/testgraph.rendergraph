@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-595.580811, 291.270325]
+      position: [-739.580811, 282.270325]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [1152.63184, 298.249878]
+      position: [1008.63184, 289.249878]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [816.770325, 109.977173]
+      position: [672.770325, 100.977173]
       type: 0
       name: Forward
       clearType: 3
@@ -108,14 +108,6 @@ RenderGraph:
       textures:
         []
       framebuffers:
-        - framebuffer: Shadow
-          guuid: 178889901
-          attrId: 1952809975
-          attachments:
-            - attachment: ""
-              textureType: 1
-              bindId: 3
-              attachmentId: 0
         - framebuffer: Skybox
           guuid: 584871110
           attrId: 1846697515
@@ -155,11 +147,6 @@ RenderGraph:
           id: 1203473887
           type: 2
           data: 370896516
-        - attribute: Shadow
-          attrType: input
-          id: 1952809975
-          type: 1
-          data: 178889901
         - attribute: Skybox
           attrType: input
           id: 1846697515
@@ -180,7 +167,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [395.56131, 484.229004]
+      position: [251.56131, 475.229004]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -188,7 +175,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, 2.474554e+16, 2.17201262e-43]
+      clearColor: [1, 1, 0.0624576211, 2.63444111e-43]
       attachments:
         {}
       attributes:
@@ -198,7 +185,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 757978825
-      position: [550.561401, -282.770966]
+      position: [406.561401, -291.770966]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -209,7 +196,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [301.56134, -282.770966]
+      position: [157.56134, -291.770966]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -220,7 +207,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 954160398
-      position: [-299.050171, 100.533905]
+      position: [-443.050171, 91.533905]
       type: 0
       name: DepthPrePass
       clearType: 3
@@ -274,7 +261,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 770486413
-      position: [60.9498291, 235.533905]
+      position: [-83.0501709, 226.533905]
       type: 7
       shader: lightCulling
       attributes:
@@ -294,7 +281,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1394602077
-      position: [27.9498291, -26.466095]
+      position: [-116.050171, -35.466095]
       type: 3
       uniformType: 0
       dataName: ForwardTileX

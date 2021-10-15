@@ -70,9 +70,6 @@ namespace Lamp
 		Ref<ShaderStorageBuffer> VisibleLightsBuffer;
 		Ref<ShaderStorageBuffer> PointLightStorageBuffer;
 		//////////////////////
-
-		//Shadows
-		Ref<Shader> DirectionalShadowShader;
 	};
 
 	static Renderer3DStorage* s_pRenderData;
@@ -104,7 +101,6 @@ namespace Lamp
 		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3, DrawAccess::Static);
 		////////////////////////
 
-		s_pRenderData->DirectionalShadowShader = ShaderLibrary::GetShader("dirShadow");
 		s_RenderBuffer.drawCalls.reserve(100);
 
 		//Setup dynamic uniforms
@@ -128,6 +124,10 @@ namespace Lamp
 		//Draw shadow maps 
 		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 		{
+			if (!light->CastShadows)
+			{
+				continue;
+			}
 			light->ShadowBuffer->Bind();
 			RenderCommand::ClearDepth();
 			BeginPass(light->ShadowPass->GetSpecification());
@@ -295,6 +295,21 @@ namespace Lamp
 			{
 				material->GetTextures()[textureName]->Bind(i);
 				i++;
+			}
+
+			/////Testing/////
+			uint32_t index = 0;
+			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+			{
+				if (!light->CastShadows)
+				{
+					return;
+				}
+
+				shaderToUse->UploadInt("u_DirShadowMaps[" + std::to_string(index) + "]", i);
+				light->ShadowBuffer->BindDepthAttachment(i);
+				i++;
+				index++;
 			}
 		}
 
@@ -599,10 +614,16 @@ namespace Lamp
 			uint32_t index = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 			{
+				if (!light->CastShadows)
+				{
+					continue;
+				}
+
 				s_pRenderData->LightDataBuffer.viewProjections[index] = light->ViewProjection;
 				index++;
 			}
-			s_pRenderData->LightDataUniformBuffer->SetData(&s_pRenderData->LightDataUniformBuffer, sizeof(DirectionalLightVPs));
+			s_pRenderData->LightDataBuffer.lightCount = index;
+			s_pRenderData->LightDataUniformBuffer->SetData(&s_pRenderData->LightDataBuffer, sizeof(DirectionalLightVPs));
 		}
 
 		s_pRenderData->Camera = camera;

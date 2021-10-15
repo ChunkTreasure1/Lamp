@@ -36,6 +36,7 @@ namespace Lamp
 	struct DirectionalLightVPs
 	{
 		glm::mat4 viewProjections[10];
+		uint32_t lightCount = 0;
 	};
 
 	struct LightIndex
