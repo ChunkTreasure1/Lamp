@@ -29,16 +29,16 @@ namespace Lamp
 	struct ComponentProperty
 	{
 		ComponentProperty(PropertyType propertyType, const std::string& name, void* value)
-			: PropertyType(propertyType), Name(name), Value(value)
+			: propertyType(propertyType), name(name), value(value)
 		{}
 
 		ComponentProperty() 
-			: PropertyType(PropertyType::Void), Value(nullptr)
+			: propertyType(PropertyType::Void), value(nullptr)
 		{}
 
-		std::string Name;
-		void* Value;
-		PropertyType PropertyType;
+		std::string name;
+		void* value;
+		PropertyType propertyType;
 
 		static uint32_t PropertyTypeToSize(Lamp::PropertyType type)
 		{

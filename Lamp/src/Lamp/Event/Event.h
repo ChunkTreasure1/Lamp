@@ -17,9 +17,9 @@ namespace Lamp
 		AppTick = 6, AppUpdate = 7, AppRender = 8, AppLog = 9, AppItemClicked = 10,
 		KeyPressed = 11, KeyReleased = 12, KeyTyped = 13,
 		MouseButtonPressed = 14, MouseButtonReleased = 15, MouseMoved = 16, MouseScrolled = 17,
-		EntityCollision = 18, EntityStoppedCollision = 19, EntityPositionChanged = 20, ImGuiBegin = 21, EntityPropertyChanged = 22,
+		EntityCollision = 18, EntityStoppedCollision = 19, ObjectPositionChanged = 20, ImGuiBegin = 21, ObjectPropertyChanged = 22,
 		EntityComponentAdded = 23, ImGuiUpdate = 24, EditorViewportSizeChanged = 25, EntityPhysicsUpdate = 26, EntityCollisionStart = 27,
-		EntityCollisionEnd = 28, EntityTriggerBegin = 29, EntityTriggerEnd = 30, EntityRotationChanged = 31
+		EntityCollisionEnd = 28, EntityTriggerBegin = 29, EntityTriggerEnd = 30, ObjectRotationChanged = 31, ObjectScaleChanged
 	};
 
 

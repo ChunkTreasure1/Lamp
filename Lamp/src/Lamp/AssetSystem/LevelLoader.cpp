@@ -73,49 +73,49 @@ namespace Lamp
 					for (const auto& prop : component->GetComponentProperties().GetProperties())
 					{
 						out << YAML::BeginMap;
-						LP_SERIALIZE_PROPERTY(param, prop.Name, out);
-						LP_SERIALIZE_PROPERTY(type, ComponentProperties::GetStringFromType(prop.PropertyType), out);
+						LP_SERIALIZE_PROPERTY(param, prop.name, out);
+						LP_SERIALIZE_PROPERTY(type, ComponentProperties::GetStringFromType(prop.propertyType), out);
 						
-						switch (prop.PropertyType)
+						switch (prop.propertyType)
 						{
 							case PropertyType::String:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<std::string*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<std::string*>(prop.value), out);
 								break;
 
 							case PropertyType::Bool:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<bool*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<bool*>(prop.value), out);
 								break;
 
 							case PropertyType::Int:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<int*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<int*>(prop.value), out);
 								break;
 
 							case PropertyType::Float:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<float*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<float*>(prop.value), out);
 								break;
 
 							case PropertyType::Float2:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec2*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec2*>(prop.value), out);
 								break;
 
 							case PropertyType::Float3:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec3*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec3*>(prop.value), out);
 								break;
 
 							case PropertyType::Float4:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec4*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec4*>(prop.value), out);
 								break;
 
 							case PropertyType::Path:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<std::string*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<std::string*>(prop.value), out);
 								break;
 
 							case PropertyType::Color3:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec3*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec3*>(prop.value), out);
 								break;
 
 							case PropertyType::Color4:
-								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec4*>(prop.Value), out);
+								LP_SERIALIZE_PROPERTY(value, *static_cast<glm::vec4*>(prop.value), out);
 								break;
 
 							default:
@@ -332,7 +332,7 @@ namespace Lamp
 							break;
 					}
 
-					EntityPropertyChangedEvent e;
+					ObjectPropertyChangedEvent e;
 					pComp->OnEvent(e);
 				}
 

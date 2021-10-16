@@ -29,7 +29,7 @@ namespace Lamp
 
 	private:
 		bool OnRender(AppRenderEvent& e);
-		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
+		bool OnPropertyChanged(ObjectPropertyChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<MeshComponent>(); }

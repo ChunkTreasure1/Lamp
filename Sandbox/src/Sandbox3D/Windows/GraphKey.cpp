@@ -413,19 +413,19 @@ namespace Sandbox3D
 
 			for (auto& prop : pComp->GetComponentProperties().GetProperties())
 			{
-				switch (prop.PropertyType)
+				switch (prop.propertyType)
 				{
-					case Lamp::PropertyType::Bool: inputs.push_back(node->InputAttributeConfig<bool>(prop.Name.c_str(), Lamp::PropertyType::Bool)); break;
-					case Lamp::PropertyType::Int: inputs.push_back(node->InputAttributeConfig<int>(prop.Name.c_str(), Lamp::PropertyType::Int)); break;
-					case Lamp::PropertyType::Float: inputs.push_back(node->InputAttributeConfig<float>(prop.Name.c_str(), Lamp::PropertyType::Float)); break;
-					case Lamp::PropertyType::Float2: inputs.push_back(node->InputAttributeConfig<glm::vec2>(prop.Name.c_str(), Lamp::PropertyType::Float2)); break;
-					case Lamp::PropertyType::Float3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.Name.c_str(), Lamp::PropertyType::Float3)); break;
-					case Lamp::PropertyType::Float4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.Name.c_str(), Lamp::PropertyType::Float4)); break;
-					case Lamp::PropertyType::Color3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.Name.c_str(), Lamp::PropertyType::Float3)); break;
-					case Lamp::PropertyType::Color4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.Name.c_str(), Lamp::PropertyType::Float4)); break;
-					case Lamp::PropertyType::Path: inputs.push_back(node->InputAttributeConfig<std::string>(prop.Name.c_str(), Lamp::PropertyType::Path)); break;
-					case Lamp::PropertyType::String: inputs.push_back(node->InputAttributeConfig<std::string>(prop.Name.c_str(), Lamp::PropertyType::String)); break;
-					case Lamp::PropertyType::Void: inputs.push_back(node->InputAttributeConfig_Void(prop.Name.c_str(), Lamp::PropertyType::Bool)); break;
+					case Lamp::PropertyType::Bool: inputs.push_back(node->InputAttributeConfig<bool>(prop.name.c_str(), Lamp::PropertyType::Bool)); break;
+					case Lamp::PropertyType::Int: inputs.push_back(node->InputAttributeConfig<int>(prop.name.c_str(), Lamp::PropertyType::Int)); break;
+					case Lamp::PropertyType::Float: inputs.push_back(node->InputAttributeConfig<float>(prop.name.c_str(), Lamp::PropertyType::Float)); break;
+					case Lamp::PropertyType::Float2: inputs.push_back(node->InputAttributeConfig<glm::vec2>(prop.name.c_str(), Lamp::PropertyType::Float2)); break;
+					case Lamp::PropertyType::Float3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.name.c_str(), Lamp::PropertyType::Float3)); break;
+					case Lamp::PropertyType::Float4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.name.c_str(), Lamp::PropertyType::Float4)); break;
+					case Lamp::PropertyType::Color3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.name.c_str(), Lamp::PropertyType::Float3)); break;
+					case Lamp::PropertyType::Color4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.name.c_str(), Lamp::PropertyType::Float4)); break;
+					case Lamp::PropertyType::Path: inputs.push_back(node->InputAttributeConfig<std::string>(prop.name.c_str(), Lamp::PropertyType::Path)); break;
+					case Lamp::PropertyType::String: inputs.push_back(node->InputAttributeConfig<std::string>(prop.name.c_str(), Lamp::PropertyType::String)); break;
+					case Lamp::PropertyType::Void: inputs.push_back(node->InputAttributeConfig_Void(prop.name.c_str(), Lamp::PropertyType::Bool)); break;
 				}
 			}
 
@@ -554,7 +554,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -584,7 +584,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -614,7 +614,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -642,7 +642,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -672,7 +672,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -702,7 +702,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -731,7 +731,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -770,7 +770,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -799,7 +799,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -828,7 +828,7 @@ namespace Sandbox3D
 
 						if (pEntity)
 						{
-							Lamp::EntityPropertyChangedEvent e;
+							Lamp::ObjectPropertyChangedEvent e;
 							pEntity->OnEvent(e);
 						}
 					}
@@ -931,7 +931,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -959,7 +959,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -987,7 +987,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1014,7 +1014,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1041,7 +1041,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1067,7 +1067,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1093,7 +1093,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1129,7 +1129,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1155,7 +1155,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}
@@ -1181,7 +1181,7 @@ namespace Sandbox3D
 
 					if (pEntity)
 					{
-						Lamp::EntityPropertyChangedEvent e;
+						Lamp::ObjectPropertyChangedEvent e;
 						pEntity->OnEvent(e);
 					}
 				}

@@ -35,7 +35,7 @@ namespace Lamp
 		inline const glm::vec3& GetRotation() { return m_Rotation; }
 		inline const glm::vec3& GetScale() { return m_Scale; }
 
-		inline const glm::mat4& GetModelMatrix() { return m_ModelMatrix; }
+		const glm::mat4& GetTransform();
 		inline const std::string& GetName() { return m_Name; }
 
 		inline uint32_t GetLayerID() { return m_LayerID; }
@@ -49,10 +49,6 @@ namespace Lamp
 		virtual void Destroy() = 0;
 
 	protected:
-		void CalculateModelMatrix();
-		virtual void ScaleChanged() {}
-
-	protected:
 		bool m_IsActive = true;
 		bool m_IsFrozen = false;
 		bool m_IsSelected = false;
@@ -61,7 +57,7 @@ namespace Lamp
 		glm::vec3 m_Rotation = { 0.f, 0.f, 0.f };
 		glm::vec3 m_Scale = { 0.f, 0.f, 0.f };
 
-		glm::mat4 m_ModelMatrix = glm::mat4(1.f);
+		glm::mat4 m_Transform = glm::mat4(1.f);
 		std::string m_Name;
 
 		uint32_t m_LayerID = 0;

@@ -4,6 +4,11 @@ namespace Sandbox3D
 {
 	void ActionHandler::Undo()
 	{
+		if (m_Actions.empty())
+		{
+			return;
+		}
+
 		switch (m_Actions.front().type)
 		{
 			case ActionType::Add:

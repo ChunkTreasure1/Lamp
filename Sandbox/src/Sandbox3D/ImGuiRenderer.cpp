@@ -26,6 +26,8 @@
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 #include <Lamp/Rendering/Vertices/FrameBuffer.h>
 
+#include <Lamp/Utility/UIUtility.h>
+
 namespace Sandbox3D
 {
 	using namespace Lamp;
@@ -72,7 +74,7 @@ namespace Sandbox3D
 			{
 				if (Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer)
 				{
- 					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
 					m_SelectionBuffer = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer;
 				}
 			}
@@ -120,7 +122,7 @@ namespace Sandbox3D
 
 		if (m_pSelectedObject && m_SceneState != SceneState::Play)
 		{
-			transform = m_pSelectedObject->GetModelMatrix();
+			transform = m_pSelectedObject->GetTransform();
 
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
@@ -163,10 +165,10 @@ namespace Sandbox3D
 
 					hasDuplicated = true;
 				}
-				else
+				else if (transform != m_pSelectedObject->GetTransform())
 				{
 					glm::vec3 p, r, s;
-					ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(p), glm::value_ptr(r), glm::value_ptr(s));
+					Math::DecomposeTransform(transform, p, r, s);
 
 					glm::vec3 deltaRot = r - m_pSelectedObject->GetRotation();
 					m_pSelectedObject->SetPosition(p);
@@ -260,24 +262,16 @@ namespace Sandbox3D
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					glm::vec3 pos = pEnt->GetPosition();
-					float f[3] = { pos.x, pos.y, pos.z };
-
-					ImGui::InputFloat3("Position", f);
-					pEnt->SetPosition(glm::make_vec3(f));
-
+					UI::InputFloat3("Position", const_cast<glm::vec3&>(pEnt->GetPosition()));
 
 					glm::vec3 rot = pEnt->GetRotation();
-					float r[3] = { rot.x, rot.y, rot.z };
+					rot = glm::degrees(rot);
+					if (UI::InputFloat3("Rotation", rot))
+					{
+						pEnt->SetRotation(glm::radians(rot));
+					}
 
-					ImGui::InputFloat3("Rotation", r);
-					pEnt->SetRotation(glm::make_vec3(r));
-
-					glm::vec3 scale = pEnt->GetScale();
-					float s[3] = { scale.x, scale.y, scale.z };
-
-					ImGui::InputFloat3("Scale", s);
-					pEnt->SetScale(glm::make_vec3(s));
+					UI::InputFloat3("Scale", const_cast<glm::vec3&>(pEnt->GetScale()));
 				}
 
 				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
@@ -325,23 +319,16 @@ namespace Sandbox3D
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					glm::vec3 pos = pBrush->GetPosition();
-					float f[3] = { pos.x, pos.y, pos.z };
-
-					ImGui::InputFloat3("Position", f);
-					pBrush->SetPosition(glm::make_vec3(f));
+					UI::InputFloat3("Position", const_cast<glm::vec3&>(pBrush->GetPosition()));
 
 					glm::vec3 rot = pBrush->GetRotation();
-					float r[3] = { rot.x, rot.y, rot.z };
+					rot = glm::degrees(rot);
+					if (UI::InputFloat3("Rotation", rot))
+					{
+						pBrush->SetRotation(glm::radians(rot));
+					}
 
-					ImGui::InputFloat3("Rotation", r);
-					pBrush->SetRotation(glm::make_vec3(r));
-
-					glm::vec3 scale = pBrush->GetScale();
-					float s[3] = { scale.x, scale.y, scale.z };
-
-					ImGui::InputFloat3("Scale", s);
-					pBrush->SetScale(glm::make_vec3(s));
+					UI::InputFloat3("Scale", const_cast<glm::vec3&>(pBrush->GetScale()));
 				}
 
 				if (ImGui::CollapsingHeader("Materials"))
@@ -351,13 +338,8 @@ namespace Sandbox3D
 					{
 						static std::string lastInput = "";
 						std::string input = mat.second->GetName();
-						
-						ImGui::InputText(std::string("###input" + std::to_string(i)).c_str(), &input);
-						if (input != lastInput)
-						{
-							lastInput = input;
-						}
 
+						UI::InputString("###input" + std::to_string(i), input);
 						i++;
 					}
 				}
@@ -503,7 +485,7 @@ namespace Sandbox3D
 		ImGui::BeginChild("text");
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-		for (auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
+		for (const auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
 		{
 			if (msg.Level == Lamp::LogLevel::Trace)
 			{
@@ -550,193 +532,28 @@ namespace Sandbox3D
 				removeComp = true;
 			}
 
-			for (auto& pProp : ptr->GetComponentProperties().GetProperties())
+			for (auto& prop : ptr->GetComponentProperties().GetProperties())
 			{
-				switch (pProp.PropertyType)
+				bool propertyChanged = false;
+
+				switch (prop.propertyType)
 				{
-				case Lamp::PropertyType::Int:
-				{
-					int* p = static_cast<int*>(pProp.Value);
-					int v = *p;
-
-					ImGui::DragInt(pProp.Name.c_str(), &v);
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-
-					break;
+					case Lamp::PropertyType::Int: propertyChanged = UI::InputInt(prop.name, *static_cast<int*>(prop.value)); break;
+					case Lamp::PropertyType::Bool: propertyChanged = UI::InputBool(prop.name, *static_cast<bool*>(prop.value)); break;
+					case Lamp::PropertyType::Float: propertyChanged = UI::InputFloat(prop.name, *static_cast<float*>(prop.value)); break;
+					case Lamp::PropertyType::Float2: propertyChanged = UI::InputFloat2(prop.name, *static_cast<glm::vec2*>(prop.value)); break;
+					case Lamp::PropertyType::Float3: propertyChanged = UI::InputFloat3(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
+					case Lamp::PropertyType::Float4: propertyChanged = UI::InputFloat4(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case Lamp::PropertyType::String: propertyChanged = UI::InputString(prop.name, *static_cast<std::string*>(prop.value)); break;
+					case Lamp::PropertyType::Path: propertyChanged = UI::InputPath(prop.name, *static_cast<std::string*>(prop.value)); break;
+					case Lamp::PropertyType::Color3: propertyChanged = UI::InputColor3(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
+					case Lamp::PropertyType::Color4: propertyChanged = UI::InputFloat4(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 				}
 
-				case Lamp::PropertyType::Bool:
+				if (propertyChanged)
 				{
-					bool* p = static_cast<bool*>(pProp.Value);
-					bool v = *p;
-
-					ImGui::Checkbox(pProp.Name.c_str(), &v);
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-
-					break;
-				}
-
-				case Lamp::PropertyType::Float:
-				{
-					float* p = static_cast<float*>(pProp.Value);
-					float v = *p;
-
-					ImGui::DragFloat(pProp.Name.c_str(), &v);
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::Float2:
-				{
-					glm::vec2* p = static_cast<glm::vec2*>(pProp.Value);
-					glm::vec2 v = *p;
-
-					ImGui::DragFloat2(pProp.Name.c_str(), glm::value_ptr(v));
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::Float3:
-				{
-					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-					glm::vec3 v = *p;
-
-					ImGui::DragFloat3(pProp.Name.c_str(), glm::value_ptr(v));
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::Float4:
-				{
-					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-					glm::vec4 v = *p;
-
-					ImGui::DragFloat4(pProp.Name.c_str(), glm::value_ptr(*p));
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::String:
-				{
-					std::string* s = static_cast<std::string*>(pProp.Value);
-					std::string v = *s;
-
-					ImGui::InputText(pProp.Name.c_str(), &v);
-					if (v != *s)
-					{
-						*s = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::Path:
-				{
-					std::string* s = static_cast<std::string*>(pProp.Value);
-					std::string v = *s;
-
-					ImGui::InputText(pProp.Name.c_str(), &v);
-					if (ImGui::BeginDragDropTarget())
-					{
-						if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-						{
-							const wchar_t* path = (const wchar_t*)pPayload->Data;
-							std::filesystem::path p = std::filesystem::path("assets") / path;
-							v = p.string();
-						}
-
-						ImGui::EndDragDropTarget();
-					}
-
-					ImGui::SameLine();
-					if (ImGui::Button("Open..."))
-					{
-						std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-						if (!path.empty())
-						{
-							v = path;
-						}
-					}
-
-					if (v != *s)
-					{
-						*s = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::Color3:
-				{
-					glm::vec3* p = static_cast<glm::vec3*>(pProp.Value);
-					glm::vec3 v = *p;
-
-					ImGui::ColorEdit3(pProp.Name.c_str(), glm::value_ptr(v));
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
-
-				case Lamp::PropertyType::Color4:
-				{
-					glm::vec4* p = static_cast<glm::vec4*>(pProp.Value);
-					glm::vec4 v = *p;
-
-					ImGui::ColorEdit4(pProp.Name.c_str(), glm::value_ptr(v));
-					if (v != *p)
-					{
-						*p = v;
-
-						Lamp::EntityPropertyChangedEvent e;
-						ptr->GetEntity()->OnEvent(e);
-					}
-					break;
-				}
+					Lamp::ObjectPropertyChangedEvent e;
+					ptr->GetEntity()->OnEvent(e);
 				}
 			}
 		}
@@ -889,7 +706,7 @@ namespace Sandbox3D
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
 
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-		
+
 		float size = ImGui::GetWindowHeight() - 4.f;
 		Ref<Lamp::Texture2D> playIcon = m_IconPlay;
 		if (m_SceneState == SceneState::Play)

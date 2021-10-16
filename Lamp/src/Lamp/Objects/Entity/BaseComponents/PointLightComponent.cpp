@@ -51,18 +51,18 @@ namespace Lamp
 	void PointLightComponent::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<EntityPositionChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPositionChanged));
-		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPropertyChanged));
+		dispatcher.Dispatch<ObjectPositionChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPositionChanged));
+		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPropertyChanged));
 	}
 
-	bool PointLightComponent::OnPositionChanged(EntityPositionChangedEvent& e)
+	bool PointLightComponent::OnPositionChanged(ObjectPositionChangedEvent& e)
 	{
 		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
 
 		return false;
 	}
 
-	bool PointLightComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
+	bool PointLightComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
 		m_pPointLight->ShadowBuffer->UpdateProjection();
 

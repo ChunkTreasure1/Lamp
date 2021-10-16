@@ -19,7 +19,8 @@ namespace Lamp
 		inline DirectionalLight* GetLight() { return m_pDirectionalLight; }
 
 	private:
-		bool OnRotationChanged(EntityRotationChangedEvent& e);
+		bool OnRotationChanged(ObjectRotationChangedEvent& e);
+		void UpdateLight();
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<DirectionalLightComponent>(); }
@@ -27,5 +28,6 @@ namespace Lamp
 
 	private:
 		DirectionalLight* m_pDirectionalLight;
+		const float m_size = 20.f;
 	};
 }

@@ -17,10 +17,7 @@ namespace Lamp
 		virtual void Destroy() override;
 
 		//Getting
-		inline Ref<Mesh>& GetModel() { return m_Model; }
-
-	protected:
-		virtual void ScaleChanged() override;
+		inline Ref<Mesh>& GetModel() { return m_Mesh; }
 
 	public:
 		static Brush* Create(const std::string& path);
@@ -31,8 +28,9 @@ namespace Lamp
 	private:
 		bool OnRender(AppRenderEvent& e);
 		bool OnUpdate(AppUpdateEvent& e);
+		bool OnScaleChanged(ObjectScaleChangedEvent& e);
 
 	private:
-		Ref<Mesh> m_Model;
+		Ref<Mesh> m_Mesh;
 	};
 }

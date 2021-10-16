@@ -75,18 +75,18 @@ namespace Lamp
 
 			for (auto& property : comp->GetComponentProperties().GetProperties())
 			{
-				switch (property.PropertyType)
+				switch (property.propertyType)
 				{
 					case Lamp::PropertyType::String:
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								std::string* p = static_cast<std::string*>(prop.Value);
-								*p = std::string(*static_cast<std::string*>(property.Value));
+								std::string* p = static_cast<std::string*>(prop.value);
+								*p = std::string(*static_cast<std::string*>(property.value));
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -97,12 +97,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								bool* p = static_cast<bool*>(prop.Value);
-								*p = *static_cast<bool*>(property.Value);
+								bool* p = static_cast<bool*>(prop.value);
+								*p = *static_cast<bool*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -112,12 +112,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								int* p = static_cast<int*>(prop.Value);
-								*p = *static_cast<int*>(property.Value);
+								int* p = static_cast<int*>(prop.value);
+								*p = *static_cast<int*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -127,12 +127,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								float* p = static_cast<float*>(prop.Value);
-								*p = *static_cast<float*>(property.Value);
+								float* p = static_cast<float*>(prop.value);
+								*p = *static_cast<float*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -142,12 +142,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
-								*p = *static_cast<glm::vec2*>(property.Value);
+								glm::vec2* p = static_cast<glm::vec2*>(prop.value);
+								*p = *static_cast<glm::vec2*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -157,12 +157,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-								*p = *static_cast<glm::vec3*>(property.Value);
+								glm::vec3* p = static_cast<glm::vec3*>(prop.value);
+								*p = *static_cast<glm::vec3*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -172,12 +172,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-								*p = *static_cast<glm::vec4*>(property.Value);
+								glm::vec4* p = static_cast<glm::vec4*>(prop.value);
+								*p = *static_cast<glm::vec4*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -187,12 +187,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								std::string* p = static_cast<std::string*>(prop.Value);
-								*p = *static_cast<std::string*>(property.Value);
+								std::string* p = static_cast<std::string*>(prop.value);
+								*p = *static_cast<std::string*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -203,12 +203,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-								*p = *static_cast<glm::vec3*>(property.Value);
+								glm::vec3* p = static_cast<glm::vec3*>(prop.value);
+								*p = *static_cast<glm::vec3*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -218,12 +218,12 @@ namespace Lamp
 					{
 						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							if (prop.Name == property.Name)
+							if (prop.name == property.name)
 							{
-								glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-								*p = *static_cast<glm::vec4*>(property.Value);
+								glm::vec4* p = static_cast<glm::vec4*>(prop.value);
+								*p = *static_cast<glm::vec4*>(property.value);
 
-								EntityPropertyChangedEvent e;
+								ObjectPropertyChangedEvent e;
 								component->OnEvent(e);
 							}
 						}
@@ -239,7 +239,7 @@ namespace Lamp
 		{
 			copy->m_GraphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_GraphKeyGraph);
 		}
-		copy->m_ModelMatrix = entity->m_ModelMatrix;
+		copy->m_Transform = entity->m_Transform;
 		copy->SetPosition(entity->m_Position);
 		copy->SetRotation(entity->m_Rotation);
 		copy->SetScale(entity->m_Scale);

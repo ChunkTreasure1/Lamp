@@ -19,9 +19,9 @@ namespace Lamp
 		{
 			for (const auto& prop : properties)
 			{
-				if (prop.Name == name)
+				if (prop.name == name)
 				{
-					T* p = static_cast<T*>(prop.Value);
+					T* p = static_cast<T*>(prop.value);
 					return p;
 				}
 			}

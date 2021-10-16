@@ -7,7 +7,7 @@
 namespace Lamp
 {
 	Brush::Brush(Ref<Mesh> model)
-		: m_Model(model)
+		: m_Mesh(model)
 	{
 		m_Name = "Brush";
 	}
@@ -24,12 +24,6 @@ namespace Lamp
 		g_pEnv->pLevel->GetBrushes().erase(m_Id);
 
 		delete this;
-	}
-
-	void Brush::ScaleChanged()
-	{
-		m_Model->GetBoundingBox().Max = m_Scale * m_Model->GetBoundingBox().StartMax;
-		m_Model->GetBoundingBox().Min = m_Scale * m_Model->GetBoundingBox().StartMin;
 	}
 
 	Brush* Brush::Create(const std::string& path)
@@ -106,13 +100,21 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{	
-		m_Model->Render(m_Id, m_ModelMatrix);
+		m_Mesh->Render(m_Id, GetTransform());
 
 		return false;
 	}
 
 	bool Brush::OnUpdate(AppUpdateEvent& e)
 	{
+		return false;
+	}
+
+	bool Brush::OnScaleChanged(ObjectScaleChangedEvent& e)
+	{
+		m_Mesh->GetBoundingBox().Max = m_Scale * m_Mesh->GetBoundingBox().StartMax;
+		m_Mesh->GetBoundingBox().Min = m_Scale * m_Mesh->GetBoundingBox().StartMin;
+
 		return false;
 	}
 }

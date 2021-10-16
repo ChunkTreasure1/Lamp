@@ -8,7 +8,7 @@ namespace Lamp
 	static uint32_t s_ObjectId = 0;
 
 	Object::Object()
-		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_ModelMatrix(1.f), m_Name(""), m_LayerID(0)
+		: m_Position(0.f), m_Rotation(0.f), m_Scale(1.f), m_Transform(1.f), m_Name(""), m_LayerID(0)
 	{
 		m_Id = s_ObjectId++;
 	}
@@ -20,53 +20,45 @@ namespace Lamp
 	void Object::SetPosition(const glm::vec3 &pos)
 	{
 		m_Position = pos;
-
-		CalculateModelMatrix();
-
-		EntityPositionChangedEvent e;
+		ObjectPositionChangedEvent e;
 		OnEvent(e);
 	}
 
 	void Object::SetPhysicsPosition(const glm::vec3& pos)
 	{
 		m_Position = pos; 
-		CalculateModelMatrix(); 
 	}
 
 	void Object::SetRotation(const glm::vec3& rot)
 	{
 		m_Rotation = rot;
-		CalculateModelMatrix();
-
-		EntityRotationChangedEvent e;
+		ObjectRotationChangedEvent e;
 		OnEvent(e);
 	}
 
 	void Object::AddRotation(const glm::vec3& rot)
 	{
 		m_Rotation += rot; 
-		CalculateModelMatrix();
-
-		EntityRotationChangedEvent e;
+		ObjectRotationChangedEvent e;
 		OnEvent(e);
 	}
 
 	void Object::SetScale(const glm::vec3& scale)
 	{
 		m_Scale = scale;
-		CalculateModelMatrix();
-		ScaleChanged();
+		ObjectScaleChangedEvent e;
+		OnEvent(e);
 	}
 
 	void Object::SetModelMatrix(const glm::mat4& mat)
 	{
-		m_ModelMatrix = mat;
+		m_Transform = mat;
 
 		glm::vec3 scale;
 		glm::vec3 rotation;
 		glm::vec3 position;
 
-		Math::DecomposeTransform(m_ModelMatrix, position, rotation, scale);
+		Math::DecomposeTransform(m_Transform, position, rotation, scale);
 
 		rotation = rotation - m_Rotation;
 
@@ -76,10 +68,12 @@ namespace Lamp
 		m_Scale = scale;
 	}
 
-	void Object::CalculateModelMatrix()
+	const glm::mat4& Object::GetTransform()
 	{
-		m_ModelMatrix = glm::translate(glm::mat4(1.f), m_Position)
+		m_Transform = glm::translate(glm::mat4(1.f), m_Position)
 			* glm::toMat4(glm::quat(m_Rotation))
 			* glm::scale(glm::mat4(1.f), m_Scale);
+
+		return m_Transform;
 	}
 }

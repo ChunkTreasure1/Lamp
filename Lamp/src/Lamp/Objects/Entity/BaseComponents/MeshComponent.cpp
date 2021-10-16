@@ -26,7 +26,7 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(MeshComponent::OnRender));
-		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(MeshComponent::OnPropertyChanged));
+		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(MeshComponent::OnPropertyChanged));
 	}
 
 	bool MeshComponent::OnRender(AppRenderEvent& e)
@@ -36,12 +36,12 @@ namespace Lamp
 			return false;
 		}
 
-		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetModelMatrix());
+		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetTransform());
 
 		return true;
 	}
 
-	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
+	bool MeshComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
 		m_Model = ResourceCache::GetAsset<Mesh>(m_Path);
 
