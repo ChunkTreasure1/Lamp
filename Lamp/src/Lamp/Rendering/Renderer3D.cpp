@@ -155,7 +155,7 @@ namespace Lamp
 		s_pRenderData->CurrentRenderPass = nullptr;
 	}
 
-	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& vertexData, Ref<Material> material, size_t objectId)
+	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, const Ref<VertexArray> vertexData, const Ref<Material> material, size_t objectId)
 	{
 		LP_ASSERT(s_pRenderData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
@@ -452,7 +452,7 @@ namespace Lamp
 		s_RendererSettings->InternalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
 	}
 
-	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id)
+	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -481,7 +481,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		for (auto& data : s_RenderBuffer.drawCalls)
+		for (const auto& data : s_RenderBuffer.drawCalls)
 		{
 			DrawMesh(data.transform, data.data, data.material, data.id);
 		}

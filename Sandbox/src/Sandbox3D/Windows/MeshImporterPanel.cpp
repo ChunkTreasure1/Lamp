@@ -1,4 +1,4 @@
-#include "SandboxMeshImporter.h"
+#include "MeshImporterPanel.h"
 
 #include <Lamp/Rendering/RenderCommand.h>
 #include <imgui/imgui.h>
@@ -18,13 +18,13 @@ namespace Sandbox3D
 {
 	using namespace Lamp;
 
-	SandboxMeshImporter::SandboxMeshImporter(std::string_view name)
+	MeshImporterPanel::MeshImporterPanel(std::string_view name)
 		: BaseWindow(name)
 	{
 		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
 		m_Camera->SetPosition({ -3.f, 2.f, 3.f });
 
-		m_RenderFuncs.push_back(LP_EXTRA_RENDER(SandboxMeshImporter::Render));
+		m_RenderFuncs.push_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
 
 		//Setup icons
 		m_LoadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
@@ -41,11 +41,16 @@ namespace Sandbox3D
 			mainBuffer.Height = 720;
 			mainBuffer.Width = 1280;
 
-			m_Framebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			RenderPassSpecification passSpec{};
+			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
+			passSpec.clearType = Lamp::ClearType::ColorDepth;
+			passSpec.cullFace = Lamp::CullFace::Back;
+
+			m_RenderPass = CreateRef<RenderPass>(passSpec);
 		}
 	}
 
-	bool SandboxMeshImporter::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
+	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		if (!m_IsOpen)
 		{
@@ -76,7 +81,7 @@ namespace Sandbox3D
 		return false;
 	}
 
-	bool SandboxMeshImporter::Update(Lamp::AppUpdateEvent& e)
+	bool MeshImporterPanel::Update(Lamp::AppUpdateEvent& e)
 	{
 		if (m_DefaultShader == nullptr)
 		{
@@ -87,7 +92,7 @@ namespace Sandbox3D
 		return false;
 	}
 
-	std::string SandboxMeshImporter::GetDragDropTarget()
+	std::string MeshImporterPanel::GetDragDropTarget()
 	{
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -104,11 +109,11 @@ namespace Sandbox3D
 		return "";
 	}
 
-	void SandboxMeshImporter::MaterialPopup()
+	void MeshImporterPanel::MaterialPopup()
 	{
 	}
 
-	void SandboxMeshImporter::UpdateCamera(Lamp::Timestep ts)
+	void MeshImporterPanel::UpdateCamera(Lamp::Timestep ts)
 	{
 		if (!m_IsOpen)
 		{
@@ -121,7 +126,7 @@ namespace Sandbox3D
 		}
 	}
 
-	void SandboxMeshImporter::UpdateToolbar()
+	void MeshImporterPanel::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
@@ -205,51 +210,24 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void SandboxMeshImporter::UpdateMeshConstruction()
+	void MeshImporterPanel::UpdateMeshConstruction()
 	{
 	}
 
-	void SandboxMeshImporter::Render()
+	void MeshImporterPanel::Render()
 	{
 		if (!m_IsOpen)
 		{
 			return;
 		}
 
-		RenderPassSpecification pass;
-		pass.TargetFramebuffer = m_Framebuffer;
-
-		RenderCommand::SetClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 0.1f));
-		RenderCommand::Clear();
-
-		m_Framebuffer->Bind();
-		RenderCommand::Clear();
-
 		Renderer3D::Begin(m_Camera->GetCamera());
-		Renderer3D::BeginPass(pass);
 
-		if (m_RenderSkybox)
-		{
-			Renderer3D::DrawSkybox();
-		}
 
-		if (m_pModelToImport.get() != nullptr)
-		{
-			m_pModelToImport->Render(0, glm::mat4(1.f));
-		}
-		if (m_RenderGrid)
-		{
-			//TODO: Add grid rendering
-		}
-
-		Renderer3D::DrawRenderBuffer();
-
-		Renderer3D::EndPass();
 		Renderer3D::End();
-		m_Framebuffer->Unbind();
 	}
 
-	void SandboxMeshImporter::OnEvent(Lamp::Event& e)
+	void MeshImporterPanel::OnEvent(Lamp::Event& e)
 	{
 		if (!m_IsOpen)
 		{
@@ -277,11 +255,11 @@ namespace Sandbox3D
 		}
 
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(SandboxMeshImporter::UpdateImGui));
-		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(SandboxMeshImporter::Update));
+		dispatcher.Dispatch<Lamp::ImGuiUpdateEvent>(LP_BIND_EVENT_FN(MeshImporterPanel::UpdateImGui));
+		dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(MeshImporterPanel::Update));
 	}
 
-	void SandboxMeshImporter::UpdatePerspective()
+	void MeshImporterPanel::UpdatePerspective()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Import Perspective");
@@ -293,20 +271,20 @@ namespace Sandbox3D
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
 			if (m_PerspectiveSize != *((glm::vec2*)&panelSize))
 			{
-				m_Framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				m_RenderPass->GetSpecification().TargetFramebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 				m_PerspectiveSize = { panelSize.x, panelSize.y };
 
 				m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
 
-			uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
+			uint32_t textureID = m_RenderPass->GetSpecification().TargetFramebuffer->GetColorAttachmentID();
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
 
-	void SandboxMeshImporter::UpdateProperties()
+	void MeshImporterPanel::UpdateProperties()
 	{
 		ImGui::Begin("Import Settings", &m_IsOpen);
 
@@ -330,7 +308,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void SandboxMeshImporter::UpdateMaterial()
+	void MeshImporterPanel::UpdateMaterial()
 	{
 		ImGui::Begin("Materials");
 

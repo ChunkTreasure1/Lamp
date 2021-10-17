@@ -3,4 +3,4 @@ material:
   handle: 4069686199
   textures:
     gizmo: 17221873274523020632
-  shader: Sprite
+  shader: quad

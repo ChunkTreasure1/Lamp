@@ -3,6 +3,7 @@
 
 #include "Lamp/Level/Level.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
 #include <glm/ext/matrix_transform.hpp>
@@ -276,7 +277,7 @@ namespace Lamp
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
 
-			Renderer3D::SubmitQuad(transform, m_GizmoMaterial, m_Id);
+			Renderer2D::DrawQuad(transform, m_GizmoMaterial, m_Id);
 		}
 
 		return false;

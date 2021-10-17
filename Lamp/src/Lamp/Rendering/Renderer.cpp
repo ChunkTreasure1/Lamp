@@ -20,6 +20,7 @@ namespace Lamp
 
 		RenderCommand::Initialize();
 		Renderer3D::Initialize();
+		Renderer2D::Initialize();
 	}
 
 	void Renderer::Shutdown()

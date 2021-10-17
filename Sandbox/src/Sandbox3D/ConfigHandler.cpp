@@ -1,7 +1,7 @@
 #include "Sandbox3D.h"
 #include <rapidxml/rapidxml_print.hpp>
 
-#include "Windows/SandboxMeshImporter.h"
+#include "Windows/MeshImporterPanel.h"
 
 namespace Sandbox3D
 {

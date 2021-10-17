@@ -12,7 +12,7 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 
 #include <Lamp/Math/Math.h>
-#include "Windows/SandboxMeshImporter.h"
+#include "Windows/MeshImporterPanel.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
 

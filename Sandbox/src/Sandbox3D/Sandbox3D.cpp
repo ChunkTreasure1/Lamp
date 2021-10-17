@@ -10,7 +10,7 @@
 
 #include <Lamp/Rendering/RenderPass.h>
 
-#include "Windows/SandboxMeshImporter.h"
+#include "Windows/MeshImporterPanel.h"
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
 #include "Windows/RenderGraphPanel.h"
@@ -42,7 +42,7 @@ namespace Sandbox3D
 		Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph");
 		Renderer3D::GetSettings().RenderGraph->Start();
 
-		m_pWindows.push_back(new SandboxMeshImporter("Mesh Importer"));
+		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new RenderGraphPanel("Render Graph"));

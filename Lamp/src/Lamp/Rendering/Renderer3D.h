@@ -62,7 +62,7 @@ namespace Lamp
 		static void BeginPass(RenderPassSpecification& passSpec);
 		static void EndPass();
 
-		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh>& mesh, Ref<Material> mat, size_t id = -1);
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id = -1);
 		static void SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id = -1);
 
 		static void DrawRenderBuffer();
@@ -80,7 +80,7 @@ namespace Lamp
 		static void CreateBaseMeshes();
 		static void SetupUniformBuffers(const Ref<CameraBase> camera);
 
-		static void DrawMesh(const glm::mat4& modelMatrix, Ref<VertexArray>& data, Ref<Material> mat, size_t id = -1);
+		static void DrawMesh(const glm::mat4& modelMatrix, const Ref<VertexArray> data, const Ref<Material> mat, size_t id = -1);
 
 	private:
 		static RendererSettings* s_RendererSettings;

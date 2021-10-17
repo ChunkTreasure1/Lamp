@@ -1,7 +1,9 @@
 #include "lppch.h"
-#include "RenderNodeStart.h"
 
+#include "RenderNodeStart.h"
 #include "RenderNodePass.h"
+#include "Lamp/Rendering/Renderer2D.h"
+
 #include <imnodes.h>
 
 namespace Lamp
@@ -49,6 +51,7 @@ namespace Lamp
 	void RenderNodeStart::Activate(std::any value)
 	{
 		Renderer3D::Begin(std::any_cast<Ref<CameraBase>>(value));
+		Renderer2D::Begin(std::any_cast<Ref<CameraBase>>(value));
 		for (const auto& link : links)
 		{
 			if (link->pInput->pNode->GetNodeType() == RenderNodeType::Pass)
@@ -56,6 +59,7 @@ namespace Lamp
 				link->pInput->pNode->Activate(value);
 			}
 		}
+		Renderer2D::End();
 		Renderer3D::End();
 	}
 
