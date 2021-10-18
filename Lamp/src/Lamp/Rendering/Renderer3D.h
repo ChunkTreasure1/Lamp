@@ -38,7 +38,6 @@ namespace Lamp
 
 		static void DrawRenderBuffer();
 
-		static void DrawSkybox();
 		static void DrawCube();
 		static void DrawQuad();
 

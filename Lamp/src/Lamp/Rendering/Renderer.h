@@ -89,6 +89,7 @@ namespace Lamp
 
 		friend class Renderer3D;
 		friend class Renderer2D;
+		friend class Skybox;
 		friend class RenderNodeFramebuffer;
 		friend class RenderNodePass;
 		friend class RenderNodeCompute;

@@ -12,6 +12,7 @@
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 
 #include <Lamp/Utility/UIUtility.h>
 
@@ -33,6 +34,8 @@ namespace Sandbox
 
 		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("assets/editor.rendergraph");
 		m_renderGraph->Start();
+
+		m_Framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
 	}
 
 	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
@@ -206,12 +209,14 @@ namespace Sandbox
 			return;
 		}
 
-		for (const auto& mesh : m_pModelToImport->GetSubMeshes())
+		if (m_pModelToImport)
 		{
+			for (const auto& mesh : m_pModelToImport->GetSubMeshes())
+			{
 
-			Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pModelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pModelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+			}
 		}
-
 
 		m_renderGraph->Run(m_Camera->GetCamera());
 	}
@@ -257,17 +262,20 @@ namespace Sandbox
 			m_HoveringPerspective = ImGui::IsWindowHovered();
 			m_Camera->SetControlsEnabled(m_HoveringPerspective);
 
-			ImVec2 panelSize = ImGui::GetContentRegionAvail();
-			if (m_PerspectiveSize != *((glm::vec2*)&panelSize))
+			if (m_renderGraph->GetSpecification().endNode->framebuffer)
 			{
-				m_RenderPass->GetSpecification().TargetFramebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-				m_PerspectiveSize = { panelSize.x, panelSize.y };
+				ImVec2 panelSize = ImGui::GetContentRegionAvail();
+				if (m_PerspectiveSize != *((glm::vec2*)&panelSize))
+				{
+					m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+					m_PerspectiveSize = { panelSize.x, panelSize.y };
 
-				m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+					m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				}
+
+				uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID();
+				ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			}
-
-			uint32_t textureID = m_RenderPass->GetSpecification().TargetFramebuffer->GetColorAttachmentID();
-			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();

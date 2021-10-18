@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 259899954
-      position: [115, 289]
+      position: [42, 300]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 293213604
-      position: [1001, 357]
+      position: [928, 368]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 1211186725
-      position: [515, 107]
+      position: [442, 118]
       type: 0
       name: MainPass
       clearType: 3
@@ -36,7 +36,7 @@ RenderGraph:
         width: 1280
         height: 720
         samples: 1
-        clearColor: [0.255813956, 0.255811393, 0.255811393, 1]
+        clearColor: [0.739534855, 0.206381828, 0.206381828, 1]
         attachments:
           - attachment: ""
             borderColor: [1, 1, 1, 1]
@@ -134,7 +134,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1569709031
-      position: [65, 482]
+      position: [-8, 493]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -142,7 +142,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -0.0351179242, 1.70958413e-43]
+      clearColor: [1, 1, -1784512, 2.12997367e-43]
       attachments:
         {}
       attributes:

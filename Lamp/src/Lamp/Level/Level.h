@@ -7,6 +7,7 @@
 
 #include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
 #include "Lamp/Event/EditorEvent.h"
+#include "Lamp/Rendering/Skybox.h"
 
 #include <string>
 #include <glm/gtc/quaternion.hpp>
@@ -78,8 +79,10 @@ namespace Lamp
 		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
 		inline bool GetIsPlaying() { return m_IsPlaying; }
 		inline RenderUtils& GetRenderUtils() { return m_RenderUtils; }
+		inline Ref<Skybox> GetSkybox() { return m_skybox; }
 
 		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
+		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
 
 		static AssetType GetStaticType() { return AssetType::Level; }
 		virtual AssetType GetType() override { return GetStaticType(); }
@@ -115,6 +118,7 @@ namespace Lamp
 		bool m_IsPlaying = false;
 		bool m_LastShowedGizmos = false;
 
+		Ref<Skybox> m_skybox;
 		std::map<uint32_t, Brush*> m_Brushes;
 		std::map<uint32_t, Entity*> m_Entities;
 		std::vector<ObjectLayer> m_Layers;

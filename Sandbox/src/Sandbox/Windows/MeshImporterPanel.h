@@ -49,7 +49,7 @@ namespace Sandbox
 		Ref<Lamp::Mesh> m_pModelToImport;
 		Ref<Lamp::PerspectiveCameraController> m_Camera;
 		Ref<Lamp::Shader> m_DefaultShader;
-		Ref<Lamp::RenderPass> m_RenderPass;
+		Ref<Lamp::Framebuffer> m_Framebuffer;
 
 		std::vector<int> m_ShaderSelectionIds;
 

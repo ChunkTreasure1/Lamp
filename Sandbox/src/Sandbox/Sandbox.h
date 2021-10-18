@@ -45,8 +45,6 @@ namespace Sandbox
 	private:
 		void CreateDockspace();
 		void GetInput();
-		void RenderGrid();
-		void RenderSkybox();
 		void SetupFromConfig();
 		void RenderLines();
 

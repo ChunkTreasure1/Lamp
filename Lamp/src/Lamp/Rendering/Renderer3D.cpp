@@ -261,21 +261,6 @@ namespace Lamp
 		}
 	}
 
-	void Renderer3D::DrawSkybox()
-	{
-		LP_ASSERT(s_pRenderData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
-
-		RenderCommand::SetCullFace(CullFace::Back);
-
-		LP_PROFILE_FUNCTION();
-		s_pRenderData->SkyboxShader->Bind();
-		s_pRenderData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
-
-		Renderer::s_pSceneData->internalFramebuffers["Skybox"]->Bind();
-
-		DrawCube();
-	}
-
 	void Renderer3D::DrawCube()
 	{
 		s_pRenderData->SkyboxVertexArray->Bind();
