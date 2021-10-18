@@ -14,7 +14,7 @@
 #include <ImNodes/ImNodes.h>
 #include <imgui/imgui_stdlib.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 

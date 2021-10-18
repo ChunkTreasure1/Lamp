@@ -5,7 +5,7 @@
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 

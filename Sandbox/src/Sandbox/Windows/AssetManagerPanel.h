@@ -3,7 +3,7 @@
 #include <filesystem>
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class AssetManagerPanel
 	{

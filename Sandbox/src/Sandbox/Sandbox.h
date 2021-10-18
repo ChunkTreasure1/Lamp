@@ -27,15 +27,15 @@ namespace Lamp
 	class Framebuffer;
 }
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class BaseWindow;
 
-	class Sandbox3D : public Lamp::Layer
+	class Sandbox : public Lamp::Layer
 	{
 	public:
-		Sandbox3D();
-		~Sandbox3D();
+		Sandbox();
+		~Sandbox();
 
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
 

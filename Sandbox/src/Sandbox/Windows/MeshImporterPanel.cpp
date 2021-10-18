@@ -11,10 +11,11 @@
 #include <Lamp/AssetSystem/MeshImporter.h>
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
+#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
 
 #include <Lamp/Utility/UIUtility.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 
@@ -30,24 +31,8 @@ namespace Sandbox3D
 		m_LoadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
 		m_SaveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
-		{
-			FramebufferSpecification mainBuffer;
-			mainBuffer.Attachments =
-			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
-				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
-			};
-			mainBuffer.ClearColor = { 0.1f, 0.15f, 0.15f, 1.f };
-			mainBuffer.Height = 720;
-			mainBuffer.Width = 1280;
-
-			RenderPassSpecification passSpec{};
-			passSpec.TargetFramebuffer = Lamp::Framebuffer::Create(mainBuffer);
-			passSpec.clearType = Lamp::ClearType::ColorDepth;
-			passSpec.cullFace = Lamp::CullFace::Back;
-
-			m_RenderPass = CreateRef<RenderPass>(passSpec);
-		}
+		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("assets/editor.rendergraph");
+		m_renderGraph->Start();
 	}
 
 	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
@@ -85,7 +70,7 @@ namespace Sandbox3D
 	{
 		if (m_DefaultShader == nullptr)
 		{
-			m_DefaultShader = Lamp::ShaderLibrary::GetShader("pbrForward");
+			m_DefaultShader = Lamp::ShaderLibrary::GetShader("pbrEditor");
 		}
 		UpdateCamera(e.GetTimestep());
 
@@ -135,7 +120,7 @@ namespace Sandbox3D
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
 
 		ImGui::Begin("##toolbarMeshImporter", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-	
+
 		float size = ImGui::GetWindowHeight() - 4.f;
 
 		if (ImGui::ImageButton((ImTextureID)m_LoadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
@@ -174,7 +159,7 @@ namespace Sandbox3D
 			m_SavePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
 
 			std::string matOriginPath = m_SavePath.substr(m_SavePath.find_last_of('\\') + 1, m_SavePath.size() - 1);
-			
+
 
 			if (m_SavePath != "")
 			{
@@ -193,7 +178,7 @@ namespace Sandbox3D
 						std::string matPath = m_SavePath.substr(0, m_SavePath.find_last_of('\\') + 1);
 						matPath += matOriginPath + ".mtl";
 						//Add material to library
-						
+
 						//TODO: fix
 						//MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial(mat.first));
 						//MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
@@ -221,10 +206,14 @@ namespace Sandbox3D
 			return;
 		}
 
-		Renderer3D::Begin(m_Camera->GetCamera());
+		for (const auto& mesh : m_pModelToImport->GetSubMeshes())
+		{
+
+			Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pModelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+		}
 
 
-		Renderer3D::End();
+		m_renderGraph->Run(m_Camera->GetCamera());
 	}
 
 	void MeshImporterPanel::OnEvent(Lamp::Event& e)

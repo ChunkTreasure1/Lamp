@@ -1,6 +1,6 @@
 #include "ActionHandler.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	void ActionHandler::Undo()
 	{

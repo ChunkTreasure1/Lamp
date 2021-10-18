@@ -5,7 +5,7 @@
 
 #include <Lamp/Event/ApplicationEvent.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class AnimatedIcon
 	{

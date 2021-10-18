@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Sandbox3D/Sandbox3D.h"
+#include "Sandbox/Sandbox.h"
 
 #include "BaseWindow.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	struct ImportSettings
 	{
@@ -56,6 +56,7 @@ namespace Sandbox3D
 		//Icons
 		Ref<Lamp::Texture2D> m_LoadIcon;
 		Ref<Lamp::Texture2D> m_SaveIcon;
+		Ref<Lamp::RenderGraph> m_renderGraph;
 
 		//Import settings
 		ImportSettings m_ImportSettings;

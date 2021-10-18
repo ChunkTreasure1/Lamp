@@ -1,5 +1,5 @@
 #include "lppch.h"
-#include "Sandbox3D.h"
+#include "Sandbox.h"
 
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
@@ -18,7 +18,7 @@
 
 #include <Lamp/Core/Application.h>
 #include <Lamp/GraphKey/GraphKeyGraph.h>
-#include "Sandbox3D/Windows/GraphKey.h"
+#include "Sandbox/Windows/GraphKey.h"
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
@@ -28,11 +28,11 @@
 
 #include <Lamp/Utility/UIUtility.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 
-	void Sandbox3D::UpdatePerspective()
+	void Sandbox::UpdatePerspective()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -110,7 +110,7 @@ namespace Sandbox3D
 				ImGui::EndDragDropTarget();
 			}
 
-			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime()) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
+			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime() * 1000) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
 			ImGui::SetCursorPos(ImVec2(20, 40));
 			ImGui::Text(frameInfo.c_str());
 		}
@@ -188,7 +188,7 @@ namespace Sandbox3D
 		ImGui::PopStyleVar(2);
 	}
 
-	void Sandbox3D::UpdateProperties()
+	void Sandbox::UpdateProperties()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -360,7 +360,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateAddComponent()
+	void Sandbox::UpdateAddComponent()
 	{
 		if (ImGui::BeginPopup("AddComponent"))
 		{
@@ -394,7 +394,7 @@ namespace Sandbox3D
 		}
 	}
 
-	void Sandbox3D::UpdateCreateTool()
+	void Sandbox::UpdateCreateTool()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -453,7 +453,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateLogTool()
+	void Sandbox::UpdateLogTool()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -520,7 +520,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	bool Sandbox3D::DrawComponent(Lamp::EntityComponent* ptr)
+	bool Sandbox::DrawComponent(Lamp::EntityComponent* ptr)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -563,7 +563,7 @@ namespace Sandbox3D
 		return removeComp;
 	}
 
-	void Sandbox3D::UpdateLevelSettings()
+	void Sandbox::UpdateLevelSettings()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -577,7 +577,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateRenderingSettings()
+	void Sandbox::UpdateRenderingSettings()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -617,7 +617,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateRenderPassView()
+	void Sandbox::UpdateRenderPassView()
 	{
 		if (!m_RenderPassViewOpen)
 		{
@@ -637,7 +637,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateShaderView()
+	void Sandbox::UpdateShaderView()
 	{
 		if (!m_ShaderViewOpen)
 		{
@@ -665,7 +665,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::UpdateToolbar()
+	void Sandbox::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
@@ -720,7 +720,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	void Sandbox3D::CreateDockspace()
+	void Sandbox::CreateDockspace()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -891,7 +891,7 @@ namespace Sandbox3D
 		ImGui::End();
 	}
 
-	bool Sandbox3D::OnMouseMoved(Lamp::MouseMovedEvent& e)
+	bool Sandbox::OnMouseMoved(Lamp::MouseMovedEvent& e)
 	{
 		m_MouseHoverPos = glm::vec2(e.GetX(), e.GetY());
 

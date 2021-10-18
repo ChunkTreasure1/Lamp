@@ -1,5 +1,5 @@
 #include "lppch.h"
-#include "Sandbox3D.h"
+#include "Sandbox.h"
 
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
@@ -23,12 +23,12 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Core/Application.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 
-	Sandbox3D::Sandbox3D()
-		: Layer("Sandbox3D"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
+	Sandbox::Sandbox()
+		: Layer("Sandbox"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
 	{
 		g_pEnv->IsEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
@@ -53,7 +53,7 @@ namespace Sandbox3D
 		SetupFromConfig();
 	}
 
-	Sandbox3D::~Sandbox3D()
+	Sandbox::~Sandbox()
 	{
 		for (auto p : m_pWindows)
 		{
@@ -64,7 +64,7 @@ namespace Sandbox3D
 		m_pWindows.clear();
 	}
 
-	bool Sandbox3D::OnUpdate(AppUpdateEvent& e)
+	bool Sandbox::OnUpdate(AppUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -76,7 +76,7 @@ namespace Sandbox3D
 		GetInput();
 
 		{
-			LP_PROFILE_SCOPE("Sandbox3D::Update::LevelUpdate")
+			LP_PROFILE_SCOPE("Sandbox::Update::LevelUpdate")
 				switch (m_SceneState)
 				{
 					case SceneState::Edit:
@@ -121,7 +121,7 @@ namespace Sandbox3D
 		return false;
 	}
 
-	void Sandbox3D::OnImGuiRender(Timestep ts)
+	void Sandbox::OnImGuiRender(Timestep ts)
 	{
 		LP_PROFILE_FUNCTION();
 		CreateDockspace();
@@ -146,7 +146,7 @@ namespace Sandbox3D
 		OnEvent(e);
 	}
 
-	void Sandbox3D::OnEvent(Event& e)
+	void Sandbox::OnEvent(Event& e)
 	{
 		if (m_SceneState == SceneState::Play && m_pGame)
 		{
@@ -182,15 +182,15 @@ namespace Sandbox3D
 		}
 
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnMouseMoved));
-		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnUpdate));
-		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnWindowClose));
-		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnKeyPressed));
-		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnImGuiBegin));
-		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox3D::OnViewportSizeChanged));
+		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox::OnMouseMoved));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox::OnUpdate));
+		dispatcher.Dispatch<WindowCloseEvent>(LP_BIND_EVENT_FN(Sandbox::OnWindowClose));
+		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox::OnKeyPressed));
+		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox::OnImGuiBegin));
+		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox::OnViewportSizeChanged));
 	}
 
-	bool Sandbox3D::OnKeyPressed(KeyPressedEvent& e)
+	bool Sandbox::OnKeyPressed(KeyPressedEvent& e)
 	{
 		//Shortcuts
 		if (e.GetRepeatCount() > 0)
@@ -288,13 +288,13 @@ namespace Sandbox3D
 		return false;
 	}
 
-	bool Sandbox3D::OnImGuiBegin(ImGuiBeginEvent& e)
+	bool Sandbox::OnImGuiBegin(ImGuiBeginEvent& e)
 	{
 		ImGuizmo::BeginFrame();
 		return true;
 	}
 
-	bool Sandbox3D::OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e)
+	bool Sandbox::OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e)
 	{
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
@@ -304,7 +304,7 @@ namespace Sandbox3D
 		return false;
 	}
 
-	void Sandbox3D::GetInput()
+	void Sandbox::GetInput()
 	{
 		if (Input::IsMouseButtonPressed(0))
 		{
@@ -340,19 +340,19 @@ namespace Sandbox3D
 		}
 	}
 
-	void Sandbox3D::RenderSkybox()
+	void Sandbox::RenderSkybox()
 	{
 		Renderer3D::DrawSkybox();
 	}
 
-	void Sandbox3D::RenderLines()
+	void Sandbox::RenderLines()
 	{
 		for (auto& p : m_Lines)
 		{
 		}
 	}
 
-	void Sandbox3D::OnLevelPlay()
+	void Sandbox::OnLevelPlay()
 	{
 		m_SceneState = SceneState::Play;
 		m_pSelectedObject = nullptr;
@@ -366,7 +366,7 @@ namespace Sandbox3D
 		m_pGame->OnStart();
 	}
 
-	void Sandbox3D::OnLevelStop()
+	void Sandbox::OnLevelStop()
 	{
 		m_SceneState = SceneState::Edit;
 		m_pSelectedObject = nullptr;
@@ -378,7 +378,7 @@ namespace Sandbox3D
 		m_pGame = nullptr;
 	}
 
-	void Sandbox3D::OnSimulationStart()
+	void Sandbox::OnSimulationStart()
 	{
 		m_SceneState = SceneState::Simulating;
 		m_pSelectedObject = nullptr;
@@ -389,7 +389,7 @@ namespace Sandbox3D
 		m_pRuntimeLevel->OnSimulationStart();
 	}
 
-	void Sandbox3D::OnSimulationStop()
+	void Sandbox::OnSimulationStop()
 	{
 		m_SceneState = SceneState::Edit;
 		m_pSelectedObject = nullptr;

@@ -7,7 +7,7 @@ namespace Lamp
 	class Material;
 }
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class MaterialEditor : public BaseWindow
 	{

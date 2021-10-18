@@ -4,7 +4,7 @@
 #include <Lamp/Objects/Entity/Base/BaseComponent.h>
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class GraphKey : public BaseWindow
 	{

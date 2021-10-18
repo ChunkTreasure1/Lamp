@@ -2,9 +2,9 @@
 
 #include <string_view>
 
-#include "Sandbox3D/Sandbox3D.h"
+#include "Sandbox/Sandbox.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class BaseWindow
 	{

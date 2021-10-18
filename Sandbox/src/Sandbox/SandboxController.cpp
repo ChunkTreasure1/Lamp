@@ -2,7 +2,7 @@
 
 #include "Lamp/Level/Level.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	SandboxController::SandboxController()
 		: m_Listener(0)

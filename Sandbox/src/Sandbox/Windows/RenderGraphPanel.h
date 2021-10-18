@@ -1,9 +1,9 @@
 #pragma once
-#include "Sandbox3D/Windows/BaseWindow.h"
+#include "Sandbox/Windows/BaseWindow.h"
 
 #include "Lamp/Rendering/RenderGraph/RenderGraph.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 
 	class RenderGraphPanel : public BaseWindow

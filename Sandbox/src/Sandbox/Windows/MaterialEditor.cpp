@@ -8,7 +8,7 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 

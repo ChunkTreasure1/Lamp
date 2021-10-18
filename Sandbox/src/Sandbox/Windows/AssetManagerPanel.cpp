@@ -6,7 +6,7 @@
 #include <Lamp/Debug/Instrumentor.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 	static const std::filesystem::path s_assetsPath = "assets";

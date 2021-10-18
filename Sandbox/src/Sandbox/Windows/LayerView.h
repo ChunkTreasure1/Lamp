@@ -2,7 +2,7 @@
 
 #include "BaseWindow.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class LayerView : public BaseWindow
 	{

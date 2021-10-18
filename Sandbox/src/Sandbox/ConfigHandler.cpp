@@ -1,9 +1,9 @@
-#include "Sandbox3D.h"
+#include "Sandbox.h"
 #include <rapidxml/rapidxml_print.hpp>
 
 #include "Windows/MeshImporterPanel.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	static std::string ToString(const bool& var)
 	{
@@ -49,7 +49,7 @@ namespace Sandbox3D
 		return false;
 	}
 
-	bool Sandbox3D::OnWindowClose(Lamp::WindowCloseEvent& e)
+	bool Sandbox::OnWindowClose(Lamp::WindowCloseEvent& e)
 	{
 		using namespace rapidxml;
 
@@ -93,7 +93,7 @@ namespace Sandbox3D
 		return true;
 	}
 
-	void Sandbox3D::SetupFromConfig()
+	void Sandbox::SetupFromConfig()
 	{
 		using namespace rapidxml;
 

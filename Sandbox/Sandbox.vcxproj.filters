@@ -60,40 +60,40 @@
     <ClInclude Include="..\Lamp\vendor\imnodes\imnodes_internal.h">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Actions\ActionHandler.h">
+    <ClInclude Include="src\Sandbox\Actions\ActionHandler.h">
       <Filter>src\Sandbox3D\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Sandbox3D.h">
+    <ClInclude Include="src\Sandbox\Sandbox.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\SandboxController.h">
+    <ClInclude Include="src\Sandbox\SandboxController.h">
       <Filter>src\Sandbox3D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\UI\AnimatedIcon.h">
+    <ClInclude Include="src\Sandbox\UI\AnimatedIcon.h">
       <Filter>src\Sandbox3D\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\AssetManagerPanel.h">
+    <ClInclude Include="src\Sandbox\Windows\AssetManagerPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\BaseWindow.h">
+    <ClInclude Include="src\Sandbox\Windows\BaseWindow.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\BufferWindow.h">
+    <ClInclude Include="src\Sandbox\Windows\BufferWindow.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\GraphKey.h">
+    <ClInclude Include="src\Sandbox\Windows\GraphKey.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\LayerView.h">
+    <ClInclude Include="src\Sandbox\Windows\LayerView.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h">
+    <ClInclude Include="src\Sandbox\Windows\MaterialEditor.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\MeshImporterPanel.h">
+    <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h">
+    <ClInclude Include="src\Sandbox\Windows\RenderGraphPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,43 +104,43 @@
     <ClCompile Include="..\Lamp\vendor\imnodes\imnodes.cpp">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Actions\ActionHandler.cpp">
+    <ClCompile Include="src\Sandbox\Actions\ActionHandler.cpp">
       <Filter>src\Sandbox3D\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\ConfigHandler.cpp">
+    <ClCompile Include="src\Sandbox\ConfigHandler.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\ImGuiRenderer.cpp">
+    <ClCompile Include="src\Sandbox\ImGuiRenderer.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Sandbox3D.cpp">
+    <ClCompile Include="src\Sandbox\Sandbox.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\SandboxController.cpp">
+    <ClCompile Include="src\Sandbox\SandboxController.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\ShortcutFunctions.cpp">
+    <ClCompile Include="src\Sandbox\ShortcutFunctions.cpp">
       <Filter>src\Sandbox3D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\UI\AnimatedIcon.cpp">
+    <ClCompile Include="src\Sandbox\UI\AnimatedIcon.cpp">
       <Filter>src\Sandbox3D\UI</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\AssetManagerPanel.cpp">
+    <ClCompile Include="src\Sandbox\Windows\AssetManagerPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\GraphKey.cpp">
+    <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\LayerView.cpp">
+    <ClCompile Include="src\Sandbox\Windows\LayerView.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp">
+    <ClCompile Include="src\Sandbox\Windows\MaterialEditor.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\MeshImporterPanel.cpp">
+    <ClCompile Include="src\Sandbox\Windows\MeshImporterPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp">
+    <ClCompile Include="src\Sandbox\Windows\RenderGraphPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">

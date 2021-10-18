@@ -10,7 +10,7 @@
 #include <Lamp/GraphKey/NodeRegistry.h>
 #include <Lamp/Objects/Entity/Base/Entity.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	using namespace Lamp;
 

@@ -1,7 +1,7 @@
 #include "AnimatedIcon.h"
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	AnimatedIcon::AnimatedIcon(const std::filesystem::path& firstFrame, uint32_t frameCount, float animTime)
 		: m_AnimTime(animTime), m_FrameCount(frameCount), m_PerFrameTime(animTime / (float)frameCount)

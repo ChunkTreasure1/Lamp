@@ -1,12 +1,12 @@
 #include "lppch.h"
-#include "Sandbox3D.h"
+#include "Sandbox.h"
 
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
-namespace Sandbox3D
+namespace Sandbox
 {
-	void Sandbox3D::SaveLevelAs()
+	void Sandbox::SaveLevelAs()
 	{
 		std::string filepath = Lamp::FileDialogs::SaveFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
@@ -16,7 +16,7 @@ namespace Sandbox3D
 		}
 	}
 
-	void Sandbox3D::OpenLevel()
+	void Sandbox::OpenLevel()
 	{
 		std::string filepath = Lamp::FileDialogs::OpenFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
@@ -25,13 +25,13 @@ namespace Sandbox3D
 		}
 	}
 
-	void Sandbox3D::OpenLevel(const std::filesystem::path& path)
+	void Sandbox::OpenLevel(const std::filesystem::path& path)
 	{
 		m_pLevel = Lamp::ResourceCache::GetAsset<Lamp::Level>(path);
 		m_pSelectedObject = nullptr;
 	}
 
-	void Sandbox3D::NewLevel()
+	void Sandbox::NewLevel()
 	{
 		if (!g_pEnv->pLevel->Path.empty())
 		{
@@ -43,12 +43,12 @@ namespace Sandbox3D
 		m_pSelectedObject = nullptr;
 	}
 
-	void Sandbox3D::Undo()
+	void Sandbox::Undo()
 	{
 		m_ActionHandler.Undo();
 	}
 
-	void Sandbox3D::Redo()
+	void Sandbox::Redo()
 	{
 		m_ActionHandler.Redo();
 	}

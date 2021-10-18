@@ -6,7 +6,7 @@
 
 #include <Lamp/Objects/Object.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	enum class ActionType
 	{

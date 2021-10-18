@@ -4,7 +4,7 @@
 #include <Lamp/Rendering/Vertices/FrameBuffer.h>
 #include <Lamp/Core/Core.h>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class BufferWindow
 	{

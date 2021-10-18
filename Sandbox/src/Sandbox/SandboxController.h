@@ -5,7 +5,7 @@
 
 #include <glm/gtc/quaternion.hpp>
 
-namespace Sandbox3D
+namespace Sandbox
 {
 	class SandboxController
 	{
