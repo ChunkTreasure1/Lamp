@@ -31,19 +31,19 @@ namespace Lamp
 		inline void SetIsSelected(bool state) { m_IsSelected = state; }
 
 		//Getting
-		inline const glm::vec3& GetPosition() { return m_Position; }
-		inline const glm::vec3& GetRotation() { return m_Rotation; }
-		inline const glm::vec3& GetScale() { return m_Scale; }
+		inline const glm::vec3& GetPosition() const { return m_Position; }
+		inline const glm::vec3& GetRotation() const { return m_Rotation; }
+		inline const glm::vec3& GetScale() const { return m_Scale; }
 
 		const glm::mat4& GetTransform();
-		inline const std::string& GetName() { return m_Name; }
+		inline const std::string& GetName() const { return m_Name; }
 
-		inline uint32_t GetLayerID() { return m_LayerID; }
-		inline bool GetIsFrozen() { return m_IsFrozen; }
-		inline bool GetIsActive() { return m_IsActive; }
+		inline uint32_t GetLayerID() const { return m_LayerID; }
+		inline bool GetIsFrozen() const { return m_IsFrozen; }
+		inline bool GetIsActive() const { return m_IsActive; }
 		
-		inline const uint32_t GetID() { return m_Id; }
-		inline const bool GetIsSelected() { return m_IsSelected; }
+		inline const uint32_t GetID() const { return m_Id; }
+		inline const bool GetIsSelected() const { return m_IsSelected; }
 
 		virtual void OnEvent(Event& e) {}
 		virtual void Destroy() = 0;

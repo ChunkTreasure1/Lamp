@@ -11,7 +11,6 @@
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Level/Level.h"
 #include "Texture2D/IBLBuffer.h"
-#include "RenderGraph/Nodes/DynamicUniformRegistry.h"
 
 #include "Buffers/UniformBuffer.h"
 #include "Buffers/ShaderStorageBuffer.h"
@@ -28,16 +27,8 @@
 
 namespace Lamp
 {
-	struct LineVertex
-	{
-		glm::vec3 Position;
-		glm::vec4 Color;
-	};
-
 	struct Renderer3DStorage
 	{
-		static const uint32_t MaxLights = 1024;
-
 		/////Skybox//////
 		Ref<Shader> SkyboxShader;
 		Ref<VertexArray> SkyboxVertexArray;
@@ -47,95 +38,46 @@ namespace Lamp
 		Ref<VertexArray> QuadVertexArray;
 		//////////////
 
-		Ref<CameraBase> Camera;
-
 		RenderPassSpecification* CurrentRenderPass = nullptr;
 
-		glm::vec2 LastViewportSize = glm::vec2(0.f);
-
-		/////Uniform buffers/////
-		CommonBuffer CommonBuffer;
-		Ref<UniformBuffer> CommonUniformBuffer;
-
-		DirectionalLightBuffer DirectionalLightDataBuffer;
-		Ref<UniformBuffer> DirectionalLightUniformBuffer;
-
-		DirectionalLightVPs LightDataBuffer;
-		Ref<UniformBuffer> LightDataUniformBuffer;
-		////////////////////////
-
-		/////Forward plus/////
-		uint32_t ForwardTileCount = 1;
-
-		Ref<ShaderStorageBuffer> VisibleLightsBuffer;
-		Ref<ShaderStorageBuffer> PointLightStorageBuffer;
-		//////////////////////
 	};
 
 	static Renderer3DStorage* s_pRenderData;
-	RendererSettings* Renderer3D::s_RendererSettings;
 	RenderBuffer Renderer3D::s_RenderBuffer;
 
 	void Renderer3D::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
 		s_pRenderData = new Renderer3DStorage();
-		s_RendererSettings = new RendererSettings();
 
 		CreateBaseMeshes();
 
-		/////Uniform Buffer/////
-		s_pRenderData->CommonUniformBuffer = UniformBuffer::Create(sizeof(CommonBuffer), 0);
-		s_pRenderData->DirectionalLightUniformBuffer = UniformBuffer::Create(sizeof(DirectionalLightBuffer), 1);
-		s_pRenderData->LightDataUniformBuffer = UniformBuffer::Create(sizeof(DirectionalLightVPs), 4);
-		////////////////////////
-
-		/////Storage buffer/////
-		s_pRenderData->PointLightStorageBuffer = ShaderStorageBuffer::Create(s_pRenderData->MaxLights * sizeof(PointLightData), 2);
-
-		s_RendererSettings->ForwardGroupX = (2000 + (2000 % 16)) / 16;
-		s_RendererSettings->ForwardGroupY = (2000 + (2000 % 16)) / 16;
-
-		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
-
-		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3, DrawAccess::Static);
-		////////////////////////
-
 		s_RenderBuffer.drawCalls.reserve(1000);
-
-		//Setup dynamic uniforms
-		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure));
-		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&Renderer3D::GetSettings().Gamma));
-		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&Renderer3D::GetSettings().BufferSize));
-		DynamicUniformRegistry::AddUniform("ForwardTileX", UniformType::Int, RegisterData(&Renderer3D::GetSettings().ForwardGroupX));
 	}
 
 	void Renderer3D::Shutdown()
 	{
 		LP_PROFILE_FUNCTION();
 		delete s_pRenderData;
-		delete s_RendererSettings;
 	}
 
 	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
-		SetupUniformBuffers(camera);
-
 		//Draw shadow maps 
 		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 		{
-			if (!light->CastShadows)
+			if (!light->castShadows)
 			{
 				continue;
 			}
-			light->ShadowBuffer->Bind();
+			light->shadowBuffer->Bind();
 			RenderCommand::ClearDepth();
-			BeginPass(light->ShadowPass->GetSpecification());
+			BeginPass(light->shadowPass->GetSpecification());
 
 			DrawRenderBuffer();
 
 			EndPass();
-			light->ShadowBuffer->Unbind();
+			light->shadowBuffer->Unbind();
 		}
 	}
 
@@ -301,13 +243,13 @@ namespace Lamp
 			uint32_t index = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 			{
-				if (!light->CastShadows)
+				if (!light->castShadows)
 				{
 					return;
 				}
 
 				shaderToUse->UploadInt("u_DirShadowMaps[" + std::to_string(index) + "]", i);
-				light->ShadowBuffer->BindDepthAttachment(i);
+				light->shadowBuffer->BindDepthAttachment(i);
 				i++;
 				index++;
 			}
@@ -329,7 +271,7 @@ namespace Lamp
 		s_pRenderData->SkyboxShader->Bind();
 		s_pRenderData->SkyboxShader->UploadInt("u_EnvironmentMap", 0);
 
-		s_RendererSettings->InternalFramebuffers["Skybox"]->Bind();
+		Renderer::s_pSceneData->internalFramebuffers["Skybox"]->Bind();
 
 		DrawCube();
 	}
@@ -350,7 +292,7 @@ namespace Lamp
 	{
 		const auto& pass = s_pRenderData->CurrentRenderPass;
 		RenderCommand::SetCullFace(pass->cullFace);
-		Ref<Shader> shaderToUse = pass->renderShader; //? pass->renderShader : mat.GetShader();
+		Ref<Shader> shaderToUse = pass->renderShader;
 
 		shaderToUse->Bind();
 
@@ -449,7 +391,7 @@ namespace Lamp
 
 	void Renderer3D::SetEnvironment(const std::string& path)
 	{
-		s_RendererSettings->InternalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
+		Renderer::s_pSceneData->internalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
 	}
 
 	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id)
@@ -545,79 +487,8 @@ namespace Lamp
 			s_pRenderData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
 			s_pRenderData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
 
-			s_RendererSettings->InternalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
+			Renderer::s_pSceneData->internalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
 		}
 		////////////////
-	}
-
-	void Renderer3D::SetupUniformBuffers(const Ref<CameraBase> camera)
-	{
-		//Main
-		{
-			s_pRenderData->CommonBuffer.CameraPosition = glm::vec4(camera->GetPosition(), 0.f);
-			s_pRenderData->CommonBuffer.Projection = camera->GetProjectionMatrix();
-			s_pRenderData->CommonBuffer.View = camera->GetViewMatrix();
-			s_pRenderData->CommonUniformBuffer->SetData(&s_pRenderData->CommonBuffer, sizeof(CommonBuffer));
-		}
-
-		//Directional light
-		{
-			uint32_t index = 0;
-			s_pRenderData->DirectionalLightDataBuffer.lightCount = 0;
-			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
-			{
-				glm::vec3 direction = glm::normalize(glm::mat3(light->Transform) * glm::vec3(1.f));
-				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].direction = glm::vec4(direction, 1.f);
-				s_pRenderData->DirectionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->Color, light->Intensity);
-				index++;
-				s_pRenderData->DirectionalLightDataBuffer.lightCount++;
-			}
-			s_pRenderData->DirectionalLightUniformBuffer->SetData(&s_pRenderData->DirectionalLightDataBuffer, sizeof(DirectionalLightBuffer));
-		}
-
-		//Point light
-		{
-			PointLightData* buffer = (PointLightData*)s_pRenderData->PointLightStorageBuffer->Map();
-			s_RendererSettings->LightCount = 0;
-
-			for (uint32_t i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
-			{
-				const auto& light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i];
-
-				buffer[i].position = glm::vec4(light->ShadowBuffer->GetPosition(), 0.f);
-				buffer[i].color = glm::vec4(light->Color, 0.f);
-				buffer[i].intensity = light->Intensity;
-				buffer[i].falloff = light->Falloff;
-				buffer[i].farPlane = light->FarPlane;
-				buffer[i].radius = light->Radius;
-
-				s_RendererSettings->LightCount++;
-			}
-
-			s_pRenderData->PointLightStorageBuffer->Unmap();
-		}
-
-		//Light data
-		{
-			uint32_t index = 0;
-			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
-			{
-				if (!light->CastShadows)
-				{
-					continue;
-				}
-
-				s_pRenderData->LightDataBuffer.viewProjections[index] = light->ViewProjection;
-				index++;
-			}
-			s_pRenderData->LightDataBuffer.lightCount = index;
-			s_pRenderData->LightDataUniformBuffer->SetData(&s_pRenderData->LightDataBuffer, sizeof(DirectionalLightVPs));
-		}
-
-		s_pRenderData->Camera = camera;
-
-		s_RendererSettings->ForwardGroupX = ((uint32_t)s_RendererSettings->BufferSize.x + ((uint32_t)s_RendererSettings->BufferSize.x % 16)) / 16;
-		s_RendererSettings->ForwardGroupY = ((uint32_t)s_RendererSettings->BufferSize.y + ((uint32_t)s_RendererSettings->BufferSize.y % 16)) / 16;
-		s_pRenderData->ForwardTileCount = s_RendererSettings->ForwardGroupX * s_RendererSettings->ForwardGroupY;
 	}
 }

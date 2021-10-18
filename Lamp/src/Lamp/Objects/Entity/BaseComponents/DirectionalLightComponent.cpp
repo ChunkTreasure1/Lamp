@@ -23,13 +23,13 @@ namespace Lamp
 			{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
 		};
 
-		m_pDirectionalLight->ShadowBuffer = Framebuffer::Create(spec);
+		m_pDirectionalLight->shadowBuffer = Framebuffer::Create(spec);
 
 		SetComponentProperties
 		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->Intensity) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->Color) },
-			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->CastShadows) }
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->intensity) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->color) },
+			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
 		});
 
 		g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight);
@@ -60,12 +60,12 @@ namespace Lamp
 
 	void DirectionalLightComponent::UpdateLight()
 	{
-		m_pDirectionalLight->Transform = m_pEntity->GetTransform();
+		m_pDirectionalLight->transform = m_pEntity->GetTransform();
 
-		glm::vec3 dir = glm::normalize(glm::mat3(m_pDirectionalLight->Transform) * glm::vec3(1.f)) * -1.f;
+		glm::vec3 dir = glm::normalize(glm::mat3(m_pDirectionalLight->transform) * glm::vec3(1.f)) * -1.f;
 
 		glm::mat4 view = glm::lookAt(glm::vec3(0.f) - dir * m_size, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 		glm::mat4 projection = glm::ortho(-m_size, m_size, -m_size, m_size, 0.1f, 100.f);
-		m_pDirectionalLight->ViewProjection = projection * view;
+		m_pDirectionalLight->viewProjection = projection * view;
 	}
 }

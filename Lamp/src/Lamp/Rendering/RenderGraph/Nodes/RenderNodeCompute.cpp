@@ -4,6 +4,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/Utility/SerializeMacros.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include <imnodes.h>
 
@@ -94,7 +95,7 @@ namespace Lamp
 
 	void RenderNodeCompute::Activate(std::any value)
 	{
-		glm::vec2 bufferSize = Renderer3D::GetSettings().BufferSize;
+		glm::vec2 bufferSize = Renderer::s_pSceneData->bufferSize;
 		m_WorkGroupX = ((uint32_t)bufferSize.x + ((uint32_t)bufferSize.x % 16)) / 16;
 		m_WorkGroupY = ((uint32_t)bufferSize.y + ((uint32_t)bufferSize.y % 16)) / 16;
 
@@ -102,8 +103,8 @@ namespace Lamp
 		{
 			m_ComputeShader->Bind();
 			m_ComputeShader->UploadInt("u_DepthMap", 0);
-			m_ComputeShader->UploadFloat2("u_BufferSize", Renderer3D::GetSettings().BufferSize);
-			m_ComputeShader->UploadInt("u_LightCount", Renderer3D::GetSettings().LightCount);
+			m_ComputeShader->UploadFloat2("u_BufferSize", Renderer::s_pSceneData->bufferSize);
+			m_ComputeShader->UploadInt("u_LightCount", Renderer::s_pSceneData->pointLightCount);
 
 			if (framebuffer)
 			{

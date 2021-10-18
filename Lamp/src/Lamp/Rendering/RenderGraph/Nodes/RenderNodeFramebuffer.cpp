@@ -5,6 +5,7 @@
 #include "RenderNodeCompute.h"
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -25,7 +26,7 @@ namespace Lamp
 
 		outputs.push_back(output);
 
-		for (const auto &[uName, uBuffer] : Renderer3D::GetSettings().InternalFramebuffers)
+		for (const auto& [uName, uBuffer] : Renderer::s_pSceneData->internalFramebuffers)
 		{
 			m_BufferNames.push_back(uName.c_str());
 		}
@@ -78,7 +79,7 @@ namespace Lamp
 			}
 			else
 			{
-				framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
+				framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
 				m_SelectedBufferName = m_BufferNames[m_CurrentlySelectedBuffer];
 			}
 		}
@@ -88,7 +89,7 @@ namespace Lamp
 			ImGui::PushItemWidth(150.f);
 			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), (int)m_BufferNames.size()))
 			{
-				framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
+				framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
 				m_SelectedBufferName = m_BufferNames[m_CurrentlySelectedBuffer];
 			}
 			ImGui::PopItemWidth();
@@ -99,11 +100,11 @@ namespace Lamp
 			{
 				if (m_UseScreenSize)
 				{
-					Renderer3D::GetSettings().UseViewportSize.push_back(framebuffer);
+					Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
 				}
 				else
 				{
-					auto& vector = Renderer3D::GetSettings().UseViewportSize;
+					auto& vector = Renderer::s_pSceneData->useViewportSize;
 					if (auto it = std::find(vector.begin(), vector.end(), framebuffer); it != vector.end())
 					{
 						vector.erase(it);
@@ -147,7 +148,7 @@ namespace Lamp
 				ImGui::PushItemWidth(200.f);
 
 				int attIndex = 0;
-				for (auto &att : specification.Attachments.Attachments)
+				for (auto& att : specification.Attachments.Attachments)
 				{
 					std::string attId = std::to_string(attIndex);
 					bool changed = false;
@@ -159,7 +160,7 @@ namespace Lamp
 
 						ImGui::Checkbox("Is multisampled", &att.MultiSampled);
 
-						static const char *texFormats[] = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
+						static const char* texFormats[] = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
 						int currentlySelectedFormat = (int)att.TextureFormat;
 						std::string formatId = "Texture format##format" + attId;
 						if (ImGui::Combo(formatId.c_str(), &currentlySelectedFormat, texFormats, IM_ARRAYSIZE(texFormats)))
@@ -168,7 +169,7 @@ namespace Lamp
 							changed = true;
 						}
 
-						static const char *texFiltering[] = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
+						static const char* texFiltering[] = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
 						int currentlySelectedFiltering = (int)att.TextureFiltering;
 						std::string filteringId = "Texture filtering##filtering" + attId;
 						if (ImGui::Combo(filteringId.c_str(), &currentlySelectedFiltering, texFiltering, IM_ARRAYSIZE(texFiltering)))
@@ -177,7 +178,7 @@ namespace Lamp
 							changed = true;
 						}
 
-						static const char *texWrap[] = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
+						static const char* texWrap[] = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
 						int currentlySelectedWrap = (int)att.TextureWrap;
 						std::string wrapId = "Texture wrap##wrap" + attId;
 						if (ImGui::Combo(wrapId.c_str(), &currentlySelectedWrap, texWrap, IM_ARRAYSIZE(texWrap)))
@@ -224,7 +225,7 @@ namespace Lamp
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
 		LP_SERIALIZE_PROPERTY(samples, specification.Samples, out);
 		LP_SERIALIZE_PROPERTY(clearColor, specification.ClearColor, out);
-		
+
 		out << YAML::Key << "attachments" << YAML::Value;
 		out << YAML::BeginMap;
 		{
@@ -259,20 +260,20 @@ namespace Lamp
 
 		if (m_UseInternalBuffers)
 		{
-			framebuffer = Renderer3D::GetSettings().InternalFramebuffers[m_SelectedBufferName];
+			framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_SelectedBufferName];
 		}
 		else
 		{
-			auto &specification = framebuffer->GetSpecification();
+			auto& specification = framebuffer->GetSpecification();
 			LP_DESERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, node, false);
 			LP_DESERIALIZE_PROPERTY(width, specification.Width, node, 0);
 			LP_DESERIALIZE_PROPERTY(height, specification.Height, node, 0);
 			LP_DESERIALIZE_PROPERTY(samples, specification.Samples, node, 0);
 			LP_DESERIALIZE_PROPERTY(clearColor, specification.ClearColor, node, glm::vec4(0.f));
-			
+
 			if (m_UseScreenSize)
 			{
-				Renderer3D::GetSettings().UseViewportSize.push_back(framebuffer);
+				Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
 			}
 
 			YAML::Node attachmentsNode = node["attachments"];

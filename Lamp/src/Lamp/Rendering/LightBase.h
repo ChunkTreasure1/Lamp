@@ -7,7 +7,7 @@
 
 namespace Lamp
 {
-	static int s_LightId = 0;
+	static int s_lightId = 0;
 	class PointShadowBuffer;
 	class Framebuffer;
 	class RenderPass;
@@ -16,34 +16,34 @@ namespace Lamp
 	{
 		DirectionalLight();
 
-		glm::vec3 Color{ 1.f, 1.f, 1.f };
-		float Intensity = 1.f;
-		bool CastShadows = true;
+		glm::vec3 color{ 1.f, 1.f, 1.f };
+		float intensity = 1.f;
+		bool castShadows = true;
 
-		glm::mat4 Transform = glm::mat4(1.f);
-		glm::mat4 ViewProjection = glm::mat4(1.f);
+		glm::mat4 transform = glm::mat4(1.f);
+		glm::mat4 viewProjection = glm::mat4(1.f);
 
-		uint32_t Id = s_LightId++;
-		std::unique_ptr<RenderPass> ShadowPass;
-		std::shared_ptr<Framebuffer> ShadowBuffer;
+		uint32_t Id = s_lightId++;
+		std::unique_ptr<RenderPass> shadowPass;
+		std::shared_ptr<Framebuffer> shadowBuffer;
 	};
 
 	struct PointLight
 	{
 		PointLight()
 		{
-			Id = s_LightId++;
+			id = s_lightId++;
 		}
 
-		glm::vec3 Color{ 1.f, 1.f, 1.f };
+		glm::vec3 color{ 1.f, 1.f, 1.f };
 
-		float Intensity = 1.f;
-		float Radius = 1.f;
-		float Falloff = 0.f;
-		float FarPlane = 100.f;
-		float NearPlane = 0.01f;
+		float intensity = 1.f;
+		float radius = 1.f;
+		float falloff = 0.f;
+		float farPlane = 100.f;
+		float nearPlane = 0.01f;
 
-		uint32_t Id;
-		std::shared_ptr<PointShadowBuffer> ShadowBuffer;
+		uint32_t id;
+		std::shared_ptr<PointShadowBuffer> shadowBuffer;
 	};
 }

@@ -11,34 +11,6 @@ namespace Lamp
 {	
 	class RenderGraph;
 
-	struct RendererSettings
-	{
-		Ref<RenderGraph> RenderGraph;
-
-		//SSAO
-		int SSAOKernelSize = 64;
-		const int SSAOMaxKernelSize = 64; //Needs to be matched with value in ssao shader
-
-		//Lights
-		int LightCount = 0;
-		uint32_t ForwardGroupX = 1;
-		uint32_t ForwardGroupY = 1;
-
-		float SSAORadius = 0.5f;
-		float SSAOBias = 0.025f;
-		
-		glm::vec2 BufferSize = { 1280, 720 };
-
-		//Camera
-		float HDRExposure = 3.f;
-		float Gamma = 2.2f;
-
-		//Internal lists
-		std::map<std::string, Ref<Texture2D>> InternalTextures;
-		std::map<std::string, Ref<Framebuffer>> InternalFramebuffers;
-		std::vector<Ref<Framebuffer>> UseViewportSize;
-	};
-
 	enum class ERendererSettings
 	{
 		SSAOKernelSize,
@@ -73,16 +45,13 @@ namespace Lamp
 		static void RenderQuad();
 
 		static void SetEnvironment(const std::string& path);
-		static RendererSettings& GetSettings() { return *s_RendererSettings; }
 
 	private:
 		static void CreateBaseMeshes();
-		static void SetupUniformBuffers(const Ref<CameraBase> camera);
 
 		static void DrawMesh(const glm::mat4& modelMatrix, const Ref<VertexArray> data, const Ref<Material> mat, size_t id = -1);
 
 	private:
-		static RendererSettings* s_RendererSettings;
 		static RenderBuffer s_RenderBuffer;
 	};
 }

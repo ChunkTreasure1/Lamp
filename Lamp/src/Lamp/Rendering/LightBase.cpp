@@ -11,7 +11,7 @@ namespace Lamp
 		RenderPassSpecification spec;
 		spec.clearType = ClearType::ColorDepth;
 		spec.cullFace = CullFace::Front;
-		spec.TargetFramebuffer = ShadowBuffer;
+		spec.TargetFramebuffer = shadowBuffer;
 		spec.drawType = DrawType::Forward;
 		spec.staticUniforms =
 		{
@@ -20,11 +20,11 @@ namespace Lamp
 
 		spec.dynamicUniforms =
 		{
-			{ 1, { { "u_ViewProjection", UniformType::Mat4, RegisterData(&ViewProjection) }, 2 } }
+			{ 1, { { "u_ViewProjection", UniformType::Mat4, RegisterData(&viewProjection) }, 2 } }
 		};
 
 		spec.renderShader = ShaderLibrary::GetShader("dirShadow");
 
-		ShadowPass = CreateScope<RenderPass>(spec);
+		shadowPass = CreateScope<RenderPass>(spec);
 	}
 }

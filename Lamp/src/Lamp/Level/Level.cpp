@@ -26,7 +26,7 @@ namespace Lamp
 	{
 		for (int i = 0; i < m_PointLights.size(); i++)
 		{
-			if (m_PointLights[i]->Id == light->Id)
+			if (m_PointLights[i]->id == light->id)
 			{
 				m_PointLights.erase(m_PointLights.begin() + i);
 				return true;
@@ -141,6 +141,9 @@ namespace Lamp
 		{
 			it.second->OnEvent(e);
 		}
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Level::OnViewportResize));
 	}
 
 	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)
@@ -199,6 +202,7 @@ namespace Lamp
 		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
 		g_pEnv->ShouldRenderGizmos = false;
 	}
+
 	void Level::OnRuntimeEnd()
 	{
 		Physics::DestroyScene();
@@ -210,6 +214,7 @@ namespace Lamp
 		Physics::CreateScene();
 		Physics::CreateActors(this);
 	}
+
 	void Level::OnSimulationEnd()
 	{
 		Physics::DestroyScene();
@@ -307,7 +312,7 @@ namespace Lamp
 
 	void Level::RenderLevel(Ref<CameraBase> camera)
 	{
-		if (const auto& graph = Renderer3D::GetSettings().RenderGraph)
+		if (const auto& graph = Renderer::s_pSceneData->renderGraph)
 		{
 			graph->Run(camera);
 		}
@@ -315,5 +320,17 @@ namespace Lamp
 		{
 			RenderPassManager::Get()->RenderPasses(camera);
 		}
+	}
+
+	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)
+	{
+		for (const auto& buffer : Renderer::s_pSceneData->useViewportSize)
+		{
+			buffer->Resize(e.GetWidth(), e.GetHeight());
+		}
+		
+		Renderer::s_pSceneData->bufferSize = { e.GetWidth(), e.GetHeight() };
+
+		return false;
 	}
 }

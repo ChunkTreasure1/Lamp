@@ -7,6 +7,7 @@
 #include "RenderNodeEnd.h"
 #include "RenderNodeCompute.h"
 
+#include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Utility/StandardUtilities.h"
 #include "Lamp/Utility/UIUtility.h"
 
@@ -245,11 +246,11 @@ namespace Lamp
 				{
 					if (m_UseViewportSize)
 					{
-						Renderer3D::GetSettings().UseViewportSize.push_back(renderPass->GetSpecification().TargetFramebuffer);
+						Renderer::s_pSceneData->useViewportSize.push_back(renderPass->GetSpecification().TargetFramebuffer);
 					}
 					else
 					{
-						auto& vector = Renderer3D::GetSettings().UseViewportSize;
+						auto& vector = Renderer::s_pSceneData->useViewportSize;
 						if (auto it = std::find(vector.begin(), vector.end(), renderPass->GetSpecification().TargetFramebuffer); it != vector.end())
 						{
 							vector.erase(it);
@@ -1061,7 +1062,7 @@ namespace Lamp
 
 		if (m_UseViewportSize)
 		{
-			Renderer3D::GetSettings().UseViewportSize.push_back(specification.TargetFramebuffer);
+			Renderer::s_pSceneData->useViewportSize.push_back(specification.TargetFramebuffer);
 		}
 
 		//static uniforms

@@ -19,17 +19,17 @@ namespace Lamp
 		////////////////
 
 		//Getting
-		inline const float GetIntensity() { return m_pPointLight->Intensity; }
-		inline const float GetRadius() { return m_pPointLight->Radius; }
-		inline const float GetFalloff() { return m_pPointLight->Falloff; }
+		inline const float GetIntensity() { return m_pPointLight->intensity; }
+		inline const float GetRadius() { return m_pPointLight->radius; }
+		inline const float GetFalloff() { return m_pPointLight->falloff; }
 
-		inline const glm::vec3& GetColor() { return m_pPointLight->Color; }
-		inline const float GetFarPlane() { return m_pPointLight->FarPlane; }
+		inline const glm::vec3& GetColor() { return m_pPointLight->color; }
+		inline const float GetFarPlane() { return m_pPointLight->farPlane; }
 		inline PointLight* GetLight() { return m_pPointLight; }
 
 		//Setting
-		inline void SetIntensity(float val) { m_pPointLight->Intensity = val; }
-		inline void SetColor(const glm::vec3& val) { m_pPointLight->Color = val; }
+		inline void SetIntensity(float val) { m_pPointLight->intensity = val; }
+		inline void SetColor(const glm::vec3& val) { m_pPointLight->color = val; }
 
 	private:
 		bool OnPositionChanged(ObjectPositionChangedEvent& e);

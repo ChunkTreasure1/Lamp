@@ -20,17 +20,17 @@ namespace Lamp
 
 			m_pPointLight = new PointLight();
 
-			m_pPointLight->ShadowBuffer = std::make_shared<PointShadowBuffer>(spec);
+			m_pPointLight->shadowBuffer = std::make_shared<PointShadowBuffer>(spec);
 		}
 
 		SetComponentProperties
 		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->Intensity) },
-			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->Radius) },
-			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->Falloff) },
-			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->ShadowBuffer->GetNearPlane()) },
-			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->FarPlane) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->Color) }
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->intensity) },
+			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->radius) },
+			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
+			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
+			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
 		});
 
 		g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
@@ -45,7 +45,7 @@ namespace Lamp
 
 	void PointLightComponent::Initialize()
 	{
-		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
+		m_pPointLight->shadowBuffer->SetPosition(m_pEntity->GetPosition());
 	}
 
 	void PointLightComponent::OnEvent(Event& e)
@@ -57,14 +57,14 @@ namespace Lamp
 
 	bool PointLightComponent::OnPositionChanged(ObjectPositionChangedEvent& e)
 	{
-		m_pPointLight->ShadowBuffer->SetPosition(m_pEntity->GetPosition());
+		m_pPointLight->shadowBuffer->SetPosition(m_pEntity->GetPosition());
 
 		return false;
 	}
 
 	bool PointLightComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
-		m_pPointLight->ShadowBuffer->UpdateProjection();
+		m_pPointLight->shadowBuffer->UpdateProjection();
 
 		return false;
 	}

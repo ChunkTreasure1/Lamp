@@ -2,7 +2,7 @@
 
 #include "RenderNodeStart.h"
 #include "RenderNodePass.h"
-#include "Lamp/Rendering/Renderer2D.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include <imnodes.h>
 
@@ -50,7 +50,7 @@ namespace Lamp
 
 	void RenderNodeStart::Activate(std::any value)
 	{
-		Renderer3D::Begin(std::any_cast<Ref<CameraBase>>(value));
+		Renderer::Begin(std::any_cast<Ref<CameraBase>>(value));
 		for (const auto& link : links)
 		{
 			if (link->pInput->pNode->GetNodeType() == RenderNodeType::Pass)
@@ -58,7 +58,7 @@ namespace Lamp
 				link->pInput->pNode->Activate(value);
 			}
 		}
-		Renderer3D::End();
+		Renderer::End();
 	}
 
 	void RenderNodeStart::Serialize(YAML::Emitter& out)

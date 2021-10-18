@@ -6,6 +6,7 @@
 #include "Lamp/Core/Time/Timestep.h"
 
 #include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
+#include "Lamp/Event/EditorEvent.h"
 
 #include <string>
 #include <glm/gtc/quaternion.hpp>
@@ -106,6 +107,7 @@ namespace Lamp
 
 	private:
 		void RenderLevel(Ref<CameraBase> camera);
+		bool OnViewportResize(EditorViewportSizeChangedEvent& e);
 
 	private:
 		std::string m_Name;

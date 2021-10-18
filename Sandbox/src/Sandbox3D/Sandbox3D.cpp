@@ -39,8 +39,8 @@ namespace Sandbox3D
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
-		Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph");
-		Renderer3D::GetSettings().RenderGraph->Start();
+		Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>("assets/testGraph.rendergraph"));
+		Renderer::GetRenderGraph()->Start();
 
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
@@ -299,13 +299,7 @@ namespace Sandbox3D
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 
-		for (const auto& buffer : Renderer3D::GetSettings().UseViewportSize)
-		{
-			buffer->Resize(width, height);
-		}
-
 		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
-		Renderer3D::GetSettings().BufferSize = { width, height };
 
 		return false;
 	}

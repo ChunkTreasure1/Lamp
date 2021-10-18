@@ -3,6 +3,7 @@
 
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Event/KeyEvent.h"
+#include "Lamp/Event/MouseEvent.h"
 
 namespace Lamp
 {

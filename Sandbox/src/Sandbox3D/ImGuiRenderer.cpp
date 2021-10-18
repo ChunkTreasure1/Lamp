@@ -70,12 +70,14 @@ namespace Sandbox3D
 			}
 
 			uint32_t textureID = 0;
-			if (Renderer3D::GetSettings().RenderGraph)
+			if (Renderer::GetRenderGraph())
 			{
-				if (Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer)
+				auto& renderGraph = Renderer::GetRenderGraph();
+
+				if (renderGraph->GetSpecification().endNode->framebuffer)
 				{
-					textureID = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
-					m_SelectionBuffer = Renderer3D::GetSettings().RenderGraph->GetSpecification().endNode->framebuffer;
+					textureID = renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+					m_SelectionBuffer = renderGraph->GetSpecification().endNode->framebuffer;
 				}
 			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -588,63 +590,29 @@ namespace Sandbox3D
 
 		ImGui::Text("RenderGraph");
 
-		std::string graphPath = Renderer3D::GetSettings().RenderGraph ? Renderer3D::GetSettings().RenderGraph->Path.string() : "";
+		std::string graphPath = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path.string() : "";
 		if (ImGui::InputText("##graph", &graphPath))
 		{
-			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
+			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
 		}
 
 		ImGui::SameLine();
 		if (ImGui::Button("Open"))
 		{
 			graphPath = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
-			Lamp::Renderer3D::GetSettings().RenderGraph = ResourceCache::GetAsset<RenderGraph>(graphPath);
-
-			Lamp::Renderer3D::GetSettings().RenderGraph->Start();
+			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
+			Renderer::GetRenderGraph()->Start();
 		}
 
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))
 		{
-			if (Renderer3D::GetSettings().RenderGraph)
+			if (Renderer::GetRenderGraph())
 			{
-				Renderer3D::GetSettings().RenderGraph = ResourceCache::ReloadAsset<RenderGraph>(std::dynamic_pointer_cast<Asset>(Renderer3D::GetSettings().RenderGraph));
-				Renderer3D::GetSettings().RenderGraph->Start();
+				Renderer::SetRenderGraph(ResourceCache::ReloadAsset<RenderGraph>(std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph())));
+				Renderer::GetRenderGraph()->Start();
 			}
 		}
-
-		ImGui::Separator();
-
-		ImGui::Text("HDR");
-
-		static std::string path = "";
-		ImGui::DragFloat("HDR Exposure", &Lamp::Renderer3D::GetSettings().HDRExposure);
-		ImGui::InputText("HDR environment", &path);
-		ImGui::SameLine();
-		if (ImGui::Button("Open..."))
-		{
-			path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-			if (!path.empty())
-			{
-				Lamp::Renderer3D::SetEnvironment(path);
-			}
-
-			ImGui::DragFloat("HDR Exposure", &g_pEnv->HDRExposure);
-		}
-
-		ImGui::Separator();
-
-		ImGui::Text("SSAO");
-
-		int preKernelSize = Lamp::Renderer3D::GetSettings().SSAOKernelSize;
-		ImGui::SliderInt("Kernel Size", &Lamp::Renderer3D::GetSettings().SSAOKernelSize, 16, Lamp::Renderer3D::GetSettings().SSAOMaxKernelSize, "%d");
-		ImGui::SliderFloat("Radius", &Lamp::Renderer3D::GetSettings().SSAORadius, 0.f, 10.f, "%.3f");
-		ImGui::SliderFloat("Bias", &Lamp::Renderer3D::GetSettings().SSAOBias, 0.f, 1.f, "%.3f");
-
-		ImGui::Separator();
-		ImGui::Text("General");
-
-		ImGui::SliderFloat("Gamma", &Lamp::Renderer3D::GetSettings().Gamma, 0.f, 10.f, "%.3f");
 
 		ImGui::End();
 	}

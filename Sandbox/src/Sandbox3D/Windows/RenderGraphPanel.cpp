@@ -194,7 +194,7 @@ namespace Sandbox3D
 			Ref<RenderNodeDynamicUniform> node = CreateRef<RenderNodeDynamicUniform>();
 			m_CurrentlyOpenGraph->AddNode(node);
 			node->dataName = "Exposure";
-			node->pData = RegisterData(&Renderer3D::GetSettings().HDRExposure);
+			//node->pData = RegisterData(&Renderer3D::GetSettings().HDRExposure);
 			node->uniformType = Lamp::UniformType::Float;
 			node->Initialize();
 		}

@@ -6,6 +6,7 @@
 #include "Lamp/AssetSystem/ResourceCache.h"
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/Utility/SerializeMacros.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include <imgui.h>
 #include <imnodes.h>
@@ -22,7 +23,7 @@ namespace Lamp
 
 		outputs.push_back(output);
 
-		for (const auto& [uName, uTexture] : Renderer3D::GetSettings().InternalTextures)
+		for (const auto& [uName, uTexture] : Renderer::s_pSceneData->internalTextures)
 		{
 			m_TextureNames.push_back(uName.c_str());
 		}
@@ -71,7 +72,7 @@ namespace Lamp
 			ImGui::PushItemWidth(150.f);
 			if (ImGui::Combo("##textures", &m_CurrentlySelectedTexture, m_TextureNames.data(), (int)m_TextureNames.size()))
 			{
-				texture = Renderer3D::GetSettings().InternalTextures[m_TextureNames[m_CurrentlySelectedTexture]];
+				texture = Renderer::s_pSceneData->internalTextures[m_TextureNames[m_CurrentlySelectedTexture]];
 				m_SelectedTextureName = m_TextureNames[m_CurrentlySelectedTexture];
 			}
 			ImGui::PopItemWidth();
@@ -128,7 +129,7 @@ namespace Lamp
 		}
 		else
 		{
-			texture = Renderer3D::GetSettings().InternalTextures[m_SelectedTextureName];
+			texture = Renderer::s_pSceneData->internalTextures[m_SelectedTextureName];
 		}
 
 		//attributes
