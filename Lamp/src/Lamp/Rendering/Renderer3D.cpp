@@ -101,7 +101,7 @@ namespace Lamp
 		s_pRenderData->VisibleLightsBuffer = ShaderStorageBuffer::Create(s_pRenderData->ForwardTileCount * sizeof(LightIndex) * s_pRenderData->MaxLights, 3, DrawAccess::Static);
 		////////////////////////
 
-		s_RenderBuffer.drawCalls.reserve(100);
+		s_RenderBuffer.drawCalls.reserve(1000);
 
 		//Setup dynamic uniforms
 		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&Renderer3D::GetSettings().HDRExposure));
@@ -461,18 +461,6 @@ namespace Lamp
 		data.material = mat;
 		data.id = id;
 		data.data = mesh->GetVertexArray();
-
-		s_RenderBuffer.drawCalls.push_back(data);
-	}
-
-	void Renderer3D::SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id)
-	{
-		LP_PROFILE_FUNCTION();
-		RenderCommandData data;
-		data.transform = transform;
-		data.material = mat;
-		data.id = id;
-		data.data = s_pRenderData->QuadVertexArray;
 
 		s_RenderBuffer.drawCalls.push_back(data);
 	}

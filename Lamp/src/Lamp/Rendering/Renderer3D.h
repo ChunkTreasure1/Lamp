@@ -63,7 +63,6 @@ namespace Lamp
 		static void EndPass();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id = -1);
-		static void SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id = -1);
 
 		static void DrawRenderBuffer();
 

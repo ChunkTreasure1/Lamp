@@ -16,12 +16,16 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(const Ref<CameraBase>& camera);
-		static void End();
+		static void BeginPass();
+		static void EndPass();
+
 		static void Flush();
 
 		static void DrawQuad(const glm::mat4& tm, const glm::vec4& color);
 		static void DrawQuad(const glm::mat4& tm, const Ref<Material> mat, uint32_t id, const glm::vec4& color = { 1.f, 1.f, 1.f, 1.f });
+
+		static void SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id = -1);
+		static void DrawRenderBuffer();
 
 		struct Statistics
 		{
@@ -38,5 +42,7 @@ namespace Lamp
 	private:
 		static void StartNewBatch();
 		static void ResetBatchData();
+
+		static RenderBuffer s_RenderBuffer;
 	};
 }

@@ -42,6 +42,8 @@ namespace Lamp
 	 	DrawType drawType = DrawType::All;
 		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
 
+		bool draw2D = false;
+
 		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
 		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
 		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId

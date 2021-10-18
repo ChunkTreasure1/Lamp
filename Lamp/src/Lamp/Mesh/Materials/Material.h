@@ -28,14 +28,12 @@ namespace Lamp
 		void SetTexture(const std::string& name, Ref<Texture2D> texture);
 		void SetShader(Ref<Shader> shader);
 		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetPath(const std::filesystem::path& path) { m_Path = path; }
 
 		//Getting
 		inline std::unordered_map<std::string, Ref<Texture2D>>& GetTextures() { return m_pTextures; }
 		inline const uint32_t GetIndex() { return m_Index; }
 		inline const Ref<Shader>& GetShader() { return m_pShader; }
 		inline const std::string& GetName() { return m_Name; }
-		inline const std::filesystem::path& GetPath() { return m_Path; }
 
 		static AssetType GetStaticType() { return AssetType::Material; }
 		virtual AssetType GetType() override { return GetStaticType(); }
@@ -47,6 +45,5 @@ namespace Lamp
 		Ref<Shader> m_pShader;
 		uint32_t m_Index;
 		std::string m_Name;
-		std::filesystem::path m_Path;
 	};
 }

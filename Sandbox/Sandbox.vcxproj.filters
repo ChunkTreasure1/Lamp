@@ -90,10 +90,10 @@
     <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h">
+    <ClInclude Include="src\Sandbox3D\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox3D\Windows\MeshImporterPanel.h">
+    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClInclude>
   </ItemGroup>
@@ -137,10 +137,10 @@
     <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp">
+    <ClCompile Include="src\Sandbox3D\Windows\MeshImporterPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox3D\Windows\MeshImporterPanel.cpp">
+    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp">
       <Filter>src\Sandbox3D\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
@@ -178,6 +178,9 @@
     <None Include="engine\shaders\main\pbrForward.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
+    <None Include="engine\shaders\quad.glsl">
+      <Filter>engine\shaders</Filter>
+    </None>
     <None Include="engine\shaders\selection.glsl">
       <Filter>engine\shaders</Filter>
     </None>
@@ -186,9 +189,6 @@
     </None>
     <None Include="engine\shaders\shadows\pointShadow.glsl">
       <Filter>engine\shaders\shadows</Filter>
-    </None>
-    <None Include="engine\shaders\sprite.glsl">
-      <Filter>engine\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

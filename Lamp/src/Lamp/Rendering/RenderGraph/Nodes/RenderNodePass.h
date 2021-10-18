@@ -29,6 +29,7 @@ namespace Lamp
 
 	private:
 		bool m_UseViewportSize = false;
+
 		std::vector<const char*> m_Shaders;
 		Ref<RenderInputAttribute> m_TargetBufferAttribute;
 	};

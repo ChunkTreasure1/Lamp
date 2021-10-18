@@ -15,7 +15,7 @@ namespace Lamp
 		static void Initialize();
 		static void Shutdown();
 
-		static void Begin(OrthographicCamera& camera);
+		static void Begin(Ref<CameraBase> camera);
 		static void End();
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }

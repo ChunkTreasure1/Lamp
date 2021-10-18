@@ -277,7 +277,7 @@ namespace Lamp
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
 
-			Renderer2D::DrawQuad(transform, m_GizmoMaterial, m_Id);
+			Renderer2D::SubmitQuad(transform, m_GizmoMaterial, m_Id);
 		}
 
 		return false;

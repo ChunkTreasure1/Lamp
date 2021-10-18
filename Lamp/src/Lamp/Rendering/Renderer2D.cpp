@@ -15,6 +15,7 @@ namespace Lamp
 		glm::vec4 color;
 		glm::vec2 texCoord;
 		float texIndex;
+		float id;
 		//TODO: maskid, tiling factor
 	};
 
@@ -47,6 +48,7 @@ namespace Lamp
 	};
 
 	static Renderer2DStorage* s_pStorage;
+	RenderBuffer Renderer2D::s_RenderBuffer;
 
 	void Renderer2D::Initialize()
 	{
@@ -61,7 +63,8 @@ namespace Lamp
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" },
 			{ ElementType::Float2, "a_TexCoord" },
-			{ ElementType::Float, "a_TexIndex" }
+			{ ElementType::Float, "a_TexIndex" },
+			{ ElementType::Float, "a_Id" }
 		});
 		s_pStorage->pQuadVertexArray->AddVertexBuffer(s_pStorage->pQuadVertexBuffer);
 
@@ -114,30 +117,14 @@ namespace Lamp
 
 		delete[] samplers;
 		////////////////////////
+
+		s_RenderBuffer.drawCalls.reserve(1000);
 	}
 
 	void Renderer2D::Shutdown()
 	{
 		delete[] s_pStorage->TextureSlots;
 		delete s_pStorage;
-	}
-
-	void Renderer2D::Begin(const Ref<CameraBase>& camera)
-	{
-		RenderCommand::Clear();
-
-		s_pStorage->pTextureShader->Bind();
-		s_pStorage->pTextureShader->UploadMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
-
-		ResetBatchData();
-	}
-
-	void Renderer2D::End()
-	{
-		uint32_t dataSize = (uint8_t*)s_pStorage->QuadVertexBufferPtr - (uint8_t*)s_pStorage->QuadVertexBufferBase;
-		s_pStorage->pQuadVertexBuffer->SetData(s_pStorage->QuadVertexBufferBase, dataSize);
-
-		Flush();
 	}
 
 	void Renderer2D::Flush()
@@ -151,6 +138,22 @@ namespace Lamp
 		//Draw
 		RenderCommand::DrawIndexed(s_pStorage->pQuadVertexArray, s_pStorage->QuadIndexCount);
 		s_pStorage->Stats.drawCalls++;
+	}
+
+	void Renderer2D::BeginPass()
+	{
+		s_pStorage->pTextureShader->Bind();
+		ResetBatchData();
+	}
+
+	void Renderer2D::EndPass()
+	{
+		uint32_t dataSize = (uint8_t*)s_pStorage->QuadVertexBufferPtr - (uint8_t*)s_pStorage->QuadVertexBufferBase;
+		s_pStorage->pQuadVertexBuffer->SetData(s_pStorage->QuadVertexBufferBase, dataSize);
+
+		s_RenderBuffer.drawCalls.clear();
+
+		Flush();
 	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& tm, const glm::vec4& color)
@@ -222,29 +225,51 @@ namespace Lamp
 		s_pStorage->QuadVertexBufferPtr->color = color;
 		s_pStorage->QuadVertexBufferPtr->texCoord = { 0.f, 0.f };
 		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
 		s_pStorage->QuadVertexBufferPtr++;
 
 		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[1];
 		s_pStorage->QuadVertexBufferPtr->color = color;
 		s_pStorage->QuadVertexBufferPtr->texCoord = { 1.f, 0.f };
 		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
 		s_pStorage->QuadVertexBufferPtr++;
 
 		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[2];
 		s_pStorage->QuadVertexBufferPtr->color = color;
 		s_pStorage->QuadVertexBufferPtr->texCoord = { 1.f, 1.f };
 		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
 		s_pStorage->QuadVertexBufferPtr++;
 
 		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[3];
 		s_pStorage->QuadVertexBufferPtr->color = color;
 		s_pStorage->QuadVertexBufferPtr->texCoord = { 0.f, 1.f };
 		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
 		s_pStorage->QuadVertexBufferPtr++;
 
 		s_pStorage->QuadIndexCount += 6;
 
 		s_pStorage->Stats.quadCount++;
+	}
+
+	void Renderer2D::SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id)
+	{
+		RenderCommandData data;
+		data.transform = transform;
+		data.material = mat;
+		data.id = id;
+
+		s_RenderBuffer.drawCalls.push_back(data);
+	}
+
+	void Renderer2D::DrawRenderBuffer()
+	{
+		for (const auto& drawCall : s_RenderBuffer.drawCalls)
+		{
+			DrawQuad(drawCall.transform, drawCall.material, drawCall.id);
+		}
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats()
@@ -259,7 +284,7 @@ namespace Lamp
 
 	void Renderer2D::StartNewBatch()
 	{
-		End();
+		EndPass();
 		ResetBatchData();
 	}
 

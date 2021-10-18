@@ -29,9 +29,9 @@ namespace Lamp
 		Renderer3D::Shutdown();
 	}
 
-	void Renderer::Begin(OrthographicCamera & camera)
+	void Renderer::Begin(Ref<CameraBase> camera)
 	{
-		s_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_pSceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
 	}
 
 	void Renderer::End()

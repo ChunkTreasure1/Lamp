@@ -5,6 +5,7 @@
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Level/Level.h"
+#include "Lamp/Rendering/Renderer2D.h"
 
 namespace Lamp
 {
@@ -62,6 +63,15 @@ namespace Lamp
 
 			default:
 				break;
+		}
+
+		if (m_PassSpec.draw2D)
+		{
+			Renderer2D::BeginPass();
+
+			Renderer2D::DrawRenderBuffer();
+		
+			Renderer2D::EndPass();
 		}
 
 		Renderer3D::EndPass();

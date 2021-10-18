@@ -227,6 +227,11 @@ namespace Lamp
 				}
 			}
 
+			//2D
+			{
+				ImGui::Checkbox("Draw 2D pass", &specification.draw2D);
+			}
+
 			ImGui::TreePop();
 		}
 
@@ -813,6 +818,7 @@ namespace Lamp
 		LP_SERIALIZE_PROPERTY(drawType, (uint32_t)specification.drawType, out);
 		LP_SERIALIZE_PROPERTY(cullFace, (uint32_t)specification.cullFace, out);
 		LP_SERIALIZE_PROPERTY(renderShader, (specification.renderShader ? specification.renderShader->GetName() : ""), out);
+		LP_SERIALIZE_PROPERTY(draw2D, specification.draw2D, out);
 
 		out << YAML::Key << "targetFramebuffer" << YAML::Value;
 		out << YAML::BeginMap;
@@ -1017,6 +1023,7 @@ namespace Lamp
 		specification.clearType = (ClearType)node["clearType"].as<uint32_t>();
 		specification.drawType = (DrawType)node["drawType"].as<uint32_t>();
 		specification.cullFace = (CullFace)node["cullFace"].as<uint32_t>();
+		LP_DESERIALIZE_PROPERTY(draw2D, specification.draw2D, node, false);
 
 		std::string shaderName = node["renderShader"].as<std::string>();
 		if (!shaderName.empty())

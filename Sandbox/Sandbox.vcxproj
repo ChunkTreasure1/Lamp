@@ -160,8 +160,8 @@
     <ClInclude Include="src\Sandbox3D\Windows\GraphKey.h" />
     <ClInclude Include="src\Sandbox3D\Windows\LayerView.h" />
     <ClInclude Include="src\Sandbox3D\Windows\MaterialEditor.h" />
-    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h" />
     <ClInclude Include="src\Sandbox3D\Windows\MeshImporterPanel.h" />
+    <ClInclude Include="src\Sandbox3D\Windows\RenderGraphPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp" />
@@ -177,8 +177,8 @@
     <ClCompile Include="src\Sandbox3D\Windows\GraphKey.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\LayerView.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\MaterialEditor.cpp" />
-    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp" />
     <ClCompile Include="src\Sandbox3D\Windows\MeshImporterPanel.cpp" />
+    <ClCompile Include="src\Sandbox3D\Windows\RenderGraphPanel.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -192,10 +192,10 @@
     <None Include="engine\shaders\main\lightCulling.glsl" />
     <None Include="engine\shaders\main\lightDebug.glsl" />
     <None Include="engine\shaders\main\pbrForward.glsl" />
+    <None Include="engine\shaders\quad.glsl" />
     <None Include="engine\shaders\selection.glsl" />
     <None Include="engine\shaders\shadows\dirShadow.glsl" />
     <None Include="engine\shaders\shadows\pointShadow.glsl" />
-    <None Include="engine\shaders\sprite.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">
