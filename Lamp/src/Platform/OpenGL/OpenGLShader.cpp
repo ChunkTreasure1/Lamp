@@ -59,6 +59,10 @@ namespace Lamp
 			{
 				return GL_GEOMETRY_SHADER;
 			}
+			if (type == "compute")
+			{
+				return GL_COMPUTE_SHADER;
+			}
 
 			return 0;
 		}
@@ -85,10 +89,6 @@ namespace Lamp
 			std::string n;
 
 			glGetActiveUniform(m_RendererID, (GLuint)i, 512, &length, &size, &type, name);
-			if (n.find("["))
-			{
-
-			}
 
 			m_Specifications.Uniforms.emplace(std::make_pair(name, Utils::GLUniformToUniformType(type))); //TODO: add support for arrays
 		}
@@ -188,6 +188,10 @@ namespace Lamp
 
 			case GL_GEOMETRY_SHADER:
 				m_Specifications.Type |= ShaderType::GeometryShader;
+				break;
+
+			case GL_COMPUTE_SHADER:
+				m_Specifications.Type |= ShaderType::ComputeShader;
 				break;
 
 			default:

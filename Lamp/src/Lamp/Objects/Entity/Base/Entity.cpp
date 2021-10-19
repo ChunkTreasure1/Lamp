@@ -3,12 +3,14 @@
 
 #include "Lamp/Level/Level.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
 #include <glm/ext/matrix_transform.hpp>
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "ComponentRegistry.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/BoxColliderComponent.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
 
 namespace Lamp
 {
@@ -16,22 +18,14 @@ namespace Lamp
 	{
 		m_Name = "Entity";
 
-		m_GizmoTexure = ResourceCache::GetAsset<Texture2D>("engine/gizmos/gizmoEntity.png");
+		m_GizmoMaterial = MaterialLibrary::GetMaterial("gizmoEntity");
 	}
 
 	void Entity::OnEvent(Event& e)
 	{
-		for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+		for (const auto& comp : m_pComponents)
 		{
-			if (m_pComponents.size() == 0)
-			{
-				return;
-			}
-
-			if (it->get()->GetEventMask() & e.GetEventType())
-			{
-				it->get()->OnEvent(e);
-			}
+			comp->OnEvent(e);
 		}
 
 		if (m_GraphKeyGraph)
@@ -82,160 +76,160 @@ namespace Lamp
 
 			for (auto& property : comp->GetComponentProperties().GetProperties())
 			{
-				switch (property.PropertyType)
+				switch (property.propertyType)
 				{
-				case Lamp::PropertyType::String:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::String:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							std::string* p = static_cast<std::string*>(prop.Value);
-							*p = std::string(*static_cast<std::string*>(property.Value));
+							if (prop.name == property.name)
+							{
+								std::string* p = static_cast<std::string*>(prop.value);
+								*p = std::string(*static_cast<std::string*>(property.value));
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
-					}
 
-					break;
-				}
-				case Lamp::PropertyType::Bool:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+						break;
+					}
+					case Lamp::PropertyType::Bool:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							bool* p = static_cast<bool*>(prop.Value);
-							*p = *static_cast<bool*>(property.Value);
+							if (prop.name == property.name)
+							{
+								bool* p = static_cast<bool*>(prop.value);
+								*p = *static_cast<bool*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Int:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Int:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							int* p = static_cast<int*>(prop.Value);
-							*p = *static_cast<int*>(property.Value);
+							if (prop.name == property.name)
+							{
+								int* p = static_cast<int*>(prop.value);
+								*p = *static_cast<int*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Float:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Float:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							float* p = static_cast<float*>(prop.Value);
-							*p = *static_cast<float*>(property.Value);
+							if (prop.name == property.name)
+							{
+								float* p = static_cast<float*>(prop.value);
+								*p = *static_cast<float*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Float2:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Float2:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							glm::vec2* p = static_cast<glm::vec2*>(prop.Value);
-							*p = *static_cast<glm::vec2*>(property.Value);
+							if (prop.name == property.name)
+							{
+								glm::vec2* p = static_cast<glm::vec2*>(prop.value);
+								*p = *static_cast<glm::vec2*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Float3:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Float3:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-							*p = *static_cast<glm::vec3*>(property.Value);
+							if (prop.name == property.name)
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(prop.value);
+								*p = *static_cast<glm::vec3*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Float4:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Float4:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-							*p = *static_cast<glm::vec4*>(property.Value);
+							if (prop.name == property.name)
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(prop.value);
+								*p = *static_cast<glm::vec4*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Path:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Path:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							std::string* p = static_cast<std::string*>(prop.Value);
-							*p = *static_cast<std::string*>(property.Value);
+							if (prop.name == property.name)
+							{
+								std::string* p = static_cast<std::string*>(prop.value);
+								*p = *static_cast<std::string*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
-					}
 
-					break;
-				}
-				case Lamp::PropertyType::Color3:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+						break;
+					}
+					case Lamp::PropertyType::Color3:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							glm::vec3* p = static_cast<glm::vec3*>(prop.Value);
-							*p = *static_cast<glm::vec3*>(property.Value);
+							if (prop.name == property.name)
+							{
+								glm::vec3* p = static_cast<glm::vec3*>(prop.value);
+								*p = *static_cast<glm::vec3*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
-				case Lamp::PropertyType::Color4:
-				{
-					for (auto& prop : component->GetComponentProperties().GetProperties())
+					case Lamp::PropertyType::Color4:
 					{
-						if (prop.Name == property.Name)
+						for (auto& prop : component->GetComponentProperties().GetProperties())
 						{
-							glm::vec4* p = static_cast<glm::vec4*>(prop.Value);
-							*p = *static_cast<glm::vec4*>(property.Value);
+							if (prop.name == property.name)
+							{
+								glm::vec4* p = static_cast<glm::vec4*>(prop.value);
+								*p = *static_cast<glm::vec4*>(property.value);
 
-							EntityPropertyChangedEvent e;
-							component->OnEvent(e);
+								ObjectPropertyChangedEvent e;
+								component->OnEvent(e);
+							}
 						}
+						break;
 					}
-					break;
-				}
 				}
 			}
 
@@ -246,7 +240,7 @@ namespace Lamp
 		{
 			copy->m_GraphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_GraphKeyGraph);
 		}
-		copy->m_ModelMatrix = entity->m_ModelMatrix;
+		copy->m_Transform = entity->m_Transform;
 		copy->SetPosition(entity->m_Position);
 		copy->SetRotation(entity->m_Rotation);
 		copy->SetScale(entity->m_Scale);
@@ -270,72 +264,20 @@ namespace Lamp
 	{
 		if (g_pEnv->ShouldRenderGizmos)
 		{
-			if (!m_GizmoShader || !m_SelectionShader)
-			{
-				m_GizmoShader = ShaderLibrary::GetShader("Sprite");
-				m_SelectionShader = ShaderLibrary::GetShader("selection");
-			}
+			glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 
-			if (!m_GizmoShader || !m_SelectionShader)
-			{
-				return false;
-			}
+			float angleXZ = std::atan2f(dir.z, dir.x);
+			float angleY = -std::asin(dir.y);
 
-			switch (e.GetPassInfo().type)
-			{
-			case PassType::Forward:
-			{
-				m_GizmoShader->Bind();
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
+				* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
 
-				m_GizmoShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
+			glm::mat4 transform = glm::translate(glm::mat4(1.f), m_Position)
+				* rotation
+				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
-				glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 
-				float angleXZ = std::atan2f(dir.z, dir.x);
-				float angleY = -std::asin(dir.y);
-
-				glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
-					* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
-
-				glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
-					* rotation
-					* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-				m_GizmoShader->UploadMat4("u_Model", model);
-				m_GizmoShader->UploadInt("u_Texture", 0);
-
-				m_GizmoTexure->Bind(0);
-
-				Renderer3D::DrawQuad();
-				break;
-			}
-
-			case PassType::Selection:
-			{
-				m_SelectionShader->Bind();
-
-				m_SelectionShader->UploadMat4("u_ViewProjection", e.GetCamera()->GetViewProjectionMatrix());
-
-				glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
-
-				float angleXZ = std::atan2f(dir.z, dir.x);
-				float angleY = -std::asin(dir.y);
-
-				glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
-					* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
-
-				glm::mat4 model = glm::translate(glm::mat4(1.f), m_Position)
-					* rotation
-					* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-				m_SelectionShader->UploadMat4("u_Model", model);
-				m_SelectionShader->UploadInt("u_ObjectId", m_Id);
-
-				Renderer3D::DrawQuad();
-				break;
-			}
-
-			default:
-				break;
-			}
+			Renderer2D::SubmitQuad(transform, m_GizmoMaterial, m_Id);
 		}
 
 		return false;

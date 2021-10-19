@@ -64,7 +64,6 @@ namespace Lamp
 			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
 		};
 
-
 		//Render to cubemap
 		m_EqCubeShader->Bind();
 		m_EqCubeShader->UploadInt("u_EquirectangularMap", 0);
@@ -185,6 +184,10 @@ namespace Lamp
 		//////////////////
 
 		m_TestTexture = Texture2D::Create("engine/textures/testBRDF.png");
+
+		m_Attachments[0] = m_IrradianceId;
+		m_Attachments[1] = m_PrefilterMap;
+		m_Attachments[2] = m_TestTexture->GetID();
 	}
 
 	IBLBuffer::~IBLBuffer()
@@ -200,15 +203,47 @@ namespace Lamp
 
 	void IBLBuffer::Bind()
 	{
-
 		glDepthFunc(GL_LEQUAL);
 		glBindTextureUnit(0, m_CubeMapId);
 	}
 
-	void IBLBuffer::BindTextures(uint32_t startId)
+	void IBLBuffer::Unbind()
 	{
-		glBindTextureUnit(startId, m_IrradianceId);
-		glBindTextureUnit(startId + 1, m_PrefilterMap);
-		glBindTextureUnit(startId + 2, m_TestTexture->GetID());
+	}
+
+	void IBLBuffer::Resize(const uint32_t width, const uint32_t height)
+	{
+	}
+
+	int IBLBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	{
+		return 0;
+	}
+
+	void IBLBuffer::Copy(uint32_t rendererId, const glm::vec2& size, bool depth)
+	{
+	}
+
+	inline const uint32_t IBLBuffer::GetColorAttachmentID(uint32_t i)
+	{
+		return uint32_t();
+	}
+
+	inline const uint32_t IBLBuffer::GetDepthAttachmentID()
+	{
+		return uint32_t();
+	}
+
+	void IBLBuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+	}
+
+	void IBLBuffer::BindColorAttachment(uint32_t id, uint32_t attachId)
+	{
+		glBindTextureUnit(id, m_Attachments[attachId]);
+	}
+
+	void IBLBuffer::BindDepthAttachment(uint32_t id)
+	{
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace Lamp
 {
-	enum class FramebufferTextureFormat
+	enum class FramebufferTextureFormat : uint32_t
 	{
 		None = 0,
 
@@ -20,13 +20,13 @@ namespace Lamp
 		Depth = DEPTH24STENCIL8
 	};
 
-	enum class FramebufferRenderbufferType
+	enum class FramebufferRenderbufferType : uint32_t
 	{
 		Color = 0,
 		Depth
 	};
 
-	enum class FramebufferTexureFiltering
+	enum class FramebufferTexureFiltering : uint32_t
 	{
 		Nearest = 0,
 		Linear = 1,
@@ -36,7 +36,7 @@ namespace Lamp
 		LinearMipMapLinear = 5
 	};
 
-	enum class FramebufferTextureWrap
+	enum class FramebufferTextureWrap : uint32_t
 	{
 		Repeat = 0,
 		MirroredRepeat = 1,
@@ -47,7 +47,9 @@ namespace Lamp
 
 	struct FramebufferTextureSpecification
 	{
-		FramebufferTextureSpecification() = default;
+		FramebufferTextureSpecification() 
+			: TextureFiltering(FramebufferTexureFiltering::Linear), TextureWrap(FramebufferTextureWrap::Repeat)
+		{}
 		FramebufferTextureSpecification(
 			FramebufferTextureFormat format,
 			FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear,
@@ -86,8 +88,6 @@ namespace Lamp
 		std::vector<FramebufferRenderbufferSpecification> Renderbuffers;
 	};
 
-
-
 	struct FramebufferSpecification
 	{
 		uint32_t Width = 1280;
@@ -108,6 +108,7 @@ namespace Lamp
 		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth = false) = 0;
+		virtual void Invalidate() = 0;
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
@@ -118,7 +119,7 @@ namespace Lamp
 		virtual void BindColorAttachment(uint32_t id = 0, uint32_t i = 0) = 0;
 		virtual void BindDepthAttachment(uint32_t id = 0) = 0;
 
-		virtual const FramebufferSpecification& GetSpecification() const = 0;
+		virtual FramebufferSpecification& GetSpecification() = 0;
 
 	public:
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);

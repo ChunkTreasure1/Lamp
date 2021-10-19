@@ -1,164 +1,105 @@
 #include "lppch.h"
 #include "AssetLoader.h"
 
-#include <rapidxml/rapidxml.hpp>
-#include <rapidxml/rapidxml_print.hpp>
+#include "Lamp/Utility/SerializeMacros.h"
+#include "Lamp/Utility/YAMLSerializationHelpers.h"
 
-#include "Lamp/Meshes/Mesh.h"
-#include "Lamp/Meshes/Materials/MaterialLibrary.h"
+#include "Lamp/Mesh/Mesh.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/AssetSystem/ResourceCache.h"
+
+#include <yaml-cpp/yaml.h>
 
 namespace Lamp
 {
-	static bool GetValue(char* val, glm::vec2& var)
-	{
-		if (val)
-		{
-			float x, y;
-			if (sscanf(val, "%f,%f", &x, &y) == 2)
-			{
-				var = glm::vec2(x, y);
-				return true;
-			}
-		}
-		return false;
-	}
-	static bool GetValue(char* val, glm::vec3& var)
-	{
-		if (val)
-		{
-			float x, y, z;
-			if (sscanf(val, "%f,%f,%f", &x, &y, &z) == 3)
-			{
-				var = glm::vec3(x, y, z);
-				return true;
-			}
-		}
-		return false;
-	}
-	static bool GetValue(char* val, int& var)
-	{
-		if (val)
-		{
-			var = atoi(val);
-			return true;
-		}
-
-		return false;
-	}
-	static bool GetValue(char* val, float& var)
-	{
-		if (val)
-		{
-			var = (float)atof(val);
-			return true;
-		}
-		return false;
-	}
-
-	static std::string ToString(const int& var)
-	{
-		return std::to_string(var);
-	}
-	static std::string ToString(const float& var)
-	{
-		return std::to_string(var);
-	}
-	static std::string ToString(const glm::vec2& var)
-	{
-		std::string str(std::to_string(var.x) + "," + std::to_string(var.y));
-		return str;
-	}
-	static std::string ToString(const glm::vec3& var)
-	{
-		std::string str(std::to_string(var.x) + "," + std::to_string(var.y) + "," + std::to_string(var.z));
-		return str;
-	}
-
 	void MeshLoader::Save(const Ref<Asset>& asset) const
 	{
 		Ref<Mesh> mesh = std::dynamic_pointer_cast<Mesh>(asset);
 
 		//Save raw data
-		std::ofstream out(asset->Path, std::ios::out | std::ios::binary);
+		std::ofstream rout(asset->Path, std::ios::out | std::ios::binary);
 
 		for (auto& subMesh : mesh->GetSubMeshes())
 		{
-			out.write((char*)subMesh->GetVertices().data(), subMesh->GetVertices().size() * sizeof(Vertex));
-			out.write((char*)subMesh->GetIndices().data(), subMesh->GetIndices().size() * sizeof(Vertex));
+			rout.write((char*)subMesh->GetVertices().data(), subMesh->GetVertices().size() * sizeof(Vertex));
+			rout.write((char*)subMesh->GetIndices().data(), subMesh->GetIndices().size() * sizeof(Vertex));
 		}
 
-		out.close();
-
-		//Save spec file
-		using namespace rapidxml;
+		rout.close();
 
 		LP_CORE_INFO("Saving mesh {0}", mesh->GetName());
-		
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "geometry" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+			
+			LP_SERIALIZE_PROPERTY(name, mesh->GetName(), out);
+			LP_SERIALIZE_PROPERTY(handle, mesh->Handle, out);
+
+			out << YAML::Key << "meshes" << YAML::Value;
+			out << YAML::BeginMap;
+			{
+				uint32_t meshCount = 0;
+				for (auto& subMesh : mesh->GetSubMeshes())
+				{
+					out << YAML::Key << "mesh" + std::to_string(meshCount) << YAML::Value;
+					out << YAML::BeginMap;
+					{
+						LP_SERIALIZE_PROPERTY(matId, subMesh->GetMaterialIndex(), out);
+						LP_SERIALIZE_PROPERTY(verticeCount, (uint32_t)subMesh->GetVertices().size(), out);
+						LP_SERIALIZE_PROPERTY(indiceCount, (uint32_t)subMesh->GetIndices().size(), out);
+					}
+					out << YAML::EndMap;
+					meshCount++;
+				}
+			}
+			out << YAML::EndMap; //Meshes
+
+			out << YAML::Key << "materials" << YAML::Value;
+			out << YAML::BeginMap;
+			{
+				uint32_t matCount = 0;
+				for (auto& mat : mesh->GetMaterials())
+				{
+					out << YAML::Key << "material" + std::to_string(matCount) << YAML::Value;
+					out << YAML::BeginMap;
+					{
+						LP_SERIALIZE_PROPERTY(name, mat.second->GetName(), out);
+						LP_SERIALIZE_PROPERTY(id, mat.first, out);
+					}
+					out << YAML::EndMap;
+					matCount++;
+				}
+			}
+			out << YAML::EndMap; //Materials
+
+			out << YAML::Key << "boundingBox" << YAML::Value;
+			out << YAML::BeginMap;
+			{
+				LP_SERIALIZE_PROPERTY(maxPos, mesh->GetBoundingBox().Max, out);
+				LP_SERIALIZE_PROPERTY(minPos, mesh->GetBoundingBox().Min, out);
+			}
+			out << YAML::EndMap;
+
+			out << YAML::EndMap; //Geometry 
+		}
+		out << YAML::EndMap; //Root
+
 		std::ofstream file;
 		file.open(asset->Path.string() + ".spec");
-
-		xml_document<> doc;		
-		xml_node<>* pRoot = doc.allocate_node(node_element, "Geometry");
-		pRoot->append_attribute(doc.allocate_attribute("name", mesh->GetName().c_str()));
-
-		//Meshes
-		xml_node<>* pMeshes = doc.allocate_node(node_element, "Meshes");
-		for (auto& subMesh : mesh->GetSubMeshes())
-		{
-			xml_node<>* pMesh = doc.allocate_node(node_element, "Mesh");
-			char* pMatId = doc.allocate_string(std::to_string(subMesh->GetMaterialIndex()).c_str());
-			pMesh->append_attribute(doc.allocate_attribute("matId", pMatId));
-
-			xml_node<>* pVertCount = doc.allocate_node(node_element, "VerticeCount");
-			char* pVCount = doc.allocate_string(ToString((int)subMesh->GetVertices().size()).c_str());
-			pVertCount->append_attribute(doc.allocate_attribute("count", pVCount));
-			pMesh->append_node(pVertCount);
-
-			xml_node<>* pIndiceCount = doc.allocate_node(node_element, "IndiceCount");
-			char* pICount = doc.allocate_string(ToString((int)subMesh->GetIndices().size()).c_str());
-			pIndiceCount->append_attribute(doc.allocate_attribute("count", pICount));
-			pMesh->append_node(pIndiceCount);
-
-			pMeshes->append_node(pMesh);
-		}
-		pRoot->append_node(pMeshes);
-
-		//Materials
-		xml_node<>* pMaterials = doc.allocate_node(node_element, "Materials");
-		for (auto& mat : mesh->GetMaterials())
-		{
-			xml_node<>* pMaterial = doc.allocate_node(node_element, "Material");
-			pMaterial->append_attribute(doc.allocate_attribute("name", mat.second.GetName().c_str()));
-			pMaterial->append_attribute(doc.allocate_attribute("id", std::to_string(mat.first).c_str()));
-
-			pMaterials->append_node(pMaterial);
-		}
-		pRoot->append_node(pMaterials);
-
-		//Bounding box
-		xml_node<>* pBB = doc.allocate_node(node_element, "BoundingBox");
-		xml_node<>* pMax = doc.allocate_node(node_element, "Max");
-		char* pPos1 = doc.allocate_string(ToString(mesh->GetBoundingBox().Max).c_str());
-		pMax->append_attribute(doc.allocate_attribute("position", pPos1));
-
-		xml_node<>* pMin = doc.allocate_node(node_element, "Min");
-		char* pPos2 = doc.allocate_string(ToString(mesh->GetBoundingBox().Min).c_str());
-		pMin->append_attribute(doc.allocate_attribute("position", pPos2));
-
-		pBB->append_node(pMax);
-		pBB->append_node(pMin);
-
-		pRoot->append_node(pBB);
-		doc.append_node(pRoot);
-
-		file << doc;
+		file << out.c_str();
 		file.close();
-	
+
 		LP_CORE_INFO("Saved model {0}!", mesh->GetName());
 	}
+
 	bool MeshLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
-		using namespace rapidxml;
+		asset = CreateRef<Mesh>();
+		Ref<Mesh> mesh = std::dynamic_pointer_cast<Mesh>(asset);
 
 		//Check if file exists
 		struct stat b;
@@ -168,114 +109,97 @@ namespace Lamp
 			return false;
 		}
 
-		xml_document<> file;
-		xml_node<>* pRootNode;
-
 		std::ifstream specFile(path.string() + ".spec");
-		std::vector<char> buffer((std::istreambuf_iterator<char>(specFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
-		specFile.close();
-
-		file.parse<0>(buffer.data());
-		pRootNode = file.first_node("Geometry");
-		if (!pRootNode)
+		if (!specFile.is_open())
 		{
-			LP_CORE_ERROR("Invalid spec file at {0}!", path.string().c_str());
-			asset->SetFlag(AssetFlag::Invalid);
 			return false;
 		}
 
-		std::string name = "";
-		std::vector<Ref<SubMesh>> meshes;
-		std::map<uint32_t, Material> materials;
+		std::stringstream strStream;
+		strStream << specFile.rdbuf();
+
+		YAML::Node root = YAML::Load(strStream.str());
+		YAML::Node geoNode = root["geometry"];
+
+		std::string meshName;
+		meshName = geoNode["name"].as<std::string>();
+		LP_DESERIALIZE_PROPERTY(handle, mesh->Handle, geoNode, (AssetHandle)0);
+
+		//Meshes
+		YAML::Node meshesNode = geoNode["meshes"];
+		uint32_t meshCount = 0;
+		std::vector<Ref<SubMesh>> subMeshes;
+
+		while (YAML::Node meshNode = meshesNode["mesh" + std::to_string(meshCount)])
+		{
+			std::vector<Vertex> vertices;
+			std::vector<uint32_t> indices;
+
+			uint32_t matIdInt;
+			uint32_t verticeCountInt;
+			uint32_t indiceCountInt;
+
+			LP_DESERIALIZE_PROPERTY(matId, matIdInt, meshNode, 0);
+			LP_DESERIALIZE_PROPERTY(verticeCount, verticeCountInt, meshNode, 0);
+			LP_DESERIALIZE_PROPERTY(indiceCount, indiceCountInt, meshNode, 0);
+
+			//Read file data
+			std::ifstream in(path, std::ios::in | std::ios::binary);
+			for (size_t i = 0; i < verticeCountInt; i++)
+			{
+				Vertex vert;
+				in.read((char*)&vert, sizeof(Vertex));
+
+				vertices.push_back(vert);
+			}
+			for (size_t i = 0; i < indiceCountInt; i++)
+			{
+				uint32_t indice;
+				in.read((char*)&indice, sizeof(uint32_t));
+
+				indices.push_back(indice);
+			}
+			in.close();
+
+			subMeshes.push_back(CreateRef<SubMesh>(vertices, indices, matIdInt));
+			meshCount++;
+		}
+
+		//Materials
+		YAML::Node materialsNode = geoNode["materials"];
+		uint32_t matCount = 0;
+		std::map<uint32_t, Ref<Material>> materials;
+
+		while (YAML::Node matNode = materialsNode["material" + std::to_string(matCount)])
+		{
+			uint32_t idInt;
+			std::string matName;
+
+			matName = matNode["name"].as<std::string>();
+			LP_DESERIALIZE_PROPERTY(id, idInt, matNode, 0);
+
+			if (MaterialLibrary::IsMaterialLoaded(matName))
+			{
+				materials[idInt] = MaterialLibrary::GetMaterial(matName);
+			}
+			else
+			{
+				LP_CORE_WARN("Material {0} not loaded!", matName);
+			}
+
+			matCount++;
+		}
+
+		//Bounding box
+		YAML::Node bbNode = geoNode["boundingBox"];
 		AABB boundingBox;
 
-		name = pRootNode->first_attribute("name")->value();
-		
-		//Read meshes
-		if (xml_node<>* pMeshes = pRootNode->first_node("Meshes"))
-		{
-			for (xml_node<>* pMesh = pMeshes->first_node("Mesh"); pMesh; pMesh = pMesh->next_sibling())
-			{
-				std::vector<Vertex> vertices;
-				std::vector<uint32_t> indices;
+		LP_DESERIALIZE_PROPERTY(maxPos, boundingBox.StartMax, bbNode, glm::vec3(0.f));
+		LP_DESERIALIZE_PROPERTY(minPos, boundingBox.StartMin, bbNode, glm::vec3(0.f));
+		boundingBox.Max = boundingBox.StartMax;
+		boundingBox.Min = boundingBox.StartMin;
 
-				//Read spec data
-				int matId;
-				GetValue(pMesh->first_attribute("matId")->value(), matId);
-
-				int vertCount = 0;
-				if (xml_node<>* pVertCount = pMesh->first_node("VerticeCount"))
-				{
-					GetValue(pVertCount->first_attribute("count")->value(), vertCount);
-				}
-
-				int indiceCount = 0;
-				if (xml_node<>* pIndiceCount = pMesh->first_node("IndiceCount"))
-				{
-					GetValue(pIndiceCount->first_attribute("count")->value(), indiceCount);
-				}
-
-				//Read file data
-				std::ifstream in(path, std::ios::in | std::ios::binary);
-				for (size_t i = 0; i < vertCount; i++)
-				{
-					Vertex vert;
-					in.read((char*)&vert, sizeof(Vertex));
-
-					vertices.push_back(vert);
-				}
-				for (size_t i = 0; i < indiceCount; i++)
-				{
-					uint32_t indice;
-					in.read((char*)&indice, sizeof(uint32_t));
-
-					indices.push_back(indice);
-				}
-
-				in.close();
-				meshes.push_back(CreateRef<SubMesh>(vertices, indices, (uint32_t)matId));
-			}
-		}
-
-		//Read materials
-		if (xml_node<>* pMaterials = pRootNode->first_node("Materials"))
-		{
-			for (xml_node<>* pMaterial = pMaterials->first_node("Material"); pMaterial; pMaterial = pMaterial->next_sibling())
-			{
-				std::string name;
-				name = pMaterial->first_attribute("name")->value();
-
-				int id; 
-				GetValue(pMaterial->first_attribute("id")->value(), id);
-				if (MaterialLibrary::IsMaterialLoaded(name))
-				{
-					materials[id] = MaterialLibrary::GetMaterial(name);
-				}
-				else
-				{
-					LP_CORE_ERROR("Material {0} not loaded!", name);
-				}
-			}
-		}
-
-		//Read bounding box
-		if (xml_node<>* pBB = pRootNode->first_node("BoundingBox"))
-		{
-			if (xml_node<>* pMax = pBB->first_node("Max"))
-			{
-				GetValue(pMax->first_attribute("position")->value(), boundingBox.StartMax);
-			}
-			if (xml_node<>* pMin = pBB->first_node("Min"))
-			{
-				GetValue(pMin->first_attribute("position")->value(), boundingBox.StartMin);
-			}
-
-			boundingBox.Max = boundingBox.StartMax;
-			boundingBox.Min = boundingBox.StartMin;
-		}
-		
-		asset = CreateRef<Mesh>(name, meshes, materials, boundingBox);
+		asset = CreateRef<Mesh>(meshName, subMeshes, materials, boundingBox);
 		asset->Path = path;
 
 		return true;
@@ -289,8 +213,96 @@ namespace Lamp
 		return true;
 	}
 
+	void TextureLoader::Save(const Ref<Asset>& asset) const
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "TextureData" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+
+			LP_SERIALIZE_PROPERTY(handle, asset->Handle, out);
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndMap;
+		std::ofstream fout(asset->Path.string() + ".spec");
+		fout << out.c_str();
+		fout.close();
+	}
+
 	bool EnvironmentLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
 		return false;
+	}
+
+	void MaterialLoader::Save(const Ref<Asset>& asset) const
+	{
+		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "material" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+
+			LP_SERIALIZE_PROPERTY(name, mat->GetName(), out);
+			LP_SERIALIZE_PROPERTY(handle, mat->Handle, out);
+
+			out << YAML::Key << "textures" << YAML::Value;
+			out << YAML::BeginMap;
+			{
+				for (auto& tex : mat->GetTextures())
+				{
+					LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Handle, out);
+				}
+			}
+			out << YAML::EndMap;
+
+			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndMap;
+
+		std::ofstream fout(asset->Path);
+		fout << out.c_str();
+		fout.close();
+	}
+
+	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	{
+		std::ifstream stream(path);
+		if (!stream.is_open())
+		{
+			return false;
+		}
+
+		std::stringstream strStream;
+		strStream << stream.rdbuf();
+
+		YAML::Node root = YAML::Load(strStream.str());
+		YAML::Node materialNode = root["material"];
+
+		asset = CreateRef<Material>();
+		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
+
+		mat->SetName(materialNode["name"].as<std::string>());
+		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, materialNode, AssetHandle(0));
+		mat->SetShader(ShaderLibrary::GetShader(materialNode["shader"].as<std::string>()));
+
+		YAML::Node textureNode = materialNode["textures"];
+		
+		for (auto& texName : mat->GetShader()->GetSpecifications().TextureNames)
+		{
+			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
+			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
+		}
+
+		asset->Path = path;
+
+		return true;
 	}
 }

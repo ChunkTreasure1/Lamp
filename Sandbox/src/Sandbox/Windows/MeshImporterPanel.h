@@ -1,0 +1,64 @@
+#pragma once
+
+#include "Sandbox/Sandbox.h"
+
+#include "BaseWindow.h"
+
+namespace Sandbox
+{
+	struct ImportSettings
+	{
+		float MeshScale = 1.f;
+		glm::vec3 MeshUp = { 0.f, 1.f, 0.f };
+	};
+
+	class MeshImporterPanel : public BaseWindow
+	{
+	public:
+		MeshImporterPanel(std::string_view name);
+
+		virtual void OnEvent(Lamp::Event& e) override;
+		inline const Ref<Lamp::PerspectiveCameraController>& GetCamera() { return m_Camera; }
+
+	private:
+		void UpdatePerspective();
+		void UpdateProperties();
+		void UpdateMaterial();
+		void UpdateCamera(Lamp::Timestep ts);
+
+		void UpdateToolbar();
+		void UpdateMeshConstruction();
+
+		void Render();
+
+		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
+		bool Update(Lamp::AppUpdateEvent& e);
+
+		std::string GetDragDropTarget();
+		void MaterialPopup();
+
+	private:
+		bool m_HoveringPerspective = false;
+		bool m_RightMousePressed = false;
+		bool m_RenderSkybox = false;
+		bool m_RenderGrid = true;
+		glm::vec2 m_PerspectiveSize;
+		std::string m_SavePath = "";
+		std::string m_SourcePath = "";
+
+		Ref<Lamp::Mesh> m_pModelToImport;
+		Ref<Lamp::PerspectiveCameraController> m_Camera;
+		Ref<Lamp::Shader> m_DefaultShader;
+		Ref<Lamp::Framebuffer> m_Framebuffer;
+
+		std::vector<int> m_ShaderSelectionIds;
+
+		//Icons
+		Ref<Lamp::Texture2D> m_LoadIcon;
+		Ref<Lamp::Texture2D> m_SaveIcon;
+		Ref<Lamp::RenderGraph> m_renderGraph;
+
+		//Import settings
+		ImportSettings m_ImportSettings;
+	};
+}

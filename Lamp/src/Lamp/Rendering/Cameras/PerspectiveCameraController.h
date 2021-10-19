@@ -31,8 +31,6 @@ namespace Lamp
 		bool OnRender(AppRenderEvent& e);
 
 	private:
-		std::vector<std::array<glm::vec3, 2>> m_LinePositions;
-
 		float m_TranslationSpeed = 5.f;
 		float m_NearPlane = 0.1f;
 		float m_FarPlane = 100.f;

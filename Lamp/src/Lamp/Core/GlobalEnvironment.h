@@ -9,11 +9,11 @@ namespace Lamp
 {
 	class Level;
 	class AssetManager;
+	class Framebuffer;
 }
 
 struct GlobalEnvironment
 {
-	Lamp::DirectionalLight DirLight;
 	bool ShouldRenderBB = false;
 	bool ShouldRenderGizmos = true;
 	bool IsEditor = false;

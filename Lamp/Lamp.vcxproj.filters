@@ -46,11 +46,11 @@
     <Filter Include="src\Lamp\Math">
       <UniqueIdentifier>{7F2B061B-EBEB-8151-B426-CBCE20A6C62D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Meshes">
-      <UniqueIdentifier>{5AEA86F5-C675-F4B9-CF86-77AE3B9150BA}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Mesh">
+      <UniqueIdentifier>{623C061B-CEFC-8151-9737-CBCE03B7C62D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Meshes\Materials">
-      <UniqueIdentifier>{AB25E2D6-17E8-1561-6098-A4EDCC99EE3E}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Mesh\Materials">
+      <UniqueIdentifier>{B3A11504-1FD9-5D9B-28E3-C1BE94998494}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Objects">
       <UniqueIdentifier>{9FABB438-8BA4-D38A-B4D6-B80FA02EB396}</UniqueIdentifier>
@@ -76,6 +76,9 @@
     <Filter Include="src\Lamp\Rendering">
       <UniqueIdentifier>{B3A77F8C-9F8B-40E2-08EC-3A35F4EE2A64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\Rendering\Buffers">
+      <UniqueIdentifier>{2F6A2E8D-1B7A-DA5D-8433-3F7C7062C9F6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Lamp\Rendering\Cameras">
       <UniqueIdentifier>{9ECEFFAB-8ADE-AB7C-F397-109BDFC69A15}</UniqueIdentifier>
     </Filter>
@@ -84,6 +87,9 @@
     </Filter>
     <Filter Include="src\Lamp\Rendering\RenderGraph">
       <UniqueIdentifier>{74024CD3-6028-163A-496E-9B0535333B06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Lamp\Rendering\RenderGraph\Nodes">
+      <UniqueIdentifier>{3C8B8D65-2872-4F5D-D1C2-B57ABD88C8C3}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
@@ -130,11 +136,38 @@
     <Filter Include="vendor\glm\glm\gtx">
       <UniqueIdentifier>{B3A6A76B-9F8A-68C1-08EB-6214F4ED5243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\imnodes">
+      <UniqueIdentifier>{11E04766-FDAD-3B6C-E641-AC92D2AE17D1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\stb_image\stb">
       <UniqueIdentifier>{E59C11F7-D12B-9BC0-7A4A-AFBB66B8AB66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp">
+      <UniqueIdentifier>{C5B3FC54-313F-6A19-3A50-ED0DA65AC619}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\include">
+      <UniqueIdentifier>{38D04F32-A407-98C9-AD11-FCEC19C8BEC2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\include\yaml-cpp">
+      <UniqueIdentifier>{EAF52FF2-D646-1B34-FFAA-09F6EB5AAE9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\include\yaml-cpp\contrib">
+      <UniqueIdentifier>{EA87E472-D604-D8B5-FF81-D8C9EB5D7449}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\include\yaml-cpp\node">
+      <UniqueIdentifier>{FFEED84C-6BB3-D73C-3419-0807A09C7372}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\include\yaml-cpp\node\detail">
+      <UniqueIdentifier>{E131EE05-CD44-EE5E-762E-CB4B62208BAC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\src">
+      <UniqueIdentifier>{5CCC2628-C82D-0436-519B-4AE8BDFB3AF5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\yaml-cpp\src\contrib">
+      <UniqueIdentifier>{5CB0BB24-C8BD-E90A-51A4-E5F5BDB0B5C1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +189,9 @@
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
@@ -163,6 +199,9 @@
       <Filter>src\Lamp\Audio</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Application.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Buffer.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Core.h">
@@ -188,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h">
       <Filter>src\Lamp\Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\UUID.h">
+      <Filter>src\Lamp\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
@@ -222,6 +264,9 @@
     <ClInclude Include="src\Lamp\GraphKey\Node.h">
       <Filter>src\Lamp\GraphKey</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\NodeIncludes.h">
+      <Filter>src\Lamp\GraphKey</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h">
       <Filter>src\Lamp\GraphKey</Filter>
     </ClInclude>
@@ -249,29 +294,26 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Level\Layer.h">
-      <Filter>src\Lamp\Level</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Level\Level.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Level\LevelSystem.h">
+    <ClInclude Include="src\Lamp\Level\ObjectLayer.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Math\Math.h">
       <Filter>src\Lamp\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClInclude Include="src\Lamp\Mesh\Materials\Material.h">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClInclude Include="src\Lamp\Mesh\Materials\MaterialLibrary.h">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\Mesh.h">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClInclude Include="src\Lamp\Mesh\Mesh.h">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Meshes\SubMesh.h">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClInclude Include="src\Lamp\Mesh\SubMesh.h">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
       <Filter>src\Lamp\Objects\Brushes</Filter>
@@ -297,7 +339,7 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h">
@@ -318,6 +360,9 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h">
       <Filter>src\Lamp\Objects\Entity</Filter>
     </ClInclude>
@@ -328,6 +373,9 @@
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Physics\PhysXDebugger.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Physics\PhysXInternal.h">
@@ -357,8 +405,17 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h">
       <Filter>src\Lamp\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffer.h">
-      <Filter>src\Lamp\Rendering</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
@@ -390,7 +447,37 @@
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
@@ -423,13 +510,13 @@
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\UniformBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Vertices\Framebuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
@@ -444,7 +531,19 @@
     <ClInclude Include="src\Lamp\Utility\Random.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\SerializeMacros.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\StandardUtilities.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\UIUtility.h">
+      <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
@@ -460,6 +559,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
@@ -1569,9 +1671,193 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\imnodes\imnodes.h">
+      <Filter>vendor\imnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imnodes\imnodes_internal.h">
+      <Filter>vendor\imnodes</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\stb_image\stb\stb_image.h">
       <Filter>vendor\stb_image\stb</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\anchor.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\binary.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\contrib\anchordict.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\contrib\graphbuilder.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\depthguard.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\dll.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitfromevents.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitter.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitterdef.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emittermanip.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitterstyle.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\eventhandler.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\exceptions.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\mark.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\convert.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\impl.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\iterator.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\iterator_fwd.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\memory.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node_data.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node_iterator.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node_ref.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\emit.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\impl.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\iterator.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\node.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\parse.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\ptr.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\type.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\noexcept.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\null.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\ostream_wrapper.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\parser.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\stlemitter.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\traits.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\yaml.h">
+      <Filter>vendor\yaml-cpp\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\collectionstack.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\contrib\graphbuilderadapter.h">
+      <Filter>vendor\yaml-cpp\src\contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\directives.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\emitterstate.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\emitterutils.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\exp.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\indentation.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\nodebuilder.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\nodeevents.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\ptr_vector.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\regex_yaml.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\regeximpl.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\scanner.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\scanscalar.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\scantag.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\setting.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\singledocparser.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\stream.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\streamcharsource.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\stringsource.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\tag.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\yaml-cpp\src\token.h">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1584,6 +1870,9 @@
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp">
@@ -1603,6 +1892,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp">
       <Filter>src\Lamp\Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Core\UUID.cpp">
+      <Filter>src\Lamp\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Window.cpp">
       <Filter>src\Lamp\Core</Filter>
@@ -1652,23 +1944,20 @@
     <ClCompile Include="src\Lamp\Level\Level.cpp">
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Level\LevelSystem.cpp">
-      <Filter>src\Lamp\Level</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Math\Math.cpp">
       <Filter>src\Lamp\Math</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClCompile Include="src\Lamp\Mesh\Materials\Material.cpp">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp">
-      <Filter>src\Lamp\Meshes\Materials</Filter>
+    <ClCompile Include="src\Lamp\Mesh\Materials\MaterialLibrary.cpp">
+      <Filter>src\Lamp\Mesh\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\Mesh.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClCompile Include="src\Lamp\Mesh\Mesh.cpp">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Meshes\SubMesh.cpp">
-      <Filter>src\Lamp\Meshes</Filter>
+    <ClCompile Include="src\Lamp\Mesh\SubMesh.cpp">
+      <Filter>src\Lamp\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
@@ -1688,7 +1977,7 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp">
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp">
@@ -1709,6 +1998,9 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
       <Filter>src\Lamp\Objects</Filter>
     </ClCompile>
@@ -1716,6 +2008,9 @@
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp">
+      <Filter>src\Lamp\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Physics\PhysXDebugger.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp">
@@ -1739,6 +2034,12 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClCompile>
@@ -1754,11 +2055,44 @@
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\LightBase.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp">
       <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderGraph.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderNode.cpp">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp">
       <Filter>src\Lamp\Rendering</Filter>
@@ -1790,10 +2124,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
@@ -1801,6 +2132,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Utility\UIUtility.cpp">
+      <Filter>src\Lamp\Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1815,6 +2149,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
@@ -1835,8 +2172,105 @@
     <ClCompile Include="src\lppch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imnodes\imnodes.cpp">
+      <Filter>vendor\imnodes</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp">
       <Filter>vendor\stb_image\stb</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\binary.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\contrib\graphbuilder.cpp">
+      <Filter>vendor\yaml-cpp\src\contrib</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\contrib\graphbuilderadapter.cpp">
+      <Filter>vendor\yaml-cpp\src\contrib</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\convert.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\depthguard.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\directives.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\emit.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\emitfromevents.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\emitter.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\emitterstate.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\emitterutils.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\exceptions.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\exp.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\memory.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\node.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\node_data.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\nodebuilder.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\nodeevents.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\null.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\ostream_wrapper.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\parse.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\parser.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\regex_yaml.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\scanner.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\scanscalar.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\scantag.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\scantoken.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\simplekey.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\singledocparser.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\stream.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
+      <Filter>vendor\yaml-cpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
   </ItemGroup>
 </Project>

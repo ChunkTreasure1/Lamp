@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Lamp/Core/UUID.h"
 #include "Lamp/Core/Core.h"
 
 #include <filesystem>
@@ -22,7 +23,8 @@ namespace Lamp
 		Material = 3,
 		Texture = 4,
 		Audio = 5,
-		EnvironmentMap = 6
+		EnvironmentMap = 6,
+		RenderGraph = 7
 	};
 
 	inline static std::unordered_map<std::string, AssetType> s_AssetExtensionMap =
@@ -36,14 +38,17 @@ namespace Lamp
 		{ ".tga", AssetType::Texture },
 		{ ".wav", AssetType::Audio },
 		{ ".ogg", AssetType::Audio },
-		{ ".hdr", AssetType::EnvironmentMap }
+		{ ".hdr", AssetType::EnvironmentMap },
+		{ ".rendergraph", AssetType::RenderGraph }
 	};
 
+	using AssetHandle = UUID;
 
 	class Asset
 	{
 	public:
-		uint64_t Handle;
+		AssetHandle Handle;
+
 		uint16_t Flags = (uint16_t)AssetFlag::None;
 		std::filesystem::path Path;
 	

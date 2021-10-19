@@ -21,7 +21,7 @@ namespace Lamp
 	class TextureLoader : public AssetLoader
 	{
 	public:
-		virtual void Save(const Ref<Asset>& asset) const override {}
+		virtual void Save(const Ref<Asset>& asset) const override;
 		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
 	};
 
@@ -29,6 +29,13 @@ namespace Lamp
 	{
 	public:
 		virtual void Save(const Ref<Asset>& asset) const override {}
+		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
+	};
+
+	class MaterialLoader : public AssetLoader
+	{
+	public:
+		virtual void Save(const Ref<Asset>& asset) const override;
 		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
 	};
 }

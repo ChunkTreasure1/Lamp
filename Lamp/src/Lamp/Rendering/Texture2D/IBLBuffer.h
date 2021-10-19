@@ -5,22 +5,33 @@
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 
 #include "Lamp/Rendering/Texture2D/Texture2D.h"
+#include "Lamp/Rendering/Vertices/FrameBuffer.h"
 
 namespace Lamp
 {
-	class IBLBuffer
+	class IBLBuffer : public Framebuffer
 	{
 	public:
 		IBLBuffer(const std::string& path);
-		~IBLBuffer();
+		virtual ~IBLBuffer() override;
 
-		void Bind();
-		inline const uint32_t GetTextureID() { return m_CubeMapId; }
-		inline const uint32_t GetPrefilterID() { return m_PrefilterMap; }
-		inline const uint32_t GetBRDFLUTID() { return m_TestTexture->GetID(); }
-		inline const uint32_t GetIrradianceID() { return m_IrradianceId; }
+		virtual void Bind() override;
+		virtual void Unbind() override;
+		virtual void Resize(const uint32_t width, const uint32_t height) override;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
+		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override;
+		virtual void Invalidate() override {}
 
-		void BindTextures(uint32_t startId);
+		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
+		virtual inline const uint32_t GetDepthAttachmentID() override;
+		virtual inline const uint32_t GetRendererID() override { return -1; }
+
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+
+		virtual void BindColorAttachment(uint32_t id, uint32_t i);
+		virtual void BindDepthAttachment(uint32_t id);
+
+		virtual FramebufferSpecification& GetSpecification() override { return FramebufferSpecification(); }
 
 	private:
 		Ref<Shader> m_EqCubeShader;
@@ -39,5 +50,6 @@ namespace Lamp
 
 		glm::mat4 m_CaptureProjection;
 		std::vector<glm::mat4> m_CaptureViews;
+		std::array<uint32_t, 3> m_Attachments;
 	};
 }

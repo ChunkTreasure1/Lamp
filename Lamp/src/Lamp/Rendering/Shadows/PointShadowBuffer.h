@@ -29,7 +29,7 @@ namespace Lamp
 		virtual void BindColorAttachment(uint32_t id /* = 0 */, uint32_t i /* = 0 */);
 		virtual void BindDepthAttachment(uint32_t id /* = 0 */);
 
-		virtual const FramebufferSpecification& GetSpecification() const { return FramebufferSpecification(); }
+		virtual FramebufferSpecification& GetSpecification() { return FramebufferSpecification(); }
 
 		void SetPosition(const glm::vec3& pos);
 		inline const glm::vec3& GetPosition() { return m_Position; }

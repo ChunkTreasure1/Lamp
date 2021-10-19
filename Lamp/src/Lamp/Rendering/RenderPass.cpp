@@ -5,6 +5,7 @@
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Level/Level.h"
+#include "Lamp/Rendering/Renderer2D.h"
 
 namespace Lamp
 {
@@ -19,130 +20,85 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
 
-		switch (m_PassSpec.type)
+		RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
+		m_PassSpec.TargetFramebuffer->Bind();
+
+		//Clear color if i should
+		switch (m_PassSpec.clearType)
 		{
-			case PassType::PointShadow:
-			{
-				m_PassSpec.LightIndex = 0;
-				for (auto& light : g_pEnv->pLevel->GetRenderUtils().GetPointLights())
-				{
-					light->ShadowBuffer->Bind();
-					RenderCommand::Clear();
-
-					Renderer3D::BeginPass(m_PassSpec);
-
-					AppRenderEvent renderEvent(m_PassSpec, camera);
-					for (auto& entity : g_pEnv->pLevel->GetEntities())
-					{
-						entity.second->OnEvent(renderEvent);
-					}
-
-					for (auto& brush : g_pEnv->pLevel->GetBrushes())
-					{
-						brush.second->OnEvent(renderEvent);
-					}
-
-
-					Renderer3D::EndPass();
-					light->ShadowBuffer->Unbind();
-					m_PassSpec.LightIndex++;
-				}
+			case ClearType::None:
 				break;
-			}
 
-			case PassType::Lightning:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
+			case ClearType::Color:
+				RenderCommand::ClearColor();
+				break;
+
+			case ClearType::Depth:
+				RenderCommand::ClearDepth();
+				break;
+
+			case ClearType::ColorDepth:
 				RenderCommand::Clear();
-				Renderer3D::BeginPass(m_PassSpec);
-				Renderer3D::CombineLightning();
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
-
-				Renderer3D::CopyDepth();
 				break;
-			}
+		}
 
-			case PassType::SSAO:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
-				RenderCommand::ClearColor();
-				Renderer3D::BeginPass(m_PassSpec);
+		Renderer3D::BeginPass(m_PassSpec);
 
-				Renderer3D::SSAOMainPass();
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
+		switch (m_PassSpec.drawType)
+		{
+			case DrawType::All:
+				Renderer3D::DrawRenderBuffer();
 				break;
-			}
 
-			case PassType::SSAOBlur:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
-				RenderCommand::ClearColor();
-				Renderer3D::BeginPass(m_PassSpec);
-
-				Renderer3D::SSAOBlurPass();
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
+			case DrawType::Forward:
+				Renderer3D::DrawRenderBuffer();
 				break;
-			}
 
-			case PassType::Forward:
-			{
-				m_PassSpec.TargetFramebuffer->Bind();
-				Renderer3D::BeginPass(m_PassSpec);
-
-				AppRenderEvent renderEvent(m_PassSpec, camera);
-				Application::Get().OnEvent(renderEvent);
-
-				for (auto& entity : g_pEnv->pLevel->GetEntities())
-				{
-					entity.second->OnEvent(renderEvent);
-				}
-
-				for (auto& f : m_PassSpec.ExtraRenders)
-				{
-					f();
-				}
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
+			case DrawType::Line:
 				break;
-			}
+
+			case DrawType::Quad:
+				Renderer3D::RenderQuad();
+				break;
 
 			default:
-			{
-				RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-				RenderCommand::Clear();
-
-				m_PassSpec.TargetFramebuffer->Bind();
-				RenderCommand::Clear();
-
-				Renderer3D::BeginPass(m_PassSpec);
-
-				AppRenderEvent renderEvent(m_PassSpec, camera);
-				Application::Get().OnEvent(renderEvent);
-
-				for (auto& entity : g_pEnv->pLevel->GetEntities())
-				{
-					entity.second->OnEvent(renderEvent);
-				}
-
-				for (auto& brush : g_pEnv->pLevel->GetBrushes())
-				{
-					brush.second->OnEvent(renderEvent);
-				}
-
-				for (auto& f : m_PassSpec.ExtraRenders)
-				{
-					f();
-				}
-
-				Renderer3D::EndPass();
-				m_PassSpec.TargetFramebuffer->Unbind();
 				break;
+		}
+
+		if (m_PassSpec.draw2D)
+		{
+			Renderer2D::BeginPass();
+
+			Renderer2D::DrawRenderBuffer();
+		
+			Renderer2D::EndPass();
+		}
+
+		if (m_PassSpec.drawSkybox)
+		{
+			g_pEnv->pLevel->GetSkybox()->Render();
+		}
+
+		Renderer3D::EndPass();
+		m_PassSpec.TargetFramebuffer->Unbind();
+
+		for (const auto& commandPair : m_PassSpec.framebufferCommands)
+		{
+			const auto& commandSpec = commandPair.second.first;
+			if (!commandSpec.primary || !commandSpec.secondary)
+			{
+				LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);
+				continue;
+			}
+
+			switch (commandSpec.command)
+			{
+				case FramebufferCommand::Copy:
+					commandSpec.primary->Copy(commandSpec.secondary->GetRendererID(), { commandSpec.primary->GetSpecification().Width, commandSpec.primary->GetSpecification().Height }, true);
+					break;
+
+				default:
+					break;
 			}
 		}
 	}
@@ -168,6 +124,7 @@ namespace Lamp
 
 	void RenderPassManager::RenderPasses(Ref<CameraBase>& camera)
 	{
+		LP_PROFILE_FUNCTION();
 		Renderer3D::Begin(camera);
 		for (auto& pass : m_RenderPasses)
 		{

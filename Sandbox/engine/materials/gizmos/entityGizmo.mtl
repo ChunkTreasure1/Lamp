@@ -1,0 +1,6 @@
+material:
+  name: gizmoEntity
+  handle: 4069686199
+  textures:
+    gizmo: 17221873274523020632
+  shader: quad

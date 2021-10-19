@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "GraphKeyGraph.h"
 
-#include "NodeRegistry.h"
+#include "NodeIncludes.h"
 
 namespace Lamp
 {

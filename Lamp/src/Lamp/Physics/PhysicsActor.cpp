@@ -371,7 +371,7 @@ namespace Lamp
 	{
 		auto& sdk = PhysXInternal::GetPhysXSDK();
 		
-		glm::mat4 transform = m_pEntity->GetModelMatrix();
+		glm::mat4 transform = m_pEntity->GetTransform();
 
 		if (m_RigidbodyData->GetSpecification().m_BodyType == RigidbodyComponent::Type::Static)
 		{

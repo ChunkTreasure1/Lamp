@@ -2,8 +2,13 @@
 #include "Level.h"
 
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
-#include "Lamp/Objects/Entity/BaseComponents/LightComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
 #include "Lamp/Physics/Physics.h"
+#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Brushes/Brush.h"
+
+#include "Lamp/GraphKey/NodeRegistry.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraph.h"
 
 namespace Lamp
 {
@@ -21,9 +26,28 @@ namespace Lamp
 	{
 		for (int i = 0; i < m_PointLights.size(); i++)
 		{
-			if (m_PointLights[i]->Id == light->Id)
+			if (m_PointLights[i]->id == light->id)
 			{
 				m_PointLights.erase(m_PointLights.begin() + i);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void RenderUtils::RegisterDirectionalLight(DirectionalLight* light)
+	{
+		m_DirectionalLights.push_back(light);
+	}
+
+	bool RenderUtils::UnregisterDirectionalLight(DirectionalLight* light)
+	{
+		for (int i = 0; i < m_DirectionalLights.size(); i++)
+		{
+			if (m_DirectionalLights[i]->Id == light->Id)
+			{
+				m_DirectionalLights.erase(m_DirectionalLights.begin() + i);
 				return true;
 			}
 		}
@@ -57,9 +81,9 @@ namespace Lamp
 		{
 			std::pair pair = std::make_pair(entity.first, Entity::Duplicate(entity.second, false));
 			m_Entities.emplace(pair);
-			if (auto lightComp = pair.second->GetComponent<LightComponent>())
+			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(lightComp->GetPointLight());
+				m_RenderUtils.RegisterPointLight(lightComp->GetLight());
 			}
 		}
 
@@ -104,7 +128,6 @@ namespace Lamp
 
 		m_Environment = level.m_Environment;
 		m_Name = level.m_Name;
-		m_Path = level.m_Path;
 	}
 
 	void Level::OnEvent(Event& e)
@@ -118,11 +141,26 @@ namespace Lamp
 		{
 			it.second->OnEvent(e);
 		}
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Level::OnViewportResize));
 	}
 
 	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)
 	{
-		RenderPassManager::Get()->RenderPasses(camera);
+		AppRenderEvent e(camera);
+		OnEvent(e);
+
+		RenderLevel(camera);
+	}
+	void Level::UpdateSimulation(Timestep ts, Ref<CameraBase>& camera)
+	{
+		Physics::GetScene()->Simulate(ts);
+
+		AppRenderEvent e(camera);
+		OnEvent(e);
+
+		RenderLevel(camera);
 	}
 
 	void Level::UpdateRuntime(Timestep ts)
@@ -144,13 +182,22 @@ namespace Lamp
 
 		if (camera)
 		{
-			RenderPassManager::Get()->RenderPasses(camera);
+			AppRenderEvent e(camera);
+			OnEvent(e);
+
+			RenderLevel(camera);
 		}
 	}
+
 	void Level::OnRuntimeStart()
 	{
 		Physics::CreateScene();
 		Physics::CreateActors(this);
+
+		for (const auto& node : NodeRegistry::s_StartNodes())
+		{
+			node->ActivateOutput(0);
+		}
 
 		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
 		g_pEnv->ShouldRenderGizmos = false;
@@ -162,15 +209,28 @@ namespace Lamp
 		g_pEnv->ShouldRenderGizmos = m_LastShowedGizmos;
 	}
 
+	void Level::OnSimulationStart()
+	{
+		Physics::CreateScene();
+		Physics::CreateActors(this);
+	}
+
+	void Level::OnSimulationEnd()
+	{
+		Physics::DestroyScene();
+	}
+
 	void Level::SetupLights()
 	{
 		for (auto& entity : m_Entities)
 		{
-			if (auto& comp = entity.second->GetComponent<LightComponent>())
+			if (auto& comp = entity.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(comp->GetPointLight());
+				m_RenderUtils.RegisterPointLight(comp->GetLight());
 			}
 		}
+
+
 	}
 
 	void Level::AddLayer(const ObjectLayer& layer)
@@ -248,5 +308,29 @@ namespace Lamp
 				return;
 			}
 		}
+	}
+
+	void Level::RenderLevel(Ref<CameraBase> camera)
+	{
+		if (const auto& graph = Renderer::s_pSceneData->renderGraph)
+		{
+			graph->Run(camera);
+		}
+		else
+		{
+			RenderPassManager::Get()->RenderPasses(camera);
+		}
+	}
+
+	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)
+	{
+		for (const auto& buffer : Renderer::s_pSceneData->useViewportSize)
+		{
+			buffer->Resize(e.GetWidth(), e.GetHeight());
+		}
+		
+		Renderer::s_pSceneData->bufferSize = { e.GetWidth(), e.GetHeight() };
+
+		return false;
 	}
 }

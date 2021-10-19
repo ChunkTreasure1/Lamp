@@ -1,0 +1,123 @@
+Assets:
+  - Handle: 16897032606846204281
+    Path: assets/editor.rendergraph
+  - Handle: 10335344246315033883
+    Path: assets\models\cube.lgf
+  - Handle: 13551055251788859933
+    Path: assets\models\sphere.lgf
+  - Handle: 9317505486348122308
+    Path: assets\models\sponza.lgf
+  - Handle: 14877024273708001692
+    Path: assets/testGraph.rendergraph
+  - Handle: 14311675356115887053
+    Path: assets/testLevel.level
+  - Handle: 3775480950542812265
+    Path: assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
+  - Handle: 876498905806854835
+    Path: assets\textures\TeddyTextures\DJTeddy_final_mro.tga
+  - Handle: 5969456504029299388
+    Path: assets\textures\TeddyTextures\DJTeddy_final_normal.tga
+  - Handle: 9024159386129981965
+    Path: assets/textures/base/base_albedo.png
+  - Handle: 14789578748660744105
+    Path: assets/textures/base/base_mro.png
+  - Handle: 16748793907619626814
+    Path: assets/textures/base/base_normal.png
+  - Handle: 3536854313384504482
+    Path: assets/textures/wornMetal/tex_albedo.png
+  - Handle: 4157263279336200044
+    Path: assets/textures/wornMetal/tex_mro.png
+  - Handle: 16027289893487307791
+    Path: assets/textures/wornMetal/tex_normal.png
+  - Handle: 1596807254034736571
+    Path: engine/textures/default/defaultTexture.png
+  - Handle: 17221873274523020632
+    Path: engine/textures/gizmos/gizmoEntity.png
+  - Handle: 14854305732802269758
+    Path: engine/textures/gizmos/gizmoLight.png
+  - Handle: 18118714278600547282
+    Path: engine/textures/ui/AssetIcons/iconMesh.png
+  - Handle: 7667220179670436888
+    Path: engine/textures/ui/MeshImporter/loadIcon.png
+  - Handle: 12858174739659580198
+    Path: engine/textures/ui/MeshImporter/saveIcon.png
+  - Handle: 18122935309257362114
+    Path: engine/textures/ui/PlayIcon.png
+  - Handle: 9522613728534807396
+    Path: engine/textures/ui/StopIcon.png
+  - Handle: 10585254570923109976
+    Path: engine/textures/ui/assetIcons/iconMaterial.png
+  - Handle: 6375851401896882490
+    Path: engine/textures/ui/assetIcons/iconMesh.png
+  - Handle: 626665572364075707
+    Path: engine/textures/ui/directoryIcon.png
+  - Handle: 11535979565681188853
+    Path: engine/textures/ui/files.png
+  - Handle: 17945416414219562556
+    Path: engine/textures/ui/newIcon.png
+  - Handle: 382669663917100860
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim1.png
+  - Handle: 8731073733837126989
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim10.png
+  - Handle: 5136586117228432828
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim11.png
+  - Handle: 458568083197979830
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim12.png
+  - Handle: 13027658305097532426
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim13.png
+  - Handle: 17988352270936935353
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim14.png
+  - Handle: 9625520506961995708
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim15.png
+  - Handle: 15470308406045253527
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim16.png
+  - Handle: 16859737634205812419
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim17.png
+  - Handle: 7563868694473613615
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim18.png
+  - Handle: 14273276541238988377
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim19.png
+  - Handle: 2640169234302297578
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim2.png
+  - Handle: 16242809935938796640
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim20.png
+  - Handle: 4621196825977883814
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim21.png
+  - Handle: 14944856886769508157
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim22.png
+  - Handle: 13354818416548480944
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim23.png
+  - Handle: 2329436979111197053
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim24.png
+  - Handle: 17588458220826980993
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim25.png
+  - Handle: 9147311556270785026
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim26.png
+  - Handle: 2918862195536859256
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim27.png
+  - Handle: 13552613433878724503
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim28.png
+  - Handle: 5770772847984446629
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim29.png
+  - Handle: 5673204816316675978
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim3.png
+  - Handle: 17865108650165767728
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim30.png
+  - Handle: 663018637508344805
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim4.png
+  - Handle: 14712958282534549739
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim5.png
+  - Handle: 10013639376785084131
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim6.png
+  - Handle: 10145159636557219122
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim7.png
+  - Handle: 13617017861834108028
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
+  - Handle: 10556133037468570950
+    Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
+  - Handle: 2584960825807595323
+    Path: C:\Programming\Lamp\Sandbox\assets\models\cube.lgf
+  - Handle: 2625564280194159711
+    Path: C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf
+  - Handle: 14877024273708001692
+    Path: C:\Programming\Lamp\Sandbox\assets\testGraph.rendergraph

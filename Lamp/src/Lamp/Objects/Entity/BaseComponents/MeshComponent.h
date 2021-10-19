@@ -4,7 +4,7 @@
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 
-#include "Lamp/Meshes/Mesh.h"
+#include "Lamp/Mesh/Mesh.h"
 
 namespace Lamp
 {
@@ -25,15 +25,11 @@ namespace Lamp
 		//////Base//////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint32_t GetSize() { return sizeof(*this); }
-		virtual uint64_t GetEventMask() override { return EventType::AppRender 
-			| EventType::AppUpdate 
-			| EventType::EntityPropertyChanged; }
 		////////////////
 
 	private:
 		bool OnRender(AppRenderEvent& e);
-		bool OnPropertyChanged(EntityPropertyChangedEvent& e);
+		bool OnPropertyChanged(ObjectPropertyChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<MeshComponent>(); }

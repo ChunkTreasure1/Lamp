@@ -27,8 +27,6 @@ namespace Lamp
 		//Base
 		virtual void Initialize() {}
 		virtual void OnEvent(Event& e) {}
-		virtual uint64_t GetEventMask() = 0;
-		virtual uint32_t GetSize() = 0;
 
 	protected:
 		EntityComponent(std::string name)
@@ -41,5 +39,6 @@ namespace Lamp
 	private:
 		friend class Entity;
 		friend class LevelSystem;
+		friend class LevelLoader;
 	};
 }

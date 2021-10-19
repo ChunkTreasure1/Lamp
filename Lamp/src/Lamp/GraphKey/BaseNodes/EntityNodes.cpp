@@ -26,7 +26,8 @@ namespace Lamp
 
 			inputAttributes = inputs;
 			outputAttributes = outputs;
-
+			needsEntity = true;
+			
 			name = "CreateEntity";
 		}
 
@@ -69,6 +70,7 @@ namespace Lamp
 
 			inputAttributes = inputs;
 			outputAttributes = outputs;
+			needsEntity = true;
 
 			name = "Entity";
 		}
@@ -109,6 +111,7 @@ namespace Lamp
 
 			outputAttributes = outputs;
 			inputAttributes = inputs;
+			needsEntity = true;
 		}
 
 	private:

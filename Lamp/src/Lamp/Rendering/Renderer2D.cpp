@@ -3,6 +3,7 @@
 
 #include "Vertices/VertexArray.h"
 #include "Renderer2D.h"
+#include "Shader/ShaderLibrary.h"
 
 #include "RenderCommand.h"
 
@@ -10,17 +11,12 @@ namespace Lamp
 {
 	struct QuadVertex
 	{
-		glm::vec3 Position;
-		glm::vec4 Color;
-		glm::vec2 TexCoord;
-		float TexIndex;
+		glm::vec3 position;
+		glm::vec4 color;
+		glm::vec2 texCoord;
+		float texIndex;
+		float id;
 		//TODO: maskid, tiling factor
-	};
-
-	struct LineVertex
-	{
-		glm::vec3 Position;
-		glm::vec4 Color;
 	};
 
 	struct Renderer2DStorage
@@ -43,15 +39,6 @@ namespace Lamp
 		glm::vec4 QuadVertexPositions[4];
 		//////////////////
 
-		///////Lines///////
-		Ref<VertexArray> pLineVertexArray;
-		Ref<VertexBuffer> pLineVertexBuffer;
-		uint32_t LineIndexCount = 0;
-
-		LineVertex* pLineVertexBufferBase = nullptr;
-		LineVertex* pLineVertexBufferPtr = nullptr;
-		///////////////////
-
 		Ref<Shader> pTextureShader;
 		Ref<Texture2D> pWhiteTexture;
 		Ref<Texture2D>* TextureSlots{ new Ref<Texture2D>[RenderCommand::GetCapabilities().MaxTextureSlots] };
@@ -60,32 +47,33 @@ namespace Lamp
 		Renderer2D::Statistics Stats;
 	};
 
-	Ref<Framebuffer> Renderer2D::m_pFrameBuffer = nullptr;
-	static Renderer2DStorage* s_pData;
+	static Renderer2DStorage* s_pStorage;
+	RenderBuffer Renderer2D::s_RenderBuffer;
 
 	void Renderer2D::Initialize()
 	{
-		s_pData = new Renderer2DStorage();
+		s_pStorage = new Renderer2DStorage();
 
 		////////Quad////////
-		s_pData->pQuadVertexArray = VertexArray::Create();
+		s_pStorage->pQuadVertexArray = VertexArray::Create();
 
-		s_pData->pQuadVertexBuffer = VertexBuffer::Create(s_pData->MaxVertices * sizeof(QuadVertex));
-		s_pData->pQuadVertexBuffer->SetBufferLayout
+		s_pStorage->pQuadVertexBuffer = VertexBuffer::Create(s_pStorage->MaxVertices * sizeof(QuadVertex));
+		s_pStorage->pQuadVertexBuffer->SetBufferLayout
 		({
 			{ ElementType::Float3, "a_Position" },
 			{ ElementType::Float4, "a_Color" },
 			{ ElementType::Float2, "a_TexCoord" },
-			{ ElementType::Float, "a_TexIndex" }
+			{ ElementType::Float, "a_TexIndex" },
+			{ ElementType::Float, "a_Id" }
 		});
-		s_pData->pQuadVertexArray->AddVertexBuffer(s_pData->pQuadVertexBuffer);
+		s_pStorage->pQuadVertexArray->AddVertexBuffer(s_pStorage->pQuadVertexBuffer);
 
-		s_pData->QuadVertexBufferBase = new QuadVertex[s_pData->MaxVertices];
+		s_pStorage->QuadVertexBufferBase = new QuadVertex[s_pStorage->MaxVertices];
 
-		uint32_t* pQuadIndices = new uint32_t[s_pData->MaxIndices];
+		uint32_t* pQuadIndices = new uint32_t[s_pStorage->MaxIndices];
 
 		uint32_t offset = 0;
-		for (uint32_t i = 0; i < s_pData->MaxIndices; i += 6)
+		for (uint32_t i = 0; i < s_pStorage->MaxIndices; i += 6)
 		{
 			pQuadIndices[i + 0] = offset + 0;
 			pQuadIndices[i + 1] = offset + 1;
@@ -99,49 +87,21 @@ namespace Lamp
 		}
 
 		Ref<IndexBuffer> pQuadIB;
-		pQuadIB = IndexBuffer::Create(pQuadIndices, s_pData->MaxIndices);
-		s_pData->pQuadVertexArray->SetIndexBuffer(pQuadIB);
+		pQuadIB = IndexBuffer::Create(pQuadIndices, s_pStorage->MaxIndices);
+		s_pStorage->pQuadVertexArray->SetIndexBuffer(pQuadIB);
 
-		s_pData->QuadVertexPositions[0] = { -0.5f, -0.5, 0.f, 1.f };
-		s_pData->QuadVertexPositions[1] = { 0.5f, -0.5, 0.f, 1.f };
-		s_pData->QuadVertexPositions[2] = { 0.5f, 0.5, 0.f, 1.f };
-		s_pData->QuadVertexPositions[3] = { -0.5f, 0.5, 0.f, 1.f };
+		s_pStorage->QuadVertexPositions[0] = { -0.5f, -0.5, 0.f, 1.f };
+		s_pStorage->QuadVertexPositions[1] = { 0.5f, -0.5, 0.f, 1.f };
+		s_pStorage->QuadVertexPositions[2] = { 0.5f, 0.5, 0.f, 1.f };
+		s_pStorage->QuadVertexPositions[3] = { -0.5f, 0.5, 0.f, 1.f };
 
 		delete[] pQuadIndices;
 		////////////////////
 
-		////////Line////////
-		s_pData->pLineVertexArray = VertexArray::Create();
-		s_pData->pLineVertexBuffer = VertexBuffer::Create(s_pData->MaxLineVerts * sizeof(LineVertex));
-		s_pData->pLineVertexBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float4, "a_Color" }
-		});
-		s_pData->pLineVertexArray->AddVertexBuffer(s_pData->pLineVertexBuffer);
-		s_pData->pLineVertexBufferBase = new LineVertex[s_pData->MaxLineVerts];
-
-		uint32_t* pLineIndices = new uint32_t[s_pData->MaxLineIndices];
-		offset = 0;
-		for (uint32_t i = 0; i < s_pData->MaxLineIndices; i += 2)
-		{
-			pLineIndices[i + 0] = offset + 0;
-			pLineIndices[i + 1] = offset + 1;
-
-			offset += 2;
-		}
-
-		Ref<IndexBuffer> pLineIB;
-		pLineIB = IndexBuffer::Create(pLineIndices, s_pData->MaxLineIndices);
-		s_pData->pLineVertexArray->SetIndexBuffer(pLineIB);
-
-		delete[] pLineIndices;
-		////////////////////
-
 		////////Textures////////
-		s_pData->pWhiteTexture = Texture2D::Create(1, 1);
+		s_pStorage->pWhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
-		s_pData->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		s_pStorage->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		int* samplers{ new int[RenderCommand::GetCapabilities().MaxTextureSlots] };
 		for (uint32_t i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
@@ -149,114 +109,105 @@ namespace Lamp
 			samplers[i] = i;
 		}
 
-		//s_pData->pTextureShader = Shader::Create("engine/shaders/2d/Texture.vert", "engine/shaders/2d/Texture.frag");
-		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
+		s_pStorage->pTextureShader = ShaderLibrary::GetShader("quad");
+		s_pStorage->pTextureShader->Bind();
+		s_pStorage->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 
-		s_pData->TextureSlots[0] = s_pData->pWhiteTexture;
+		s_pStorage->TextureSlots[0] = s_pStorage->pWhiteTexture;
 
 		delete[] samplers;
 		////////////////////////
 
-		//m_pFrameBuffer = Lamp::Framebuffer::Create(1280, 720);
+		s_RenderBuffer.drawCalls.reserve(1000);
 	}
 
 	void Renderer2D::Shutdown()
 	{
-
-		delete[] s_pData->TextureSlots;
-		delete s_pData;
-	}
-
-	void Renderer2D::Begin(const Ref<CameraBase>& camera)
-	{
-		RenderCommand::Clear();
-
-		s_pData->pTextureShader->Bind();
-		s_pData->pTextureShader->UploadMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
-
-		ResetBatchData();
-	}
-
-	void Renderer2D::End()
-	{
-		uint32_t dataSize = (uint8_t*)s_pData->QuadVertexBufferPtr - (uint8_t*)s_pData->QuadVertexBufferBase;
-		s_pData->pQuadVertexBuffer->SetData(s_pData->QuadVertexBufferBase, dataSize);
-
-		dataSize = (uint8_t*)s_pData->pLineVertexBufferPtr - (uint8_t*)s_pData->pLineVertexBufferBase;
-		s_pData->pLineVertexBuffer->SetData(s_pData->pLineVertexBufferBase, dataSize);
-
-		Flush();
+		delete[] s_pStorage->TextureSlots;
+		delete s_pStorage;
 	}
 
 	void Renderer2D::Flush()
 	{
 		//Bind textures
-		for (uint32_t i = 0; i < s_pData->TextureSlotIndex; i++)
+		for (uint32_t i = 0; i < s_pStorage->TextureSlotIndex; i++)
 		{
-			s_pData->TextureSlots[i]->Bind(i);
+			s_pStorage->TextureSlots[i]->Bind(i);
 		}
 
 		//Draw
-		RenderCommand::DrawIndexed(s_pData->pQuadVertexArray, s_pData->QuadIndexCount);
-		s_pData->Stats.DrawCalls++;
+		RenderCommand::DrawIndexed(s_pStorage->pQuadVertexArray, s_pStorage->QuadIndexCount);
+		s_pStorage->Stats.drawCalls++;
+	}
 
-		RenderCommand::DrawIndexedLines(s_pData->pLineVertexArray, s_pData->LineIndexCount);
-		s_pData->Stats.DrawCalls++;
+	void Renderer2D::BeginPass()
+	{
+		s_pStorage->pTextureShader->Bind();
+		ResetBatchData();
+	}
+
+	void Renderer2D::EndPass()
+	{
+		uint32_t dataSize = (uint8_t*)s_pStorage->QuadVertexBufferPtr - (uint8_t*)s_pStorage->QuadVertexBufferBase;
+		s_pStorage->pQuadVertexBuffer->SetData(s_pStorage->QuadVertexBufferBase, dataSize);
+
+		s_RenderBuffer.drawCalls.clear();
+
+		Flush();
 	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& tm, const glm::vec4& color)
 	{
-
-		if (s_pData->QuadIndexCount >= Renderer2DStorage::MaxIndices)
+		if (s_pStorage->QuadIndexCount >= Renderer2DStorage::MaxIndices)
 		{
 			StartNewBatch();
 		}
 
 		const float texIndex = 0.f; // white texture
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[0];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 0.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = (tm * s_pStorage->QuadVertexPositions[0]);
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 0.f, 0.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = texIndex;
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[1];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 1.f, 0.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[1];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 1.f, 0.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = texIndex;
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[2];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 1.f, 1.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[2];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 1.f, 1.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = texIndex;
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[3];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 1.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[3];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 0.f, 1.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = texIndex;
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadIndexCount += 6;
-		s_pData->Stats.QuadCount++;
+		s_pStorage->QuadIndexCount += 6;
+		s_pStorage->Stats.quadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& tm, const Ref<Texture2D>& texture, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::mat4& tm, const Ref<Material> mat, uint32_t id, const glm::vec4& color)
 	{
-
-		if (s_pData->QuadIndexCount >= Renderer2DStorage::MaxIndices)
+		if (s_pStorage->QuadIndexCount >= Renderer2DStorage::MaxIndices)
 		{
 			StartNewBatch();
 		}
 
 		float textureIndex = 0.f;
 
-		for (uint32_t i = 1; i < s_pData->TextureSlotIndex; i++)
+		auto& texture = mat->GetTextures().at("gizmo");
+
+		for (uint32_t i = 1; i < s_pStorage->TextureSlotIndex; i++)
 		{
 			//TODO: change
-			if (s_pData->TextureSlots[i].get() == texture.get())
+			if (s_pStorage->TextureSlots[i].get() == texture.get())
 			{
 				textureIndex = (float)i;
 				break;
@@ -265,132 +216,82 @@ namespace Lamp
 
 		if (textureIndex == 0.f)
 		{
-			textureIndex = (float)s_pData->TextureSlotIndex;
-			s_pData->TextureSlots[s_pData->TextureSlotIndex] = texture;
-			s_pData->TextureSlotIndex++;
+			textureIndex = (float)s_pStorage->TextureSlotIndex;
+			s_pStorage->TextureSlots[s_pStorage->TextureSlotIndex] = texture;
+			s_pStorage->TextureSlotIndex++;
 		}
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[0];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 0.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[0];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 0.f, 0.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[1];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 1.f, 0.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[1];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 1.f, 0.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[2];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 1.f, 1.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[2];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 1.f, 1.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadVertexBufferPtr->Position = tm * s_pData->QuadVertexPositions[3];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 1.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_pData->QuadVertexBufferPtr++;
+		s_pStorage->QuadVertexBufferPtr->position = tm * s_pStorage->QuadVertexPositions[3];
+		s_pStorage->QuadVertexBufferPtr->color = color;
+		s_pStorage->QuadVertexBufferPtr->texCoord = { 0.f, 1.f };
+		s_pStorage->QuadVertexBufferPtr->texIndex = textureIndex;
+		s_pStorage->QuadVertexBufferPtr->id = static_cast<float>(id);
+		s_pStorage->QuadVertexBufferPtr++;
 
-		s_pData->QuadIndexCount += 6;
+		s_pStorage->QuadIndexCount += 6;
 
-		s_pData->Stats.QuadCount++;
+		s_pStorage->Stats.quadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& pos, const glm::vec2& scale, const glm::vec4& color)
+	void Renderer2D::SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id)
 	{
+		RenderCommandData data;
+		data.transform = transform;
+		data.material = mat;
+		data.id = id;
 
-		if (s_pData->QuadIndexCount >= Renderer2DStorage::MaxIndices)
+		s_RenderBuffer.drawCalls.push_back(data);
+	}
+
+	void Renderer2D::DrawRenderBuffer()
+	{
+		for (const auto& drawCall : s_RenderBuffer.drawCalls)
 		{
-			StartNewBatch();
+			DrawQuad(drawCall.transform, drawCall.material, drawCall.id);
 		}
-
-		const float texIndex = 0.f; // white texture
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.f), pos)
-			* glm::scale(glm::mat4(1.f), { scale.x, scale.y, 1.f });
-
-		s_pData->QuadVertexBufferPtr->Position = transform * s_pData->QuadVertexPositions[0];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 0.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
-
-		s_pData->QuadVertexBufferPtr->Position = transform * s_pData->QuadVertexPositions[1];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 1.f, 0.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
-
-		s_pData->QuadVertexBufferPtr->Position = transform * s_pData->QuadVertexPositions[2];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 1.f, 1.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
-
-		s_pData->QuadVertexBufferPtr->Position = transform * s_pData->QuadVertexPositions[3];
-		s_pData->QuadVertexBufferPtr->Color = color;
-		s_pData->QuadVertexBufferPtr->TexCoord = { 0.f, 1.f };
-		s_pData->QuadVertexBufferPtr->TexIndex = texIndex;
-		s_pData->QuadVertexBufferPtr++;
-
-		s_pData->QuadIndexCount += 6;
-
-		s_pData->Stats.QuadCount++;
-	}
-
-	void Renderer2D::DrawLine(const glm::vec3& posA, const glm::vec3& posB)
-	{
-		if (s_pData->LineIndexCount >= Renderer2DStorage::MaxLineIndices)
-		{
-			StartNewBatch();
-		}
-
-		s_pData->pLineVertexBufferPtr->Position = posA;
-		s_pData->pLineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->pLineVertexBufferPtr++;
-
-		s_pData->pLineVertexBufferPtr->Position = posB;
-		s_pData->pLineVertexBufferPtr->Color = glm::vec4(1.f, 1.f, 1.f, 1.f);
-		s_pData->pLineVertexBufferPtr++;
-
-		s_pData->LineIndexCount += 2;
-		s_pData->Stats.LineCount++;
-	}
-
-	void Renderer2D::DrawLine(const glm::vec2& posA, const glm::vec2& posB)
-	{
-		glLineWidth(2.f);
-		DrawLine({ posA.x, posA.y, 0.f }, { posB.x, posB.y, 0.f });
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats()
 	{
-
-		return s_pData->Stats;
+		return s_pStorage->Stats;
 	}
 
 	void Renderer2D::ResetStats()
 	{
-
-		memset(&s_pData->Stats, 0, sizeof(Renderer2D::Statistics));
+		memset(&s_pStorage->Stats, 0, sizeof(Renderer2D::Statistics));
 	}
 
 	void Renderer2D::StartNewBatch()
 	{
-		End();
+		EndPass();
 		ResetBatchData();
 	}
 
 	void Renderer2D::ResetBatchData()
 	{
-		s_pData->QuadIndexCount = 0;
-		s_pData->QuadVertexBufferPtr = s_pData->QuadVertexBufferBase;
-		s_pData->TextureSlotIndex = 1;
-
-		s_pData->LineIndexCount = 0;
-		s_pData->pLineVertexBufferPtr = s_pData->pLineVertexBufferBase;
+		s_pStorage->QuadIndexCount = 0;
+		s_pStorage->QuadVertexBufferPtr = s_pStorage->QuadVertexBufferBase;
+		s_pStorage->TextureSlotIndex = 1;
 	}
 }

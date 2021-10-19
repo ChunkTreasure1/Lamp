@@ -7,38 +7,72 @@ namespace Lamp
 {
 	class Entity;
 
-	class EntityPositionChangedEvent : public Event
+	class ObjectPositionChangedEvent : public Event
 	{
 	public:
-		EntityPositionChangedEvent()
+		ObjectPositionChangedEvent()
 		{}
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "EntityPositionChanged";
+			ss << "ObjectPositionChanged";
 			return ss.str();
 		}
 
 		EVENT_CLASS_CATEGORY(EventCategoryEntity);
-		EVENT_CLASS_TYPE(EntityPositionChanged);
+		EVENT_CLASS_TYPE(ObjectPositionChanged);
 	};
 
-	class EntityPropertyChangedEvent : public Event
+	class ObjectRotationChangedEvent : public Event
 	{
 	public:
-		EntityPropertyChangedEvent()
+		ObjectRotationChangedEvent()
 		{}
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "EntityPropertyChanged";
+			ss << "ObjectRotationChanged";
 			return ss.str();
 		}
 
 		EVENT_CLASS_CATEGORY(EventCategoryEntity);
-		EVENT_CLASS_TYPE(EntityPropertyChanged);
+		EVENT_CLASS_TYPE(ObjectRotationChanged);
+	};
+
+	class ObjectScaleChangedEvent : public Event
+	{
+	public:
+		ObjectScaleChangedEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "ObjectScaleChanged";
+			return ss.str();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(ObjectScaleChanged);
+	};
+
+	class ObjectPropertyChangedEvent : public Event
+	{
+	public:
+		ObjectPropertyChangedEvent()
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "ObjectPropertyChanged";
+			return ss.str();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(ObjectPropertyChanged);
 	};
 
 	class EntityComponentAddedEvent : public Event
@@ -58,7 +92,7 @@ namespace Lamp
 		EVENT_CLASS_TYPE(EntityComponentAdded);
 	};
 
-	class EntityPhysicsUpdateEvent : public Event 
+	class EntityPhysicsUpdateEvent : public Event
 	{
 	public:
 		EntityPhysicsUpdateEvent(float ts)

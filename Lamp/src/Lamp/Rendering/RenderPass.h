@@ -5,20 +5,26 @@
 #include "RenderCommand.h"
 #include "Renderer3D.h"
 
+#include "RenderGraph/RenderPassSpecifications.h"
+
 #define LP_EXTRA_RENDER(fn) std::bind(&fn, this)
 
 namespace Lamp
 {
-	enum class PassType
+	enum class ClearType : uint32_t
 	{
-		DirShadow = 0,
-		PointShadow = BIT(1),
-		Lightning = BIT(2),
-		Geometry = BIT(3),
-		SSAO = BIT(4),
-		SSAOBlur = BIT(5),
-		Forward = BIT(6),
-		Selection = BIT(7),
+		None = 0,
+		Color = 1,
+		Depth = 2,
+		ColorDepth = 3
+	};
+
+	enum class DrawType : uint32_t
+	{
+		All = 0,
+		Quad = 1,
+		Line = 2,
+		Forward = 3,
 	};
 
 	struct RenderPassSpecification
@@ -28,9 +34,22 @@ namespace Lamp
 
 		Ref<Framebuffer> TargetFramebuffer;
 
-		PassType type;
 		uint32_t LightIndex = 0;
 		std::string Name = "";
+
+		ClearType clearType = ClearType::ColorDepth;
+		CullFace cullFace = CullFace::Back;
+	 	DrawType drawType = DrawType::All;
+		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
+
+		bool draw2D = false;
+		bool drawSkybox = false;
+
+		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
+		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
+		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId
+		std::map<GraphUUID, std::pair<PassFramebufferSpecification, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
+		std::map<GraphUUID, std::pair<PassFramebufferCommandSpecification, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 
 	class RenderPass
@@ -38,11 +57,14 @@ namespace Lamp
 	public:
 		friend class RenderPassManager;
 
+		RenderPass()
+			: m_ID(0)
+		{}
 		RenderPass(const RenderPassSpecification& spec);
 		~RenderPass() {}
 
 		inline uint32_t GetID() { return m_ID; }
-		inline const RenderPassSpecification& GetSpecification() const { return m_PassSpec; }
+		inline RenderPassSpecification& GetSpecification() { return m_PassSpec; }
 
 		void Render(Ref<CameraBase>& camera);
 
@@ -58,10 +80,10 @@ namespace Lamp
 	{
 	public:
 		RenderPassManager() = default;
-		~RenderPassManager() 
+		~RenderPassManager()
 		{
 			m_RenderPasses.clear();
-			s_Instance = nullptr; 
+			s_Instance = nullptr;
 		}
 
 		void AddPass(Ref<RenderPass>& pass);

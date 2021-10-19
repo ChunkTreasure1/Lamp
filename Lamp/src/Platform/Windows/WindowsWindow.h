@@ -12,7 +12,8 @@ namespace Lamp
 		virtual ~WindowsWindow() override;
 
 		virtual void Update(Timestep ts) override;
-		
+		virtual void Maximize() override;
+
 		//Getting
 		virtual const uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual const uint32_t GetHeight() const override { return m_Data.Height; }

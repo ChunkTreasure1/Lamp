@@ -6,12 +6,11 @@
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 #include "Lamp/Physics/Physics.h"
-
 #include "Lamp/AssetSystem/AssetManager.h"
-
+#include "Lamp/Objects/Entity/ComponentInclude.h"
+#include "Lamp/ImGui/ImGuiLayer.h"
 #include "CoreLogger.h"
 
-#include "Lamp/Objects/Entity/ComponentInclude.h"
 #include <thread>
 
 GlobalEnvironment* g_pEnv;

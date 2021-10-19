@@ -3,7 +3,7 @@
 #include "Lamp/Physics/PhysicsMaterial.h"
 #include "Lamp/Objects/Entity/Base/BaseComponent.h"
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Meshes/Mesh.h"
+#include "Lamp/Mesh/Mesh.h"
 
 namespace Lamp
 {
@@ -22,8 +22,6 @@ namespace Lamp
 		/////Base/////
 		virtual void Initialize() override;
 		virtual void OnEvent(Event& e) override;
-		virtual uint32_t GetSize() { return sizeof(*this); }
-		virtual uint64_t GetEventMask() override { return EventType::None; }
 		//////////////
 
 	public:
@@ -34,6 +32,7 @@ namespace Lamp
 		struct MeshColliderSpecification
 		{
 			Ref<Mesh> CollisionMesh;
+			std::vector<Ref<Mesh>> ProcessedMeshes;
 			bool IsConvex = false;
 			bool IsTrigger = false;
 			bool OverrideMesh = false;

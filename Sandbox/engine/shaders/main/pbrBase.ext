@@ -1,43 +1,60 @@
 struct DirectionalLight
 {
-	vec3 direction;
-	vec3 color;
-
-	float intensity;
+	vec4 direction;
+	vec4 colorIntensity;
 };
 
 struct PointLight
 {
-	vec3 position;
-	vec3 color;
+	vec4 position;
+	vec4 color;
 	
-	float radius;
 	float intensity;
+	float radius;
 	float falloff;
 	float farPlane;
+};
 
-	samplerCube shadowMap;
+struct LightIndex
+{
+	int index;
 };
 
 layout(std140, binding = 0) uniform Main
 {
 	mat4 u_View;
 	mat4 u_Projection;
-	mat4 u_ShadowVP;
-	vec3 u_CameraPosition;
+	vec4 u_CameraPosition;
 };
 
-uniform PointLight u_PointLights[2];
-uniform int u_LightCount;
-uniform DirectionalLight u_DirectionalLight;
+layout(std140, binding = 1) uniform DirectionalLights
+{
+	DirectionalLight u_DirectionalLights[10];
+	uint u_DirLightCount;
+};
 
-uniform sampler2D u_ShadowMap;
+layout(std430, binding = 2) readonly buffer LightBuffer
+{
+    PointLight pointLights[1024];
+    uint lightCount;
+
+} lightBuffer;
+
+layout(std430, binding = 3) readonly buffer VisibleLightsBuffer
+{
+    LightIndex data[];
+
+} visibleIndices;
+
+uniform sampler2D u_DirShadowMaps[10];
+
 uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
 uniform sampler2D u_BRDFLUT;
 
 uniform float u_Exposure;
 uniform float u_Gamma;
+uniform int u_TilesX;
 
 const float PI = 3.14159265359;
 
@@ -80,66 +97,9 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 baseReflectivity, float roughn
 	return baseReflectivity + (max(vec3(1.0 - roughness), baseReflectivity) - baseReflectivity) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
-float DirectionalShadowCalculation(vec4 pos)
-{
-	vec3 projCoords = pos.xyz / pos.w;
-	projCoords = projCoords * 0.5 + 0.5;
-
-	float currentDepth = projCoords.z;
-
-	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
-	for (int x = -1; x <= 1; x++)
-	{
-		for (int y = -1; y <= 1; y++)
-		{
-			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
-		}
-	}
-
-	shadow = (0.5 + (shadow / 18));
-
-	if (projCoords.z > 1.0)
-	{
-		shadow = 0.0;
-	}
-
-	return shadow;
-}
-
-
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, vec4 shadowCoord)
-{
-	float shadow = DirectionalShadowCalculation(shadowCoord);
-
-	vec3 L = normalize(light.direction);
-	vec3 H = normalize(V + L);
-
-	// Cook-Torrance BRDF
-	float NdotV = max(dot(normal, V), 0.0000001);
-	float NdotL = max(dot(normal, L), 0.0000001);
-	float HdotV	= max(dot(H, V), 0.0);
-	float NdotH = max(dot(normal, H), 0.0);
-
-	float d = distributionGGX(NdotH, roughness);
-	float g = geometrySmith(NdotV, NdotL, roughness);
-	vec3 f = fresnelSchlick(HdotV, baseReflectivity);
-
-	vec3 specular = d * g * f;
-	specular /= 4.0 * NdotV * NdotL;
-
-	//Energy conservation
-	vec3 kD = vec3(1.0) - f;
-	kD *= 1.0 - metallic;
-
-	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.intensity * light.color;
-	return lightStrength;
-}
-
 float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 {
-	vec3 fragToLight = fragPos - light.position;
+	vec3 fragToLight = fragPos - light.position.xyz;
 
 	float currentDepth = length(fragToLight);
 
@@ -148,12 +108,12 @@ float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 	int samples = 20;
 	float offset = 0.1;
 
-	float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
+	//float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
 
 	for(int i = 0; i < samples; ++i)
     {
-        float closestDepth = texture(light.shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-        closestDepth *= light.farPlane;   
+        float closestDepth = 0.0; //texture(light.shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+       // closestDepth *= light.farPlane;   
         if(currentDepth - bias > closestDepth)
             shadow += 1.0;
     }
@@ -165,8 +125,8 @@ float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 
 vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
 {
-	float distance = length(light.position - fragPos);
-	float shadow = PointShadowCalculation(fragPos, light, distance);
+	float distance = length(light.position.xyz - fragPos);
+	float shadow = 0.0; //PointShadowCalculation(fragPos, light, distance);
 
 	if(distance > light.radius)
 	{
@@ -174,14 +134,14 @@ vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity
 	}
 
 	//Radiance
-	vec3 L = normalize(light.position - fragPos);
+	vec3 L = normalize(light.position.xyz - fragPos);
 	vec3 H = normalize(V + L);
 
 	//Change to work with a falloff value
 	float attenuation = clamp(1.0 - distance / light.radius, 0.0, 1.0);
 	attenuation *= attenuation;
 
-	vec3 radiance = (light.color * light.intensity) * attenuation;
+	vec3 radiance = (light.color.xyz * light.intensity) * attenuation;
 
 	// Cook-Torrance BRDF
 	float NdotV = max(dot(N, V), 0.0000001);
@@ -201,22 +161,107 @@ vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity
 	kD *= 1.0 - metallic;
 
 	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular)) * radiance * NdotL;
-
 	return lightStrength;
 }
 
-vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3 fragPos, vec4 shadowCoord, vec3 N)
+float DirectionalShadowCalculation(vec4 pos, uint samplerId)
 {
-	vec3 V = normalize(u_CameraPosition - fragPos);
+	vec3 projCoords = pos.xyz / pos.w;
+	projCoords = projCoords * 0.5 + 0.5;
+
+	float closestDepth = texture(u_DirShadowMaps[samplerId], projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	const float bias = 0.05;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(u_DirShadowMaps[samplerId], 0);
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			float pcfDepth = texture(u_DirShadowMaps[samplerId], projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
+		}
+	}
+
+	shadow /= 9.0;
+
+	if (projCoords.z > 1.0)
+	{
+		shadow = 0;
+	}
+
+	return shadow;
+}
+
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, vec4 shadowCoord, uint samplerId)
+{
+	float shadow = DirectionalShadowCalculation(shadowCoord, samplerId);
+
+	vec3 L = normalize(light.direction.xyz);
+	vec3 H = normalize(V + L);
+
+	// Cook-Torrance BRDF
+	float NdotV = max(dot(normal, V), 0.0000001);
+	float NdotL = max(dot(normal, L), 0.0000001);
+	float HdotV	= max(dot(H, V), 0.0);
+	float NdotH = max(dot(normal, H), 0.0);
+
+	float d = distributionGGX(NdotH, roughness);
+	float g = geometrySmith(NdotV, NdotL, roughness);
+	vec3 f = fresnelSchlick(HdotV, baseReflectivity);
+
+	vec3 specular = d * g * f;
+	specular /= 4.0 * NdotV * NdotL;
+
+	//Energy conservation
+	vec3 kD = vec3(1.0) - f;
+	kD *= 1.0 - metallic;
+
+	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
+	return lightStrength;
+}
+
+vec3 ACESTonemap(vec3 color)
+{
+	mat3 m1 = mat3(
+		0.59719, 0.07600, 0.02840,
+		0.35458, 0.90834, 0.13383,
+		0.04823, 0.01566, 0.83777
+	);
+	mat3 m2 = mat3(
+		1.60475, -0.10208, -0.00327,
+		-0.53108, 1.10813, -0.07276,
+		-0.07367, -0.00605, 1.07602
+	);
+	vec3 v = m1 * color;
+	vec3 a = v * (v + 0.0245786) - 0.000090537;
+	vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
+	return clamp(m2 * (a / b), 0.0, 1.0);
+}
+
+vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3 fragPos, vec3 N)
+{
+	vec3 V = normalize(u_CameraPosition.xyz - fragPos);
 
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
 
-	Lo += CalculateDirectionalLight(u_DirectionalLight, V, N, baseReflectivity, albedo, metallic, roughness, shadowCoord);
-
-	for(int i = 0; i < u_LightCount; ++i)
+	for (uint i = 0; i < u_DirLightCount; i++)
 	{
-		//Lo += CalculatePointLight(u_PointLights[i], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
+		Lo += CalculateDirectionalLight(u_DirectionalLights[i], V, N, baseReflectivity, albedo, metallic, roughness, v_In.ShadowCoord[i], i);
+	}
+
+	//Calculate light indices
+	ivec2 location = ivec2(gl_FragCoord.xy);
+	ivec2 tileId = location / ivec2(16, 16);
+	uint index = tileId.y * u_TilesX + tileId.x;
+	
+	uint offset = index * 1024;
+	for(int i = 0; i < 1024 && visibleIndices.data[offset + i].index != -1; ++i)
+	{
+		uint index = visibleIndices.data[offset + i].index;
+		Lo += CalculatePointLight(lightBuffer.pointLights[index], V, N, baseReflectivity, metallic, roughness, albedo, fragPos);
 	}
 
 	vec3 R = reflect(-V, N);
@@ -235,9 +280,9 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3
 	vec3 ambient = (kD * diffuse + specular) * ao;
 
 	vec3 color = ambient + Lo;
-
-	//HDR tonemapping
-	color = vec3(1.0) - exp(-color * u_Exposure);
+	color *= u_Exposure;
+	
+	color = ACESTonemap(color);
 
 	//Gamma correction
 	color = pow(color, vec3(1.0 / u_Gamma));

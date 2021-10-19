@@ -6,6 +6,8 @@
 #include "Lamp/AssetSystem/AssetManager.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
+#include "Lamp/Level/Level.h"
+
 namespace Lamp
 {
 	LP_REGISTER_COMPONENT(MeshComponent);
@@ -17,14 +19,14 @@ namespace Lamp
 
 	void MeshComponent::Initialize()
 	{
-		g_pEnv->pLevel->GetRenderUtils().RegisterMeshComponent(m_pEntity->GetId(), this);
+		g_pEnv->pLevel->GetRenderUtils().RegisterMeshComponent(m_pEntity->GetID(), this);
 	}
 
 	void MeshComponent::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(MeshComponent::OnRender));
-		dispatcher.Dispatch<EntityPropertyChangedEvent>(LP_BIND_EVENT_FN(MeshComponent::OnPropertyChanged));
+		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(MeshComponent::OnPropertyChanged));
 	}
 
 	bool MeshComponent::OnRender(AppRenderEvent& e)
@@ -34,17 +36,12 @@ namespace Lamp
 			return false;
 		}
 
-		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetModelMatrix());
-
-		if (g_pEnv->ShouldRenderBB && (e.GetPassInfo().type != PassType::DirShadow || e.GetPassInfo().type != PassType::PointShadow))
-		{
-			m_Model->RenderBoundingBox(m_pEntity->GetModelMatrix());
-		}
+		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetTransform());
 
 		return true;
 	}
 
-	bool MeshComponent::OnPropertyChanged(EntityPropertyChangedEvent& e)
+	bool MeshComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
 		m_Model = ResourceCache::GetAsset<Mesh>(m_Path);
 

@@ -78,7 +78,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -102,7 +102,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -128,8 +128,8 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;LP_ENABLE_ASSERTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -156,9 +156,11 @@
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
+    <ClInclude Include="src\Lamp\Core\Buffer.h" />
     <ClInclude Include="src\Lamp\Core\Core.h" />
     <ClInclude Include="src\Lamp\Core\CoreLogger.h" />
     <ClInclude Include="src\Lamp\Core\EntryPoint.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
+    <ClInclude Include="src\Lamp\Core\UUID.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
     <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
@@ -178,6 +181,7 @@
     <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h" />
     <ClInclude Include="src\Lamp\GraphKey\Link.h" />
     <ClInclude Include="src\Lamp\GraphKey\Node.h" />
+    <ClInclude Include="src\Lamp\GraphKey\NodeIncludes.h" />
     <ClInclude Include="src\Lamp\GraphKey\NodeRegistry.h" />
     <ClInclude Include="src\Lamp\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Lamp\Input\FileSystem.h" />
@@ -187,14 +191,13 @@
     <ClInclude Include="src\Lamp\Input\WindowsInput.h" />
     <ClInclude Include="src\Lamp\Layer\Layer.h" />
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
-    <ClInclude Include="src\Lamp\Level\Layer.h" />
     <ClInclude Include="src\Lamp\Level\Level.h" />
-    <ClInclude Include="src\Lamp\Level\LevelSystem.h" />
+    <ClInclude Include="src\Lamp\Level\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />
-    <ClInclude Include="src\Lamp\Meshes\Materials\Material.h" />
-    <ClInclude Include="src\Lamp\Meshes\Materials\MaterialLibrary.h" />
-    <ClInclude Include="src\Lamp\Meshes\Mesh.h" />
-    <ClInclude Include="src\Lamp\Meshes\SubMesh.h" />
+    <ClInclude Include="src\Lamp\Mesh\Materials\Material.h" />
+    <ClInclude Include="src\Lamp\Mesh\Materials\MaterialLibrary.h" />
+    <ClInclude Include="src\Lamp\Mesh\Mesh.h" />
+    <ClInclude Include="src\Lamp\Mesh\SubMesh.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
@@ -203,17 +206,19 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h" />
+    <ClInclude Include="src\Lamp\Physics\PhysXDebugger.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXInternal.h" />
     <ClInclude Include="src\Lamp\Physics\PhysXUtils.h" />
     <ClInclude Include="src\Lamp\Physics\Physics.h" />
@@ -223,7 +228,10 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsScene.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
@@ -234,7 +242,17 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
@@ -243,21 +261,27 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\UniformBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
-    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\Framebuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
+    <ClInclude Include="src\Lamp\Utility\SerializeMacros.h" />
+    <ClInclude Include="src\Lamp\Utility\StandardUtilities.h" />
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
+    <ClInclude Include="src\Lamp\Utility\UIUtility.h" />
+    <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
@@ -627,19 +651,82 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="vendor\imnodes\imnodes.h" />
+    <ClInclude Include="vendor\imnodes\imnodes_internal.h" />
     <ClInclude Include="vendor\stb_image\stb\stb_image.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\anchor.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\binary.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\depthguard.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\dll.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitter.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\exceptions.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\mark.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\convert.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\emit.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\impl.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\node.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\parse.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\node\type.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\noexcept.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\null.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\parser.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\traits.h" />
+    <ClInclude Include="vendor\yaml-cpp\include\yaml-cpp\yaml.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\collectionstack.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\contrib\graphbuilderadapter.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\directives.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\emitterstate.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\emitterutils.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\exp.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\indentation.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\nodebuilder.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\nodeevents.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\ptr_vector.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\regex_yaml.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\regeximpl.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\scanner.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\scanscalar.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\scantag.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\setting.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\singledocparser.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\stream.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\streamcharsource.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\stringsource.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\tag.h" />
+    <ClInclude Include="vendor\yaml-cpp\src\token.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp" />
+    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp" />
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
+    <ClCompile Include="src\Lamp\Core\UUID.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\BaseNodes.cpp" />
     <ClCompile Include="src\Lamp\GraphKey\BaseNodes\EntityNodes.cpp" />
@@ -656,28 +743,29 @@
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
     <ClCompile Include="src\Lamp\Level\Level.cpp" />
-    <ClCompile Include="src\Lamp\Level\LevelSystem.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Materials\Material.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Materials\MaterialLibrary.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\Mesh.cpp" />
-    <ClCompile Include="src\Lamp\Meshes\SubMesh.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\Materials\Material.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\Materials\MaterialLibrary.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Lamp\Mesh\SubMesh.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\LightComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\DirectionalLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\MeshComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\BoxColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\CapsuleColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\MeshColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
+    <ClCompile Include="src\Lamp\Physics\PhysXDebugger.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXInternal.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysXUtils.cpp" />
     <ClCompile Include="src\Lamp\Physics\Physics.cpp" />
@@ -685,13 +773,26 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderGraph.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderNode.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
@@ -700,17 +801,19 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\UniformBuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
@@ -719,7 +822,39 @@
     <ClCompile Include="src\lppch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\imnodes\imnodes.cpp" />
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\binary.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\contrib\graphbuilder.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\contrib\graphbuilderadapter.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\convert.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\depthguard.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\directives.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\emit.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\emitfromevents.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\emitter.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\emitterstate.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\emitterutils.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\exceptions.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\exp.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\memory.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\node.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\node_data.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\nodebuilder.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\nodeevents.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\null.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\ostream_wrapper.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\parse.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\parser.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\regex_yaml.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\scanner.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\scanscalar.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\scantag.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\scantoken.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\simplekey.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\singledocparser.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\stream.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\tag.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

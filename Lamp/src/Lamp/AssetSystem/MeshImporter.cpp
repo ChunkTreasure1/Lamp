@@ -2,7 +2,8 @@
 #include "MeshImporter.h"
 
 #include <assimp/Importer.hpp>
-
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace Lamp
 {
@@ -18,7 +19,8 @@ namespace Lamp
 
 	Ref<Mesh> MeshImporter::ImportMesh(const std::filesystem::path& path)
 	{
-		std::vector<Ref<SubMesh>> meshes = LoadMesh(path);
+		std::map<uint32_t, Ref<Material>> materials;
+		std::vector<Ref<SubMesh>> meshes = LoadMesh(path, materials);
 		if (meshes.empty())
 		{
 			LP_CORE_WARN("Failed to load mesh {0}!", path.string().c_str());
@@ -28,14 +30,6 @@ namespace Lamp
 		}
 
 		//Create materials
-		std::map<uint32_t, Material> materials;
-		for (auto& mesh : meshes)
-		{
-			if (materials.find(mesh->GetMaterialIndex()) == materials.end())
-			{
-				materials[mesh->GetMaterialIndex()] = Material(mesh->GetMaterialIndex());
-			}
-		}
 
 		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
 		float xMin = FLT_MAX, yMin = FLT_MAX, zMin = FLT_MAX;
@@ -85,7 +79,7 @@ namespace Lamp
 		return mesh;
 	}
 
-	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const std::filesystem::path& path)
+	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const std::filesystem::path& path, std::map<uint32_t, Ref<Material>>& materials)
 	{
 		Assimp::Importer importer;
 		std::vector<Ref<SubMesh>> meshes;
@@ -104,6 +98,11 @@ namespace Lamp
 		}
 
 		ProcessNode(pScene->mRootNode, pScene, meshes);
+
+		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
+		{
+			materials.emplace(std::make_pair(i, CreateRef<Material>(i, pScene->mMaterials[i]->GetName().C_Str())));
+		}
 
 		return meshes;
 	}

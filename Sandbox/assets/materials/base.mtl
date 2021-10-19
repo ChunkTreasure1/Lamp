@@ -1,6 +1,8 @@
-<Material name="base">
-	<albedo path="assets/textures/base/base_albedo.png"/>
-	<normal path="assets/textures/base/base_normal.png"/>
-	<mro path="assets/textures/base/base_mro.png"/>
-	<Shader name="pbrForward" path="engine/shaders/3d/main/pbrForward.glsl"/>
-</Material>
+material:
+  name: base
+  handle: 3596698544
+  textures:
+    albedo: 9024159386129981965
+    normal: 16748793907619626814
+    mro: 14789578748660744105
+  shader: pbrForward

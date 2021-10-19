@@ -54,7 +54,13 @@ project "Lamp"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/stb/**.h",
-		"%{prj.name}/vendor/stb_image/stb/**.cpp"
+		"%{prj.name}/vendor/stb_image/stb/**.cpp",
+		"%{prj.name}/vendor/imnodes/**.h",
+		"%{prj.name}/vendor/imnodes/**.cpp",
+		
+		"%{prj.name}/vendor/yaml-cpp/src/**.cpp",
+		"%{prj.name}/vendor/yaml-cpp/src/**.h",
+		"%{prj.name}/vendor/yaml-cpp/include/**.h",
 	}
 
 	includedirs
@@ -70,7 +76,9 @@ project "Lamp"
 		"%{prj.name}/vendor/rapidxml",
 		"%{prj.name}/vendor/assimp/include",
 		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/PhysX/include"
+		"%{prj.name}/vendor/PhysX/include",
+		"%{prj.name}/vendor/imnodes/",
+		"%{prj.name}/vendor/yaml-cpp/include/",
 	}
 	
 	links 
@@ -107,7 +115,6 @@ project "Lamp"
 			symbols "on"
 
 		filter "configurations:Release"
-			defines "LP_RELEASE"
 			runtime "Release"
 			optimize "on"
 			
@@ -118,9 +125,10 @@ project "Lamp"
 			}
 
 		filter "configurations:Dist"
-			defines "LP_DIST"
+			defines { "LP_DIST", "LP_ENABLE_ASSERTS", "NDEBUG" }
 			runtime "Release"
 			optimize "on"
+			
 			
 project "Sandbox"
 	location "Sandbox"
@@ -165,7 +173,8 @@ project "Sandbox"
 		"Game/src",
 		"Lamp/vendor/ImGuizmo/include",
 		"Lamp/vendor/bullet/src",
-		"Lamp/vendor/imnodes/"
+		"Lamp/vendor/imnodes/",
+		"Lamp/vendor/yaml-cpp/include/",
 	}
 	
 	libdirs
@@ -196,6 +205,7 @@ project "Sandbox"
 		defines 
 		{
 			"LP_PLATFORM_WINDOWS",
+			"_CRT_SECURE_NO_WARNINGS"
 		}
 
 		filter "configurations:Debug"

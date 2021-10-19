@@ -7,13 +7,13 @@
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
 
-#include "Lamp/ImGui/ImGuiLayer.h"
 #include "Lamp/Input/FileSystem.h"
 #include "Time/FrameTime.h"
 
 namespace Lamp
 {
 	class PhysicsEngine;
+	class ImGuiLayer;
 
 	class Application
 	{

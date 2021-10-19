@@ -1,16 +1,15 @@
-<Geometry name="sphere">
-	<Meshes>
-		<Mesh matId="0">
-			<VerticeCount count="1984"/>
-			<IndiceCount count="2880"/>
-		</Mesh>
-	</Meshes>
-	<Materials>
-		<Material name="sphere" id="0"/>
-	</Materials>
-	<BoundingBox>
-		<Max position="1.000000,1.000000,1.000000"/>
-		<Min position="-1.000000,-1.000000,-1.000000"/>
-	</BoundingBox>
-</Geometry>
-
+geometry:
+  name: sphere
+  handle: 13551055251788859933
+  meshes:
+    mesh0:
+      matId: 0
+      verticeCount: 1984
+      indiceCount: 2880
+  materials:
+    material0:
+      name: sphere
+      id: 0
+  boundingBox:
+    maxPos: [1.0, 1.0, 1.0]
+    minPos: [-1.0, -1.0, -1.0]

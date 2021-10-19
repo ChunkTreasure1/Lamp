@@ -1,4 +1,4 @@
-#include "lppch.h"
+	#include "lppch.h"
 #include "OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
@@ -53,6 +53,8 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			}
+
+			return GL_NONE;
 		}
 
 		static GLint FormatToType(FramebufferTextureFormat format)
@@ -69,6 +71,8 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
 				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_INT;
 			}
+
+			return GL_NONE;
 		}
 
 		static GLint FilteringToGL(FramebufferTexureFiltering filtering)
@@ -83,7 +87,7 @@ namespace Lamp
 			case Lamp::FramebufferTexureFiltering::LinearMipMapLinear: return GL_LINEAR_MIPMAP_LINEAR;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static GLint WrapToGL(FramebufferTextureWrap wrap)
@@ -97,7 +101,7 @@ namespace Lamp
 			case Lamp::FramebufferTextureWrap::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static GLint RenderbufferTypeGL(FramebufferRenderbufferType type)
@@ -111,7 +115,7 @@ namespace Lamp
 				break;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static GLint RenderbufferTypeAttachment(FramebufferRenderbufferType type)
@@ -124,7 +128,7 @@ namespace Lamp
 				break;
 			}
 
-			return 0;
+			return GL_NONE;
 		}
 
 		static void AttachTexture(FramebufferSpecification spec, FramebufferTextureSpecification textureSpec, uint32_t id, bool multisample)
@@ -171,24 +175,14 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_ATTACHMENT;
 			}
+
+			return 0;
 		}
 	}
 
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
-		for (auto& format : m_Specification.Attachments.Attachments)
-		{
-			if (!Utils::IsDepthFormat(format.TextureFormat))
-			{
-				m_ColorAttachmentSpecs.emplace_back(format);
-			}
-			else
-			{
-				m_DepthAttachmentFormatSpec = format;
-			}
-		}
-
 		Invalidate();
 	}
 
@@ -281,7 +275,20 @@ namespace Lamp
 
 	void OpenGLFramebuffer::Invalidate()
 	{
-		if (m_RendererID)
+		m_ColorAttachmentSpecs.clear();
+		for (auto& format : m_Specification.Attachments.Attachments)
+		{
+			if (!Utils::IsDepthFormat(format.TextureFormat))
+			{
+				m_ColorAttachmentSpecs.emplace_back(format);
+			}
+			else
+			{
+				m_DepthAttachmentFormatSpec = format;
+			}
+		}
+
+		if (m_RendererID > 0)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
 			
@@ -309,10 +316,7 @@ namespace Lamp
 		{
 			m_ColorAttachmentIDs.resize(m_ColorAttachmentSpecs.size());
 
-			for (int i = 0; i < m_ColorAttachmentSpecs.size(); i++)
-			{
-				Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), (uint32_t)m_ColorAttachmentIDs.size());
-			}
+			Utils::CreateTextures(multisample, m_ColorAttachmentIDs.data(), (uint32_t)m_ColorAttachmentIDs.size());
 
 			for (size_t i = 0; i < m_ColorAttachmentIDs.size(); i++)
 			{

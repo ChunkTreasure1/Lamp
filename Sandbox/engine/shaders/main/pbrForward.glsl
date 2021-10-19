@@ -20,26 +20,33 @@ layout(std140, binding = 0) uniform Main
 {
 	mat4 u_View;
 	mat4 u_Projection;
-	mat4 u_ShadowVP;
-	vec3 u_CameraPosition;
+	vec4 u_CameraPosition;
 };
+
+layout(std140, binding = 4) uniform DirLightData
+{
+	mat4 dirLightVPs[10];
+	int count;
+} u_LightData;
 
 out Out
 {
 	vec3 FragPos;
 	vec2 TexCoord;
-	vec4 ShadowCoord;
+	vec4 ShadowCoord[10];
 	vec3 Normal;
 	mat3 TBN;
 } v_Out;
 
 uniform mat4 u_Model;
+uniform mat4 u_ShadowVP;
 
 void main()
 {
 	v_Out.FragPos = vec3(u_Model * vec4(a_Position, 1.0));
 	v_Out.TexCoord = a_TexCoords;
 	v_Out.Normal = a_Normal;
+
 
 	//TBN creation
     vec3 T = normalize(vec3(u_Model * vec4(a_Tangent, 0.0)));
@@ -49,7 +56,10 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	//Shadow calculation
-	v_Out.ShadowCoord = u_ShadowVP * u_Model * vec4(a_Position, 1.0);
+	for(int i = 0; i < u_LightData.count; i++)
+	{
+		v_Out.ShadowCoord[i] = u_LightData.dirLightVPs[i] * u_Model * vec4(a_Position, 1.0);
+	}
 
 	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
 }
@@ -58,12 +68,13 @@ void main()
 #version 440 core
 
 layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int ObjectId;
 
 in Out
 {
 	vec3 FragPos;
 	vec2 TexCoord;
-	vec4 ShadowCoord;
+	vec4 ShadowCoord[10];
 	vec3 Normal;
 	mat3 TBN;
 } v_In;
@@ -76,13 +87,32 @@ struct Material
 };
 
 uniform Material u_Material;
+uniform int u_ObjectId;
 
 #include pbrBase.ext
-#include pbrForwardBase.ext
+
+vec3 CalculateNormal()
+{
+	vec3 tangentNormal = texture(u_Material.normal, v_In.TexCoord).xyz * 2.0 - 1.0;
+	return normalize(v_In.TBN * tangentNormal);
+}
+
+vec4 CalculateForward()
+{
+	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(u_Gamma));
+	float metallic = texture(u_Material.mro, v_In.TexCoord).r;
+	float roughness = texture(u_Material.mro, v_In.TexCoord).g;
+	float ao = 0.5;
+
+	vec3 N = normalize(CalculateNormal());
+
+	return CalculateColor(albedo, metallic, roughness, ao, v_In.FragPos, N);
+}
 
 void main()
 {
 	vec4 color = CalculateForward();
 
 	FragColor = color;
+	ObjectId = u_ObjectId;
 }

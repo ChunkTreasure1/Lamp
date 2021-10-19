@@ -72,18 +72,16 @@ namespace Lamp
 	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent(const RenderPassSpecification& passInfo, const Ref<CameraBase> camera) 
-			: m_RenderPassInfo(passInfo), m_Camera(camera)
+		AppRenderEvent(const Ref<CameraBase> camera) 
+			: m_Camera(camera)
 		{}
 
-		inline const RenderPassSpecification& GetPassInfo() { return m_RenderPassInfo; }
 		inline const Ref<CameraBase>& GetCamera() { return m_Camera; }
 
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 
 	private:
-		RenderPassSpecification m_RenderPassInfo;
 		Ref<CameraBase> m_Camera;
 	};
 
@@ -110,28 +108,6 @@ namespace Lamp
 	private:
 		std::string m_Message;
 		std::string m_Severity;
-	};
-
-	class AppItemClickedEvent : public Event
-	{
-	public:
-		AppItemClickedEvent(const File& file)
-			: m_File(file)
-		{}
-
-		const File& GetFile() { return m_File; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "AppItemClickedEvent: " << m_File.GetPath() << std::endl;
-			return ss.str();
-		}
-
-		EVENT_CLASS_TYPE(AppItemClicked);
-		EVENT_CLASS_CATEGORY(EventCategoryApplication);
-	private:
-		File m_File;
 	};
 
 	class ImGuiBeginEvent : public Event

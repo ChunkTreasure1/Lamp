@@ -1,0 +1,333 @@
+RenderGraph:
+  name: New
+  handle: 14877024273708001692
+  Nodes:
+    - Node: ""
+      id: 1911584716
+      position: [-729.580811, 353.270325]
+      type: 4
+      attributes:
+        - attribute: Start
+          attrType: output
+          id: 352811382
+          type: 3
+    - Node: ""
+      id: 937844428
+      position: [1018.63184, 360.249878]
+      type: 6
+      attributes:
+        - attribute: End
+          attrType: input
+          id: 1978010946
+          type: 3
+          data: 0
+    - Node: ""
+      id: 2076158411
+      position: [682.770325, 171.977173]
+      type: 0
+      name: Forward
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: ""
+      draw2D: true
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1304
+        height: 722
+        samples: 1
+        clearColor: [0.38139534, 0.381391525, 0.381391525, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 1
+            filtering: 0
+            wrap: 2
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 1
+            wrap: 0
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 5
+            filtering: 0
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_Model
+          guuid: 414905022
+          type: 9
+          data: 0
+        - staticUniform: u_Material.albedo
+          guuid: 600923457
+          type: 0
+          data: 0
+        - staticUniform: u_ShadowMap
+          guuid: 808479141
+          type: 0
+          data: 3
+        - staticUniform: u_Material.mro
+          guuid: 862335930
+          type: 0
+          data: 2
+        - staticUniform: u_Material.normal
+          guuid: 1134938289
+          type: 0
+          data: 1
+        - staticUniform: u_IrradianceMap
+          guuid: 1328828731
+          type: 0
+          data: 4
+        - staticUniform: u_PrefilterMap
+          guuid: 1471275545
+          type: 0
+          data: 5
+        - staticUniform: u_ObjectId
+          guuid: 1999005063
+          type: 9
+          data: 3
+        - staticUniform: u_BRDFLUT
+          guuid: 2143930172
+          type: 0
+          data: 6
+      dynamicUniforms:
+        - dynamicUniform: u_Exposure
+          guuid: 209966861
+          type: 0
+          attrId: 1541734088
+        - dynamicUniform: u_Gamma
+          guuid: 370896516
+          type: 0
+          attrId: 1203473887
+        - dynamicUniform: u_TilesX
+          guuid: 966553632
+          type: 0
+          attrId: 998524288
+      textures:
+        []
+      framebuffers:
+        - framebuffer: Skybox
+          guuid: 584871110
+          attrId: 1846697515
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 4
+              attachmentId: 0
+            - attachment: ""
+              textureType: 0
+              bindId: 5
+              attachmentId: 1
+            - attachment: ""
+              textureType: 0
+              bindId: 6
+              attachmentId: 2
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 2035749057
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 772322653
+          type: 1
+          data: 1
+        - attribute: u_Exposure
+          attrType: input
+          id: 1541734088
+          type: 2
+          data: 209966861
+        - attribute: u_Gamma
+          attrType: input
+          id: 1203473887
+          type: 2
+          data: 370896516
+        - attribute: Skybox
+          attrType: input
+          id: 1846697515
+          type: 1
+          data: 584871110
+        - attribute: u_TilesX
+          attrType: input
+          id: 998524288
+          type: 2
+          data: 966553632
+        - attribute: Framebuffer
+          attrType: output
+          id: 1692424272
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 1635662274
+          type: 3
+    - Node: ""
+      id: 1527295735
+      position: [261.56131, 546.229004]
+      type: 1
+      usingInternal: true
+      selectedBuffer: Skybox
+      useViewportSize: false
+      width: 1280
+      height: 720
+      samples: 1
+      clearColor: [1, 1, -5.51759068e-30, 3.3771293e-43]
+      attachments:
+        {}
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 1335445865
+          type: 1
+    - Node: ""
+      id: 757978825
+      position: [416.561401, -220.770966]
+      type: 3
+      uniformType: 1
+      dataName: Exposure
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 80803424
+          type: 2
+    - Node: ""
+      id: 202792404
+      position: [167.56134, -220.770966]
+      type: 3
+      uniformType: 1
+      dataName: Gamma
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 2046820775
+          type: 2
+    - Node: ""
+      id: 954160398
+      position: [-433.050171, 162.533905]
+      type: 0
+      name: DepthPrePass
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: depthPass
+      draw2D: false
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1304
+        height: 722
+        samples: 1
+        clearColor: [0.348837197, 0.34883371, 0.34883371, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 0
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_Model
+          guuid: 669833833
+          type: 9
+          data: 0
+      dynamicUniforms:
+        []
+      textures:
+        []
+      framebuffers:
+        []
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 1771489659
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 785748167
+          type: 1
+          data: 1
+        - attribute: Framebuffer
+          attrType: output
+          id: 267211912
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 487594828
+          type: 3
+    - Node: ""
+      id: 770486413
+      position: [-73.0501709, 297.533905]
+      type: 7
+      shader: lightCulling
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 2030054679
+          type: 3
+          data: 0
+        - attribute: Depth
+          attrType: input
+          id: 891878538
+          type: 1
+          data: 0
+        - attribute: Activated
+          attrType: output
+          id: 1371239852
+          type: 3
+    - Node: ""
+      id: 1394602077
+      position: [-106.050171, 35.533905]
+      type: 3
+      uniformType: 0
+      dataName: ForwardTileX
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 1705880431
+          type: 2
+  Links:
+    - Link: ""
+      id: 1074877368
+      from: 1335445865
+      to: 1846697515
+    - Link: ""
+      id: 1706017632
+      from: 80803424
+      to: 1541734088
+    - Link: ""
+      id: 1419286848
+      from: 2046820775
+      to: 1203473887
+    - Link: ""
+      id: 278876685
+      from: 352811382
+      to: 1771489659
+    - Link: ""
+      id: 1826390435
+      from: 267211912
+      to: 891878538
+    - Link: ""
+      id: 951983566
+      from: 487594828
+      to: 2030054679
+    - Link: ""
+      id: 1636207468
+      from: 1705880431
+      to: 998524288
+    - Link: ""
+      id: 273081990
+      from: 1635662274
+      to: 1978010946
+    - Link: ""
+      id: 1052965489
+      from: 1371239852
+      to: 2035749057

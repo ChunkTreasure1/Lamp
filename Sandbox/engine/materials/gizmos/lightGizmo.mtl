@@ -1,0 +1,6 @@
+material:
+  name: gizmoLight
+  handle: 3454282124
+  textures:
+    gizmo: 14854305732802269758
+  shader: quad

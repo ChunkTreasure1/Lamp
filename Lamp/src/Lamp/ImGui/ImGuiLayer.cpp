@@ -6,6 +6,7 @@
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Event/ApplicationEvent.h"
+#include <imnodes.h>
 
 //TEMPORARY
 #include <GLFW/glfw3.h>
@@ -27,6 +28,7 @@ namespace Lamp
 		//Setup ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		ImNodes::CreateContext();
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	//Enable keyboard controls
@@ -34,10 +36,11 @@ namespace Lamp
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		//Enable docking
 
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		//Enable multiple viewports
+		io.ConfigWindowsMoveFromTitleBarOnly = true;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Roboto-Regular.ttf", 16.f);
+		m_pFont = io.Fonts->AddFontFromFileTTF("engine/fonts/Futura-Light.ttf", 18.f);
 
 		//Setup ImGui style
 		ImGui::StyleColorsDark();
@@ -124,6 +127,7 @@ namespace Lamp
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+		ImNodes::DestroyContext();
 	}
 
 	void ImGuiLayer::Begin()

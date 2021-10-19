@@ -72,7 +72,7 @@ namespace Lamp
 		return nullptr;
 	}
 
-	const Ref<PhysicsActor>& PhysicsScene::GetActor(Entity* pEnt) const
+	const Ref<PhysicsActor> PhysicsScene::GetActor(Entity* pEnt) const
 	{
 		for (const auto& actor : m_Actors)
 		{

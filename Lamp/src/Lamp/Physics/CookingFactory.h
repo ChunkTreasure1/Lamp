@@ -25,5 +25,7 @@ namespace Lamp
 		static CookingResult CookConvexMesh(const Ref<Mesh>& mesh, std::vector<MeshColliderData>& outData);
 		static CookingResult CookTriangleMesh(const Ref<Mesh>& mesh, std::vector<MeshColliderData>& outData);
 
+	private:
+		static void GenerateDebugMesh(Ref<MeshColliderComponent> component, const MeshColliderData& colliderData);
 	};
 }

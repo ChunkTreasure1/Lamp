@@ -1,6 +1,8 @@
-<Material name="sphere">
-	<albedo path="assets/textures/wornMetal/tex_albedo.png"/>
-	<normal path="assets/textures/wornMetal/tex_normal.png"/>
-	<mro path="assets/textures/wornMetal/tex_mro.png"/>
-	<Shader name="pbrForward" path="engine/shaders/3d/main/pbrForward.glsl"/>
-</Material>
+material:
+  name: sphere
+  handle: 3370775300
+  textures:
+    albedo: 3536854313384504482
+    normal: 16027289893487307791
+    mro: 4157263279336200044
+  shader: pbrForward
