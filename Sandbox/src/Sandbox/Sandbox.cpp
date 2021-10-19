@@ -35,7 +35,7 @@ namespace Sandbox
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/testLevel.level");
-		m_pLevel->SetSkybox("assets/textures/Frozen_Waterfall_Ref.hdr");
+		m_pLevel->SetSkybox("assets/textures/monbachtal_riverbank_4k.hdr");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
 		//Make sure the sandbox controller is created after level has been loaded
