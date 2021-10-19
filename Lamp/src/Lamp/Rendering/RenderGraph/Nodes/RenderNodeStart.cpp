@@ -50,6 +50,7 @@ namespace Lamp
 
 	void RenderNodeStart::Activate(std::any value)
 	{
+		LP_PROFILE_FUNCTION();
 		Renderer::Begin(std::any_cast<Ref<CameraBase>>(value));
 		for (const auto& link : links)
 		{

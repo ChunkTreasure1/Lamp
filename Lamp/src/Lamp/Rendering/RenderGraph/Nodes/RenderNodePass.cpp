@@ -233,6 +233,11 @@ namespace Lamp
 				ImGui::Checkbox("Draw 2D pass", &specification.draw2D);
 			}
 
+			//Skybox
+			{
+				ImGui::Checkbox("Draw Skybox", &specification.drawSkybox);
+			}
+
 			ImGui::TreePop();
 		}
 
@@ -820,6 +825,7 @@ namespace Lamp
 		LP_SERIALIZE_PROPERTY(cullFace, (uint32_t)specification.cullFace, out);
 		LP_SERIALIZE_PROPERTY(renderShader, (specification.renderShader ? specification.renderShader->GetName() : ""), out);
 		LP_SERIALIZE_PROPERTY(draw2D, specification.draw2D, out);
+		LP_SERIALIZE_PROPERTY(drawSkybox, specification.drawSkybox, out);
 
 		out << YAML::Key << "targetFramebuffer" << YAML::Value;
 		out << YAML::BeginMap;
@@ -1025,6 +1031,7 @@ namespace Lamp
 		specification.drawType = (DrawType)node["drawType"].as<uint32_t>();
 		specification.cullFace = (CullFace)node["cullFace"].as<uint32_t>();
 		LP_DESERIALIZE_PROPERTY(draw2D, specification.draw2D, node, false);
+		LP_DESERIALIZE_PROPERTY(drawSkybox, specification.drawSkybox, node, false);
 
 		std::string shaderName = node["renderShader"].as<std::string>();
 		if (!shaderName.empty())

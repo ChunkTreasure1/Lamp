@@ -29,14 +29,8 @@ namespace Lamp
 {
 	struct Renderer3DStorage
 	{
-		/////Skybox//////
-		Ref<Shader> SkyboxShader;
-		Ref<VertexArray> SkyboxVertexArray;
-		/////////////////
-
-		/////Quad/////	
+		Ref<VertexArray> CubeVertexArray;
 		Ref<VertexArray> QuadVertexArray;
-		//////////////
 
 		RenderPassSpecification* CurrentRenderPass = nullptr;
 
@@ -63,6 +57,8 @@ namespace Lamp
 
 	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
+		LP_PROFILE_FUNCTION();
+
 		//Draw shadow maps 
 		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 		{
@@ -263,8 +259,8 @@ namespace Lamp
 
 	void Renderer3D::DrawCube()
 	{
-		s_pRenderData->SkyboxVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_pRenderData->SkyboxVertexArray, s_pRenderData->SkyboxVertexArray->GetIndexBuffer()->GetCount());
+		s_pRenderData->CubeVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pRenderData->CubeVertexArray, s_pRenderData->CubeVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::DrawQuad()
@@ -460,19 +456,16 @@ namespace Lamp
 				4, 5, 0, 0, 5, 1
 			};
 
-			s_pRenderData->SkyboxVertexArray = VertexArray::Create();
+			s_pRenderData->CubeVertexArray = VertexArray::Create();
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" }
 				});
-			s_pRenderData->SkyboxVertexArray->AddVertexBuffer(pBuffer);
+			s_pRenderData->CubeVertexArray->AddVertexBuffer(pBuffer);
 
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-			s_pRenderData->SkyboxVertexArray->SetIndexBuffer(indexBuffer);
-			s_pRenderData->SkyboxShader = ShaderLibrary::GetShader("Skybox");
-
-			Renderer::s_pSceneData->internalFramebuffers.emplace(std::make_pair("Skybox", CreateRef<IBLBuffer>("assets/textures/Frozen_Waterfall_Ref.hdr")));
+			s_pRenderData->CubeVertexArray->SetIndexBuffer(indexBuffer);
 		}
 		////////////////
 	}

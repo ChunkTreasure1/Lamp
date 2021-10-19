@@ -74,7 +74,10 @@ namespace Lamp
 			Renderer2D::EndPass();
 		}
 
-		g_pEnv->pLevel->GetSkybox()->Render();
+		if (m_PassSpec.drawSkybox)
+		{
+			g_pEnv->pLevel->GetSkybox()->Render();
+		}
 
 		Renderer3D::EndPass();
 		m_PassSpec.TargetFramebuffer->Unbind();
@@ -98,7 +101,6 @@ namespace Lamp
 					break;
 			}
 		}
-
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)

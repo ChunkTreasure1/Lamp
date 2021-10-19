@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-1097.58081, 335.270325]
+      position: [-729.580811, 353.270325]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [650.631836, 342.249878]
+      position: [1018.63184, 360.249878]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [314.770325, 153.977173]
+      position: [682.770325, 171.977173]
       type: 0
       name: Forward
       clearType: 3
@@ -31,6 +31,7 @@ RenderGraph:
       cullFace: 1
       renderShader: ""
       draw2D: true
+      drawSkybox: false
       targetFramebuffer:
         useViewportSize: true
         width: 1304
@@ -168,7 +169,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [-106.43869, 528.229004]
+      position: [261.56131, 546.229004]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -176,7 +177,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, 1.33231002e+09, 1.68155816e-44]
+      clearColor: [1, 1, -5.51759068e-30, 3.3771293e-43]
       attachments:
         {}
       attributes:
@@ -186,7 +187,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 757978825
-      position: [48.5614014, -238.770966]
+      position: [416.561401, -220.770966]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -197,7 +198,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [-200.43866, -238.770966]
+      position: [167.56134, -220.770966]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -208,7 +209,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 954160398
-      position: [-801.050171, 144.533905]
+      position: [-433.050171, 162.533905]
       type: 0
       name: DepthPrePass
       clearType: 3
@@ -216,6 +217,7 @@ RenderGraph:
       cullFace: 1
       renderShader: depthPass
       draw2D: false
+      drawSkybox: false
       targetFramebuffer:
         useViewportSize: true
         width: 1304
@@ -263,7 +265,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 770486413
-      position: [-441.050171, 279.533905]
+      position: [-73.0501709, 297.533905]
       type: 7
       shader: lightCulling
       attributes:
@@ -283,7 +285,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1394602077
-      position: [-474.050171, 17.533905]
+      position: [-106.050171, 35.533905]
       type: 3
       uniformType: 0
       dataName: ForwardTileX

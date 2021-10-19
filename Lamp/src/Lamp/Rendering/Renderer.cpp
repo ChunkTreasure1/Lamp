@@ -45,6 +45,8 @@ namespace Lamp
 
 	void Renderer::Begin(const Ref<CameraBase> camera)
 	{
+		LP_PROFILE_FUNCTION();
+
 		UpdateBuffers(camera);
 		Renderer3D::Begin(camera);
 	}

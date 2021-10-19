@@ -43,6 +43,7 @@ namespace Lamp
 		Ref<Shader> renderShader = nullptr; // if null it will use the material shader
 
 		bool draw2D = false;
+		bool drawSkybox = false;
 
 		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
 		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
