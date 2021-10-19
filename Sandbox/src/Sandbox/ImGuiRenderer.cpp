@@ -109,10 +109,6 @@ namespace Sandbox
 
 				ImGui::EndDragDropTarget();
 			}
-
-			std::string frameInfo = "FrameTime: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFrameTime() * 1000) + ". FPS: " + std::to_string(Lamp::Application::Get().GetFrameTime().GetFramesPerSecond()) + ". Using VSync: " + std::to_string(Lamp::Application::Get().GetWindow().GetIsVSync());
-			ImGui::SetCursorPos(ImVec2(20, 40));
-			ImGui::Text(frameInfo.c_str());
 		}
 
 		//Guizmo
@@ -718,6 +714,10 @@ namespace Sandbox
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();
+	}
+
+	void Sandbox::UpdateStatistics()
+	{
 	}
 
 	void Sandbox::CreateDockspace()

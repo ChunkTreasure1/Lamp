@@ -71,6 +71,7 @@ namespace Sandbox
 		void UpdateRenderPassView();
 		void UpdateShaderView();
 		void UpdateToolbar();
+		void UpdateStatistics();
 
 		//Shortcuts
 		void SaveLevelAs();
