@@ -136,6 +136,8 @@ namespace Sandbox
 		UpdateRenderPassView();
 		UpdateShaderView();
 		UpdateToolbar();
+		UpdateStatistics();
+
 		m_assetManager.OnImGuiRender();
 
 		for (auto& window : m_BufferWindows)

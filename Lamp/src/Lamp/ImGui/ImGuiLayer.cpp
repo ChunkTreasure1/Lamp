@@ -136,6 +136,8 @@ namespace Lamp
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		ImGui::ShowDemoWindow();
+
 		ImGuiBeginEvent e;
 		Application::Get().OnEvent(e);
 	}

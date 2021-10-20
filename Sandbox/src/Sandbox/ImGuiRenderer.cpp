@@ -260,16 +260,16 @@ namespace Sandbox
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					UI::InputFloat3("Position", const_cast<glm::vec3&>(pEnt->GetPosition()));
+					UI::Property("Position", const_cast<glm::vec3&>(pEnt->GetPosition()));
 
 					glm::vec3 rot = pEnt->GetRotation();
 					rot = glm::degrees(rot);
-					if (UI::InputFloat3("Rotation", rot))
+					if (UI::Property("Rotation", rot))
 					{
 						pEnt->SetRotation(glm::radians(rot));
 					}
 
-					UI::InputFloat3("Scale", const_cast<glm::vec3&>(pEnt->GetScale()));
+					UI::Property("Scale", const_cast<glm::vec3&>(pEnt->GetScale()));
 				}
 
 				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
@@ -317,16 +317,16 @@ namespace Sandbox
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					UI::InputFloat3("Position", const_cast<glm::vec3&>(pBrush->GetPosition()));
+					UI::Property("Position", const_cast<glm::vec3&>(pBrush->GetPosition()));
 
 					glm::vec3 rot = pBrush->GetRotation();
 					rot = glm::degrees(rot);
-					if (UI::InputFloat3("Rotation", rot))
+					if (UI::Property("Rotation", rot))
 					{
 						pBrush->SetRotation(glm::radians(rot));
 					}
 
-					UI::InputFloat3("Scale", const_cast<glm::vec3&>(pBrush->GetScale()));
+					UI::Property("Scale", const_cast<glm::vec3&>(pBrush->GetScale()));
 				}
 
 				if (ImGui::CollapsingHeader("Materials"))
@@ -337,7 +337,7 @@ namespace Sandbox
 						static std::string lastInput = "";
 						std::string input = mat.second->GetName();
 
-						UI::InputString("###input" + std::to_string(i), input);
+						UI::Property("###input" + std::to_string(i), input);
 						i++;
 					}
 				}
@@ -536,16 +536,16 @@ namespace Sandbox
 
 				switch (prop.propertyType)
 				{
-					case Lamp::PropertyType::Int: propertyChanged = UI::InputInt(prop.name, *static_cast<int*>(prop.value)); break;
-					case Lamp::PropertyType::Bool: propertyChanged = UI::InputBool(prop.name, *static_cast<bool*>(prop.value)); break;
-					case Lamp::PropertyType::Float: propertyChanged = UI::InputFloat(prop.name, *static_cast<float*>(prop.value)); break;
-					case Lamp::PropertyType::Float2: propertyChanged = UI::InputFloat2(prop.name, *static_cast<glm::vec2*>(prop.value)); break;
-					case Lamp::PropertyType::Float3: propertyChanged = UI::InputFloat3(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
-					case Lamp::PropertyType::Float4: propertyChanged = UI::InputFloat4(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
-					case Lamp::PropertyType::String: propertyChanged = UI::InputString(prop.name, *static_cast<std::string*>(prop.value)); break;
-					case Lamp::PropertyType::Path: propertyChanged = UI::InputPath(prop.name, *static_cast<std::string*>(prop.value)); break;
-					case Lamp::PropertyType::Color3: propertyChanged = UI::InputColor3(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
-					case Lamp::PropertyType::Color4: propertyChanged = UI::InputFloat4(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case Lamp::PropertyType::Int: propertyChanged = UI::Property(prop.name, *static_cast<int*>(prop.value)); break;
+					case Lamp::PropertyType::Bool: propertyChanged = UI::Property(prop.name, *static_cast<bool*>(prop.value)); break;
+					case Lamp::PropertyType::Float: propertyChanged = UI::Property(prop.name, *static_cast<float*>(prop.value)); break;
+					case Lamp::PropertyType::Float2: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec2*>(prop.value)); break;
+					case Lamp::PropertyType::Float3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
+					case Lamp::PropertyType::Float4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case Lamp::PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
+					case Lamp::PropertyType::Path: propertyChanged = UI::Property(prop.name, *static_cast<std::filesystem::path*>(prop.value)); break;
+					case Lamp::PropertyType::Color3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value), false); break;
+					case Lamp::PropertyType::Color4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value), true); break;
 				}
 
 				if (propertyChanged)
@@ -718,6 +718,14 @@ namespace Sandbox
 
 	void Sandbox::UpdateStatistics()
 	{
+		ImGui::Begin("Statistics"); 
+
+		static int i = 5;
+
+		UI::Property("Test", i);
+		UI::Property("Test2", i);
+
+		ImGui::End();
 	}
 
 	void Sandbox::CreateDockspace()
