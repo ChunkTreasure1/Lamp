@@ -260,16 +260,20 @@ namespace Sandbox
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					UI::Property("Position", const_cast<glm::vec3&>(pEnt->GetPosition()));
+					UI::BeginProperties("transProps");
+
+					UI::PropertyAxisColor("Position", const_cast<glm::vec3&>(pEnt->GetPosition()));
 
 					glm::vec3 rot = pEnt->GetRotation();
 					rot = glm::degrees(rot);
-					if (UI::Property("Rotation", rot))
+					if (UI::PropertyAxisColor("Rotation", rot))
 					{
 						pEnt->SetRotation(glm::radians(rot));
 					}
 
-					UI::Property("Scale", const_cast<glm::vec3&>(pEnt->GetScale()));
+					UI::PropertyAxisColor("Scale", const_cast<glm::vec3&>(pEnt->GetScale()), 1.f);
+				
+					UI::EndProperties();
 				}
 
 				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
@@ -317,16 +321,20 @@ namespace Sandbox
 
 				if (ImGui::CollapsingHeader("Transform"))
 				{
-					UI::Property("Position", const_cast<glm::vec3&>(pBrush->GetPosition()));
+					UI::BeginProperties("transProp");
+
+					UI::PropertyAxisColor("Position", const_cast<glm::vec3&>(pBrush->GetPosition()));
 
 					glm::vec3 rot = pBrush->GetRotation();
 					rot = glm::degrees(rot);
-					if (UI::Property("Rotation", rot))
+					if (UI::PropertyAxisColor("Rotation", rot))
 					{
 						pBrush->SetRotation(glm::radians(rot));
 					}
 
-					UI::Property("Scale", const_cast<glm::vec3&>(pBrush->GetScale()));
+					UI::PropertyAxisColor("Scale", const_cast<glm::vec3&>(pBrush->GetScale()));
+
+					UI::EndProperties();
 				}
 
 				if (ImGui::CollapsingHeader("Materials"))
@@ -334,11 +342,14 @@ namespace Sandbox
 					int i = 0;
 					for (auto& mat : pBrush->GetModel()->GetMaterials())
 					{
-						static std::string lastInput = "";
 						std::string input = mat.second->GetName();
 
-						UI::Property("###input" + std::to_string(i), input);
+						UI::BeginProperties();
+
+						UI::Property("Material" + std::to_string(i), input);
 						i++;
+
+						UI::EndProperties();
 					}
 				}
 			}
@@ -530,6 +541,8 @@ namespace Sandbox
 				removeComp = true;
 			}
 
+			UI::BeginProperties("compProp" + ptr->GetName());
+
 			for (auto& prop : ptr->GetComponentProperties().GetProperties())
 			{
 				bool propertyChanged = false;
@@ -543,7 +556,7 @@ namespace Sandbox
 					case Lamp::PropertyType::Float3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
 					case Lamp::PropertyType::Float4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 					case Lamp::PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
-					case Lamp::PropertyType::Path: propertyChanged = UI::Property(prop.name, *static_cast<std::filesystem::path*>(prop.value)); break;
+					case Lamp::PropertyType::Path: propertyChanged = UI::Property(prop.name, std::filesystem::path(*static_cast<std::string*>(prop.value))); break;
 					case Lamp::PropertyType::Color3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value), false); break;
 					case Lamp::PropertyType::Color4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value), true); break;
 				}
@@ -554,6 +567,8 @@ namespace Sandbox
 					ptr->GetEntity()->OnEvent(e);
 				}
 			}
+
+			UI::EndProperties();
 		}
 
 		return removeComp;
@@ -721,9 +736,31 @@ namespace Sandbox
 		ImGui::Begin("Statistics"); 
 
 		static int i = 5;
+		static bool b = false;
+		static float f = 0.f;
 
-		UI::Property("Test", i);
-		UI::Property("Test2", i);
+		static glm::vec2 f2 = { 0.f, 0.f };
+		static glm::vec3 t = { 0.f, 0.f, 0.f };
+		static glm::vec4 f4 = { 0.f, 0.f, 0.f, 0.f };
+
+		UI::BeginProperties("prs");
+
+		UI::PropertyAxisColor("Position", t);
+		UI::PropertyAxisColor("Rotation", t);
+		UI::PropertyAxisColor("Scale", t);
+
+		UI::EndProperties();
+
+		if (UI::BeginProperties("other"))
+		{
+			UI::Property("Int", i);
+			UI::Property("Bool", b);
+			UI::Property("Float", f);
+			UI::Property("Float2", f2);
+			UI::Property("Testing var", t);
+
+			UI::EndProperties();
+		}
 
 		ImGui::End();
 	}

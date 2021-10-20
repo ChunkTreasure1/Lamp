@@ -35,9 +35,8 @@ public:
 	class ScopedStyle
 	{
 	public:
-		ScopedStyle(ImGuiStyleVar var, const glm::vec2& value)
+		ScopedStyle(ImGuiStyleVar_ var, const glm::vec2& value)
 		{
-			auto& style = ImGui::GetStyle();
 			ImGui::PushStyleVar(var, { value.x, value.y });
 		}
 
@@ -51,7 +50,17 @@ public:
 	static bool ImageTreeNodeEx(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...);
 	static bool InputTextOnSameline(std::string& string, const std::string& id);
 
+	static void PushId();
+	static void PopId();
+
+	static bool BeginProperties(const std::string& name = "", bool showHeader = false);
+	static void EndProperties();
+
+	static void ShiftCursor(float x, float y);
+
 	//Inputs
+	static bool PropertyAxisColor(const std::string& text, glm::vec3& value, float resetValue = 0.f);
+
 	static bool Property(const std::string& text, int& value, int min = 0, int max = 0);
 	static bool Property(const std::string& text, bool& value);
 	static bool Property(const std::string& text, float& value);
