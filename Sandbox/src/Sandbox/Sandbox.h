@@ -68,8 +68,6 @@ namespace Sandbox
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
-		void UpdateRenderPassView();
-		void UpdateShaderView();
 		void UpdateToolbar();
 		void UpdateStatistics();
 

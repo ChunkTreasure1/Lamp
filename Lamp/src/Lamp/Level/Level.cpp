@@ -126,6 +126,7 @@ namespace Lamp
 			}
 		}
 
+		m_skybox = level.m_skybox;
 		m_Environment = level.m_Environment;
 		m_Name = level.m_Name;
 	}

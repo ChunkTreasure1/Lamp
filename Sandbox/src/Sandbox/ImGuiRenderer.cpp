@@ -258,7 +258,7 @@ namespace Sandbox
 				ImGui::InputText("Name", &name);
 				pEnt->SetName(name);
 
-				if (ImGui::CollapsingHeader("Transform"))
+				if (UI::TreeNodeFramed("Transform"))
 				{
 					UI::BeginProperties("transProps");
 
@@ -272,8 +272,9 @@ namespace Sandbox
 					}
 
 					UI::PropertyAxisColor("Scale", const_cast<glm::vec3&>(pEnt->GetScale()), 1.f);
-				
+
 					UI::EndProperties();
+					UI::TreeNodePop();
 				}
 
 				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
@@ -319,7 +320,7 @@ namespace Sandbox
 				ImGui::InputText("Name", &name);
 				pBrush->SetName(name);
 
-				if (ImGui::CollapsingHeader("Transform"))
+				if (UI::TreeNodeFramed("Transform"))
 				{
 					UI::BeginProperties("transProp");
 
@@ -335,9 +336,10 @@ namespace Sandbox
 					UI::PropertyAxisColor("Scale", const_cast<glm::vec3&>(pBrush->GetScale()));
 
 					UI::EndProperties();
+					UI::TreeNodePop();
 				}
 
-				if (ImGui::CollapsingHeader("Materials"))
+				if (UI::TreeNodeFramed("Materials"))
 				{
 					int i = 0;
 					for (auto& mat : pBrush->GetModel()->GetMaterials())
@@ -351,6 +353,8 @@ namespace Sandbox
 
 						UI::EndProperties();
 					}
+
+					UI::TreeNodePop();
 				}
 			}
 
@@ -532,15 +536,33 @@ namespace Sandbox
 		LP_PROFILE_FUNCTION();
 
 		bool removeComp = false;
+		bool open = UI::TreeNodeFramed(ptr->GetName(), true, 0.f, { 0.f, 2.f });
 
-		if (ImGui::CollapsingHeader(ptr->GetName().c_str()))
+		float buttonSize = 20.f + GImGui->Style.FramePadding.y * 0.5f;
+		float availRegion = ImGui::GetContentRegionAvail().x;
+
+		if (!open)
 		{
-			std::string id = "Remove###Remove" + ptr->GetName();
-			if (ImGui::Button(id.c_str()))
+			UI::SameLine(availRegion - buttonSize * 0.5f + GImGui->Style.FramePadding.x * 0.5f);
+		}
+		else
+		{
+			UI::SameLine(availRegion + buttonSize * 0.5f + GImGui->Style.FramePadding.x * 0.5f);
+		}
+		std::string id = "-###Remove" + ptr->GetName();
+
+		{
+			UI::ScopedStyleFloat round{ ImGuiStyleVar_FrameRounding, 0.f };
+			UI::ScopedStyleFloat2 pad{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
+
+			if (ImGui::Button(id.c_str(), ImVec2{ buttonSize, buttonSize }))
 			{
 				removeComp = true;
 			}
+		}
 
+		if (open)
+		{
 			UI::BeginProperties("compProp" + ptr->GetName());
 
 			for (auto& prop : ptr->GetComponentProperties().GetProperties())
@@ -569,6 +591,7 @@ namespace Sandbox
 			}
 
 			UI::EndProperties();
+			UI::TreeNodePop();
 		}
 
 		return removeComp;
@@ -622,54 +645,6 @@ namespace Sandbox
 			{
 				Renderer::SetRenderGraph(ResourceCache::ReloadAsset<RenderGraph>(std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph())));
 				Renderer::GetRenderGraph()->Start();
-			}
-		}
-
-		ImGui::End();
-	}
-
-	void Sandbox::UpdateRenderPassView()
-	{
-		if (!m_RenderPassViewOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Render pass view", &m_RenderPassViewOpen);
-
-		auto& passes = Lamp::RenderPassManager::Get()->GetRenderPasses();
-		for (auto& pass : passes)
-		{
-			if (ImGui::CollapsingHeader(pass->GetSpecification().Name.c_str()))
-			{
-			}
-		}
-
-		ImGui::End();
-	}
-
-	void Sandbox::UpdateShaderView()
-	{
-		if (!m_ShaderViewOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Shader View", &m_ShaderViewOpen);
-
-		static auto& shaders = Lamp::ShaderLibrary::GetShaders();
-		for (auto& shader : shaders)
-		{
-			if (ImGui::CollapsingHeader(shader->GetName().c_str()))
-			{
-				ImGui::Text("Path: %s", shader->GetPath().c_str());
-				ImGui::Separator();
-
-				ImGui::Text("Uniforms");
-				for (auto& uniform : shader->GetSpecifications().Uniforms)
-				{
-					ImGui::Selectable(uniform.first.c_str());
-				}
 			}
 		}
 
@@ -733,7 +708,7 @@ namespace Sandbox
 
 	void Sandbox::UpdateStatistics()
 	{
-		ImGui::Begin("Statistics"); 
+		ImGui::Begin("Statistics");
 
 		static int i = 5;
 		static bool b = false;
@@ -757,7 +732,7 @@ namespace Sandbox
 			UI::Property("Bool", b);
 			UI::Property("Float", f);
 			UI::Property("Float2", f2);
-			UI::Property("Testing var", t);
+			UI::Property("Testing var bla bla bal fhwfl-l hhdf", t);
 
 			UI::EndProperties();
 		}
@@ -814,6 +789,8 @@ namespace Sandbox
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowMinSize.x = 300.f;
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -891,21 +868,9 @@ namespace Sandbox
 			if (ImGui::BeginMenu("Rendering"))
 			{
 				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
-				ImGui::MenuItem("Render pass view", NULL, &m_RenderPassViewOpen);
-				ImGui::MenuItem("Shader View", NULL, &m_ShaderViewOpen);
 				if (ImGui::MenuItem("Recompile shaders"))
 				{
 					Lamp::ShaderLibrary::RecompileShaders();
-				}
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Buffers"))
-			{
-				for (auto& window : m_BufferWindows)
-				{
-					ImGui::MenuItem(window.GetLabel().c_str(), NULL, &window.GetIsOpen());
 				}
 
 				ImGui::EndMenu();
