@@ -134,7 +134,6 @@ namespace Sandbox
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
 		UpdateToolbar();
-		UpdateStatistics();
 
 		m_assetManager.OnImGuiRender();
 

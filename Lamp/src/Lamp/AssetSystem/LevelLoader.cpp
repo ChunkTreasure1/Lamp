@@ -352,7 +352,7 @@ namespace Lamp
 			uint32_t id = entry["id"].as<uint32_t>();
 			bool active = entry["active"].as<bool>();
 
-			layers.push_back(ObjectLayer(name, id, active));
+			layers.emplace_back(name, id, active);
 		}
 
 		level->m_Brushes = brushes;
@@ -362,6 +362,16 @@ namespace Lamp
 		if (level->m_Layers.empty())
 		{
 			level->AddLayer(ObjectLayer("Main", 0, true));
+		}
+
+		for (const auto& entity : entities)
+		{
+			level->AddToLayer(entity.second);
+		}
+
+		for (const auto& brush : brushes)
+		{
+			level->AddToLayer(brush.second);
 		}
 
 		YAML::Node envNode = levelNode["LevelEnvironment"];

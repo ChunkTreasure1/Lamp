@@ -12,8 +12,11 @@ namespace Sandbox
 	LayerView::LayerView(std::string_view name)
 		: BaseWindow(name)
 	{
-		m_EntityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
-		m_BrushIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/AssetIcons/iconMesh.png");
+		m_entityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
+		m_brushIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/AssetIcons/iconMesh.png");
+
+		m_visibleIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/visible.png");
+		m_frozenIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/frozen.png");
 	}
 
 	void LayerView::OnEvent(Lamp::Event& e)
@@ -37,6 +40,9 @@ namespace Sandbox
 		static bool itemMenuOpen = false;
 		static uint32_t idMenuOpen = 0;
 
+		const float imageSize = 20.f;
+		const float imagePadding = 10.f;
+
 		int startId = 0;
 		for (auto& layer : g_pEnv->pLevel->GetLayers())
 		{
@@ -45,58 +51,118 @@ namespace Sandbox
 			ImGui::SameLine();
 
 			std::string id = layer.Name + "###layer" + std::to_string(layer.ID);
-			if (ImGui::TreeNode(id.c_str()))
+
+			bool open = UI::TreeNodeFramed(id, true, 0.f, { 0.f, 2.f });
+			CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
+
+			const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
+
+			if (open)
 			{
-				CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
+				UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
+				UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
+				UI::ScopedColor active(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
 
-				std::string inputId("Name"); inputId += "###input" + std::to_string(layer.ID);
-				ImGui::InputText(inputId.c_str(), &layer.Name);
-
-				for (auto& obj : layer.Objects)
+				std::string id = "##table" + std::to_string(layer.ID);
+				if (ImGui::BeginTable(id.c_str(), 3, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable))
 				{
-					startId++;
-					ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+					ImGui::TableSetupColumn("Settings", ImGuiTableColumnFlags_WidthFixed, imageSize * 2 + imagePadding);
+					ImGui::TableSetupColumn("Name");
+					ImGui::TableSetupColumn("Type");
+					ImGui::TableHeadersRow();
 
-					Ref<Texture2D> icon;
-					if (auto* brush = dynamic_cast<Lamp::Brush*>(obj))
+					for (auto obj : layer.Objects)
 					{
-						icon = m_BrushIcon;
-					}
-					else
-					{
-						icon = m_EntityIcon;
-					}
+						static bool test = false;
+						ImGui::TableNextRow();
 
-					UI::ImageTreeNodeEx(icon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
-					if (ImGui::BeginDragDropSource())
-					{
-						const uint32_t values[2] = { layer.ID, obj->GetID() };
-						ImGui::SetDragDropPayload("LAYER_OBJECT", values, sizeof(uint32_t) * 2, ImGuiCond_Once);
-						ImGui::EndDragDropSource();
-					}
+						ImGui::TableNextColumn();
+						ImGui::ImageButton((ImTextureID)(m_visibleIcon->GetID()), { imageSize, imageSize }, { 0.f, 0.f }, { 1.f, 1.f }, 0);
+						ImGui::SameLine();
+						ImGui::ImageButton((ImTextureID)(m_frozenIcon->GetID()), { imageSize, imageSize }, { 0.f, 0.f }, { 1.f, 1.f }, 0);
 
-					if (ImGui::IsItemClicked())
-					{
-						if (m_pSelectedObject)
+						ImGui::TableNextColumn();
+						Ref<Texture2D> icon;
+						if (typeid(*obj) == typeid(Brush))
 						{
-							m_pSelectedObject->SetIsSelected(false);
+							icon = m_brushIcon;
 						}
-
-						m_pSelectedObject = obj;
-
-						if (m_pSelectedObject)
+						else
 						{
-							m_pSelectedObject->SetIsSelected(true);
+							icon = m_entityIcon;
+						}
+						UI::ImageTreeNode(icon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
+
+						ImGui::TableNextColumn();
+						if (typeid(*obj) == typeid(Brush))
+						{
+							ImGui::TextDisabled("Brush");
+						}
+						else
+						{
+							ImGui::TextDisabled("Entity");
 						}
 					}
+
+					ImGui::EndTable();
 				}
 
-				ImGui::TreePop();
+				UI::TreeNodePop();
 			}
-			else
-			{
-				CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
-			}
+
+
+			//if (ImGui::TreeNode(id.c_str()))
+			//{
+			//	CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
+
+			//	std::string inputId("Name"); inputId += "###input" + std::to_string(layer.ID);
+			//	ImGui::InputText(inputId.c_str(), &layer.Name);
+
+			//	for (auto& obj : layer.Objects)
+			//	{
+			//		startId++;
+			//		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+			//		Ref<Texture2D> icon;
+			//		if (auto* brush = dynamic_cast<Lamp::Brush*>(obj))
+			//		{
+			//			icon = m_BrushIcon;
+			//		}
+			//		else
+			//		{
+			//			icon = m_EntityIcon;
+			//		}
+
+			//		UI::ImageTreeNodeEx(icon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
+			//		if (ImGui::BeginDragDropSource())
+			//		{
+			//			const uint32_t values[2] = { layer.ID, obj->GetID() };
+			//			ImGui::SetDragDropPayload("LAYER_OBJECT", values, sizeof(uint32_t) * 2, ImGuiCond_Once);
+			//			ImGui::EndDragDropSource();
+			//		}
+
+			//		if (ImGui::IsItemClicked())
+			//		{
+			//			if (m_pSelectedObject)
+			//			{
+			//				m_pSelectedObject->SetIsSelected(false);
+			//			}
+
+			//			m_pSelectedObject = obj;
+
+			//			if (m_pSelectedObject)
+			//			{
+			//				m_pSelectedObject->SetIsSelected(true);
+			//			}
+			//		}
+			//	}
+
+			//	ImGui::TreePop();
+			//}
+			//else
+			//{
+			//	CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
+			//}
 		}
 
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered() && !itemMenuOpen)
@@ -118,7 +184,7 @@ namespace Sandbox
 		{
 			if (ImGui::Selectable("Add"))
 			{
-				g_pEnv->pLevel->AddLayer(ObjectLayer("New layer",(uint32_t)g_pEnv->pLevel->GetLayers().size(), true));
+				g_pEnv->pLevel->AddLayer(ObjectLayer("New layer", (uint32_t)g_pEnv->pLevel->GetLayers().size(), true));
 				ImGui::CloseCurrentPopup();
 			}
 

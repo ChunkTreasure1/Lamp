@@ -655,9 +655,9 @@ namespace Sandbox
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.305f, 0.31f, 0.5f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
+		UI::ScopedColor(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
+		UI::ScopedColor(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
+		UI::ScopedColor(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
 
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
@@ -702,7 +702,6 @@ namespace Sandbox
 			}
 		}
 		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}
 

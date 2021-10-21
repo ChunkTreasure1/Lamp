@@ -53,6 +53,10 @@ Assets:
     Path: engine/textures/ui/directoryIcon.png
   - Handle: 11535979565681188853
     Path: engine/textures/ui/files.png
+  - Handle: 1738656851519606708
+    Path: engine/textures/ui/layerView/frozen.png
+  - Handle: 2162149618891488016
+    Path: engine/textures/ui/layerView/visible.png
   - Handle: 17945416414219562556
     Path: engine/textures/ui/newIcon.png
   - Handle: 382669663917100860

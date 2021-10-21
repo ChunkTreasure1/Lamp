@@ -2,7 +2,7 @@ level:
   name: Level
   handle: 14311675356115887053
   brushes:
-    - brush: Brush
+    - brush: Floor
       meshHandle: 10335344246315033883
       position: [0, -0.0248743296, 0]
       rotation: [0, 0, 0]
@@ -14,32 +14,32 @@ level:
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
-    - brush: Brush
+    - brush: Wall4
       meshHandle: 10335344246315033883
       position: [-14.5140333, 3.7758646, 0]
       rotation: [0, 0, 0]
       scale: [1, 6.80206537, 30]
       layerId: 0
-    - brush: Brush
+    - brush: Wall2
       meshHandle: 10335344246315033883
       position: [14.5138855, 3.7758646, 0]
       rotation: [0, 0, 0]
       scale: [1, 6.80206537, 30]
       layerId: 0
-    - brush: Brush
+    - brush: Wall1
       meshHandle: 10335344246315033883
       position: [-0.320364475, 3.7758646, -14.5667343]
       rotation: [0, 0, 0]
       scale: [29.5076294, 6.80206823, 1]
       layerId: 0
-    - brush: Brush
+    - brush: Wall3
       meshHandle: 10335344246315033883
       position: [-0.320364475, 3.7758646, 14.4801054]
       rotation: [0, 0, 0]
       scale: [29.5076294, 6.80206823, 1]
       layerId: 0
   entities:
-    - entity: Entity
+    - entity: Bear
       position: [-2.78273559, 4.27135849, 1.058339]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
@@ -109,7 +109,7 @@ level:
             - param: Speed
               type: Float
               value: 10
-    - entity: Entity
+    - entity: Platform
       position: [6.84333134, 3.79782891, 1.33471704]
       rotation: [0, 0, 0]
       scale: [5.00000429, 0.999985933, 4.99998999]
@@ -182,6 +182,6 @@ level:
       id: 1
       active: true
   LevelEnvironment:
-    cameraPosition: [-4.2282033, 6.24557829, 7.8520174]
-    cameraRotation: [-0.537285328, 0.434985638, 0.614304721, 0.380449265]
+    cameraPosition: [-17.9288616, 12.9420328, 16.2935848]
+    cameraRotation: [-0.369931579, -0.617751896, -0.562638819, 0.406166047]
     cameraFOV: 60

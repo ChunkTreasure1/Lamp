@@ -72,8 +72,11 @@ namespace UI
 		ImGui::Text(text.c_str());
 	}
 
-	static bool ImageTreeNodeEx(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
+	static bool ImageTreeNode(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
 	{
+		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
+		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
+
 		ImVec2 size = ImGui::CalcTextSize(fmt);
 		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
