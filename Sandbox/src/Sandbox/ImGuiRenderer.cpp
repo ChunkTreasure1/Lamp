@@ -50,6 +50,7 @@ namespace Sandbox
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
 			m_PerspectiveHover = ImGui::IsWindowHovered();
 			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
+			m_PerspectiveFocused = ImGui::IsWindowFocused();
 
 			//Viewport bounds
 			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
@@ -672,9 +673,9 @@ namespace Sandbox
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
-		UI::ScopedColor(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
-		UI::ScopedColor(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
-		UI::ScopedColor(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
+		UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
+		UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
+		UI::ScopedColor active(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
 
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
@@ -726,32 +727,8 @@ namespace Sandbox
 	{
 		ImGui::Begin("Statistics");
 
-		static int i = 5;
-		static bool b = false;
-		static float f = 0.f;
-
-		static glm::vec2 f2 = { 0.f, 0.f };
-		static glm::vec3 t = { 0.f, 0.f, 0.f };
-		static glm::vec4 f4 = { 0.f, 0.f, 0.f, 0.f };
-
-		UI::BeginProperties("prs");
-
-		UI::PropertyAxisColor("Position", t);
-		UI::PropertyAxisColor("Rotation", t);
-		UI::PropertyAxisColor("Scale", t);
-
-		UI::EndProperties();
-
-		if (UI::BeginProperties("other"))
-		{
-			UI::Property("Int", i);
-			UI::Property("Bool", b);
-			UI::Property("Float", f);
-			UI::Property("Float2", f2);
-			UI::Property("Testing var bla bla bal fhwfl-l hhdf", t);
-
-			UI::EndProperties();
-		}
+		ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
+		ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
 
 		ImGui::End();
 	}

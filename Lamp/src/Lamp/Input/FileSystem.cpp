@@ -18,7 +18,7 @@ namespace Lamp
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			std::string s = entry.path().string();
-			if (s.find(".") != std::string::npos)
+			if (s.find('.') != std::string::npos)
 			{
 				files.push_back(s);
 			}
@@ -34,7 +34,7 @@ namespace Lamp
 		for (const auto& entry : std::filesystem::directory_iterator("assets"))
 		{
 			std::string s = entry.path().string();
-			if (s.find(".") == std::string::npos)
+			if (s.find('.') == std::string::npos)
 			{
 				folders.push_back(s);
 			}
@@ -110,7 +110,7 @@ namespace Lamp
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
 		{
 			std::string s = entry.path().string();
-			if (s.find(".") == std::string::npos)
+			if (s.find('.') == std::string::npos)
 			{
 				folders.push_back(s);
 			}
@@ -184,25 +184,25 @@ namespace Lamp
 
 	void FileSystem::PrintBrushes(std::vector<std::string>& folders, int startID)
 	{
-		if (folders.size() == 0)
+		if (folders.empty())
 		{
 			return;
 		}
 
-		for (int i = 0; i < folders.size(); i++)
+		for (auto & folder : folders)
 		{
-			std::string s = folders[i];
+			std::string s = folder;
 			std::size_t pos = s.find_last_of("/\\");
 			s = s.substr(pos + 1);
 
-			std::vector<std::string> files = Lamp::FileSystem::GetBrushFiles(folders[i]);
+			std::vector<std::string> files = Lamp::FileSystem::GetBrushFiles(folder);
 
-			for (int j = 0; j < files.size(); j++)
+			for (const auto & file : files)
 			{
 				startID++;
 				ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-				std::string p = files[j];
+				std::string p = file;
 				if (p.find(".spec") != std::string::npos)
 				{
 					continue;
@@ -211,18 +211,18 @@ namespace Lamp
 				std::size_t posp = p.find_last_of("/\\");
 				p = p.substr(posp + 1);
 
-				std::size_t lgfPos = p.find_last_of(".");
+				std::size_t lgfPos = p.find_last_of('.');
 				p = p.substr(0, lgfPos);
 
 				ImGui::TreeNodeEx((void*)(intptr_t)startID, nodeFlags, p.c_str());
 				if (ImGui::BeginDragDropSource())
 				{
-					const char* path = files[j].c_str();
-					ImGui::SetDragDropPayload("BRUSH_ITEM", path, sizeof(char) * (files[j].length() + 1), ImGuiCond_Once);
+					const char* path = file.c_str();
+					ImGui::SetDragDropPayload("BRUSH_ITEM", path, sizeof(char) * (file.length() + 1), ImGuiCond_Once);
 					ImGui::EndDragDropSource();
 				}
 			}
-			PrintBrushes(GetFolders(folders[i]), startID);
+			PrintBrushes(GetFolders(folder), startID);
 		}
 	}
 }

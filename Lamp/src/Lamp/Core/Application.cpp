@@ -66,6 +66,8 @@ namespace Lamp
 		
 		m_AssetManagerThread.join();
 
+		g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
+
 		delete g_pEnv->pAssetManager;
 		delete g_pEnv;
 	}

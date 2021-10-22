@@ -103,7 +103,6 @@ namespace UI
 		else
 		{
 			UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
-			UI::ScopedStyleFloat2 framePad(ImGuiStyleVar_FramePadding, padding);
 
 			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
 		}

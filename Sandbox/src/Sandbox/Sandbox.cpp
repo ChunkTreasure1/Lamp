@@ -134,6 +134,7 @@ namespace Sandbox
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
 		UpdateToolbar();
+		UpdateStatistics();
 
 		m_assetManager.OnImGuiRender();
 
@@ -328,27 +329,30 @@ namespace Sandbox
 			m_MousePressed = false;
 		}
 
-		if (Input::IsKeyPressed(LP_KEY_1))
+		if (m_PerspectiveFocused)
 		{
-			m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
-		}
-
-		if (Input::IsKeyPressed(LP_KEY_2))
-		{
-			m_ImGuizmoOperation = ImGuizmo::ROTATE;
-		}
-
-		if (Input::IsKeyPressed(LP_KEY_3))
-		{
-			m_ImGuizmoOperation = ImGuizmo::SCALE;
-		}
-
-		if (Input::IsKeyPressed(LP_KEY_DELETE))
-		{
-			if (m_pSelectedObject)
+			if (Input::IsKeyPressed(LP_KEY_1))
 			{
-				m_pSelectedObject->Destroy();
-				m_pSelectedObject = nullptr;
+				m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
+			}
+
+			if (Input::IsKeyPressed(LP_KEY_2))
+			{
+				m_ImGuizmoOperation = ImGuizmo::ROTATE;
+			}
+
+			if (Input::IsKeyPressed(LP_KEY_3))
+			{
+				m_ImGuizmoOperation = ImGuizmo::SCALE;
+			}
+
+			if (Input::IsKeyPressed(LP_KEY_DELETE))
+			{
+				if (m_pSelectedObject)
+				{
+					m_pSelectedObject->Destroy();
+					m_pSelectedObject = nullptr;
+				}
 			}
 		}
 	}

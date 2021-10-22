@@ -13,7 +13,7 @@ namespace Lamp
 			: Name(name), ID(id), Active(active)
 		{}
 
-		~ObjectLayer();
+		~ObjectLayer() = default;
 
 		std::string Name;
 		uint32_t ID;

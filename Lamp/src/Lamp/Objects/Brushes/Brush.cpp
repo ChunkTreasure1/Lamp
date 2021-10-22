@@ -27,7 +27,7 @@ namespace Lamp
 		delete this;
 	}
 
-	Brush* Brush::Create(const std::string& path)
+	Brush* Brush::Create(const std::filesystem::path& path)
 	{
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
 		Brush* brush = new Brush(model);
@@ -39,7 +39,7 @@ namespace Lamp
 		return brush;
 	}
 
-	Brush* Brush::Create(const std::string& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
+	Brush* Brush::Create(const std::filesystem::path& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
 	{
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
 		Brush* brush = new Brush(model);

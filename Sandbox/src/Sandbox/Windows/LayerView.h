@@ -15,6 +15,7 @@ namespace Sandbox
 
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
+		bool Update(Lamp::AppUpdateEvent& e);
 
 		void UpdateMainClickMenu();
 		void UpdateItemClickMenu(const std::string& id, bool& open, uint32_t& layerId);
@@ -23,6 +24,9 @@ namespace Sandbox
 
 	private:
 		Lamp::Object* m_pSelectedObject = nullptr;
+		int m_renamingLayer = -1;
+		int m_lastRenamingLayer = -1;
+
 		Ref<Lamp::Texture2D> m_entityIcon;
 		Ref<Lamp::Texture2D> m_brushIcon;
 

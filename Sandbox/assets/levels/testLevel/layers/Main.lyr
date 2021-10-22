@@ -23,13 +23,13 @@ layer:
   brushes:
     - brush: Brush
       meshHandle: 10335344246315033883
-      position: [0, 0, 0]
+      position: [0, 0, 0.0790808201]
       rotation: [0, 0, 0]
       scale: [20, 1, 20]
       layerId: 0
     - brush: Brush
-      meshHandle: 1849076596110463034
-      position: [0, 0.419199944, 0]
+      meshHandle: 1554070060000114675
+      position: [0, 0.817531705, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0

@@ -5,14 +5,14 @@
 
 namespace Lamp
 {
-	std::unordered_map<std::string, Ref<Asset>> ResourceCache::s_AssetCache;
+	std::unordered_map<std::filesystem::path, Ref<Asset>> ResourceCache::s_AssetCache;
 	std::mutex ResourceCache::s_CacheMutex;
 
-	bool ResourceCache::AddAsset(std::filesystem::path path, Ref<Asset>& asset)
+	bool ResourceCache::AddAsset(const std::filesystem::path& path, Ref<Asset>& asset)
 	{
-		if (s_AssetCache.find(path.string()) == s_AssetCache.end())
+		if (s_AssetCache.find(path) == s_AssetCache.end())
 		{
-			s_AssetCache.insert(std::make_pair(path.string(), asset));
+			s_AssetCache.insert(std::make_pair(path, asset));
 			return true;
 		}
 		return false;

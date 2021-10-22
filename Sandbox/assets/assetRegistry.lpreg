@@ -9,10 +9,12 @@ Assets:
     Path: assets\models\sphere.lgf
   - Handle: 9317505486348122308
     Path: assets\models\sponza.lgf
-  - Handle: 1849076596110463034
+  - Handle: 1554070060000114675
     Path: assets\models\teddy.lgf
   - Handle: 14877024273708001692
     Path: assets/testGraph.rendergraph
+  - Handle: 14311675356115887053
+    Path: assets/testLevel.level
   - Handle: 3775480950542812265
     Path: assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
   - Handle: 876498905806854835
@@ -55,17 +57,13 @@ Assets:
     Path: engine/textures/ui/directoryIcon.png
   - Handle: 11535979565681188853
     Path: engine/textures/ui/files.png
-  - Handle: 1738656851519606708
-    Path: engine/textures/ui/layerView/frozen.png
-  - Handle: 6116497964473529924
+  - Handle: 9875380136337216300
     Path: engine/textures/ui/layerView/locked.png
-  - Handle: 15123458661920013054
+  - Handle: 6083366095981541132
     Path: engine/textures/ui/layerView/unlocked.png
-  - Handle: 2162149618891488016
-    Path: engine/textures/ui/layerView/visible.png
-  - Handle: 3372363526589816876
+  - Handle: 14471577020628928
     Path: engine/textures/ui/layerView/visible_n.png
-  - Handle: 12710616569131877305
+  - Handle: 7587795120753172420
     Path: engine/textures/ui/layerView/visible_v.png
   - Handle: 17945416414219562556
     Path: engine/textures/ui/newIcon.png

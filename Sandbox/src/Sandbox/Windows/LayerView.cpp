@@ -27,6 +27,7 @@ namespace Sandbox
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(LayerView::UpdateImGui));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(LayerView::Update));
 	}
 
 	bool LayerView::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
@@ -40,7 +41,9 @@ namespace Sandbox
 
 		ImGui::Begin("Layers", &m_IsOpen);
 
-		static std::string currentRightClick = "";
+		m_isFocused = ImGui::IsWindowFocused();
+
+		static std::string currentRightClick;
 		static bool itemMenuOpen = false;
 		static uint32_t idMenuOpen = 0;
 
@@ -61,11 +64,43 @@ namespace Sandbox
 			}
 
 			ImGui::SameLine();
+			std::string id = m_renamingLayer == layer.ID ? "###layer" + std::to_string(layer.ID) : layer.Name + "###layer" + std::to_string(layer.ID);
 
-			std::string id = layer.Name + "###layer" + std::to_string(layer.ID);
-
+			ImVec2 cursorPos = ImGui::GetCursorPos();
 			bool open = UI::TreeNodeFramed(id, true, 0.f, { 0.f, 1.5f });
-			CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
+			CollapsingHeaderAddons(currentRightClick, layer.Name + "###layer" + std::to_string(layer.ID), itemMenuOpen, idMenuOpen, layer.ID);
+
+			if (m_renamingLayer == layer.ID)
+			{
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(cursorPos.x + ImGui::GetTreeNodeToLabelSpacing());
+
+				std::string renameId = "###rename" + std::to_string(layer.ID);
+				ImGui::PushItemWidth(75.f);
+				UI::ScopedColor background{ ImGuiCol_FrameBg, { 0.1f, 0.1f, 0.1f, 0.1f } };
+
+				ImGui::InputText(renameId.c_str(), &layer.Name);
+				if (m_renamingLayer != m_lastRenamingLayer)
+				{
+					ImGuiID widgetId = ImGui::GetCurrentWindow()->GetID(renameId.c_str());
+					ImGui::SetFocusID(widgetId, ImGui::GetCurrentWindow());
+					ImGui::SetKeyboardFocusHere(-1);
+					m_lastRenamingLayer = m_renamingLayer;
+				}
+				if (!ImGui::IsItemFocused())
+				{
+					m_renamingLayer = -1;
+					m_lastRenamingLayer = -1;
+				}
+				if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+				{
+					m_renamingLayer = -1;
+					m_lastRenamingLayer = -1;
+				}
+
+				ImGui::PopItemWidth();
+			}
+
 
 			const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
 
@@ -123,6 +158,9 @@ namespace Sandbox
 						}
 						if (ImGui::BeginDragDropSource())
 						{
+							std::string dragDropText = "Moving " + obj->GetName();
+							ImGui::TextUnformatted(dragDropText.c_str());
+						
 							const uint32_t values[2] = { layer.ID, obj->GetID() };
 							ImGui::SetDragDropPayload("LAYER_OBJECT", values, sizeof(uint32_t) * 2, ImGuiCond_Once);
 							ImGui::EndDragDropSource();
@@ -161,6 +199,22 @@ namespace Sandbox
 		return false;
 	}
 
+	bool LayerView::Update(Lamp::AppUpdateEvent& e)
+	{
+		if (!m_isFocused)
+		{
+			return false;
+		}
+
+		if (Input::IsKeyPressed(LP_KEY_ENTER))
+		{
+			m_renamingLayer = -1;
+			m_lastRenamingLayer = -1;
+		}
+
+		return false;
+	}
+
 	void LayerView::UpdateMainClickMenu()
 	{
 		if (ImGui::BeginPopup("LV_Main"))
@@ -179,10 +233,15 @@ namespace Sandbox
 	{
 		if (ImGui::BeginPopup(id.c_str()))
 		{
-			if (id == "")
+			if (id.empty())
 			{
 				open = false;
 				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Selectable("Rename"))
+			{
+				m_renamingLayer = static_cast<int>(layerId);
 			}
 
 			if (ImGui::Selectable("Remove"))
