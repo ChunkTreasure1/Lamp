@@ -105,6 +105,7 @@ namespace Lamp
 		void RemoveLayer(uint32_t id);
 		void MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId);
 		void AddToLayer(Object* obj);
+		void RemoveFromLayer(Object* obj);
 
 		friend class LevelLoader;
 

@@ -83,6 +83,14 @@ namespace UI
 		return ImGui::TreeNodeEx(ptr_id, flags, fmt);
 	}
 
+	static bool ImageSelectable(uint32_t texId, const std::string& text, bool selected)
+	{
+		ImVec2 size = ImGui::CalcTextSize(text.c_str());
+		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::SameLine();
+		return ImGui::Selectable(text.c_str(), selected, ImGuiSelectableFlags_SpanAvailWidth);
+	}
+
 	static bool TreeNodeFramed(const std::string& text, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
 	{
 		const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |

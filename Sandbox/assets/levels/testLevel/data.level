@@ -1,0 +1,14 @@
+level:
+  name: Level
+  handle: 14311675356115887053
+  layers:
+    - layer: Main
+      id: 0
+      active: true
+    - layer: Test
+      id: 1
+      active: true
+  LevelEnvironment:
+    cameraPosition: [-7.03354406, 5.21151733, 11.0801239]
+    cameraRotation: [-0.818975627, 0.0773115009, -0.557123184, -0.113646604]
+    cameraFOV: 60

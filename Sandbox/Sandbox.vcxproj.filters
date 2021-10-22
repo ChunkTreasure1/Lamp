@@ -37,17 +37,17 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Sandbox3D">
-      <UniqueIdentifier>{A277177F-0E38-93B5-D772-DC3243F2D791}</UniqueIdentifier>
+    <Filter Include="src\Sandbox">
+      <UniqueIdentifier>{0BC25EEC-7777-D7E1-006C-D1B86C20CEE5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Sandbox3D\Actions">
-      <UniqueIdentifier>{42C75A10-AE33-160B-7727-AE68E3523873}</UniqueIdentifier>
+    <Filter Include="src\Sandbox\Actions">
+      <UniqueIdentifier>{AB6A5694-17CC-33A2-A039-7A540C9A6A61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Sandbox3D\UI">
-      <UniqueIdentifier>{8FBF51FD-7BB8-704F-A4EA-55D49042505B}</UniqueIdentifier>
+    <Filter Include="src\Sandbox\UI">
+      <UniqueIdentifier>{585D0662-442B-FA67-2DBF-6A8E192CD6CC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Sandbox3D\Windows">
-      <UniqueIdentifier>{DCA36BBB-4810-27B6-1104-BF137D2F491E}</UniqueIdentifier>
+    <Filter Include="src\Sandbox\Windows">
+      <UniqueIdentifier>{4547673F-B1A8-444D-3A16-8BFFA6767B0C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,40 +61,40 @@
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Actions\ActionHandler.h">
-      <Filter>src\Sandbox3D\Actions</Filter>
+      <Filter>src\Sandbox\Actions</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Sandbox.h">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\SandboxController.h">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\UI\AnimatedIcon.h">
-      <Filter>src\Sandbox3D\UI</Filter>
+      <Filter>src\Sandbox\UI</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\AssetManagerPanel.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\BaseWindow.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\BufferWindow.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\GraphKey.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\LayerView.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\MaterialEditor.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\RenderGraphPanel.h">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -105,43 +105,43 @@
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Actions\ActionHandler.cpp">
-      <Filter>src\Sandbox3D\Actions</Filter>
+      <Filter>src\Sandbox\Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ConfigHandler.cpp">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ImGuiRenderer.cpp">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Sandbox.cpp">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\SandboxController.cpp">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ShortcutFunctions.cpp">
-      <Filter>src\Sandbox3D</Filter>
+      <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\UI\AnimatedIcon.cpp">
-      <Filter>src\Sandbox3D\UI</Filter>
+      <Filter>src\Sandbox\UI</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\AssetManagerPanel.cpp">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\LayerView.cpp">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\MaterialEditor.cpp">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\MeshImporterPanel.cpp">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\RenderGraphPanel.cpp">
-      <Filter>src\Sandbox3D\Windows</Filter>
+      <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
@@ -173,6 +173,9 @@
       <Filter>engine\shaders\main</Filter>
     </None>
     <None Include="engine\shaders\main\lightDebug.glsl">
+      <Filter>engine\shaders\main</Filter>
+    </None>
+    <None Include="engine\shaders\main\pbrEditor.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
     <None Include="engine\shaders\main\pbrForward.glsl">

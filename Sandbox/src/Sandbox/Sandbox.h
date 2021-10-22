@@ -58,6 +58,7 @@ namespace Sandbox
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
 		bool OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e);
+		bool OnObjectSelected(Lamp::EditorObjectSelectedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();

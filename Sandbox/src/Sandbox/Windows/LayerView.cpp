@@ -2,6 +2,7 @@
 
 #include <imgui/imgui_stdlib.h>
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/Core/Application.h>
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 
@@ -15,8 +16,11 @@ namespace Sandbox
 		m_entityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
 		m_brushIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/AssetIcons/iconMesh.png");
 
-		m_visibleIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/visible.png");
-		m_frozenIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/frozen.png");
+		m_visibleIconV = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/visible_v.png");
+		m_visibleIconN = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/visible_n.png");
+
+		m_lockedIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/locked.png");
+		m_unlockedIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/unlocked.png");
 	}
 
 	void LayerView::OnEvent(Lamp::Event& e)
@@ -41,18 +45,26 @@ namespace Sandbox
 		static uint32_t idMenuOpen = 0;
 
 		const float imageSize = 20.f;
-		const float imagePadding = 10.f;
+		const float imagePadding = 5.f;
 
 		int startId = 0;
 		for (auto& layer : g_pEnv->pLevel->GetLayers())
 		{
 			std::string checkId = "###check" + std::to_string(layer.ID);
-			ImGui::Checkbox(checkId.c_str(), &layer.Active);
+
+			if (ImGui::Checkbox(checkId.c_str(), &layer.Active))
+			{
+				for (auto obj : layer.Objects)
+				{
+					obj->SetIsActive(layer.Active);
+				}
+			}
+
 			ImGui::SameLine();
 
 			std::string id = layer.Name + "###layer" + std::to_string(layer.ID);
 
-			bool open = UI::TreeNodeFramed(id, true, 0.f, { 0.f, 2.f });
+			bool open = UI::TreeNodeFramed(id, true, 0.f, { 0.f, 1.5f });
 			CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
 
 			const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
@@ -73,13 +85,24 @@ namespace Sandbox
 
 					for (auto obj : layer.Objects)
 					{
+						ImGui::PushID(startId);
 						static bool test = false;
 						ImGui::TableNextRow();
 
 						ImGui::TableNextColumn();
-						ImGui::ImageButton((ImTextureID)(m_visibleIcon->GetID()), { imageSize, imageSize }, { 0.f, 0.f }, { 1.f, 1.f }, 0);
+						uint32_t visibleIcon = obj->GetIsActive() ? m_visibleIconV->GetID() : m_visibleIconN->GetID();
+
+						if (ImGui::ImageButton((ImTextureID)(visibleIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+						{
+							obj->SetIsActive(!obj->GetIsActive());
+						}
 						ImGui::SameLine();
-						ImGui::ImageButton((ImTextureID)(m_frozenIcon->GetID()), { imageSize, imageSize }, { 0.f, 0.f }, { 1.f, 1.f }, 0);
+						
+						uint32_t lockedIcon = obj->GetIsFrozen() ? m_lockedIcon->GetID() : m_unlockedIcon->GetID();
+						if (ImGui::ImageButton((ImTextureID)(lockedIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+						{
+							obj->SetIsFrozen(!obj->GetIsFrozen());
+						}
 
 						ImGui::TableNextColumn();
 						Ref<Texture2D> icon;
@@ -91,7 +114,19 @@ namespace Sandbox
 						{
 							icon = m_entityIcon;
 						}
-						UI::ImageTreeNode(icon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
+
+						std::string id = obj->GetName() + "##" + obj->GetName() + std::to_string(obj->GetID());
+						if (UI::ImageSelectable(icon->GetID(), id, obj->GetIsSelected()))
+						{
+							EditorObjectSelectedEvent e(obj);
+							Application::Get().OnEvent(e);
+						}
+						if (ImGui::BeginDragDropSource())
+						{
+							const uint32_t values[2] = { layer.ID, obj->GetID() };
+							ImGui::SetDragDropPayload("LAYER_OBJECT", values, sizeof(uint32_t) * 2, ImGuiCond_Once);
+							ImGui::EndDragDropSource();
+						}
 
 						ImGui::TableNextColumn();
 						if (typeid(*obj) == typeid(Brush))
@@ -102,6 +137,8 @@ namespace Sandbox
 						{
 							ImGui::TextDisabled("Entity");
 						}
+						ImGui::PopID();
+						startId++;
 					}
 
 					ImGui::EndTable();
@@ -109,60 +146,6 @@ namespace Sandbox
 
 				UI::TreeNodePop();
 			}
-
-
-			//if (ImGui::TreeNode(id.c_str()))
-			//{
-			//	CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
-
-			//	std::string inputId("Name"); inputId += "###input" + std::to_string(layer.ID);
-			//	ImGui::InputText(inputId.c_str(), &layer.Name);
-
-			//	for (auto& obj : layer.Objects)
-			//	{
-			//		startId++;
-			//		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-			//		Ref<Texture2D> icon;
-			//		if (auto* brush = dynamic_cast<Lamp::Brush*>(obj))
-			//		{
-			//			icon = m_BrushIcon;
-			//		}
-			//		else
-			//		{
-			//			icon = m_EntityIcon;
-			//		}
-
-			//		UI::ImageTreeNodeEx(icon->GetID(), (void*)(intptr_t)startId, nodeFlags, obj->GetName().c_str());
-			//		if (ImGui::BeginDragDropSource())
-			//		{
-			//			const uint32_t values[2] = { layer.ID, obj->GetID() };
-			//			ImGui::SetDragDropPayload("LAYER_OBJECT", values, sizeof(uint32_t) * 2, ImGuiCond_Once);
-			//			ImGui::EndDragDropSource();
-			//		}
-
-			//		if (ImGui::IsItemClicked())
-			//		{
-			//			if (m_pSelectedObject)
-			//			{
-			//				m_pSelectedObject->SetIsSelected(false);
-			//			}
-
-			//			m_pSelectedObject = obj;
-
-			//			if (m_pSelectedObject)
-			//			{
-			//				m_pSelectedObject->SetIsSelected(true);
-			//			}
-			//		}
-			//	}
-
-			//	ImGui::TreePop();
-			//}
-			//else
-			//{
-			//	CollapsingHeaderAddons(currentRightClick, id, itemMenuOpen, idMenuOpen, layer.ID);
-			//}
 		}
 
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered() && !itemMenuOpen)

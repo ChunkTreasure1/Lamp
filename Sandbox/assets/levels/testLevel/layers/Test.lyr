@@ -1,0 +1,8 @@
+layer:
+  name: Test
+  id: 1
+  active: true
+  entities:
+    []
+  brushes:
+    []

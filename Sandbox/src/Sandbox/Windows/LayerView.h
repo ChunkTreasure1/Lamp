@@ -25,7 +25,11 @@ namespace Sandbox
 		Lamp::Object* m_pSelectedObject = nullptr;
 		Ref<Lamp::Texture2D> m_entityIcon;
 		Ref<Lamp::Texture2D> m_brushIcon;
-		Ref<Lamp::Texture2D> m_visibleIcon;
-		Ref<Lamp::Texture2D> m_frozenIcon;
+
+		Ref<Lamp::Texture2D> m_visibleIconV;
+		Ref<Lamp::Texture2D> m_visibleIconN;
+		
+		Ref<Lamp::Texture2D> m_lockedIcon;
+		Ref<Lamp::Texture2D> m_unlockedIcon;
 	};
 }

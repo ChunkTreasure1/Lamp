@@ -34,8 +34,8 @@ namespace Sandbox
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
-		m_pLevel = ResourceCache::GetAsset<Level>("assets/testLevel.level");
-		m_pLevel->SetSkybox("assets/textures/monbachtal_riverbank_4k.hdr");
+		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+		m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
 		//Make sure the sandbox controller is created after level has been loaded
@@ -188,6 +188,7 @@ namespace Sandbox
 		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(Sandbox::OnKeyPressed));
 		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox::OnImGuiBegin));
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox::OnViewportSizeChanged));
+		dispatcher.Dispatch<EditorObjectSelectedEvent>(LP_BIND_EVENT_FN(Sandbox::OnObjectSelected));
 	}
 
 	bool Sandbox::OnKeyPressed(KeyPressedEvent& e)
@@ -301,6 +302,18 @@ namespace Sandbox
 
 		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
 
+		return false;
+	}
+
+	bool Sandbox::OnObjectSelected(Lamp::EditorObjectSelectedEvent& e)
+	{
+		if (m_pSelectedObject)
+		{
+			m_pSelectedObject->SetIsSelected(false);
+		}
+
+		m_pSelectedObject = e.GetObject();
+		m_pSelectedObject->SetIsSelected(true);
 		return false;
 	}
 

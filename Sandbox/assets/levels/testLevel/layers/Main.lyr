@@ -1,0 +1,35 @@
+layer:
+  name: Main
+  id: 0
+  active: true
+  entities:
+    - entity: Entity
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: DirectionalLightComponent
+          params:
+            - param: Intensity
+              type: Float
+              value: 1
+            - param: Color
+              type: Color3
+              value: [1, 1, 1]
+            - param: Cast Shadows
+              type: Bool
+              value: true
+  brushes:
+    - brush: Brush
+      meshHandle: 10335344246315033883
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [20, 1, 20]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 1849076596110463034
+      position: [0, 0.419199944, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0

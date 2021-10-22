@@ -311,6 +311,18 @@ namespace Lamp
 		}
 	}
 
+	void Level::RemoveFromLayer(Object* obj)
+	{
+		for (auto& layer : m_Layers)
+		{
+			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj); it != layer.Objects.end())
+			{
+				layer.Objects.erase(it);
+				break;
+			}
+		}
+	}
+
 	void Level::RenderLevel(Ref<CameraBase> camera)
 	{
 		if (const auto& graph = Renderer::s_pSceneData->renderGraph)

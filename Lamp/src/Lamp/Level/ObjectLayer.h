@@ -13,6 +13,8 @@ namespace Lamp
 			: Name(name), ID(id), Active(active)
 		{}
 
+		~ObjectLayer();
+
 		std::string Name;
 		uint32_t ID;
 		bool Active;

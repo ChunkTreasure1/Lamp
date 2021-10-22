@@ -29,4 +29,20 @@ namespace Lamp
 		uint32_t m_Width;
 		uint32_t m_Height;
 	};
+
+	class EditorObjectSelectedEvent : public Event
+	{
+	public:
+		EditorObjectSelectedEvent(Object* obj)
+			: m_pObject(obj)
+		{}
+
+		inline Object* GetObject() { return m_pObject; }
+
+		EVENT_CLASS_CATEGORY(EventCategoryEditor);
+		EVENT_CLASS_TYPE(EditorObjectSelected);
+
+	private:
+		Object* m_pObject;
+	};
 }

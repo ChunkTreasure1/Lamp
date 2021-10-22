@@ -152,13 +152,21 @@ namespace Sandbox
 				{
 					if (typeid(*m_pSelectedObject) == typeid(Lamp::Brush))
 					{
+						m_pSelectedObject->SetIsSelected(false);
+
 						auto brush = static_cast<Lamp::Brush*>(m_pSelectedObject);
 						m_pSelectedObject = Lamp::Brush::Duplicate(brush, true);
+
+						m_pSelectedObject->SetIsSelected(true);
 					}
 					else if (typeid(*m_pSelectedObject) == typeid(Lamp::Entity))
 					{
+						m_pSelectedObject->SetIsSelected(false);
+
 						auto entity = static_cast<Lamp::Entity*>(m_pSelectedObject);
 						m_pSelectedObject = Lamp::Entity::Duplicate(entity, true);
+
+						m_pSelectedObject->SetIsSelected(true);
 					}
 
 					hasDuplicated = true;
@@ -229,20 +237,29 @@ namespace Sandbox
 				{
 					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
-					if (m_pSelectedObject)
+					Object* newSelected = Lamp::Entity::Get(pixelData);
+					if (!newSelected)
 					{
-						m_pSelectedObject->SetIsSelected(false);
+						newSelected = Lamp::Brush::Get(pixelData);
 					}
 
-					m_pSelectedObject = Lamp::Entity::Get(pixelData);
-					if (!m_pSelectedObject)
+					if (newSelected && !newSelected->GetIsFrozen())
 					{
-						m_pSelectedObject = Lamp::Brush::Get(pixelData);
-					}
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(false);
+						}
 
-					if (m_pSelectedObject)
+						newSelected->SetIsSelected(true);
+						m_pSelectedObject = newSelected;
+					}
+					else
 					{
-						m_pSelectedObject->SetIsSelected(true);
+						if (m_pSelectedObject)
+						{
+							m_pSelectedObject->SetIsSelected(false);
+						}
+						m_pSelectedObject = nullptr;
 					}
 				}
 

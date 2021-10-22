@@ -17,7 +17,7 @@ namespace Lamp
 		virtual void Destroy() override;
 
 		//Getting
-		inline Ref<Mesh>& GetModel() { return m_Mesh; }
+		inline const Ref<Mesh>& GetModel() const { return m_Mesh; }
 
 	public:
 		static Brush* Create(const std::string& path);

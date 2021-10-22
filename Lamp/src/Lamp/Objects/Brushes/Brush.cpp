@@ -21,6 +21,7 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
+		g_pEnv->pLevel->RemoveFromLayer(this);
 		g_pEnv->pLevel->GetBrushes().erase(m_Id);
 
 		delete this;
@@ -100,7 +101,10 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{	
-		m_Mesh->Render(m_Id, GetTransform());
+		if (m_IsActive)
+		{
+			m_Mesh->Render(m_Id, GetTransform());
+		}
 
 		return false;
 	}
