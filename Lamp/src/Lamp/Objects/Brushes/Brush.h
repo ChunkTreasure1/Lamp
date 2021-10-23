@@ -17,11 +17,11 @@ namespace Lamp
 		virtual void Destroy() override;
 
 		//Getting
-		inline Ref<Mesh>& GetModel() { return m_Mesh; }
+		inline const Ref<Mesh>& GetModel() const { return m_Mesh; }
 
 	public:
-		static Brush* Create(const std::string& path);
-		static Brush* Create(const std::string& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name);
+		static Brush* Create(const std::filesystem::path& path);
+		static Brush* Create(const std::filesystem::path& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name);
 		static Brush* Duplicate(Brush* main, bool addToLevel);
 		static Brush* Get(uint32_t id);
 

@@ -39,8 +39,8 @@ namespace Sandbox
 
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
 
-		virtual void OnImGuiRender(Lamp::Timestep ts) override;
-		virtual void OnEvent(Lamp::Event& e) override;
+		void OnImGuiRender(Lamp::Timestep ts) override;
+		void OnEvent(Lamp::Event& e) override;
 
 	private:
 		void CreateDockspace();
@@ -58,6 +58,7 @@ namespace Sandbox
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 		bool OnImGuiBegin(Lamp::ImGuiBeginEvent& e);
 		bool OnViewportSizeChanged(Lamp::EditorViewportSizeChangedEvent& e);
+		bool OnObjectSelected(Lamp::EditorObjectSelectedEvent& e);
 
 		//ImGui
 		void UpdatePerspective();
@@ -102,10 +103,7 @@ namespace Sandbox
 
 		//Perspective
 		bool m_PerspectiveOpen = true;
-		const float m_AspectRatio = 1.7f;
 		bool m_PerspectiveFocused = false;
-		bool m_HaveUndone = false;
-		bool m_IsPlaying = false;
 		bool m_RightMousePressed = false;
 
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;

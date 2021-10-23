@@ -29,7 +29,7 @@ namespace Lamp
 		virtual void Destroy() override;
 
 		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
-		inline bool GetSaveable() { return m_ShouldBeSaved; }
+		inline const bool GetSaveable() const { return m_ShouldBeSaved; }
 
 		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_GraphKeyGraph = graph; }
 		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }

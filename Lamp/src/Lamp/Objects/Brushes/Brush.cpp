@@ -21,12 +21,13 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
+		g_pEnv->pLevel->RemoveFromLayer(this);
 		g_pEnv->pLevel->GetBrushes().erase(m_Id);
 
 		delete this;
 	}
 
-	Brush* Brush::Create(const std::string& path)
+	Brush* Brush::Create(const std::filesystem::path& path)
 	{
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
 		Brush* brush = new Brush(model);
@@ -38,7 +39,7 @@ namespace Lamp
 		return brush;
 	}
 
-	Brush* Brush::Create(const std::string& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
+	Brush* Brush::Create(const std::filesystem::path& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
 	{
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
 		Brush* brush = new Brush(model);
@@ -100,7 +101,10 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{	
-		m_Mesh->Render(m_Id, GetTransform());
+		if (m_IsActive)
+		{
+			m_Mesh->Render(m_Id, GetTransform());
+		}
 
 		return false;
 	}

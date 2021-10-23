@@ -64,13 +64,14 @@ namespace Lamp
 		}
 
 		Level()
-		{}
+		{
+			//Reserve 100 layer slots
+			m_Layers.reserve(100);
+		}
 
 		Level(const Level& level);
 
-		~Level()
-		{
-		}
+		~Level();
 
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
 		inline const std::string& GetName() { return m_Name; }
@@ -85,12 +86,14 @@ namespace Lamp
 		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
 
 		static AssetType GetStaticType() { return AssetType::Level; }
-		virtual AssetType GetType() override { return GetStaticType(); }
+		AssetType GetType() override { return GetStaticType(); }
 
 		void OnEvent(Event& e);
 		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);
 		void UpdateSimulation(Timestep ts, Ref<CameraBase>& camera);
 		void UpdateRuntime(Timestep ts);
+
+		void Shutdown();
 
 		void OnRuntimeStart();
 		void OnRuntimeEnd();
@@ -105,6 +108,7 @@ namespace Lamp
 		void RemoveLayer(uint32_t id);
 		void MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId);
 		void AddToLayer(Object* obj);
+		void RemoveFromLayer(Object* obj);
 
 		friend class LevelLoader;
 

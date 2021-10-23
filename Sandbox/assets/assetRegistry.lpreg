@@ -1,12 +1,16 @@
 Assets:
   - Handle: 16897032606846204281
     Path: assets/editor.rendergraph
+  - Handle: 14311675356115887053
+    Path: assets/levels/testLevel/data.level
   - Handle: 10335344246315033883
     Path: assets\models\cube.lgf
   - Handle: 13551055251788859933
     Path: assets\models\sphere.lgf
   - Handle: 9317505486348122308
     Path: assets\models\sponza.lgf
+  - Handle: 1554070060000114675
+    Path: assets\models\teddy.lgf
   - Handle: 14877024273708001692
     Path: assets/testGraph.rendergraph
   - Handle: 14311675356115887053
@@ -53,6 +57,14 @@ Assets:
     Path: engine/textures/ui/directoryIcon.png
   - Handle: 11535979565681188853
     Path: engine/textures/ui/files.png
+  - Handle: 9875380136337216300
+    Path: engine/textures/ui/layerView/locked.png
+  - Handle: 6083366095981541132
+    Path: engine/textures/ui/layerView/unlocked.png
+  - Handle: 14471577020628928
+    Path: engine/textures/ui/layerView/visible_n.png
+  - Handle: 7587795120753172420
+    Path: engine/textures/ui/layerView/visible_v.png
   - Handle: 17945416414219562556
     Path: engine/textures/ui/newIcon.png
   - Handle: 382669663917100860

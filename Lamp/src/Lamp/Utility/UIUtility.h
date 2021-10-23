@@ -72,12 +72,23 @@ namespace UI
 		ImGui::Text(text.c_str());
 	}
 
-	static bool ImageTreeNodeEx(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
+	static bool ImageTreeNode(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
 	{
+		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
+		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
+
 		ImVec2 size = ImGui::CalcTextSize(fmt);
 		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
 		return ImGui::TreeNodeEx(ptr_id, flags, fmt);
+	}
+
+	static bool ImageSelectable(uint32_t texId, const std::string& text, bool selected)
+	{
+		ImVec2 size = ImGui::CalcTextSize(text.c_str());
+		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::SameLine();
+		return ImGui::Selectable(text.c_str(), selected, ImGuiSelectableFlags_SpanAvailWidth);
 	}
 
 	static bool TreeNodeFramed(const std::string& text, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
@@ -92,7 +103,6 @@ namespace UI
 		else
 		{
 			UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
-			UI::ScopedStyleFloat2 framePad(ImGuiStyleVar_FramePadding, padding);
 
 			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
 		}

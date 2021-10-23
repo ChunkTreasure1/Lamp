@@ -10,6 +10,9 @@
 #include "Lamp/GraphKey/NodeRegistry.h"
 #include "Lamp/Rendering/RenderGraph/RenderGraph.h"
 
+#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Brushes/Brush.h"
+
 namespace Lamp
 {
 	RenderUtils::~RenderUtils()
@@ -98,7 +101,7 @@ namespace Lamp
 			}
 		}
 
-		for (auto layer : level.m_Layers)
+		for (const auto& layer : level.m_Layers)
 		{
 			ObjectLayer l(layer.Name, layer.ID, layer.Active);
 			m_Layers.push_back(l);
@@ -129,6 +132,11 @@ namespace Lamp
 		m_skybox = level.m_skybox;
 		m_Environment = level.m_Environment;
 		m_Name = level.m_Name;
+	}
+
+	Level::~Level()
+	{
+
 	}
 
 	void Level::OnEvent(Event& e)
@@ -187,6 +195,21 @@ namespace Lamp
 			OnEvent(e);
 
 			RenderLevel(camera);
+		}
+	}
+
+	void Level::Shutdown()
+	{
+		for (auto& ent : m_Entities)
+		{
+			delete ent.second;
+			ent.second = nullptr;
+		}
+
+		for (auto& brush : m_Brushes)
+		{
+			delete brush.second;
+			brush.second = nullptr;
 		}
 	}
 
@@ -307,6 +330,18 @@ namespace Lamp
 			{
 				layer.Objects.push_back(obj);
 				return;
+			}
+		}
+	}
+
+	void Level::RemoveFromLayer(Object* obj)
+	{
+		for (auto& layer : m_Layers)
+		{
+			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj); it != layer.Objects.end())
+			{
+				layer.Objects.erase(it);
+				break;
 			}
 		}
 	}

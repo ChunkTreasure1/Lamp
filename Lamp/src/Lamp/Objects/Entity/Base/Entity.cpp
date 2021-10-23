@@ -23,6 +23,11 @@ namespace Lamp
 
 	void Entity::OnEvent(Event& e)
 	{
+		if (!m_IsActive)
+		{
+			return;
+		}
+
 		for (const auto& comp : m_pComponents)
 		{
 			comp->OnEvent(e);
@@ -40,6 +45,7 @@ namespace Lamp
 	void Entity::Destroy()
 	{
 		auto& entites = g_pEnv->pLevel->GetEntities();
+		g_pEnv->pLevel->RemoveFromLayer(this);
 
 		entites.erase(m_Id);
 		delete this;
@@ -262,7 +268,7 @@ namespace Lamp
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)
 	{
-		if (g_pEnv->ShouldRenderGizmos)
+		if (g_pEnv->ShouldRenderGizmos && m_IsActive)
 		{
 			glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
 

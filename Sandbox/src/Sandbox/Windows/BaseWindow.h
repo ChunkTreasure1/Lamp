@@ -33,6 +33,8 @@ namespace Sandbox
 	protected:
 		std::string m_Name;
 		bool m_IsOpen;
+		bool m_isFocused;
+
 		ActionHandler m_ActionHandler;
 
 		std::vector<RenderFunc> m_RenderFuncs;

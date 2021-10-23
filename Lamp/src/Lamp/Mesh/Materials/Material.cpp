@@ -18,7 +18,7 @@ namespace Lamp
 		m_pTextures.clear();
 		for (auto& name : shader->GetSpecifications().TextureNames)
 		{
-			m_pTextures.emplace(std::pair<std::string, Ref<Texture2D>>(name, ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png")));
+			m_pTextures.emplace(name, ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png"));
 		}
 
 		m_pShader = shader;
