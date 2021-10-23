@@ -16,156 +16,170 @@
 #include "Lamp/Event/ApplicationEvent.h"
 namespace Lamp
 {
-	class GraphKeyGraph;
-	class EntityManager;
+class GraphKeyGraph;
+class EntityManager;
 
-	class Entity : public Object
-	{
-	public:
-		Entity();
-		~Entity() {}
+class Entity : public Object
+{
+public:
+    Entity();
+    ~Entity() {}
 
-		virtual void OnEvent(Event& e) override;
-		virtual void Destroy() override;
+    virtual void OnEvent(Event& e) override;
+    virtual void Destroy() override;
 
-		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
-		inline const bool GetSaveable() const { return m_ShouldBeSaved; }
+    inline void SetSaveable(bool state) {
+        m_ShouldBeSaved = state;
+    }
+    inline const bool GetSaveable() const {
+        return m_ShouldBeSaved;
+    }
 
-		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_GraphKeyGraph = graph; }
-		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }
+    inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) {
+        m_GraphKeyGraph = graph;
+    }
+    inline Ref<GraphKeyGraph>& GetGraphKeyGraph() {
+        return m_GraphKeyGraph;
+    }
 
-		inline void SetGizmoMaterial(Ref<Material> mat) { m_GizmoMaterial = mat; }
-		inline const Ref<Material> GetGizmoMaterial() { return m_GizmoMaterial; }
+    inline void SetGizmoMaterial(Ref<Material> mat) {
+        m_GizmoMaterial = mat;
+    }
+    inline const Ref<Material> GetGizmoMaterial() {
+        return m_GizmoMaterial;
+    }
 
-		//Getting
-		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
+    //Getting
+    inline const std::vector<Ref<EntityComponent>>& GetComponents() const {
+        return m_pComponents;
+    }
 
-		template<typename T>
-		Ref<T> GetComponent()
-		{
-			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
-			{
-				return std::dynamic_pointer_cast<T>(it->second);
-			}
+    template<typename T>
+    Ref<T> GetComponent()
+    {
+        if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
+        {
+            return std::dynamic_pointer_cast<T>(it->second);
+        }
 
-			return Ref<T>(nullptr);
-		}
+        return Ref<T>(nullptr);
+    }
 
-		template<typename T, typename... TArgs>
-		Ref<T> GetOrCreateComponent(TArgs&&... mArgs)
-		{
-			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it == m_pComponentMap.end())
-			{
-				Ref<T> c(new T(std::forward<TArgs>(mArgs)...));
-				c->m_pEntity = this;
+    template<typename T, typename... TArgs>
+    Ref<T> GetOrCreateComponent(TArgs&&... mArgs)
+    {
+        if (auto it = m_pComponentMap.find(T::GetFactoryName()); it == m_pComponentMap.end())
+        {
+            Ref<T> c(new T(std::forward<TArgs>(mArgs)...));
+            c->m_pEntity = this;
 
-				m_pComponents.push_back(c);
-				m_pComponentMap[T::GetFactoryName()] = c;
+            m_pComponents.push_back(c);
+            m_pComponentMap[T::GetFactoryName()] = c;
 
-				c->Initialize();
+            c->Initialize();
 
-				return c;
-			}
-			else
-			{
-				return std::dynamic_pointer_cast<T>(it->second);
-			}
-		}
-		
+            return c;
+        }
+        else
+        {
+            return std::dynamic_pointer_cast<T>(it->second);
+        }
+    }
 
-		template<typename T>
-		bool HasComponent()
-		{
-			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
-			{
-				return true;
-			}
 
-			return false;
-		}
+    template<typename T>
+    bool HasComponent()
+    {
+        if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
+        {
+            return true;
+        }
 
-		bool HasComponent(const std::string& name)
-		{
-			if (auto it = m_pComponentMap.find(name); it != m_pComponentMap.end())
-			{
-				return true;
-			}
+        return false;
+    }
 
-			return false;
-		}
+    bool HasComponent(const std::string& name)
+    {
+        if (auto it = m_pComponentMap.find(name); it != m_pComponentMap.end())
+        {
+            return true;
+        }
 
-		bool AddComponent(Ref<EntityComponent> comp)
-		{
-			std::string str = comp->GetName();
-			str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+        return false;
+    }
 
-			if (auto it = m_pComponentMap.find(str); it == m_pComponentMap.end())
-			{
-				comp->m_pEntity = this;
-				comp->Initialize();
+    bool AddComponent(Ref<EntityComponent> comp)
+    {
+        std::string str = comp->GetName();
+        str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
 
-				m_pComponents.push_back(comp);
-				m_pComponentMap[str] = comp;
-				return true;
-			}
+        if (auto it = m_pComponentMap.find(str); it == m_pComponentMap.end())
+        {
+            comp->m_pEntity = this;
+            comp->Initialize();
 
-			return false;
-		}
+            m_pComponents.push_back(comp);
+            m_pComponentMap[str] = comp;
+            return true;
+        }
 
-		bool RemoveComponent(Ref<EntityComponent> comp)
-		{
-			auto it = std::find(m_pComponents.begin(), m_pComponents.end(), comp);
-			if (it != m_pComponents.end())
-			{
-				m_pComponents.erase(it);
+        return false;
+    }
 
-				if (auto t = m_pComponentMap.find(comp->GetName()); t != m_pComponentMap.end())
-				{
-					m_pComponentMap.erase(t);
-					return true;
-				}
-			}
+    bool RemoveComponent(Ref<EntityComponent> comp)
+    {
+        auto it = std::find(m_pComponents.begin(), m_pComponents.end(), comp);
+        if (it != m_pComponents.end())
+        {
+            m_pComponents.erase(it);
 
-			return false;
-		}
+            if (auto t = m_pComponentMap.find(comp->GetName()); t != m_pComponentMap.end())
+            {
+                m_pComponentMap.erase(t);
+                return true;
+            }
+        }
 
-		template<typename T>
-		bool RemoveComponent()
-		{
-			for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
-			{
-				if (it->get()->GetName() == T::GetFactoryName())
-				{
-					m_pComponents.erase(it);
+        return false;
+    }
 
-					if (auto t = m_pComponentMap.find(T::GetFactoryName()); t != m_pComponentMap.end())
-					{
-						m_pComponentMap.erase(t);
-						return true;
-					}
+    template<typename T>
+    bool RemoveComponent()
+    {
+        for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+        {
+            if (it->get()->GetName() == T::GetFactoryName())
+            {
+                m_pComponents.erase(it);
 
-					return true;
-				}
-			}
+                if (auto t = m_pComponentMap.find(T::GetFactoryName()); t != m_pComponentMap.end())
+                {
+                    m_pComponentMap.erase(t);
+                    return true;
+                }
 
-			return false;
-		}
+                return true;
+            }
+        }
 
-	public:
-		static Entity* Create(bool saveable = false, uint32_t layer = 0);
-		static Entity* Get(uint32_t id);
-		static Entity* Duplicate(Entity* entity, bool addToLevel = true);
+        return false;
+    }
 
-	private:
-		bool OnRenderEvent(AppRenderEvent& e);
+public:
+    static Entity* Create(bool saveable = false, uint32_t layer = 0);
+    static Entity* Get(uint32_t id);
+    static Entity* Duplicate(Entity* entity, bool addToLevel = true);
 
-	private:
-		bool m_ShouldBeSaved = false;
+private:
+    bool OnRenderEvent(AppRenderEvent& e);
 
-		Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
-		Ref<Material> m_GizmoMaterial;
+private:
+    bool m_ShouldBeSaved = false;
 
-		std::vector<Ref<EntityComponent>> m_pComponents;
-		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;
-	};
+    Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
+    Ref<Material> m_GizmoMaterial;
+
+    std::vector<Ref<EntityComponent>> m_pComponents;
+    std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;
+};
 }

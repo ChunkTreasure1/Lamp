@@ -19,148 +19,148 @@ namespace Lamp
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
-	void UpdateAssetManager(bool& running)
-	{
-		while (running)
-		{
-			g_pEnv->pAssetManager->Update();
-		}
-	}
+void UpdateAssetManager(bool& running)
+{
+    while (running)
+    {
+        g_pEnv->pAssetManager->Update();
+    }
+}
 
-	Application* Application::s_pInstance = nullptr;
+Application* Application::s_pInstance = nullptr;
 
-	Application::Application()
-	{
-		LP_PROFILE_FUNCTION();
-		s_pInstance = this;
-		g_pEnv = new GlobalEnvironment();
+Application::Application()
+{
+    LP_PROFILE_FUNCTION();
+    s_pInstance = this;
+    g_pEnv = new GlobalEnvironment();
 
-		g_pEnv->pAssetManager = new AssetManager();
+    g_pEnv->pAssetManager = new AssetManager();
 
-		//Create the window
-		WindowProps props;
-		props.Height = 720;
-		props.Width = 1280;
-		props.IsVSync = false;
-		props.Title = "Lamp";
+    //Create the window
+    WindowProps props;
+    props.Height = 720;
+    props.Width = 1280;
+    props.IsVSync = false;
+    props.Title = "Lamp";
 
-		m_pWindow = Window::Create(props);
-		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+    m_pWindow = Window::Create(props);
+    m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		Renderer::Initialize();
-		AudioEngine::Initialize();
-		Physics::Initialize();
+    Renderer::Initialize();
+    AudioEngine::Initialize();
+    Physics::Initialize();
 
-		m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_Running));
+    m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_Running));
 
-		//Setup the GUI system
-		m_pImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_pImGuiLayer);
-	}
+    //Setup the GUI system
+    m_pImGuiLayer = new ImGuiLayer();
+    PushOverlay(m_pImGuiLayer);
+}
 
-	Application::~Application()
-	{
-		LP_PROFILE_FUNCTION();
-		AudioEngine::Shutdown();
-		Renderer::Shutdown();
-		
-		m_AssetManagerThread.join();
+Application::~Application()
+{
+    LP_PROFILE_FUNCTION();
+    AudioEngine::Shutdown();
+    Renderer::Shutdown();
 
-		g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
+    m_AssetManagerThread.join();
 
-		delete g_pEnv->pAssetManager;
-		delete g_pEnv;
-	}
+    g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
 
-	void Application::Run()
-	{
-		while (m_Running)
-		{
-			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
-			float time = (float)glfwGetTime();
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
+    delete g_pEnv->pAssetManager;
+    delete g_pEnv;
+}
 
-			m_FrameTime.Begin();
+void Application::Run()
+{
+    while (m_Running)
+    {
+        LP_PROFILE_SCOPE("Application::Run::TotalLoop");
+        float time = (float)glfwGetTime();
+        Timestep timestep = time - m_LastFrameTime;
+        m_LastFrameTime = time;
 
-			AudioEngine::Update();
-			//Load 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateLayers")
-					AppUpdateEvent e(timestep);
+        m_FrameTime.Begin();
 
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnEvent(e);
-				}
-			}
+        AudioEngine::Update();
+        //Load
+        {
+            LP_PROFILE_SCOPE("Application::UpdateLayers")
+            AppUpdateEvent e(timestep);
 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateImGui")
+            for (Layer* pLayer : m_LayerStack)
+            {
+                pLayer->OnEvent(e);
+            }
+        }
 
-					m_pImGuiLayer->Begin();
+        {
+            LP_PROFILE_SCOPE("Application::UpdateImGui")
 
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnImGuiRender(timestep);
-				}
+            m_pImGuiLayer->Begin();
 
-				m_pImGuiLayer->End();
-			}
+            for (Layer* pLayer : m_LayerStack)
+            {
+                pLayer->OnImGuiRender(timestep);
+            }
 
-			m_pWindow->Update(timestep);
+            m_pImGuiLayer->End();
+        }
 
-			m_FrameTime.End();
-		}
-	}
+        m_pWindow->Update(timestep);
 
-	void Application::OnEvent(Event& e)
-	{
-		LP_PROFILE_FUNCTION();
-		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+        m_FrameTime.End();
+    }
+}
 
-		////Handle rest of events
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-		{
-			(*--it)->OnEvent(e);
-			if (e.Handled)
-			{
-				break;
-			}
-		}
-	}
+void Application::OnEvent(Event& e)
+{
+    LP_PROFILE_FUNCTION();
+    EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-	void Application::PushLayer(Layer* pLayer)
-	{
-		m_LayerStack.PushLayer(pLayer);
-	}
+    ////Handle rest of events
+    for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+    {
+        (*--it)->OnEvent(e);
+        if (e.Handled)
+        {
+            break;
+        }
+    }
+}
 
-	void Application::PushOverlay(Layer* pLayer)
-	{
-		m_LayerStack.PushOverlay(pLayer);
-	}
+void Application::PushLayer(Layer* pLayer)
+{
+    m_LayerStack.PushLayer(pLayer);
+}
 
-	bool Application::OnWindowClose(WindowCloseEvent& e)
-	{
-		m_Running = false;
-		return false;
-	}
+void Application::PushOverlay(Layer* pLayer)
+{
+    m_LayerStack.PushOverlay(pLayer);
+}
 
-	bool Application::OnWindowResize(WindowResizeEvent& e)
-	{
-		if (e.GetWidth() == 0 && e.GetHeight() == 0)
-		{
-			m_Minimized = true;
-			return false;
-		}
-		else
-		{
-			m_Minimized = false;
-		}
+bool Application::OnWindowClose(WindowCloseEvent& e)
+{
+    m_Running = false;
+    return false;
+}
 
-		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
-		return false;
-	}
+bool Application::OnWindowResize(WindowResizeEvent& e)
+{
+    if (e.GetWidth() == 0 && e.GetHeight() == 0)
+    {
+        m_Minimized = true;
+        return false;
+    }
+    else
+    {
+        m_Minimized = false;
+    }
+
+    RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
+    return false;
+}
 }
