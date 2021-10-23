@@ -17,13 +17,13 @@ namespace Lamp
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_ValidateDataStructure;
 
-	Ref<Mesh> MeshImporter::ImportMesh(const std::filesystem::path& path)
+	Ref<Mesh> MeshImporter::ImportMesh(const ImportSettings& settings)
 	{
 		std::map<uint32_t, Ref<Material>> materials;
-		std::vector<Ref<SubMesh>> meshes = LoadMesh(path, materials);
+		std::vector<Ref<SubMesh>> meshes = LoadMesh(settings, materials);
 		if (meshes.empty())
 		{
-			LP_CORE_WARN("Failed to load mesh {0}!", path.string().c_str());
+			LP_CORE_WARN("Failed to load mesh {0}!", settings.path.string().c_str());
 			Ref<Mesh> asset = CreateRef<Mesh>();
 			asset->SetFlag(AssetFlag::Invalid);
 			return asset;
@@ -74,17 +74,17 @@ namespace Lamp
 		boundingBox.Max = glm::vec3(xMax, yMax, zMax);
 		boundingBox.Min = glm::vec3(xMin, yMin, zMin);
 
-		Ref<Mesh> mesh = CreateRef<Mesh>(path.stem().string(), meshes, materials, boundingBox);
+		Ref<Mesh> mesh = CreateRef<Mesh>(settings.path.stem().string(), meshes, materials, boundingBox);
 
 		return mesh;
 	}
 
-	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const std::filesystem::path& path, std::map<uint32_t, Ref<Material>>& materials)
+	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const ImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials)
 	{
 		Assimp::Importer importer;
 		std::vector<Ref<SubMesh>> meshes;
 
-		const aiScene* pScene = importer.ReadFile(path.string(), s_MeshImportFlags);
+		const aiScene* pScene = importer.ReadFile(settings.path.string(), s_MeshImportFlags);
 		if (!pScene)
 		{
 			return meshes;
@@ -97,7 +97,7 @@ namespace Lamp
 			return meshes;
 		}
 
-		ProcessNode(pScene->mRootNode, pScene, meshes);
+		ProcessNode(pScene->mRootNode, pScene, meshes, settings.units);
 
 		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
 		{
@@ -107,24 +107,38 @@ namespace Lamp
 		return meshes;
 	}
 
-	void MeshImporter::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes)
+	void MeshImporter::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes, Units units)
 	{
 		for (size_t i = 0; i < pNode->mNumMeshes; i++)
 		{
 			aiMesh* pMesh = pScene->mMeshes[pNode->mMeshes[i]];
-			meshes.push_back(ProcessMesh(pMesh, pScene));
+			meshes.push_back(ProcessMesh(pMesh, pScene, units));
 		}
 
 		for (size_t i = 0; i < pNode->mNumChildren; i++)
 		{
-			ProcessNode(pNode->mChildren[i], pScene, meshes);
+			ProcessNode(pNode->mChildren[i], pScene, meshes, units);
 		}
 	}
 
-	Ref<SubMesh> MeshImporter::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
+	Ref<SubMesh> MeshImporter::ProcessMesh(aiMesh* pMesh, const aiScene* pScene, Units units)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
+
+		float scale = 1.f;
+		switch (units)
+		{
+			case Lamp::Units::Centimeters:
+				scale = 1.f;
+				break;
+			case Lamp::Units::Decimeters:
+				scale = 0.1f;
+				break;
+			case Lamp::Units::Meters:
+				scale = 0.01f;
+				break;
+		}
 
 		for (size_t i = 0; i < pMesh->mNumVertices; i++)
 		{
@@ -136,9 +150,9 @@ namespace Lamp
 			glm::vec3 bitangent;
 			glm::vec2 texCoords;
 
-			pos.x = pMesh->mVertices[i].x * 0.5f;
-			pos.y = pMesh->mVertices[i].y * 0.5f;
-			pos.z = pMesh->mVertices[i].z * 0.5f;
+			pos.x = pMesh->mVertices[i].x * scale;
+			pos.y = pMesh->mVertices[i].y * scale;
+			pos.z = pMesh->mVertices[i].z * scale;
 
 			normal.x = pMesh->mNormals[i].x;
 			normal.y = pMesh->mNormals[i].y;

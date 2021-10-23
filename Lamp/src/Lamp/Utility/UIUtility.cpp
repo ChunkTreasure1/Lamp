@@ -9,6 +9,16 @@ bool UI::InputTextOnSameline(std::string& string, const std::string& id)
 	return ImGui::InputText(id.c_str(), &string);
 }
 
+bool UI::Property(const std::string& text, const std::string& value)
+{
+	if (ImGui::InputText(text.c_str(), &const_cast<std::string&>(value)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool UI::Property(const std::string& text, std::string& value)
 {
 	if (ImGui::InputText(text.c_str(), &value))

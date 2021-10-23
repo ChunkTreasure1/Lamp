@@ -4,14 +4,10 @@
 
 #include "BaseWindow.h"
 
+#include <Lamp/AssetSystem/MeshImporter.h>
+
 namespace Sandbox
 {
-	struct ImportSettings
-	{
-		float MeshScale = 1.f;
-		glm::vec3 MeshUp = { 0.f, 1.f, 0.f };
-	};
-
 	class MeshImporterPanel : public BaseWindow
 	{
 	public:
@@ -30,6 +26,7 @@ namespace Sandbox
 		void UpdateMeshConstruction();
 
 		void Render();
+		void LoadMesh();
 
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool Update(Lamp::AppUpdateEvent& e);
@@ -44,7 +41,6 @@ namespace Sandbox
 		bool m_renderGrid = true;
 		glm::vec2 m_perspectiveSize;
 		std::string m_savePath;
-		std::string m_sourcePath;
 
 		Ref<Lamp::Mesh> m_modelToImport;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
@@ -59,6 +55,6 @@ namespace Sandbox
 		Ref<Lamp::RenderGraph> m_renderGraph;
 
 		//Import settings
-		ImportSettings m_importSettings;
+		Lamp::ImportSettings m_importSettings;
 	};
 }

@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <vector>
 
 namespace UI
 {
@@ -146,13 +147,9 @@ namespace UI
 		ImGui::SameLine(offsetX, spacing);
 	}
 
-	static bool BeginProperties(const std::string& name = "", bool showHeader = false)
+	static bool BeginProperties(const std::string& name = "")
 	{
 		ImGuiTableFlags flags;
-		if (showHeader)
-		{
-			ImGui::TableHeader(name.c_str());
-		}
 		PushId();
 		return ImGui::BeginTable(name.c_str(), 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable);
 	}
@@ -256,6 +253,27 @@ namespace UI
 		return true;
 	}
 
+	static bool Combo(const std::string& text, int& currentItem, const std::vector<const char*>& items)
+	{
+		bool changed = false;
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+		std::string id = "##" + std::to_string(s_stackId++);
+		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), items.size()))
+		{
+			changed =  true;
+		}
+
+		ImGui::PopItemWidth();
+
+		return changed;
+	}
+
 	static bool Property(const std::string& text, int& value, int min = 0, int max = 0)
 	{
 		bool changed = false;
@@ -263,7 +281,7 @@ namespace UI
 		ScopedStyleFloat2 cellPad{ ImGuiStyleVar_CellPadding, { 4.f, 0.f } };
 
 		ImGui::TableNextColumn();
-		ImGui::Text(text.c_str());
+		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
 		std::string id = "##" + std::to_string(s_stackId++);
@@ -283,7 +301,7 @@ namespace UI
 		bool changed = false;
 
 		ImGui::TableNextColumn();
-		ImGui::Text(text.c_str());
+		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
 		std::string id = "##" + std::to_string(s_stackId++);
@@ -301,7 +319,7 @@ namespace UI
 		bool changed = false;
 
 		ImGui::TableNextColumn();
-		ImGui::Text(text.c_str());
+		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
 		std::string id = "##" + std::to_string(s_stackId++);
@@ -322,7 +340,7 @@ namespace UI
 		bool changed = false;
 
 		ImGui::TableNextColumn();
-		ImGui::Text(text.c_str());
+		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
 		std::string id = "##" + std::to_string(s_stackId++);
@@ -343,7 +361,7 @@ namespace UI
 		bool changed = false;
 
 		ImGui::TableNextColumn();
-		ImGui::Text(text.c_str());
+		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
 		std::string id = "##" + std::to_string(s_stackId++);
@@ -364,7 +382,7 @@ namespace UI
 		bool changed = false;
 
 		ImGui::TableNextColumn();
-		ImGui::Text(text.c_str());
+		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
 		std::string id = "##" + std::to_string(s_stackId++);
@@ -380,6 +398,7 @@ namespace UI
 		return changed;
 	}
 
+	bool Property(const std::string& text, const std::string& value);
 	bool Property(const std::string& text, std::string& value);
 
 	static bool Property(const std::string& text, glm::vec4& value, bool useAlpha)

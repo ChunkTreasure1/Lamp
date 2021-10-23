@@ -11,6 +11,8 @@
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 
+#include <Lamp/Utility/UIUtility.h>
+
 namespace Sandbox
 {
 	using namespace Lamp;
@@ -144,17 +146,22 @@ namespace Sandbox
 			m_pSelectedMaterial = m_materialModel->GetMaterial(0);
 		}
 
-		static std::string tempName = "";
-		tempName = m_pSelectedMaterial->GetName();
-
-		if (ImGui::InputText("Name", &tempName))
+		if (UI::BeginProperties("matProps"))
 		{
-			m_pSelectedMaterial->SetName(tempName);
+			UI::Property("Name", m_pSelectedMaterial->GetName());
+
+			UI::EndProperties();
 		}
+
+		UI::Separator();
+		
+		ImGui::TextUnformatted("Textures");
 
 		for (auto& tex : m_pSelectedMaterial->GetTextures())
 		{
-			if (ImGui::ImageButton(ImTextureID(tex.second->GetID()), { 128, 128 }))
+			ImGui::TextUnformatted(tex.first.c_str());
+
+			if (ImGui::ImageButton(ImTextureID(tex.second->GetID()), { 64, 64 }))
 			{
 				std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 				if (!path.empty())

@@ -8,7 +8,6 @@
 #include <imgui/imgui_stdlib.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
-#include <Lamp/AssetSystem/MeshImporter.h>
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
@@ -128,30 +127,10 @@ namespace Sandbox
 
 		if (ImGui::ImageButton((ImTextureID)m_loadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
-			m_sourcePath = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
-			if (!m_sourcePath.empty() && std::filesystem::exists(m_sourcePath))
+			m_importSettings.path = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
+			if (!m_importSettings.path.empty() && std::filesystem::exists(m_importSettings.path))
 			{
-				m_modelToImport = MeshImporter::ImportMesh(m_sourcePath);
-
-				m_savePath = m_sourcePath.substr(0, m_sourcePath.find_last_of('.'));
-				m_savePath += ".lgf";
-				m_modelToImport->Path = m_savePath;
-
-				for (auto& mat : m_modelToImport->GetMaterials())
-				{
-					mat.second->SetShader(m_defaultShader);
-
-					for (auto& tex : mat.second->GetTextures())
-					{
-						tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
-					}
-				}
-
-				m_shaderSelectionIds.clear();
-				for (int i = 0; i < m_modelToImport->GetMaterials().size(); i++)
-				{
-					m_shaderSelectionIds.push_back(0);
-				}
+				LoadMesh();
 			}
 		}
 
@@ -164,7 +143,7 @@ namespace Sandbox
 			std::string matOriginPath = m_savePath.substr(m_savePath.find_last_of('\\') + 1, m_savePath.size() - 1);
 
 
-			if (m_savePath != "")
+			if (!m_savePath.empty())
 			{
 				if (m_savePath.find(".lgf") == std::string::npos)
 				{
@@ -180,11 +159,11 @@ namespace Sandbox
 					{
 						std::string matPath = m_savePath.substr(0, m_savePath.find_last_of('\\') + 1);
 						matPath += matOriginPath + ".mtl";
-						//Add material to library
 
-						//TODO: fix
-						//MaterialLibrary::SaveMaterial(matPath, m_pModelToImport->GetMaterial(mat.first));
-						//MaterialLibrary::AddMaterial(m_pModelToImport->GetMaterial(mat.first));
+						mat.second->Path = std::filesystem::path(matPath);
+						g_pEnv->pAssetManager->SaveAsset(mat.second);
+
+						MaterialLibrary::AddMaterial(mat.second);
 					}
 				}
 
@@ -218,6 +197,31 @@ namespace Sandbox
 		}
 
 		m_renderGraph->Run(m_camera->GetCamera());
+	}
+
+	void MeshImporterPanel::LoadMesh()
+	{
+		m_modelToImport = MeshImporter::ImportMesh(m_importSettings);
+
+		m_savePath = m_importSettings.path.stem().string();
+		m_savePath += ".lgf";
+		m_modelToImport->Path = m_savePath;
+
+		for (auto& mat : m_modelToImport->GetMaterials())
+		{
+			mat.second->SetShader(m_defaultShader);
+
+			for (auto& tex : mat.second->GetTextures())
+			{
+				tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+			}
+		}
+
+		m_shaderSelectionIds.clear();
+		for (int i = 0; i < m_modelToImport->GetMaterials().size(); i++)
+		{
+			m_shaderSelectionIds.push_back(0);
+		}
 	}
 
 	void MeshImporterPanel::OnEvent(Lamp::Event& e)
@@ -284,22 +288,39 @@ namespace Sandbox
 	{
 		ImGui::Begin("Import Settings", &m_IsOpen);
 
-		ImGui::Text(("Source path: " + m_sourcePath).c_str());
+		ImGui::Text(("Source path: " + m_importSettings.path.string()).c_str());
 		ImGui::Text(("Destination path: " + m_savePath).c_str());
 
-		ImGui::Checkbox("Show Skybox", &m_renderSkybox);
-		ImGui::Checkbox("Show Grid", &m_renderGrid);
+		UI::BeginProperties("importProps");
+		
+		UI::Property("Show Skybox", m_renderSkybox);
+		UI::Property("Show Grid", m_renderGrid);
+
+		UI::EndProperties();
 
 		ImGui::Separator();
 		ImGui::Text("Mesh settings");
 
-		if (ImGui::DragFloat("Scale", &m_importSettings.MeshScale) && m_modelToImport)
-		{
-		}
+		static std::vector<const char*> units = { "Centimeters", "Decimeters", "Meters" };
+		static int currentUnit = 0;
 
-		static const char* meshDirections[] = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
+		static std::vector<const char*> meshDirections = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
 		static int currentDirection = 0;
-		ImGui::Combo("Up", &currentDirection, meshDirections, IM_ARRAYSIZE(meshDirections));
+
+		if (UI::BeginProperties("meshSettings"))
+		{
+			if (UI::Combo("Units", currentUnit, units))
+			{
+				m_importSettings.units = static_cast<Units>(currentUnit);
+				LoadMesh();
+			}
+
+			if (UI::Combo("Up direction", currentDirection, meshDirections))
+			{
+			}
+
+			UI::EndProperties();
+		}
 
 		ImGui::End();
 	}
@@ -310,8 +331,6 @@ namespace Sandbox
 
 		static std::vector<const char*> shaders;
 		static std::unordered_map<std::string, std::string> paths;
-
-		UI::ImageText(m_saveIcon->GetID(), "test");
 
 		shaders.clear();
 		for (auto& shader : ShaderLibrary::GetShaders())
@@ -341,20 +360,24 @@ namespace Sandbox
 				if (ImGui::CollapsingHeader(id.c_str()))
 				{
 					std::string matName = mat.second->GetName();
-					std::string nameId = "Name##matName" + std::to_string(i);
-					if (ImGui::InputText(nameId.c_str(), &matName))
-					{
-						mat.second->SetName(matName);
-					}
 
-					std::string comboId = "Shader##shader" + std::to_string(i);
-					if (ImGui::Combo(comboId.c_str(), &m_shaderSelectionIds[i], shaders.data(), shaders.size()))
+					std::string propId = "##props" + std::to_string(i);
+					if (UI::BeginProperties(propId))
 					{
-						if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]))
+						if (UI::Property("Name", matName))
 						{
-							mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]));
-
+							mat.second->SetName(matName);
 						}
+
+						if (UI::Combo("Shader", m_shaderSelectionIds[i], shaders))
+						{
+							if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]))
+							{
+								mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]));
+							}
+						}
+
+						UI::EndProperties();
 					}
 
 					ImGui::Separator();
