@@ -4,21 +4,17 @@
 
 #include "BaseWindow.h"
 
+#include <Lamp/AssetSystem/MeshImporter.h>
+
 namespace Sandbox
 {
-	struct ImportSettings
-	{
-		float MeshScale = 1.f;
-		glm::vec3 MeshUp = { 0.f, 1.f, 0.f };
-	};
-
 	class MeshImporterPanel : public BaseWindow
 	{
 	public:
 		MeshImporterPanel(std::string_view name);
 
-		virtual void OnEvent(Lamp::Event& e) override;
-		inline const Ref<Lamp::PerspectiveCameraController>& GetCamera() { return m_Camera; }
+		void OnEvent(Lamp::Event& e) override;
+		inline const Ref<Lamp::PerspectiveCameraController>& GetCamera() { return m_camera; }
 
 	private:
 		void UpdatePerspective();
@@ -30,6 +26,7 @@ namespace Sandbox
 		void UpdateMeshConstruction();
 
 		void Render();
+		void LoadMesh();
 
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool Update(Lamp::AppUpdateEvent& e);
@@ -38,27 +35,26 @@ namespace Sandbox
 		void MaterialPopup();
 
 	private:
-		bool m_HoveringPerspective = false;
-		bool m_RightMousePressed = false;
-		bool m_RenderSkybox = false;
-		bool m_RenderGrid = true;
-		glm::vec2 m_PerspectiveSize;
-		std::string m_SavePath = "";
-		std::string m_SourcePath = "";
+		bool m_hoveringPerspective = false;
+		bool m_rightMousePressed = false;
+		bool m_renderSkybox = false;
+		bool m_renderGrid = true;
+		glm::vec2 m_perspectiveSize;
+		std::string m_savePath;
 
-		Ref<Lamp::Mesh> m_pModelToImport;
-		Ref<Lamp::PerspectiveCameraController> m_Camera;
-		Ref<Lamp::Shader> m_DefaultShader;
-		Ref<Lamp::Framebuffer> m_Framebuffer;
+		Ref<Lamp::Mesh> m_modelToImport;
+		Ref<Lamp::PerspectiveCameraController> m_camera;
+		Ref<Lamp::Shader> m_defaultShader;
+		Ref<Lamp::Framebuffer> m_framebuffer;
 
-		std::vector<int> m_ShaderSelectionIds;
+		std::vector<int> m_shaderSelectionIds;
 
 		//Icons
-		Ref<Lamp::Texture2D> m_LoadIcon;
-		Ref<Lamp::Texture2D> m_SaveIcon;
+		Ref<Lamp::Texture2D> m_loadIcon;
+		Ref<Lamp::Texture2D> m_saveIcon;
 		Ref<Lamp::RenderGraph> m_renderGraph;
 
 		//Import settings
-		ImportSettings m_ImportSettings;
+		Lamp::ImportSettings m_importSettings;
 	};
 }

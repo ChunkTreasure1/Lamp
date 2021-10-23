@@ -27,6 +27,12 @@ Assets:
     Path: assets/textures/base/base_mro.png
   - Handle: 16748793907619626814
     Path: assets/textures/base/base_normal.png
+  - Handle: 16049206056634944348
+    Path: assets\textures\rusted_iron\tex_albedo.png
+  - Handle: 5130617057313453152
+    Path: assets\textures\rusted_iron\tex_mro.png
+  - Handle: 8613916089095324438
+    Path: assets\textures\rusted_iron\tex_normal.png
   - Handle: 3536854313384504482
     Path: assets/textures/wornMetal/tex_albedo.png
   - Handle: 4157263279336200044

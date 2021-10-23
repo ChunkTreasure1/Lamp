@@ -8,6 +8,11 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
+#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
+
+#include <Lamp/Utility/UIUtility.h>
+
 namespace Sandbox
 {
 	using namespace Lamp;
@@ -17,25 +22,16 @@ namespace Sandbox
 	MaterialEditor::MaterialEditor(std::string_view name)
 		: BaseWindow(name)
 	{
-		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
-		m_Camera->SetPosition({ 0.f, 0.f, 3.f });
-		m_RenderFuncs.push_back(LP_EXTRA_RENDER(MaterialEditor::Render));
+		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
+		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
-		{
-			FramebufferSpecification main;
-			main.Attachments =
-			{
-				{ FramebufferTextureFormat::RGBA8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge },
-				{ FramebufferTextureFormat::DEPTH24STENCIL8, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
-			};
-			main.ClearColor = { 0.1f, 0.1f, 0.1f, 1.f };
-			main.Height = 1024;
-			main.Width = 1024;
+		m_RenderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 
-			m_Framebuffer = Framebuffer::Create(main);
-		}
+		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("assets/editor.rendergraph");
+		m_renderGraph->Start();
 
-		m_MaterialModel = ResourceCache::GetAsset<Mesh>("assets/models/sphere.lgf");
+		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
+		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/models/sphere.lgf");
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)
@@ -48,8 +44,6 @@ namespace Sandbox
 
 	bool MaterialEditor::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-
-
 		return false;
 	}
 
@@ -103,32 +97,35 @@ namespace Sandbox
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Material View");
 
-		ImVec2 panelSize = ImGui::GetContentRegionAvail();
-		if (m_perspectiveSize != *((glm::vec2*)&panelSize))
+		if (m_renderGraph->GetSpecification().endNode->framebuffer)
 		{
-			m_Framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-			m_perspectiveSize = { panelSize.x, panelSize.y };
-
-			m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-		}
-
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
-		ImGui::Image((ImTextureID)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			ImVec2 panelSize = ImGui::GetContentRegionAvail();
+			if (m_perspectiveSize != *((glm::vec2*)&panelSize))
 			{
-				const wchar_t* wPath = (const wchar_t*)pPayload->Data;
-				std::filesystem::path path(wPath);
+				m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				m_perspectiveSize = { panelSize.x, panelSize.y };
 
-				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-				if (type == Lamp::AssetType::Material)
-				{
-					//Todo: set material
-				}
+				m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
 
-			ImGui::EndDragDropTarget();
+			uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
+			ImGui::Image((ImTextureID)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* wPath = (const wchar_t*)pPayload->Data;
+					std::filesystem::path path(wPath);
+
+					AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+					if (type == Lamp::AssetType::Material)
+					{
+						//Todo: set material
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
 		}
 
 		ImGui::End();
@@ -139,27 +136,32 @@ namespace Sandbox
 	{
 		ImGui::Begin("Properties##Material");
 
-		if (!m_MaterialModel)
+		if (!m_materialModel)
 		{
 			return;
 		}
 
 		if (!m_pSelectedMaterial)
 		{
-			m_pSelectedMaterial = m_MaterialModel->GetMaterial(0);
+			m_pSelectedMaterial = m_materialModel->GetMaterial(0);
 		}
 
-		static std::string tempName = "";
-		tempName = m_pSelectedMaterial->GetName();
-
-		if (ImGui::InputText("Name", &tempName))
+		if (UI::BeginProperties("matProps"))
 		{
-			m_pSelectedMaterial->SetName(tempName);
+			UI::Property("Name", m_pSelectedMaterial->GetName());
+
+			UI::EndProperties();
 		}
+
+		UI::Separator();
+		
+		ImGui::TextUnformatted("Textures");
 
 		for (auto& tex : m_pSelectedMaterial->GetTextures())
 		{
-			if (ImGui::ImageButton(ImTextureID(tex.second->GetID()), { 128, 128 }))
+			ImGui::TextUnformatted(tex.first.c_str());
+
+			if (ImGui::ImageButton(ImTextureID(tex.second->GetID()), { 64, 64 }))
 			{
 				std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 				if (!path.empty())
@@ -188,7 +190,7 @@ namespace Sandbox
 			std::string id = mat->GetName() + "###mat" + std::to_string(i);
 			if (ImGui::Selectable(id.c_str()))
 			{
-				m_MaterialModel->SetMaterial(mat, 0);
+				m_materialModel->SetMaterial(mat, 0);
 				m_pSelectedMaterial = mat;
 			}
 			std::string popId = mat->GetName() + "##matPop" + std::to_string(i);
@@ -224,27 +226,15 @@ namespace Sandbox
 			return;
 		}
 
-		RenderPassSpecification pass;
-		pass.TargetFramebuffer = m_Framebuffer;
-
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
-		RenderCommand::Clear();
-
-		m_Framebuffer->Bind();
-		RenderCommand::Clear();
-
-		Renderer3D::Begin(m_Camera->GetCamera());
-		Renderer3D::BeginPass(pass);
-		if (m_MaterialModel)
+		if (m_materialModel)
 		{
-			m_MaterialModel->Render(-1, glm::mat4(1.f));
+			for (const auto& mesh : m_materialModel->GetSubMeshes())
+			{
+				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_materialModel->GetMaterials()[mesh->GetMaterialIndex()]);
+			}
 		}
 
-		Renderer3D::DrawRenderBuffer();
-
-		Renderer3D::EndPass();
-		Renderer3D::End();
-		m_Framebuffer->Unbind();
+		m_renderGraph->Run(m_camera->GetCamera());
 	}
 
 	void MaterialEditor::CreateNewMaterial()
