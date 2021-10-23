@@ -23,19 +23,19 @@ namespace Sandbox
 	MeshImporterPanel::MeshImporterPanel(std::string_view name)
 		: BaseWindow(name)
 	{
-		m_Camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
-		m_Camera->SetPosition({ -3.f, 2.f, 3.f });
+		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
+		m_camera->SetPosition({ -3.f, 2.f, 3.f });
 
-		m_RenderFuncs.push_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
+		m_RenderFuncs.emplace_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
 
 		//Setup icons
-		m_LoadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
-		m_SaveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
+		m_loadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
+		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
 		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("assets/editor.rendergraph");
 		m_renderGraph->Start();
 
-		m_Framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
+		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
 	}
 
 	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
@@ -71,9 +71,9 @@ namespace Sandbox
 
 	bool MeshImporterPanel::Update(Lamp::AppUpdateEvent& e)
 	{
-		if (m_DefaultShader == nullptr)
+		if (m_defaultShader == nullptr)
 		{
-			m_DefaultShader = Lamp::ShaderLibrary::GetShader("pbrEditor");
+			m_defaultShader = Lamp::ShaderLibrary::GetShader("pbrEditor");
 		}
 		UpdateCamera(e.GetTimestep());
 
@@ -108,9 +108,9 @@ namespace Sandbox
 			return;
 		}
 
-		if (Input::IsMouseButtonPressed(1) && (m_HoveringPerspective || m_RightMousePressed))
+		if (Input::IsMouseButtonPressed(1) && (m_hoveringPerspective || m_rightMousePressed))
 		{
-			m_Camera->Update(ts);
+			m_camera->Update(ts);
 		}
 	}
 
@@ -126,20 +126,20 @@ namespace Sandbox
 
 		float size = ImGui::GetWindowHeight() - 4.f;
 
-		if (ImGui::ImageButton((ImTextureID)m_LoadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		if (ImGui::ImageButton((ImTextureID)m_loadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
-			m_SourcePath = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
-			if (m_SourcePath != "" && std::filesystem::exists(m_SourcePath))
+			m_sourcePath = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
+			if (!m_sourcePath.empty() && std::filesystem::exists(m_sourcePath))
 			{
-				m_pModelToImport = MeshImporter::ImportMesh(m_SourcePath);
+				m_modelToImport = MeshImporter::ImportMesh(m_sourcePath);
 
-				m_SavePath = m_SourcePath.substr(0, m_SourcePath.find_last_of('.'));
-				m_SavePath += ".lgf";
-				m_pModelToImport->Path = m_SavePath;
+				m_savePath = m_sourcePath.substr(0, m_sourcePath.find_last_of('.'));
+				m_savePath += ".lgf";
+				m_modelToImport->Path = m_savePath;
 
-				for (auto& mat : m_pModelToImport->GetMaterials())
+				for (auto& mat : m_modelToImport->GetMaterials())
 				{
-					mat.second->SetShader(m_DefaultShader);
+					mat.second->SetShader(m_defaultShader);
 
 					for (auto& tex : mat.second->GetTextures())
 					{
@@ -147,38 +147,38 @@ namespace Sandbox
 					}
 				}
 
-				m_ShaderSelectionIds.clear();
-				for (int i = 0; i < m_pModelToImport->GetMaterials().size(); i++)
+				m_shaderSelectionIds.clear();
+				for (int i = 0; i < m_modelToImport->GetMaterials().size(); i++)
 				{
-					m_ShaderSelectionIds.push_back(0);
+					m_shaderSelectionIds.push_back(0);
 				}
 			}
 		}
 
 		ImGui::SameLine();
 
-		if (ImGui::ImageButton((ImTextureID)m_SaveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
-			m_SavePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
+			m_savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
 
-			std::string matOriginPath = m_SavePath.substr(m_SavePath.find_last_of('\\') + 1, m_SavePath.size() - 1);
+			std::string matOriginPath = m_savePath.substr(m_savePath.find_last_of('\\') + 1, m_savePath.size() - 1);
 
 
-			if (m_SavePath != "")
+			if (m_savePath != "")
 			{
-				if (m_SavePath.find(".lgf") == std::string::npos)
+				if (m_savePath.find(".lgf") == std::string::npos)
 				{
-					m_SavePath += ".lgf";
+					m_savePath += ".lgf";
 				}
 
-				m_pModelToImport->Path = m_SavePath;
+				m_modelToImport->Path = m_savePath;
 
-				for (auto& mat : m_pModelToImport->GetMaterials())
+				for (auto& mat : m_modelToImport->GetMaterials())
 				{
 					mat.second->SetName(matOriginPath + std::to_string(mat.first));
 					if (!MaterialLibrary::IsMaterialLoaded(matOriginPath + std::to_string(mat.first)))
 					{
-						std::string matPath = m_SavePath.substr(0, m_SavePath.find_last_of('\\') + 1);
+						std::string matPath = m_savePath.substr(0, m_savePath.find_last_of('\\') + 1);
 						matPath += matOriginPath + ".mtl";
 						//Add material to library
 
@@ -188,8 +188,8 @@ namespace Sandbox
 					}
 				}
 
-				g_pEnv->pAssetManager->SaveAsset(m_pModelToImport);
-				m_SavePath = "";
+				g_pEnv->pAssetManager->SaveAsset(m_modelToImport);
+				m_savePath = "";
 			}
 		}
 
@@ -209,16 +209,15 @@ namespace Sandbox
 			return;
 		}
 
-		if (m_pModelToImport)
+		if (m_modelToImport)
 		{
-			for (const auto& mesh : m_pModelToImport->GetSubMeshes())
+			for (const auto& mesh : m_modelToImport->GetSubMeshes())
 			{
-
-				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pModelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
 
-		m_renderGraph->Run(m_Camera->GetCamera());
+		m_renderGraph->Run(m_camera->GetCamera());
 	}
 
 	void MeshImporterPanel::OnEvent(Lamp::Event& e)
@@ -230,18 +229,18 @@ namespace Sandbox
 
 		if (Input::IsMouseButtonReleased(1))
 		{
-			m_Camera->SetHasControl(false);
-			m_RightMousePressed = false;
+			m_camera->SetHasControl(false);
+			m_rightMousePressed = false;
 
 			Application::Get().GetWindow().ShowCursor(true);
 			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 		}
 
-		if (Input::IsMouseButtonPressed(1) && (m_HoveringPerspective || m_RightMousePressed))
+		if (Input::IsMouseButtonPressed(1) && (m_hoveringPerspective || m_rightMousePressed))
 		{
-			m_Camera->OnEvent(e);
-			m_RightMousePressed = true;
+			m_camera->OnEvent(e);
+			m_rightMousePressed = true;
 
 			Application::Get().GetWindow().ShowCursor(false);
 			ImGuiIO& io = ImGui::GetIO();
@@ -259,18 +258,18 @@ namespace Sandbox
 		ImGui::Begin("Import Perspective");
 		{
 			glm::vec2 windowPos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_HoveringPerspective = ImGui::IsWindowHovered();
-			m_Camera->SetControlsEnabled(m_HoveringPerspective);
+			m_hoveringPerspective = ImGui::IsWindowHovered();
+			m_camera->SetControlsEnabled(m_hoveringPerspective);
 
 			if (m_renderGraph->GetSpecification().endNode->framebuffer)
 			{
 				ImVec2 panelSize = ImGui::GetContentRegionAvail();
-				if (m_PerspectiveSize != *((glm::vec2*)&panelSize))
+				if (m_perspectiveSize != *((glm::vec2*)&panelSize))
 				{
 					m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-					m_PerspectiveSize = { panelSize.x, panelSize.y };
+					m_perspectiveSize = { panelSize.x, panelSize.y };
 
-					m_Camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+					m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 				}
 
 				uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID();
@@ -285,16 +284,16 @@ namespace Sandbox
 	{
 		ImGui::Begin("Import Settings", &m_IsOpen);
 
-		ImGui::Text(("Source path: " + m_SourcePath).c_str());
-		ImGui::Text(("Destination path: " + m_SavePath).c_str());
+		ImGui::Text(("Source path: " + m_sourcePath).c_str());
+		ImGui::Text(("Destination path: " + m_savePath).c_str());
 
-		ImGui::Checkbox("Show Skybox", &m_RenderSkybox);
-		ImGui::Checkbox("Show Grid", &m_RenderGrid);
+		ImGui::Checkbox("Show Skybox", &m_renderSkybox);
+		ImGui::Checkbox("Show Grid", &m_renderGrid);
 
 		ImGui::Separator();
 		ImGui::Text("Mesh settings");
 
-		if (ImGui::DragFloat("Scale", &m_ImportSettings.MeshScale) && m_pModelToImport)
+		if (ImGui::DragFloat("Scale", &m_importSettings.MeshScale) && m_modelToImport)
 		{
 		}
 
@@ -312,7 +311,7 @@ namespace Sandbox
 		static std::vector<const char*> shaders;
 		static std::unordered_map<std::string, std::string> paths;
 
-		UI::ImageText(m_SaveIcon->GetID(), "test");
+		UI::ImageText(m_saveIcon->GetID(), "test");
 
 		shaders.clear();
 		for (auto& shader : ShaderLibrary::GetShaders())
@@ -320,23 +319,23 @@ namespace Sandbox
 			shaders.push_back(shader->GetName().c_str());
 		}
 
-		if (m_pModelToImport.get())
+		if (m_modelToImport.get())
 		{
 			int matId = 0;
-			for (auto& mat : m_pModelToImport->GetMaterials())
+			for (auto& mat : m_modelToImport->GetMaterials())
 			{
 				for (int i = 0; i < shaders.size(); i++)
 				{
 					if (mat.second->GetShader()->GetName() == shaders[i])
 					{
-						m_ShaderSelectionIds[matId] = i;
+						m_shaderSelectionIds[matId] = i;
 					}
 				}
 				matId++;
 			}
 
 			int i = 0;
-			for (auto& mat : m_pModelToImport->GetMaterials())
+			for (auto& mat : m_modelToImport->GetMaterials())
 			{
 				std::string id = mat.second->GetName() + "###mat" + std::to_string(i);
 				if (ImGui::CollapsingHeader(id.c_str()))
@@ -349,11 +348,11 @@ namespace Sandbox
 					}
 
 					std::string comboId = "Shader##shader" + std::to_string(i);
-					if (ImGui::Combo(comboId.c_str(), &m_ShaderSelectionIds[i], shaders.data(), shaders.size()))
+					if (ImGui::Combo(comboId.c_str(), &m_shaderSelectionIds[i], shaders.data(), shaders.size()))
 					{
-						if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]))
+						if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]))
 						{
-							mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_ShaderSelectionIds[i]]));
+							mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]));
 
 						}
 					}

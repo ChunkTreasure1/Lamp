@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 259899954
-      position: [42, 300]
+      position: [-9, 198]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 293213604
-      position: [928, 368]
+      position: [877, 266]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 1211186725
-      position: [442, 118]
+      position: [391, 16]
       type: 0
       name: MainPass
       clearType: 3
@@ -31,12 +31,13 @@ RenderGraph:
       cullFace: 1
       renderShader: pbrEditor
       draw2D: false
+      drawSkybox: false
       targetFramebuffer:
         useViewportSize: false
         width: 1280
         height: 720
         samples: 1
-        clearColor: [0.739534855, 0.206381828, 0.206381828, 1]
+        clearColor: [0.279069781, 0.27906698, 0.27906698, 1]
         attachments:
           - attachment: ""
             borderColor: [1, 1, 1, 1]
@@ -49,6 +50,10 @@ RenderGraph:
           guuid: 81887197
           type: 4
           data: [0.5, 0.5, 0.5, 0]
+        - staticUniform: u_Model
+          guuid: 223392925
+          type: 9
+          data: 0
         - staticUniform: u_Material.albedo
           guuid: 311186607
           type: 0
@@ -134,7 +139,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1569709031
-      position: [-8, 493]
+      position: [-59, 391]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -142,7 +147,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -1784512, 2.12997367e-43]
+      clearColor: [1, 1, -7.70170012e+25, 1.19110369e-43]
       attachments:
         {}
       attributes:
