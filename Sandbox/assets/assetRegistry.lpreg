@@ -1,6 +1,6 @@
 Assets:
   - Handle: 16897032606846204281
-    Path: assets/editor.rendergraph
+    Path: engine/renderGraphs/editor.rendergraph
   - Handle: 14311675356115887053
     Path: assets/levels/testLevel/data.level
   - Handle: 10335344246315033883
@@ -12,7 +12,7 @@ Assets:
   - Handle: 1554070060000114675
     Path: assets\models\teddy.lgf
   - Handle: 14877024273708001692
-    Path: assets/testGraph.rendergraph
+    Path: engine/renderGraphs/main.rendergraph
   - Handle: 14311675356115887053
     Path: assets/testLevel.level
   - Handle: 3775480950542812265

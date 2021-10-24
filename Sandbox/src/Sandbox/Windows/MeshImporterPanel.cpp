@@ -31,7 +31,7 @@ namespace Sandbox
 		m_loadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
-		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("assets/editor.rendergraph");
+		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
 		m_renderGraph->Start();
 
 		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;

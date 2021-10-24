@@ -27,7 +27,7 @@ namespace Sandbox
 
 		m_RenderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 
-		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("assets/editor.rendergraph");
+		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
 		m_renderGraph->Start();
 
 		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
