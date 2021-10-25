@@ -14,6 +14,8 @@ namespace Lamp
 {
 	class Brush;
 	class Entity;
+	class Attribute;
+
 	class LevelLoader : public AssetLoader
 	{
 	public:
@@ -21,8 +23,10 @@ namespace Lamp
 		virtual bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
 	
 	private:
-		void SaveEntity(YAML::Emitter& out, const Entity* pEnt) const;
-		void SaveBrush(YAML::Emitter& out, const Brush* pBrush) const;
+		void SerializeEntity(YAML::Emitter& out, const Entity* pEnt) const;
+		void SerializeBrush(YAML::Emitter& out, const Brush* pBrush) const;
+
+		void SerializeAttribute(const Attribute& attr, const std::string& type, YAML::Emitter& out) const;
 
 		template<typename T>
 		T* GetPropertyData(const std::string& name, const std::vector<ComponentProperty>& properties) const

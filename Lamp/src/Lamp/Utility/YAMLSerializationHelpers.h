@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/AssetSystem/Asset.h"
+#include "Lamp/Objects/Entity/Base/ComponentProperties.h"
 
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
@@ -147,6 +148,23 @@ namespace YAML
 			v = node.as<int>();
 			return true;
 		};
+	};
+
+	template<>
+	struct convert<Lamp::PropertyType>
+	{
+		static Node encode(const Lamp::PropertyType& rhs)
+		{
+			Node node;
+			node.push_back((uint32_t)rhs);
+			return node;
+		}
+
+		static bool decode(const Node& node, Lamp::PropertyType& v)
+		{
+			v = static_cast<Lamp::PropertyType>(node.as<uint32_t>());
+			return true;
+		}
 	};
 }
 

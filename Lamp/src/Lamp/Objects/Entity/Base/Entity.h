@@ -28,14 +28,14 @@ namespace Lamp
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
 
-		inline void SetSaveable(bool state) { m_ShouldBeSaved = state; }
-		inline const bool GetSaveable() const { return m_ShouldBeSaved; }
+		inline void SetSaveable(bool state) { m_shouldBeSaved = state; }
+		inline const bool GetSaveable() const { return m_shouldBeSaved; }
 
-		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_GraphKeyGraph = graph; }
-		inline Ref<GraphKeyGraph>& GetGraphKeyGraph() { return m_GraphKeyGraph; }
+		inline void SetGraphKeyGraph(Ref<GraphKeyGraph> graph) { m_graphKeyGraph = graph; }
+		inline const Ref<GraphKeyGraph> GetGraphKeyGraph() const { return m_graphKeyGraph; }
 
-		inline void SetGizmoMaterial(Ref<Material> mat) { m_GizmoMaterial = mat; }
-		inline const Ref<Material> GetGizmoMaterial() { return m_GizmoMaterial; }
+		inline void SetGizmoMaterial(Ref<Material> mat) { m_gizmoMaterial = mat; }
+		inline const Ref<Material> GetGizmoMaterial() { return m_gizmoMaterial; }
 
 		//Getting
 		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
@@ -160,10 +160,10 @@ namespace Lamp
 		bool OnRenderEvent(AppRenderEvent& e);
 
 	private:
-		bool m_ShouldBeSaved = false;
+		bool m_shouldBeSaved = false;
 
-		Ref<GraphKeyGraph> m_GraphKeyGraph = nullptr;
-		Ref<Material> m_GizmoMaterial;
+		Ref<GraphKeyGraph> m_graphKeyGraph = nullptr;
+		Ref<Material> m_gizmoMaterial;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;
 		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;

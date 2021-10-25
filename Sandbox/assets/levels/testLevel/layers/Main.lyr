@@ -20,6 +20,13 @@ layer:
             - param: Cast Shadows
               type: Bool
               value: true
+    - entity: Entity
+      position: [-1.72452307, 3.18256187, 1.69228327]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        []
   brushes:
     - brush: Brush
       meshHandle: 10335344246315033883

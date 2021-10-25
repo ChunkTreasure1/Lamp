@@ -7,6 +7,7 @@
 #include "AssetManager.h"
 #include "Lamp/Objects/Brushes/Brush.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/GraphKey/GraphKeyGraph.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -91,18 +92,14 @@ namespace Lamp
 				layerOut << YAML::Key << "entities" << YAML::BeginSeq;
 				for (const auto& ent : entities)
 				{
-
-					SaveEntity(layerOut, dynamic_cast<Entity*>(ent));
-
+					SerializeEntity(layerOut, dynamic_cast<Entity*>(ent));
 				}
 				layerOut << YAML::EndSeq;
 
 				layerOut << YAML::Key << "brushes" << YAML::BeginSeq;
 				for (const auto& brush : brushes)
 				{
-
-					SaveBrush(layerOut, dynamic_cast<Brush*>(brush));
-
+					SerializeBrush(layerOut, dynamic_cast<Brush*>(brush));
 				}
 				layerOut << YAML::EndSeq;
 
@@ -112,7 +109,7 @@ namespace Lamp
 
 			std::ofstream file;
 			auto path = asset->Path.parent_path() / std::filesystem::path("layers");
-			
+
 			if (!std::filesystem::exists(path))
 			{
 				std::filesystem::create_directory(path);
@@ -361,7 +358,7 @@ namespace Lamp
 		return true;
 	}
 
-	void LevelLoader::SaveEntity(YAML::Emitter& out, const Entity* entity) const
+	void LevelLoader::SerializeEntity(YAML::Emitter& out, const Entity* entity) const
 	{
 		if (entity == nullptr)
 		{
@@ -450,10 +447,44 @@ namespace Lamp
 		}
 		out << YAML::EndSeq;
 
+		//Save entities graph
+		if (entity->GetGraphKeyGraph())
+		{
+			auto graph = entity->GetGraphKeyGraph();
+
+			out << YAML::BeginMap;
+			LP_SERIALIZE_PROPERTY(name, graph->GetSpecification().name, out);
+
+			//Nodes
+			out << YAML::Key << "nodes" << YAML::BeginSeq;
+			for (const auto& node : graph->GetSpecification().nodes)
+			{
+				LP_SERIALIZE_PROPERTY(name, node->name, out);
+				LP_SERIALIZE_PROPERTY(id, node->id, out);
+				LP_SERIALIZE_PROPERTY(position, node->position, out);
+
+				//Attributes
+				out << YAML::Key << "attributes" << YAML::BeginSeq;
+				for (const auto& attr : node->inputAttributes)
+				{
+					SerializeAttribute(attr, "input", out);
+				}
+
+				for (const auto& attr : node->outputAttributes)
+				{
+					SerializeAttribute(attr, "output", out);
+				}
+				out << YAML::EndSeq;
+			}
+			out << YAML::EndSeq;
+
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap;
 	}
 
-	void LevelLoader::SaveBrush(YAML::Emitter& out, const Brush* pBrush) const
+	void LevelLoader::SerializeBrush(YAML::Emitter& out, const Brush* pBrush) const
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "brush" << YAML::Value << pBrush->GetName();
@@ -462,6 +493,80 @@ namespace Lamp
 		out << YAML::Key << "rotation" << YAML::Value << pBrush->GetRotation();
 		out << YAML::Key << "scale" << YAML::Value << pBrush->GetScale();
 		out << YAML::Key << "layerId" << YAML::Value << pBrush->GetLayerID();
+		out << YAML::EndMap;
+	}
+
+	void LevelLoader::SerializeAttribute(const Attribute& attr, const std::string& type, YAML::Emitter& out) const
+	{
+		out << YAML::BeginMap;
+
+		LP_SERIALIZE_PROPERTY(name, attr.name, out);
+		LP_SERIALIZE_PROPERTY(attrType, type, out);
+		LP_SERIALIZE_PROPERTY(id, attr.id, out);
+		LP_SERIALIZE_PROPERTY(propType, attr.type, out);
+
+
+		switch (attr.type)
+		{
+			case Lamp::PropertyType::String: LP_SERIALIZE_PROPERTY(data, std::any_cast<std::string>(attr.data), out); break;
+			case Lamp::PropertyType::Path:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Bool: LP_SERIALIZE_PROPERTY(data, std::any_cast<bool>(attr.data), out); break;
+
+			case Lamp::PropertyType::Int:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Float:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Float2:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Float3:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Float4:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Color3:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Color4:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Void:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::Selectable:
+			{
+				break;
+			}
+
+			case Lamp::PropertyType::EntityId:
+			{
+				break;
+			}
+		}
+
 		out << YAML::EndMap;
 	}
 }

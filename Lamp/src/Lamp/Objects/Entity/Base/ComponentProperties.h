@@ -9,9 +9,9 @@
 
 namespace Lamp
 {
-	enum class PropertyType
+	enum class PropertyType : uint32_t
 	{
-		String,
+		String = 0,
 		Path,
 		Bool,
 		Int,
