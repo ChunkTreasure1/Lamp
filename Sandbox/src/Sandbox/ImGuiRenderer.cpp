@@ -273,7 +273,7 @@ namespace Sandbox
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				ImGui::InputText("Name", &name);
+				ImGui::InputTextString("Name", &name);
 				pEnt->SetName(name);
 
 				if (UI::TreeNodeFramed("Transform"))
@@ -335,7 +335,7 @@ namespace Sandbox
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				ImGui::InputText("Name", &name);
+				ImGui::InputTextString("Name", &name);
 				pBrush->SetName(name);
 
 				if (UI::TreeNodeFramed("Transform"))
@@ -643,7 +643,7 @@ namespace Sandbox
 		ImGui::Text("RenderGraph");
 
 		std::string graphPath = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path.string() : "";
-		if (ImGui::InputText("##graph", &graphPath))
+		if (ImGui::InputTextString("##graph", &graphPath))
 		{
 			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
 		}

@@ -48,13 +48,13 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_Name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_IsOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
-			ImGuiID dockspace_id = ImGui::GetID(m_Name.c_str());
+			ImGuiID dockspace_id = ImGui::GetID(m_name.c_str());
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 		ImGui::End();
@@ -724,7 +724,7 @@ namespace Sandbox
 				{
 					std::string v = s;
 
-					ImGui::InputText(prop.name.c_str(), &v);
+					ImGui::InputTextString(prop.name.c_str(), &v);
 					if (v != s)
 					{
 						s = v;
@@ -753,7 +753,7 @@ namespace Sandbox
 				{
 					std::string v = s;
 
-					ImGui::InputText(prop.name.c_str(), &v);
+					ImGui::InputTextString(prop.name.c_str(), &v);
 					ImGui::SameLine();
 					if (ImGui::Button("Open..."))
 					{
@@ -1079,7 +1079,7 @@ namespace Sandbox
 				std::string& s = std::any_cast<std::string&>(prop.data);
 				std::string v = s;
 
-				ImGui::InputText(prop.name.c_str(), &v);
+				ImGui::InputTextString(prop.name.c_str(), &v);
 				if (v != s)
 				{
 					s = v;
@@ -1105,7 +1105,7 @@ namespace Sandbox
 				std::string& s = std::any_cast<std::string&>(prop.data);
 				std::string v = s;
 
-				ImGui::InputText(prop.name.c_str(), &v);
+				ImGui::InputTextString(prop.name.c_str(), &v);
 				ImGui::SameLine();
 				if (ImGui::Button("Open..."))
 				{

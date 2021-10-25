@@ -25,7 +25,7 @@ namespace Sandbox
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
 		m_camera->SetPosition({ -3.f, 2.f, 3.f });
 
-		m_RenderFuncs.emplace_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
+		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
 
 		//Setup icons
 		m_loadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
@@ -47,13 +47,14 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_Name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_IsOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
-			ImGuiID dockspace_id = ImGui::GetID(m_Name.c_str());
+			std::string id = m_name + "dockspace";
+			ImGuiID dockspace_id = ImGui::GetID(id.c_str());
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
@@ -291,12 +292,15 @@ namespace Sandbox
 		ImGui::Text(("Source path: " + m_importSettings.path.string()).c_str());
 		ImGui::Text(("Destination path: " + m_savePath).c_str());
 
-		UI::BeginProperties("importProps");
-		
-		UI::Property("Show Skybox", m_renderSkybox);
-		UI::Property("Show Grid", m_renderGrid);
+		UI::PushId();
+		if (UI::BeginProperties("test", false))
+		{
+			UI::Property("Show Skybox", m_renderSkybox);
+			UI::Property("Show Grid", m_renderGrid);
 
-		UI::EndProperties();
+			UI::EndProperties(false);
+		}
+		UI::PopId();
 
 		ImGui::Separator();
 		ImGui::Text("Mesh settings");
@@ -307,7 +311,8 @@ namespace Sandbox
 		static std::vector<const char*> meshDirections = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
 		static int currentDirection = 0;
 
-		if (UI::BeginProperties("meshSettings"))
+		UI::PushId();
+		if (UI::BeginProperties("meshSettings", false))
 		{
 			if (UI::Combo("Units", currentUnit, units))
 			{
@@ -319,8 +324,9 @@ namespace Sandbox
 			{
 			}
 
-			UI::EndProperties();
+			UI::EndProperties(false);
 		}
+		UI::PopId();
 
 		ImGui::End();
 	}
@@ -359,15 +365,11 @@ namespace Sandbox
 				std::string id = mat.second->GetName() + "###mat" + std::to_string(i);
 				if (ImGui::CollapsingHeader(id.c_str()))
 				{
-					std::string matName = mat.second->GetName();
-
 					std::string propId = "##props" + std::to_string(i);
-					if (UI::BeginProperties(propId))
+					UI::PushId();
+					if (UI::BeginProperties(propId, false))
 					{
-						if (UI::Property("Name", matName))
-						{
-							mat.second->SetName(matName);
-						}
+						UI::Property("Name", mat.second->GetName());
 
 						if (UI::Combo("Shader", m_shaderSelectionIds[i], shaders))
 						{
@@ -377,8 +379,9 @@ namespace Sandbox
 							}
 						}
 
-						UI::EndProperties();
+						UI::EndProperties(false);
 					}
+					UI::PopId();
 
 					ImGui::Separator();
 
@@ -387,8 +390,17 @@ namespace Sandbox
 						ImGui::Text(tex.first.c_str());
 						if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 64, 64 }, { 0, 1 }, { 1, 0 }))
 						{
-
+							std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
+							if (!path.empty())
+							{
+								Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
+								if (newTex->IsValid())
+								{
+									tex.second = newTex;
+								}
+							}
 						}
+
 						if (ImGui::BeginDragDropTarget())
 						{
 							if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))

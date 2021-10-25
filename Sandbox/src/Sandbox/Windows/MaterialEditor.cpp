@@ -25,7 +25,7 @@ namespace Sandbox
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
-		m_RenderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
+		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 
 		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
 		m_renderGraph->Start();
@@ -57,13 +57,13 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_Name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_IsOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
-			ImGuiID dockspace_id = ImGui::GetID(m_Name.c_str());
+			ImGuiID dockspace_id = ImGui::GetID(m_name.c_str());
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 		ImGui::End();
@@ -146,12 +146,14 @@ namespace Sandbox
 			m_pSelectedMaterial = m_materialModel->GetMaterial(0);
 		}
 
-		if (UI::BeginProperties("matProps"))
+		UI::PushId();
+		if (UI::BeginProperties("matProps", false))
 		{
 			UI::Property("Name", m_pSelectedMaterial->GetName());
 
-			UI::EndProperties();
+			UI::EndProperties(false);
 		}
+		UI::PopId();
 
 		UI::Separator();
 		
@@ -174,6 +176,20 @@ namespace Sandbox
 				}
 			}
 
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* wPath = (const wchar_t*)(pPayload->Data);
+					std::filesystem::path path(wPath);
+
+					AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+					if (type == AssetType::Texture)
+					{
+						tex.second = ResourceCache::GetAsset<Texture2D>(path);
+					}
+				}
+			}
 		}
 
 		ImGui::End();
@@ -240,13 +256,12 @@ namespace Sandbox
 	void MaterialEditor::CreateNewMaterial()
 	{
 		std::filesystem::path matPath = s_assetsPath / "material.mtl";
-		std::ofstream ofs(matPath);
-		ofs << "<Material name=\"material\">\n";
-		ofs << "	<albedo path=\"engine/textures/default/defaultTexture.png\"/>\n";
-		ofs << "	<normal path=\"engine/textures/default/defaultTexture.png\"/>\n";
-		ofs << "	<mro path=\"engine/textures/default/defaultTexture.png\"/>\n";
-		ofs << "	<Shader name=\"testPbr\" vertex=\"engine/shaders/3d/testPbr_vs.glsl\" fragment=\"engine/shaders/3d/testPbr_fs.glsl\"/>\n";
-		ofs << "</Material>";
-		ofs.close();
+		
+		Ref<Material> mat = CreateRef<Material>(0, "New Material");
+		mat->Path = matPath;
+		mat->SetShader(ShaderLibrary::GetShader("pbrForward"));
+
+		g_pEnv->pAssetManager->SaveAsset(mat);
+		MaterialLibrary::AddMaterial(mat);
 	}
 }

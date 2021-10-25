@@ -1,6 +1,4 @@
 Assets:
-  - Handle: 16897032606846204281
-    Path: engine/renderGraphs/editor.rendergraph
   - Handle: 14311675356115887053
     Path: assets/levels/testLevel/data.level
   - Handle: 10335344246315033883
@@ -11,8 +9,6 @@ Assets:
     Path: assets\models\sponza.lgf
   - Handle: 1554070060000114675
     Path: assets\models\teddy.lgf
-  - Handle: 14877024273708001692
-    Path: engine/renderGraphs/main.rendergraph
   - Handle: 14311675356115887053
     Path: assets/testLevel.level
   - Handle: 3775480950542812265
@@ -39,6 +35,10 @@ Assets:
     Path: assets/textures/wornMetal/tex_mro.png
   - Handle: 16027289893487307791
     Path: assets/textures/wornMetal/tex_normal.png
+  - Handle: 16897032606846204281
+    Path: engine/renderGraphs/editor.rendergraph
+  - Handle: 14877024273708001692
+    Path: engine/renderGraphs/main.rendergraph
   - Handle: 1596807254034736571
     Path: engine/textures/default/defaultTexture.png
   - Handle: 17221873274523020632
@@ -133,6 +133,12 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
   - Handle: 10556133037468570950
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
+  - Handle: 17404815560585732550
+    Path: textures\rusted_iron\tex_albedo.png
+  - Handle: 16254148078386359770
+    Path: textures\rusted_iron\tex_mro.png
+  - Handle: 10240692305914165347
+    Path: textures\rusted_iron\tex_normal.png
   - Handle: 2584960825807595323
     Path: C:\Programming\Lamp\Sandbox\assets\models\cube.lgf
   - Handle: 2625564280194159711

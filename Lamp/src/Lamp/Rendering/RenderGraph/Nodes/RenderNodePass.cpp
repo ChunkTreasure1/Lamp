@@ -166,7 +166,7 @@ namespace Lamp
 		ImGui::PushItemWidth(200.f);
 
 		std::string nameId = "Name##node" + nodeId;
-		ImGui::InputText(nameId.c_str(), &specification.Name);
+		ImGui::InputTextString(nameId.c_str(), &specification.Name);
 
 		if (ImGui::TreeNode("Settings"))
 		{
@@ -382,7 +382,7 @@ namespace Lamp
 				ImGui::PushItemWidth(100.f);
 
 				std::string uNameId = "##uniformName" + std::to_string(staticUniformCount);
-				ImGui::InputText(uNameId.c_str(), &staticUniformSpec.name);
+				ImGui::InputTextString(uNameId.c_str(), &staticUniformSpec.name);
 				ImGui::SameLine();
 
 				static const char* uTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
@@ -550,7 +550,7 @@ namespace Lamp
 
 				ImGui::PushItemWidth(100.f);
 				std::string nameId = "##dynUniformName" + std::to_string(uniformCount);
-				if (ImGui::InputText(nameId.c_str(), &dynUniformSpec.name))
+				if (ImGui::InputTextString(nameId.c_str(), &dynUniformSpec.name))
 				{
 					SetAttributeName(dynUniformSpec.name, dynUniformPair.second.second);
 				}

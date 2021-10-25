@@ -5,6 +5,8 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <imgui_stdlib.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
@@ -115,7 +117,11 @@ namespace UI
 		ImGui::TreePop();
 	}
 
-	bool InputTextOnSameline(std::string& string, const std::string& id);
+	static bool InputTextOnSameline(std::string& string, const std::string& id)
+	{
+		ImGui::SameLine();
+		return ImGui::InputTextString(id.c_str(), &string);
+	}
 
 	static void Separator(ImGuiSeparatorFlags customFlags = 0)
 	{
@@ -147,17 +153,22 @@ namespace UI
 		ImGui::SameLine(offsetX, spacing);
 	}
 
-	static bool BeginProperties(const std::string& name = "")
+	static bool BeginProperties(const std::string& name = "", bool pushId = true)
 	{
-		ImGuiTableFlags flags;
-		PushId();
+		if (pushId)
+		{
+			PushId();
+		}
 		return ImGui::BeginTable(name.c_str(), 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable);
 	}
 
-	static void EndProperties()
+	static void EndProperties(bool popId = true)
 	{
 		ImGui::EndTable();
-		PopId();
+		if (popId)
+		{
+			PopId();
+		}
 	}
 
 	static void ShiftCursor(float x, float y)
@@ -398,8 +409,45 @@ namespace UI
 		return changed;
 	}
 
-	bool Property(const std::string& text, const std::string& value);
-	bool Property(const std::string& text, std::string& value);
+	static bool Property(const std::string& text, const std::string& value)
+	{
+		bool changed = false;
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+
+		if (ImGui::InputTextString(id.c_str(), &const_cast<std::string&>(value)))
+		{
+			changed = true;
+		}
+
+		ImGui::PopItemWidth();
+
+		return changed;
+	}
+
+	static bool Property(const std::string& text, std::string& value)
+	{
+		bool changed = false;
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+
+		if (ImGui::InputTextString(id.c_str(), &value))
+		{
+			changed = true;
+		}
+
+		return changed;
+	}
 
 	static bool Property(const std::string& text, glm::vec4& value, bool useAlpha)
 	{
@@ -422,5 +470,39 @@ namespace UI
 		return false;
 	}
 
-	bool Property(const std::string& text, std::filesystem::path& path);
+	static bool Property(const std::string& text, std::filesystem::path& path)
+	{
+		bool changed = false;
+		if (ImGui::InputTextString(text.c_str(), &path.string()))
+		{
+			changed = true;
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* inPath = (const wchar_t*)payload->Data;
+				std::filesystem::path newPath = std::filesystem::path("assets") / inPath;
+
+				path = newPath;
+				changed = true;
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Select..."))
+		{
+			std::string newPath = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			if (!newPath.empty())
+			{
+				path = newPath;
+
+				changed = true;
+			}
+		}
+
+		return changed;
+	}
 };
