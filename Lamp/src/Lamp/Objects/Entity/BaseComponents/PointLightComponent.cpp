@@ -33,7 +33,10 @@ namespace Lamp
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
 		});
 
-		g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
+		if (g_pEnv->pLevel)
+		{
+			g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
+		}
 	}
 
 	PointLightComponent::~PointLightComponent()

@@ -9,6 +9,8 @@ public:
 	{}
 
 	virtual void OnStart() override;
+	virtual void OnStop() override;
+
 	bool OnUpdate(Lamp::AppUpdateEvent& e);
 	virtual void OnEvent(Lamp::Event& e) override;
 

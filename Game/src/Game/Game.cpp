@@ -16,6 +16,10 @@ void Game::OnStart()
 	}
 }
 
+void Game::OnStop()
+{
+}
+
 bool Game::OnUpdate(Lamp::AppUpdateEvent& e)
 {
 	return false;

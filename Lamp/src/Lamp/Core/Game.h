@@ -10,6 +10,8 @@ namespace Lamp
 	{
 	public:
 		virtual void OnStart() = 0;
+		virtual void OnStop() = 0;
+
 		virtual void OnEvent(Event& e) = 0;
 	};
 }

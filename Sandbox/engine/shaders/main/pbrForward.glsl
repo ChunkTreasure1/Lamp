@@ -39,7 +39,6 @@ out Out
 } v_Out;
 
 uniform mat4 u_Model;
-uniform mat4 u_ShadowVP;
 
 void main()
 {

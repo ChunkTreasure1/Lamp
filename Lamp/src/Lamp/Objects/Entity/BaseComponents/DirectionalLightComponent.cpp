@@ -32,7 +32,10 @@ namespace Lamp
 			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
 		});
 
-		g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight);
+		if (g_pEnv->pLevel)
+		{
+			g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight);
+		}
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
