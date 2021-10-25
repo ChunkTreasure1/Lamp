@@ -3,6 +3,7 @@
 
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/DirectionalLightComponent.h"
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
 #include "Lamp/Objects/Brushes/Brush.h"
@@ -87,6 +88,11 @@ namespace Lamp
 			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
 				m_RenderUtils.RegisterPointLight(lightComp->GetLight());
+			}
+
+			if (auto dirLightComp = pair.second->GetComponent<DirectionalLightComponent>())
+			{
+				m_RenderUtils.RegisterDirectionalLight(dirLightComp->GetLight());
 			}
 		}
 
@@ -242,19 +248,6 @@ namespace Lamp
 	void Level::OnSimulationEnd()
 	{
 		Physics::DestroyScene();
-	}
-
-	void Level::SetupLights()
-	{
-		for (auto& entity : m_Entities)
-		{
-			if (auto& comp = entity.second->GetComponent<PointLightComponent>())
-			{
-				m_RenderUtils.RegisterPointLight(comp->GetLight());
-			}
-		}
-
-
 	}
 
 	void Level::AddLayer(const ObjectLayer& layer)

@@ -101,8 +101,6 @@ namespace Lamp
 		void OnSimulationStart();
 		void OnSimulationEnd();
 
-		void SetupLights();
-
 		//Layers
 		void AddLayer(const ObjectLayer& layer);
 		void RemoveLayer(uint32_t id);

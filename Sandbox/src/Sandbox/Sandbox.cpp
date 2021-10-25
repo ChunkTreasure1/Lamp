@@ -368,12 +368,14 @@ namespace Sandbox
 	{
 		m_SceneState = SceneState::Play;
 		m_pSelectedObject = nullptr;
-		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
 
+		g_pEnv->pLevel = nullptr;
+		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
+		
 		g_pEnv->pLevel = m_pRuntimeLevel;
 		m_pRuntimeLevel->SetIsPlaying(true);
 		m_pRuntimeLevel->OnRuntimeStart();
-
+		
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 	}
