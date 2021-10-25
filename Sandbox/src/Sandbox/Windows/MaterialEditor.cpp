@@ -156,16 +156,16 @@ namespace Sandbox
 		UI::PopId();
 
 		UI::Separator();
-		
+
 		ImGui::TextUnformatted("Textures");
 
 		for (auto& tex : m_pSelectedMaterial->GetTextures())
 		{
 			ImGui::TextUnformatted(tex.first.c_str());
 
-			if (ImGui::ImageButton(ImTextureID(tex.second->GetID()), { 64, 64 }))
+			std::filesystem::path path;
+			if (UI::ImageButton(tex.second->GetID(), path))
 			{
-				std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 				if (!path.empty())
 				{
 					Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
@@ -176,18 +176,15 @@ namespace Sandbox
 				}
 			}
 
-			if (ImGui::BeginDragDropTarget())
+			if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
 			{
-				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-				{
-					const wchar_t* wPath = (const wchar_t*)(pPayload->Data);
-					std::filesystem::path path(wPath);
+				const wchar_t* wPath = (const wchar_t*)(ptr);
+				std::filesystem::path path(wPath);
 
-					AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-					if (type == AssetType::Texture)
-					{
-						tex.second = ResourceCache::GetAsset<Texture2D>(path);
-					}
+				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+				if (type == AssetType::Texture)
+				{
+					tex.second = ResourceCache::GetAsset<Texture2D>(path);
 				}
 			}
 		}
@@ -256,7 +253,7 @@ namespace Sandbox
 	void MaterialEditor::CreateNewMaterial()
 	{
 		std::filesystem::path matPath = s_assetsPath / "material.mtl";
-		
+
 		Ref<Material> mat = CreateRef<Material>(0, "New Material");
 		mat->Path = matPath;
 		mat->SetShader(ShaderLibrary::GetShader("pbrForward"));

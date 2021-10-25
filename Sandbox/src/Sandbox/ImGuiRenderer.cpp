@@ -83,41 +83,26 @@ namespace Sandbox
 			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-			if (ImGui::BeginDragDropTarget())
+			if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
 			{
-				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				const wchar_t* wPath = (const wchar_t*)ptr;
+				std::filesystem::path path = std::filesystem::path("assets") / std::filesystem::path(wPath);
+
+				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+				if (type == Lamp::AssetType::Level)
 				{
-					const wchar_t* wPath = (const wchar_t*)pPayload->Data;
-					std::filesystem::path path = std::filesystem::path("assets") / std::filesystem::path(wPath);
-
-					AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-					if (type == Lamp::AssetType::Level)
-					{
-						OpenLevel(path);
-					}
-
-					if (type == Lamp::AssetType::Mesh)
-					{
-						m_pSelectedObject = Lamp::Brush::Create(path.string());
-					}
+					OpenLevel(path);
 				}
 
-				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("BRUSH_ITEM"))
+				if (type == Lamp::AssetType::Mesh)
 				{
-					const char* path = (const char*)pPayload->Data;
-					m_pSelectedObject = Lamp::Brush::Create(path);
+					m_pSelectedObject = Lamp::Brush::Create(path.string());
 				}
-
-				ImGui::EndDragDropTarget();
 			}
 		}
 
 		//Guizmo
 		static glm::mat4 transform = glm::mat4(1.f);
-		static glm::mat4 lastTrans = glm::mat4(1.f);
-		static bool beginMove = false;
-		static bool hasStarted = false;
-		static bool firstTime = true;
 
 		if (m_pSelectedObject && m_SceneState != SceneState::Play)
 		{
@@ -642,19 +627,17 @@ namespace Sandbox
 
 		ImGui::Text("RenderGraph");
 
-		std::string graphPath = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path.string() : "";
-		if (ImGui::InputTextString("##graph", &graphPath))
-		{
-			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
-		}
+		std::filesystem::path graphPath = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
 
-		ImGui::SameLine();
-		if (ImGui::Button("Open"))
+		UI::BeginProperties("renderProps");
+
+		if (UI::Property("Render graph", graphPath))
 		{
-			graphPath = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
 			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
 			Renderer::GetRenderGraph()->Start();
 		}
+
+		UI::EndProperties();
 
 		ImGui::SameLine();
 		if (ImGui::Button("Reload"))

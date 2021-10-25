@@ -757,11 +757,11 @@ namespace Sandbox
 					ImGui::SameLine();
 					if (ImGui::Button("Open..."))
 					{
-						std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-						if (!path.empty())
-						{
-							v = path;
-						}
+						//std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+						//if (!path.empty())
+						//{
+						//	v = path;
+						//}
 					}
 
 					if (v != s)
@@ -1109,12 +1109,12 @@ namespace Sandbox
 				ImGui::SameLine();
 				if (ImGui::Button("Open..."))
 				{
-					std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-					if (!path.empty())
-					{
-						v = path;
-					}
-				}
+					//std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+					//if (!path.empty())
+					//{
+					//	v = path;
+					//}
+				}	//
 
 				if (v != s)
 				{

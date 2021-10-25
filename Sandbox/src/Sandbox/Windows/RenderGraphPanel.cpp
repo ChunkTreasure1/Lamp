@@ -259,7 +259,7 @@ namespace Sandbox
 
 		if (ImGui::ImageButton((ImTextureID)m_LoadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
-			std::string path = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
+			std::filesystem::path path = FileDialogs::OpenFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
 			if (!path.empty() && std::filesystem::exists(path))
 			{
 				Ref<Asset> graph;
@@ -276,7 +276,7 @@ namespace Sandbox
 			{
 				if (m_CurrentlyOpenGraph->Path.empty())
 				{
-					std::string path = FileDialogs::SaveFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
+					std::filesystem::path path = FileDialogs::SaveFile("RenderGraph (*.rendergraph)\0*.rendergraph\0");
 					m_CurrentlyOpenGraph->Path = path;
 				}
 

@@ -141,27 +141,23 @@ namespace Sandbox
 		{
 			m_savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
 
-			std::string matOriginPath = m_savePath.substr(m_savePath.find_last_of('\\') + 1, m_savePath.size() - 1);
-
-
 			if (!m_savePath.empty())
 			{
-				if (m_savePath.find(".lgf") == std::string::npos)
+				if (m_savePath.extension().empty())
 				{
-					m_savePath += ".lgf";
+					m_savePath / ".lgf";
 				}
 
 				m_modelToImport->Path = m_savePath;
 
 				for (auto& mat : m_modelToImport->GetMaterials())
 				{
-					mat.second->SetName(matOriginPath + std::to_string(mat.first));
-					if (!MaterialLibrary::IsMaterialLoaded(matOriginPath + std::to_string(mat.first)))
+					mat.second->SetName(m_savePath.stem().string() + std::to_string(mat.first));
+					if (!MaterialLibrary::IsMaterialLoaded(m_savePath.stem().string() + std::to_string(mat.first)))
 					{
-						std::string matPath = m_savePath.substr(0, m_savePath.find_last_of('\\') + 1);
-						matPath += matOriginPath + ".mtl";
+						std::filesystem::path matPath = m_savePath.parent_path() / m_savePath.stem() / ".mtl";
 
-						mat.second->Path = std::filesystem::path(matPath);
+						mat.second->Path = matPath;
 						g_pEnv->pAssetManager->SaveAsset(mat.second);
 
 						MaterialLibrary::AddMaterial(mat.second);
@@ -290,7 +286,7 @@ namespace Sandbox
 		ImGui::Begin("Import Settings", &m_IsOpen);
 
 		ImGui::Text(("Source path: " + m_importSettings.path.string()).c_str());
-		ImGui::Text(("Destination path: " + m_savePath).c_str());
+		ImGui::Text(("Destination path: " + m_savePath.string()).c_str());
 
 		UI::PushId();
 		if (UI::BeginProperties("test", false))
@@ -388,9 +384,10 @@ namespace Sandbox
 					for (auto& tex : mat.second->GetTextures())
 					{
 						ImGui::Text(tex.first.c_str());
-						if (ImGui::ImageButton((ImTextureID)tex.second->GetID(), { 64, 64 }, { 0, 1 }, { 1, 0 }))
+
+						std::filesystem::path path;
+						if (UI::ImageButton(tex.second->GetID(), path))
 						{
-							std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 							if (!path.empty())
 							{
 								Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
@@ -401,20 +398,15 @@ namespace Sandbox
 							}
 						}
 
-						if (ImGui::BeginDragDropTarget())
+						if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
 						{
-							if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+							const wchar_t* wPath = (const wchar_t*)ptr;
+							std::filesystem::path path(wPath);
+							AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+							if (type == AssetType::Texture)
 							{
-								const wchar_t* wPath = (const wchar_t*)pPayload->Data;
-								std::filesystem::path path(wPath);
-								AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-								if (type == AssetType::Texture)
-								{
-									tex.second = ResourceCache::GetAsset<Texture2D>(std::filesystem::path("assets") / path);
-								}
+								tex.second = ResourceCache::GetAsset<Texture2D>(std::filesystem::path("assets") / path);
 							}
-
-							ImGui::EndDragDropTarget();
 						}
 						ImGui::Separator();
 					}

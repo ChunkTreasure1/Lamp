@@ -43,14 +43,12 @@ namespace Sandbox
 
 		m_isFocused = ImGui::IsWindowFocused();
 
-		static std::string currentRightClick;
-		static bool itemMenuOpen = false;
-		static uint32_t idMenuOpen = 0;
-
 		const float imageSize = 20.f;
 		const float imagePadding = 5.f;
 
 		int startId = 0;
+		bool isItemHovered = false;
+
 		for (auto& layer : g_pEnv->pLevel->GetLayers())
 		{
 			std::string checkId = "###check" + std::to_string(layer.ID);
@@ -68,7 +66,28 @@ namespace Sandbox
 
 			ImVec2 cursorPos = ImGui::GetCursorPos();
 			bool open = UI::TreeNodeFramed(id, true, 0.f, { 0.f, 1.5f });
-			CollapsingHeaderAddons(currentRightClick, layer.Name + "###layer" + std::to_string(layer.ID), itemMenuOpen, idMenuOpen, layer.ID);
+			if (ImGui::IsItemHovered())
+			{
+				isItemHovered = true;
+			}
+
+			if (UI::BeginPopup())
+			{
+				std::string renameText = "Rename layer '" + layer.Name + "'";
+				if (ImGui::Selectable(renameText.c_str()))
+				{
+					m_renamingLayer = static_cast<int>(layer.ID);
+				}
+
+				if (ImGui::Selectable("Remove layer"))
+				{
+					g_pEnv->pLevel->RemoveLayer(layer.ID);
+
+					ImGui::CloseCurrentPopup();
+				}
+
+				UI::EndPopup();
+			}
 
 			if (m_renamingLayer == layer.ID)
 			{
@@ -100,7 +119,6 @@ namespace Sandbox
 
 				ImGui::PopItemWidth();
 			}
-
 
 			const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
 
@@ -156,6 +174,26 @@ namespace Sandbox
 							EditorObjectSelectedEvent e(obj);
 							Application::Get().OnEvent(e);
 						}
+
+						if (ImGui::IsItemHovered())
+						{
+							isItemHovered = true;
+						}
+
+						bool objectDestroyed = false;
+
+						if (UI::BeginPopup())
+						{
+							std::string removeText = "Remove '" + obj->GetName() + "'";
+							if (ImGui::Selectable(removeText.c_str()))
+							{
+								obj->Destroy();
+								objectDestroyed = true;
+							}
+
+							UI::EndPopup();
+						}
+
 						if (ImGui::BeginDragDropSource())
 						{
 							std::string dragDropText = "Moving " + obj->GetName();
@@ -166,15 +204,19 @@ namespace Sandbox
 							ImGui::EndDragDropSource();
 						}
 
-						ImGui::TableNextColumn();
-						if (typeid(*obj) == typeid(Brush))
+						if (!objectDestroyed)
 						{
-							ImGui::TextDisabled("Brush");
+							ImGui::TableNextColumn();
+							if (typeid(*obj) == typeid(Brush))
+							{
+								ImGui::TextDisabled("Brush");
+							}
+							else
+							{
+								ImGui::TextDisabled("Entity");
+							}
 						}
-						else
-						{
-							ImGui::TextDisabled("Entity");
-						}
+
 						ImGui::PopID();
 						startId++;
 					}
@@ -186,13 +228,16 @@ namespace Sandbox
 			}
 		}
 
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered() && !itemMenuOpen)
+		if (!isItemHovered && ImGui::BeginPopupContextWindow())
 		{
-			ImGui::OpenPopup("LV_Main");
-		}
+			if (ImGui::Selectable("Add layer"))
+			{
+				g_pEnv->pLevel->AddLayer(ObjectLayer("New layer", (uint32_t)g_pEnv->pLevel->GetLayers().size(), true));
+				ImGui::CloseCurrentPopup();
+			}
 
-		UpdateMainClickMenu();
-		UpdateItemClickMenu(currentRightClick, itemMenuOpen, idMenuOpen);
+			ImGui::EndPopup();
+		}
 
 		ImGui::End();
 
@@ -213,75 +258,5 @@ namespace Sandbox
 		}
 
 		return false;
-	}
-
-	void LayerView::UpdateMainClickMenu()
-	{
-		if (ImGui::BeginPopup("LV_Main"))
-		{
-			if (ImGui::Selectable("Add"))
-			{
-				g_pEnv->pLevel->AddLayer(ObjectLayer("New layer", (uint32_t)g_pEnv->pLevel->GetLayers().size(), true));
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::EndPopup();
-		}
-	}
-
-	void LayerView::UpdateItemClickMenu(const std::string& id, bool& open, uint32_t& layerId)
-	{
-		if (ImGui::BeginPopup(id.c_str()))
-		{
-			if (id.empty())
-			{
-				open = false;
-				ImGui::CloseCurrentPopup();
-			}
-
-			if (ImGui::Selectable("Rename"))
-			{
-				m_renamingLayer = static_cast<int>(layerId);
-			}
-
-			if (ImGui::Selectable("Remove"))
-			{
-				g_pEnv->pLevel->RemoveLayer(layerId);
-
-				layerId = 0;
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::EndPopup();
-		}
-		else
-		{
-			open = false;
-		}
-	}
-
-	void LayerView::CollapsingHeaderAddons(std::string& currRightClick, const std::string& id, bool& open, uint32_t& layerId, const uint32_t& currId)
-	{
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-		{
-			ImGui::OpenPopup(id.c_str());
-			open = true;
-			currRightClick = id;
-			layerId = currId;
-		}
-
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("LAYER_OBJECT"))
-			{
-				const uint32_t* values = (const uint32_t*)pPayload->Data;
-				if (values[0] != currId)
-				{
-					g_pEnv->pLevel->MoveObjectToLayer(values[0], currId, values[1]);
-				}
-			}
-
-			ImGui::EndDragDropTarget();
-		}
 	}
 }
