@@ -8,7 +8,7 @@ namespace Sandbox
 {
 	void Sandbox::SaveLevelAs()
 	{
-		std::string filepath = Lamp::FileDialogs::SaveFile("Lamp Level (*.level)\0*.level\0");
+		std::filesystem::path filepath = Lamp::FileDialogs::SaveFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
 			g_pEnv->pLevel->Path = filepath;
@@ -18,7 +18,7 @@ namespace Sandbox
 
 	void Sandbox::OpenLevel()
 	{
-		std::string filepath = Lamp::FileDialogs::OpenFile("Lamp Level (*.level)\0*.level\0");
+		std::filesystem::path filepath = Lamp::FileDialogs::OpenFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
 			OpenLevel(filepath);

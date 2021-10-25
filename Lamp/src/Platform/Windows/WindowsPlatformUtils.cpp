@@ -9,7 +9,7 @@
 
 namespace Lamp
 {
-	std::string FileDialogs::OpenFile(const char* filter)
+	std::filesystem::path FileDialogs::OpenFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -30,7 +30,7 @@ namespace Lamp
 		return std::string();
 	}
 
-	std::string FileDialogs::SaveFile(const char* filter)
+	std::filesystem::path FileDialogs::SaveFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };

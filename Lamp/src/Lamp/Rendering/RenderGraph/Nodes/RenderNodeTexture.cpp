@@ -142,7 +142,7 @@ namespace Lamp
 
 	void RenderNodeTexture::GetTexture()
 	{
-		std::string path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
+		std::filesystem::path path = FileDialogs::OpenFile("All (*.*)\0*.*\0");
 		if (!path.empty())
 		{
 			Ref<Texture2D> tex = ResourceCache::GetAsset<Texture2D>(path);

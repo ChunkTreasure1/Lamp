@@ -148,6 +148,23 @@ namespace UI
 		s_contextId--;
 	}
 
+	static bool BeginPopup(const std::string& id = "")
+	{
+		if (id.empty())
+		{
+			return ImGui::BeginPopupContextItem();
+		}
+		else
+		{
+			return ImGui::BeginPopupContextItem(id.c_str());
+		}
+	}
+
+	static void EndPopup()
+	{
+		ImGui::EndPopup();
+	}
+
 	static void SameLine(float offsetX = 0.f, float spacing = -1.f)
 	{
 		ImGui::SameLine(offsetX, spacing);
@@ -277,10 +294,42 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), items.size()))
 		{
-			changed =  true;
+			changed = true;
 		}
 
 		ImGui::PopItemWidth();
+
+		return changed;
+	}
+
+	static void* DragDropTarget(const std::string& type)
+	{
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload(type.c_str()))
+			{
+				return pPayload->Data;
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		return nullptr;
+	}
+
+	static bool ImageButton(uint32_t id, const glm::vec2& size = { 64, 64 })
+	{
+		return ImGui::ImageButton((ImTextureID)id, ImVec2{ size.x, size.y }, { 0, 1 }, { 1, 0 });
+	}
+
+	static bool ImageButton(uint32_t id, std::filesystem::path& path, const char* filter = "All (*.*)\0*.*\0", const glm::vec2& size = { 64, 64 })
+	{
+		bool changed = false;
+		if (ImGui::ImageButton((ImTextureID)id, ImVec2{ size.x, size.y }, { 0, 1 }, { 1, 0 }))
+		{
+			path = Lamp::FileDialogs::OpenFile(filter);
+			changed = true;
+		}
 
 		return changed;
 	}
@@ -478,29 +527,21 @@ namespace UI
 			changed = true;
 		}
 
-		if (ImGui::BeginDragDropTarget())
+		if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-			{
-				const wchar_t* inPath = (const wchar_t*)payload->Data;
-				std::filesystem::path newPath = std::filesystem::path("assets") / inPath;
+			const wchar_t* inPath = (const wchar_t*)ptr;
+			std::filesystem::path newPath = std::filesystem::path("assets") / inPath;
 
-				path = newPath;
-				changed = true;
-			}
+			path = newPath;
+			changed = true;
 		}
 
 		ImGui::SameLine();
 
-		if (ImGui::Button("Select..."))
+		if (ImGui::Button("Open..."))
 		{
-			std::string newPath = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-			if (!newPath.empty())
-			{
-				path = newPath;
-
-				changed = true;
-			}
+			path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			changed = true;
 		}
 
 		return changed;

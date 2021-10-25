@@ -17,9 +17,6 @@ namespace Sandbox
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool Update(Lamp::AppUpdateEvent& e);
 
-		void UpdateMainClickMenu();
-		void UpdateItemClickMenu(const std::string& id, bool& open, uint32_t& layerId);
-
 		void CollapsingHeaderAddons(std::string& currRightClick, const std::string& id, bool& open, uint32_t& layerId, const uint32_t& currId);
 
 	private:

@@ -40,7 +40,7 @@ namespace Sandbox
 		bool m_renderSkybox = false;
 		bool m_renderGrid = true;
 		glm::vec2 m_perspectiveSize;
-		std::string m_savePath;
+		std::filesystem::path m_savePath;
 
 		Ref<Lamp::Mesh> m_modelToImport;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
