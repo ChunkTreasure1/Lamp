@@ -27,7 +27,7 @@ namespace Sandbox
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(GraphKey::OnUpdate));
 	}
 
-	void GraphKey::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph>& graph, uint32_t entity)
+	void GraphKey::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph> graph, uint32_t entity)
 	{
 		m_CurrentEntityId = entity;
 		m_CurrentlyOpenGraph = graph;

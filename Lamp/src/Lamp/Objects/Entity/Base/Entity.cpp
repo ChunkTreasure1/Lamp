@@ -18,7 +18,7 @@ namespace Lamp
 	{
 		m_Name = "Entity";
 
-		m_GizmoMaterial = MaterialLibrary::GetMaterial("gizmoEntity");
+		m_gizmoMaterial = MaterialLibrary::GetMaterial("gizmoEntity");
 	}
 
 	void Entity::OnEvent(Event& e)
@@ -33,9 +33,9 @@ namespace Lamp
 			comp->OnEvent(e);
 		}
 
-		if (m_GraphKeyGraph)
+		if (m_graphKeyGraph)
 		{
-			m_GraphKeyGraph->OnEvent(e);
+			m_graphKeyGraph->OnEvent(e);
 		}
 
 		EventDispatcher dispatcher(e);
@@ -242,9 +242,9 @@ namespace Lamp
 			copy->AddComponent(component);
 		}
 
-		if (entity->m_GraphKeyGraph)
+		if (entity->m_graphKeyGraph)
 		{
-			copy->m_GraphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_GraphKeyGraph);
+			copy->m_graphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_graphKeyGraph);
 		}
 		copy->m_Transform = entity->m_Transform;
 		copy->SetPosition(entity->m_Position);
@@ -283,7 +283,7 @@ namespace Lamp
 				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
 
 
-			Renderer2D::SubmitQuad(transform, m_GizmoMaterial, m_Id);
+			Renderer2D::SubmitQuad(transform, m_gizmoMaterial, m_Id);
 		}
 
 		return false;
