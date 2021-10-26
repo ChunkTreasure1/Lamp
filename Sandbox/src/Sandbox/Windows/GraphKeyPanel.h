@@ -6,10 +6,10 @@
 
 namespace Sandbox
 {
-	class GraphKey : public BaseWindow
+	class GraphKeyPanel : public BaseWindow
 	{
 	public:
-		GraphKey(std::string_view name);
+		GraphKeyPanel(std::string_view name);
 
 		virtual void OnEvent(Lamp::Event& e) override;
 

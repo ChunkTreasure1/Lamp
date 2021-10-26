@@ -18,7 +18,7 @@
 
 #include <Lamp/Core/Application.h>
 #include <Lamp/GraphKey/GraphKeyGraph.h>
-#include "Sandbox/Windows/GraphKey.h"
+#include "Sandbox/Windows/GraphKeyPanel.h"
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
@@ -291,7 +291,7 @@ namespace Sandbox
 						spec.path = "Assets/libs/graphkey/" + spec.name + ".graphkey";
 						pEnt->SetGraphKeyGraph(CreateRef<Lamp::GraphKeyGraph>(spec));
 
-						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						if (auto vs = (GraphKeyPanel*)(m_pWindows[1]))
 						{
 							vs->SetIsOpen(true);
 							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph(), pEnt->GetID());
@@ -299,7 +299,7 @@ namespace Sandbox
 					}
 					else
 					{
-						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						if (auto vs = (GraphKeyPanel*)(m_pWindows[1]))
 						{
 							vs->SetIsOpen(true);
 							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph(), pEnt->GetID());

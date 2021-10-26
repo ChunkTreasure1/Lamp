@@ -84,7 +84,7 @@
     <ClInclude Include="src\Sandbox\Windows\BufferWindow.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\GraphKey.h">
+    <ClInclude Include="src\Sandbox\Windows\GraphKeyPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\LayerViewPanel.h">
@@ -131,7 +131,7 @@
     <ClCompile Include="src\Sandbox\Windows\AssetBrowserPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp">
+    <ClCompile Include="src\Sandbox\Windows\GraphKeyPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\LayerViewPanel.cpp">

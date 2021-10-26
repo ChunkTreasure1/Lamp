@@ -1,4 +1,4 @@
-#include "GraphKey.h"
+#include "GraphKeyPanel.h"
 
 #include <ImNodes.h>
 
@@ -10,24 +10,26 @@
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <Lamp/Utility/UIUtility.h>
 
+#include <Lamp/Utility/UIUtility.h>
+
 namespace Sandbox
 {
 	using namespace Lamp;
 
-	GraphKey::GraphKey(std::string_view name)
+	GraphKeyPanel::GraphKeyPanel(std::string_view name)
 		: BaseWindow(name)
 	{
 		//CreateComponentNodes();
 	}
 
-	void GraphKey::OnEvent(Lamp::Event& e)
+	void GraphKeyPanel::OnEvent(Lamp::Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(GraphKey::UpdateImGui));
-		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(GraphKey::OnUpdate));
+		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(GraphKeyPanel::UpdateImGui));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(GraphKeyPanel::OnUpdate));
 	}
 
-	void GraphKey::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph> graph, uint32_t entity)
+	void GraphKeyPanel::SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph> graph, uint32_t entity)
 	{
 		m_CurrentEntityId = entity;
 		m_CurrentlyOpenGraph = graph;
@@ -38,7 +40,7 @@ namespace Sandbox
 		}
 	}
 
-	bool GraphKey::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
+	bool GraphKeyPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		if (!m_IsOpen)
 		{
@@ -67,7 +69,7 @@ namespace Sandbox
 		return false;
 	}
 
-	bool GraphKey::OnUpdate(Lamp::AppUpdateEvent& e)
+	bool GraphKeyPanel::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
 		if (Input::IsKeyPressed(LP_KEY_DELETE))
 		{
@@ -102,7 +104,7 @@ namespace Sandbox
 		return true;
 	}
 
-	void GraphKey::UpdateNodeWindow()
+	void GraphKeyPanel::UpdateNodeWindow()
 	{
 		ImGui::Begin("Main", &m_IsOpen);
 		if (m_CurrentlyOpenGraph)
@@ -264,7 +266,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void GraphKey::UpdateNodeList()
+	void GraphKeyPanel::UpdateNodeList()
 	{
 		if (!m_IsOpen)
 		{
@@ -344,7 +346,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void GraphKey::UpdatePropertiesWindow()
+	void GraphKeyPanel::UpdatePropertiesWindow()
 	{
 		if (!m_IsOpen)
 		{
@@ -368,7 +370,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void GraphKey::UpdateGraphList()
+	void GraphKeyPanel::UpdateGraphList()
 	{
 		if (!m_IsOpen)
 		{
@@ -394,7 +396,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void GraphKey::CreateComponentNodes()
+	void GraphKeyPanel::CreateComponentNodes()
 	{
 		for (const auto& pC : Lamp::ComponentRegistry::s_Methods())
 		{
@@ -433,17 +435,17 @@ namespace Sandbox
 		}
 	}
 
-	void GraphKey::RemoveNode(uint32_t id)
+	void GraphKeyPanel::RemoveNode(uint32_t id)
 	{
 		m_CurrentlyOpenGraph->RemoveNode(id);
 	}
 
-	void GraphKey::RemoveLink(uint32_t id)
+	void GraphKeyPanel::RemoveLink(uint32_t id)
 	{
 		m_CurrentlyOpenGraph->RemoveLink(id);
 	}
 
-	void GraphKey::DrawNode(Ref<Lamp::Node>& node)
+	void GraphKeyPanel::DrawNode(Ref<Lamp::Node>& node)
 	{
 		ImNodes::BeginNode(node->id);
 
@@ -456,23 +458,6 @@ namespace Sandbox
 		ImNodes::BeginNodeTitleBar();
 		ImGui::Text(node->name.c_str());
 		ImNodes::EndNodeTitleBar();
-
-		std::string popId = "pop" + std::to_string(node->id);
-		if (ImGui::BeginPopupContextItem(popId.c_str(), ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverExistingPopup))
-		{
-			if (node->needsEntity)
-			{
-				if (ImGui::MenuItem("Assign graph entity"))
-				{
-					node->entityId = m_CurrentEntityId;
-				}
-			}
-
-			if (ImGui::MenuItem("Remove"))
-			{
-			}
-			ImGui::EndPopup();
-		}
 
 		Entity* pEntity = Entity::Get(node->entityId);
 
@@ -491,6 +476,7 @@ namespace Sandbox
 			{
 				nodeWidth = 200.f;
 			}
+
 
 			ImNodes::BeginInputAttribute(attr.id);
 			{
@@ -518,12 +504,12 @@ namespace Sandbox
 
 			ImNodes::BeginOutputAttribute(attr.id);
 			{
-				float labelWidth = ImGui::CalcTextSize(attr.name.c_str()).x;
-				ImGui::PushItemWidth(nodeWidth - labelWidth);
+				//float labelWidth = ImGui::CalcTextSize(attr.name.c_str()).x;
+				//ImGui::PushItemWidth(nodeWidth - labelWidth);
 
 				DrawOutput(attr, node);
 
-				ImGui::PopItemWidth();
+				//ImGui::PopItemWidth();
 			}
 			ImNodes::EndOutputAttribute();
 		}
@@ -531,11 +517,12 @@ namespace Sandbox
 		ImNodes::EndNode();
 	}
 
-	void GraphKey::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
+	void GraphKeyPanel::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
 	{
 		auto& prop = attr;
 
 		Entity* pEntity = Entity::Get(node->id);
+		float width = ImNodes::GetNodeDimensions(node->id).x;
 
 		switch (prop.type)
 		{
@@ -602,6 +589,15 @@ namespace Sandbox
 			case Lamp::PropertyType::Float:
 			{
 				float& p = std::any_cast<float&>(prop.data);
+
+				if (attr.pLinks.empty())
+				{
+
+				}
+				else
+				{
+
+				}
 
 				if (attr.pLinks.size() == 0)
 				{
@@ -903,7 +899,7 @@ namespace Sandbox
 		}
 	}
 
-	void GraphKey::DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
+	void GraphKeyPanel::DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
 	{
 		auto& prop = attr;
 
@@ -1201,7 +1197,7 @@ namespace Sandbox
 		}
 	}
 
-	bool GraphKey::IsHovered(const glm::vec2& pos, const glm::vec2& size)
+	bool GraphKeyPanel::IsHovered(const glm::vec2& pos, const glm::vec2& size)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		glm::vec2 mousePos = { io.MousePos.x, io.MousePos.y };
@@ -1217,7 +1213,7 @@ namespace Sandbox
 		return false;
 	}
 
-	void GraphKey::AddNode(const std::string& name)
+	void GraphKeyPanel::AddNode(const std::string& name)
 	{
 		if (!m_CurrentlyOpenGraph)
 		{

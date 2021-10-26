@@ -31,14 +31,6 @@ namespace Lamp
 
 		void OnEvent(Event& e);
 
-	public:
-		static void Save(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot, rapidxml::xml_document<>& doc);
-		static void Load(Ref<GraphKeyGraph>& graph, rapidxml::xml_node<>* pRoot);
-
-	private:
-		static void AppendAttribute(Attribute& attr, const std::string& type, rapidxml::xml_node<>* pRoot, rapidxml::xml_document<>& doc);
-		static void LoadAttribute(Attribute& attr, rapidxml::xml_node<>* pRoot, const std::string& name);
-
 	private:
 		GraphKeyGraphSpecification m_Specification;
 		uint32_t m_CurrentId = 0;

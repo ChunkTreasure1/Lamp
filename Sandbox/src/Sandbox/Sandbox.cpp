@@ -11,7 +11,7 @@
 #include <Lamp/Rendering/RenderPass.h>
 
 #include "Windows/MeshImporterPanel.h"
-#include "Windows/GraphKey.h"
+#include "Windows/GraphKeyPanel.h"
 #include "Windows/MaterialEditor.h"
 #include "Windows/RenderGraphPanel.h"
 #include "Windows/LayerViewPanel.h"
@@ -44,7 +44,7 @@ namespace Sandbox
 		Renderer::GetRenderGraph()->Start();
 
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
-		m_pWindows.push_back(new GraphKey("Visual Scripting"));
+		m_pWindows.push_back(new GraphKeyPanel("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new RenderGraphPanel("Render Graph"));
 		m_pWindows.push_back(new LayerViewPanel("Layer View"));
