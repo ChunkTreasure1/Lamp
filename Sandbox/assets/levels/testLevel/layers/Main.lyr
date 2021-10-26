@@ -27,6 +27,51 @@ layer:
       layerId: 0
       components:
         []
+      graphkey:
+        name: Entity
+        nodes:
+          - name: Start
+            id: 0
+            position: [200, 238]
+            attributes:
+              - name: OnStart
+                attrType: output
+                id: 1
+                propType: 10
+                data: ""
+          - name: Add
+            id: 2
+            position: [406, 186]
+            attributes:
+              - name: Add
+                attrType: input
+                id: 3
+                propType: 10
+                data: ""
+              - name: A
+                attrType: input
+                id: 4
+                propType: 4
+                data: 0
+              - name: B
+                attrType: input
+                id: 5
+                propType: 4
+                data: 28
+              - name: Done
+                attrType: output
+                id: 6
+                propType: 10
+                data: ""
+              - name: Result
+                attrType: output
+                id: 7
+                propType: 4
+                data: 0
+        links:
+          - id: 8
+            from: 1
+            to: 3
   brushes:
     - brush: Brush
       meshHandle: 10335344246315033883

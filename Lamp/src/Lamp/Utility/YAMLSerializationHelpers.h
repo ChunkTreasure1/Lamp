@@ -197,4 +197,10 @@ namespace Lamp
 		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
 		return out;
 	}
+
+	inline YAML::Emitter& operator<<(YAML::Emitter& out, const PropertyType& type)
+	{
+		out << static_cast<uint32_t>(type);
+		return out;
+	}
 }

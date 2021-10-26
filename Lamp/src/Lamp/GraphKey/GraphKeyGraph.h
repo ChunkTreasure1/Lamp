@@ -7,10 +7,10 @@ namespace Lamp
 {
 	struct GraphKeyGraphSpecification
 	{
+		std::string name;
+		std::filesystem::path path;
 		std::vector<Ref<Node>> nodes;
 		std::vector<Ref<Link>> links;
-		std::string name;
-		std::string path;
 	};
 
 	class GraphKeyGraph
