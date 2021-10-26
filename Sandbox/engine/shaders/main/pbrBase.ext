@@ -46,6 +46,11 @@ layout(std430, binding = 3) readonly buffer VisibleLightsBuffer
 
 } visibleIndices;
 
+layout(std140, binding = 4) uniform SSS
+{
+	float u_SSSWidth;
+}
+
 uniform sampler2D u_DirShadowMaps[10];
 
 uniform samplerCube u_IrradianceMap;
@@ -219,7 +224,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 	kD *= 1.0 - metallic;
 
 	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
-	return lightStrength;
+	return lightStrength * SSSSTransmittance(translucency, u_SSSWidth, fragPos, normal, L, u_DirShadowMaps[samplerId], mat4(1), 1000);
 }
 
 vec3 ACESTonemap(vec3 color)
@@ -240,7 +245,31 @@ vec3 ACESTonemap(vec3 color)
 	return clamp(m2 * (a / b), 0.0, 1.0);
 }
 
-vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float ao, vec3 fragPos, vec3 N)
+vec3 SSSSTransmittance(float translucency, float sssWidth, vec3 fragPos, vec3 normal, vec3 lightVector, sampler2D shadowMap, mat4 lightViewProjection, float lightFarPlane)
+{
+	float scale = 8.25 * (1.0 - translucency) / sssWidth;
+	vec4 shrinkedPos = vec4(fragPos - 0.005 * normal, 1.0);
+
+	vec4 shadowPos = lightViewProjection * shrinkedPos;
+	float d1 = texture(shadowMap, shadowPos.xy / shadowPos.w).r;
+	float d2 = shadowPos.z;
+
+	d1 *= lightFarPlane;
+	float d = scale * abs(d1 - d2);
+
+	//Calculate color using the thickness
+	float dd = -d * d;
+	vec3 profile = vec3(0.233, 0.455, 0.649) * exp(dd / 0.0064) +
+                     vec3(0.1,   0.336, 0.344) * exp(dd / 0.0484) +
+                     vec3(0.118, 0.198, 0.0)   * exp(dd / 0.187)  +
+                     vec3(0.113, 0.007, 0.007) * exp(dd / 0.567)  +
+                     vec3(0.358, 0.004, 0.0)   * exp(dd / 1.99)   +
+                     vec3(0.078, 0.0,   0.0)   * exp(dd / 7.41);
+
+	return profile * clamp(0.3 + dot(lightVector, -normal));
+}
+
+vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float translucency, vec3 fragPos, vec3 N)
 {
 	vec3 V = normalize(u_CameraPosition.xyz - fragPos);
 
