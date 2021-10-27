@@ -285,7 +285,7 @@ namespace Lamp
 
 				glDeleteShader(shader);
 
-				LP_ERROR("{0}", infoLog.data());
+				LP_CORE_ERROR("{0}", infoLog.data());
 				break;
 			}
 
@@ -314,7 +314,7 @@ namespace Lamp
 			for (auto id : glShaderIDs)
 				glDeleteShader(id);
 
-			LP_ERROR("{0}", infoLog.data());
+			LP_CORE_ERROR("{0}", infoLog.data());
 			LP_CORE_ASSERT(false, "Shader link failure!");
 			return;
 		}

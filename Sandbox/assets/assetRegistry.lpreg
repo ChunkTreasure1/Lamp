@@ -3,6 +3,18 @@ Assets:
     Path: assets/levels/testLevel/data.level
   - Handle: 10335344246315033883
     Path: assets\models\cube.lgf
+  - Handle: 10336611542070808023
+    Path: assets\models\head\textures\EyeTexture_albedo.tga
+  - Handle: 9310698082886069763
+    Path: assets\models\head\textures\EyeTexture_mro.tga
+  - Handle: 16556669663397278961
+    Path: assets\models\head\textures\EyeTexture_normal.tga
+  - Handle: 13743312291602395088
+    Path: assets\models\head\textures\kyle_low_albedo.tga
+  - Handle: 1612161284982214417
+    Path: assets\models\head\textures\kyle_low_mro.tga
+  - Handle: 5408929621648482626
+    Path: assets\models\head\textures\kyle_low_normal.tga
   - Handle: 13551055251788859933
     Path: assets\models\sphere.lgf
   - Handle: 9317505486348122308

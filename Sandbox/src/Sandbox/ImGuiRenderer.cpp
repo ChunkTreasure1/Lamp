@@ -83,7 +83,7 @@ namespace Sandbox
 			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-			if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
+			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
 				const wchar_t* wPath = (const wchar_t*)ptr;
 				std::filesystem::path path = std::filesystem::path("assets") / std::filesystem::path(wPath);

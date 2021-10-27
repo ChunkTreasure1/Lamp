@@ -304,17 +304,40 @@ namespace UI
 
 	static void* DragDropTarget(const std::string& type)
 	{
+		void* data = nullptr;
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload(type.c_str()))
 			{
-				return pPayload->Data;
+				data = pPayload->Data;
 			}
 
 			ImGui::EndDragDropTarget();
 		}
 
-		return nullptr;
+		return data;
+	}
+
+
+	static void* DragDropTarget(std::initializer_list<std::string> types)
+	{
+		void* data = nullptr;
+
+		for (const auto& type : types)
+		{
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload(type.c_str()))
+				{
+					data = pPayload->Data;
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+		}
+
+		return data;
 	}
 
 	static bool ImageButton(uint32_t id, const glm::vec2& size = { 64, 64 })

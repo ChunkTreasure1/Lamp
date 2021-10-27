@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 259899954
-      position: [-9, 198]
+      position: [-80, 323]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 293213604
-      position: [877, 266]
+      position: [806, 391]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 1211186725
-      position: [391, 16]
+      position: [301, 74]
       type: 0
       name: MainPass
       clearType: 3
@@ -45,6 +45,12 @@ RenderGraph:
             format: 1
             filtering: 1
             wrap: 3
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 1
+            wrap: 2
       staticUniforms:
         - staticUniform: u_DirLight.direction
           guuid: 81887197
@@ -139,7 +145,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1569709031
-      position: [-59, 391]
+      position: [-130, 516]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -147,7 +153,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -7.70170012e+25, 1.19110369e-43]
+      clearColor: [1, 1, -3.3071707e-35, 2.12997367e-43]
       attachments:
         {}
       attributes:

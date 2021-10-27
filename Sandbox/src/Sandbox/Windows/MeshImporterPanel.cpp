@@ -145,19 +145,21 @@ namespace Sandbox
 			{
 				if (m_savePath.extension().empty())
 				{
-					m_savePath / ".lgf";
+					std::string path = m_savePath.string();
+					path += ".lgf";
+					m_savePath = std::filesystem::path(path);
 				}
 
 				m_modelToImport->Path = m_savePath;
 
 				for (auto& mat : m_modelToImport->GetMaterials())
 				{
-					mat.second->SetName(m_savePath.stem().string() + std::to_string(mat.first));
-					if (!MaterialLibrary::IsMaterialLoaded(m_savePath.stem().string() + std::to_string(mat.first)))
+					//mat.second->SetName(m_savePath.stem().string() + std::to_string(mat.first));
+					if (!MaterialLibrary::IsMaterialLoaded(mat.second->GetName()))
 					{
-						std::filesystem::path matPath = m_savePath.parent_path() / m_savePath.stem() / ".mtl";
+						std::string sMatPath = m_savePath.parent_path().string() + "/" + mat.second->GetName() + ".mtl";
 
-						mat.second->Path = matPath;
+						mat.second->Path = std::filesystem::path(sMatPath);
 						g_pEnv->pAssetManager->SaveAsset(mat.second);
 
 						MaterialLibrary::AddMaterial(mat.second);

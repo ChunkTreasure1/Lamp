@@ -101,7 +101,7 @@ vec4 CalculateForward()
 	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(u_Gamma));
 	float metallic = texture(u_Material.mro, v_In.TexCoord).r;
 	float roughness = texture(u_Material.mro, v_In.TexCoord).g;
-	float translucency = texture(u_Material.mro, V_In.TexCoord).b;
+	float translucency = texture(u_Material.mro, v_In.TexCoord).b;
 
 	vec3 N = normalize(CalculateNormal());
 
