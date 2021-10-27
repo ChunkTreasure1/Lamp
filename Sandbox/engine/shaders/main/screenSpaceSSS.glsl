@@ -13,7 +13,7 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
-out v_TexCoords;
+out vec2 v_TexCoords;
 
 void main()
 {
@@ -96,7 +96,7 @@ void main()
 
         //Expensive on memory
         float depth = texture(u_DepthMap, offset).r;
-        float s = clamp(300.f * distToProjectionWindow * u_Width * abs(depthMap - depth));
+        float s = clamp(300.f * distToProjectionWindow * u_Width * abs(depthMap - depth), 0.0, 1.0);
 
         color.rgb = mix(color.rgb, colorMap.rgb, s);
 

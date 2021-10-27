@@ -46,10 +46,16 @@ layout(std430, binding = 3) readonly buffer VisibleLightsBuffer
 
 } visibleIndices;
 
-layout(std140, binding = 4) uniform SSS
+layout(std140, binding = 4) uniform DirLightData
+{
+	mat4 dirLightVPs[10];
+	int count;
+} u_LightData;
+
+layout(std140, binding = 5) uniform SSS
 {
 	float u_SSSWidth;
-}
+};
 
 uniform sampler2D u_DirShadowMaps[10];
 
@@ -224,7 +230,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3
 	kD *= 1.0 - metallic;
 
 	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
-	return lightStrength * SSSSTransmittance(translucency, u_SSSWidth, fragPos, normal, L, u_DirShadowMaps[samplerId], mat4(1), 1000);
+	return lightStrength; //SSSSTransmittance(translucency, u_SSSWidth, fragPos, normal, L, u_DirShadowMaps[samplerId], mat4(1), 1000);
 }
 
 vec3 ACESTonemap(vec3 color)
@@ -266,7 +272,7 @@ vec3 SSSSTransmittance(float translucency, float sssWidth, vec3 fragPos, vec3 no
                      vec3(0.358, 0.004, 0.0)   * exp(dd / 1.99)   +
                      vec3(0.078, 0.0,   0.0)   * exp(dd / 7.41);
 
-	return profile * clamp(0.3 + dot(lightVector, -normal));
+	return profile * clamp(0.3 + dot(lightVector, -normal), 0.0, 1.0);
 }
 
 vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float translucency, vec3 fragPos, vec3 N)
@@ -306,7 +312,7 @@ vec4 CalculateColor(vec3 albedo, float metallic, float roughness, float transluc
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse + specular) * ao;
+	vec3 ambient = (kD * diffuse + specular) * 0.5;
 
 	vec3 color = ambient + Lo;
 	color *= u_Exposure;
