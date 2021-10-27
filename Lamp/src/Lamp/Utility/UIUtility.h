@@ -665,4 +665,16 @@ namespace UI
 
 		return changed;
 	}
+
+	static bool Property(const std::string& text, int& value, const std::map<std::string, int>& enums)
+	{
+		std::vector<const char*> names;
+		names.reserve(enums.size());
+		for (const auto& e : enums)
+		{
+			names.push_back(e.first.c_str());
+		}
+
+		return Combo(text, value, names);
+	}
 };

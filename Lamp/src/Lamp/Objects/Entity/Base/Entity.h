@@ -43,17 +43,29 @@ namespace Lamp
 		template<typename T>
 		Ref<T> GetComponent()
 		{
+			if (!std::is_base_of<EntityComponent, T>::value)
+			{
+				LP_ERROR("Class must be of type EntityComponent!");
+				return nullptr;
+			}
+
 			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
 			{
 				return std::dynamic_pointer_cast<T>(it->second);
 			}
 
-			return Ref<T>(nullptr);
+			return nullptr;
 		}
 
 		template<typename T, typename... TArgs>
 		Ref<T> GetOrCreateComponent(TArgs&&... mArgs)
 		{
+			if (!std::is_base_of<EntityComponent, T>::value)
+			{
+				LP_ERROR("Class must be of type EntityComponent!");
+				return nullptr;
+			}
+
 			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it == m_pComponentMap.end())
 			{
 				Ref<T> c = CreateRef<T>(std::forward<TArgs>(mArgs)...);
@@ -76,6 +88,12 @@ namespace Lamp
 		template<typename T>
 		bool HasComponent()
 		{
+			if (!std::is_base_of<EntityComponent, T>::value)
+			{
+				LP_ERROR("Class must be of type EntityComponent!");
+				return false;
+			}
+
 			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
 			{
 				return true;
@@ -132,6 +150,12 @@ namespace Lamp
 		template<typename T>
 		bool RemoveComponent()
 		{
+			if (!std::is_base_of<EntityComponent, T>::value)
+			{
+				LP_ERROR("Class must be of type EntityComponent!");
+				return false;
+			}
+
 			for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
 			{
 				if (it->get()->GetName() == T::GetFactoryName())

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <string>
 #include <any>
 
@@ -23,7 +24,8 @@ namespace Lamp
 		Color4,
 		Void,
 		Selectable,
-		EntityId
+		EntityId,
+		Enum
 	};
 
 	struct ComponentProperty
@@ -32,31 +34,37 @@ namespace Lamp
 			: propertyType(propertyType), name(name), value(value)
 		{}
 
+		ComponentProperty(PropertyType propertyType, const std::string& name, std::map<std::string, int> enums, void* value)
+			: propertyType(propertyType), name(name), value(value), enums(enums)
+		{ }
+
 		ComponentProperty() 
 			: propertyType(PropertyType::Void), value(nullptr)
 		{}
 
 		std::string name;
 		void* value;
+		std::map<std::string, int> enums;
 		PropertyType propertyType;
 
-		static uint32_t PropertyTypeToSize(Lamp::PropertyType type)
+		static uint32_t PropertyTypeToSize(PropertyType type)
 		{
 			switch (type)
 			{
-			case Lamp::PropertyType::String: return 0;
-			case Lamp::PropertyType::Path: return 0;
-			case Lamp::PropertyType::Bool: return 1;
-			case Lamp::PropertyType::Int: return 4;
-			case Lamp::PropertyType::Float: return 4;
-			case Lamp::PropertyType::Float2: return 2 * 4;
-			case Lamp::PropertyType::Float3: return 3 * 4;
-			case Lamp::PropertyType::Float4: return 3 * 4;
-			case Lamp::PropertyType::Color3: return 3 * 4;
-			case Lamp::PropertyType::Color4: return 4 * 4;
-			case Lamp::PropertyType::Void: return 0;
-			case Lamp::PropertyType::Selectable: return 0;
-			case Lamp::PropertyType::EntityId: return 0;
+				case PropertyType::String: return 0;
+				case PropertyType::Path: return 0;
+				case PropertyType::Bool: return 1;
+				case PropertyType::Int: return 4;
+				case PropertyType::Float: return 4;
+				case PropertyType::Float2: return 2 * 4;
+				case PropertyType::Float3: return 3 * 4;
+				case PropertyType::Float4: return 3 * 4;
+				case PropertyType::Color3: return 3 * 4;
+				case PropertyType::Color4: return 4 * 4;
+				case PropertyType::Void: return 0;
+				case PropertyType::Selectable: return 0;
+				case PropertyType::EntityId: return 0;
+				case PropertyType::Enum: return 0;
 			default:
 				break;
 			}

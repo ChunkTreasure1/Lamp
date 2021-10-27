@@ -14,7 +14,7 @@ namespace Sandbox
 		virtual void OnEvent(Lamp::Event& e) override;
 
 		void SetCurrentlyOpenGraph(Ref<Lamp::GraphKeyGraph> graph, uint32_t entity);
-		inline Ref<Lamp::GraphKeyGraph>& GetCurrentlyOpenGraph() { return m_CurrentlyOpenGraph; }
+		inline Ref<Lamp::GraphKeyGraph> GetCurrentlyOpenGraph() { return m_CurrentlyOpenGraph; }
 
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
@@ -29,9 +29,9 @@ namespace Sandbox
 		void RemoveNode(uint32_t id);
 		void RemoveLink(uint32_t id);
 
-		void DrawNode(Ref<Lamp::Node>& node);
-		void DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties = false);
-		void DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties = false);
+		void DrawNode(Ref<Lamp::Node> node);
+		void DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node> node, bool isProperties = false);
+		void DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node> node, bool isProperties = false);
 
 		bool IsHovered(const glm::vec2& pos, const glm::vec2& size);
 		void AddNode(const std::string& name);

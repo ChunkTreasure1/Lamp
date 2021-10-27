@@ -5,6 +5,8 @@
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
+#include "KeyEnums.h"
+
 namespace Lamp
 {
 	class KeyPressedNode : public Node
@@ -19,7 +21,7 @@ namespace Lamp
 
 			std::vector<InputAttribute> inputs =
 			{
-				InputAttributeConfig<int>("Key", PropertyType::Int)
+				InputAttributeConfig<int>("Key", PropertyType::Enum, GetMap())
 			};
 
 			outputAttributes = outputs;
@@ -55,7 +57,7 @@ namespace Lamp
 		{
 			std::vector<InputAttribute> inputs =
 			{
-				InputAttributeConfig<int>("Keycode", PropertyType::Int)
+				InputAttributeConfig<int>("Key", PropertyType::Enum, GetMap())
 			};
 
 			std::vector<OutputAttribute> outputs =

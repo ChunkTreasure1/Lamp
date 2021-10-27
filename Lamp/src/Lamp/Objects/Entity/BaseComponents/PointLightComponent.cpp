@@ -22,7 +22,7 @@ namespace Lamp
 			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
 			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
 			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
+			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) },
 		});
 
 		if (g_pEnv->pLevel)

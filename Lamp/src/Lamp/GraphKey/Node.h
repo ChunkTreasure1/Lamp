@@ -34,6 +34,7 @@ namespace Lamp
 			linkable = linkable;
 		}
 
+		std::map<std::string, int> enums;
 		Func function = NULL;
 	};
 
@@ -66,6 +67,17 @@ namespace Lamp
 		virtual void OnEvent(Event& e) {}
 
 	public:
+		template<typename T>
+		InputAttribute InputAttributeConfig(const std::string& name, PropertyType type, std::map<std::string, int> enums, bool linkable = true)
+		{
+			InputAttribute attr(name, linkable);
+			attr.data = T();
+			attr.enums = enums;
+			attr.type = type;
+
+			return attr;
+		}
+		
 		template<typename T>
 		InputAttribute InputAttributeConfig(const std::string& name, PropertyType type, bool linkable = true)
 		{

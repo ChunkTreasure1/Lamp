@@ -4,11 +4,11 @@
 
 #include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
 #include <Lamp/Utility/PlatformUtility.h>
+#include <imgui/imgui_stdlib.h>
 
 #include <Lamp/GraphKey/Link.h>
 #include <Lamp/GraphKey/NodeRegistry.h>
 #include <Lamp/Objects/Entity/Base/Entity.h>
-#include <Lamp/Utility/UIUtility.h>
 
 #include <Lamp/Utility/UIUtility.h>
 
@@ -280,7 +280,7 @@ namespace Sandbox
 
 			for (auto& key : Lamp::NodeRegistry::s_Methods())
 			{
-				sorted[Lamp::NodeRegistry::GetCategory(key.first)].emplace_back(key);
+				sorted[Lamp::NodeRegistry::GetCategory(key.first)].push_back(key);
 			}
 
 			int i = 0;
@@ -357,13 +357,67 @@ namespace Sandbox
 
 		if (m_SelectedNode)
 		{
-			for (auto& input : m_SelectedNode->inputAttributes)
+			if (UI::TreeNodeFramed("Inputs"))
 			{
-				DrawInput(input, m_SelectedNode);
+				UI::PushId();
+				UI::BeginProperties("inputProps", false);
+				
+				for (auto& input : m_SelectedNode->inputAttributes)
+				{
+					bool propertyChanged = false;
+					switch (input.type)
+					{
+						case Lamp::PropertyType::Int: propertyChanged = UI::Property(input.name, std::any_cast<int&>(input.data)); break;
+						case Lamp::PropertyType::Bool: propertyChanged = UI::Property(input.name, std::any_cast<bool&>(input.data)); break;
+						case Lamp::PropertyType::Float: propertyChanged = UI::Property(input.name, std::any_cast<float&>(input.data)); break;
+						case Lamp::PropertyType::Float2: propertyChanged = UI::Property(input.name, std::any_cast<glm::vec2&>(input.data)); break;
+						case Lamp::PropertyType::Float3: propertyChanged = UI::Property(input.name, std::any_cast<glm::vec3&>(input.data)); break;
+						case Lamp::PropertyType::Float4: propertyChanged = UI::Property(input.name, std::any_cast<glm::vec4&>(input.data)); break;
+						case Lamp::PropertyType::String: propertyChanged = UI::Property(input.name, std::any_cast<std::string&>(input.data)); break;
+						case Lamp::PropertyType::Path: propertyChanged = UI::Property(input.name, std::filesystem::path(std::any_cast<std::string&>(input.data))); break;
+						case Lamp::PropertyType::Color3: propertyChanged = UI::Property(input.name, std::any_cast<glm::vec3&>(input.data), false); break;
+						case Lamp::PropertyType::Color4: propertyChanged = UI::Property(input.name, std::any_cast<glm::vec4&>(input.data), true); break;
+						case Lamp::PropertyType::Enum:
+						{
+							propertyChanged = UI::Property(input.name, std::any_cast<int&>(input.data), input.enums); 
+							break;
+						}
+					}
+				}
+
+				UI::EndProperties(false);
+				UI::PopId();
+
+				UI::TreeNodePop();
 			}
-			for (auto& output : m_SelectedNode->outputAttributes)
+
+			if (UI::TreeNodeFramed("Outputs"))
 			{
-				DrawOutput(output, m_SelectedNode);
+				UI::BeginProperties("outputProps", false);
+				
+				for (auto& output : m_SelectedNode->outputAttributes)
+				{
+					bool propertyChanged = false;
+					switch (output.type)
+					{
+						case Lamp::PropertyType::Int: propertyChanged = UI::Property(output.name, std::any_cast<int&>(output.data)); break;
+						case Lamp::PropertyType::Bool: propertyChanged = UI::Property(output.name, std::any_cast<bool&>(output.data)); break;
+						case Lamp::PropertyType::Float: propertyChanged = UI::Property(output.name, std::any_cast<float&>(output.data)); break;
+						case Lamp::PropertyType::Float2: propertyChanged = UI::Property(output.name, std::any_cast<glm::vec2&>(output.data)); break;
+						case Lamp::PropertyType::Float3: propertyChanged = UI::Property(output.name, std::any_cast<glm::vec3&>(output.data)); break;
+						case Lamp::PropertyType::Float4: propertyChanged = UI::Property(output.name, std::any_cast<glm::vec4&>(output.data)); break;
+						case Lamp::PropertyType::String: propertyChanged = UI::Property(output.name, std::any_cast<std::string&>(output.data)); break;
+						case Lamp::PropertyType::Path: propertyChanged = UI::Property(output.name, std::filesystem::path(std::any_cast<std::string&>(output.data))); break;
+						case Lamp::PropertyType::Color3: propertyChanged = UI::Property(output.name, std::any_cast<glm::vec3&>(output.data), false); break;
+						case Lamp::PropertyType::Color4: propertyChanged = UI::Property(output.name, std::any_cast<glm::vec4&>(output.data), true); break;
+
+						default:
+							break;
+					}
+				}
+
+				UI::EndProperties(false);
+				UI::TreeNodePop();
 			}
 		}
 
@@ -398,12 +452,12 @@ namespace Sandbox
 
 	void GraphKeyPanel::CreateComponentNodes()
 	{
-		for (const auto& pC : Lamp::ComponentRegistry::s_Methods())
+		for (auto pC : Lamp::ComponentRegistry::s_Methods())
 		{
 			m_BaseComponents.push_back(pC.second());
 		}
 
-		for (const auto& pComp : m_BaseComponents)
+		for (auto pComp : m_BaseComponents)
 		{
 			Ref<Node> node = CreateRef<Node>();
 			node->name = pComp->GetName();
@@ -445,7 +499,7 @@ namespace Sandbox
 		m_CurrentlyOpenGraph->RemoveLink(id);
 	}
 
-	void GraphKeyPanel::DrawNode(Ref<Lamp::Node>& node)
+	void GraphKeyPanel::DrawNode(Ref<Lamp::Node> node)
 	{
 		ImNodes::BeginNode(node->id);
 
@@ -466,58 +520,47 @@ namespace Sandbox
 			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "No entity assigned!");
 		}
 
+		ImVec2 cursorPos = ImGui::GetCursorPos();
+		
+		if (!node->inputAttributes.empty())
+		{
+			cursorPos.x += 120.f;
+		}
+
 		for (int i = 0; i < node->inputAttributes.size(); i++)
 		{
 			InputAttribute& attr = node->inputAttributes[i];
 
-			float nodeWidth = 100.f;
-			if (attr.type == Lamp::PropertyType::Float3 || attr.type == Lamp::PropertyType::Float4
-				|| attr.type == Lamp::PropertyType::Color3 || attr.type == Lamp::PropertyType::Color4)
+			auto pinShape = attr.pLinks.empty() ? ImNodesPinShape_Triangle : ImNodesPinShape_TriangleFilled;
+			ImNodes::BeginInputAttribute(attr.id, pinShape);
 			{
-				nodeWidth = 200.f;
-			}
-
-
-			ImNodes::BeginInputAttribute(attr.id);
-			{
-				float labelWidth = ImGui::CalcTextSize(attr.name.c_str()).x;
-				ImGui::PushItemWidth(nodeWidth - labelWidth);
-
 				DrawInput(attr, node);
 
-				ImGui::PopItemWidth();
 			}
 			ImNodes::EndInputAttribute();
 		}
 
+		ImGui::SetCursorPos(cursorPos);
 
 		for (int i = 0; i < node->outputAttributes.size(); i++)
 		{
 			OutputAttribute& attr = node->outputAttributes[i];
 
-			float nodeWidth = 100.f;
-			if (attr.type == Lamp::PropertyType::Float3 || attr.type == Lamp::PropertyType::Float4
-				|| attr.type == Lamp::PropertyType::Color3 || attr.type == Lamp::PropertyType::Color4)
+			auto pinShape = attr.pLinks.empty() ? ImNodesPinShape_Triangle : ImNodesPinShape_TriangleFilled;
+			ImNodes::BeginOutputAttribute(attr.id, pinShape);
 			{
-				nodeWidth = 200.f;
-			}
-
-			ImNodes::BeginOutputAttribute(attr.id);
-			{
-				//float labelWidth = ImGui::CalcTextSize(attr.name.c_str()).x;
-				//ImGui::PushItemWidth(nodeWidth - labelWidth);
-
 				DrawOutput(attr, node);
-
-				//ImGui::PopItemWidth();
 			}
 			ImNodes::EndOutputAttribute();
+		
+			cursorPos.y += 20.f;
+			ImGui::SetCursorPos(cursorPos);
 		}
 
 		ImNodes::EndNode();
 	}
 
-	void GraphKeyPanel::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
+	void GraphKeyPanel::DrawInput(Lamp::InputAttribute& attr, Ref<Lamp::Node> node, bool isProperties)
 	{
 		auto& prop = attr;
 
@@ -529,313 +572,71 @@ namespace Sandbox
 			case Lamp::PropertyType::Int:
 			{
 				int& p = std::any_cast<int&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					int v = p;
-
-					ImGui::DragInt(prop.name.c_str(), &v);
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
-
+				ImGui::Text("%s = %i", prop.name.c_str(), p);
 				break;
 			}
 
 			case Lamp::PropertyType::Bool:
 			{
 				bool& p = std::any_cast<bool&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					bool v = p;
-
-					ImGui::Checkbox(prop.name.c_str(), &v);
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
-
+				std::string text = p ? "true" : "false";
+				ImGui::Text("%s = %s", prop.name.c_str(), text.c_str());
 				break;
 			}
 
 			case Lamp::PropertyType::Float:
 			{
-				float& p = std::any_cast<float&>(prop.data);
-
-				if (attr.pLinks.empty())
-				{
-
-				}
-				else
-				{
-
-				}
-
-				if (attr.pLinks.size() == 0)
-				{
-					float v = p;
-
-					ImGui::DragFloat(prop.name.c_str(), &v);
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
+				float& f = std::any_cast<float&>(prop.data);
+				ImGui::Text("%s = %.2f", prop.name.c_str(), f);
 				break;
 			}
 
 			case Lamp::PropertyType::Float2:
 			{
 				glm::vec2& p = std::any_cast<glm::vec2&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					glm::vec2 v = p;
-					ImGui::DragFloat2(prop.name.c_str(), glm::value_ptr(v));
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
-
+				ImGui::Text("%s = { %.2f, %.2f }", prop.name.c_str(), p.x, p.y);
 				break;
 			}
 
 			case Lamp::PropertyType::Float3:
 			{
 				glm::vec3& p = std::any_cast<glm::vec3&>(prop.data);
-
-				if (!attr.pLinks.size() == 0)
-				{
-					glm::vec3 v = p;
-
-					ImGui::DragFloat3(prop.name.c_str(), glm::value_ptr(v));
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ", " + std::to_string(p.z) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
-
+				ImGui::Text("%s = { %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z);
 				break;
 			}
 
 			case Lamp::PropertyType::Float4:
 			{
 				glm::vec4& p = std::any_cast<glm::vec4&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					glm::vec4 v = p;
-
-					ImGui::DragFloat4(prop.name.c_str(), glm::value_ptr(v));
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ", " + std::to_string(p.z) + ", " + std::to_string(p.w) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
+				ImGui::Text("%s = { %.2f, %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z, p.w);
 				break;
 			}
 
 			case Lamp::PropertyType::String:
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
-
-				if (attr.pLinks.empty())
-				{
-					std::string v = s;
-
-					UI::InputText(prop.name.c_str(), v);
-					if (v != s)
-					{
-						s = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + s + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
+				ImGui::Text("%s = %s", prop.name.c_str(), s.c_str());
 				break;
 			}
 
 			case Lamp::PropertyType::Path:
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					std::string v = s;
-
-					UI::InputText(prop.name.c_str(), v);
-					ImGui::SameLine();
-					if (ImGui::Button("Open..."))
-					{
-						//std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-						//if (!path.empty())
-						//{
-						//	v = path;
-						//}
-					}
-
-					if (v != s)
-					{
-						s = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + s + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
+				ImGui::Text("%s = %s", prop.name.c_str(), s.c_str());
 				break;
 			}
 
 			case Lamp::PropertyType::Color3:
 			{
 				glm::vec3& p = std::any_cast<glm::vec3&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					glm::vec3 v = p;
-
-					ImGui::ColorEdit3(prop.name.c_str(), glm::value_ptr(v));
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ", " + std::to_string(p.z) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
+				ImGui::Text("%s = { %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z);
 				break;
 			}
 
 			case Lamp::PropertyType::Color4:
 			{
 				glm::vec4& p = std::any_cast<glm::vec4&>(prop.data);
-
-				if (attr.pLinks.size() == 0)
-				{
-					glm::vec4 v = p;
-
-					ImGui::ColorEdit4(prop.name.c_str(), glm::value_ptr(v));
-					if (v != p)
-					{
-						p = v;
-
-						if (pEntity)
-						{
-							Lamp::ObjectPropertyChangedEvent e;
-							pEntity->OnEvent(e);
-						}
-					}
-				}
-				else
-				{
-					ImGui::Text(std::string("(" + std::to_string(p.x) + ", " + std::to_string(p.y) + ", " + std::to_string(p.z) + ", " + std::to_string(p.w) + ")").c_str());
-					ImGui::SameLine();
-					ImGui::Text(prop.name.c_str());
-				}
-
+				ImGui::Text("%s = { %.2f, %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z, p.w);
 				break;
 			}
 
@@ -860,14 +661,14 @@ namespace Sandbox
 
 				if (ImGui::BeginCombo(prop.name.c_str(), currentItem.c_str()))
 				{
-					for (auto& i : vec)
+					for (int i = 0; i < vec.size(); i++)
 					{
-						i.second = (currentItem == i.first);
-						if (ImGui::Selectable(i.first.c_str(), i.second))
+						vec[i].second = (currentItem == vec[i].first);
+						if (ImGui::Selectable(vec[i].first.c_str(), vec[i].second))
 						{
-							currentItem = i.first;
+							currentItem = vec[i].first;
 						}
-						if (i.second)
+						if (vec[i].second)
 						{
 							ImGui::SetItemDefaultFocus();
 						}
@@ -878,7 +679,7 @@ namespace Sandbox
 
 				ImGui::PopItemWidth();
 				break;
-			}
+			} 
 
 			case Lamp::PropertyType::EntityId:
 			{
@@ -899,288 +700,87 @@ namespace Sandbox
 		}
 	}
 
-	void GraphKeyPanel::DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node>& node, bool isProperties)
+	void GraphKeyPanel::DrawOutput(Lamp::OutputAttribute& attr, Ref<Lamp::Node> node, bool isProperties)
 	{
 		auto& prop = attr;
 
 		Entity* pEntity = Entity::Get(node->entityId);
+
+		for (auto& link : attr.pLinks)
+		{
+			link->pInput->data = attr.data;
+		}
 
 		switch (prop.type)
 		{
 			case Lamp::PropertyType::Int:
 			{
 				int& p = std::any_cast<int&>(prop.data);
-				int v = p;
-
-				ImGui::DragInt(prop.name.c_str(), &v);
-				if (v != p)
-				{
-					p = v;
-
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
-
+				ImGui::Text("%s = %i", prop.name.c_str(), p);
 				break;
 			}
 
 			case Lamp::PropertyType::Bool:
 			{
 				bool& p = std::any_cast<bool&>(prop.data);
-				bool v = p;
-
-				ImGui::Checkbox(prop.name.c_str(), &v);
-				if (v != p)
-				{
-					p = v;
-
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
-
+				std::string text = p ? "true" : "false";
+				ImGui::Text("%s = %s", prop.name.c_str(), text.c_str());
 				break;
 			}
 
 			case Lamp::PropertyType::Float:
 			{
-				float& p = std::any_cast<float&>(prop.data);
-				float v = p;
-
-				ImGui::DragFloat(prop.name.c_str(), &v);
-				if (v != p)
-				{
-					p = v;
-
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				float& f = std::any_cast<float&>(prop.data);
+				ImGui::Text("%s = %.2f", prop.name.c_str(), f);
 				break;
 			}
 
 			case Lamp::PropertyType::Float2:
 			{
 				glm::vec2& p = std::any_cast<glm::vec2&>(prop.data);
-				glm::vec2 v = p;
-
-				ImGui::DragFloat2(prop.name.c_str(), glm::value_ptr(v));
-				if (v != p)
-				{
-					p = v;
-
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = { %.2f, %.2f }", prop.name.c_str(), p.x, p.y);
 				break;
 			}
 
 			case Lamp::PropertyType::Float3:
 			{
 				glm::vec3& p = std::any_cast<glm::vec3&>(prop.data);
-				glm::vec3 v = p;
-
-				ImGui::DragFloat3(prop.name.c_str(), glm::value_ptr(v));
-				if (v != p)
-				{
-					p = v;
-
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = { %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z);
 				break;
 			}
 
 			case Lamp::PropertyType::Float4:
 			{
 				glm::vec4& p = std::any_cast<glm::vec4&>(prop.data);
-				glm::vec4 v = p;
-
-				ImGui::DragFloat4(prop.name.c_str(), glm::value_ptr(v));
-				if (v != p)
-				{
-					p = v;
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = { %.2f, %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z, p.w);
 				break;
 			}
 
 			case Lamp::PropertyType::String:
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
-				std::string v = s;
-
-				UI::InputText(prop.name.c_str(), v);
-				if (v != s)
-				{
-					s = v;
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = %s", prop.name.c_str(), s.c_str());
 				break;
 			}
 
 			case Lamp::PropertyType::Path:
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
-				std::string v = s;
-
-				UI::InputText(prop.name.c_str(), v);
-				ImGui::SameLine();
-				if (ImGui::Button("Open..."))
-				{
-					//std::string path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
-					//if (!path.empty())
-					//{
-					//	v = path;
-					//}
-				}	//
-
-				if (v != s)
-				{
-					s = v;
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = %s", prop.name.c_str(), s.c_str());
 				break;
 			}
 
 			case Lamp::PropertyType::Color3:
 			{
 				glm::vec3& p = std::any_cast<glm::vec3&>(prop.data);
-				glm::vec3 v = p;
-
-				ImGui::ColorEdit3(prop.name.c_str(), glm::value_ptr(v));
-				if (v != p)
-				{
-					p = v;
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = { %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z);
 				break;
 			}
 
 			case Lamp::PropertyType::Color4:
 			{
 				glm::vec4& p = std::any_cast<glm::vec4&>(prop.data);
-				glm::vec4 v = p;
-
-				ImGui::ColorEdit4(prop.name.c_str(), glm::value_ptr(v));
-				if (v != p)
-				{
-					p = v;
-					if (attr.pLinks.size() > 0)
-					{
-						for (auto& link : attr.pLinks)
-						{
-							link->pInput->data = attr.data;
-						}
-					}
-
-					if (pEntity)
-					{
-						Lamp::ObjectPropertyChangedEvent e;
-						pEntity->OnEvent(e);
-					}
-				}
+				ImGui::Text("%s = { %.2f, %.2f, %.2f, %.2f }", prop.name.c_str(), p.x, p.y, p.z, p.w);
 				break;
 			}
 
@@ -1223,14 +823,14 @@ namespace Sandbox
 		Ref<Node> n = NodeRegistry::s_Methods()[name]();
 		n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
-		for (auto& inputAttribute : n->inputAttributes)
+		for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
 		{
-			inputAttribute.id = m_CurrentlyOpenGraph->GetCurrentId()++;
+			n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
 		}
 
-		for (auto& outputAttribute : n->outputAttributes)
+		for (int i = 0; i < n->outputAttributes.size(); i++)
 		{
-			outputAttribute.id = m_CurrentlyOpenGraph->GetCurrentId()++;
+			n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
 		}
 
 		if (m_CurrentlyOpenGraph)

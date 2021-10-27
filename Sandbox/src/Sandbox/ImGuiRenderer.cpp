@@ -24,10 +24,9 @@
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
-#include <Lamp/Rendering/Buffers/FrameBuffer.h>
+#include <Lamp/Rendering/Vertices/FrameBuffer.h>
 
 #include <Lamp/Utility/UIUtility.h>
-#include <Lamp/Rendering/Renderer.h>
 
 namespace Sandbox
 {
@@ -84,10 +83,10 @@ namespace Sandbox
 			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
+			if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* wPath = (const wchar_t*)ptr;
-				std::filesystem::path path(wPath);
+				std::filesystem::path path = std::filesystem::path("assets") / std::filesystem::path(wPath);
 
 				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
 				if (type == Lamp::AssetType::Level)
@@ -259,7 +258,7 @@ namespace Sandbox
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				UI::InputText("Name", name);
+				ImGui::InputTextString("Name", &name);
 				pEnt->SetName(name);
 
 				if (UI::TreeNodeFramed("Transform"))
@@ -321,7 +320,7 @@ namespace Sandbox
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				UI::InputText("Name", name);
+				ImGui::InputTextString("Name", &name);
 				pBrush->SetName(name);
 
 				if (UI::TreeNodeFramed("Transform"))
@@ -583,8 +582,9 @@ namespace Sandbox
 					case Lamp::PropertyType::Float4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 					case Lamp::PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
 					case Lamp::PropertyType::Path: propertyChanged = UI::Property(prop.name, std::filesystem::path(*static_cast<std::string*>(prop.value))); break;
-					case Lamp::PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
-					case Lamp::PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case Lamp::PropertyType::Color3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value), false); break;
+					case Lamp::PropertyType::Color4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value), true); break;
+					case Lamp::PropertyType::Enum: propertyChanged = UI::Property(prop.name, *static_cast<int*>(prop.value), prop.enums); break;
 				}
 
 				if (propertyChanged)
@@ -624,77 +624,35 @@ namespace Sandbox
 			return;
 		}
 
-		auto sceneData = const_cast<Renderer::SceneData*>(Renderer::GetSceneData());
-
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
-		if (UI::TreeNodeFramed("General", true))
+		ImGui::Text("RenderGraph");
+
+		std::filesystem::path graphPath = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
+
+		UI::BeginProperties("renderProps");
+
+		if (UI::Property("Render graph", graphPath))
 		{
-			ImGui::Text("HDR");
-			ImGui::Separator();
-			if (UI::BeginProperties("generalProps"))
-			{
-				UI::Property("Exposure", sceneData->hdrExposure);
-				UI::Property("Gamma", sceneData->gamma); 
-
-				UI::EndProperties();
-			}
-
-			UI::TreeNodePop();
+			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
+			Renderer::GetRenderGraph()->Start();
 		}
 
-		if (UI::TreeNodeFramed("Render graph", true))
+		UI::EndProperties();
+
+		ImGui::SameLine();
+		if (ImGui::Button("Reload"))
 		{
-			static std::filesystem::path path = "";
-			static std::filesystem::path lastPath = "";
-			path = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
-			lastPath = path;
-
-			if (UI::BeginProperties("renderProps"))
+			if (Renderer::GetRenderGraph())
 			{
-				if (UI::Property("Graph", path))
-				{
-					auto graph = ResourceCache::GetAsset<RenderGraph>(path);
-					if (!graph)
-					{
-						path = lastPath;
-					}
-
-					Renderer::SetRenderGraph(graph);
-					Renderer::GetRenderGraph()->Start();
-				}
-
-				auto& renderGraph = std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph());
-				UI::Property("TestGraph", renderGraph);
-
-				UI::EndProperties();
+				Renderer::SetRenderGraph(ResourceCache::ReloadAsset<RenderGraph>(std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph())));
+				Renderer::GetRenderGraph()->Start();
 			}
-
-			UI::TreeNodePop();
-		}
-
-		if (UI::TreeNodeFramed("SSAO", true))
-		{
-			if (UI::BeginProperties("ssaoProps"))
-			{
-				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.radius), true, 0.f, 1.f);
-				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.strength), true, 0.f, 1.f);
-				if (UI::Property("Kernel Size", const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize), true, 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
-				{
-					Renderer::GenerateKernel();
-				}
-
-				UI::Property("Ambiance Multiplier", const_cast<float&>(Renderer::GetSceneData()->ambianceMultiplier));
-
-				UI::EndProperties();
-			}
-
-			UI::TreeNodePop();
 		}
 
 		ImGui::End();
 	}
-	
+
 	void Sandbox::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
@@ -755,12 +713,6 @@ namespace Sandbox
 
 		ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
 		ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
-
-		ImGui::Separator();
-
-		ImGui::Text("Total draw calls: %d", Renderer3D::GetStatistics().totalDrawCalls);
-		ImGui::Text("Scene draw calls: %d", Renderer3D::GetStatistics().sceneDrawCalls);
-		ImGui::Text("Other draw calls: %d", Renderer3D::GetStatistics().otherDrawCalls);
 
 		ImGui::End();
 	}
@@ -868,23 +820,23 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Editor"))
 			{
-				ImGui::MenuItem("Render Bounding Box", nullptr, &g_pEnv->ShouldRenderBB);
-				ImGui::MenuItem("Render Gizmos", nullptr, &g_pEnv->ShouldRenderGizmos);
+				ImGui::MenuItem("Render Bounding Box", NULL, &g_pEnv->ShouldRenderBB);
+				ImGui::MenuItem("Render Gizmos", NULL, &g_pEnv->ShouldRenderGizmos);
 
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Properties", nullptr, &m_InspectiorOpen);
-				ImGui::MenuItem("Create", nullptr, &m_CreateToolOpen);
-				ImGui::MenuItem("Log", nullptr, &m_LogToolOpen);
-				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
-				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
+				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
+				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
+				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
+				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
+				ImGui::MenuItem("Asset Manager", NULL, &m_assetManager.GetIsOpen());
 
 				for (auto pWindow : m_pWindows)
 				{
-					ImGui::MenuItem(pWindow->GetLabel().c_str(), nullptr, &pWindow->GetIsOpen());
+					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
 				}
 
 				ImGui::EndMenu();
@@ -892,7 +844,7 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Rendering"))
 			{
-				ImGui::MenuItem("Settings", nullptr, &m_RenderingSettingsOpen);
+				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
 				if (ImGui::MenuItem("Recompile shaders"))
 				{
 					Lamp::ShaderLibrary::RecompileShaders();
@@ -915,10 +867,7 @@ namespace Sandbox
 					}
 				}
 
-				if (ImGui::MenuItem("Play physics", nullptr))
-				{
-					
-				}
+				ImGui::MenuItem("Play physics", NULL, &Lamp::Application::Get().GetIsSimulating());
 
 				ImGui::EndMenu();
 			}

@@ -179,6 +179,7 @@
     <ClInclude Include="src\Lamp\Event\Event.h" />
     <ClInclude Include="src\Lamp\Event\KeyEvent.h" />
     <ClInclude Include="src\Lamp\Event\MouseEvent.h" />
+    <ClInclude Include="src\Lamp\GraphKey\BaseNodes\KeyEnums.h" />
     <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h" />
     <ClInclude Include="src\Lamp\GraphKey\Link.h" />
     <ClInclude Include="src\Lamp\GraphKey\Node.h" />
