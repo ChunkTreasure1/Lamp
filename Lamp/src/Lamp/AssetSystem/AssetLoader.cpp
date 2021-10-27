@@ -8,6 +8,7 @@
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
+#include "Lamp/AssetSystem/BaseAssets.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -117,6 +118,8 @@ namespace Lamp
 
 		std::stringstream strStream;
 		strStream << specFile.rdbuf();
+
+		specFile.close();
 
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node geoNode = root["geometry"];
@@ -283,6 +286,8 @@ namespace Lamp
 		std::stringstream strStream;
 		strStream << stream.rdbuf();
 
+		stream.close();
+
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node materialNode = root["material"];
 
@@ -302,6 +307,63 @@ namespace Lamp
 		}
 
 		asset->Path = path;
+
+		return true;
+	}
+
+	void MeshSourceLoader::Save(const Ref<Asset>& asset) const
+	{
+		Ref<MeshSource> mesh = std::dynamic_pointer_cast<MeshSource>(asset);
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "meshsource" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+
+			LP_SERIALIZE_PROPERTY(handle, mesh->Handle, out);
+			LP_SERIALIZE_PROPERTY(sourcePath, mesh->m_sourceMesh.string(), out);
+			LP_SERIALIZE_PROPERTY(meshHandle, mesh->m_mesh, out);
+
+			out << YAML::EndMap;
+		}
+		out << YAML::EndMap;
+
+		std::ofstream fout(asset->Path);
+		fout << out.c_str();
+		fout.close();
+	}
+
+	bool MeshSourceLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	{
+		std::ifstream stream(path);
+		if (!stream.is_open())
+		{
+			return false;
+		}
+
+		std::stringstream strStream;
+		strStream << stream.rdbuf();
+		stream.close();
+
+		YAML::Node root = YAML::Load(strStream.str());
+		YAML::Node meshNode = root["meshsource"];
+
+		asset = CreateRef<MeshSource>();
+		Ref<MeshSource> meshSource = std::dynamic_pointer_cast<MeshSource>(asset);
+
+		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, meshNode, AssetHandle(0));
+		meshSource->m_sourceMesh = std::filesystem::path(meshNode["sourcePath"].as<std::string>());
+		if (!std::filesystem::exists(meshSource->m_sourceMesh))
+		{
+			LP_CORE_ERROR("Mesh {0} not found!", meshSource->m_sourceMesh.string());
+			meshSource->SetFlag(AssetFlag::Missing, true);
+
+			return false;
+		}
+
+		LP_DESERIALIZE_PROPERTY(meshHandle, meshSource->m_mesh, meshNode, AssetHandle(0));
+		meshSource->Path = path;
 
 		return true;
 	}

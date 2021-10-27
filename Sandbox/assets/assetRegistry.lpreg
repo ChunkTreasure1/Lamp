@@ -153,6 +153,14 @@ Assets:
     Path: textures\rusted_iron\tex_normal.png
   - Handle: 2584960825807595323
     Path: C:\Programming\Lamp\Sandbox\assets\models\cube.lgf
+  - Handle: 6910923214299874720
+    Path: C:\Programming\Lamp\Sandbox\assets\models\head/EyeMat.mtl
+  - Handle: 11199186427354133030
+    Path: C:\Programming\Lamp\Sandbox\assets\models\head\LampSSSTestModel.lgs
+  - Handle: 8323116545972294953
+    Path: C:\Programming\Lamp\Sandbox\assets\models\head/SkinMat.mtl
+  - Handle: 12141333726095375046
+    Path: C:\Programming\Lamp\Sandbox\assets\models\head\head.lgf
   - Handle: 2625564280194159711
     Path: C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf
   - Handle: 14877024273708001692

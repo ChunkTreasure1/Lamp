@@ -12,6 +12,7 @@
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
+#include <Lamp/AssetSystem/BaseAssets.h>
 
 #include <Lamp/Utility/UIUtility.h>
 
@@ -140,35 +141,7 @@ namespace Sandbox
 		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
 			m_savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
-
-			if (!m_savePath.empty())
-			{
-				if (m_savePath.extension().empty())
-				{
-					std::string path = m_savePath.string();
-					path += ".lgf";
-					m_savePath = std::filesystem::path(path);
-				}
-
-				m_modelToImport->Path = m_savePath;
-
-				for (auto& mat : m_modelToImport->GetMaterials())
-				{
-					//mat.second->SetName(m_savePath.stem().string() + std::to_string(mat.first));
-					if (!MaterialLibrary::IsMaterialLoaded(mat.second->GetName()))
-					{
-						std::string sMatPath = m_savePath.parent_path().string() + "/" + mat.second->GetName() + ".mtl";
-
-						mat.second->Path = std::filesystem::path(sMatPath);
-						g_pEnv->pAssetManager->SaveAsset(mat.second);
-
-						MaterialLibrary::AddMaterial(mat.second);
-					}
-				}
-
-				g_pEnv->pAssetManager->SaveAsset(m_modelToImport);
-				m_savePath = "";
-			}
+			SaveMesh();
 		}
 
 		ImGui::PopStyleVar(2);
@@ -220,6 +193,53 @@ namespace Sandbox
 		for (int i = 0; i < m_modelToImport->GetMaterials().size(); i++)
 		{
 			m_shaderSelectionIds.push_back(0);
+		}
+	}
+
+	void MeshImporterPanel::SaveMesh()
+	{
+		if (!m_savePath.empty())
+		{
+			if (m_savePath.extension().empty())
+			{
+				std::string path = m_savePath.string();
+				path += ".lgf";
+				m_savePath = std::filesystem::path(path);
+			}
+
+			m_modelToImport->Path = m_savePath;
+
+			for (auto& mat : m_modelToImport->GetMaterials())
+			{
+				if (!MaterialLibrary::IsMaterialLoaded(mat.second->GetName()))
+				{
+					std::string sMatPath = m_savePath.parent_path().string() + "/" + mat.second->GetName() + ".mtl";
+
+					mat.second->Path = std::filesystem::path(sMatPath);
+					g_pEnv->pAssetManager->SaveAsset(mat.second);
+
+					MaterialLibrary::AddMaterial(mat.second);
+				}
+			}
+
+			//Save mesh file
+			g_pEnv->pAssetManager->SaveAsset(m_modelToImport);
+			m_savePath = "";
+
+			//Copy and create MeshSource
+			if (std::filesystem::exists(m_importSettings.path))
+			{
+				std::filesystem::path dest = m_importSettings.path.filename();
+
+				dest = m_modelToImport->Path.parent_path() / dest;
+
+				std::filesystem::copy_file(m_importSettings.path, dest, std::filesystem::copy_options::overwrite_existing);
+
+				Ref<MeshSource> meshSource = CreateRef<MeshSource>(dest, m_modelToImport->Handle);
+				meshSource->Path = m_modelToImport->Path.parent_path() / std::filesystem::path(m_importSettings.path.stem().string() + ".lgs");
+
+				g_pEnv->pAssetManager->SaveAsset(meshSource);
+			}
 		}
 	}
 

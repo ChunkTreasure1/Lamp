@@ -38,6 +38,7 @@ namespace Lamp
 	void AssetManager::Initialize()
 	{
 		m_AssetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
+		m_AssetLoaders[AssetType::MeshSource] = CreateScope<MeshSourceLoader>();
 		m_AssetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
 		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
 		m_AssetLoaders[AssetType::RenderGraph] = CreateScope<RenderGraphLoader>();
@@ -83,6 +84,11 @@ namespace Lamp
 		if (!asset->IsValid())
 		{
 			return;
+		}
+
+		if (m_AssetRegistry.find(asset->Path) == m_AssetRegistry.end())
+		{
+			m_AssetRegistry.emplace(asset->Path, asset->Handle);
 		}
 
 		m_AssetLoaders[asset->GetType()]->Save(asset);

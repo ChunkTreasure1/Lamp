@@ -1860,6 +1860,7 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">

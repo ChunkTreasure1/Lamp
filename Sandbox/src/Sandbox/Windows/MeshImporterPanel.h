@@ -27,6 +27,7 @@ namespace Sandbox
 
 		void Render();
 		void LoadMesh();
+		void SaveMesh();
 
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool Update(Lamp::AppUpdateEvent& e);

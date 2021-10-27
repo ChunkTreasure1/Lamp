@@ -154,6 +154,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\Asset.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h" />
     <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
