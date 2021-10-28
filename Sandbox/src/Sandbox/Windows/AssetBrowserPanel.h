@@ -30,11 +30,13 @@ namespace Sandbox
 
 		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
 		
+		void OnImGuiRender();
+		bool& GetIsOpen() { return m_isOpen; }
+
+	private:
 		void RenderControlsBar(float height);
 		void RenderDirectory(const Ref<DirectoryData> dirData);
-		void OnImGuiRender();
-
-		bool& GetIsOpen() { return m_isOpen; }
+		void Reload();
 
 	private:
 		bool m_isOpen = true;

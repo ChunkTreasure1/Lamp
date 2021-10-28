@@ -181,6 +181,9 @@
     <None Include="engine\shaders\main\pbrForward.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
+    <None Include="engine\shaders\main\screenSpaceSSS.glsl">
+      <Filter>engine\shaders\main</Filter>
+    </None>
     <None Include="engine\shaders\quad.glsl">
       <Filter>engine\shaders</Filter>
     </None>

@@ -183,6 +183,9 @@
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
@@ -1860,7 +1863,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2133,7 +2135,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">

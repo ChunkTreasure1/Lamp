@@ -188,7 +188,7 @@ project "Sandbox"
 	{
 		"Lamp",
 		"Game",
-		"assimp-vc142-mt.lib",
+		"assimp-vc143-mt.lib",
 		"fmodstudio_vc.lib",
 		"fmod_vc.lib"
 	}
@@ -342,7 +342,7 @@ project "GameLauncher"
 	{
 		"Lamp",
 		"Game",
-		"assimp-vc142-mt.lib",
+		"assimp-vc143-mt.lib",
 		"fmodstudio_vc.lib",
 		"fmod_vc.lib"
 	}

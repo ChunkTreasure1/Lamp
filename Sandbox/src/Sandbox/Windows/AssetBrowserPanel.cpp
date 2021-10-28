@@ -42,7 +42,10 @@ namespace Sandbox
 				data.handle = g_pEnv->pAssetManager->GetAssetHandleFromPath(entry);
 				data.type = g_pEnv->pAssetManager->GetAssetTypeFromPath(entry);
 
-				dirData->assets.push_back(data);
+				if (data.type != Lamp::AssetType::None)
+				{
+					dirData->assets.push_back(data);
+				}
 			}
 			else
 			{
@@ -68,7 +71,10 @@ namespace Sandbox
 	{
 		ImGui::BeginChild("##controlsBar", { 0.f, height });
 		{
-			ImGui::Button("Test", { height - 2, height - 2 });
+			if (ImGui::Button("L", { height - 2, height - 2 }))
+			{
+				Reload();
+			}
 		}
 		ImGui::EndChild();
 	}
@@ -101,6 +107,16 @@ namespace Sandbox
 
 			ImGui::TreePop();
 		}
+	}
+
+	void AssetBrowserPanel::Reload()
+	{
+		m_pCurrentDirectory = nullptr;
+		m_pNextDirectory = nullptr;
+
+		m_directories[s_assetsPath.string()] = ProcessDirectory(s_assetsPath.string(), nullptr);
+
+		m_pCurrentDirectory = m_directories[s_assetsPath.string()].get();
 	}
 
 	void AssetBrowserPanel::OnImGuiRender()

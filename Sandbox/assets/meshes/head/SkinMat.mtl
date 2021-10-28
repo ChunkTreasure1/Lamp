@@ -1,0 +1,8 @@
+material:
+  name: SkinMat
+  handle: 5611808262002018531
+  textures:
+    albedo: 8263925564987163983
+    normal: 5165272647848418933
+    mro: 18237952958890378144
+  shader: pbrForward

@@ -86,7 +86,7 @@ namespace Sandbox
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
 				const wchar_t* wPath = (const wchar_t*)ptr;
-				std::filesystem::path path = std::filesystem::path("assets") / std::filesystem::path(wPath);
+				std::filesystem::path path(wPath);
 
 				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
 				if (type == Lamp::AssetType::Level)

@@ -202,6 +202,8 @@ namespace Sandbox
 	{
 		if (!m_savePath.empty())
 		{
+			m_savePath = std::filesystem::path("assets") / std::filesystem::relative(m_savePath, "assets");
+
 			if (m_savePath.extension().empty())
 			{
 				std::string path = m_savePath.string();
@@ -439,7 +441,7 @@ namespace Sandbox
 							AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
 							if (type == AssetType::Texture)
 							{
-								tex.second = ResourceCache::GetAsset<Texture2D>(std::filesystem::path("assets") / path);
+								tex.second = ResourceCache::GetAsset<Texture2D>(path);
 							}
 						}
 						ImGui::Separator();

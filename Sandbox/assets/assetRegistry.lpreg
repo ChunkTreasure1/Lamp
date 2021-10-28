@@ -1,28 +1,36 @@
 Assets:
   - Handle: 14311675356115887053
     Path: assets/levels/testLevel/data.level
-  - Handle: 10335344246315033883
-    Path: assets\models\cube.lgf
-  - Handle: 10336611542070808023
-    Path: assets\models\head\textures\EyeTexture_albedo.tga
-  - Handle: 9310698082886069763
-    Path: assets\models\head\textures\EyeTexture_mro.tga
-  - Handle: 16556669663397278961
-    Path: assets\models\head\textures\EyeTexture_normal.tga
-  - Handle: 13743312291602395088
-    Path: assets\models\head\textures\kyle_low_albedo.tga
-  - Handle: 1612161284982214417
-    Path: assets\models\head\textures\kyle_low_mro.tga
-  - Handle: 5408929621648482626
-    Path: assets\models\head\textures\kyle_low_normal.tga
-  - Handle: 13551055251788859933
-    Path: assets\models\sphere.lgf
-  - Handle: 9317505486348122308
-    Path: assets\models\sponza.lgf
-  - Handle: 1554070060000114675
-    Path: assets\models\teddy.lgf
-  - Handle: 14311675356115887053
-    Path: assets/testLevel.level
+  - Handle: 10994454763501493260
+    Path: assets\meshes\base\cube.lgf
+  - Handle: 3462220506084564617
+    Path: assets\meshes\base\cube.lgs
+  - Handle: 6595288631453100615
+    Path: assets\meshes\base\sphere.lgf
+  - Handle: 5685371472809271156
+    Path: assets\meshes\base\sphere.lgs
+  - Handle: 12262372207240023893
+    Path: assets\meshes\head/EyeMat.mtl
+  - Handle: 8801035466883344644
+    Path: assets\meshes\head\LampSSSTestModel.lgs
+  - Handle: 5611808262002018531
+    Path: assets\meshes\head/SkinMat.mtl
+  - Handle: 3247278211742412997
+    Path: assets\meshes\head\head.lgf
+  - Handle: 2012487481358295908
+    Path: assets\meshes\head\textures\EyeTexture_albedo.tga
+  - Handle: 12778783623854556376
+    Path: assets\meshes\head\textures\EyeTexture_mro.tga
+  - Handle: 14105642521841293496
+    Path: assets\meshes\head\textures\EyeTexture_normal.tga
+  - Handle: 8263925564987163983
+    Path: assets\meshes\head\textures\kyle_low_albedo.tga
+  - Handle: 18237952958890378144
+    Path: assets\meshes\head\textures\kyle_low_mro.tga
+  - Handle: 5165272647848418933
+    Path: assets\meshes\head\textures\kyle_low_normal.tga
+  - Handle: 12615268533991144061
+    Path: assets/models/sphere.lgf
   - Handle: 3775480950542812265
     Path: assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
   - Handle: 876498905806854835
@@ -35,18 +43,6 @@ Assets:
     Path: assets/textures/base/base_mro.png
   - Handle: 16748793907619626814
     Path: assets/textures/base/base_normal.png
-  - Handle: 16049206056634944348
-    Path: assets\textures\rusted_iron\tex_albedo.png
-  - Handle: 5130617057313453152
-    Path: assets\textures\rusted_iron\tex_mro.png
-  - Handle: 8613916089095324438
-    Path: assets\textures\rusted_iron\tex_normal.png
-  - Handle: 3536854313384504482
-    Path: assets/textures/wornMetal/tex_albedo.png
-  - Handle: 4157263279336200044
-    Path: assets/textures/wornMetal/tex_mro.png
-  - Handle: 16027289893487307791
-    Path: assets/textures/wornMetal/tex_normal.png
   - Handle: 16897032606846204281
     Path: engine/renderGraphs/editor.rendergraph
   - Handle: 14877024273708001692
@@ -145,23 +141,3 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
   - Handle: 10556133037468570950
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
-  - Handle: 17404815560585732550
-    Path: textures\rusted_iron\tex_albedo.png
-  - Handle: 16254148078386359770
-    Path: textures\rusted_iron\tex_mro.png
-  - Handle: 10240692305914165347
-    Path: textures\rusted_iron\tex_normal.png
-  - Handle: 2584960825807595323
-    Path: C:\Programming\Lamp\Sandbox\assets\models\cube.lgf
-  - Handle: 6910923214299874720
-    Path: C:\Programming\Lamp\Sandbox\assets\models\head/EyeMat.mtl
-  - Handle: 11199186427354133030
-    Path: C:\Programming\Lamp\Sandbox\assets\models\head\LampSSSTestModel.lgs
-  - Handle: 8323116545972294953
-    Path: C:\Programming\Lamp\Sandbox\assets\models\head/SkinMat.mtl
-  - Handle: 12141333726095375046
-    Path: C:\Programming\Lamp\Sandbox\assets\models\head\head.lgf
-  - Handle: 2625564280194159711
-    Path: C:\Programming\Lamp\Sandbox\assets\models\teddy.lgf
-  - Handle: 14877024273708001692
-    Path: C:\Programming\Lamp\Sandbox\assets\testGraph.rendergraph
