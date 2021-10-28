@@ -298,7 +298,10 @@ namespace Lamp
 			out << YAML::BeginMap;
 
 			LP_SERIALIZE_PROPERTY(handle, mesh->Handle, out);
-			LP_SERIALIZE_PROPERTY(sourcePath, mesh->m_sourceMesh.string(), out);
+			LP_SERIALIZE_PROPERTY(sourcePath, mesh->m_importSettings.path.string(), out);
+			LP_SERIALIZE_PROPERTY(units, (uint32_t)mesh->m_importSettings.units, out);
+			LP_SERIALIZE_PROPERTY(upDir, mesh->m_importSettings.upDirection, out);
+			LP_SERIALIZE_PROPERTY(compileStatic, mesh->m_importSettings.compileStatic, out);
 			LP_SERIALIZE_PROPERTY(meshHandle, mesh->m_mesh, out);
 
 			out << YAML::EndMap;
@@ -328,11 +331,14 @@ namespace Lamp
 		asset = CreateRef<MeshSource>();
 		Ref<MeshSource> meshSource = std::dynamic_pointer_cast<MeshSource>(asset);
 
+		meshSource->m_importSettings.units = meshNode["units"] ? (Units)meshNode["units"].as<uint32_t>() : Units::Centimeters;
+		LP_DESERIALIZE_PROPERTY(upDir, meshSource->m_importSettings.upDirection, meshNode, glm::vec3(0.f));
+		LP_DESERIALIZE_PROPERTY(compileStatic, meshSource->m_importSettings.compileStatic, meshNode, false);
 		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, meshNode, AssetHandle(0));
-		meshSource->m_sourceMesh = std::filesystem::path(meshNode["sourcePath"].as<std::string>());
-		if (!std::filesystem::exists(meshSource->m_sourceMesh))
+		meshSource->m_importSettings.path = std::filesystem::path(meshNode["sourcePath"].as<std::string>());
+		if (!std::filesystem::exists(meshSource->m_importSettings.path))
 		{
-			LP_CORE_ERROR("Mesh {0} not found!", meshSource->m_sourceMesh.string());
+			LP_CORE_ERROR("Mesh {0} not found!", meshSource->m_importSettings.path.string());
 			meshSource->SetFlag(AssetFlag::Missing, true);
 
 			return false;

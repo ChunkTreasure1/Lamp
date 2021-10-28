@@ -5,6 +5,11 @@
 #include <unordered_map>
 #include <mutex>
 
+namespace Sandbox
+{
+	class AssetBrowserPanel;
+}
+
 namespace std
 {
 	template<>
@@ -56,6 +61,8 @@ namespace Lamp
 		ResourceCache() = delete;
 
 	private:
+		friend class Sandbox::AssetBrowserPanel;
+
 		static std::unordered_map<std::filesystem::path, Ref<Asset>> s_AssetCache;
 		static std::mutex s_CacheMutex;
 	};

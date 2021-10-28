@@ -5,10 +5,7 @@ level:
     - layer: Main
       id: 0
       active: true
-    - layer: Test
-      id: 1
-      active: true
   LevelEnvironment:
-    cameraPosition: [9.97083759, 4.644135, 11.1073036]
-    cameraRotation: [0.90724498, -0.0455965661, -0.405488253, -0.102013357]
+    cameraPosition: [5.8743763, 4.63975334, 6.67041159]
+    cameraRotation: [-0.622671187, 0.259835988, -0.230773434, -0.701077342]
     cameraFOV: 60

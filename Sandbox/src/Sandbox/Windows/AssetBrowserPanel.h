@@ -37,6 +37,8 @@ namespace Sandbox
 		void RenderControlsBar(float height);
 		void RenderDirectory(const Ref<DirectoryData> dirData);
 		void Reload();
+		void RenderFilePopup(const AssetData& asset);
+		void ReimportAsset(const AssetData& asset);
 
 	private:
 		bool m_isOpen = true;

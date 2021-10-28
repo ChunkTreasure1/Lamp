@@ -2,25 +2,31 @@
 
 #include "Asset.h"
 
+#include "Lamp/AssetSystem/MeshImporter.h"
+
 namespace Lamp
 {
 	class MeshSource : public Asset
 	{
 	public:
-		MeshSource(const std::filesystem::path& path, AssetHandle mesh)
-			: m_sourceMesh(path), m_mesh(mesh)
+		MeshSource(const ImportSettings& settings, AssetHandle mesh)
+			: m_importSettings(settings), m_mesh(mesh)
 		{}
 
 		MeshSource()
 		{}
 
+		const std::filesystem::path& GetSource() const { return m_importSettings.path; }
+		const AssetHandle& GetMeshAsset() const { return m_mesh; }
+		const ImportSettings& GetImportSettings() const { return m_importSettings; }
+
 		static AssetType GetStaticType() { return AssetType::MeshSource; }
-		virtual AssetType GetType() override { return GetStaticType(); }
+		AssetType GetType() override { return GetStaticType(); }
 
 		friend class MeshSourceLoader;
 
 	private:
-		std::filesystem::path m_sourceMesh;
 		AssetHandle m_mesh;
+		ImportSettings m_importSettings;
 	};
 }

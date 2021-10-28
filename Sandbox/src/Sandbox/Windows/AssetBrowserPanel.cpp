@@ -5,6 +5,8 @@
 
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/AssetSystem/BaseAssets.h>
+#include <Lamp/Mesh/Mesh.h>
 
 #include <Lamp/Debug/Instrumentor.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -54,7 +56,7 @@ namespace Sandbox
 		}
 
 		//Sort directories and assets by name
-		std::sort(dirData->subDirectories.begin(), dirData->subDirectories.end(), [](const Ref<DirectoryData> dataOne, const Ref<DirectoryData> dataTwo) 
+		std::sort(dirData->subDirectories.begin(), dirData->subDirectories.end(), [](const Ref<DirectoryData> dataOne, const Ref<DirectoryData> dataTwo)
 			{
 				return dataOne->path.stem().string() < dataTwo->path.stem().string();
 			});
@@ -74,6 +76,17 @@ namespace Sandbox
 			if (ImGui::Button("L", { height - 2, height - 2 }))
 			{
 				Reload();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("<-", { height - 2, height - 2 }))
+			{
+				if (m_pCurrentDirectory->path != std::filesystem::path(s_assetsPath))
+				{
+					m_pNextDirectory = m_pCurrentDirectory->parent;
+					m_pNextDirectory->selected = true;
+				}
 			}
 		}
 		ImGui::EndChild();
@@ -117,6 +130,41 @@ namespace Sandbox
 		m_directories[s_assetsPath.string()] = ProcessDirectory(s_assetsPath.string(), nullptr);
 
 		m_pCurrentDirectory = m_directories[s_assetsPath.string()].get();
+	}
+
+	void AssetBrowserPanel::RenderFilePopup(const AssetData& data)
+	{
+		if (UI::BeginPopup())
+		{
+			if (ImGui::MenuItem("Reimport", "Ctrl + R"))
+			{
+				ReimportAsset(data);
+			}
+
+
+			UI::EndPopup();
+		}
+	}
+
+	void AssetBrowserPanel::ReimportAsset(const AssetData& data)
+	{
+		switch (data.type)
+		{
+			case Lamp::AssetType::MeshSource:
+			{
+				//Get asset
+				Ref<MeshSource> meshSource = ResourceCache::GetAsset<MeshSource>(data.path);
+				Ref<Asset>& asset = ResourceCache::s_AssetCache[g_pEnv->pAssetManager->GetPathFromAssetHandle(meshSource->GetMeshAsset())];
+				AssetHandle oldHandle = asset->Handle;
+
+				asset = MeshImporter::ImportMesh(meshSource->GetImportSettings());
+				asset->Handle = oldHandle;
+
+				g_pEnv->pAssetManager->SaveAsset(asset);
+
+				break;
+			}
+		}
 	}
 
 	void AssetBrowserPanel::OnImGuiRender()
@@ -186,15 +234,6 @@ namespace Sandbox
 
 				ImGui::BeginChild("Scrolling");
 				{
-					if (m_pCurrentDirectory->path != std::filesystem::path(s_assetsPath))
-					{
-						if (ImGui::Button("<-"))
-						{
-							m_pNextDirectory = m_pCurrentDirectory->parent;
-							m_pNextDirectory->selected = true;
-						}
-					}
-
 					static float padding = 16.f;
 					static float thumbnailSize = 100.f;
 
@@ -221,7 +260,7 @@ namespace Sandbox
 							dir->selected = true;
 							m_pNextDirectory = dir.get();
 						}
-						
+
 						ImGui::TextWrapped(dir->path.filename().string().c_str());
 
 						ImGui::NextColumn();
@@ -247,6 +286,7 @@ namespace Sandbox
 
 							ImGui::EndDragDropSource();
 						}
+						RenderFilePopup(asset);
 
 						ImGui::TextWrapped(asset.path.filename().string().c_str());
 

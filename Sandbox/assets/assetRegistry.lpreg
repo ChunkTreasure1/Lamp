@@ -29,6 +29,12 @@ Assets:
     Path: assets\meshes\head\textures\kyle_low_mro.tga
   - Handle: 5165272647848418933
     Path: assets\meshes\head\textures\kyle_low_normal.tga
+  - Handle: 7330277855757082519
+    Path: assets\meshes\teddy\lampTestModelOnePart.lgs
+  - Handle: 18292569150900447914
+    Path: assets\meshes\teddy\teddy.lgf
+  - Handle: 7521803897941262776
+    Path: assets\meshes\teddy/teddy.mtl
   - Handle: 12615268533991144061
     Path: assets/models/sphere.lgf
   - Handle: 3775480950542812265

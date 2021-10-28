@@ -238,8 +238,9 @@ namespace Sandbox
 				dest = m_modelToImport->Path.parent_path() / dest;
 
 				std::filesystem::copy_file(m_importSettings.path, dest, std::filesystem::copy_options::overwrite_existing);
-
-				Ref<MeshSource> meshSource = CreateRef<MeshSource>(dest, m_modelToImport->Handle);
+				
+				m_importSettings.path = dest;
+				Ref<MeshSource> meshSource = CreateRef<MeshSource>(m_importSettings, m_modelToImport->Handle);
 				meshSource->Path = m_modelToImport->Path.parent_path() / std::filesystem::path(m_importSettings.path.stem().string() + ".lgs");
 
 				g_pEnv->pAssetManager->SaveAsset(meshSource);

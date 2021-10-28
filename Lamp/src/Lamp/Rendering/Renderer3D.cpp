@@ -29,11 +29,11 @@ namespace Lamp
 {
 	struct Renderer3DStorage
 	{
-		Ref<VertexArray> CubeVertexArray;
-		Ref<VertexArray> QuadVertexArray;
+		Ref<VertexArray> cubeVertexArray;
+		Ref<VertexArray> quadVertexArray;
+		Ref<CameraBase> camera;
 
-		RenderPassSpecification* CurrentRenderPass = nullptr;
-
+		RenderPassSpecification* currentRenderPass = nullptr;
 	};
 
 	static Renderer3DStorage* s_pRenderData;
@@ -57,6 +57,8 @@ namespace Lamp
 
 	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
+		s_pRenderData->camera = camera;
+
 		LP_PROFILE_FUNCTION();
 
 		//Draw shadow maps 
@@ -85,21 +87,21 @@ namespace Lamp
 
 	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
 	{
-		s_pRenderData->CurrentRenderPass = &passSpec;
+		s_pRenderData->currentRenderPass = &passSpec;
 	}
 
 	void Renderer3D::EndPass()
 	{
-		s_pRenderData->CurrentRenderPass = nullptr;
+		s_pRenderData->currentRenderPass = nullptr;
 	}
 
 	void Renderer3D::DrawMesh(const glm::mat4& modelMatrix, const Ref<VertexArray> vertexData, const Ref<Material> material, size_t objectId)
 	{
-		LP_ASSERT(s_pRenderData->CurrentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
+		LP_ASSERT(s_pRenderData->currentRenderPass != nullptr, "Has Renderer3D::Begin been called?");
 
 		LP_PROFILE_FUNCTION();
 
-		const auto& pass = s_pRenderData->CurrentRenderPass;
+		const auto& pass = s_pRenderData->currentRenderPass;
 
 		RenderCommand::SetCullFace(pass->cullFace);
 
@@ -259,19 +261,19 @@ namespace Lamp
 
 	void Renderer3D::DrawCube()
 	{
-		s_pRenderData->CubeVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_pRenderData->CubeVertexArray, s_pRenderData->CubeVertexArray->GetIndexBuffer()->GetCount());
+		s_pRenderData->cubeVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pRenderData->cubeVertexArray, s_pRenderData->cubeVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::DrawQuad()
 	{
-		s_pRenderData->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_pRenderData->QuadVertexArray, s_pRenderData->QuadVertexArray->GetIndexBuffer()->GetCount());
+		s_pRenderData->quadVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_pRenderData->quadVertexArray, s_pRenderData->quadVertexArray->GetIndexBuffer()->GetCount());
 	}
 
 	void Renderer3D::RenderQuad()
 	{
-		const auto& pass = s_pRenderData->CurrentRenderPass;
+		const auto& pass = s_pRenderData->currentRenderPass;
 		RenderCommand::SetCullFace(pass->cullFace);
 		Ref<Shader> shaderToUse = pass->renderShader;
 
@@ -392,6 +394,20 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
+		//TODO: Should be moved to only be made once, right after render event
+		//Sort
+		const glm::vec3& pos = s_pRenderData->camera->GetPosition();
+		std::sort(s_RenderBuffer.drawCalls.begin(), s_RenderBuffer.drawCalls.end(), [&pos](const RenderCommandData& dataOne, const RenderCommandData& dataTwo) 
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distOne = glm::exp2(pos.x - dPosOne.x) + glm::exp2(pos.y - dPosOne.y) + glm::exp2(pos.z - dPosOne.z);
+				const float distTwo = glm::exp2(pos.x - dPosTwo.x) + glm::exp2(pos.y - dPosTwo.y) + glm::exp2(pos.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
+
 		for (const auto& data : s_RenderBuffer.drawCalls)
 		{
 			DrawMesh(data.transform, data.data, data.material, data.id);
@@ -416,7 +432,7 @@ namespace Lamp
 				1, 3, 2 //(bottom right - bottom left - top left)
 			};
 
-			s_pRenderData->QuadVertexArray = VertexArray::Create();
+			s_pRenderData->quadVertexArray = VertexArray::Create();
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(quadVertices, (uint32_t)(sizeof(Vertex) * quadVertices.size()));
 			pBuffer->SetBufferLayout
 			({
@@ -426,9 +442,9 @@ namespace Lamp
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
 				});
-			s_pRenderData->QuadVertexArray->AddVertexBuffer(pBuffer);
+			s_pRenderData->quadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
-			s_pRenderData->QuadVertexArray->SetIndexBuffer(indexBuffer);
+			s_pRenderData->quadVertexArray->SetIndexBuffer(indexBuffer);
 		}
 		//////////////
 
@@ -456,16 +472,16 @@ namespace Lamp
 				4, 5, 0, 0, 5, 1
 			};
 
-			s_pRenderData->CubeVertexArray = VertexArray::Create();
+			s_pRenderData->cubeVertexArray = VertexArray::Create();
 			Ref<VertexBuffer> pBuffer = VertexBuffer::Create(boxPositions, (uint32_t)(sizeof(float) * boxPositions.size()));
 			pBuffer->SetBufferLayout
 			({
 				{ ElementType::Float3, "a_Position" }
 				});
-			s_pRenderData->CubeVertexArray->AddVertexBuffer(pBuffer);
+			s_pRenderData->cubeVertexArray->AddVertexBuffer(pBuffer);
 
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(boxIndicies, (uint32_t)(boxIndicies.size()));
-			s_pRenderData->CubeVertexArray->SetIndexBuffer(indexBuffer);
+			s_pRenderData->cubeVertexArray->SetIndexBuffer(indexBuffer);
 		}
 		////////////////
 	}

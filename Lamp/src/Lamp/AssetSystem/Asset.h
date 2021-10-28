@@ -32,7 +32,7 @@ namespace Lamp
 	{
 		{ ".level", AssetType::Level },
 		{ ".lgf", AssetType::Mesh },
-		{ ".fbx", AssetType::MeshSource },
+		{ ".lgs", AssetType::MeshSource },
 		{ ".mtl", AssetType::Material },
 		{ ".png", AssetType::Texture },
 		{ ".jpg", AssetType::Texture },
