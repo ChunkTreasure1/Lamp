@@ -72,7 +72,7 @@
     <ClInclude Include="src\Sandbox\UI\AnimatedIcon.h">
       <Filter>src\Sandbox\UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\AssetManagerPanel.h">
+    <ClInclude Include="src\Sandbox\Windows\AssetBrowserPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\BaseWindow.h">
@@ -84,7 +84,7 @@
     <ClInclude Include="src\Sandbox\Windows\GraphKey.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\LayerView.h">
+    <ClInclude Include="src\Sandbox\Windows\LayerViewPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\MaterialEditor.h">
@@ -125,13 +125,13 @@
     <ClCompile Include="src\Sandbox\UI\AnimatedIcon.cpp">
       <Filter>src\Sandbox\UI</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\AssetManagerPanel.cpp">
+    <ClCompile Include="src\Sandbox\Windows\AssetBrowserPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\LayerView.cpp">
+    <ClCompile Include="src\Sandbox\Windows\LayerViewPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\MaterialEditor.cpp">

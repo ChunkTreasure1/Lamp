@@ -154,11 +154,11 @@
     <ClInclude Include="src\Sandbox\Sandbox.h" />
     <ClInclude Include="src\Sandbox\SandboxController.h" />
     <ClInclude Include="src\Sandbox\UI\AnimatedIcon.h" />
-    <ClInclude Include="src\Sandbox\Windows\AssetManagerPanel.h" />
+    <ClInclude Include="src\Sandbox\Windows\AssetBrowserPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\BaseWindow.h" />
     <ClInclude Include="src\Sandbox\Windows\BufferWindow.h" />
     <ClInclude Include="src\Sandbox\Windows\GraphKey.h" />
-    <ClInclude Include="src\Sandbox\Windows\LayerView.h" />
+    <ClInclude Include="src\Sandbox\Windows\LayerViewPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\MaterialEditor.h" />
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\RenderGraphPanel.h" />
@@ -173,9 +173,9 @@
     <ClCompile Include="src\Sandbox\SandboxController.cpp" />
     <ClCompile Include="src\Sandbox\ShortcutFunctions.cpp" />
     <ClCompile Include="src\Sandbox\UI\AnimatedIcon.cpp" />
-    <ClCompile Include="src\Sandbox\Windows\AssetManagerPanel.cpp" />
+    <ClCompile Include="src\Sandbox\Windows\AssetBrowserPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp" />
-    <ClCompile Include="src\Sandbox\Windows\LayerView.cpp" />
+    <ClCompile Include="src\Sandbox\Windows\LayerViewPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\MaterialEditor.cpp" />
     <ClCompile Include="src\Sandbox\Windows\MeshImporterPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\RenderGraphPanel.cpp" />

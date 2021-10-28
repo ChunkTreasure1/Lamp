@@ -154,10 +154,8 @@ namespace UI
 		{
 			return ImGui::BeginPopupContextItem();
 		}
-		else
-		{
-			return ImGui::BeginPopupContextItem(id.c_str());
-		}
+		
+		return ImGui::BeginPopupContextItem(id.c_str());
 	}
 
 	static void EndPopup()

@@ -14,6 +14,8 @@
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 #include <Lamp/AssetSystem/BaseAssets.h>
 
+#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodePass.h>
+
 #include <Lamp/Utility/UIUtility.h>
 
 namespace Sandbox
@@ -313,7 +315,17 @@ namespace Sandbox
 		UI::PushId();
 		if (UI::BeginProperties("test", false))
 		{
-			UI::Property("Show Skybox", m_renderSkybox);
+			if (UI::Property("Show Skybox", m_renderSkybox))
+			{
+				for (auto node : m_renderGraph->GetSpecification().nodes)
+				{
+					if (auto pass = std::dynamic_pointer_cast<Lamp::RenderNodePass>(node))
+					{
+						pass->renderPass->GetSpecification().drawSkybox = m_renderSkybox;
+					}
+				}
+			}
+
 			UI::Property("Show Grid", m_renderGrid);
 
 			UI::EndProperties(false);

@@ -1,4 +1,4 @@
-#include "LayerView.h"
+#include "LayerViewPanel.h"
 
 #include <imgui/imgui_stdlib.h>
 #include <Lamp/Utility/UIUtility.h>
@@ -10,7 +10,7 @@ namespace Sandbox
 {
 	using namespace Lamp;
 
-	LayerView::LayerView(std::string_view name)
+	LayerViewPanel::LayerViewPanel(std::string_view name)
 		: BaseWindow(name)
 	{
 		m_entityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
@@ -23,14 +23,14 @@ namespace Sandbox
 		m_unlockedIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/layerView/unlocked.png");
 	}
 
-	void LayerView::OnEvent(Lamp::Event& e)
+	void LayerViewPanel::OnEvent(Lamp::Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(LayerView::UpdateImGui));
-		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(LayerView::Update));
+		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(LayerViewPanel::UpdateImGui));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(LayerViewPanel::Update));
 	}
 
-	bool LayerView::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
+	bool LayerViewPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -139,7 +139,6 @@ namespace Sandbox
 					for (auto obj : layer.Objects)
 					{
 						ImGui::PushID(startId);
-						static bool test = false;
 						ImGui::TableNextRow();
 
 						ImGui::TableNextColumn();
@@ -244,7 +243,7 @@ namespace Sandbox
 		return false;
 	}
 
-	bool LayerView::Update(Lamp::AppUpdateEvent& e)
+	bool LayerViewPanel::Update(Lamp::AppUpdateEvent& e)
 	{
 		if (!m_isFocused)
 		{

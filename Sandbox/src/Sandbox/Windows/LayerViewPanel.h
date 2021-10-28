@@ -4,10 +4,10 @@
 
 namespace Sandbox
 {
-	class LayerView : public BaseWindow
+	class LayerViewPanel : public BaseWindow
 	{
 	public:
-		LayerView(std::string_view name);
+		LayerViewPanel(std::string_view name);
 
 		virtual void OnEvent(Lamp::Event& e) override;
 
@@ -16,8 +16,6 @@ namespace Sandbox
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool Update(Lamp::AppUpdateEvent& e);
-
-		void CollapsingHeaderAddons(std::string& currRightClick, const std::string& id, bool& open, uint32_t& layerId, const uint32_t& currId);
 
 	private:
 		Lamp::Object* m_pSelectedObject = nullptr;
