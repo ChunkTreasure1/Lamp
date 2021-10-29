@@ -12,6 +12,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 
+#include <random>
 
 namespace Lamp
 {
@@ -30,11 +31,18 @@ namespace Lamp
 		CreateUniformBuffers();
 		CreateShaderStorageBuffers();
 
+		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(4, 4);
+		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), 0);
+		s_pSceneData->internalTextures.emplace("SSAO Noise", s_pSceneData->ssaoNoiseTexture);
+
 		//Setup dynamic uniforms
 		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&s_pSceneData->hdrExposure));
 		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&s_pSceneData->gamma));
 		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&s_pSceneData->bufferSize));
 		DynamicUniformRegistry::AddUniform("ForwardTileX", UniformType::Int, RegisterData(&s_pSceneData->screenGroupX));
+		DynamicUniformRegistry::AddUniform("SSAO kernel size", UniformType::Int, RegisterData(&s_pSceneData->ssaoKernelSize));
+		DynamicUniformRegistry::AddUniform("Aspect ratio", UniformType::Float, RegisterData(&s_pSceneData->aspectRatio));
+		DynamicUniformRegistry::AddUniform("Tan Half FOV", UniformType::Float, RegisterData(&s_pSceneData->tanHalfFOV));
 	}
 
 	void Renderer::Shutdown()
@@ -61,6 +69,9 @@ namespace Lamp
 		s_pSceneData->commonDataBuffer = UniformBuffer::Create(sizeof(CommonRenderData), 0);
 		s_pSceneData->directionalLightBuffer = UniformBuffer::Create(sizeof(DirectionalLightBuffer), 1);
 		s_pSceneData->directionalLightVPBuffer = UniformBuffer::Create(sizeof(DirectionalLightVPs), 4);
+		
+		s_pSceneData->ssaoBuffer = UniformBuffer::Create(sizeof(SSAOData), 6);
+		GenerateKernel();
 	}
 
 	void Renderer::CreateShaderStorageBuffers()
@@ -141,8 +152,54 @@ namespace Lamp
 			s_pSceneData->directionalLightVPBuffer->SetData(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPs));
 		}
 
+		//SSAO
+		{
+			//TODO: update from settings
+		}
+
 		s_pSceneData->screenGroupX = ((uint32_t)s_pSceneData->bufferSize.x + ((uint32_t)s_pSceneData->bufferSize.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenGroupY = ((uint32_t)s_pSceneData->bufferSize.y + ((uint32_t)s_pSceneData->bufferSize.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
+
+		//SSAO
+		Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(camera);
+		s_pSceneData->aspectRatio = perspectiveCamera->GetAspectRatio();
+		s_pSceneData->tanHalfFOV = glm::tan(glm::radians(s_pSceneData->aspectRatio) / 2.f);
+	}
+
+	static float Lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
+
+
+	void Renderer::GenerateKernel()
+	{
+		s_pSceneData->ssaoNoise.clear();
+
+		std::uniform_real_distribution<float> randomFloats(0.f, 1.f);
+		std::default_random_engine generator;
+
+		for (uint32_t i = 0; i < s_pSceneData->ssaoData.kernelSize; i++)
+		{
+			glm::vec3 sample{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, randomFloats(generator) };
+			sample = glm::normalize(sample);
+			sample *= randomFloats(generator);
+
+			float scale = float(i) / s_pSceneData->ssaoData.kernelSize;
+
+			scale = Lerp(0.1f, 1.f, scale * scale);
+			scale *= scale;
+
+			s_pSceneData->ssaoData.kernelSamples[i] = glm::vec4(sample, 0.f);
+		}
+
+		for (uint32_t i = 0; i < 16; i++)
+		{
+			glm::vec3 noise{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, 0.f };
+			s_pSceneData->ssaoNoise.push_back(noise);
+		}
+
+		s_pSceneData->ssaoBuffer->SetData(&s_pSceneData->ssaoData, sizeof(SSAOData));
 	}
 }

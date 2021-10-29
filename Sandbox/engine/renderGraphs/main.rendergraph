@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-1162.41577, 304.33609]
+      position: [-245.447632, 344.682953]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [771.631775, 317.249878]
+      position: [2112.6001, 322.596741]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [360.935242, 130.042938]
+      position: [1557.90344, 156.389801]
       type: 0
       name: Forward
       clearType: 3
@@ -66,10 +66,6 @@ RenderGraph:
           guuid: 600923457
           type: 0
           data: 0
-        - staticUniform: u_ShadowMap
-          guuid: 808479141
-          type: 0
-          data: 3
         - staticUniform: u_Material.mro
           guuid: 862335930
           type: 0
@@ -86,6 +82,10 @@ RenderGraph:
           guuid: 1471275545
           type: 0
           data: 5
+        - staticUniform: u_SSAOMap
+          guuid: 1726813157
+          type: 0
+          data: 7
         - staticUniform: u_ObjectId
           guuid: 1999005063
           type: 9
@@ -126,6 +126,14 @@ RenderGraph:
               textureType: 0
               bindId: 6
               attachmentId: 2
+        - framebuffer: SSAO
+          guuid: 1592522834
+          attrId: 1784170606
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 7
+              attachmentId: 0
       framebufferCommands:
         []
       attributes:
@@ -159,6 +167,11 @@ RenderGraph:
           id: 998524288
           type: 2
           data: 966553632
+        - attribute: SSAO
+          attrType: input
+          id: 1784170606
+          type: 1
+          data: 1592522834
         - attribute: Framebuffer
           attrType: output
           id: 1692424272
@@ -169,7 +182,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [-60.2737427, 504.294769]
+      position: [1161.69446, 493.641663]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -177,7 +190,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -5.77375201e-33, 3.15292154e-43]
+      clearColor: [1, 1, -2.76989727e-32, 2.04589576e-43]
       attachments:
         {}
       attributes:
@@ -187,7 +200,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 757978825
-      position: [94.7263794, -262.7052]
+      position: [1435.69446, -257.358337]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -198,7 +211,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [-154.273682, -262.7052]
+      position: [1186.69446, -257.358337]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -209,7 +222,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 954160398
-      position: [-810.885193, 114.599663]
+      position: [6.08294678, 225.946533]
       type: 0
       name: DepthPrePass
       clearType: 3
@@ -231,11 +244,29 @@ RenderGraph:
             format: 7
             filtering: 0
             wrap: 2
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 2
+            filtering: 1
+            wrap: 2
       staticUniforms:
         - staticUniform: u_Model
           guuid: 669833833
           type: 9
           data: 0
+        - staticUniform: u_Material.albedo
+          guuid: 1145384975
+          type: 0
+          data: 0
+        - staticUniform: u_Material.mro
+          guuid: 1562574667
+          type: 0
+          data: 2
+        - staticUniform: u_Material.normal
+          guuid: 1818626242
+          type: 0
+          data: 1
       dynamicUniforms:
         []
       textures:
@@ -265,7 +296,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 770486413
-      position: [-394.885193, 255.59967]
+      position: [946.082947, 260.946533]
       type: 7
       shader: lightCulling
       attributes:
@@ -285,7 +316,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1394602077
-      position: [-427.885193, -6.40033722]
+      position: [913.082947, -1.05347443]
       type: 3
       uniformType: 0
       dataName: ForwardTileX
@@ -294,6 +325,161 @@ RenderGraph:
           attrType: output
           id: 1705880431
           type: 2
+    - Node: ""
+      id: 781432400
+      position: [549.902649, -53.9472504]
+      type: 0
+      name: SSAOMain
+      clearType: 3
+      drawType: 1
+      cullFace: 1
+      renderShader: ssao
+      draw2D: false
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 6
+            filtering: 1
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_NormalMap
+          guuid: 86333247
+          type: 0
+          data: 0
+        - staticUniform: u_DepthMap
+          guuid: 327951378
+          type: 0
+          data: 1
+      dynamicUniforms:
+        - dynamicUniform: u_TanHalfFOV
+          guuid: 1891864
+          type: 0
+          attrId: 1125923108
+        - dynamicUniform: u_AspectRatio
+          guuid: 343263575
+          type: 0
+          attrId: 2056006177
+        - dynamicUniform: u_BufferSize
+          guuid: 1660509971
+          type: 0
+          attrId: 1822908006
+      textures:
+        - texture: u_Noise
+          guuid: 369304674
+          bindSlot: 0
+          attrId: 929937316
+      framebuffers:
+        - framebuffer: DepthPrePass
+          guuid: 1539373100
+          attrId: 863788390
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 0
+              attachmentId: 0
+            - attachment: ""
+              textureType: 1
+              bindId: 1
+              attachmentId: 0
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 218120135
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 225938096
+          type: 1
+          data: 1
+        - attribute: u_AspectRatio
+          attrType: input
+          id: 2056006177
+          type: 2
+          data: 343263575
+        - attribute: u_TanHalfFOV
+          attrType: input
+          id: 1125923108
+          type: 2
+          data: 1891864
+        - attribute: u_BufferSize
+          attrType: input
+          id: 1822908006
+          type: 2
+          data: 1660509971
+        - attribute: u_Noise
+          attrType: input
+          id: 929937316
+          type: 0
+          data: 369304674
+        - attribute: DepthPrePass
+          attrType: input
+          id: 863788390
+          type: 1
+          data: 1539373100
+        - attribute: Framebuffer
+          attrType: output
+          id: 857743689
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 1212272488
+          type: 3
+    - Node: ""
+      id: 263397489
+      position: [123.96814, -121.653137]
+      type: 3
+      uniformType: 1
+      dataName: Aspect ratio
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 928958145
+          type: 2
+    - Node: ""
+      id: 1950662959
+      position: [122.96814, -2.65313721]
+      type: 3
+      uniformType: 1
+      dataName: Tan Half FOV
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 1510943882
+          type: 2
+    - Node: ""
+      id: 2031064463
+      position: [-142.03186, -115.653137]
+      type: 3
+      uniformType: 2
+      dataName: Buffer Size
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 1253685018
+          type: 2
+    - Node: ""
+      id: 266238784
+      position: [-123, 21]
+      type: 2
+      path: ""
+      usingInternal: true
+      selectedTexture: ""
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 291125314
+          type: 0
   Links:
     - Link: ""
       id: 1074877368
@@ -324,10 +510,38 @@ RenderGraph:
       from: 1371239852
       to: 2035749057
     - Link: ""
-      id: 928702155
-      from: 487594828
-      to: 2030054679
-    - Link: ""
       id: 1995701839
       from: 1635662274
       to: 1978010946
+    - Link: ""
+      id: 77138404
+      from: 928958145
+      to: 2056006177
+    - Link: ""
+      id: 1457094918
+      from: 1510943882
+      to: 1125923108
+    - Link: ""
+      id: 4903894
+      from: 1253685018
+      to: 1822908006
+    - Link: ""
+      id: 855254193
+      from: 487594828
+      to: 218120135
+    - Link: ""
+      id: 1891838389
+      from: 267211912
+      to: 863788390
+    - Link: ""
+      id: 1637860138
+      from: 1212272488
+      to: 2030054679
+    - Link: ""
+      id: 1552175008
+      from: 857743689
+      to: 1784170606
+    - Link: ""
+      id: 1621451201
+      from: 291125314
+      to: 929937316

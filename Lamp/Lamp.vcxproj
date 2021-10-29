@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -252,6 +252,7 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />

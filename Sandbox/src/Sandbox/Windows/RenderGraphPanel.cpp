@@ -10,6 +10,7 @@
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeCompute.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
+#include <Lamp/Rendering/RenderGraph/RenderGraphUtils.h>
 
 #include <ImNodes/ImNodes.h>
 #include <imgui/imgui_stdlib.h>
@@ -134,7 +135,19 @@ namespace Sandbox
 
 			for (auto& link : m_CurrentlyOpenGraph->GetSpecification().links)
 			{
+				if (link->pInput->type != RenderAttributeType::Pass)
+				{
+					ImNodes::PushColorStyle(ImNodesCol_Link, Utils::GetTypeColor(link->pInput->type));
+					ImNodes::PushColorStyle(ImNodesCol_LinkHovered, Utils::GetTypeHoverColor(link->pInput->type));
+				}
+
 				ImNodes::Link(link->id, link->pOutput->id, link->pInput->id);
+
+				if (link->pInput->type != RenderAttributeType::Pass)
+				{
+					ImNodes::PopColorStyle();
+					ImNodes::PopColorStyle();
+				}
 			}
 		}
 

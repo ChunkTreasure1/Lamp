@@ -3,6 +3,7 @@
 
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Utility/SerializeMacros.h"
+#include "RenderGraphUtils.h"
 
 #include <imnodes.h>
 
@@ -23,28 +24,10 @@ namespace Lamp
 			unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
 			unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
 
-			switch (input->type)
+			if (input->type != RenderAttributeType::Pass)
 			{
-				case RenderAttributeType::Pass:
-					break;
-
-				case RenderAttributeType::DynamicUniform:
-					pinColor = IM_COL32(153, 64, 173, 255);
-					pinHoverColor = IM_COL32(159, 94, 173, 255);
-					break;
-
-				case RenderAttributeType::Framebuffer:
-					pinColor = IM_COL32(150, 28, 17, 255);
-					pinHoverColor = IM_COL32(179, 53, 41, 255);
-					break;
-
-				case RenderAttributeType::Texture:
-					pinColor = IM_COL32(62, 189, 100, 255);
-					pinHoverColor = IM_COL32(100, 181, 124, 255);
-					break;
-
-				default:
-					break;
+				pinColor = Utils::GetTypeColor(input->type);
+				pinHoverColor = Utils::GetTypeHoverColor(input->type);
 			}
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
@@ -70,9 +53,24 @@ namespace Lamp
 			cursorPos.y += 20.f;
 			ImGui::SetCursorPos(cursorPos);
 
+			unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
+			unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
+
+			if (output->type != RenderAttributeType::Pass)
+			{
+				pinColor = Utils::GetTypeColor(output->type);
+				pinHoverColor = Utils::GetTypeHoverColor(output->type);
+			}
+
+			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
+			ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
+
 			ImNodes::BeginOutputAttribute(output->id);
 			ImGui::Text(output->name.c_str());
 			ImNodes::EndOutputAttribute();
+
+			ImNodes::PopColorStyle();
+			ImNodes::PopColorStyle();
 		}
 	}
 

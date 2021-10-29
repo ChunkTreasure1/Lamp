@@ -35,6 +35,7 @@ namespace Lamp
 		static void CreateUniformBuffers();
 		static void CreateShaderStorageBuffers();
 		static void UpdateBuffers(const Ref<CameraBase> camera);
+		static void GenerateKernel();
 
 	private: 
 		struct SceneData
@@ -56,11 +57,15 @@ namespace Lamp
 			Ref<RenderGraph> renderGraph;
 
 			/////SSAO/////
-			uint32_t ssaoKernelSize = 64;
 			uint32_t ssaoMaxKernelSize = 256;
+			uint32_t ssaoKernelSize = 64;
+			std::vector<glm::vec3> ssaoNoise;
+			Ref<Texture2D> ssaoNoiseTexture;
 
 			float ssaoRadius = 0.5f;
 			float ssaoBias = 0.025f;
+			float aspectRatio = 16.f / 9.f;
+			float tanHalfFOV = 0.f;
 			//////////////
 		
 			/////Uniform buffers//////
@@ -72,6 +77,9 @@ namespace Lamp
 
 			DirectionalLightVPs directionalLightVPData;
 			Ref<UniformBuffer> directionalLightVPBuffer;
+
+			SSAOData ssaoData;
+			Ref<UniformBuffer> ssaoBuffer;
 			//////////////////////////
 
 			/////Shader Storage//////

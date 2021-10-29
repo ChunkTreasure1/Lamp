@@ -172,7 +172,7 @@ vec3 CalculatePointLight(PointLight light, vec3 V, vec3 N, vec3 baseReflectivity
 	kD *= 1.0 - metallic;
 
 	vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular)) * radiance * NdotL;
-	return lightStrength;
+	return lightStrength;	
 }
 
 float DirectionalShadowCalculation(vec4 pos, uint samplerId)
