@@ -26,19 +26,19 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -189,11 +189,13 @@
     <None Include="engine\shaders\ibl\prefilter.glsl" />
     <None Include="engine\shaders\ibl\skybox.glsl" />
     <None Include="engine\shaders\lineShader.glsl" />
+    <None Include="engine\shaders\main\composite.glsl" />
     <None Include="engine\shaders\main\lightCulling.glsl" />
     <None Include="engine\shaders\main\lightDebug.glsl" />
     <None Include="engine\shaders\main\pbrEditor.glsl" />
     <None Include="engine\shaders\main\pbrForward.glsl" />
     <None Include="engine\shaders\main\screenSpaceSSS.glsl" />
+    <None Include="engine\shaders\postprocess\ssao.glsl" />
     <None Include="engine\shaders\quad.glsl" />
     <None Include="engine\shaders\selection.glsl" />
     <None Include="engine\shaders\shadows\dirShadow.glsl" />

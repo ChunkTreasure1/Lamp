@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-245.447632, 344.682953]
+      position: [-512.762207, 444.140808]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [2112.6001, 322.596741]
+      position: [2204.28564, 525.054565]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [1557.90344, 156.389801]
+      position: [1290.58887, 255.847641]
       type: 0
       name: Forward
       clearType: 3
@@ -126,14 +126,6 @@ RenderGraph:
               textureType: 0
               bindId: 6
               attachmentId: 2
-        - framebuffer: SSAO
-          guuid: 1592522834
-          attrId: 1784170606
-          attachments:
-            - attachment: ""
-              textureType: 0
-              bindId: 7
-              attachmentId: 0
       framebufferCommands:
         []
       attributes:
@@ -167,11 +159,6 @@ RenderGraph:
           id: 998524288
           type: 2
           data: 966553632
-        - attribute: SSAO
-          attrType: input
-          id: 1784170606
-          type: 1
-          data: 1592522834
         - attribute: Framebuffer
           attrType: output
           id: 1692424272
@@ -182,7 +169,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [1161.69446, 493.641663]
+      position: [894.379883, 593.099487]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -190,7 +177,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, -2.76989727e-32, 2.04589576e-43]
+      clearColor: [1, 1, 3.25012167e-18, 2.01786979e-43]
       attachments:
         {}
       attributes:
@@ -200,7 +187,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 757978825
-      position: [1435.69446, -257.358337]
+      position: [1168.37988, -157.900513]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -211,7 +198,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [1186.69446, -257.358337]
+      position: [919.379883, -157.900513]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -222,7 +209,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 954160398
-      position: [6.08294678, 225.946533]
+      position: [-261.231689, 325.404358]
       type: 0
       name: DepthPrePass
       clearType: 3
@@ -296,7 +283,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 770486413
-      position: [946.082947, 260.946533]
+      position: [678.768372, 360.404358]
       type: 7
       shader: lightCulling
       attributes:
@@ -316,7 +303,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1394602077
-      position: [913.082947, -1.05347443]
+      position: [645.768372, 98.4043655]
       type: 3
       uniformType: 0
       dataName: ForwardTileX
@@ -327,7 +314,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 781432400
-      position: [549.902649, -53.9472504]
+      position: [278.588074, 52.5105896]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -358,6 +345,10 @@ RenderGraph:
           guuid: 327951378
           type: 0
           data: 1
+        - staticUniform: u_Noise
+          guuid: 1249930245
+          type: 0
+          data: 2
       dynamicUniforms:
         - dynamicUniform: u_TanHalfFOV
           guuid: 1891864
@@ -374,7 +365,7 @@ RenderGraph:
       textures:
         - texture: u_Noise
           guuid: 369304674
-          bindSlot: 0
+          bindSlot: 2
           attrId: 929937316
       framebuffers:
         - framebuffer: DepthPrePass
@@ -437,7 +428,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 263397489
-      position: [123.96814, -121.653137]
+      position: [-143.346436, -22.1952972]
       type: 3
       uniformType: 1
       dataName: Aspect ratio
@@ -448,7 +439,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1950662959
-      position: [122.96814, -2.65313721]
+      position: [-144.346436, 96.8047028]
       type: 3
       uniformType: 1
       dataName: Tan Half FOV
@@ -459,7 +450,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 2031064463
-      position: [-142.03186, -115.653137]
+      position: [-409.346436, -16.1952972]
       type: 3
       uniformType: 2
       dataName: Buffer Size
@@ -470,7 +461,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 266238784
-      position: [-123, 21]
+      position: [-390.314575, 120.45784]
       type: 2
       path: ""
       usingInternal: true
@@ -480,6 +471,91 @@ RenderGraph:
           attrType: output
           id: 291125314
           type: 0
+    - Node: ""
+      id: 24444795
+      position: [1726.82654, 237.776047]
+      type: 0
+      name: Composite
+      clearType: 3
+      drawType: 1
+      cullFace: 1
+      renderShader: composite
+      draw2D: false
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [0.311627924, 0.311624795, 0.311624795, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 1
+            filtering: 1
+            wrap: 2
+      staticUniforms:
+        - staticUniform: u_SSAOMap
+          guuid: 575831008
+          type: 0
+          data: 1
+        - staticUniform: u_Color
+          guuid: 1450207094
+          type: 0
+          data: 0
+      dynamicUniforms:
+        []
+      textures:
+        []
+      framebuffers:
+        - framebuffer: SSAO
+          guuid: 175700897
+          attrId: 1313405932
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 1
+              attachmentId: 0
+        - framebuffer: Color
+          guuid: 1559823780
+          attrId: 268534902
+          attachments:
+            - attachment: ""
+              textureType: 0
+              bindId: 0
+              attachmentId: 0
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Activate
+          attrType: input
+          id: 838224858
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 1446147204
+          type: 1
+          data: 1
+        - attribute: SSAO
+          attrType: input
+          id: 1313405932
+          type: 1
+          data: 175700897
+        - attribute: Color
+          attrType: input
+          id: 268534902
+          type: 1
+          data: 1559823780
+        - attribute: Framebuffer
+          attrType: output
+          id: 1938784520
+          type: 1
+        - attribute: Activated
+          attrType: output
+          id: 1749293875
+          type: 3
   Links:
     - Link: ""
       id: 1074877368
@@ -510,10 +586,6 @@ RenderGraph:
       from: 1371239852
       to: 2035749057
     - Link: ""
-      id: 1995701839
-      from: 1635662274
-      to: 1978010946
-    - Link: ""
       id: 77138404
       from: 928958145
       to: 2056006177
@@ -538,10 +610,22 @@ RenderGraph:
       from: 1212272488
       to: 2030054679
     - Link: ""
-      id: 1552175008
-      from: 857743689
-      to: 1784170606
-    - Link: ""
       id: 1621451201
       from: 291125314
       to: 929937316
+    - Link: ""
+      id: 1642010167
+      from: 1692424272
+      to: 268534902
+    - Link: ""
+      id: 847920369
+      from: 857743689
+      to: 1313405932
+    - Link: ""
+      id: 1334596665
+      from: 1635662274
+      to: 838224858
+    - Link: ""
+      id: 1980375789
+      from: 1749293875
+      to: 1978010946

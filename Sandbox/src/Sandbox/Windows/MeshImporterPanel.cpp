@@ -369,7 +369,6 @@ namespace Sandbox
 		ImGui::Begin("Materials");
 
 		static std::vector<const char*> shaders;
-		static std::unordered_map<std::string, std::string> paths;
 
 		shaders.clear();
 		for (auto& shader : ShaderLibrary::GetShaders())

@@ -477,6 +477,9 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
@@ -1863,7 +1866,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">

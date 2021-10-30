@@ -80,16 +80,17 @@ void main()
     mat3 TBN = mat3(tangent, bitangent, normal);
 
     float occlusion = 1.0;
-    float positionDepth = z;
+    float positionDepth = (u_View * vec4(pos, 1.0)).z;
     for (int i = 0; i < u_KernelSize; i++)
     {
-        vec3 samplePos = pos + TBN * u_KernelSamples[i].xyz * u_Radius;
+        vec4 samplePos = u_View * vec4(pos + TBN * u_KernelSamples[i].xyz * u_Radius, 1.0);
 
-        vec4 offset = u_Projection * vec4(samplePos, 1.0);
+        vec4 offset = u_Projection * samplePos;
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5 + 0.5;
 
-        float sampleDepth = CalculateViewZ(offset.xy);
+        vec3 offsetPos = vec3(x, y, CalculateViewZ(offset.xy));
+        float sampleDepth = (u_View * vec4(offsetPos, 1.0)).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth- sampleDepth));
         occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_KernelSize : 0.0;

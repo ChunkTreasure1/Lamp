@@ -31,6 +31,9 @@
     <Filter Include="engine\shaders\main">
       <UniqueIdentifier>{08EC023B-744D-E048-FDBA-26FB691B1708}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\shaders\postprocess">
+      <UniqueIdentifier>{68DC9835-54EC-4406-BDA5-A924A9D4339F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="engine\shaders\shadows">
       <UniqueIdentifier>{1C00CDD2-08FA-F524-F166-8C35DDFF5B91}</UniqueIdentifier>
     </Filter>
@@ -169,6 +172,9 @@
     <None Include="engine\shaders\lineShader.glsl">
       <Filter>engine\shaders</Filter>
     </None>
+    <None Include="engine\shaders\main\composite.glsl">
+      <Filter>engine\shaders\main</Filter>
+    </None>
     <None Include="engine\shaders\main\lightCulling.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
@@ -183,6 +189,9 @@
     </None>
     <None Include="engine\shaders\main\screenSpaceSSS.glsl">
       <Filter>engine\shaders\main</Filter>
+    </None>
+    <None Include="engine\shaders\postprocess\ssao.glsl">
+      <Filter>engine\shaders\postprocess</Filter>
     </None>
     <None Include="engine\shaders\quad.glsl">
       <Filter>engine\shaders</Filter>
