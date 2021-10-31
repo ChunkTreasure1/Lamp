@@ -625,28 +625,31 @@ namespace Sandbox
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
-		ImGui::Text("RenderGraph");
-
-		std::filesystem::path graphPath = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
-
-		UI::BeginProperties("renderProps");
-
-		if (UI::Property("Render graph", graphPath))
+		if (UI::TreeNodeFramed("Render graph", true))
 		{
-			Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>(graphPath));
-			Renderer::GetRenderGraph()->Start();
-		}
+			static std::filesystem::path path = "";
+			static std::filesystem::path lastPath = "";
+			path = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
+			lastPath = path;
 
-		UI::EndProperties();
-
-		ImGui::SameLine();
-		if (ImGui::Button("Reload"))
-		{
-			if (Renderer::GetRenderGraph())
+			if (UI::BeginProperties("renderProps"))
 			{
-				Renderer::SetRenderGraph(ResourceCache::ReloadAsset<RenderGraph>(std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph())));
-				Renderer::GetRenderGraph()->Start();
+				if (UI::Property("Graph", path))
+				{
+					auto graph = ResourceCache::GetAsset<RenderGraph>(path);
+					if (!graph)
+					{
+						path = lastPath;
+					}
+
+					Renderer::SetRenderGraph(graph);
+					Renderer::GetRenderGraph()->Start();
+				}
+
+				UI::EndProperties();
 			}
+
+			UI::TreeNodePop();
 		}
 
 		ImGui::End();

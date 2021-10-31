@@ -230,6 +230,7 @@ namespace Lamp
 		}
 		{
 			LP_PROFILE_SCOPE("Textures");
+
 			int i = 0;
 			for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
 			{
@@ -367,6 +368,14 @@ namespace Lamp
 						break;
 				}
 			}
+		}
+
+		//Textures
+		for (const auto& texturePair : pass->textures)
+		{
+			const auto& tex = texturePair.second.first;
+
+			tex.texture->Bind(tex.bindSlot);
 		}
 
 		DrawQuad();

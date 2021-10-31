@@ -147,5 +147,7 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
   - Handle: 10556133037468570950
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
+  - Handle: 16897032606846204281
+    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\editor.rendergraph
   - Handle: 14877024273708001692
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\main.rendergraph

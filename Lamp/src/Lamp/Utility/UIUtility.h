@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/Utility/PlatformUtility.h"
+#include "Lamp/AssetSystem/Asset.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -103,13 +104,10 @@ namespace UI
 		{
 			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
 		}
-		else
-		{
-			UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
+		
+		UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
 
-			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
-		}
-
+		return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
 	}
 
 	static void TreeNodePop()
@@ -119,7 +117,7 @@ namespace UI
 
 	static bool InputText(const std::string& id, std::string& text)
 	{
-		return ImGui::InputText(id.c_str(), &text);
+		return ImGui::InputTextString(id.c_str(), &text);
 	}
 
 	static bool InputTextOnSameline(std::string& string, const std::string& id)
@@ -159,7 +157,7 @@ namespace UI
 		{
 			return ImGui::BeginPopupContextItem();
 		}
-		
+
 		return ImGui::BeginPopupContextItem(id.c_str());
 	}
 
@@ -321,7 +319,6 @@ namespace UI
 
 		return data;
 	}
-
 
 	static void* DragDropTarget(std::initializer_list<std::string> types)
 	{
@@ -495,7 +492,7 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (InputText(id.c_str(), const_cast<std::string&>(value)))
+		if (InputText(id, const_cast<std::string&>(value)))
 		{
 			changed = true;
 		}
@@ -516,7 +513,7 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (InputText(id.c_str(), value))
+		if (InputText(id, value))
 		{
 			changed = true;
 		}
@@ -548,8 +545,28 @@ namespace UI
 	static bool Property(const std::string& text, std::filesystem::path& path)
 	{
 		bool changed = false;
-		if (InputText(text.c_str(), path.string()))
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string sPath = path.string();
+		ImGui::PushItemWidth(ImGui::GetColumnWidth() - ImGui::CalcTextSize("Open...").x - 20.f);
+
+		std::string id = "##" + std::to_string(s_stackId++);
+		if (InputText(id, sPath))
 		{
+			path = std::filesystem::path(sPath);
+			changed = true;
+		}
+
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		if (ImGui::Button("Open...", { ImGui::GetContentRegionAvail().x, 25.f }))
+		{
+			auto newPath = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			path = newPath;
 			changed = true;
 		}
 
@@ -562,11 +579,34 @@ namespace UI
 			changed = true;
 		}
 
-		ImGui::SameLine();
+		return changed;
+	}
 
-		if (ImGui::Button("Open..."))
+	static bool Property(const std::string& text, Ref<Lamp::Asset>& asset)
+	{
+		bool changed = false;
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		ImGui::Text("Asset: %s", asset->Path.string());
+
+		ImGui::SameLine();
+		if (ImGui::Button("Open"))
 		{
-			path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			if (BeginPopup("Assets"))
+			{
+
+				EndPopup();
+			}
+		}
+
+		if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
+		{
+			const wchar_t* inPath = (const wchar_t*)ptr;
+			std::filesystem::path newPath = std::filesystem::path("assets") / inPath;
+
 			changed = true;
 		}
 
