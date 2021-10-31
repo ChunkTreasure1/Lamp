@@ -5,7 +5,6 @@
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
-#include <imgui/imgui_stdlib.h>
 
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
 #include <Lamp/AssetSystem/AssetManager.h>
@@ -320,7 +319,7 @@ namespace Sandbox
 		{
 			if (UI::Property("Show Skybox", m_renderSkybox))
 			{
-				for (auto node : m_renderGraph->GetSpecification().nodes)
+				for (const auto& node : m_renderGraph->GetSpecification().nodes)
 				{
 					if (auto pass = std::dynamic_pointer_cast<Lamp::RenderNodePass>(node))
 					{

@@ -98,7 +98,7 @@ namespace Sandbox
 				ImGui::PushItemWidth(75.f);
 				UI::ScopedColor background{ ImGuiCol_FrameBg, { 0.1f, 0.1f, 0.1f, 0.1f } };
 
-				ImGui::InputTextString(renameId.c_str(), &layer.Name);
+				UI::InputText(renameId.c_str(), layer.Name);
 				if (m_renamingLayer != m_lastRenamingLayer)
 				{
 					ImGuiID widgetId = ImGui::GetCurrentWindow()->GetID(renameId.c_str());

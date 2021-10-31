@@ -4,11 +4,11 @@
 
 #include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <imgui/imgui_stdlib.h>
 
 #include <Lamp/GraphKey/Link.h>
 #include <Lamp/GraphKey/NodeRegistry.h>
 #include <Lamp/Objects/Entity/Base/Entity.h>
+#include <Lamp/Utility/UIUtility.h>
 
 namespace Sandbox
 {
@@ -278,7 +278,7 @@ namespace Sandbox
 
 			for (auto& key : Lamp::NodeRegistry::s_Methods())
 			{
-				sorted[Lamp::NodeRegistry::GetCategory(key.first)].push_back(key);
+				sorted[Lamp::NodeRegistry::GetCategory(key.first)].emplace_back(key);
 			}
 
 			int i = 0;
@@ -396,12 +396,12 @@ namespace Sandbox
 
 	void GraphKey::CreateComponentNodes()
 	{
-		for (auto pC : Lamp::ComponentRegistry::s_Methods())
+		for (const auto& pC : Lamp::ComponentRegistry::s_Methods())
 		{
 			m_BaseComponents.push_back(pC.second());
 		}
 
-		for (auto pComp : m_BaseComponents)
+		for (const auto& pComp : m_BaseComponents)
 		{
 			Ref<Node> node = CreateRef<Node>();
 			node->name = pComp->GetName();
@@ -720,11 +720,11 @@ namespace Sandbox
 			{
 				std::string& s = std::any_cast<std::string&>(prop.data);
 
-				if (attr.pLinks.size() == 0)
+				if (attr.pLinks.empty())
 				{
 					std::string v = s;
 
-					ImGui::InputTextString(prop.name.c_str(), &v);
+					UI::InputText(prop.name.c_str(), v);
 					if (v != s)
 					{
 						s = v;
@@ -753,7 +753,7 @@ namespace Sandbox
 				{
 					std::string v = s;
 
-					ImGui::InputTextString(prop.name.c_str(), &v);
+					UI::InputText(prop.name.c_str(), v);
 					ImGui::SameLine();
 					if (ImGui::Button("Open..."))
 					{
@@ -864,14 +864,14 @@ namespace Sandbox
 
 				if (ImGui::BeginCombo(prop.name.c_str(), currentItem.c_str()))
 				{
-					for (int i = 0; i < vec.size(); i++)
+					for (auto& i : vec)
 					{
-						vec[i].second = (currentItem == vec[i].first);
-						if (ImGui::Selectable(vec[i].first.c_str(), vec[i].second))
+						i.second = (currentItem == i.first);
+						if (ImGui::Selectable(i.first.c_str(), i.second))
 						{
-							currentItem = vec[i].first;
+							currentItem = i.first;
 						}
-						if (vec[i].second)
+						if (i.second)
 						{
 							ImGui::SetItemDefaultFocus();
 						}
@@ -882,7 +882,7 @@ namespace Sandbox
 
 				ImGui::PopItemWidth();
 				break;
-			} 
+			}
 
 			case Lamp::PropertyType::EntityId:
 			{
@@ -1079,7 +1079,7 @@ namespace Sandbox
 				std::string& s = std::any_cast<std::string&>(prop.data);
 				std::string v = s;
 
-				ImGui::InputTextString(prop.name.c_str(), &v);
+				UI::InputText(prop.name.c_str(), v);
 				if (v != s)
 				{
 					s = v;
@@ -1105,7 +1105,7 @@ namespace Sandbox
 				std::string& s = std::any_cast<std::string&>(prop.data);
 				std::string v = s;
 
-				ImGui::InputTextString(prop.name.c_str(), &v);
+				UI::InputText(prop.name.c_str(), v);
 				ImGui::SameLine();
 				if (ImGui::Button("Open..."))
 				{
@@ -1227,14 +1227,14 @@ namespace Sandbox
 		Ref<Node> n = NodeRegistry::s_Methods()[name]();
 		n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
-		for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+		for (auto& inputAttribute : n->inputAttributes)
 		{
-			n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+			inputAttribute.id = m_CurrentlyOpenGraph->GetCurrentId()++;
 		}
 
-		for (int i = 0; i < n->outputAttributes.size(); i++)
+		for (auto& outputAttribute : n->outputAttributes)
 		{
-			n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+			outputAttribute.id = m_CurrentlyOpenGraph->GetCurrentId()++;
 		}
 
 		if (m_CurrentlyOpenGraph)

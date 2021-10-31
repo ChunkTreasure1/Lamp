@@ -16,7 +16,7 @@
 #include <imgui_stdlib.h>
 
 namespace Lamp
-{	
+{
 	static const GraphUUID targetBufferId = GraphUUID(1);
 
 	namespace Utils
@@ -166,7 +166,7 @@ namespace Lamp
 		ImGui::PushItemWidth(200.f);
 
 		std::string nameId = "Name##node" + nodeId;
-		ImGui::InputTextString(nameId.c_str(), &specification.Name);
+		UI::InputText(nameId, specification.Name);
 
 		if (ImGui::TreeNode("Settings"))
 		{
@@ -292,7 +292,7 @@ namespace Lamp
 				{
 					if (ImGui::Button("Add"))
 					{
-						specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
+						specification.Attachments.Attachments.emplace_back();
 					}
 
 					ImGui::PushItemWidth(200.f);
@@ -373,7 +373,7 @@ namespace Lamp
 				{
 					std::string sName = name;
 					specification.staticUniforms.erase(staticUniformPair.first);
-					
+
 					break;
 				}
 
@@ -382,7 +382,7 @@ namespace Lamp
 				ImGui::PushItemWidth(100.f);
 
 				std::string uNameId = "##uniformName" + std::to_string(staticUniformCount);
-				ImGui::InputTextString(uNameId.c_str(), &staticUniformSpec.name);
+				UI::InputText(uNameId, staticUniformSpec.name);
 				ImGui::SameLine();
 
 				static const char* uTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
@@ -550,7 +550,7 @@ namespace Lamp
 
 				ImGui::PushItemWidth(100.f);
 				std::string nameId = "##dynUniformName" + std::to_string(uniformCount);
-				if (ImGui::InputTextString(nameId.c_str(), &dynUniformSpec.name))
+				if (UI::InputText(nameId, dynUniformSpec.name))
 				{
 					SetAttributeName(dynUniformSpec.name, dynUniformPair.second.second);
 				}
@@ -663,7 +663,7 @@ namespace Lamp
 
 					if (ImGui::Button("Add##att"))
 					{
-						framebufferSpec.attachments.push_back(PassFramebufferAttachmentSpec());
+						framebufferSpec.attachments.emplace_back();
 					}
 
 					uint32_t attId = 0;
@@ -1229,11 +1229,11 @@ namespace Lamp
 
 			if (compId == inputs[i]->id)
 			{
-				for (size_t j = 0; j < links.size(); j++)
+				for (const auto& link : links)
 				{
-					if (links[j]->pInput->id == inputs[i]->id)
+					if (link->pInput->id == inputs[i]->id)
 					{
-						links[j]->markedForDelete = true;
+						link->markedForDelete = true;
 						break;
 					}
 				}
@@ -1241,11 +1241,11 @@ namespace Lamp
 				inputs.erase(inputs.begin() + i);
 
 				int newIndex = 0;
-				for (int i = 0; i < inputs.size(); i++)
+				for (const auto& input : inputs)
 				{
-					if (inputs[i]->type == RenderAttributeType::Texture)
+					if (input->type == RenderAttributeType::Texture)
 					{
-						inputs[i]->data = newIndex;
+						input->data = newIndex;
 						newIndex++;
 					}
 				}

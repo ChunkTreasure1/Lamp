@@ -258,7 +258,7 @@ namespace Sandbox
 				ImGui::Text("Entity");
 
 				std::string name = pEnt->GetName();
-				ImGui::InputTextString("Name", &name);
+				UI::InputText("Name", name);
 				pEnt->SetName(name);
 
 				if (UI::TreeNodeFramed("Transform"))
@@ -320,7 +320,7 @@ namespace Sandbox
 				ImGui::Text("Brush");
 
 				std::string name = pBrush->GetName();
-				ImGui::InputTextString("Name", &name);
+				UI::InputText("Name", name);
 				pBrush->SetName(name);
 
 				if (UI::TreeNodeFramed("Transform"))

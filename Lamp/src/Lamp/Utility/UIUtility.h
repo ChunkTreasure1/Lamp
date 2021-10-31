@@ -117,10 +117,15 @@ namespace UI
 		ImGui::TreePop();
 	}
 
+	static bool InputText(const std::string& id, std::string& text)
+	{
+		return ImGui::InputText(id.c_str(), &text, 0, nullptr, nullptr);
+	}
+
 	static bool InputTextOnSameline(std::string& string, const std::string& id)
 	{
 		ImGui::SameLine();
-		return ImGui::InputTextString(id.c_str(), &string);
+		return InputText(id, string);
 	}
 
 	static void Separator(ImGuiSeparatorFlags customFlags = 0)
@@ -490,7 +495,7 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (ImGui::InputTextString(id.c_str(), &const_cast<std::string&>(value)))
+		if (InputText(id.c_str(), const_cast<std::string&>(value)))
 		{
 			changed = true;
 		}
@@ -511,7 +516,7 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (ImGui::InputTextString(id.c_str(), &value))
+		if (InputText(id.c_str(), value))
 		{
 			changed = true;
 		}
@@ -543,7 +548,7 @@ namespace UI
 	static bool Property(const std::string& text, std::filesystem::path& path)
 	{
 		bool changed = false;
-		if (ImGui::InputTextString(text.c_str(), &path.string()))
+		if (InputText(text.c_str(), path.string()))
 		{
 			changed = true;
 		}
