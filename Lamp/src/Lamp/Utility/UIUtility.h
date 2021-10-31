@@ -119,7 +119,7 @@ namespace UI
 
 	static bool InputText(const std::string& id, std::string& text)
 	{
-		return ImGui::InputText(id.c_str(), &text, 0, nullptr, nullptr);
+		return ImGui::InputText(id.c_str(), &text);
 	}
 
 	static bool InputTextOnSameline(std::string& string, const std::string& id)

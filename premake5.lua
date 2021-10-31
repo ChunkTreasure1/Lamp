@@ -188,6 +188,7 @@ project "Sandbox"
 	{
 		"Lamp",
 		"Game",
+		"ImGui",
 		"assimp-vc143-mt.lib",
 		"fmodstudio_vc.lib",
 		"fmod_vc.lib"
