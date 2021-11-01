@@ -66,8 +66,7 @@ void main()
 #type fragment
 #version 440 core
 
-layout(location = 0) out vec4 o_Ambient;
-layout(location = 2) out vec4 o_Light;
+layout(location = 0) out vec4 o_Color;
 layout(location = 1) out int o_ObjectId;
 
 in Out
@@ -415,18 +414,17 @@ void main()
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse + specular);
+	vec3 ambient = (kD * diffuse + specular) * 0.5;
 
 	vec3 color = ambient + Lo;
-	color *= u_Exposure;
+	//color *= u_Exposure;
 	
-	color = ACESTonemap(color);
+	//color = ACESTonemap(color);
 
 	//Gamma correction
-	color = pow(color, vec3(1.0 / u_Gamma));
+	//color = pow(color, vec3(1.0 / u_Gamma));
 
 	//o_Color = vec4(color, 1.0);
-	o_Ambient = vec4(color, 1.0);
-	o_Light = vec4(Lo, 1.0);
+	o_Color = vec4(color, 1.0);
 	o_ObjectId = u_ObjectId;
 }

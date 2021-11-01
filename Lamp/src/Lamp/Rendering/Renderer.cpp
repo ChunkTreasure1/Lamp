@@ -154,7 +154,8 @@ namespace Lamp
 
 		//SSAO
 		{
-			//TODO: update from settings
+			s_pSceneData->ssaoData.bias = 0.025f;
+			s_pSceneData->ssaoBuffer->SetData(&s_pSceneData->ssaoData, sizeof(SSAOData));
 		}
 
 		s_pSceneData->screenGroupX = ((uint32_t)s_pSceneData->bufferSize.x + ((uint32_t)s_pSceneData->bufferSize.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;

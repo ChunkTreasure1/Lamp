@@ -43,8 +43,9 @@ layout(std140, binding = 6) uniform SSAO
 {
     vec4 u_KernelSamples[256];
     int u_KernelSize;
-    float u_Radius;
     float u_Bias;
+    float u_Radius;
+    float u_T;
 };
 
 in vec2 v_TexCoords;
@@ -56,20 +57,23 @@ uniform sampler2D u_DepthMap;
 uniform sampler2D u_Noise;
 uniform vec2 u_BufferSize;
 
-float CalculateViewZ(vec2 coords)
+vec3 CalculateWorld(vec2 coords)
 {
     float depth = texture(u_DepthMap, coords).x;
-    float viewZ = u_Projection[3][2] / (2 * depth - 1 - u_Projection[2][2]);
-    return viewZ;
+    float z = depth * 2.0 - 1.0;
+
+    vec4 screenPos = vec4(coords * 2.0 - 1.0, z, 1.0);
+    vec4 viewSpace = inverse(u_Projection) * screenPos;
+
+    viewSpace /= viewSpace.w;
+
+    vec4 worldSpace = inverse(u_View) * viewSpace;
+    return worldSpace.xyz;
 }
 
 void main()
 {
-    float z = CalculateViewZ(v_TexCoords);
-    float x = v_ViewRay.x * z;
-    float y = v_ViewRay.y * z;
-
-    vec3 pos = vec3(x, y, z);
+    vec3 pos = CalculateWorld(v_TexCoords);
     vec2 noiseScale = vec2(u_BufferSize.x / 4.0, u_BufferSize.y / 4.0);
 
     vec3 normal = normalize(texture(u_NormalMap, v_TexCoords).rgb);
@@ -79,22 +83,26 @@ void main()
     vec3 bitangent = cross(normal, tangent);
     mat3 TBN = mat3(tangent, bitangent, normal);
 
-    float occlusion = 1.0;
-    float positionDepth = (u_View * vec4(pos, 1.0)).z;
+    float occlusion = 0.0;
     for (int i = 0; i < u_KernelSize; i++)
     {
-        vec4 samplePos = u_View * vec4(pos + TBN * u_KernelSamples[i].xyz * u_Radius, 1.0);
+        vec3 samplePos = TBN * u_KernelSamples[i].xyz;
+        samplePos = pos + samplePos * u_Radius;
 
-        vec4 offset = u_Projection * samplePos;
+        vec4 offset = vec4(samplePos, 1.0);
+        offset = u_Projection * offset;
+
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5 + 0.5;
 
-        vec3 offsetPos = vec3(x, y, CalculateViewZ(offset.xy));
-        float sampleDepth = (u_View * vec4(offsetPos, 1.0)).z;
+        vec3 offsetPos = CalculateWorld(offset.xy);
+        float sampleDepth =  offsetPos.z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth - sampleDepth));
-        occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_KernelSize : 0.0;
+        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(pos.z - sampleDepth));
+        occlusion += (sampleDepth >= samplePos.z + u_Bias ? 1.0 : 0.0) * rangeCheck;
     }
+
+    occlusion = 1.0 - (occlusion / u_KernelSize);
 
     FragColor = occlusion;
 }

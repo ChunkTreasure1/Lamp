@@ -48,7 +48,8 @@ namespace Lamp
 	{
 		glm::vec4 kernelSamples[256];
 		uint32_t kernelSize = 64;
-		float radius = 0.5f;
 		float bias = 0.025f;
+		float radius = 0.5f;
+		float t = 0.f;
 	};
 }

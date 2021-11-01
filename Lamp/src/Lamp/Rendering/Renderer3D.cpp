@@ -327,6 +327,10 @@ namespace Lamp
 					shaderToUse->UploadFloat(dynamicUniformSpec.name, *static_cast<float*>(dynamicUniformSpec.data));
 					break;
 
+				case UniformType::Float2:
+					shaderToUse->UploadFloat2(dynamicUniformSpec.name, *static_cast<glm::vec2*>(dynamicUniformSpec.data));
+					break;
+
 				case UniformType::Float3:
 					shaderToUse->UploadFloat3(dynamicUniformSpec.name, *static_cast<glm::vec3*>(dynamicUniformSpec.data));
 					break;
@@ -373,6 +377,12 @@ namespace Lamp
 		//Textures
 		for (const auto& texturePair : pass->textures)
 		{
+			if (texturePair.second.first.texture == nullptr)
+			{
+				LP_CORE_ERROR("Texture is nullptr");
+				break;
+			}
+
 			const auto& tex = texturePair.second.first;
 
 			tex.texture->Bind(tex.bindSlot);
