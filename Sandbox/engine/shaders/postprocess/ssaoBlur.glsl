@@ -23,7 +23,7 @@ void main()
 
 #type fragment
 #version 440 core
-layout(location = 0) out float o_SSAO;
+layout(location = 0) out vec4 o_SSAO;
 
 in vec2 v_TexCoords;
 in vec4 v_ShadowCoords;
@@ -43,5 +43,5 @@ void main()
         }
     }
 
-    o_SSAO = result / (4.0 * 4.0);
+    o_SSAO = vec4(result / (4.0 * 4.0), result / (4.0 * 4.0), result / (4.0, 4.0), 1.0);
 }
