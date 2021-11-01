@@ -27,13 +27,19 @@ layout (location = 0) out vec4 o_FinalColor;
 
 in vec2 v_TexCoords;
 
-uniform sampler2D u_Color;
+uniform sampler2D u_Ambient;
+uniform sampler2D u_Light;
 uniform sampler2D u_SSAOMap;
+uniform float u_Exposure;
 
 void main()
 {
-    vec4 color = texture(u_Color, v_TexCoords);
+    vec3 ambient = texture(u_Ambient, v_TexCoords).rgb;
+    vec3 light = texture(u_Light, v_TexCoords).rgb;
     float ssao = texture(u_SSAOMap, v_TexCoords).r;
 
-    o_FinalColor = color - (vec4(0.5, 0.5, 0.5, 0.0) * ssao);
+    vec3 color = ambient * 0.5 + light;
+    color *= u_Exposure;
+
+    o_FinalColor = vec4(ambient * ssao, 1.0);
 }

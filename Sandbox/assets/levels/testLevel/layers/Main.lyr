@@ -3,7 +3,7 @@ layer:
   id: 0
   active: true
   entities:
-    - entity: DirLight
+    - entity: Entity
       position: [0, 2.87243533, 7.77864981]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]

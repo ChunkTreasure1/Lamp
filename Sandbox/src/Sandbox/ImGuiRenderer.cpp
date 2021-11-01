@@ -646,6 +646,9 @@ namespace Sandbox
 					Renderer::GetRenderGraph()->Start();
 				}
 
+				auto& renderGraph = std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph());
+				UI::Property("TestGraph", renderGraph);
+
 				UI::EndProperties();
 			}
 

@@ -590,7 +590,7 @@ namespace UI
 		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
-		ImGui::Text("Asset: %s", asset->Path.string());
+		ImGui::Text("Asset: %s", asset->Path.string().c_str());
 
 		ImGui::SameLine();
 		if (ImGui::Button("Open"))

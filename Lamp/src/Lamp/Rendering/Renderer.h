@@ -28,7 +28,7 @@ namespace Lamp
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
 
-		static const Ref<RenderGraph> GetRenderGraph() { return s_pSceneData->renderGraph; }
+		static const Ref<RenderGraph>& GetRenderGraph() { return s_pSceneData->renderGraph; }
 		static void SetRenderGraph(Ref<RenderGraph> graph) { s_pSceneData->renderGraph = graph; }
 
 	private:

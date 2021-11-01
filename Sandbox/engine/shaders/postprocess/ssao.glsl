@@ -92,7 +92,7 @@ void main()
         vec3 offsetPos = vec3(x, y, CalculateViewZ(offset.xy));
         float sampleDepth = (u_View * vec4(offsetPos, 1.0)).z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth- sampleDepth));
+        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth - sampleDepth));
         occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_KernelSize : 0.0;
     }
 
