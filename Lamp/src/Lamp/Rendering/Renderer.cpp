@@ -154,7 +154,6 @@ namespace Lamp
 
 		//SSAO
 		{
-			s_pSceneData->ssaoData.bias = 0.025f;
 			s_pSceneData->ssaoBuffer->SetData(&s_pSceneData->ssaoData, sizeof(SSAOData));
 		}
 
@@ -190,7 +189,7 @@ namespace Lamp
 			float scale = float(i) / s_pSceneData->ssaoData.kernelSize;
 
 			scale = Lerp(0.1f, 1.f, scale * scale);
-			scale *= scale;
+			sample *= scale;
 
 			s_pSceneData->ssaoData.kernelSamples[i] = glm::vec4(sample, 0.f);
 		}
@@ -200,7 +199,5 @@ namespace Lamp
 			glm::vec3 noise{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, 0.f };
 			s_pSceneData->ssaoNoise.push_back(noise);
 		}
-
-		s_pSceneData->ssaoBuffer->SetData(&s_pSceneData->ssaoData, sizeof(SSAOData));
 	}
 }

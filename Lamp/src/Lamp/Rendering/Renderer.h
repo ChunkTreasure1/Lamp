@@ -58,7 +58,7 @@ namespace Lamp
 
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 256;
-			uint32_t ssaoKernelSize = 64;
+			uint32_t ssaoKernelSize = 128;
 			std::vector<glm::vec3> ssaoNoise;
 			Ref<Texture2D> ssaoNoiseTexture;
 

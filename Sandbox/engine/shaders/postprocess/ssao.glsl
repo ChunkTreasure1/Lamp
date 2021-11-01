@@ -30,7 +30,7 @@ void main()
 
 #type fragment
 #version 440
-layout (location = 0) out float FragColor;
+layout (location = 0) out vec4 o_Color;
 
 layout(std140, binding = 0) uniform Main
 {
@@ -53,8 +53,8 @@ in vec2 v_ViewRay;
 
 uniform sampler2D u_NormalMap;
 uniform sampler2D u_DepthMap;
-
 uniform sampler2D u_Noise;
+
 uniform vec2 u_BufferSize;
 
 vec3 CalculateWorld(vec2 coords)
@@ -83,26 +83,21 @@ void main()
     vec3 bitangent = cross(normal, tangent);
     mat3 TBN = mat3(tangent, bitangent, normal);
 
-    float occlusion = 0.0;
+    float occlusion = 1.0;
+    float positionDepth = (u_View * vec4(pos, 1.0)).z;
     for (int i = 0; i < u_KernelSize; i++)
     {
-        vec3 samplePos = TBN * u_KernelSamples[i].xyz;
-        samplePos = pos + samplePos * u_Radius;
+        vec4 samplePos = u_View * vec4(pos + TBN * u_KernelSamples[i].xyz * u_Radius, 1.0);
 
-        vec4 offset = vec4(samplePos, 1.0);
-        offset = u_Projection * offset;
-
+        vec4 offset = u_Projection * samplePos;
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5 + 0.5;
 
-        vec3 offsetPos = CalculateWorld(offset.xy);
-        float sampleDepth =  offsetPos.z;
+        float sampleDepth = (u_View * vec4(CalculateWorld(offset.xy), 1.0)).z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(pos.z - sampleDepth));
-        occlusion += (sampleDepth >= samplePos.z + u_Bias ? 1.0 : 0.0) * rangeCheck;
+        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth - sampleDepth));
+        occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_KernelSize : 0.0;
     }
 
-    occlusion = 1.0 - (occlusion / u_KernelSize);
-
-    FragColor = occlusion;
+    o_Color = vec4(occlusion, occlusion, occlusion, 1.0);
 }

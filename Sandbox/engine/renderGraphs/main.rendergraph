@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-1914.46021, 113.877808]
+      position: [-736.587891, 165.998993]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [936.587646, 185.791565]
+      position: [425.288818, 364.063293]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [18.8908691, -90.4153595]
+      position: [1196.76318, -38.2941589]
       type: 0
       name: Forward
       clearType: 3
@@ -175,7 +175,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [-373.318115, 253.836487]
+      position: [804.554199, 305.957672]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -183,7 +183,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, 5.5010548e-21, 2.53635022e-43]
+      clearColor: [1, 1, -1.90614442e-17, 2.53635022e-43]
       attachments:
         {}
       attributes:
@@ -193,7 +193,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 757978825
-      position: [-99.3181152, -497.163513]
+      position: [1078.5542, -445.042328]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -204,7 +204,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [-348.318115, -497.163513]
+      position: [829.554199, -445.042328]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -215,7 +215,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 954160398
-      position: [-1596.92969, -18.8586578]
+      position: [-419.057373, 33.2625427]
       type: 0
       name: DepthPrePass
       clearType: 3
@@ -289,7 +289,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 770486413
-      position: [-588.929688, 21.1413422]
+      position: [588.942627, 73.2625427]
       type: 7
       shader: lightCulling
       attributes:
@@ -309,7 +309,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1394602077
-      position: [-621.929688, -240.858643]
+      position: [555.942627, -188.737457]
       type: 3
       uniformType: 0
       dataName: ForwardTileX
@@ -320,7 +320,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 781432400
-      position: [-989.109863, -286.752441]
+      position: [188.762451, -234.631256]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -339,7 +339,7 @@ RenderGraph:
           - attachment: ""
             borderColor: [1, 1, 1, 1]
             multisampled: false
-            format: 6
+            format: 1
             filtering: 1
             wrap: 2
       staticUniforms:
@@ -434,7 +434,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 263397489
-      position: [-1411.04443, -361.458313]
+      position: [-233.172119, -309.337128]
       type: 3
       uniformType: 1
       dataName: Aspect ratio
@@ -445,7 +445,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1950662959
-      position: [-1412.04443, -242.458313]
+      position: [-234.172119, -190.337128]
       type: 3
       uniformType: 1
       dataName: Tan Half FOV
@@ -456,7 +456,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 2031064463
-      position: [-1677.04443, -355.458313]
+      position: [-499.172119, -303.337128]
       type: 3
       uniformType: 2
       dataName: Buffer Size
@@ -467,7 +467,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 266238784
-      position: [-1658.01257, -218.805176]
+      position: [-480.140381, -166.68399]
       type: 2
       path: ""
       usingInternal: true
@@ -479,7 +479,7 @@ RenderGraph:
           type: 0
     - Node: ""
       id: 1066576225
-      position: [530.302002, -76.2630157]
+      position: [1708.17432, -24.1418152]
       type: 0
       name: Composite
       clearType: 3
@@ -580,7 +580,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1196749694
-      position: [257, -207]
+      position: [1434.87231, -154.878815]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -639,10 +639,6 @@ RenderGraph:
       from: 267211912
       to: 863788390
     - Link: ""
-      id: 1637860138
-      from: 1212272488
-      to: 2030054679
-    - Link: ""
       id: 1621451201
       from: 291125314
       to: 929937316
@@ -659,10 +655,10 @@ RenderGraph:
       from: 857743689
       to: 1823437977
     - Link: ""
-      id: 1594213598
-      from: 1305742783
-      to: 1978010946
-    - Link: ""
       id: 1727557724
       from: 412741838
       to: 1638994397
+    - Link: ""
+      id: 1178651924
+      from: 1212272488
+      to: 1978010946
