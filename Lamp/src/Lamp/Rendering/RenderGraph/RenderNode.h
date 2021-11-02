@@ -7,7 +7,7 @@
 
 namespace Lamp
 {
-	struct RenderNode;
+	class RenderNode;
 	struct RenderLink;
 
 	enum class RenderNodeType : uint32_t
@@ -27,7 +27,8 @@ namespace Lamp
 		Texture = 0,
 		Framebuffer = 1,
 		DynamicUniform = 2,
-		Pass = 3
+		Pass = 3,
+		Uniform = 4
 	};
 
 	struct RenderAttribute
@@ -61,8 +62,9 @@ namespace Lamp
 		bool markedForDelete = false;
 	};
 
-	struct RenderNode
+	class RenderNode
 	{
+	public:
 		RenderNode()
 		{}
 		virtual ~RenderNode() {}

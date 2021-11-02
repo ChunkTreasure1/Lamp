@@ -47,6 +47,7 @@ namespace Lamp
 
 		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
 		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
+		std::unordered_map<GraphUUID, std::pair<PassUnifromSpecification, GraphUUID>> uniforms; // name, type, data, attrId
 		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId
 		std::map<GraphUUID, std::pair<PassFramebufferSpecification, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
 		std::map<GraphUUID, std::pair<PassFramebufferCommandSpecification, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
@@ -72,6 +73,8 @@ namespace Lamp
 		inline void SetID(uint32_t id) { m_ID = id; }
 
 	private:
+		friend class RenderNodePass;
+
 		uint32_t m_ID;
 		RenderPassSpecification m_passSpecification;
 	};

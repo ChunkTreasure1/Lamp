@@ -15,7 +15,7 @@
 
 namespace UI
 {
-	static int s_contextId = 0;
+	static uint32_t s_contextId = 0;
 	static uint32_t s_stackId = 0;
 
 	class ScopedColor
@@ -141,7 +141,8 @@ namespace UI
 
 	static void PushId()
 	{
-		ImGui::PushID(s_contextId++);
+		int id = s_contextId++;
+		ImGui::PushID(id);
 		s_stackId = 0;
 	}
 

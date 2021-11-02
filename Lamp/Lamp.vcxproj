@@ -271,6 +271,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Lamp\Utility\SerializeMacros.h" />

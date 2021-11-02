@@ -10,6 +10,7 @@
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Utility/StandardUtilities.h"
 #include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Utility/ImGuiExtension.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -48,6 +49,19 @@ namespace Lamp
 				default:
 					return -1;
 			}
+		}
+
+		static bool DrawCombo(const std::string& text, const std::string& id, const std::vector<const char*>& data, int& selected)
+		{
+			const float maxWidth = 80.f;
+
+			float offset = maxWidth - ImGui::CalcTextSize(text.c_str()).x;
+
+			ImGui::TextUnformatted(text.c_str());
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			return ImGui::Combo(id.c_str(), &selected, data.data(), data.size());
 		}
 	}
 
@@ -167,618 +181,61 @@ namespace Lamp
 
 		ImGui::PushItemWidth(200.f);
 
-		std::string nameId = "Name##node" + nodeId;
+		float offset = 50.f - ImGui::CalcTextSize("Name").x;
+
+		ImGui::TextUnformatted("Name");
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+
+		std::string nameId = "##name" + nodeId;
 		UI::InputText(nameId, specification.Name);
 
-		if (ImGui::TreeNode("Settings"))
+		const float treeWidth = ImNodes::GetNodeDimensions(id).x - 20.f;
+
+		if (ImGui::TreeNodeWidth("Settings", treeWidth))
 		{
-			//ClearType
-			{
-				static const char* clearTypes[] = { "None", "Color", "Depth", "ColorDepth" };
-				int currentlySelectedClearType = (int)specification.clearType;
-				std::string clearTypeId = "Clear Type##node" + nodeId;
-
-				if (ImGui::Combo(clearTypeId.c_str(), &currentlySelectedClearType, clearTypes, 4))
-				{
-					specification.clearType = (ClearType)currentlySelectedClearType;
-				}
-			}
-
-			//DrawType
-			{
-				static const char* drawTypes[] = { "All", "Quad", "Line", "Forward", "Deferred" };
-				int currentlySelectedDrawType = (int)specification.drawType;
-				std::string drawTypeId = "Draw Type##node" + nodeId;
-
-				if (ImGui::Combo(drawTypeId.c_str(), &currentlySelectedDrawType, drawTypes, 5))
-				{
-					specification.drawType = (DrawType)currentlySelectedDrawType;
-				}
-			}
-
-			//Cull face
-			{
-				static const char* cullFaces[] = { "Front", "Back" };
-				int currentlySelectedCullFace = (int)specification.cullFace;
-				std::string cullfaceId = "Cull Face##node" + nodeId;
-
-				if (ImGui::Combo(cullfaceId.c_str(), &currentlySelectedCullFace, cullFaces, 2))
-				{
-					specification.cullFace = (CullFace)currentlySelectedCullFace;
-				}
-			}
-
-			//Shader
-			{
-				int currentlySelectedShader = 0;
-				if (specification.renderShader)
-				{
-					auto it = std::find(m_Shaders.begin(), m_Shaders.end(), specification.renderShader->GetName().c_str());
-					currentlySelectedShader = (int)std::distance(m_Shaders.begin(), it);
-				}
-				std::string shaderId = "Render Shader##node" + nodeId;
-				if (ImGui::Combo(shaderId.c_str(), &currentlySelectedShader, m_Shaders.data(), (int)m_Shaders.size()))
-				{
-					if (currentlySelectedShader == 0)
-					{
-						specification.renderShader = nullptr;
-					}
-					else
-					{
-						specification.renderShader = ShaderLibrary::GetShader(m_Shaders[currentlySelectedShader]);
-					}
-				}
-			}
-
-			//2D
-			{
-				ImGui::Checkbox("Draw 2D pass", &specification.draw2D);
-			}
-
-			//Skybox
-			{
-				ImGui::Checkbox("Draw Skybox", &specification.drawSkybox);
-			}
+			DrawSettings();
 
 			ImGui::TreePop();
 		}
 
 		if (!IsAttributeLinked(m_TargetBufferAttribute))
 		{
-			if (ImGui::TreeNode("Output Framebuffer"))
+			if (ImGui::TreeNodeWidth("Output Framebuffer", treeWidth))
 			{
-				auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
-
-				if (ImGui::Checkbox("Use viewport size", &m_UseViewportSize))
-				{
-					if (m_UseViewportSize)
-					{
-						Renderer::s_pSceneData->useViewportSize.push_back(renderPass->GetSpecification().TargetFramebuffer);
-					}
-					else
-					{
-						auto& vector = Renderer::s_pSceneData->useViewportSize;
-						if (auto it = std::find(vector.begin(), vector.end(), renderPass->GetSpecification().TargetFramebuffer); it != vector.end())
-						{
-							vector.erase(it);
-						}
-					}
-				}
-
-				if (!m_UseViewportSize)
-				{
-					int width = static_cast<int>(specification.Width);
-					if (ImGui::InputInt("Width", &width))
-					{
-						specification.Width = width;
-					}
-
-					int height = static_cast<int>(specification.Height);
-					if (ImGui::InputInt("Height", &height))
-					{
-						specification.Height = height;
-					}
-				}
-
-				int samples = static_cast<int>(specification.Samples);
-				if (ImGui::InputInt("Samples", &samples))
-				{
-					specification.Samples = samples;
-				}
-
-				ImGui::PushItemWidth(200.f);
-				ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
-				ImGui::PopItemWidth();
-
-				if (ImGui::TreeNode("Attachments"))
-				{
-					if (ImGui::Button("Add"))
-					{
-						specification.Attachments.Attachments.emplace_back();
-					}
-
-					ImGui::PushItemWidth(200.f);
-
-					int attIndex = 0;
-					for (auto& att : specification.Attachments.Attachments)
-					{
-						std::string attId = std::to_string(attIndex);
-						bool changed = false;
-
-						std::string treeId = "Attachment##" + attId;
-						if (ImGui::TreeNode(treeId.c_str()))
-						{
-							ImGui::ColorEdit4("Border Color", glm::value_ptr(att.BorderColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
-
-							ImGui::Checkbox("Is multisampled", &att.MultiSampled);
-
-							static const char* texFormats[] = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
-							int currentlySelectedFormat = (int)att.TextureFormat;
-							std::string formatId = "Texture format##format" + attId;
-							if (ImGui::Combo(formatId.c_str(), &currentlySelectedFormat, texFormats, IM_ARRAYSIZE(texFormats)))
-							{
-								att.TextureFormat = (FramebufferTextureFormat)currentlySelectedFormat;
-								changed = true;
-							}
-
-							static const char* texFiltering[] = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
-							int currentlySelectedFiltering = (int)att.TextureFiltering;
-							std::string filteringId = "Texture filtering##filtering" + attId;
-							if (ImGui::Combo(filteringId.c_str(), &currentlySelectedFiltering, texFiltering, IM_ARRAYSIZE(texFiltering)))
-							{
-								att.TextureFiltering = (FramebufferTexureFiltering)currentlySelectedFiltering;
-								changed = true;
-							}
-
-							static const char* texWrap[] = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
-							int currentlySelectedWrap = (int)att.TextureWrap;
-							std::string wrapId = "Texture wrap##wrap" + attId;
-							if (ImGui::Combo(wrapId.c_str(), &currentlySelectedWrap, texWrap, IM_ARRAYSIZE(texWrap)))
-							{
-								att.TextureWrap = (FramebufferTextureWrap)currentlySelectedWrap;
-								changed = true;
-							}
-
-							if (changed)
-							{
-								renderPass->GetSpecification().TargetFramebuffer->Invalidate();
-							}
-
-
-							ImGui::TreePop();
-						}
-						attIndex++;
-					}
-					ImGui::PopItemWidth();
-
-					ImGui::TreePop();
-				}
+				DrawOutputBuffer();
 
 				ImGui::TreePop();
 			}
 		}
 
-		if (ImGui::TreeNode("Uniforms"))
+		if (ImGui::TreeNodeWidth("Uniforms", treeWidth))
 		{
-			bool showUniforms = true;
+			bool showUniforms = specification.renderShader != nullptr && !specification.renderShader->GetSpecification().uniforms.empty();
 
-			if (specification.renderShader == nullptr)
+			if (!showUniforms)
 			{
-				ImGui::TextColored(ImVec4(0.874, 0.165, 0.164, 1.f), "You need to select a shader before uniforms can be shown!");
-				showUniforms = false;
+				ImGui::TextColored(ImVec4(0.874, 0.165, 0.164, 1.f), "There are no uniforms to show!");
 			}
 			else
-			{
-				if (specification.renderShader->GetSpecification().uniforms.empty())
-				{
-					ImGui::TextColored(ImVec4(0.874, 0.165, 0.164, 1.f), "This shader contain no uniforms!");
-					showUniforms = false;
-				}
-			}
-
-			if (showUniforms)
 			{
 				DrawUniforms();
 			}
 
 			ImGui::TreePop();
 		}
-
-		if (ImGui::TreeNode("Static Uniforms"))
+		else
 		{
-			if (ImGui::Button("Create"))
+			for (const auto& input : inputs)
 			{
-				specification.staticUniforms.emplace(GraphUUID(), PassStaticUniformSpecification());
+				if (IsAttributeLinked(input))
+				{
+					ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
+					ImGui::TextUnformatted(input->name.c_str());
+					ImNodes::EndInputAttribute();
+				}
 			}
-
-			uint32_t staticUniformCount = 0;
-			for (auto& staticUniformPair : specification.staticUniforms)
-			{
-				auto& staticUniformSpec = staticUniformPair.second;
-
-				std::string butId = "-##statRm" + std::to_string(staticUniformCount);
-				if (ImGui::Button(butId.c_str()))
-				{
-					std::string sName = name;
-					specification.staticUniforms.erase(staticUniformPair.first);
-
-					break;
-				}
-
-				ImGui::SameLine();
-
-				ImGui::PushItemWidth(100.f);
-
-				std::string uNameId = "##uniformName" + std::to_string(staticUniformCount);
-				UI::InputText(uNameId, staticUniformSpec.name);
-				ImGui::SameLine();
-
-				static const char* uTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
-
-				std::string uTypeId = "##uniformType" + std::to_string(staticUniformCount);
-				int currentlySelectedType = (int)staticUniformSpec.type;
-				if (ImGui::Combo(uTypeId.c_str(), &currentlySelectedType, uTypes, 10))
-				{
-					staticUniformSpec.type = (UniformType)currentlySelectedType;
-					staticUniformSpec.data = Utils::GetResetValue(staticUniformSpec.type);
-				}
-
-				ImGui::PopItemWidth();
-
-				ImGui::SameLine();
-
-				ImGui::PushItemWidth(100.f);
-				if (staticUniformSpec.data.has_value())
-				{
-					if (staticUniformSpec.type != UniformType::RenderData)
-					{
-						std::string inId = "##value" + std::to_string(staticUniformCount);
-						switch (staticUniformSpec.type)
-						{
-							case UniformType::Int:
-							{
-								int data = std::any_cast<int>(staticUniformSpec.data);
-
-								if (ImGui::InputInt(inId.c_str(), &data))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-							case UniformType::Float:
-							{
-								float data = std::any_cast<float>(staticUniformSpec.data);
-								if (ImGui::InputFloat(inId.c_str(), &data))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-							case UniformType::Float2:
-							{
-								glm::vec2 data = std::any_cast<glm::vec2>(staticUniformSpec.data);
-								if (ImGui::InputFloat2(inId.c_str(), glm::value_ptr(data)))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-							case UniformType::Float3:
-							{
-								glm::vec3 data = std::any_cast<glm::vec3>(staticUniformSpec.data);
-								if (ImGui::InputFloat3(inId.c_str(), glm::value_ptr(data)))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-							case UniformType::Float4:
-							{
-								glm::vec4 data = std::any_cast<glm::vec4>(staticUniformSpec.data);
-								if (ImGui::InputFloat4(inId.c_str(), glm::value_ptr(data)))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-							case UniformType::Mat3:
-							{
-								glm::mat3 data = std::any_cast<glm::mat3>(staticUniformSpec.data);
-
-								break;
-							}
-
-							case UniformType::Mat4:
-							{
-								glm::mat4 data = std::any_cast<glm::mat4>(staticUniformSpec.data);
-
-								break;
-							}
-
-							case UniformType::Sampler2D:
-							{
-								int data = std::any_cast<int>(staticUniformSpec.data);
-								if (ImGui::InputInt(inId.c_str(), &data))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-							case UniformType::SamplerCube:
-							{
-								int data = std::any_cast<int>(staticUniformSpec.data);
-								if (ImGui::InputInt(inId.c_str(), &data))
-								{
-									staticUniformSpec.data = data;
-								}
-								break;
-							}
-
-						}
-					}
-					else
-					{
-						static const char* dTypes[] = { "Transform", "Data", "Material", "Id" };
-						std::string dTypeId = "##dataType" + std::to_string(staticUniformCount);
-						int currentlySelectedData = (int)std::any_cast<RenderData>(staticUniformSpec.data);
-						if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, dTypes, 4))
-						{
-							staticUniformSpec.data = (RenderData)currentlySelectedData;
-						}
-					}
-				}
-
-				ImGui::PopItemWidth();
-
-				staticUniformCount++;
-			}
-
-			ImGui::TreePop();
 		}
-
-		if (ImGui::TreeNode("Dynamic Uniforms"))
-		{
-			if (ImGui::Button("Create"))
-			{
-				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-
-				GraphUUID dynUniformId = GraphUUID();
-				specification.dynamicUniforms.emplace(dynUniformId, std::make_pair(PassDynamicUniformSpecification(), input->id));
-
-				input->pNode = this;
-				input->name = "Uniform" + std::to_string(specification.dynamicUniforms.size() - 1);
-				input->type = RenderAttributeType::DynamicUniform;
-				input->data = dynUniformId;
-
-				inputs.push_back(input);
-			}
-
-			uint32_t uniformCount = 0;
-			for (auto& dynUniformPair : specification.dynamicUniforms)
-			{
-				auto& dynUniformSpec = dynUniformPair.second.first;
-
-				std::string butId = "-##dynRm" + std::to_string(uniformCount);
-				if (ImGui::Button(butId.c_str()))
-				{
-					RemoveAttribute(RenderAttributeType::DynamicUniform, dynUniformPair.second.second);
-
-					std::string sName = name;
-					specification.dynamicUniforms.erase(dynUniformPair.first);
-					break;
-				}
-
-				ImGui::SameLine();
-
-				ImGui::PushItemWidth(100.f);
-				std::string nameId = "##dynUniformName" + std::to_string(uniformCount);
-				if (UI::InputText(nameId, dynUniformSpec.name))
-				{
-					SetAttributeName(dynUniformSpec.name, dynUniformPair.second.second);
-				}
-
-				ImGui::PopItemWidth();
-				uniformCount++;
-			}
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Textures"))
-		{
-			if (ImGui::Button("Add"))
-			{
-				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-
-				GraphUUID texId = GraphUUID();
-				specification.textures.emplace(texId, std::make_pair(PassTextureSpecification(), input->id));
-
-				input->data = texId;
-				input->pNode = this;
-				input->name = "Texture" + std::to_string(specification.textures.size() - 1);
-				input->type = RenderAttributeType::Texture;
-
-				inputs.push_back(input);
-			}
-
-			uint32_t texId = 0;
-			for (auto& texturePair : specification.textures)
-			{
-				auto& textureSpec = texturePair.second.first;
-
-				std::string texTreeId = "##tex" + std::to_string(texId);
-
-				std::string butId = "-##texRm" + std::to_string(texId);
-				if (ImGui::Button(butId.c_str()))
-				{
-					RemoveAttribute(RenderAttributeType::Texture, texturePair.second.second);
-
-					specification.textures.erase(texturePair.first);
-				}
-				ImGui::SameLine();
-
-				bool textChanged = false;
-				if (ImGui::TreeNode(texTreeId.c_str()))
-				{
-					textChanged = UI::InputTextOnSameline(textureSpec.name, "##texName" + std::to_string(texId));
-					int currBindSlot = textureSpec.bindSlot;
-					if (ImGui::InputInt("Bind slot", &currBindSlot))
-					{
-						textureSpec.bindSlot = currBindSlot;
-					}
-
-					ImGui::TreePop();
-				}
-				else
-				{
-					textChanged = UI::InputTextOnSameline(textureSpec.name, "##texName" + std::to_string(texId));
-				}
-
-				if (textChanged)
-				{
-					SetAttributeName(textureSpec.name, texturePair.second.second);
-				}
-
-				texId++;
-			}
-
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Framebuffers"))
-		{
-			if (ImGui::Button("Add##framebuffer"))
-			{
-				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-
-				GraphUUID framebufferId = GraphUUID();
-				specification.framebuffers.emplace(framebufferId, std::make_pair(PassFramebufferSpecification(), input->id));
-
-				input->data = framebufferId;
-				input->pNode = this;
-				input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
-				input->type = RenderAttributeType::Framebuffer;
-
-				inputs.push_back(input);
-			}
-
-			uint32_t bufferId = 0;
-			for (auto& framebufferPair : specification.framebuffers)
-			{
-				auto& framebufferSpec = framebufferPair.second.first;
-				std::string bufferTreeId = "##buffer" + std::to_string(bufferId);
-
-				std::string butId = "-##frameRm" + std::to_string(bufferId);
-				if (ImGui::Button(butId.c_str()))
-				{
-					RemoveAttribute(RenderAttributeType::Framebuffer, framebufferPair.second.second);
-
-					specification.framebuffers.erase(framebufferPair.first);
-					break;
-				}
-
-				ImGui::SameLine();
-
-				bool textChanged = false;
-				if (ImGui::TreeNode(bufferTreeId.c_str()))
-				{
-					textChanged = UI::InputTextOnSameline(framebufferSpec.name, "##bufferName" + std::to_string(bufferId));
-
-					if (ImGui::Button("Add##att"))
-					{
-						framebufferSpec.attachments.emplace_back();
-					}
-
-					uint32_t attId = 0;
-					for (auto& attachment : framebufferSpec.attachments)
-					{
-						std::string butId = "-##attRm" + std::to_string(attId);
-						if (ImGui::Button(butId.c_str()))
-						{
-							Utility::RemoveFromContainer(framebufferSpec.attachments, attachment);
-						}
-
-						ImGui::SameLine();
-
-						std::string attachmentString = "Attachment##buffAtt" + std::to_string(attId);
-						if (ImGui::TreeNode(attachmentString.c_str()))
-						{
-							static const char* textureTypes[] = { "Color", "Depth" };
-							int currentlySelectedType = (int)attachment.type;
-							std::string texTypeId = "Texure Type##" + std::to_string(bufferId);
-							if (ImGui::Combo(texTypeId.c_str(), &currentlySelectedType, textureTypes, IM_ARRAYSIZE(textureTypes)))
-							{
-								attachment.type = (TextureType)currentlySelectedType;
-							}
-
-							int currBind = attachment.bindId;
-							if (ImGui::InputInt("Bind slot", &currBind))
-							{
-								attachment.bindId = (uint32_t)currBind;
-							}
-
-							int currAttach = attachment.attachmentId;
-							if (ImGui::InputInt("Attachment slot", &currAttach))
-							{
-								attachment.attachmentId = (uint32_t)currAttach;
-							}
-
-							ImGui::TreePop();
-						}
-
-						attId++;
-					}
-
-					ImGui::TreePop();
-				}
-				else
-				{
-					textChanged = UI::InputTextOnSameline(framebufferSpec.name, "##bufferName" + std::to_string(bufferId));
-				}
-
-				if (textChanged)
-				{
-					SetAttributeName(framebufferSpec.name, framebufferPair.second.second);
-				}
-
-				bufferId++;
-			}
-
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Framebuffer commands"))
-		{
-			if (ImGui::Button("Add"))
-			{
-				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-				GraphUUID cmdId = GraphUUID();
-				specification.framebufferCommands.emplace(cmdId, std::make_pair(PassFramebufferCommandSpecification(renderPass->GetSpecification().TargetFramebuffer), input->id));
-
-				input->data = cmdId;
-				input->pNode = this;
-				input->name = "FramebufferCmd" + std::to_string(specification.framebuffers.size() - 1);
-				input->type = RenderAttributeType::Framebuffer;
-
-				inputs.push_back(input);
-			}
-
-			for (auto& commandPair : specification.framebufferCommands)
-			{
-				auto& commandSpec = commandPair.second.first;
-
-
-			}
-
-			ImGui::TreePop();
-		}
-
-		DrawAttributes();
 
 		ImGui::PopItemWidth();
 
@@ -1311,19 +768,78 @@ namespace Lamp
 		return false;
 	}
 
+	Ref<RenderAttribute> RenderNodePass::FindAttributeByID(GraphUUID id)
+	{
+		for (auto& input : inputs)
+		{
+			if (input->id == id)
+			{
+				return input;
+			}
+		}
+
+		for (auto& output : outputs)
+		{
+			if (output->id == id)
+			{
+				return output;
+			}
+		}
+
+		return nullptr;
+	}
+
+	void RenderNodePass::SetupUniforms()
+	{
+		auto& renderPassSpec = renderPass->m_passSpecification;
+
+		inputs.resize(inputs.size() - renderPassSpec.uniforms.size());
+		renderPassSpec.uniforms.clear();
+
+		for (const auto& uniform : renderPassSpec.renderShader->GetSpecification().uniforms)
+		{
+			PassUnifromSpecification spec{ uniform.name, uniform.type, uniform.data, uniform.id };
+
+
+			GraphUUID uniformId = GraphUUID();
+			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+
+			renderPassSpec.uniforms.emplace(uniformId, std::make_pair<>(spec, input->id));
+
+			input->pNode = this;
+			input->name = uniform.name;
+			input->type = RenderAttributeType::DynamicUniform;
+			input->data = uniformId;
+
+			inputs.push_back(input);
+		}
+		//std::sort(renderPassSpec.uniforms.begin(), renderPassSpec.uniforms.end(), [](const std::pair<GraphUUID, std::pair<PassUnifromSpecification, GraphUUID>>& first, const std::pair<GraphUUID, std::pair<PassUnifromSpecification, GraphUUID>>& second)
+		//	{
+		//		return first.second.first.id < second.second.first.id;
+		//	});
+	}
+
 	void RenderNodePass::DrawUniforms()
 	{
 		auto& passSpec = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
 		auto& shaderSpec = const_cast<ShaderSpecification&>(passSpec.renderShader->GetSpecification());
 
-		for (auto& uniform : shaderSpec.uniforms)
+		for (auto& uniformPair : passSpec.uniforms)
 		{
+			auto& uniform = uniformPair.second.first;
+
 			ImGui::PushID(uniform.name.c_str());
 			uint32_t id = 0;
 
+			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(uniformPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+
+			ImNodes::BeginInputAttribute(uniformPair.second.second, pinShape);
+
+			float offset = 90.f - ImGui::CalcTextSize(uniform.name.c_str()).x;
 			ImGui::Text(uniform.name.c_str());
 
 			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
 			ImGui::PushItemWidth(100.f);
 			static const char* uniformTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
 
@@ -1338,7 +854,7 @@ namespace Lamp
 
 			ImGui::SameLine();
 
-			if (uniform.data.has_value())
+			if (uniform.data.has_value() && !IsAttributeLinked(FindAttributeByID(uniformPair.second.second)))
 			{
 				if (uniform.type != UniformType::RenderData)
 				{
@@ -1350,18 +866,18 @@ namespace Lamp
 						case UniformType::Float2: ImGui::DragFloat2(inputId.c_str(), glm::value_ptr(std::any_cast<glm::vec2&>(uniform.data))); break;
 						case UniformType::Float3: ImGui::DragFloat3(inputId.c_str(), glm::value_ptr(std::any_cast<glm::vec3&>(uniform.data))); break;
 						case UniformType::Float4: ImGui::DragFloat4(inputId.c_str(), glm::value_ptr(std::any_cast<glm::vec4&>(uniform.data))); break;
-						case UniformType::Mat3: ImGui::Text("Why?!?!? Are you a sociopath?!?!?");  break;
-						case UniformType::Mat4: ImGui::Text("Why?!?!?? Are you a sociopath?!?!?"); break;
+						case UniformType::Mat3: ImGui::Text("Mat3");  break;
+						case UniformType::Mat4: ImGui::Text("Mat4"); break;
 						case UniformType::Sampler2D: ImGui::InputInt(inputId.c_str(), &std::any_cast<int&>(uniform.data)); break;
 						case UniformType::SamplerCube: ImGui::InputInt(inputId.c_str(), &std::any_cast<int&>(uniform.data)); break;
 					}
 				}
 				else
 				{
-					static const char* dTypes[] = { "Transform", "Data", "Material", "Id" };
+					static const char* renderDataTypes[] = { "Transform", "Data", "Material", "Id" };
 					std::string dTypeId = "##" + std::to_string(id++);
 					int currentlySelectedData = (int)std::any_cast<RenderData>(uniform.data);
-					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, dTypes, 4))
+					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, renderDataTypes, IM_ARRAYSIZE(renderDataTypes)))
 					{
 						uniform.data = (RenderData)currentlySelectedData;
 					}
@@ -1370,6 +886,295 @@ namespace Lamp
 
 			ImGui::PopItemWidth();
 			ImGui::PopID();
+
+			ImNodes::EndInputAttribute();
+		}
+	}
+
+	void RenderNodePass::DrawSettings()
+	{
+		auto& specification = renderPass->m_passSpecification;
+
+		ImGui::PushID("settings");
+
+		const float distance = 75.f;
+
+		//ClearType
+		{
+			static const char* clearTypes[] = { "None", "Color", "Depth", "ColorDepth" };
+			int currentlySelectedClearType = (int)specification.clearType;
+
+			float offset = distance - ImGui::CalcTextSize("Clear type").x;
+
+			ImGui::TextUnformatted("Clear type");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::Combo(std::string("##clear" + std::to_string(id)).c_str(), &currentlySelectedClearType, clearTypes, 4))
+			{
+				specification.clearType = (ClearType)currentlySelectedClearType;
+			}
+		}
+
+		//DrawType
+		{
+			static const char* drawTypes[] = { "All", "Quad", "Line", "Forward", "Deferred" };
+			int currentlySelectedDrawType = (int)specification.drawType;
+
+			float offset = distance - ImGui::CalcTextSize("Draw type").x;
+
+			ImGui::TextUnformatted("Draw type");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::Combo(std::string("##draw" + std::to_string(id)).c_str(), &currentlySelectedDrawType, drawTypes, 5))
+			{
+				specification.drawType = (DrawType)currentlySelectedDrawType;
+			}
+		}
+
+		//Cull face
+		{
+			static const char* cullFaces[] = { "Front", "Back" };
+			int currentlySelectedCullFace = (int)specification.cullFace;
+
+			float offset = distance - ImGui::CalcTextSize("Cull face").x;
+
+			ImGui::TextUnformatted("Cull face");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::Combo(std::string("##cull" + std::to_string(id)).c_str(), &currentlySelectedCullFace, cullFaces, 2))
+			{
+				specification.cullFace = (CullFace)currentlySelectedCullFace;
+			}
+		}
+
+		//Shader
+		{
+			int currentlySelectedShader = 0;
+			if (specification.renderShader)
+			{
+				auto it = std::find(m_Shaders.begin(), m_Shaders.end(), specification.renderShader->GetName().c_str());
+				currentlySelectedShader = (int)std::distance(m_Shaders.begin(), it);
+			}
+
+			float offset = distance - ImGui::CalcTextSize("Shader").x;
+
+			ImGui::TextUnformatted("Shader");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::Combo(std::string("##shader" + std::to_string(id)).c_str(), &currentlySelectedShader, m_Shaders.data(), (int)m_Shaders.size()))
+			{
+				if (currentlySelectedShader == 0)
+				{
+					specification.renderShader = nullptr;
+				}
+				else
+				{
+					specification.renderShader = ShaderLibrary::GetShader(m_Shaders[currentlySelectedShader]);
+					SetupUniforms();
+				}
+			}
+		}
+
+		//2D
+		{
+			float offset = distance - ImGui::CalcTextSize("Draw 2D").x;
+
+			ImGui::TextUnformatted("Draw 2D");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			ImGui::Checkbox(std::string("##2d" + std::to_string(id)).c_str(), &specification.draw2D);
+		}
+
+		//Skybox
+		{
+			float offset = distance - ImGui::CalcTextSize("Draw skybox").x;
+
+			ImGui::TextUnformatted("Draw skybox");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			ImGui::Checkbox(std::string("##skybox" + std::to_string(id)).c_str(), &specification.drawSkybox);
+		}
+
+		UI::PopId();
+	}
+
+	void RenderNodePass::DrawOutputBuffer()
+	{
+		auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
+		const float maxWidth = 80.f;
+		const float treeWidth = ImNodes::GetNodeDimensions(id).x - 20.f;
+
+		//Viewport size
+		{
+			float offset = maxWidth - ImGui::CalcTextSize("Viewport size").x;
+
+			ImGui::Text("Viewport size");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::Checkbox(std::string("##viewpostSize").c_str(), &m_UseViewportSize))
+			{
+				if (m_UseViewportSize)
+				{
+					Renderer::s_pSceneData->useViewportSize.push_back(renderPass->GetSpecification().TargetFramebuffer);
+				}
+				else
+				{
+					auto& vector = Renderer::s_pSceneData->useViewportSize;
+					if (auto it = std::find(vector.begin(), vector.end(), renderPass->GetSpecification().TargetFramebuffer); it != vector.end())
+					{
+						vector.erase(it);
+					}
+				}
+			}
+		}
+		
+		//Size
+		{
+			float offset = maxWidth - ImGui::CalcTextSize("Height").x;
+			if (!m_UseViewportSize)
+			{
+				int width = static_cast<int>(specification.Width);
+				float offset = maxWidth - ImGui::CalcTextSize("Width").x;
+
+				ImGui::TextUnformatted("Width");
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				if (ImGui::InputInt("##Width", &width))
+				{
+					specification.Width = width;
+				}
+
+				int height = static_cast<int>(specification.Height);
+
+				offset = maxWidth - ImGui::CalcTextSize("Height").x;
+
+				ImGui::TextUnformatted("Height");
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				if (ImGui::InputInt("##Height", &height))
+				{
+					specification.Height = height;
+				}
+			}
+
+			int samples = static_cast<int>(specification.Samples);
+			offset = maxWidth - ImGui::CalcTextSize("Samples").x;
+
+			ImGui::TextUnformatted("Samples");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::InputInt("##samples", &samples))
+			{
+				specification.Samples = samples;
+			}
+		}
+
+		//Clear color
+		{
+			float offset = maxWidth - ImGui::CalcTextSize("Clear color").x;
+
+			ImGui::TextUnformatted("Clear color");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			ImGui::PushItemWidth(200.f);
+			ImGui::ColorEdit4("##clearColor", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
+			ImGui::PopItemWidth();
+		}
+
+		if (ImGui::TreeNodeWidth("Attachments", treeWidth - 20.f))
+		{
+			if (ImGui::Button("Add attachment"))
+			{
+				specification.Attachments.Attachments.emplace_back();
+			}
+
+			int attIndex = 0;
+			for (auto& att : specification.Attachments.Attachments)
+			{
+				std::string attId = std::to_string(attIndex);
+				bool changed = false;
+
+				std::string treeId = "Attachment##" + attId;
+				if (ImGui::TreeNodeWidth(treeId.c_str(), treeWidth - 40.f))
+				{
+					//Border color
+					{
+						float offset = maxWidth - ImGui::CalcTextSize("Border color").x;
+
+						ImGui::TextUnformatted("Border color");
+						ImGui::SameLine();
+						UI::ShiftCursor(offset, 0.f);
+
+						ImGui::ColorEdit4("##borderColor", glm::value_ptr(att.BorderColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
+					}
+
+					//Multi sampled
+					{
+						float offset = maxWidth - ImGui::CalcTextSize("Multisampled").x;
+						ImGui::TextUnformatted("Multisampled");
+						ImGui::SameLine();
+						UI::ShiftCursor(offset, 0.f);
+						ImGui::Checkbox("##multiSampled", &att.MultiSampled);
+					}
+
+					//Format
+					{
+						static const std::vector<const char*> formats = { "None", "RGBA8", "RGBA16F", "RGBA32F", "RG32F", "RED_INTEGER", "RED", "DEPTH32F", "DEPTH24STENCIL8" };
+						int currentlySelectedFormat = (int)att.TextureFormat;
+
+						if (Utils::DrawCombo("Format", "##format" + attId, formats, currentlySelectedFormat))
+						{
+							att.TextureFormat = (FramebufferTextureFormat)currentlySelectedFormat;
+							changed = true;
+						}
+					}
+
+					//Filtering
+					{
+						static const std::vector<const char*> filtering = { "Nearest", "Linear", "NearestMipMapNearest", "LinearMipMapNearest", "NearestMipMapLinear", "LinearMipMapLinear" };
+						int currentlySelectedFiltering = (int)att.TextureFiltering;
+
+						if (Utils::DrawCombo("Filtering", "##filtering" + attId, filtering, currentlySelectedFiltering))
+						{
+							att.TextureFiltering = (FramebufferTexureFiltering)currentlySelectedFiltering;
+							changed = true;
+						}
+					}
+
+					{
+						static const std::vector<const char*> wrap = { "Repeat", "MirroredRepeat", "ClampToEdge", "ClampToBorder", "MirrorClampToEdge" };
+						int currentlySelectedWrap = (int)att.TextureWrap;
+
+						if (Utils::DrawCombo("Wrap", "##wrap" + attId, wrap, currentlySelectedWrap))
+						{
+							att.TextureWrap = (FramebufferTextureWrap)currentlySelectedWrap;
+							changed = true;
+						}
+					}
+
+					if (changed)
+					{
+						renderPass->GetSpecification().TargetFramebuffer->Invalidate();
+					}
+
+
+					ImGui::TreePop();
+				}
+				attIndex++;
+			}
+
+			ImGui::TreePop();
 		}
 	}
 }

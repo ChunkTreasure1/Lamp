@@ -4,8 +4,9 @@
 
 namespace Lamp
 {
-	struct RenderNodePass : public RenderNode
+	class RenderNodePass : public RenderNode
 	{
+	public:
 		RenderNodePass()
 		{}
 
@@ -22,15 +23,22 @@ namespace Lamp
 		void Deserialize(YAML::Node& node) override;
 		RenderNodeType GetNodeType() override { return RenderNodeType::Pass; }
 
+
 	private:
 		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
 		void SetAttributeName(const std::string& name, GraphUUID id);
 		bool IsAttributeLinked(Ref<RenderAttribute> attr);
+		Ref<RenderAttribute> FindAttributeByID(GraphUUID id);
+
+		void SetupUniforms();
 
 		//Drawing
 		void DrawUniforms();
+		void DrawSettings();
+		void DrawOutputBuffer();
 
 	private:
+
 		bool m_UseViewportSize = false;
 
 		std::vector<const char*> m_Shaders;

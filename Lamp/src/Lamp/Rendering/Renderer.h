@@ -99,7 +99,7 @@ namespace Lamp
 		friend class Renderer2D;
 		friend class Skybox;
 		friend struct RenderNodeFramebuffer;
-		friend struct RenderNodePass;
+		friend class RenderNodePass;
 		friend struct RenderNodeCompute;
 		friend struct RenderNodeTexture;
 		friend class Level;

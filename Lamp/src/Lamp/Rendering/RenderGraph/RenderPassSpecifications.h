@@ -37,6 +37,18 @@ namespace Lamp
 		void* data;
 	};
 
+	struct PassUnifromSpecification
+	{
+		PassUnifromSpecification(const std::string& aName = "Uniform", UniformType aType = UniformType::Int, const std::any& aData = 0, uint32_t id = 0)
+			: name(aName), type(aType), data(aData)
+		{}
+
+		std::string name;
+		UniformType type;
+		std::any data;
+		uint32_t id;
+	};
+
 	struct PassTextureSpecification
 	{
 		PassTextureSpecification(Ref<Texture2D> aTexture = nullptr, uint32_t aBindSlot = 0, const std::string& aName = "Texture")
