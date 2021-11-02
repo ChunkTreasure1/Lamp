@@ -27,6 +27,7 @@
 #include <Lamp/Rendering/Vertices/FrameBuffer.h>
 
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/Rendering/Renderer.h>
 
 namespace Sandbox
 {
@@ -648,6 +649,18 @@ namespace Sandbox
 
 				auto& renderGraph = std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph());
 				UI::Property("TestGraph", renderGraph);
+
+				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.radius));
+				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.strength));
+				if (UI::Property("Kernel Size", const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize), 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
+				{
+					if (Renderer::GetSceneData()->ssaoData.kernelSize < 0)
+					{
+						const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize) = 0;
+					}
+					Renderer::GenerateKernel();
+				}
+
 
 				UI::EndProperties();
 			}

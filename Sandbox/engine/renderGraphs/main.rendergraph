@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 1911584716
-      position: [-793.587891, 309.998993]
+      position: [-2052.24365, 339.006897]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 937844428
-      position: [421.288818, 457.063293]
+      position: [783.28833, 349.063477]
       type: 6
       attributes:
         - attribute: End
@@ -23,7 +23,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 2076158411
-      position: [1139.76318, 105.705841]
+      position: [-118.892578, 134.71376]
       type: 0
       name: Forward
       clearType: 3
@@ -34,16 +34,16 @@ RenderGraph:
       drawSkybox: true
       targetFramebuffer:
         useViewportSize: true
-        width: 1304
-        height: 722
+        width: 1389
+        height: 656
         samples: 1
         clearColor: [0.38139534, 0.381391525, 0.381391525, 1]
         attachments:
           - attachment: ""
             borderColor: [1, 1, 1, 1]
             multisampled: false
-            format: 3
-            filtering: 0
+            format: 2
+            filtering: 1
             wrap: 3
           - attachment: ""
             borderColor: [1, 1, 1, 1]
@@ -175,7 +175,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1527295735
-      position: [747.554199, 449.957672]
+      position: [-511.101562, 478.965576]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -183,7 +183,7 @@ RenderGraph:
       width: 1280
       height: 720
       samples: 1
-      clearColor: [1, 1, 4.73949982e+25, 1.94780487e-43]
+      clearColor: [1, 1, -6.32421268e-17, 3.06884364e-43]
       attachments:
         {}
       attributes:
@@ -193,7 +193,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 757978825
-      position: [1021.5542, -301.042328]
+      position: [-237.101562, -272.034424]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -204,7 +204,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 202792404
-      position: [772.554199, -301.042328]
+      position: [-486.101562, -272.034424]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -215,7 +215,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 954160398
-      position: [-476.057373, 177.262543]
+      position: [-1734.71313, 206.270447]
       type: 0
       name: DepthPrePass
       clearType: 3
@@ -226,8 +226,8 @@ RenderGraph:
       drawSkybox: false
       targetFramebuffer:
         useViewportSize: true
-        width: 1304
-        height: 722
+        width: 1389
+        height: 656
         samples: 1
         clearColor: [0.422500372, 1, 0.0744186044, 1]
         attachments:
@@ -289,7 +289,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 770486413
-      position: [683.942627, 273.262543]
+      position: [-495.713135, 301.270447]
       type: 7
       shader: lightCulling
       attributes:
@@ -309,7 +309,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1394602077
-      position: [801.942627, -79.7374573]
+      position: [-456.713135, -50.729538]
       type: 3
       uniformType: 0
       dataName: ForwardTileX
@@ -320,7 +320,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 781432400
-      position: [79.7624512, -70.6312561]
+      position: [-1185.89331, -8.62333679]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -331,15 +331,15 @@ RenderGraph:
       drawSkybox: false
       targetFramebuffer:
         useViewportSize: true
-        width: 1280
-        height: 720
+        width: 1389
+        height: 656
         samples: 1
         clearColor: [1, 1, 1, 1]
         attachments:
           - attachment: ""
             borderColor: [1, 1, 1, 1]
             multisampled: false
-            format: 1
+            format: 6
             filtering: 1
             wrap: 2
       staticUniforms:
@@ -434,7 +434,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 263397489
-      position: [-290.172119, -165.337128]
+      position: [-1548.82788, -136.329208]
       type: 3
       uniformType: 1
       dataName: Aspect ratio
@@ -445,7 +445,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1950662959
-      position: [-291.172119, -46.3371277]
+      position: [-1549.82788, -17.3292084]
       type: 3
       uniformType: 1
       dataName: Tan Half FOV
@@ -456,7 +456,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 2031064463
-      position: [-556.172119, -159.337128]
+      position: [-1814.82788, -130.329208]
       type: 3
       uniformType: 2
       dataName: Buffer Size
@@ -467,7 +467,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 266238784
-      position: [-537.140381, -22.6839905]
+      position: [-1795.79614, 6.32392883]
       type: 2
       path: ""
       usingInternal: true
@@ -479,7 +479,7 @@ RenderGraph:
           type: 0
     - Node: ""
       id: 1066576225
-      position: [1651.17432, 119.858185]
+      position: [392.518555, 148.866104]
       type: 0
       name: Composite
       clearType: 3
@@ -490,8 +490,8 @@ RenderGraph:
       drawSkybox: false
       targetFramebuffer:
         useViewportSize: true
-        width: 1280
-        height: 720
+        width: 1389
+        height: 656
         samples: 1
         clearColor: [1, 1, 1, 1]
         attachments:
@@ -501,12 +501,18 @@ RenderGraph:
             format: 1
             filtering: 0
             wrap: 2
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 5
+            filtering: 0
+            wrap: 2
       staticUniforms:
-        - staticUniform: u_Ambient
+        - staticUniform: u_Color
           guuid: 562286049
           type: 0
           data: 0
-        - staticUniform: u_Light
+        - staticUniform: u_ObjectId
           guuid: 612690765
           type: 0
           data: 1
@@ -515,7 +521,7 @@ RenderGraph:
           type: 0
           data: 2
       dynamicUniforms:
-        - dynamicUniform: u_Exposure
+        - dynamicUniform: u_Strength
           guuid: 612611996
           type: 0
           attrId: 1638994397
@@ -533,7 +539,7 @@ RenderGraph:
             - attachment: ""
               textureType: 0
               bindId: 1
-              attachmentId: 2
+              attachmentId: 1
         - framebuffer: SSAO
           guuid: 1777433162
           attrId: 1823437977
@@ -565,7 +571,7 @@ RenderGraph:
           id: 1823437977
           type: 1
           data: 1777433162
-        - attribute: u_Exposure
+        - attribute: u_Strength
           attrType: input
           id: 1638994397
           type: 2
@@ -580,10 +586,10 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1196749694
-      position: [1377.87231, -10.8788147]
+      position: [119.216553, 18.1291046]
       type: 3
       uniformType: 1
-      dataName: Exposure
+      dataName: SSAO Strength
       attributes:
         - attribute: Output
           attrType: output
@@ -591,7 +597,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1962837790
-      position: [399, 14]
+      position: [-851.655762, 14.0079193]
       type: 0
       name: SSAOBlur
       clearType: 3
@@ -602,15 +608,15 @@ RenderGraph:
       drawSkybox: false
       targetFramebuffer:
         useViewportSize: true
-        width: 1280
-        height: 720
+        width: 1389
+        height: 656
         samples: 1
         clearColor: [1, 1, 1, 1]
         attachments:
           - attachment: ""
             borderColor: [1, 1, 1, 1]
             multisampled: false
-            format: 1
+            format: 6
             filtering: 1
             wrap: 2
       staticUniforms:
@@ -719,10 +725,6 @@ RenderGraph:
       from: 1692424272
       to: 594649817
     - Link: ""
-      id: 1089194866
-      from: 857743689
-      to: 1823437977
-    - Link: ""
       id: 1727557724
       from: 412741838
       to: 1638994397
@@ -735,6 +737,14 @@ RenderGraph:
       from: 1212272488
       to: 231575367
     - Link: ""
-      id: 380644181
-      from: 1239563721
+      id: 323299605
+      from: 1305742783
       to: 1978010946
+    - Link: ""
+      id: 1446841797
+      from: 1239563721
+      to: 2030054679
+    - Link: ""
+      id: 1577453247
+      from: 867941434
+      to: 1823437977

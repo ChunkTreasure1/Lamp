@@ -841,7 +841,9 @@
     <ClCompile Include="vendor\yaml-cpp\src\exceptions.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\exp.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\memory.cpp" />
-    <ClCompile Include="vendor\yaml-cpp\src\node.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\node.cpp">
+      <ObjectFileName>$(IntDir)\node1.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="vendor\yaml-cpp\src\node_data.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodebuilder.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodeevents.cpp" />

@@ -30,7 +30,7 @@ void main()
 
 #type fragment
 #version 440
-layout (location = 0) out vec4 o_Color;
+layout (location = 0) out float o_Color;
 
 layout(std140, binding = 0) uniform Main
 {
@@ -45,7 +45,7 @@ layout(std140, binding = 6) uniform SSAO
     int u_KernelSize;
     float u_Bias;
     float u_Radius;
-    float u_T;
+    float u_Strength;
 };
 
 in vec2 v_TexCoords;
@@ -99,5 +99,12 @@ void main()
         occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_KernelSize : 0.0;
     }
 
-    o_Color = vec4(occlusion, occlusion, occlusion, 1.0);
+    if(occlusion < 1.0)
+    {
+        float invStrength = 1.0 - u_Strength;
+        occlusion += invStrength;
+        occlusion = clamp(occlusion, 0.0, 1.0);
+    }
+
+    o_Color = occlusion;
 }

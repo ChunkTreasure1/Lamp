@@ -24,22 +24,21 @@ void main()
 #type fragment
 #version 440 core
 layout (location = 0) out vec4 o_FinalColor;
+layout (location = 1) out int o_ObjectId;
 
 in vec2 v_TexCoords;
 
 uniform sampler2D u_Color;
+uniform sampler2D u_ObjectId;
 uniform sampler2D u_SSAOMap;
-uniform float u_Exposure;
 
 void main()
 {
-    vec3 color = texture(u_Color, v_TexCoords).rgb;
+    vec4 color = texture(u_Color, v_TexCoords);
+    int objId = int(texture(u_ObjectId, v_TexCoords).r);
+
     float ssao = texture(u_SSAOMap, v_TexCoords).r;
 
-    color = color - (vec4(0.5, 0.5, 0.5, 0.0) * ssao).rgb;
-    color *= u_Exposure;
-
-    color = pow(color, vec3(1.0 / 2.2));
-
-    o_FinalColor = vec4(ssao, ssao, ssao, 1.0);
+    o_FinalColor = color * ssao;
+    o_ObjectId = objId;
 }

@@ -18,6 +18,8 @@ namespace Lamp
 
 	class Renderer
 	{
+		struct SceneData;
+
 	public:
 		static void Initialize();
 		static void Shutdown();
@@ -30,12 +32,13 @@ namespace Lamp
 
 		static const Ref<RenderGraph>& GetRenderGraph() { return s_pSceneData->renderGraph; }
 		static void SetRenderGraph(Ref<RenderGraph> graph) { s_pSceneData->renderGraph = graph; }
+		static const SceneData* GetSceneData() { return s_pSceneData; }
+		static void GenerateKernel();
 
 	private:
 		static void CreateUniformBuffers();
 		static void CreateShaderStorageBuffers();
 		static void UpdateBuffers(const Ref<CameraBase> camera);
-		static void GenerateKernel();
 
 	private: 
 		struct SceneData
@@ -58,12 +61,9 @@ namespace Lamp
 
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 256;
-			uint32_t ssaoKernelSize = 128;
 			std::vector<glm::vec3> ssaoNoise;
 			Ref<Texture2D> ssaoNoiseTexture;
 
-			float ssaoRadius = 0.5f;
-			float ssaoBias = 0.025f;
 			float aspectRatio = 16.f / 9.f;
 			float tanHalfFOV = 0.f;
 			//////////////

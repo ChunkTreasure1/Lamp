@@ -590,16 +590,21 @@ namespace UI
 		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();
-		ImGui::Text("Asset: %s", asset->Path.string().c_str());
+		ImGui::PushItemWidth(ImGui::GetColumnWidth() - 20.f);
+		ImGui::Text("Asset: %s", asset->Path.filename().string().c_str());
+
+		ImGui::PopItemWidth();
 
 		ImGui::SameLine();
-		if (ImGui::Button("Open"))
+		std::string buttonId = "Open##" + std::to_string(s_stackId++);
+		if (ImGui::Button(buttonId.c_str(), { ImGui::GetContentRegionAvail().x, 25.f }))
 		{
-			if (BeginPopup("Assets"))
-			{
+		}
+		if (BeginPopup())
+		{
+			ImGui::Text("Test");
 
-				EndPopup();
-			}
+			EndPopup();
 		}
 
 		if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))

@@ -40,9 +40,10 @@ namespace Lamp
 		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&s_pSceneData->gamma));
 		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&s_pSceneData->bufferSize));
 		DynamicUniformRegistry::AddUniform("ForwardTileX", UniformType::Int, RegisterData(&s_pSceneData->screenGroupX));
-		DynamicUniformRegistry::AddUniform("SSAO kernel size", UniformType::Int, RegisterData(&s_pSceneData->ssaoKernelSize));
+		DynamicUniformRegistry::AddUniform("SSAO kernel size", UniformType::Int, RegisterData(&s_pSceneData->ssaoData.kernelSize));
 		DynamicUniformRegistry::AddUniform("Aspect ratio", UniformType::Float, RegisterData(&s_pSceneData->aspectRatio));
 		DynamicUniformRegistry::AddUniform("Tan Half FOV", UniformType::Float, RegisterData(&s_pSceneData->tanHalfFOV));
+		DynamicUniformRegistry::AddUniform("SSAO Strength", UniformType::Float, RegisterData(&s_pSceneData->ssaoData.strength));
 	}
 
 	void Renderer::Shutdown()
