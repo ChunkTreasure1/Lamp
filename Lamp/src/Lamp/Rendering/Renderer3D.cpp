@@ -33,7 +33,7 @@ namespace Lamp
 		Ref<VertexArray> quadVertexArray;
 		Ref<CameraBase> camera;
 
-		RenderPassSpecification* currentRenderPass = nullptr;
+		const RenderPassSpecification* currentRenderPass = nullptr;
 	};
 
 	static Renderer3DStorage* s_pRenderData;
@@ -85,7 +85,7 @@ namespace Lamp
 		s_RenderBuffer.drawCalls.clear();
 	}
 
-	void Renderer3D::BeginPass(RenderPassSpecification& passSpec)
+	void Renderer3D::BeginPass(const RenderPassSpecification& passSpec)
 	{
 		s_pRenderData->currentRenderPass = &passSpec;
 	}
@@ -232,7 +232,7 @@ namespace Lamp
 			LP_PROFILE_SCOPE("Textures");
 
 			int i = 0;
-			for (const auto& textureName : material->GetShader()->GetSpecifications().TextureNames)
+			for (const auto& textureName : material->GetShader()->GetSpecification().textureNames)
 			{
 				material->GetTextures()[textureName]->Bind(i);
 				i++;

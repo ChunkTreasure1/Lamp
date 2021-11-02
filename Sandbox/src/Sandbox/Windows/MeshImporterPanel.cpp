@@ -323,7 +323,7 @@ namespace Sandbox
 				{
 					if (auto pass = std::dynamic_pointer_cast<Lamp::RenderNodePass>(node))
 					{
-						pass->renderPass->GetSpecification().drawSkybox = m_renderSkybox;
+						const_cast<RenderPassSpecification&>(pass->renderPass->GetSpecification()).drawSkybox = m_renderSkybox;
 					}
 				}
 			}

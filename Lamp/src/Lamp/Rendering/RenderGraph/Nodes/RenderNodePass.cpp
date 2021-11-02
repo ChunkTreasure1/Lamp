@@ -55,7 +55,7 @@ namespace Lamp
 	{
 		renderPass = CreateRef<RenderPass>();
 		FramebufferSpecification spec;
-		renderPass->GetSpecification().TargetFramebuffer = Framebuffer::Create(spec);
+		const_cast<RenderPassSpecification&>(renderPass->GetSpecification()).TargetFramebuffer = Framebuffer::Create(spec);
 
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
 		output->name = "Framebuffer";
@@ -100,23 +100,25 @@ namespace Lamp
 			{
 				case RenderAttributeType::Framebuffer:
 				{
+
 					if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 					{
+						auto& passSpecification = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
 						GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
 						if (id == 1)
 						{
-							passNode->renderPass->GetSpecification().TargetFramebuffer = renderPass->GetSpecification().TargetFramebuffer;
+							passSpecification.TargetFramebuffer = renderPass->GetSpecification().TargetFramebuffer;
 						}
 						else
 						{
-							if (passNode->renderPass->GetSpecification().framebuffers.find(id) != passNode->renderPass->GetSpecification().framebuffers.end())
+							if (passSpecification.framebuffers.find(id) != passSpecification.framebuffers.end())
 							{
-								passNode->renderPass->GetSpecification().framebuffers[id].first.framebuffer = renderPass->GetSpecification().TargetFramebuffer;
+								passSpecification.framebuffers[id].first.framebuffer = renderPass->GetSpecification().TargetFramebuffer;
 							}
 
-							if (passNode->renderPass->GetSpecification().framebufferCommands.find(id) != passNode->renderPass->GetSpecification().framebufferCommands.end())
+							if (passSpecification.framebufferCommands.find(id) != passSpecification.framebufferCommands.end())
 							{
-								passNode->renderPass->GetSpecification().framebufferCommands[id].first.secondary = renderPass->GetSpecification().TargetFramebuffer;
+								passSpecification.framebufferCommands[id].first.secondary = renderPass->GetSpecification().TargetFramebuffer;
 							}
 						}
 					}
@@ -146,7 +148,7 @@ namespace Lamp
 			m_Shaders.push_back(shader->GetName().c_str());
 		}
 
-		auto& specification = renderPass->GetSpecification();
+		auto& specification = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
 
 		ImNodes::BeginNode(id);
 
@@ -243,7 +245,7 @@ namespace Lamp
 
 		if (!IsAttributeLinked(m_TargetBufferAttribute))
 		{
-			if (ImGui::TreeNode("Target Framebuffer"))
+			if (ImGui::TreeNode("Output Framebuffer"))
 			{
 				auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
 
@@ -354,6 +356,32 @@ namespace Lamp
 
 				ImGui::TreePop();
 			}
+		}
+
+		if (ImGui::TreeNode("Uniforms"))
+		{
+			bool showUniforms = true;
+
+			if (specification.renderShader == nullptr)
+			{
+				ImGui::TextColored(ImVec4(0.874, 0.165, 0.164, 1.f), "You need to select a shader before uniforms can be shown!");
+				showUniforms = false;
+			}
+			else
+			{
+				if (specification.renderShader->GetSpecification().uniforms.empty())
+				{
+					ImGui::TextColored(ImVec4(0.874, 0.165, 0.164, 1.f), "This shader contain no uniforms!");
+					showUniforms = false;
+				}
+			}
+
+			if (showUniforms)
+			{
+				DrawUniforms();
+			}
+
+			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Static Uniforms"))
@@ -1024,7 +1052,7 @@ namespace Lamp
 
 	void RenderNodePass::Deserialize(YAML::Node& node)
 	{
-		auto& specification = renderPass->GetSpecification();
+		auto& specification = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
 
 		specification.Name = node["name"].as<std::string>();
 		specification.clearType = (ClearType)node["clearType"].as<uint32_t>();
@@ -1281,5 +1309,67 @@ namespace Lamp
 		}
 
 		return false;
+	}
+
+	void RenderNodePass::DrawUniforms()
+	{
+		auto& passSpec = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
+		auto& shaderSpec = const_cast<ShaderSpecification&>(passSpec.renderShader->GetSpecification());
+
+		for (auto& uniform : shaderSpec.uniforms)
+		{
+			ImGui::PushID(uniform.name.c_str());
+			uint32_t id = 0;
+
+			ImGui::Text(uniform.name.c_str());
+
+			ImGui::SameLine();
+			ImGui::PushItemWidth(100.f);
+			static const char* uniformTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
+
+			int currentlySelectedType = (int)uniform.type;
+
+			std::string comboId = "##" + std::to_string(id++);
+			if (ImGui::Combo(comboId.c_str(), &currentlySelectedType, uniformTypes, IM_ARRAYSIZE(uniformTypes)))
+			{
+				uniform.type = (UniformType)currentlySelectedType;
+				uniform.data = Utils::GetResetValue(uniform.type);
+			}
+
+			ImGui::SameLine();
+
+			if (uniform.data.has_value())
+			{
+				if (uniform.type != UniformType::RenderData)
+				{
+					std::string inputId = "##" + std::to_string(id++);
+					switch (uniform.type)
+					{
+						case UniformType::Int: ImGui::InputInt(inputId.c_str(), &std::any_cast<int&>(uniform.data)); break;
+						case UniformType::Float: ImGui::DragFloat(inputId.c_str(), &std::any_cast<float&>(uniform.data)); break;
+						case UniformType::Float2: ImGui::DragFloat2(inputId.c_str(), glm::value_ptr(std::any_cast<glm::vec2&>(uniform.data))); break;
+						case UniformType::Float3: ImGui::DragFloat3(inputId.c_str(), glm::value_ptr(std::any_cast<glm::vec3&>(uniform.data))); break;
+						case UniformType::Float4: ImGui::DragFloat4(inputId.c_str(), glm::value_ptr(std::any_cast<glm::vec4&>(uniform.data))); break;
+						case UniformType::Mat3: ImGui::Text("Why?!?!? Are you a sociopath?!?!?");  break;
+						case UniformType::Mat4: ImGui::Text("Why?!?!?? Are you a sociopath?!?!?"); break;
+						case UniformType::Sampler2D: ImGui::InputInt(inputId.c_str(), &std::any_cast<int&>(uniform.data)); break;
+						case UniformType::SamplerCube: ImGui::InputInt(inputId.c_str(), &std::any_cast<int&>(uniform.data)); break;
+					}
+				}
+				else
+				{
+					static const char* dTypes[] = { "Transform", "Data", "Material", "Id" };
+					std::string dTypeId = "##" + std::to_string(id++);
+					int currentlySelectedData = (int)std::any_cast<RenderData>(uniform.data);
+					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, dTypes, 4))
+					{
+						uniform.data = (RenderData)currentlySelectedData;
+					}
+				}
+			}
+
+			ImGui::PopItemWidth();
+			ImGui::PopID();
+		}
 	}
 }

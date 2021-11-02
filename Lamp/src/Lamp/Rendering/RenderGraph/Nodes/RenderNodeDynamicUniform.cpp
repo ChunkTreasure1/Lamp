@@ -37,8 +37,10 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
-				passNode->renderPass->GetSpecification().dynamicUniforms[id].first.data = pData;
-				passNode->renderPass->GetSpecification().dynamicUniforms[id].first.type = uniformType;
+				auto& renderSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
+
+				renderSpec.dynamicUniforms[id].first.data = pData;
+				renderSpec.dynamicUniforms[id].first.type = uniformType;
 			}
 		}
 	}

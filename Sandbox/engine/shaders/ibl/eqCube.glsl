@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: EqCube
 TextureCount: 0
+InternalShader: true
 TextureNames:
 {
 }

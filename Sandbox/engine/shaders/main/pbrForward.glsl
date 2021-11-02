@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: pbrForward
 TextureCount: 3
+InternalShader: false
 TextureNames
 {
 albedo
@@ -18,10 +19,10 @@ layout (location = 4) in vec2 a_TexCoords;
 
 layout(std140, binding = 0) uniform Main
 {
-	mat4 u_View;
-	mat4 u_Projection;
-	vec4 u_CameraPosition;
-};
+	mat4 view;
+	mat4 projection;
+	vec4 position;
+} u_Camera;
 
 layout(std140, binding = 4) uniform DirLightData
 {
@@ -60,7 +61,7 @@ void main()
 		v_Out.ShadowCoord[i] = u_LightData.dirLightVPs[i] * u_Model * vec4(a_Position, 1.0);
 	}
 
-	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
+	gl_Position = u_Camera.projection * u_Camera.view * u_Model * vec4(a_Position, 1.0);
 }
 
 #type fragment
@@ -78,74 +79,11 @@ in Out
 	mat3 TBN;
 } v_In;
 
-struct Material
-{
-	sampler2D albedo;
-	sampler2D normal;
-	sampler2D mro;
-};
+#include ../CommonDataStructures.h
+#include ../UniformBlocks.h
 
 uniform Material u_Material;
 uniform int u_ObjectId;
-
-struct DirectionalLight
-{
-	vec4 direction;
-	vec4 colorIntensity;
-};
-
-struct PointLight
-{
-	vec4 position;
-	vec4 color;
-	
-	float intensity;
-	float radius;
-	float falloff;
-	float farPlane;
-};
-
-struct LightIndex
-{
-	int index;
-};
-
-layout(std140, binding = 0) uniform Main
-{
-	mat4 u_View;
-	mat4 u_Projection;
-	vec4 u_CameraPosition;
-};
-
-layout(std140, binding = 1) uniform DirectionalLights
-{
-	DirectionalLight u_DirectionalLights[10];
-	uint u_DirLightCount;
-};
-
-layout(std430, binding = 2) readonly buffer LightBuffer
-{
-    PointLight pointLights[1024];
-    uint lightCount;
-
-} lightBuffer;
-
-layout(std430, binding = 3) readonly buffer VisibleLightsBuffer
-{
-    LightIndex data[];
-
-} visibleIndices;
-
-layout(std140, binding = 4) uniform DirLightData
-{
-	mat4 dirLightVPs[10];
-	int count;
-} u_LightData;
-
-layout(std140, binding = 5) uniform SSS
-{
-	float sssWidth;
-} u_SSS;
 
 uniform sampler2D u_DirShadowMaps[10];
 
@@ -379,14 +317,14 @@ void main()
 	float translucency = texture(u_Material.mro, v_In.TexCoord).b;
 
 	vec3 N = normalize(CalculateNormal());
-	vec3 V = normalize(u_CameraPosition.xyz - v_In.FragPos);
+	vec3 V = normalize(u_Camera.position.xyz - v_In.FragPos);
 
 	vec3 baseReflectivity = mix(vec3(0.04), albedo, metallic);
 	vec3 Lo = vec3(0.0);
 
-	for (uint i = 0; i < u_DirLightCount; i++)
+	for (uint i = 0; i < u_DirectionalLights.count; i++)
 	{
-		Lo += CalculateDirectionalLight(u_DirectionalLights[i], V, N, baseReflectivity, albedo, metallic, roughness, v_In.ShadowCoord[i], i);
+		Lo += CalculateDirectionalLight(u_DirectionalLights.lights[i], V, N, baseReflectivity, albedo, metallic, roughness, v_In.ShadowCoord[i], i);
 	}
 
 	//Calculate light indices
@@ -395,10 +333,10 @@ void main()
 	uint index = tileId.y * u_TilesX + tileId.x;
 	
 	uint offset = index * 1024;
-	for(int i = 0; i < 1024 && visibleIndices.data[offset + i].index != -1; ++i)
+	for(int i = 0; i < 1024 && u_VisibleIndices.data[offset + i].index != -1; ++i)
 	{
-		uint index = visibleIndices.data[offset + i].index;
-		Lo += CalculatePointLight(lightBuffer.pointLights[index], V, N, baseReflectivity, metallic, roughness, albedo, v_In.FragPos);
+		uint index = u_VisibleIndices.data[offset + i].index;
+		Lo += CalculatePointLight(u_PointLights.lights[index], V, N, baseReflectivity, metallic, roughness, albedo, v_In.FragPos);
 	}
 
 	vec3 R = reflect(-V, N);

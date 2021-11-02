@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: ssaoBlur
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }

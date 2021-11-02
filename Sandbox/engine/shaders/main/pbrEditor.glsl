@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: pbrEditor
 TextureCount: 3
+InternalShader: true
 TextureNames
 {
 albedo

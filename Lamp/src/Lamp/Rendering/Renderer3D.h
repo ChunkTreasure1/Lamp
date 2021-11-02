@@ -31,7 +31,7 @@ namespace Lamp
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
 
-		static void BeginPass(RenderPassSpecification& passSpec);
+		static void BeginPass(const RenderPassSpecification& passSpec);
 		static void EndPass();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id = -1);

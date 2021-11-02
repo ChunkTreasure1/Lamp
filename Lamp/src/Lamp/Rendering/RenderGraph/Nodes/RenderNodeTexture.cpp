@@ -36,7 +36,7 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
-				passNode->renderPass->GetSpecification().textures[id].first.texture = texture;
+				const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification()).textures[id].first.texture = texture;
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 			{

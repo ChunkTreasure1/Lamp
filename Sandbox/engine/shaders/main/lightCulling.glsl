@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: lightCulling
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }

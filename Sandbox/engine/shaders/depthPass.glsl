@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: depthPass
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }
@@ -15,10 +16,10 @@ layout (location = 4) in vec2 a_TexCoords;
 
 layout(std140, binding = 0) uniform Main
 {
-	mat4 u_View;
-	mat4 u_Projection;
-	vec4 u_CameraPosition;
-};
+	mat4 view;
+	mat4 projection;
+	vec4 position;
+} u_Camera;
 
 out Out
 {
@@ -38,7 +39,7 @@ void main()
 
 	v_Out.TBN = mat3(T, B, N);
 
-	gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
+	gl_Position = u_Camera.projection * u_Camera.view * u_Model * vec4(a_Position, 1.0);
 }
 
 #type fragment
@@ -52,12 +53,7 @@ in Out
 	mat3 TBN;
 } v_In;
 
-struct Material
-{
-	sampler2D albedo;
-	sampler2D normal;
-	sampler2D mro;
-};
+#include CommonDataStructures.h
 
 uniform Material u_Material;
 

@@ -276,7 +276,7 @@ namespace Lamp
 
 		YAML::Node textureNode = materialNode["textures"];
 
-		for (auto& texName : mat->GetShader()->GetSpecifications().TextureNames)
+		for (auto& texName : mat->GetShader()->GetSpecification().textureNames)
 		{
 			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
 			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));

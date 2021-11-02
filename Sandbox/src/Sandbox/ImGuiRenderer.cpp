@@ -658,6 +658,10 @@ namespace Sandbox
 					{
 						const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize) = 0;
 					}
+					else if (Renderer::GetSceneData()->ssaoData.kernelSize > Renderer::GetSceneData()->ssaoMaxKernelSize)
+					{
+						const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize) = Renderer::GetSceneData()->ssaoMaxKernelSize;
+					}
 					Renderer::GenerateKernel();
 				}
 

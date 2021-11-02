@@ -35,7 +35,7 @@ namespace Lamp
 		Ref<Framebuffer> TargetFramebuffer;
 
 		uint32_t LightIndex = 0;
-		std::string Name = "";
+		std::string Name;
 
 		ClearType clearType = ClearType::ColorDepth;
 		CullFace cullFace = CullFace::Back;
@@ -64,7 +64,7 @@ namespace Lamp
 		~RenderPass() {}
 
 		inline uint32_t GetID() { return m_ID; }
-		inline RenderPassSpecification& GetSpecification() { return m_PassSpec; }
+		inline const RenderPassSpecification& GetSpecification() { return m_passSpecification; }
 
 		void Render(Ref<CameraBase>& camera);
 
@@ -73,7 +73,7 @@ namespace Lamp
 
 	private:
 		uint32_t m_ID;
-		RenderPassSpecification m_PassSpec;
+		RenderPassSpecification m_passSpecification;
 	};
 
 	class RenderPassManager

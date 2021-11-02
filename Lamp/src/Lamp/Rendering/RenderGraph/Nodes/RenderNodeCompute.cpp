@@ -38,7 +38,7 @@ namespace Lamp
 		m_ShaderStrings.push_back("None");
 		for (const auto& shader : ShaderLibrary::GetShaders())
 		{
-			if (shader->GetSpecifications().Type & ShaderType::ComputeShader)
+			if (shader->GetSpecification().type & ShaderType::ComputeShader)
 			{
 				m_ShaderStrings.push_back(shader->GetName().c_str());
 			}

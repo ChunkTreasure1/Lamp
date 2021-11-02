@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: Convolution
 TextureCount: 0
+InternalShader: true
 TextureNames:
 {
 }

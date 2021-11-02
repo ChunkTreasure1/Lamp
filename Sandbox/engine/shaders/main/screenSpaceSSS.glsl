@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: screenSpaceSSS
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }

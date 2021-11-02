@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: composite
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }

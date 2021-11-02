@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: ssao
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }
@@ -57,7 +58,7 @@ uniform sampler2D u_Noise;
 
 uniform vec2 u_BufferSize;
 
-vec3 CalculateWorld(vec2 coords)
+vec3 CalculateWorldCoords(vec2 coords)
 {
     float depth = texture(u_DepthMap, coords).x;
     float z = depth * 2.0 - 1.0;
@@ -73,7 +74,7 @@ vec3 CalculateWorld(vec2 coords)
 
 void main()
 {
-    vec3 pos = CalculateWorld(v_TexCoords);
+    vec3 pos = CalculateWorldCoords(v_TexCoords);
     vec2 noiseScale = vec2(u_BufferSize.x / 4.0, u_BufferSize.y / 4.0);
 
     vec3 normal = normalize(texture(u_NormalMap, v_TexCoords).rgb);
@@ -93,7 +94,7 @@ void main()
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5 + 0.5;
 
-        float sampleDepth = (u_View * vec4(CalculateWorld(offset.xy), 1.0)).z;
+        float sampleDepth = (u_View * vec4(CalculateWorldCoords(offset.xy), 1.0)).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth - sampleDepth));
         occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_KernelSize : 0.0;

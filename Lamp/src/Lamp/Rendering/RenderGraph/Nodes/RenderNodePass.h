@@ -14,18 +14,21 @@ namespace Lamp
 		std::string name;
 		Ref<RenderPass> renderPass;
 
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override;
-		virtual void Serialize(YAML::Emitter& out) override;
-		virtual void Deserialize(YAML::Node& node) override;
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::Pass; }
+		void Initialize() override;
+		void Start() override;
+		void DrawNode() override;
+		void Activate(std::any value) override;
+		void Serialize(YAML::Emitter& out) override;
+		void Deserialize(YAML::Node& node) override;
+		RenderNodeType GetNodeType() override { return RenderNodeType::Pass; }
 
 	private:
 		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
 		void SetAttributeName(const std::string& name, GraphUUID id);
 		bool IsAttributeLinked(Ref<RenderAttribute> attr);
+
+		//Drawing
+		void DrawUniforms();
 
 	private:
 		bool m_UseViewportSize = false;
