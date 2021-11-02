@@ -280,7 +280,7 @@ namespace Sandbox
 
 			for (auto& key : Lamp::NodeRegistry::s_Methods())
 			{
-				sorted[Lamp::NodeRegistry::GetCategory(key.first)].push_back(key);
+				sorted[Lamp::NodeRegistry::GetCategory(key.first)].emplace_back(key);
 			}
 
 			int i = 0;
@@ -361,7 +361,7 @@ namespace Sandbox
 			{
 				UI::PushId();
 				UI::BeginProperties("inputProps", false);
-				
+
 				for (auto& input : m_SelectedNode->inputAttributes)
 				{
 					bool propertyChanged = false;
@@ -379,7 +379,34 @@ namespace Sandbox
 						case Lamp::PropertyType::Color4: propertyChanged = UI::Property(input.name, std::any_cast<glm::vec4&>(input.data), true); break;
 						case Lamp::PropertyType::Enum:
 						{
-							propertyChanged = UI::Property(input.name, std::any_cast<int&>(input.data), input.enums); 
+							int currentValue = 0;
+							for (const auto& item : input.enums)
+							{
+								if (std::any_cast<int&>(input.data) == item.second)
+								{
+									break;
+								}
+
+								currentValue++;
+							}
+							
+							propertyChanged = UI::Property(input.name, currentValue, input.enums);
+							
+							if (propertyChanged)
+							{
+								uint32_t i = 0;
+								for (const auto& item : input.enums)
+								{
+									if (i == currentValue)
+									{
+										std::any_cast<int&>(input.data) = item.second;
+										break;
+									}
+
+									i++;
+								}
+							}
+
 							break;
 						}
 					}
@@ -394,7 +421,7 @@ namespace Sandbox
 			if (UI::TreeNodeFramed("Outputs"))
 			{
 				UI::BeginProperties("outputProps", false);
-				
+
 				for (auto& output : m_SelectedNode->outputAttributes)
 				{
 					bool propertyChanged = false;
@@ -452,12 +479,12 @@ namespace Sandbox
 
 	void GraphKeyPanel::CreateComponentNodes()
 	{
-		for (auto pC : Lamp::ComponentRegistry::s_Methods())
+		for (const auto& pC : Lamp::ComponentRegistry::s_Methods())
 		{
 			m_BaseComponents.push_back(pC.second());
 		}
 
-		for (auto pComp : m_BaseComponents)
+		for (const auto& pComp : m_BaseComponents)
 		{
 			Ref<Node> node = CreateRef<Node>();
 			node->name = pComp->GetName();
@@ -471,17 +498,17 @@ namespace Sandbox
 			{
 				switch (prop.propertyType)
 				{
-					case Lamp::PropertyType::Bool: inputs.push_back(node->InputAttributeConfig<bool>(prop.name.c_str(), Lamp::PropertyType::Bool)); break;
-					case Lamp::PropertyType::Int: inputs.push_back(node->InputAttributeConfig<int>(prop.name.c_str(), Lamp::PropertyType::Int)); break;
-					case Lamp::PropertyType::Float: inputs.push_back(node->InputAttributeConfig<float>(prop.name.c_str(), Lamp::PropertyType::Float)); break;
-					case Lamp::PropertyType::Float2: inputs.push_back(node->InputAttributeConfig<glm::vec2>(prop.name.c_str(), Lamp::PropertyType::Float2)); break;
-					case Lamp::PropertyType::Float3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.name.c_str(), Lamp::PropertyType::Float3)); break;
-					case Lamp::PropertyType::Float4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.name.c_str(), Lamp::PropertyType::Float4)); break;
-					case Lamp::PropertyType::Color3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.name.c_str(), Lamp::PropertyType::Float3)); break;
-					case Lamp::PropertyType::Color4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.name.c_str(), Lamp::PropertyType::Float4)); break;
-					case Lamp::PropertyType::Path: inputs.push_back(node->InputAttributeConfig<std::string>(prop.name.c_str(), Lamp::PropertyType::Path)); break;
-					case Lamp::PropertyType::String: inputs.push_back(node->InputAttributeConfig<std::string>(prop.name.c_str(), Lamp::PropertyType::String)); break;
-					case Lamp::PropertyType::Void: inputs.push_back(node->InputAttributeConfig_Void(prop.name.c_str(), Lamp::PropertyType::Bool)); break;
+					case Lamp::PropertyType::Bool: inputs.push_back(node->InputAttributeConfig<bool>(prop.name, Lamp::PropertyType::Bool)); break;
+					case Lamp::PropertyType::Int: inputs.push_back(node->InputAttributeConfig<int>(prop.name, Lamp::PropertyType::Int)); break;
+					case Lamp::PropertyType::Float: inputs.push_back(node->InputAttributeConfig<float>(prop.name, Lamp::PropertyType::Float)); break;
+					case Lamp::PropertyType::Float2: inputs.push_back(node->InputAttributeConfig<glm::vec2>(prop.name, Lamp::PropertyType::Float2)); break;
+					case Lamp::PropertyType::Float3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.name, Lamp::PropertyType::Float3)); break;
+					case Lamp::PropertyType::Float4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.name, Lamp::PropertyType::Float4)); break;
+					case Lamp::PropertyType::Color3: inputs.push_back(node->InputAttributeConfig<glm::vec3>(prop.name, Lamp::PropertyType::Float3)); break;
+					case Lamp::PropertyType::Color4: inputs.push_back(node->InputAttributeConfig<glm::vec4>(prop.name, Lamp::PropertyType::Float4)); break;
+					case Lamp::PropertyType::Path: inputs.push_back(node->InputAttributeConfig<std::string>(prop.name, Lamp::PropertyType::Path)); break;
+					case Lamp::PropertyType::String: inputs.push_back(node->InputAttributeConfig<std::string>(prop.name, Lamp::PropertyType::String)); break;
+					case Lamp::PropertyType::Void: inputs.push_back(node->InputAttributeConfig_Void(prop.name, Lamp::PropertyType::Bool)); break;
 				}
 			}
 
@@ -521,7 +548,7 @@ namespace Sandbox
 		}
 
 		ImVec2 cursorPos = ImGui::GetCursorPos();
-		
+
 		if (!node->inputAttributes.empty())
 		{
 			cursorPos.x += 120.f;
@@ -552,7 +579,7 @@ namespace Sandbox
 				DrawOutput(attr, node);
 			}
 			ImNodes::EndOutputAttribute();
-		
+
 			cursorPos.y += 20.f;
 			ImGui::SetCursorPos(cursorPos);
 		}
@@ -652,6 +679,24 @@ namespace Sandbox
 				break;
 			}
 
+			case Lamp::PropertyType::Enum:
+			{
+				int index = std::any_cast<int&>(prop.data);
+				std::string text;
+				for (const auto& val : prop.enums)
+				{
+					if (val.second == index)
+					{
+						text = val.first;
+						break;
+					}
+				}
+
+				ImGui::Text("Value = %s", text.c_str());
+
+				break;
+			}
+
 			case Lamp::PropertyType::Selectable:
 			{
 				auto& vec = std::any_cast<std::vector<std::pair<std::string, bool>>&>(prop.data);
@@ -661,14 +706,14 @@ namespace Sandbox
 
 				if (ImGui::BeginCombo(prop.name.c_str(), currentItem.c_str()))
 				{
-					for (int i = 0; i < vec.size(); i++)
+					for (auto& item : vec)
 					{
-						vec[i].second = (currentItem == vec[i].first);
-						if (ImGui::Selectable(vec[i].first.c_str(), vec[i].second))
+						item.second = (currentItem == item.first);
+						if (ImGui::Selectable(item.first.c_str(), item.second))
 						{
-							currentItem = vec[i].first;
+							currentItem = item.first;
 						}
-						if (vec[i].second)
+						if (item.second)
 						{
 							ImGui::SetItemDefaultFocus();
 						}
@@ -679,7 +724,7 @@ namespace Sandbox
 
 				ImGui::PopItemWidth();
 				break;
-			} 
+			}
 
 			case Lamp::PropertyType::EntityId:
 			{
@@ -784,6 +829,13 @@ namespace Sandbox
 				break;
 			}
 
+			case Lamp::PropertyType::Enum:
+			{
+
+
+				break;
+			}
+
 			case Lamp::PropertyType::Void:
 			{
 				if (isProperties)
@@ -823,14 +875,14 @@ namespace Sandbox
 		Ref<Node> n = NodeRegistry::s_Methods()[name]();
 		n->id = m_CurrentlyOpenGraph->GetCurrentId()++;
 
-		for (uint32_t i = 0; i < n->inputAttributes.size(); i++)
+		for (auto& inputAttribute : n->inputAttributes)
 		{
-			n->inputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+			inputAttribute.id = m_CurrentlyOpenGraph->GetCurrentId()++;
 		}
 
-		for (int i = 0; i < n->outputAttributes.size(); i++)
+		for (auto& outputAttribute : n->outputAttributes)
 		{
-			n->outputAttributes[i].id = m_CurrentlyOpenGraph->GetCurrentId()++;
+			outputAttribute.id = m_CurrentlyOpenGraph->GetCurrentId()++;
 		}
 
 		if (m_CurrentlyOpenGraph)

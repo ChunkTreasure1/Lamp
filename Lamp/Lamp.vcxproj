@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -154,7 +154,6 @@
     <ClInclude Include="src\Lamp\AssetSystem\Asset.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
-    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h" />
     <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
@@ -253,7 +252,6 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
@@ -265,16 +263,13 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h" />
-    <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Lamp\Utility\SerializeMacros.h" />
@@ -288,9 +283,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -811,13 +804,11 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
@@ -825,9 +816,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
@@ -851,9 +840,7 @@
     <ClCompile Include="vendor\yaml-cpp\src\exceptions.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\exp.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\memory.cpp" />
-    <ClCompile Include="vendor\yaml-cpp\src\node.cpp">
-      <ObjectFileName>$(IntDir)\node1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="vendor\yaml-cpp\src\node.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\node_data.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodebuilder.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodeevents.cpp" />

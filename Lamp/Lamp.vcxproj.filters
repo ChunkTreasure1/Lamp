@@ -97,8 +97,8 @@
     <Filter Include="src\Lamp\Rendering\Shadows">
       <UniqueIdentifier>{BBFA1D8B-A70A-CA5B-10C4-2E7AFCF2B8F4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\Textures">
-      <UniqueIdentifier>{E6D2FB2A-52E0-2911-DBC6-25FC47D3F5C7}</UniqueIdentifier>
+    <Filter Include="src\Lamp\Rendering\Texture2D">
+      <UniqueIdentifier>{8927768A-75E2-6536-1E9A-DE800A34B0C6}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Lamp\Rendering\Vertices">
       <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
@@ -183,9 +183,6 @@
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
@@ -257,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\MouseEvent.h">
       <Filter>src\Lamp\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\GraphKey\BaseNodes\KeyEnums.h">
+      <Filter>src\Lamp\GraphKey\BaseNodes</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\GraphKey\GraphKeyGraph.h">
       <Filter>src\Lamp\GraphKey</Filter>
@@ -477,9 +477,6 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
@@ -513,35 +510,26 @@
     <ClInclude Include="src\Lamp\Rendering\Skybox.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
+    <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h">
+    <ClInclude Include="src\Lamp\Rendering\Vertices\BufferLayout.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h">
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h">
-      <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h">
       <Filter>src\Lamp\Utility</Filter>
@@ -582,13 +570,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h">
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
@@ -1881,7 +1863,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\GraphKey\BaseNodes\KeyEnums.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2148,25 +2129,19 @@
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
+    <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
+      <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp">
@@ -2190,13 +2165,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp">
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
