@@ -124,6 +124,8 @@ namespace Sandbox
 	{
 		ImGui::Begin("Graph", &m_IsOpen);
 
+		ImNodes::PushColorStyle(ImNodesCol_NodeBackgroundHovered, ImNodes::GetStyle().Colors[ImNodesCol_NodeBackground]);
+		ImNodes::PushColorStyle(ImNodesCol_NodeBackgroundSelected, ImNodes::GetStyle().Colors[ImNodesCol_NodeBackground]);
 		ImNodes::BeginNodeEditor();
 
 		if (m_CurrentlyOpenGraph)
@@ -153,6 +155,7 @@ namespace Sandbox
 
 		ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);
 		ImNodes::EndNodeEditor();
+		ImNodes::PopColorStyle();
 
 		CheckLinkCreated();
 

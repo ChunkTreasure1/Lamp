@@ -4,8 +4,9 @@
 
 namespace Lamp
 {
-	struct RenderNodeFramebuffer : public RenderNode
+	class RenderNodeFramebuffer : public RenderNode
 	{
+	public:
 		RenderNodeFramebuffer()
 		{}
 

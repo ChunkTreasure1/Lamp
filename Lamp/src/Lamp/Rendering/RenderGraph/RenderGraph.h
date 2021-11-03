@@ -4,8 +4,8 @@
 #include "Lamp/AssetSystem/Asset.h"
 namespace Lamp
 {
-	struct RenderNodeEnd;
-	struct RenderNodeStart;
+	class RenderNodeEnd;
+	class RenderNodeStart;
 
 	struct RenderGraphSpecification
 	{

@@ -40,7 +40,7 @@ namespace Lamp
 		ImGui::Text("End");
 		ImNodes::EndNodeTitleBar();
 
-		DrawAttributes();
+		DrawAttributes(inputs, outputs);
 
 		ImNodes::EndNode();
 

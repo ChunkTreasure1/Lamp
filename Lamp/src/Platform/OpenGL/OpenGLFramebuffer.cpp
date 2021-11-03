@@ -37,6 +37,8 @@ namespace Lamp
 				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
 				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
 			}
+
+			return GL_NONE;
 		}
 
 		static GLint FormatToGL(FramebufferTextureFormat format)

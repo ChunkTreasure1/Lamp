@@ -2,6 +2,7 @@
 
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/AssetSystem/Asset.h"
+#include "ImGuiExtension.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -108,6 +109,21 @@ namespace UI
 		UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
 
 		return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
+	}
+
+	static bool TreeNodeFramed(const std::string& text, float width, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
+	{
+		const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
+			ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+		
+		if (!useOther)
+		{
+			return ImGui::TreeNodeWidthEx(text.c_str(), width, nodeFlags);
+		}
+
+		UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
+
+		return ImGui::TreeNodeWidthEx(text.c_str(), width, nodeFlags);
 	}
 
 	static void TreeNodePop()

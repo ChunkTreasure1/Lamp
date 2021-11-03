@@ -23,12 +23,10 @@ namespace Lamp
 		void Deserialize(YAML::Node& node) override;
 		RenderNodeType GetNodeType() override { return RenderNodeType::Pass; }
 
-
 	private:
 		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
 		void SetAttributeName(const std::string& name, GraphUUID id);
-		bool IsAttributeLinked(Ref<RenderAttribute> attr);
-		Ref<RenderAttribute> FindAttributeByID(GraphUUID id);
+
 
 		void SetupUniforms();
 
@@ -36,12 +34,19 @@ namespace Lamp
 		void DrawUniforms();
 		void DrawSettings();
 		void DrawOutputBuffer();
+		void DrawTextures();
+		void DrawFramebuffers();
 
 	private:
 
 		bool m_UseViewportSize = false;
+		FramebufferTextureSpecification* m_renamingAttachmentSpec = nullptr;
+		FramebufferTextureSpecification* m_lastRenamingAttachmentSpec = nullptr;
 
-		std::vector<const char*> m_Shaders;
-		Ref<RenderInputAttribute> m_TargetBufferAttribute;
+		std::vector<const char*> m_shaders;
+
+		//attributes
+		Ref<RenderInputAttribute> m_targetBufferAttribute;
+		Ref<RenderInputAttribute> m_runAttribute;
 	};
 }

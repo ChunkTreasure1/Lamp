@@ -4,8 +4,9 @@
 
 namespace Lamp
 {
-	struct RenderNodeTexture : public RenderNode
+	class RenderNodeTexture : public RenderNode
 	{
+	public:
 		RenderNodeTexture()
 		{
 		}

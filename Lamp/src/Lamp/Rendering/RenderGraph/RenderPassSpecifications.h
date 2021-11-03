@@ -64,7 +64,7 @@ namespace Lamp
 	{
 		bool operator==(const PassFramebufferAttachmentSpec& rhs)
 		{
-			return type == rhs.type && bindId == rhs.bindId && attachmentId == rhs.attachmentId;
+			return this == &rhs;
 		}
 
 		TextureType type = TextureType::Color;

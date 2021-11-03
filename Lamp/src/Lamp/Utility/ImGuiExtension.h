@@ -5,7 +5,7 @@
 
 namespace ImGui
 {
-	bool TreeNodeBehaviorWidth(ImGuiID id, ImGuiTreeNodeFlags flags, const char* label, const char* label_end, float width)
+	static bool TreeNodeBehaviorWidth(ImGuiID id, ImGuiTreeNodeFlags flags, const char* label, const char* label_end, float width)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 		if (window->SkipItems)
@@ -201,11 +201,19 @@ namespace ImGui
 		return is_open;
 	}
 
-	bool TreeNodeWidth(const char* label, float width)
+	static bool TreeNodeWidth(const char* label, float width)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 		if (window->SkipItems)
 			return false;
 		return TreeNodeBehaviorWidth(window->GetID(label), 0, label, NULL, width);
+	}
+
+	static bool TreeNodeWidthEx(const char* label, float width, ImGuiTreeNodeFlags flags)
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+		return TreeNodeBehaviorWidth(window->GetID(label), flags, label, NULL, width);
 	}
 }

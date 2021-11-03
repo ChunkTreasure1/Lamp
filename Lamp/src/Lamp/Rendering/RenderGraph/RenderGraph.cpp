@@ -59,6 +59,11 @@ namespace Lamp
 			return id == link->id;
 		};
 
+		for (auto& node : m_Specification.nodes)
+		{
+			node->links.erase(std::remove_if(node->links.begin(), node->links.end(), func), node->links.end());
+		}
+
 		m_Specification.links.erase(std::remove_if(m_Specification.links.begin(), m_Specification.links.end(), func), m_Specification.links.end());
 	}
 

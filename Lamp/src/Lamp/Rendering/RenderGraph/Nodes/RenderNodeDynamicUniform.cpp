@@ -74,7 +74,7 @@ namespace Lamp
 			dataName = name;
 		}
 
-		DrawAttributes();
+		DrawAttributes(inputs, outputs);
 
 		ImGui::PopItemWidth();
 

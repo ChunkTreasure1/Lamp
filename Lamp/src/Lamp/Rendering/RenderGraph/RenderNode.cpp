@@ -9,17 +9,18 @@
 
 namespace Lamp
 {
-	void RenderNode::DrawAttributes()
+	void RenderNode::DrawAttributes(const std::vector<Ref<RenderInputAttribute>>& aInputs, const std::vector<Ref<RenderOutputAttribute>>& aOutputs)
 	{
 		ImVec2 cursorPos = ImGui::GetCursorPos();
-		cursorPos.x += 150.f;
 
-		if (!inputs.empty())
+		cursorPos.x += ImNodes::GetNodeDimensions(id).x - 100.f;
+
+		if (!aInputs.empty())
 		{
 			ImGui::TextColored(ImVec4(0.38f, 0.42f, 1.f, 1.f), "Inputs");
 		}
 
-		for (auto& input : inputs)
+		for (auto& input : aInputs)
 		{
 			unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
 			unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
@@ -32,7 +33,10 @@ namespace Lamp
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
-			ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
+
+			ImNodesPinShape pinShape = IsAttributeLinked(input) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+
+			ImNodes::BeginInputAttribute(input->id, pinShape);
 
 			ImGui::Text(input->name.c_str());
 
@@ -50,7 +54,7 @@ namespace Lamp
 
 		for (auto& output : outputs)
 		{
-			cursorPos.y += 20.f;
+			cursorPos.y += 22.f;
 			ImGui::SetCursorPos(cursorPos);
 
 			unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
@@ -65,7 +69,9 @@ namespace Lamp
 			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
 
-			ImNodes::BeginOutputAttribute(output->id);
+			ImNodesPinShape pinShape = IsAttributeLinked(output) ? ImNodesPinShape_CircleFilled : ImNodesPinShape_Circle;
+
+			ImNodes::BeginOutputAttribute(output->id, pinShape);
 			ImGui::Text(output->name.c_str());
 			ImNodes::EndOutputAttribute();
 
@@ -155,5 +161,44 @@ namespace Lamp
 		attr->type = (RenderAttributeType)node["type"].as<uint32_t>();
 
 		return std::make_pair(attr, nodeType);
+	}
+
+	bool RenderNode::IsAttributeLinked(Ref<RenderAttribute> attr)
+	{
+		for (const auto& link : links)
+		{
+			if (link->pInput->id == attr->id)
+			{
+				return true;
+			}
+
+			if (link->pOutput->id == attr->id)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	Ref<RenderAttribute> RenderNode::FindAttributeByID(GraphUUID id)
+	{
+		for (auto& input : inputs)
+		{
+			if (input->id == id)
+			{
+				return input;
+			}
+		}
+
+		for (auto& output : outputs)
+		{
+			if (output->id == id)
+			{
+				return output;
+			}
+		}
+
+		return nullptr;
 	}
 }

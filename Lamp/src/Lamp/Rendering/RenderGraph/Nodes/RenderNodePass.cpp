@@ -11,6 +11,7 @@
 #include "Lamp/Utility/StandardUtilities.h"
 #include "Lamp/Utility/UIUtility.h"
 #include "Lamp/Utility/ImGuiExtension.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -53,7 +54,7 @@ namespace Lamp
 
 		static bool DrawCombo(const std::string& text, const std::string& id, const std::vector<const char*>& data, int& selected)
 		{
-			const float maxWidth = 80.f;
+			const float maxWidth = 75.f;
 
 			float offset = maxWidth - ImGui::CalcTextSize(text.c_str()).x;
 
@@ -71,6 +72,13 @@ namespace Lamp
 		FramebufferSpecification spec;
 		const_cast<RenderPassSpecification&>(renderPass->GetSpecification()).TargetFramebuffer = Framebuffer::Create(spec);
 
+		Ref<RenderOutputAttribute> activated = CreateRef<RenderOutputAttribute>();
+		activated->name = "Finished";
+		activated->pNode = this;
+		activated->type = RenderAttributeType::Pass;
+
+		outputs.push_back(activated);
+
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
 		output->name = "Framebuffer";
 		output->pNode = this;
@@ -78,27 +86,21 @@ namespace Lamp
 
 		outputs.push_back(output);
 
-		Ref<RenderOutputAttribute> activated = CreateRef<RenderOutputAttribute>();
-		activated->name = "Activated";
-		activated->pNode = this;
-		activated->type = RenderAttributeType::Pass;
-
-		outputs.push_back(activated);
-
 		Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-		input->name = "Activate";
+		input->name = "Run";
 		input->pNode = this;
 		input->type = RenderAttributeType::Pass;
 
+		m_runAttribute = input;
 		inputs.push_back(input);
 
-		m_TargetBufferAttribute = CreateRef<RenderInputAttribute>();
-		m_TargetBufferAttribute->name = "Target framebuffer";
-		m_TargetBufferAttribute->pNode = this;
-		m_TargetBufferAttribute->data = targetBufferId;
-		m_TargetBufferAttribute->type = RenderAttributeType::Framebuffer;
+		m_targetBufferAttribute = CreateRef<RenderInputAttribute>();
+		m_targetBufferAttribute->name = "Target framebuffer";
+		m_targetBufferAttribute->pNode = this;
+		m_targetBufferAttribute->data = targetBufferId;
+		m_targetBufferAttribute->type = RenderAttributeType::Framebuffer;
 
-		inputs.push_back(m_TargetBufferAttribute);
+		inputs.push_back(m_targetBufferAttribute);
 	}
 
 	void RenderNodePass::Start()
@@ -155,11 +157,11 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		m_Shaders.clear();
-		m_Shaders.push_back("None");
+		m_shaders.clear();
+		m_shaders.push_back("None");
 		for (auto& shader : ShaderLibrary::GetShaders())
 		{
-			m_Shaders.push_back(shader->GetName().c_str());
+			m_shaders.push_back(shader->GetName().c_str());
 		}
 
 		auto& specification = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
@@ -192,24 +194,24 @@ namespace Lamp
 
 		const float treeWidth = ImNodes::GetNodeDimensions(id).x - 20.f;
 
-		if (ImGui::TreeNodeWidth("Settings", treeWidth))
+		if (UI::TreeNodeFramed("Settings", treeWidth))
 		{
 			DrawSettings();
 
-			ImGui::TreePop();
+			UI::TreeNodePop();
 		}
 
-		if (!IsAttributeLinked(m_TargetBufferAttribute))
+		if (!IsAttributeLinked(m_targetBufferAttribute))
 		{
-			if (ImGui::TreeNodeWidth("Output Framebuffer", treeWidth))
+			if (UI::TreeNodeFramed("Output Framebuffer", treeWidth))
 			{
 				DrawOutputBuffer();
 
-				ImGui::TreePop();
+				UI::TreeNodePop();
 			}
 		}
 
-		if (ImGui::TreeNodeWidth("Uniforms", treeWidth))
+		if (UI::TreeNodeFramed("Uniforms", treeWidth))
 		{
 			bool showUniforms = specification.renderShader != nullptr && !specification.renderShader->GetSpecification().uniforms.empty();
 
@@ -222,18 +224,68 @@ namespace Lamp
 				DrawUniforms();
 			}
 
-			ImGui::TreePop();
+			UI::TreeNodePop();
 		}
 		else
 		{
-			for (const auto& input : inputs)
+			for (auto& uniformPair : renderPass->m_passSpecification.uniforms)
 			{
-				if (IsAttributeLinked(input))
+				FindAttributeByID(uniformPair.second.second)->shouldDraw = true;
+			}
+		}
+
+		if (UI::TreeNodeFramed("Textures", treeWidth))
+		{
+			DrawTextures();
+
+			UI::TreeNodePop();
+		}
+		else
+		{
+			for (auto& texturePair : renderPass->m_passSpecification.textures)
+			{
+				FindAttributeByID(texturePair.second.second)->shouldDraw = true;
+			}
+		}
+
+		if (UI::TreeNodeFramed("Framebuffers", treeWidth))
+		{
+			DrawFramebuffers();
+
+			UI::TreeNodePop();
+		}
+		else
+		{
+			for (auto& bufferPair : renderPass->m_passSpecification.framebuffers)
+			{
+				FindAttributeByID(bufferPair.second.second)->shouldDraw = true;
+			}
+		}
+
+		DrawAttributes({ m_runAttribute, m_targetBufferAttribute }, outputs);
+
+		for (const auto& input : inputs)
+		{
+			if (IsAttributeLinked(input) && input->shouldDraw)
+			{
+				unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
+				unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
+
+				if (input->type != RenderAttributeType::Pass)
 				{
-					ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
-					ImGui::TextUnformatted(input->name.c_str());
-					ImNodes::EndInputAttribute();
+					pinColor = Utils::GetTypeColor(input->type);
+					pinHoverColor = Utils::GetTypeHoverColor(input->type);
 				}
+
+				ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
+				ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
+
+				ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
+				ImGui::TextUnformatted(input->name.c_str());
+				ImNodes::EndInputAttribute();
+
+				ImNodes::PopColorStyle();
+				ImNodes::PopColorStyle();
 			}
 		}
 
@@ -750,45 +802,6 @@ namespace Lamp
 		}
 	}
 
-	bool RenderNodePass::IsAttributeLinked(Ref<RenderAttribute> attr)
-	{
-		for (const auto& link : links)
-		{
-			if (link->pInput->id == attr->id)
-			{
-				return true;
-			}
-
-			if (link->pOutput->id == attr->id)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	Ref<RenderAttribute> RenderNodePass::FindAttributeByID(GraphUUID id)
-	{
-		for (auto& input : inputs)
-		{
-			if (input->id == id)
-			{
-				return input;
-			}
-		}
-
-		for (auto& output : outputs)
-		{
-			if (output->id == id)
-			{
-				return output;
-			}
-		}
-
-		return nullptr;
-	}
-
 	void RenderNodePass::SetupUniforms()
 	{
 		auto& renderPassSpec = renderPass->m_passSpecification;
@@ -821,7 +834,7 @@ namespace Lamp
 
 	void RenderNodePass::DrawUniforms()
 	{
-		auto& passSpec = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
+		auto& passSpec = renderPass->m_passSpecification;
 		auto& shaderSpec = const_cast<ShaderSpecification&>(passSpec.renderShader->GetSpecification());
 
 		for (auto& uniformPair : passSpec.uniforms)
@@ -833,6 +846,10 @@ namespace Lamp
 
 			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(uniformPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 
+			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::DynamicUniform));
+			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::DynamicUniform));
+
+			FindAttributeByID(uniformPair.second.second)->shouldDraw = false;
 			ImNodes::BeginInputAttribute(uniformPair.second.second, pinShape);
 
 			float offset = 90.f - ImGui::CalcTextSize(uniform.name.c_str()).x;
@@ -888,6 +905,9 @@ namespace Lamp
 			ImGui::PopID();
 
 			ImNodes::EndInputAttribute();
+
+			ImNodes::PopColorStyle();
+			ImNodes::PopColorStyle();
 		}
 	}
 
@@ -896,21 +916,16 @@ namespace Lamp
 		auto& specification = renderPass->m_passSpecification;
 
 		ImGui::PushID("settings");
+		uint32_t stackId = 0;
 
 		const float distance = 75.f;
 
 		//ClearType
 		{
-			static const char* clearTypes[] = { "None", "Color", "Depth", "ColorDepth" };
+			static const std::vector<const char*> clearTypes = { "None", "Color", "Depth", "ColorDepth" };
 			int currentlySelectedClearType = (int)specification.clearType;
 
-			float offset = distance - ImGui::CalcTextSize("Clear type").x;
-
-			ImGui::TextUnformatted("Clear type");
-			ImGui::SameLine();
-			UI::ShiftCursor(offset, 0.f);
-
-			if (ImGui::Combo(std::string("##clear" + std::to_string(id)).c_str(), &currentlySelectedClearType, clearTypes, 4))
+			if (Utils::DrawCombo("Clear type", "##" + std::to_string(stackId++), clearTypes, currentlySelectedClearType))
 			{
 				specification.clearType = (ClearType)currentlySelectedClearType;
 			}
@@ -918,16 +933,10 @@ namespace Lamp
 
 		//DrawType
 		{
-			static const char* drawTypes[] = { "All", "Quad", "Line", "Forward", "Deferred" };
+			static const std::vector<const char*> drawTypes = { "All", "Quad", "Line", "Forward" };
 			int currentlySelectedDrawType = (int)specification.drawType;
 
-			float offset = distance - ImGui::CalcTextSize("Draw type").x;
-
-			ImGui::TextUnformatted("Draw type");
-			ImGui::SameLine();
-			UI::ShiftCursor(offset, 0.f);
-
-			if (ImGui::Combo(std::string("##draw" + std::to_string(id)).c_str(), &currentlySelectedDrawType, drawTypes, 5))
+			if(Utils::DrawCombo("Draw type", "##" + std::to_string(stackId++), drawTypes, currentlySelectedDrawType))
 			{
 				specification.drawType = (DrawType)currentlySelectedDrawType;
 			}
@@ -935,16 +944,10 @@ namespace Lamp
 
 		//Cull face
 		{
-			static const char* cullFaces[] = { "Front", "Back" };
+			static const std::vector<const char*> cullFaces = { "Front", "Back" };
 			int currentlySelectedCullFace = (int)specification.cullFace;
 
-			float offset = distance - ImGui::CalcTextSize("Cull face").x;
-
-			ImGui::TextUnformatted("Cull face");
-			ImGui::SameLine();
-			UI::ShiftCursor(offset, 0.f);
-
-			if (ImGui::Combo(std::string("##cull" + std::to_string(id)).c_str(), &currentlySelectedCullFace, cullFaces, 2))
+			if (Utils::DrawCombo("Cull face", "##" + std::to_string(stackId++), cullFaces, currentlySelectedCullFace))
 			{
 				specification.cullFace = (CullFace)currentlySelectedCullFace;
 			}
@@ -955,17 +958,11 @@ namespace Lamp
 			int currentlySelectedShader = 0;
 			if (specification.renderShader)
 			{
-				auto it = std::find(m_Shaders.begin(), m_Shaders.end(), specification.renderShader->GetName().c_str());
-				currentlySelectedShader = (int)std::distance(m_Shaders.begin(), it);
+				auto it = std::find(m_shaders.begin(), m_shaders.end(), specification.renderShader->GetName().c_str());
+				currentlySelectedShader = (int)std::distance(m_shaders.begin(), it);
 			}
 
-			float offset = distance - ImGui::CalcTextSize("Shader").x;
-
-			ImGui::TextUnformatted("Shader");
-			ImGui::SameLine();
-			UI::ShiftCursor(offset, 0.f);
-
-			if (ImGui::Combo(std::string("##shader" + std::to_string(id)).c_str(), &currentlySelectedShader, m_Shaders.data(), (int)m_Shaders.size()))
+			if (Utils::DrawCombo("Shader", "##" + std::to_string(stackId++), m_shaders, currentlySelectedShader))
 			{
 				if (currentlySelectedShader == 0)
 				{
@@ -973,7 +970,7 @@ namespace Lamp
 				}
 				else
 				{
-					specification.renderShader = ShaderLibrary::GetShader(m_Shaders[currentlySelectedShader]);
+					specification.renderShader = ShaderLibrary::GetShader(m_shaders[currentlySelectedShader]);
 					SetupUniforms();
 				}
 			}
@@ -987,7 +984,7 @@ namespace Lamp
 			ImGui::SameLine();
 			UI::ShiftCursor(offset, 0.f);
 
-			ImGui::Checkbox(std::string("##2d" + std::to_string(id)).c_str(), &specification.draw2D);
+			ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &specification.draw2D);
 		}
 
 		//Skybox
@@ -998,10 +995,10 @@ namespace Lamp
 			ImGui::SameLine();
 			UI::ShiftCursor(offset, 0.f);
 
-			ImGui::Checkbox(std::string("##skybox" + std::to_string(id)).c_str(), &specification.drawSkybox);
+			ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &specification.drawSkybox);
 		}
 
-		UI::PopId();
+		ImGui::PopID();
 	}
 
 	void RenderNodePass::DrawOutputBuffer()
@@ -1034,7 +1031,7 @@ namespace Lamp
 				}
 			}
 		}
-		
+
 		//Size
 		{
 			float offset = maxWidth - ImGui::CalcTextSize("Height").x;
@@ -1092,7 +1089,7 @@ namespace Lamp
 			ImGui::PopItemWidth();
 		}
 
-		if (ImGui::TreeNodeWidth("Attachments", treeWidth - 20.f))
+		if (UI::TreeNodeFramed("Attachments", treeWidth - 20.f))
 		{
 			if (ImGui::Button("Add attachment"))
 			{
@@ -1105,8 +1102,65 @@ namespace Lamp
 				std::string attId = std::to_string(attIndex);
 				bool changed = false;
 
-				std::string treeId = "Attachment##" + attId;
-				if (ImGui::TreeNodeWidth(treeId.c_str(), treeWidth - 40.f))
+				if (ImGui::Button(("-##" + attId).c_str()))
+				{
+					for (uint32_t i = 0; i < specification.Attachments.Attachments.size(); i++)
+					{
+						if (specification.Attachments.Attachments[i] == att)
+						{
+							specification.Attachments.Attachments.erase(specification.Attachments.Attachments.begin() + i);
+							break;
+						}
+					}
+				}
+
+				ImGui::SameLine();
+
+				ImVec2 cursorPos = ImGui::GetCursorPos();
+				std::string treeId = m_renamingAttachmentSpec == &att ? "###att" + attId : att.name + "###att" + attId;
+				bool open = UI::TreeNodeFramed(treeId, treeWidth - 60.f);
+				if (UI::BeginPopup())
+				{
+					if (ImGui::MenuItem("Rename"))
+					{
+						m_renamingAttachmentSpec = &att;
+					}
+
+					UI::EndPopup();
+				}
+
+				if (m_renamingAttachmentSpec == &att)
+				{
+					ImGui::SameLine();
+					ImGui::SetCursorPosX(cursorPos.x + ImGui::GetTreeNodeToLabelSpacing());
+					std::string renameId = "###rename" + attId;
+
+					ImGui::PushItemWidth(75.f);
+					UI::ScopedColor background{ ImGuiCol_FrameBg, { 0.1f, 0.1f, 0.1f, 0.1f } };
+					UI::InputText(renameId, m_renamingAttachmentSpec->name);
+
+					if (m_renamingAttachmentSpec != m_lastRenamingAttachmentSpec)
+					{
+						ImGuiID widgetId = ImGui::GetCurrentWindow()->GetID(renameId.c_str());
+						ImGui::SetFocusID(widgetId, ImGui::GetCurrentWindow());
+						ImGui::SetKeyboardFocusHere(-1);
+						m_lastRenamingAttachmentSpec = m_renamingAttachmentSpec;
+					}
+					if (!ImGui::IsItemFocused())
+					{
+						m_renamingAttachmentSpec = nullptr;
+						m_lastRenamingAttachmentSpec = nullptr;
+					}
+					if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+					{
+						m_renamingAttachmentSpec = nullptr;
+						m_lastRenamingAttachmentSpec = nullptr;
+					}
+
+					ImGui::PopItemWidth();
+				}
+
+				if (open)
 				{
 					//Border color
 					{
@@ -1175,6 +1229,134 @@ namespace Lamp
 			}
 
 			ImGui::TreePop();
+		}
+	}
+
+	void RenderNodePass::DrawTextures()
+	{
+		auto& specification = renderPass->m_passSpecification;
+
+		if (ImGui::Button("Add##texture"))
+		{
+			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+
+			GraphUUID texId = GraphUUID();
+			specification.textures.emplace(texId, std::make_pair(PassTextureSpecification(), input->id));
+
+			input->data = texId;
+			input->pNode = this;
+			input->name = "Texture" + std::to_string(specification.textures.size() - 1);
+			input->type = RenderAttributeType::Texture;
+
+			inputs.push_back(input);
+		}
+
+		for (auto& texturePair : specification.textures)
+		{
+			auto& textureSpec = texturePair.second.first;
+
+			ImGui::PushID(textureSpec.name.c_str());
+			uint32_t id = 0;
+
+			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(texturePair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+
+			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::Texture));
+			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::Texture));
+
+			FindAttributeByID(texturePair.second.second)->shouldDraw = false;
+			ImNodes::BeginInputAttribute(texturePair.second.second, pinShape);
+
+			if (ImGui::Button(("-##" + std::to_string(id++)).c_str()))
+			{
+				RemoveAttribute(RenderAttributeType::Texture, texturePair.second.second);
+				specification.textures.erase(texturePair.first);
+				ImNodes::EndInputAttribute();
+				ImGui::PopID();
+				break;
+			}
+
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(90.f);
+
+			if (UI::InputText(("##" + std::to_string(id++)), textureSpec.name))
+			{
+				SetAttributeName(name, texturePair.second.second);
+			}
+
+			ImGui::SameLine();
+
+			int currBindSlot = textureSpec.bindSlot;
+			if (ImGui::InputInt("##bindSlot", &currBindSlot))
+			{
+				textureSpec.bindSlot = currBindSlot;
+			}
+
+			ImGui::PopItemWidth();
+			ImNodes::EndInputAttribute();
+
+			ImNodes::PopColorStyle();
+			ImNodes::PopColorStyle();
+
+			ImGui::PopID();
+		}
+	}
+
+	void RenderNodePass::DrawFramebuffers()
+	{
+		auto& specification = renderPass->m_passSpecification;
+
+		if (ImGui::Button("Add##framebuffer"))
+		{
+			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+
+			GraphUUID framebufferId = GraphUUID();
+			specification.framebuffers.emplace(framebufferId, std::make_pair(PassFramebufferSpecification(), input->id));
+
+			input->data = framebufferId;
+			input->pNode = this;
+			input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
+			input->type = RenderAttributeType::Framebuffer;
+
+			inputs.push_back(input);
+		}
+
+		for (auto& framebufferPair : specification.framebuffers)
+		{
+			auto& framebufferSpec = framebufferPair.second.first;
+
+			ImGui::PushID(framebufferSpec.name.c_str());
+			uint32_t stackId = 0;
+
+			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(framebufferPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+
+			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::Framebuffer));
+			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::Framebuffer));
+
+			FindAttributeByID(framebufferPair.second.second)->shouldDraw = false;
+			ImNodes::BeginInputAttribute(framebufferPair.second.second, pinShape);
+
+			if (ImGui::Button(("-##" + std::to_string(stackId++)).c_str()))
+			{
+				RemoveAttribute(RenderAttributeType::Framebuffer, framebufferPair.second.second);
+				specification.framebuffers.erase(framebufferPair.first);
+				ImNodes::EndInputAttribute();
+				ImGui::PopID();
+				break;
+			}
+
+			ImGui::SameLine();
+			if (UI::TreeNodeFramed("Framebuffer##" + std::to_string(stackId++), ImNodes::GetNodeDimensions(id).x - 60.f))
+			{
+				UI::TreeNodePop();
+			}
+
+			ImNodes::EndInputAttribute();
+
+			ImNodes::PopColorStyle();
+			ImNodes::PopColorStyle();
+
+			ImGui::PopID();
 		}
 	}
 }

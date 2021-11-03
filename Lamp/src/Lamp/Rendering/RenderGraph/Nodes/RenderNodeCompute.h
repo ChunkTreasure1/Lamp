@@ -4,7 +4,7 @@
 
 namespace Lamp
 {
-	struct RenderNodeCompute : public RenderNode
+	class RenderNodeCompute : public RenderNode
 	{
 	public:
 		virtual void Initialize() override;

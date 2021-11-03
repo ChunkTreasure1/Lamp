@@ -42,6 +42,7 @@ namespace Lamp
 		GraphUUID id;
 		std::string name;
 		RenderAttributeType type;
+		bool shouldDraw = false;
 	};
 
 	struct RenderOutputAttribute : public RenderAttribute
@@ -85,11 +86,15 @@ namespace Lamp
 		virtual void Serialize(YAML::Emitter& out) = 0;
 		virtual void Deserialize(YAML::Node& node) = 0;
 
-		void DrawAttributes();
+		void DrawAttributes(const std::vector<Ref<RenderInputAttribute>>& inputs, const std::vector<Ref<RenderOutputAttribute>>& outputs);
 		void SerializeAttributes(YAML::Emitter& out);
 		void DeserializeAttributes(YAML::Node& node);
 
 		void SerializeBaseAttribute(Ref<RenderAttribute> attr, const std::string& attrType, YAML::Emitter& out);
 		std::pair<Ref<RenderAttribute>, std::string> DeserializeBaseAttribute(const YAML::Node& node);
+
+	protected:
+		bool IsAttributeLinked(Ref<RenderAttribute> attr);
+		Ref<RenderAttribute> FindAttributeByID(GraphUUID id);
 	};
 }

@@ -204,7 +204,7 @@ namespace Lamp
 			}
 		}
 
-		DrawAttributes();
+		DrawAttributes(inputs, outputs);
 
 		ImNodes::EndNode();
 
