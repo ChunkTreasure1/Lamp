@@ -166,6 +166,10 @@ namespace Lamp
 
 		auto& specification = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
 
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(74, 58, 232, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(64, 97, 255, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(64, 97, 255, 255));
+
 		ImNodes::BeginNode(id);
 
 		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
@@ -292,6 +296,9 @@ namespace Lamp
 		ImGui::PopItemWidth();
 
 		ImNodes::EndNode();
+		ImNodes::PopColorStyle();
+		ImNodes::PopColorStyle();
+		ImNodes::PopColorStyle();
 	}
 
 	void RenderNodePass::Activate(std::any value)
@@ -936,7 +943,7 @@ namespace Lamp
 			static const std::vector<const char*> drawTypes = { "All", "Quad", "Line", "Forward" };
 			int currentlySelectedDrawType = (int)specification.drawType;
 
-			if(Utils::DrawCombo("Draw type", "##" + std::to_string(stackId++), drawTypes, currentlySelectedDrawType))
+			if (Utils::DrawCombo("Draw type", "##" + std::to_string(stackId++), drawTypes, currentlySelectedDrawType))
 			{
 				specification.drawType = (DrawType)currentlySelectedDrawType;
 			}

@@ -352,7 +352,7 @@ void main()
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse + specular);
+	vec3 ambient = (kD * diffuse + specular) * 0.5;
 
 	vec3 color = ambient + Lo;
 	color *= u_Exposure;

@@ -7,6 +7,7 @@
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Utility/UIUtility.h"
 
 #include <imgui.h>
 #include <imnodes.h>
@@ -64,8 +65,17 @@ namespace Lamp
 		ImGui::Text("Texture node");
 		ImNodes::EndNodeTitleBar();
 
-		ImGui::Checkbox("Use internal texture", &m_UseInternalTextures);
-		ImGui::Text("Texture:");
+		const float maxOffset = 100.f;
+
+		ImGui::PushID(("texNode" + std::to_string(id)).c_str());
+		uint32_t stackId = 0;
+
+		float offset = maxOffset - ImGui::CalcTextSize("Internal texture").x;
+		ImGui::Text("Internal texture");
+
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+		ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_UseInternalTextures);
 
 		if (m_UseInternalTextures)
 		{
@@ -98,6 +108,8 @@ namespace Lamp
 		DrawAttributes(inputs, outputs);
 
 		ImNodes::EndNode();
+
+		ImGui::PopID();
 
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();

@@ -31,7 +31,7 @@ namespace Sandbox
 		m_renderGraph->Start();
 
 		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
-		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/models/sphere.lgf");
+		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)

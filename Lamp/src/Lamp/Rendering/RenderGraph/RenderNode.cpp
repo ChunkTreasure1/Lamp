@@ -13,7 +13,10 @@ namespace Lamp
 	{
 		ImVec2 cursorPos = ImGui::GetCursorPos();
 
-		cursorPos.x += ImNodes::GetNodeDimensions(id).x - 100.f;
+		if (GetNodeType() != RenderNodeType::Start)
+		{
+			cursorPos.x += ImNodes::GetNodeDimensions(id).x - 95.f;
+		}
 
 		if (!aInputs.empty())
 		{

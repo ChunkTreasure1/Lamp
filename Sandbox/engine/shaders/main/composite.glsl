@@ -38,8 +38,9 @@ void main()
     vec4 color = texture(u_Color, v_TexCoords);
     int objId = int(texture(u_ObjectId, v_TexCoords).r);
 
-    float ssao = texture(u_SSAOMap, v_TexCoords).r;
+    float ssao = 1 - texture(u_SSAOMap, v_TexCoords).r;
 
-    o_FinalColor = color * ssao;
+    o_FinalColor = vec4(color.rgb - color.rgb * ssao, 1.0);
+
     o_ObjectId = objId;
 }

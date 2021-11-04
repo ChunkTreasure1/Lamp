@@ -7,20 +7,20 @@ namespace Lamp
 	class RenderNodeCompute : public RenderNode
 	{
 	public:
-		virtual void Initialize() override;
-		virtual void Start() override {}
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override;
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::Compute; }
-		virtual void Serialize(YAML::Emitter& out) override;
-		virtual void Deserialize(YAML::Node& node) override;
+		void Initialize() override;
+		void Start() override {}
+		void DrawNode() override;
+		void Activate(std::any value) override;
+		RenderNodeType GetNodeType() override { return RenderNodeType::Compute; }
+		void Serialize(YAML::Emitter& out) override;
+		void Deserialize(YAML::Node& node) override;
 
 		Ref<Framebuffer> framebuffer;
 
 	private:
-		uint32_t m_WorkGroupX;
-		uint32_t m_WorkGroupY;
-		Ref<Shader> m_ComputeShader;
-		std::vector<const char*> m_ShaderStrings;
+		uint32_t m_workGroupX;
+		uint32_t m_workGroupY;
+		Ref<Shader> m_computeShader;
+		std::vector<const char*> m_shaderStrings;
 	};
 }

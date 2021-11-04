@@ -6,6 +6,7 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Utility/UIUtility.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -57,6 +58,9 @@ namespace Lamp
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(179, 53, 41, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(179, 53, 41, 255));
 
+		ImGui::PushID(("framebuffer" + std::to_string(id)).c_str());
+		uint32_t stackId = 0;
+
 		ImNodes::BeginNode(id);
 
 		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
@@ -71,7 +75,15 @@ namespace Lamp
 
 		ImGui::PushItemWidth(100.f);
 
-		if (ImGui::Checkbox("Use internal framebuffer", &m_UseInternalBuffers))
+		const float maxOffset = 130.f;
+
+		float offset = maxOffset - ImGui::CalcTextSize("Internal framebuffer").x;
+		ImGui::TextUnformatted("Internal framebuffer");
+		
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+
+		if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_UseInternalBuffers))
 		{
 			if (!m_UseInternalBuffers)
 			{
@@ -97,7 +109,13 @@ namespace Lamp
 		}
 		else
 		{
-			if (ImGui::Checkbox("Use viewport size", &m_UseScreenSize))
+			offset = maxOffset - ImGui::CalcTextSize("Viewport size").x;
+			ImGui::TextUnformatted("Viewport size");
+
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_UseScreenSize))
 			{
 				if (m_UseScreenSize)
 				{
@@ -117,13 +135,26 @@ namespace Lamp
 			if (!m_UseScreenSize)
 			{
 				int width = static_cast<int>(specification.Width);
-				if (ImGui::InputInt("Width", &width))
+
+				offset = maxOffset - ImGui::CalcTextSize("Width").x;
+				ImGui::TextUnformatted("Width");
+
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &width))
 				{
 					specification.Width = width;
 				}
 
+				offset = maxOffset - ImGui::CalcTextSize("Height").x;
+				ImGui::TextUnformatted("Height");
+
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
 				int height = static_cast<int>(specification.Height);
-				if (ImGui::InputInt("Height", &height))
+				if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &height))
 				{
 					specification.Height = height;
 				}
@@ -207,6 +238,8 @@ namespace Lamp
 		DrawAttributes(inputs, outputs);
 
 		ImNodes::EndNode();
+
+		ImGui::PopID();
 
 		ImGui::PopItemWidth();
 		ImNodes::PopColorStyle();

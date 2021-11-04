@@ -149,6 +149,8 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
   - Handle: 10556133037468570950
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
+  - Handle: 8367631737299797705
+    Path: C:\Programming\Lamp\Sandbox\assets\meshes\head\textures\ELISLEDSEN.png
   - Handle: 14426076198348094346
     Path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
   - Handle: 8832679391837945518
@@ -157,3 +159,5 @@ Assets:
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\editor.rendergraph
   - Handle: 14877024273708001692
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\main.rendergraph
+  - Handle: 15204113846897012892
+    Path: C:\Users\ivar.jonsson\Desktop\ELISLEDSEN.png

@@ -24,7 +24,7 @@ layer:
     - brush: Brush
       meshHandle: 10994454763501493260
       position: [-3.19713068, 0.0418298244, -2.48263025]
-      rotation: [0.0174532924, 0, 0]
+      rotation: [0, 0, 0]
       scale: [20, 0.999999404, 20.0000038]
       layerId: 0
     - brush: Brush
