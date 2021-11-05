@@ -79,7 +79,7 @@ namespace Lamp
 
 		if (m_UseInternalTextures)
 		{
-			ImGui::PushItemWidth(150.f);
+			ImGui::PushItemWidth(128.f);
 			if (ImGui::Combo("##textures", &m_CurrentlySelectedTexture, m_TextureNames.data(), (int)m_TextureNames.size()))
 			{
 				texture = Renderer::s_pSceneData->internalTextures[m_TextureNames[m_CurrentlySelectedTexture]];

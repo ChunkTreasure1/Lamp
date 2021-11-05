@@ -25,14 +25,8 @@ namespace Lamp
 
 		for (auto& input : aInputs)
 		{
-			unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
-			unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
-
-			if (input->type != RenderAttributeType::Pass)
-			{
-				pinColor = Utils::GetTypeColor(input->type);
-				pinHoverColor = Utils::GetTypeHoverColor(input->type);
-			}
+			unsigned int pinColor = Utils::GetTypeColor(input->type);
+			unsigned int pinHoverColor = Utils::GetTypeHoverColor(input->type);
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
@@ -60,14 +54,8 @@ namespace Lamp
 			cursorPos.y += 22.f;
 			ImGui::SetCursorPos(cursorPos);
 
-			unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
-			unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
-
-			if (output->type != RenderAttributeType::Pass)
-			{
-				pinColor = Utils::GetTypeColor(output->type);
-				pinHoverColor = Utils::GetTypeHoverColor(output->type);
-			}
+			unsigned int pinColor = Utils::GetTypeColor(output->type);
+			unsigned int pinHoverColor = Utils::GetTypeHoverColor(output->type);
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);

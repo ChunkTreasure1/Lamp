@@ -37,15 +37,20 @@ namespace Lamp
 		void* data;
 	};
 
-	struct PassUnifromSpecification
+	struct PassUniformSpecification
 	{
-		PassUnifromSpecification(const std::string& aName = "Uniform", UniformType aType = UniformType::Int, const std::any& aData = 0, uint32_t id = 0)
-			: name(aName), type(aType), data(aData)
+		PassUniformSpecification(const std::string& aName = "Uniform", UniformType aType = UniformType::Int, const std::any& aData = 0, uint32_t aId = 0)
+			: name(aName), type(aType), data(aData), id(aId)
 		{}
+
+		PassUniformSpecification(void* aData, const std::string& aName = "Uniform", UniformType aType = UniformType::Int, uint32_t aId = 0)
+			: name(aName), type(aType), pData(aData), id(aId)
+		{ }
 
 		std::string name;
 		UniformType type;
 		std::any data;
+		void* pData = nullptr;
 		uint32_t id;
 	};
 

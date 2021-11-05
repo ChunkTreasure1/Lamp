@@ -55,6 +55,8 @@ Assets:
     Path: engine/renderGraphs/editor.rendergraph
   - Handle: 14877024273708001692
     Path: engine/renderGraphs/main.rendergraph
+  - Handle: 14855586085221556443
+    Path: engine/renderGraphs/testGraph.rendergraph
   - Handle: 1596807254034736571
     Path: engine/textures/default/defaultTexture.png
   - Handle: 17221873274523020632
@@ -159,5 +161,7 @@ Assets:
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\editor.rendergraph
   - Handle: 14877024273708001692
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\main.rendergraph
+  - Handle: 14855586085221556443
+    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph
   - Handle: 15204113846897012892
     Path: C:\Users\ivar.jonsson\Desktop\ELISLEDSEN.png

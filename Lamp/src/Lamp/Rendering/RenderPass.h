@@ -45,9 +45,7 @@ namespace Lamp
 		bool draw2D = false;
 		bool drawSkybox = false;
 
-		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
-		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
-		std::unordered_map<GraphUUID, std::pair<PassUnifromSpecification, GraphUUID>> uniforms; // name, type, data, attrId
+		std::unordered_map<GraphUUID, std::pair<PassUniformSpecification, GraphUUID>> uniforms; // name, type, data, attrId
 		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId
 		std::map<GraphUUID, std::pair<PassFramebufferSpecification, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
 		std::map<GraphUUID, std::pair<PassFramebufferCommandSpecification, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId

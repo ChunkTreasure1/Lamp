@@ -14,7 +14,7 @@ namespace Lamp
 				case Lamp::RenderAttributeType::Texture: return IM_COL32(62, 189, 100, 255);
 				case Lamp::RenderAttributeType::Framebuffer: return IM_COL32(150, 28, 17, 255);
 				case Lamp::RenderAttributeType::DynamicUniform: return IM_COL32(153, 64, 173, 255);
-				case Lamp::RenderAttributeType::Pass:
+				case Lamp::RenderAttributeType::Pass: return IM_COL32(74, 58, 232, 255);
 					break;
 				default:
 					break;
@@ -30,7 +30,7 @@ namespace Lamp
 				case Lamp::RenderAttributeType::Texture: return IM_COL32(100, 181, 124, 255);
 				case Lamp::RenderAttributeType::Framebuffer: return IM_COL32(179, 53, 41, 255);
 				case Lamp::RenderAttributeType::DynamicUniform: return IM_COL32(159, 94, 173, 255);
-				case Lamp::RenderAttributeType::Pass:
+				case Lamp::RenderAttributeType::Pass: return IM_COL32(64, 97, 255, 255);
 					break;
 				default:
 					break;

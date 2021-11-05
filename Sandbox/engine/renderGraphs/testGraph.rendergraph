@@ -1,0 +1,108 @@
+RenderGraph:
+  name: New
+  handle: 14855586085221556443
+  Nodes:
+    - Node: ""
+      id: 1982306009
+      position: [418, 227]
+      type: 0
+      name: DepthNormalPass
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: depthPass
+      draw2D: false
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        attachments:
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 2
+            filtering: 1
+            wrap: 3
+          - attachment: ""
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 1
+            wrap: 0
+      uniforms:
+        - uniform: u_Material.normal
+          guuid: 1865433938
+          type: 7
+          attrId: 2100618872
+          data: 0
+        - uniform: u_Model
+          guuid: 1098073538
+          type: 9
+          attrId: 1521982780
+          data: 0
+      textures:
+        []
+      framebuffers:
+        []
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Run
+          attrType: input
+          id: 2087952549
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 492158742
+          type: 1
+          data: 1
+        - attribute: u_Material.normal
+          attrType: input
+          id: 2100618872
+          type: 2
+          data: 1865433938
+        - attribute: u_Model
+          attrType: input
+          id: 1521982780
+          type: 2
+          data: 1098073538
+        - attribute: Finished
+          attrType: output
+          id: 1616262079
+          type: 3
+        - attribute: Framebuffer
+          attrType: output
+          id: 22180949
+          type: 1
+    - Node: ""
+      id: 1331983808
+      position: [118, 351]
+      type: 4
+      attributes:
+        - attribute: Start
+          attrType: output
+          id: 677932342
+          type: 3
+    - Node: ""
+      id: 2079536
+      position: [893, 313]
+      type: 6
+      attributes:
+        - attribute: End
+          attrType: input
+          id: 147224403
+          type: 3
+          data: 0
+  Links:
+    - Link: ""
+      id: 1941967617
+      from: 677932342
+      to: 2087952549
+    - Link: ""
+      id: 2088661554
+      from: 1616262079
+      to: 147224403

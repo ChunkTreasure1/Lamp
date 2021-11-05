@@ -27,26 +27,16 @@ namespace Lamp
 		{
 			switch (type)
 			{
-				case UniformType::Int:
-					return 0;
-				case UniformType::Float:
-					return 0.f;
-				case UniformType::Float2:
-					return glm::vec2(0.f);
-				case UniformType::Float3:
-					return glm::vec3(0.f);
-				case UniformType::Float4:
-					return glm::vec4(0.f);
-				case UniformType::Mat3:
-					return glm::mat3(1.f);
-				case UniformType::Mat4:
-					return glm::mat4(1.f);
-				case UniformType::Sampler2D:
-					return 0;
-				case UniformType::SamplerCube:
-					return 0;
-				case UniformType::RenderData:
-					return RenderData::Transform;
+				case UniformType::Int: return 0;
+				case UniformType::Float: return 0.f;
+				case UniformType::Float2: return glm::vec2(0.f);
+				case UniformType::Float3: return glm::vec3(0.f);
+				case UniformType::Float4: return glm::vec4(0.f);
+				case UniformType::Mat3: return glm::mat3(1.f);
+				case UniformType::Mat4: return glm::mat4(1.f);
+				case UniformType::Sampler2D: return 0;
+				case UniformType::SamplerCube: return 0;
+				case UniformType::RenderData: return RenderData::Transform;
 				default:
 					return -1;
 			}
@@ -275,11 +265,8 @@ namespace Lamp
 				unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
 				unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
 
-				if (input->type != RenderAttributeType::Pass)
-				{
-					pinColor = Utils::GetTypeColor(input->type);
-					pinHoverColor = Utils::GetTypeHoverColor(input->type);
-				}
+				pinColor = Utils::GetTypeColor(input->type);
+				pinHoverColor = Utils::GetTypeHoverColor(input->type);
 
 				ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
 				ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
@@ -404,47 +391,48 @@ namespace Lamp
 		}
 		out << YAML::EndMap; //target framebuffer
 
-		out << YAML::Key << "staticUniforms" << YAML::BeginSeq;
+		out << YAML::Key << "uniforms" << YAML::BeginSeq;
 		{
-			for (const auto& staticUniformPair : specification.staticUniforms)
+			for (const auto& uniformPair : specification.uniforms)
 			{
-				const auto& staticUniformSpec = staticUniformPair.second;
+				const auto& uniformSpec = uniformPair.second.first;
 
 				out << YAML::BeginMap;
-				out << YAML::Key << "staticUniform" << YAML::Value << staticUniformSpec.name;
+				out << YAML::Key << "uniform" << YAML::Value << uniformSpec.name;
 
-				LP_SERIALIZE_PROPERTY(guuid, staticUniformPair.first, out);
-				LP_SERIALIZE_PROPERTY(type, (uint32_t)staticUniformSpec.type, out);
+				LP_SERIALIZE_PROPERTY(guuid, uniformPair.first, out);
+				LP_SERIALIZE_PROPERTY(type, (uint32_t)uniformSpec.type, out);
+				LP_SERIALIZE_PROPERTY(attrId, uniformPair.second.second, out);
 
-				switch (staticUniformSpec.type)
+				switch (uniformSpec.type)
 				{
 					case UniformType::Int:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out);
 						break;
 					}
 
 					case UniformType::Float:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<float>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<float>(uniformSpec.data), out);
 						break;
 					}
 
 					case UniformType::Float2:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec2>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec2>(uniformSpec.data), out);
 						break;
 					}
 
 					case UniformType::Float3:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec3>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec3>(uniformSpec.data), out);
 						break;
 					}
 
 					case UniformType::Float4:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec4>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec4>(uniformSpec.data), out);
 						break;
 					}
 
@@ -460,19 +448,19 @@ namespace Lamp
 
 					case UniformType::Sampler2D:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out);
 						break;
 					}
 
 					case UniformType::SamplerCube:
 					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out);
 						break;
 					}
 
 					case UniformType::RenderData:
 					{
-						LP_SERIALIZE_PROPERTY(data, (uint32_t)std::any_cast<RenderData>(staticUniformSpec.data), out);
+						LP_SERIALIZE_PROPERTY(data, (uint32_t)std::any_cast<RenderData>(uniformSpec.data), out);
 						break;
 					}
 				}
@@ -480,25 +468,7 @@ namespace Lamp
 				out << YAML::EndMap;
 			}
 		}
-		out << YAML::EndSeq; //static uniforms
-
-		out << YAML::Key << "dynamicUniforms" << YAML::BeginSeq;
-		{
-			for (const auto& dynUniformPair : specification.dynamicUniforms)
-			{
-				const auto& dynUniformSpec = dynUniformPair.second.first;
-
-				out << YAML::BeginMap;
-				out << YAML::Key << "dynamicUniform" << YAML::Value << dynUniformSpec.name;
-
-				LP_SERIALIZE_PROPERTY(guuid, dynUniformPair.first, out);
-				LP_SERIALIZE_PROPERTY(type, (uint32_t)dynUniformSpec.type, out);
-				LP_SERIALIZE_PROPERTY(attrId, dynUniformPair.second.second, out);
-
-				out << YAML::EndMap;
-			}
-		}
-		out << YAML::EndSeq; //dynamic uniforms
+		out << YAML::EndSeq; //uniforms
 
 		out << YAML::Key << "textures" << YAML::BeginSeq;
 		{
@@ -617,14 +587,17 @@ namespace Lamp
 		}
 
 		//static uniforms
-		YAML::Node staticUniformsNode = node["staticUniforms"];
+		YAML::Node uniformsNode = node["uniforms"];
 
-		for (const auto entry : staticUniformsNode)
+		for (const auto entry : uniformsNode)
 		{
-			std::string uName = entry["staticUniform"].as<std::string>();
+			std::string uName = entry["uniform"].as<std::string>();
 			UniformType uType = (UniformType)entry["type"].as<uint32_t>();
 			GraphUUID guuid = entry["guuid"].as<GraphUUID>();
 			std::any uData;
+
+			GraphUUID attrId;
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
 
 			switch (uType)
 			{
@@ -674,23 +647,7 @@ namespace Lamp
 					break;
 			}
 
-			specification.staticUniforms.emplace(guuid, PassStaticUniformSpecification(uName, uType, uData));
-		}
-
-		//dynamic uniforms
-		YAML::Node dynamicUniformsNode = node["dynamicUniforms"];
-		for (const auto entry : dynamicUniformsNode)
-		{
-			std::string uName = entry["dynamicUniform"].as<std::string>();
-			UniformType uType = (UniformType)entry["type"].as<uint32_t>();
-
-			GraphUUID attrId;
-			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
-
-			GraphUUID guuid;
-			LP_DESERIALIZE_PROPERTY(guuid, guuid, entry, 0);
-
-			specification.dynamicUniforms.emplace(guuid, std::make_pair(PassDynamicUniformSpecification(uName, uType, nullptr), attrId));
+			specification.uniforms.emplace(guuid, std::make_pair(PassUniformSpecification(uName, uType, uData), attrId));
 		}
 
 		//textures
@@ -818,7 +775,7 @@ namespace Lamp
 
 		for (const auto& uniform : renderPassSpec.renderShader->GetSpecification().uniforms)
 		{
-			PassUnifromSpecification spec{ uniform.name, uniform.type, uniform.data, uniform.id };
+			PassUniformSpecification spec{ uniform.name, uniform.type, uniform.data, uniform.id };
 
 
 			GraphUUID uniformId = GraphUUID();
@@ -849,7 +806,7 @@ namespace Lamp
 			auto& uniform = uniformPair.second.first;
 
 			ImGui::PushID(uniform.name.c_str());
-			uint32_t id = 0;
+			uint32_t stackId = 0;
 
 			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(uniformPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 
@@ -869,7 +826,7 @@ namespace Lamp
 
 			int currentlySelectedType = (int)uniform.type;
 
-			std::string comboId = "##" + std::to_string(id++);
+			std::string comboId = "##" + std::to_string(stackId++);
 			if (ImGui::Combo(comboId.c_str(), &currentlySelectedType, uniformTypes, IM_ARRAYSIZE(uniformTypes)))
 			{
 				uniform.type = (UniformType)currentlySelectedType;
@@ -882,7 +839,7 @@ namespace Lamp
 			{
 				if (uniform.type != UniformType::RenderData)
 				{
-					std::string inputId = "##" + std::to_string(id++);
+					std::string inputId = "##" + std::to_string(stackId++);
 					switch (uniform.type)
 					{
 						case UniformType::Int: ImGui::InputInt(inputId.c_str(), &std::any_cast<int&>(uniform.data)); break;
@@ -899,7 +856,7 @@ namespace Lamp
 				else
 				{
 					static const char* renderDataTypes[] = { "Transform", "Data", "Material", "Id" };
-					std::string dTypeId = "##" + std::to_string(id++);
+					std::string dTypeId = "##" + std::to_string(stackId++);
 					int currentlySelectedData = (int)std::any_cast<RenderData>(uniform.data);
 					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, renderDataTypes, IM_ARRAYSIZE(renderDataTypes)))
 					{

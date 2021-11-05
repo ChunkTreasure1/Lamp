@@ -13,14 +13,11 @@ namespace Lamp
 		spec.cullFace = CullFace::Front;
 		spec.TargetFramebuffer = shadowBuffer;
 		spec.drawType = DrawType::Forward;
-		spec.staticUniforms =
-		{
-			{ 0, { "u_Model", UniformType::RenderData, RenderData::Transform }},
-		};
 
-		spec.dynamicUniforms =
+		spec.uniforms =
 		{
-			{ 1, { { "u_ViewProjection", UniformType::Mat4, RegisterData(&viewProjection) }, 2 } }
+			{ 0, {{ "u_Model", UniformType::RenderData, RenderData::Transform }, 1}},
+			{ 2, { { RegisterData(&viewProjection), "u_ViewProjection", UniformType::Mat4 }, 3 } }
 		};
 
 		spec.renderShader = ShaderLibrary::GetShader("dirShadow");

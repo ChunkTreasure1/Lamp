@@ -18,6 +18,13 @@ namespace Lamp
 		Ref<Framebuffer> framebuffer;
 
 	private:
+		void SetupUniforms();
+		void DrawUniforms();
+
+	private:
+		std::unordered_map<GraphUUID, std::pair<PassUniformSpecification, GraphUUID>> m_uniforms;
+		Ref<RenderInputAttribute> m_runAttribute;
+
 		uint32_t m_workGroupX;
 		uint32_t m_workGroupY;
 		Ref<Shader> m_computeShader;

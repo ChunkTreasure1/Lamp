@@ -40,7 +40,7 @@ namespace Sandbox
 
 		//Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>();
-		Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/main.rendergraph"));
+		Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/testGraph.rendergraph"));
 		Renderer::GetRenderGraph()->Start();
 
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));

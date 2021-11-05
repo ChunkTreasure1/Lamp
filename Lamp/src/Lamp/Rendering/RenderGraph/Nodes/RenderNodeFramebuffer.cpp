@@ -63,6 +63,8 @@ namespace Lamp
 
 		ImNodes::BeginNode(id);
 
+		ImGui::PushItemWidth(200.f);
+
 		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
 		if (pos.x != position.x || pos.y != position.y)
 		{
@@ -73,11 +75,11 @@ namespace Lamp
 		ImGui::Text("Framebuffer node");
 		ImNodes::EndNodeTitleBar();
 
-		ImGui::PushItemWidth(100.f);
+		ImGui::PushItemWidth(200.f);
 
-		const float maxOffset = 130.f;
+		const float maxOffset = 90.f;
 
-		float offset = maxOffset - ImGui::CalcTextSize("Internal framebuffer").x;
+		float offset = 130.f - ImGui::CalcTextSize("Internal framebuffer").x;
 		ImGui::TextUnformatted("Internal framebuffer");
 		
 		ImGui::SameLine();
@@ -99,7 +101,7 @@ namespace Lamp
 
 		if (m_UseInternalBuffers)
 		{
-			ImGui::PushItemWidth(150.f);
+			ImGui::PushItemWidth(158.f);
 			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), (int)m_BufferNames.size()))
 			{
 				framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
@@ -109,72 +111,89 @@ namespace Lamp
 		}
 		else
 		{
-			offset = maxOffset - ImGui::CalcTextSize("Viewport size").x;
-			ImGui::TextUnformatted("Viewport size");
+			const float treeWidth = ImNodes::GetNodeDimensions(id).x - 15.f;
 
-			ImGui::SameLine();
-			UI::ShiftCursor(offset, 0.f);
-
-			if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_UseScreenSize))
+			if (UI::TreeNodeFramed("Settings", treeWidth))
 			{
-				if (m_UseScreenSize)
+				offset = maxOffset - ImGui::CalcTextSize("Viewport size").x;
+				ImGui::TextUnformatted("Viewport size");
+
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_useScreenSize))
 				{
-					Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
-				}
-				else
-				{
-					auto& vector = Renderer::s_pSceneData->useViewportSize;
-					if (auto it = std::find(vector.begin(), vector.end(), framebuffer); it != vector.end())
+					if (m_useScreenSize)
 					{
-						vector.erase(it);
+						Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
+					}
+					else
+					{
+						auto& vector = Renderer::s_pSceneData->useViewportSize;
+						if (auto it = std::find(vector.begin(), vector.end(), framebuffer); it != vector.end())
+						{
+							vector.erase(it);
+						}
 					}
 				}
-			}
 
-			auto& specification = framebuffer->GetSpecification();
-			if (!m_UseScreenSize)
-			{
-				int width = static_cast<int>(specification.Width);
+				auto& specification = framebuffer->GetSpecification();
+				if (!m_useScreenSize)
+				{
+					int width = static_cast<int>(specification.Width);
 
-				offset = maxOffset - ImGui::CalcTextSize("Width").x;
-				ImGui::TextUnformatted("Width");
+					offset = maxOffset - ImGui::CalcTextSize("Width").x;
+					ImGui::TextUnformatted("Width");
+
+					ImGui::SameLine();
+					UI::ShiftCursor(offset, 0.f);
+
+					if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &width))
+					{
+						specification.Width = width;
+					}
+
+					offset = maxOffset - ImGui::CalcTextSize("Height").x;
+					ImGui::TextUnformatted("Height");
+
+					ImGui::SameLine();
+					UI::ShiftCursor(offset, 0.f);
+
+					int height = static_cast<int>(specification.Height);
+					if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &height))
+					{
+						specification.Height = height;
+					}
+				}
+
+				int samples = static_cast<int>(specification.Samples);
+				offset = maxOffset - ImGui::CalcTextSize("Samples").x;
+				ImGui::TextUnformatted("Samples");
 
 				ImGui::SameLine();
 				UI::ShiftCursor(offset, 0.f);
 
-				if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &width))
+				if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &samples))
 				{
-					specification.Width = width;
+					specification.Samples = samples;
 				}
 
-				offset = maxOffset - ImGui::CalcTextSize("Height").x;
-				ImGui::TextUnformatted("Height");
+				offset = maxOffset - ImGui::CalcTextSize("Clear color").x;
+				ImGui::TextUnformatted("Clear color");
 
 				ImGui::SameLine();
 				UI::ShiftCursor(offset, 0.f);
 
-				int height = static_cast<int>(specification.Height);
-				if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &height))
-				{
-					specification.Height = height;
-				}
+				ImGui::ColorEdit4(("##" + std::to_string(stackId++)).c_str(), glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
+
+				UI::TreeNodePop();
 			}
 
-			int samples = static_cast<int>(specification.Samples);
-			if (ImGui::InputInt("Samples", &samples))
-			{
-				specification.Samples = samples;
-			}
-
-			ImGui::PushItemWidth(200.f);
-			ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
-			ImGui::PopItemWidth();
-
-			if (ImGui::TreeNode("Attachments"))
+			/*if (ImGui::TreeNode("Attachments"))
 			{
 				if (ImGui::Button("Add"))
 				{
-					specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
+					specification.Attachments.Attachments.emplace_back();
 				}
 
 				ImGui::PushItemWidth(200.f);
@@ -232,11 +251,11 @@ namespace Lamp
 				ImGui::PopItemWidth();
 
 				ImGui::TreePop();
-			}
+			}*/
 		}
 
 		DrawAttributes(inputs, outputs);
-
+		ImGui::PopItemWidth();
 		ImNodes::EndNode();
 
 		ImGui::PopID();
@@ -253,7 +272,7 @@ namespace Lamp
 
 		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, out);
 		LP_SERIALIZE_PROPERTY(selectedBuffer, m_SelectedBufferName, out);
-		LP_SERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, out);
+		LP_SERIALIZE_PROPERTY(useViewportSize, m_useScreenSize, out);
 
 		LP_SERIALIZE_PROPERTY(width, specification.Width, out);
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
@@ -299,13 +318,13 @@ namespace Lamp
 		else
 		{
 			auto& specification = framebuffer->GetSpecification();
-			LP_DESERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, node, false);
+			LP_DESERIALIZE_PROPERTY(useViewportSize, m_useScreenSize, node, false);
 			LP_DESERIALIZE_PROPERTY(width, specification.Width, node, 0);
 			LP_DESERIALIZE_PROPERTY(height, specification.Height, node, 0);
 			LP_DESERIALIZE_PROPERTY(samples, specification.Samples, node, 0);
 			LP_DESERIALIZE_PROPERTY(clearColor, specification.ClearColor, node, glm::vec4(0.f));
 
-			if (m_UseScreenSize)
+			if (m_useScreenSize)
 			{
 				Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
 			}
