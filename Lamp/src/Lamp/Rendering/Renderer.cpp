@@ -44,6 +44,7 @@ namespace Lamp
 		DynamicUniformRegistry::AddUniform("Aspect ratio", UniformType::Float, RegisterData(&s_pSceneData->aspectRatio));
 		DynamicUniformRegistry::AddUniform("Tan Half FOV", UniformType::Float, RegisterData(&s_pSceneData->tanHalfFOV));
 		DynamicUniformRegistry::AddUniform("SSAO Strength", UniformType::Float, RegisterData(&s_pSceneData->ssaoData.strength));
+		DynamicUniformRegistry::AddUniform("Point light count", UniformType::Int, RegisterData(&s_pSceneData->pointLightCount));
 	}
 
 	void Renderer::Shutdown()

@@ -7,6 +7,7 @@
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -41,7 +42,9 @@ namespace Lamp
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
 				auto& renderPassSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
-				renderPassSpec.framebuffers[id].first.framebuffer = framebuffer;
+
+				auto buffer = Utils::GetSpecificationById<PassFramebufferSpecification>(renderPassSpec.framebuffers, id);
+				buffer->framebuffer = framebuffer;
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 			{

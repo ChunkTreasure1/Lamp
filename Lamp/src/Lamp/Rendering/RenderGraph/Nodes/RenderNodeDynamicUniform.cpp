@@ -6,6 +6,7 @@
 
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -40,9 +41,9 @@ namespace Lamp
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
 				auto& renderSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
 				
-				renderSpec.uniforms[id].first.pData = pData;
-				renderSpec.uniforms[id].first.type = uniformType;
-
+				auto uniform = Utils::GetSpecificationById<PassUniformSpecification>(renderSpec.uniforms, id);
+				uniform->pData = pData;
+				uniform->type = uniformType;
 			}
 		}
 	}

@@ -22,8 +22,8 @@ namespace Lamp
 		void DrawUniforms();
 
 	private:
-		std::unordered_map<GraphUUID, std::pair<PassUniformSpecification, GraphUUID>> m_uniforms;
-		Ref<RenderInputAttribute> m_runAttribute;
+		std::vector<PassUniformSpecification> m_uniforms;
+		std::vector<PassFramebufferSpecification> m_framebuffers;
 
 		uint32_t m_workGroupX;
 		uint32_t m_workGroupY;

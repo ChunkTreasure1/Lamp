@@ -44,9 +44,5 @@ namespace Lamp
 		FramebufferTextureSpecification* m_lastRenamingAttachmentSpec = nullptr;
 
 		std::vector<const char*> m_shaders;
-
-		//attributes
-		Ref<RenderInputAttribute> m_targetBufferAttribute;
-		Ref<RenderInputAttribute> m_runAttribute;
 	};
 }

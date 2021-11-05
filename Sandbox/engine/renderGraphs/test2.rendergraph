@@ -1,0 +1,103 @@
+RenderGraph:
+  name: New
+  handle: 16775450576561417092
+  Nodes:
+    - Node: ""
+      id: 1175227124
+      position: [399, 102]
+      type: 0
+      name: ""
+      clearType: 3
+      drawType: 0
+      cullFace: 1
+      renderShader: ""
+      draw2D: false
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: false
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        attachments:
+          []
+      uniforms:
+        []
+      textures:
+        []
+      framebuffers:
+        []
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Run
+          attrType: input
+          id: 790724074
+          type: 3
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 765397178
+          type: 1
+          data: 1
+        - attribute: Finished
+          attrType: output
+          id: 1730775046
+          type: 3
+        - attribute: Framebuffer
+          attrType: output
+          id: 2093393672
+          type: 1
+    - Node: ""
+      id: 531101663
+      position: [863, 161]
+      type: 7
+      shader: lightCulling
+      attributes:
+        - attribute: Run
+          attrType: input
+          id: 571784337
+          type: 3
+          data: 0
+        - attribute: Depth
+          attrType: input
+          id: 1756433027
+          type: 1
+          data: 0
+        - attribute: u_BufferSize
+          attrType: input
+          id: 455724378
+          type: 2
+          data: 453202786
+        - attribute: u_DepthMap
+          attrType: input
+          id: 861524221
+          type: 2
+          data: 745347784
+        - attribute: u_LightCount
+          attrType: input
+          id: 1918965052
+          type: 2
+          data: 1984765159
+        - attribute: Finished
+          attrType: output
+          id: 761418141
+          type: 3
+    - Node: ""
+      id: 97039527
+      position: [180, 130]
+      type: 4
+      attributes:
+        - attribute: Start
+          attrType: output
+          id: 198013612
+          type: 3
+  Links:
+    - Link: ""
+      id: 1096597920
+      from: 1730775046
+      to: 571784337
+    - Link: ""
+      id: 954551990
+      from: 198013612
+      to: 790724074

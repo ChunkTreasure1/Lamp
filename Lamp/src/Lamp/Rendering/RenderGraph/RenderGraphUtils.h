@@ -38,5 +38,16 @@ namespace Lamp
 
 			return 0;
 		}
+
+		template<typename T, class Container>
+		static T* GetSpecificationById(Container& container, GraphUUID id)
+		{
+			if (auto it = std::find_if(container.begin(), container.end(), [&id](const T& item) { return item.id == id; }); it != container.end())
+			{
+				return &*it;
+			}
+
+			return nullptr;
+		}
 	}
 }

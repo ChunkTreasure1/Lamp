@@ -13,6 +13,7 @@ namespace Lamp
 		endAttr->pNode = this;
 		endAttr->name = "End";
 		endAttr->type = RenderAttributeType::Pass;
+		endAttr->shouldDraw = true;
 
 		inputs.push_back(endAttr);
 	}

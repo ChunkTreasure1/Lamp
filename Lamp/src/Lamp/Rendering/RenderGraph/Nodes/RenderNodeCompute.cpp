@@ -8,6 +8,8 @@
 #include "Lamp/Utility/UIUtility.h"
 #include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
+#include "Lamp/Utility/YAMLSerializationHelpers.h"
+
 #include <imnodes.h>
 
 namespace Lamp
@@ -36,23 +38,19 @@ namespace Lamp
 
 	void RenderNodeCompute::Initialize()
 	{
-		m_runAttribute = CreateRef<RenderInputAttribute>();
-		m_runAttribute->name = "Run";
-		m_runAttribute->pNode = this;
-		m_runAttribute->type = RenderAttributeType::Pass;
-
-		Ref<RenderInputAttribute> depthMap = CreateRef<RenderInputAttribute>();
-		depthMap->name = "Depth";
-		depthMap->pNode = this;
-		depthMap->type = RenderAttributeType::Framebuffer;
-
+		Ref<RenderInputAttribute> runAttr = CreateRef<RenderInputAttribute>();
+		runAttr->name = "Run";
+		runAttr->pNode = this;
+		runAttr->type = RenderAttributeType::Pass;
+		runAttr->shouldDraw = true;
+		
 		Ref<RenderOutputAttribute> activatedAttr = CreateRef<RenderOutputAttribute>();
 		activatedAttr->name = "Finished";
 		activatedAttr->pNode = this;
 		activatedAttr->type = RenderAttributeType::Pass;
+		activatedAttr->shouldDraw = true;
 
-		inputs.push_back(m_runAttribute);
-		inputs.push_back(depthMap);
+		inputs.push_back(runAttr);
 		outputs.push_back(activatedAttr);
 	}
 
@@ -126,32 +124,16 @@ namespace Lamp
 		}
 		else
 		{
-			for (auto& uniformPair : m_uniforms)
+			for (auto& uniform : m_uniforms)
 			{
-				FindAttributeByID(uniformPair.second.second)->shouldDraw = true;
+				if (IsAttributeLinked(FindAttributeByID(uniform.attributeId)))
+				{
+					FindAttributeByID(uniform.attributeId)->shouldDraw = true;
+				}
 			}
 		}
 
-		DrawAttributes({ m_runAttribute }, outputs);
-
-		for (const auto& input : inputs)
-		{
-			if (IsAttributeLinked(input) && input->shouldDraw)
-			{
-				unsigned int pinColor = Utils::GetTypeColor(input->type);
-				unsigned int pinHoverColor = Utils::GetTypeHoverColor(input->type);
-
-				ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
-				ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
-
-				ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
-				ImGui::TextUnformatted(input->name.c_str());
-				ImNodes::EndInputAttribute();
-
-				ImNodes::PopColorStyle();
-				ImNodes::PopColorStyle();
-			}
-		}
+		DrawAttributes(inputs, outputs);
 
 		ImGui::PopItemWidth();
 
@@ -170,9 +152,8 @@ namespace Lamp
 
 		if (m_computeShader)
 		{
-			for (const auto& uniformPairs : m_uniforms)
+			for (const auto& uniform : m_uniforms)
 			{
-				const auto& uniform = uniformPairs.second.first;
 				switch (uniform.type)
 				{
 					case UniformType::Int: m_computeShader->UploadInt(uniform.name, std::any_cast<int>(uniform.data)); break;
@@ -216,6 +197,37 @@ namespace Lamp
 	{
 		LP_SERIALIZE_PROPERTY(shader, m_computeShader->GetName(), out);
 
+		out << YAML::Key << "uniforms" << YAML::BeginSeq;
+
+		for (const auto& uniform : m_uniforms)
+		{
+			out << YAML::BeginMap;
+			out << YAML::Key << "uniform" << YAML::Value << uniform.name;
+
+			LP_SERIALIZE_PROPERTY(guuid, uniform.id, out);
+			LP_SERIALIZE_PROPERTY(type, (uint32_t)uniform.type, out);
+			LP_SERIALIZE_PROPERTY(attrId, uniform.attributeId, out);
+			LP_SERIALIZE_PROPERTY(uniformId, uniform.uniformId, out);
+
+			switch (uniform.type)
+			{
+				case UniformType::Int: LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniform.data), out); break;
+				case UniformType::Float: LP_SERIALIZE_PROPERTY(data, std::any_cast<float>(uniform.data), out); break;
+				case UniformType::Float2: LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec2>(uniform.data), out); break;
+				case UniformType::Float3: LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec3>(uniform.data), out); break;
+				case UniformType::Float4: LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec4>(uniform.data), out); break;
+				case UniformType::Mat3: break;
+				case UniformType::Mat4: break;
+				case UniformType::Sampler2D: LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniform.data), out); break;
+				case UniformType::SamplerCube: LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniform.data), out); break;
+				case UniformType::RenderData: LP_SERIALIZE_PROPERTY(data, (uint32_t)std::any_cast<RenderData>(uniform.data), out); break;
+			}
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+
 		SerializeAttributes(out);
 	}
 
@@ -225,6 +237,46 @@ namespace Lamp
 		if (!shader.empty())
 		{
 			m_computeShader = ShaderLibrary::GetShader(shader);
+		}
+
+		YAML::Node uniformsNode = node["uniforms"];
+
+		for (const auto entry : uniformsNode)
+		{
+			std::string uName = entry["uniform"].as<std::string>();
+			UniformType uType = (UniformType)entry["type"].as<uint32_t>();
+			GraphUUID guuid = entry["guuid"].as<GraphUUID>();
+			std::any uData;
+
+			GraphUUID attrId;
+			uint32_t uniformId;
+			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
+			LP_DESERIALIZE_PROPERTY(uniformId, uniformId, entry, 0);
+
+			switch (uType)
+			{
+				case Lamp::UniformType::Int: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0); break;
+				case Lamp::UniformType::Float: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0.f); break;
+				case Lamp::UniformType::Float2: LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec2(0.f)); break;
+				case Lamp::UniformType::Float3: LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec3(0.f)); break;
+				case Lamp::UniformType::Float4: LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec4(0.f)); break;
+				case Lamp::UniformType::Mat3: break;
+				case Lamp::UniformType::Mat4: break;
+				case Lamp::UniformType::Sampler2D: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0); break;
+				case Lamp::UniformType::SamplerCube: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0); break;
+				case Lamp::UniformType::RenderData:
+				{
+					uint32_t data;
+					LP_DESERIALIZE_PROPERTY(data, data, entry, 0);
+					uData = (RenderData)data;
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			m_uniforms.emplace_back(uName, uType, uData, uniformId, guuid, attrId);
 		}
 
 		//attributes
@@ -245,8 +297,7 @@ namespace Lamp
 
 			GraphUUID uniformId = GraphUUID();
 			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-
-			m_uniforms.emplace(uniformId, std::make_pair<>(spec, input->id));
+			m_uniforms.emplace_back(uniform.name, uniform.type, uniform.data, uniform.id, uniformId, input->id);
 
 			input->pNode = this;
 			input->name = uniform.name;
@@ -259,19 +310,19 @@ namespace Lamp
 
 	void RenderNodeCompute::DrawUniforms()
 	{
-		for (auto& uniformPair : m_uniforms)
+		for (auto& uniform : m_uniforms)
 		{
-			auto& uniform = uniformPair.second.first;
-
 			ImGui::PushID(uniform.name.c_str());
 			uint32_t stackId = 0;
 
-			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(uniformPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+			auto attribute = FindAttributeByID(uniform.attributeId);
+
+			ImNodesPinShape pinShape = IsAttributeLinked(attribute) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::DynamicUniform));
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::DynamicUniform));
 
-			FindAttributeByID(uniformPair.second.second)->shouldDraw = false;
-			ImNodes::BeginInputAttribute(uniformPair.second.second, pinShape);
+			attribute->shouldDraw = false;
+			ImNodes::BeginInputAttribute(uniform.attributeId, pinShape);
 
 			float offset = 90.f - ImGui::CalcTextSize(uniform.name.c_str()).x;
 			ImGui::Text(uniform.name.c_str());
@@ -292,7 +343,7 @@ namespace Lamp
 
 			ImGui::SameLine();
 
-			if (uniform.data.has_value() && !IsAttributeLinked(FindAttributeByID(uniformPair.second.second)))
+			if (uniform.data.has_value() && !IsAttributeLinked(attribute))
 			{
 				if (uniform.type != UniformType::RenderData)
 				{

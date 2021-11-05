@@ -15,7 +15,7 @@ namespace Lamp
 
 		if (GetNodeType() != RenderNodeType::Start)
 		{
-			cursorPos.x += ImNodes::GetNodeDimensions(id).x - 95.f;
+			cursorPos.x += ImNodes::GetNodeDimensions(id).x - 110.f;
 		}
 
 		if (!aInputs.empty())
@@ -25,21 +25,24 @@ namespace Lamp
 
 		for (auto& input : aInputs)
 		{
-			unsigned int pinColor = Utils::GetTypeColor(input->type);
-			unsigned int pinHoverColor = Utils::GetTypeHoverColor(input->type);
+			if (input->shouldDraw)
+			{
+				unsigned int pinColor = Utils::GetTypeColor(input->type);
+				unsigned int pinHoverColor = Utils::GetTypeHoverColor(input->type);
 
-			ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
-			ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
+				ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
+				ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
 
-			ImNodesPinShape pinShape = IsAttributeLinked(input) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+				ImNodesPinShape pinShape = IsAttributeLinked(input) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 
-			ImNodes::BeginInputAttribute(input->id, pinShape);
+				ImNodes::BeginInputAttribute(input->id, pinShape);
 
-			ImGui::Text(input->name.c_str());
+				ImGui::Text(input->name.c_str());
 
-			ImNodes::EndInputAttribute();
-			ImNodes::PopColorStyle();
-			ImNodes::PopColorStyle();
+				ImNodes::EndInputAttribute();
+				ImNodes::PopColorStyle();
+				ImNodes::PopColorStyle();
+			}
 		}
 
 		ImGui::SetCursorPos(cursorPos);
@@ -84,6 +87,9 @@ namespace Lamp
 			if (attrTypeS == "input")
 			{
 				Ref<RenderInputAttribute> inAttr = std::dynamic_pointer_cast<RenderInputAttribute>(attr);
+
+				LP_SERIALIZE_PROPERTY(shouldDraw, inAttr->shouldDraw, out);
+				
 				if (inAttr->data.type() == typeid(GraphUUID))
 				{
 					LP_SERIALIZE_PROPERTY(data, std::any_cast<GraphUUID>(inAttr->data), out);
@@ -104,7 +110,7 @@ namespace Lamp
 		{
 			SerializeBaseAttribute(input, "input", out);
 		}
-
+		
 		for (auto& output : outputs)
 		{
 			SerializeBaseAttribute(output, "output", out);
@@ -139,6 +145,7 @@ namespace Lamp
 			auto& inAttr = std::dynamic_pointer_cast<RenderInputAttribute>(attr);
 			GraphUUID id;
 			LP_DESERIALIZE_PROPERTY(data, id, node, (GraphUUID)0);
+			LP_DESERIALIZE_PROPERTY(shouldDraw, inAttr->shouldDraw, node, false);
 
 			inAttr->data = id;
 		}

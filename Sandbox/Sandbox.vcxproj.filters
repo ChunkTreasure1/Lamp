@@ -169,16 +169,10 @@
     <None Include="engine\shaders\ibl\skybox.glsl">
       <Filter>engine\shaders\ibl</Filter>
     </None>
-    <None Include="engine\shaders\lineShader.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
     <None Include="engine\shaders\main\composite.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
     <None Include="engine\shaders\main\lightCulling.glsl">
-      <Filter>engine\shaders\main</Filter>
-    </None>
-    <None Include="engine\shaders\main\lightDebug.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
     <None Include="engine\shaders\main\pbrEditor.glsl">
@@ -190,9 +184,6 @@
     <None Include="engine\shaders\main\screenSpaceSSS.glsl">
       <Filter>engine\shaders\main</Filter>
     </None>
-    <None Include="engine\shaders\main\ssao.glsl">
-      <Filter>engine\shaders\main</Filter>
-    </None>
     <None Include="engine\shaders\postprocess\ssao.glsl">
       <Filter>engine\shaders\postprocess</Filter>
     </None>
@@ -200,9 +191,6 @@
       <Filter>engine\shaders\postprocess</Filter>
     </None>
     <None Include="engine\shaders\quad.glsl">
-      <Filter>engine\shaders</Filter>
-    </None>
-    <None Include="engine\shaders\selection.glsl">
       <Filter>engine\shaders</Filter>
     </None>
     <None Include="engine\shaders\shadows\dirShadow.glsl">

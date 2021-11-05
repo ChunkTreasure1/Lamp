@@ -20,6 +20,7 @@
 namespace Lamp
 {
 	static const GraphUUID targetBufferId = GraphUUID(1);
+	static const uint32_t framebufferLocation = 1;
 
 	namespace Utils
 	{
@@ -60,7 +61,7 @@ namespace Lamp
 	{
 		renderPass = CreateRef<RenderPass>();
 		FramebufferSpecification spec;
-		const_cast<RenderPassSpecification&>(renderPass->GetSpecification()).TargetFramebuffer = Framebuffer::Create(spec);
+		const_cast<RenderPassSpecification&>(renderPass->GetSpecification()).targetFramebuffer = Framebuffer::Create(spec);
 
 		Ref<RenderOutputAttribute> activated = CreateRef<RenderOutputAttribute>();
 		activated->name = "Finished";
@@ -70,7 +71,7 @@ namespace Lamp
 		outputs.push_back(activated);
 
 		Ref<RenderOutputAttribute> output = CreateRef<RenderOutputAttribute>();
-		output->name = "Framebuffer";
+		output->name = "Output buffer";
 		output->pNode = this;
 		output->type = RenderAttributeType::Framebuffer;
 
@@ -80,17 +81,18 @@ namespace Lamp
 		input->name = "Run";
 		input->pNode = this;
 		input->type = RenderAttributeType::Pass;
+		input->shouldDraw = true;
 
-		m_runAttribute = input;
 		inputs.push_back(input);
 
-		m_targetBufferAttribute = CreateRef<RenderInputAttribute>();
-		m_targetBufferAttribute->name = "Target framebuffer";
-		m_targetBufferAttribute->pNode = this;
-		m_targetBufferAttribute->data = targetBufferId;
-		m_targetBufferAttribute->type = RenderAttributeType::Framebuffer;
+		Ref<RenderInputAttribute> targetBuffer = CreateRef<RenderInputAttribute>();
+		targetBuffer->name = "Target framebuffer";
+		targetBuffer->pNode = this;
+		targetBuffer->data = targetBufferId;
+		targetBuffer->type = RenderAttributeType::Framebuffer;
+		targetBuffer->shouldDraw = true;
 
-		inputs.push_back(m_targetBufferAttribute);
+		inputs.push_back(targetBuffer);
 	}
 
 	void RenderNodePass::Start()
@@ -106,32 +108,30 @@ namespace Lamp
 			{
 				case RenderAttributeType::Framebuffer:
 				{
-
 					if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 					{
-						auto& passSpecification = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
+						auto& passSpec = passNode->renderPass->m_passSpecification;
 						GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
+
+						//If the id is one, we know it is the target framebuffer input
 						if (id == 1)
 						{
-							passSpecification.TargetFramebuffer = renderPass->GetSpecification().TargetFramebuffer;
+							passSpec.targetFramebuffer = renderPass->m_passSpecification.targetFramebuffer;
 						}
 						else
 						{
-							if (passSpecification.framebuffers.find(id) != passSpecification.framebuffers.end())
+							//Framebuffer inputs
+							if (auto buffer = Utils::GetSpecificationById<PassFramebufferSpecification>(passSpec.framebuffers, id))
 							{
-								passSpecification.framebuffers[id].first.framebuffer = renderPass->GetSpecification().TargetFramebuffer;
+								buffer->framebuffer = renderPass->m_passSpecification.targetFramebuffer;
 							}
 
-							if (passSpecification.framebufferCommands.find(id) != passSpecification.framebufferCommands.end())
+							//Framebuffer command inputs
+							if (auto it = Utils::GetSpecificationById<PassFramebufferCommandSpecification>(passSpec.framebufferCommands, id))
 							{
-								passSpecification.framebufferCommands[id].first.secondary = renderPass->GetSpecification().TargetFramebuffer;
+								it->secondary = renderPass->m_passSpecification.targetFramebuffer;
 							}
 						}
-					}
-
-					if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
-					{
-						computeNode->framebuffer = renderPass->GetSpecification().TargetFramebuffer;
 					}
 
 					break;
@@ -154,7 +154,7 @@ namespace Lamp
 			m_shaders.push_back(shader->GetName().c_str());
 		}
 
-		auto& specification = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
+		auto& specification = renderPass->m_passSpecification;
 
 		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(74, 58, 232, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(64, 97, 255, 255));
@@ -184,7 +184,7 @@ namespace Lamp
 		UI::ShiftCursor(offset, 0.f);
 
 		std::string nameId = "##name" + nodeId;
-		UI::InputText(nameId, specification.Name);
+		UI::InputText(nameId, specification.name);
 
 		const float treeWidth = ImNodes::GetNodeDimensions(id).x - 20.f;
 
@@ -195,7 +195,7 @@ namespace Lamp
 			UI::TreeNodePop();
 		}
 
-		if (!IsAttributeLinked(m_targetBufferAttribute))
+		if (!IsAttributeLinked(inputs[framebufferLocation]))
 		{
 			if (UI::TreeNodeFramed("Output Framebuffer", treeWidth))
 			{
@@ -207,7 +207,7 @@ namespace Lamp
 
 		if (UI::TreeNodeFramed("Uniforms", treeWidth))
 		{
-			bool showUniforms = specification.renderShader != nullptr && !specification.renderShader->GetSpecification().uniforms.empty();
+			bool showUniforms = specification.renderShader && !specification.renderShader->GetSpecification().uniforms.empty();
 
 			if (!showUniforms)
 			{
@@ -222,9 +222,14 @@ namespace Lamp
 		}
 		else
 		{
-			for (auto& uniformPair : renderPass->m_passSpecification.uniforms)
+			for (auto& uniform : renderPass->m_passSpecification.uniforms)
 			{
-				FindAttributeByID(uniformPair.second.second)->shouldDraw = true;
+				auto attr = FindAttributeByID(uniform.attributeId);
+
+				if (IsAttributeLinked(attr))
+				{
+					attr->shouldDraw = true;
+				}
 			}
 		}
 
@@ -236,9 +241,14 @@ namespace Lamp
 		}
 		else
 		{
-			for (auto& texturePair : renderPass->m_passSpecification.textures)
+			for (auto& texture : renderPass->m_passSpecification.textures)
 			{
-				FindAttributeByID(texturePair.second.second)->shouldDraw = true;
+				auto attr = FindAttributeByID(texture.attributeId);
+
+				if (IsAttributeLinked(attr))
+				{
+					attr->shouldDraw = true;
+				}
 			}
 		}
 
@@ -250,35 +260,17 @@ namespace Lamp
 		}
 		else
 		{
-			for (auto& bufferPair : renderPass->m_passSpecification.framebuffers)
+			for (auto& buffer : renderPass->m_passSpecification.framebuffers)
 			{
-				FindAttributeByID(bufferPair.second.second)->shouldDraw = true;
+				auto attr = FindAttributeByID(buffer.attributeId);
+				if (IsAttributeLinked(attr))
+				{
+					attr->shouldDraw = true;
+				}
 			}
 		}
 
-		DrawAttributes({ m_runAttribute, m_targetBufferAttribute }, outputs);
-
-		for (const auto& input : inputs)
-		{
-			if (IsAttributeLinked(input) && input->shouldDraw)
-			{
-				unsigned int pinColor = ImNodes::GetStyle().Colors[ImNodesCol_Pin];
-				unsigned int pinHoverColor = ImNodes::GetStyle().Colors[ImNodesCol_PinHovered];
-
-				pinColor = Utils::GetTypeColor(input->type);
-				pinHoverColor = Utils::GetTypeHoverColor(input->type);
-
-				ImNodes::PushColorStyle(ImNodesCol_Pin, pinColor);
-				ImNodes::PushColorStyle(ImNodesCol_PinHovered, pinHoverColor);
-
-				ImNodes::BeginInputAttribute(input->id, ImNodesPinShape_TriangleFilled);
-				ImGui::TextUnformatted(input->name.c_str());
-				ImNodes::EndInputAttribute();
-
-				ImNodes::PopColorStyle();
-				ImNodes::PopColorStyle();
-			}
-		}
+		DrawAttributes(inputs, outputs);
 
 		ImGui::PopItemWidth();
 
@@ -300,12 +292,12 @@ namespace Lamp
 				continue;
 			}
 
-			if (link->pInput == nullptr)
+			if (!link->pInput)
 			{
 				LP_CORE_ERROR("Input attribute is null!");
 				continue;
 			}
-			if (link->pInput->pNode == nullptr)
+			if (!link->pInput->pNode)
 			{
 				LP_CORE_ERROR("Input node is null!");
 				continue;
@@ -313,33 +305,9 @@ namespace Lamp
 
 			switch (link->pInput->pNode->GetNodeType())
 			{
-				case RenderNodeType::Pass:
-				{
-					if (link->pInput->type == RenderAttributeType::Pass)
-					{
-						link->pInput->pNode->Activate(value);
-					}
-					break;
-				}
-
-				case RenderNodeType::Compute:
-				{
-					if (link->pInput->type == RenderAttributeType::Pass)
-					{
-						link->pInput->pNode->Activate(value);
-					}
-					break;
-				}
-
-				case RenderNodeType::End:
-				{
-					if (link->pInput->type == RenderAttributeType::Pass)
-					{
-						link->pInput->pNode->Activate(renderPass->GetSpecification().TargetFramebuffer);
-					}
-					break;
-				}
-
+				case RenderNodeType::Pass: link->pInput->pNode->Activate(value); break;
+				case RenderNodeType::Compute: link->pInput->pNode->Activate(value); break;
+				case RenderNodeType::End: link->pInput->pNode->Activate(renderPass->GetSpecification().targetFramebuffer); break;
 				default:
 					break;
 			}
@@ -350,7 +318,7 @@ namespace Lamp
 	{
 		const auto& specification = renderPass->GetSpecification();
 
-		LP_SERIALIZE_PROPERTY(name, specification.Name, out);
+		LP_SERIALIZE_PROPERTY(name, specification.name, out);
 		LP_SERIALIZE_PROPERTY(clearType, (uint32_t)specification.clearType, out);
 		LP_SERIALIZE_PROPERTY(drawType, (uint32_t)specification.drawType, out);
 		LP_SERIALIZE_PROPERTY(cullFace, (uint32_t)specification.cullFace, out);
@@ -361,7 +329,7 @@ namespace Lamp
 		out << YAML::Key << "targetFramebuffer" << YAML::Value;
 		out << YAML::BeginMap;
 		{
-			const auto& targetBuffSpec = specification.TargetFramebuffer->GetSpecification();
+			const auto& targetBuffSpec = specification.targetFramebuffer->GetSpecification();
 
 			LP_SERIALIZE_PROPERTY(useViewportSize, m_UseViewportSize, out);
 			LP_SERIALIZE_PROPERTY(width, targetBuffSpec.Width, out);
@@ -375,7 +343,7 @@ namespace Lamp
 				{
 					out << YAML::BeginMap;
 					{
-						out << YAML::Key << "attachment" << YAML::Value << "";
+						out << YAML::Key << "attachment" << YAML::Value << att.name;
 
 						LP_SERIALIZE_PROPERTY(borderColor, att.BorderColor, out);
 						LP_SERIALIZE_PROPERTY(multisampled, att.MultiSampled, out);
@@ -393,76 +361,28 @@ namespace Lamp
 
 		out << YAML::Key << "uniforms" << YAML::BeginSeq;
 		{
-			for (const auto& uniformPair : specification.uniforms)
+			for (const auto& uniformSpec : specification.uniforms)
 			{
-				const auto& uniformSpec = uniformPair.second.first;
-
 				out << YAML::BeginMap;
 				out << YAML::Key << "uniform" << YAML::Value << uniformSpec.name;
 
-				LP_SERIALIZE_PROPERTY(guuid, uniformPair.first, out);
+				LP_SERIALIZE_PROPERTY(guuid, uniformSpec.id, out);
 				LP_SERIALIZE_PROPERTY(type, (uint32_t)uniformSpec.type, out);
-				LP_SERIALIZE_PROPERTY(attrId, uniformPair.second.second, out);
+				LP_SERIALIZE_PROPERTY(attrId, uniformSpec.attributeId, out);
+				LP_SERIALIZE_PROPERTY(uniformId, uniformSpec.uniformId, out);
 
 				switch (uniformSpec.type)
 				{
-					case UniformType::Int:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::Float:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<float>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::Float2:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec2>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::Float3:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec3>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::Float4:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec4>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::Mat3:
-					{
-						break;
-					}
-
-					case UniformType::Mat4:
-					{
-						break;
-					}
-
-					case UniformType::Sampler2D:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::SamplerCube:
-					{
-						LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out);
-						break;
-					}
-
-					case UniformType::RenderData:
-					{
-						LP_SERIALIZE_PROPERTY(data, (uint32_t)std::any_cast<RenderData>(uniformSpec.data), out);
-						break;
-					}
+					case UniformType::Int: LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out); break;
+					case UniformType::Float: LP_SERIALIZE_PROPERTY(data, std::any_cast<float>(uniformSpec.data), out); break;
+					case UniformType::Float2: LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec2>(uniformSpec.data), out); break;
+					case UniformType::Float3: LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec3>(uniformSpec.data), out); break;
+					case UniformType::Float4: LP_SERIALIZE_PROPERTY(data, std::any_cast<glm::vec4>(uniformSpec.data), out); break;
+					case UniformType::Mat3: break;
+					case UniformType::Mat4: break;
+					case UniformType::Sampler2D: LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out); break;
+					case UniformType::SamplerCube: LP_SERIALIZE_PROPERTY(data, std::any_cast<int>(uniformSpec.data), out); break;
+					case UniformType::RenderData: LP_SERIALIZE_PROPERTY(data, (uint32_t)std::any_cast<RenderData>(uniformSpec.data), out); break;
 				}
 
 				out << YAML::EndMap;
@@ -473,16 +393,14 @@ namespace Lamp
 		out << YAML::Key << "textures" << YAML::BeginSeq;
 		{
 			uint32_t texCount = 0;
-			for (const auto& texturePair : specification.textures)
+			for (const auto& textureSpec : specification.textures)
 			{
-				const auto& textureSpec = texturePair.second.first;
-
 				out << YAML::BeginMap;
 				out << YAML::Key << "texture" << YAML::Value << textureSpec.name;
 
-				LP_SERIALIZE_PROPERTY(guuid, texturePair.first, out);
+				LP_SERIALIZE_PROPERTY(guuid, textureSpec.id, out);
 				LP_SERIALIZE_PROPERTY(bindSlot, textureSpec.bindSlot, out);
-				LP_SERIALIZE_PROPERTY(attrId, texturePair.second.second, out);
+				LP_SERIALIZE_PROPERTY(attrId, textureSpec.attributeId, out);
 
 				out << YAML::EndMap;
 				texCount++;
@@ -491,15 +409,13 @@ namespace Lamp
 		out << YAML::EndSeq; //textures
 
 		out << YAML::Key << "framebuffers" << YAML::BeginSeq;
-		for (const auto& framebufferPair : specification.framebuffers)
+		for (const auto& framebufferSpec : specification.framebuffers)
 		{
-			const auto& framebufferSpec = framebufferPair.second.first;
-
 			out << YAML::BeginMap;
 			out << YAML::Key << "framebuffer" << YAML::Value << framebufferSpec.name;
 
-			LP_SERIALIZE_PROPERTY(guuid, framebufferPair.first, out);
-			LP_SERIALIZE_PROPERTY(attrId, framebufferPair.second.second, out);
+			LP_SERIALIZE_PROPERTY(guuid, framebufferSpec.id, out);
+			LP_SERIALIZE_PROPERTY(attrId, framebufferSpec.attributeId, out);
 
 			out << YAML::Key << "attachments" << YAML::BeginSeq;
 			for (const auto& attachment : framebufferSpec.attachments)
@@ -518,15 +434,13 @@ namespace Lamp
 		out << YAML::EndSeq; //framebuffers
 
 		out << YAML::Key << "framebufferCommands" << YAML::BeginSeq;
-		for (const auto& commandPair : specification.framebufferCommands)
+		for (const auto& commandSpec : specification.framebufferCommands)
 		{
-			const auto& commandSpec = commandPair.second.first;
-
 			out << YAML::BeginMap;
 			out << YAML::Key << "command" << YAML::Value << commandSpec.name;
 
-			LP_SERIALIZE_PROPERTY(guuid, commandPair.first, out);
-			LP_SERIALIZE_PROPERTY(attrId, commandPair.second.second, out);
+			LP_SERIALIZE_PROPERTY(guuid, commandSpec.id, out);
+			LP_SERIALIZE_PROPERTY(attrId, commandSpec.attributeId, out);
 			LP_SERIALIZE_PROPERTY(commandType, (uint32_t)commandSpec.command, out);
 
 			out << YAML::EndMap;
@@ -540,7 +454,7 @@ namespace Lamp
 	{
 		auto& specification = const_cast<RenderPassSpecification&>(renderPass->GetSpecification());
 
-		specification.Name = node["name"].as<std::string>();
+		specification.name = node["name"].as<std::string>();
 		specification.clearType = (ClearType)node["clearType"].as<uint32_t>();
 		specification.drawType = (DrawType)node["drawType"].as<uint32_t>();
 		specification.cullFace = (CullFace)node["cullFace"].as<uint32_t>();
@@ -556,7 +470,7 @@ namespace Lamp
 		YAML::Node bufferNode = node["targetFramebuffer"];
 
 		//target buffer
-		auto& targetBufferSpec = specification.TargetFramebuffer->GetSpecification();
+		auto& targetBufferSpec = specification.targetFramebuffer->GetSpecification();
 		LP_DESERIALIZE_PROPERTY(useViewportSize, m_UseViewportSize, bufferNode, false);
 		LP_DESERIALIZE_PROPERTY(width, targetBufferSpec.Width, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(height, targetBufferSpec.Height, bufferNode, 0);
@@ -575,18 +489,19 @@ namespace Lamp
 			att.TextureFormat = (FramebufferTextureFormat)entry["format"].as<uint32_t>();
 			att.TextureFiltering = (FramebufferTexureFiltering)entry["filtering"].as<uint32_t>();
 			att.TextureWrap = (FramebufferTextureWrap)entry["wrap"].as<uint32_t>();
+			att.name = entry["attachment"].as<std::string>();
 
 			targetBufferSpec.Attachments.Attachments.push_back(att);
 		}
 
-		specification.TargetFramebuffer = Framebuffer::Create(specification.TargetFramebuffer->GetSpecification());
+		specification.targetFramebuffer = Framebuffer::Create(specification.targetFramebuffer->GetSpecification());
 
 		if (m_UseViewportSize)
 		{
-			Renderer::s_pSceneData->useViewportSize.push_back(specification.TargetFramebuffer);
+			Renderer::s_pSceneData->useViewportSize.push_back(specification.targetFramebuffer);
 		}
 
-		//static uniforms
+		//uniforms
 		YAML::Node uniformsNode = node["uniforms"];
 
 		for (const auto entry : uniformsNode)
@@ -597,44 +512,21 @@ namespace Lamp
 			std::any uData;
 
 			GraphUUID attrId;
+			uint32_t uniformId;
 			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, 0);
+			LP_DESERIALIZE_PROPERTY(uniformId, uniformId, entry, 0);
 
 			switch (uType)
 			{
-				case Lamp::UniformType::Int:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0);
-					break;
-
-				case Lamp::UniformType::Float:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0.f);
-					break;
-
-				case Lamp::UniformType::Float2:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec2(0.f));
-					break;
-
-				case Lamp::UniformType::Float3:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec3(0.f));
-					break;
-
-				case Lamp::UniformType::Float4:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec4(0.f));
-					break;
-
-				case Lamp::UniformType::Mat3:
-					break;
-
-				case Lamp::UniformType::Mat4:
-					break;
-
-				case Lamp::UniformType::Sampler2D:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0);
-					break;
-
-				case Lamp::UniformType::SamplerCube:
-					LP_DESERIALIZE_PROPERTY(data, uData, entry, 0);
-					break;
-
+				case Lamp::UniformType::Int: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0); break;
+				case Lamp::UniformType::Float: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0.f); break;
+				case Lamp::UniformType::Float2: LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec2(0.f)); break;
+				case Lamp::UniformType::Float3: LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec3(0.f)); break;
+				case Lamp::UniformType::Float4: LP_DESERIALIZE_PROPERTY(data, uData, entry, glm::vec4(0.f)); break;
+				case Lamp::UniformType::Mat3: break;
+				case Lamp::UniformType::Mat4: break;
+				case Lamp::UniformType::Sampler2D: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0); break;
+				case Lamp::UniformType::SamplerCube: LP_DESERIALIZE_PROPERTY(data, uData, entry, 0); break;
 				case Lamp::UniformType::RenderData:
 				{
 					uint32_t data;
@@ -647,7 +539,7 @@ namespace Lamp
 					break;
 			}
 
-			specification.uniforms.emplace(guuid, std::make_pair(PassUniformSpecification(uName, uType, uData), attrId));
+			specification.uniforms.emplace_back(uName, uType, uData, uniformId, guuid, attrId);
 		}
 
 		//textures
@@ -663,7 +555,7 @@ namespace Lamp
 			LP_DESERIALIZE_PROPERTY(guuid, guuid, entry, 0);
 			name = entry["texture"].as<std::string>();
 
-			specification.textures.emplace(guuid, std::pair(PassTextureSpecification(nullptr, bindSlot, name), attrId));
+			specification.textures.emplace_back(nullptr, bindSlot, name, guuid, attrId);
 		}
 
 		//framebuffers
@@ -692,7 +584,7 @@ namespace Lamp
 				attachmentSpecs.push_back({ type, bindSlot, attachId });
 			}
 
-			specification.framebuffers.emplace(guuid, std::make_pair(PassFramebufferSpecification(nullptr, attachmentSpecs, name), attrId));
+			specification.framebuffers.emplace_back(nullptr, attachmentSpecs, name, guuid, attrId);
 		}
 
 		//framebuffer commands
@@ -708,7 +600,7 @@ namespace Lamp
 			LP_DESERIALIZE_PROPERTY(attrId, attrId, entry, (GraphUUID)0);
 			command = (FramebufferCommand)entry["commandType"].as<uint32_t>();
 
-			specification.framebufferCommands.emplace(guuid, std::make_pair(PassFramebufferCommandSpecification(specification.TargetFramebuffer, nullptr, command, name), attrId));
+			specification.framebufferCommands.emplace_back(renderPass->m_passSpecification.targetFramebuffer, nullptr, command, name, guuid, attrId);
 		}
 
 		//attributes
@@ -775,13 +667,10 @@ namespace Lamp
 
 		for (const auto& uniform : renderPassSpec.renderShader->GetSpecification().uniforms)
 		{
-			PassUniformSpecification spec{ uniform.name, uniform.type, uniform.data, uniform.id };
-
 
 			GraphUUID uniformId = GraphUUID();
 			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
-
-			renderPassSpec.uniforms.emplace(uniformId, std::make_pair<>(spec, input->id));
+			renderPassSpec.uniforms.emplace_back(uniform.name, uniform.type, uniform.data, uniform.id, uniformId, input->id);
 
 			input->pNode = this;
 			input->name = uniform.name;
@@ -790,10 +679,10 @@ namespace Lamp
 
 			inputs.push_back(input);
 		}
-		//std::sort(renderPassSpec.uniforms.begin(), renderPassSpec.uniforms.end(), [](const std::pair<GraphUUID, std::pair<PassUnifromSpecification, GraphUUID>>& first, const std::pair<GraphUUID, std::pair<PassUnifromSpecification, GraphUUID>>& second)
-		//	{
-		//		return first.second.first.id < second.second.first.id;
-		//	});
+		std::sort(renderPassSpec.uniforms.begin(), renderPassSpec.uniforms.end(), [](const PassUniformSpecification& first, const PassUniformSpecification& second)
+			{
+				return first.uniformId < second.uniformId;
+			});
 	}
 
 	void RenderNodePass::DrawUniforms()
@@ -801,33 +690,26 @@ namespace Lamp
 		auto& passSpec = renderPass->m_passSpecification;
 		auto& shaderSpec = const_cast<ShaderSpecification&>(passSpec.renderShader->GetSpecification());
 
-		for (auto& uniformPair : passSpec.uniforms)
+		for (auto& uniform : passSpec.uniforms)
 		{
-			auto& uniform = uniformPair.second.first;
+			auto attr = FindAttributeByID(uniform.attributeId);
 
 			ImGui::PushID(uniform.name.c_str());
 			uint32_t stackId = 0;
 
-			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(uniformPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+			ImNodesPinShape pinShape = IsAttributeLinked(attr) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::DynamicUniform));
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::DynamicUniform));
 
-			FindAttributeByID(uniformPair.second.second)->shouldDraw = false;
-			ImNodes::BeginInputAttribute(uniformPair.second.second, pinShape);
+			attr->shouldDraw = false;
+			ImNodes::BeginInputAttribute(attr->id, pinShape);
 
-			float offset = 90.f - ImGui::CalcTextSize(uniform.name.c_str()).x;
-			ImGui::Text(uniform.name.c_str());
-
-			ImGui::SameLine();
-			UI::ShiftCursor(offset, 0.f);
 			ImGui::PushItemWidth(100.f);
-			static const char* uniformTypes[] = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
+			static const std::vector<const char*> uniformTypes = { "Int", "Float", "Float2", "Float3", "Float4", "Mat3", "Mat4", "Sampler2D", "SamplerCube", "RenderData" };
 
 			int currentlySelectedType = (int)uniform.type;
-
-			std::string comboId = "##" + std::to_string(stackId++);
-			if (ImGui::Combo(comboId.c_str(), &currentlySelectedType, uniformTypes, IM_ARRAYSIZE(uniformTypes)))
+			if (Utils::DrawCombo(uniform.name, "##" + std::to_string(stackId++), uniformTypes, currentlySelectedType))
 			{
 				uniform.type = (UniformType)currentlySelectedType;
 				uniform.data = Utils::GetResetValue(uniform.type);
@@ -835,7 +717,7 @@ namespace Lamp
 
 			ImGui::SameLine();
 
-			if (uniform.data.has_value() && !IsAttributeLinked(FindAttributeByID(uniformPair.second.second)))
+			if (uniform.data.has_value() && !IsAttributeLinked(attr))
 			{
 				if (uniform.type != UniformType::RenderData)
 				{
@@ -967,7 +849,7 @@ namespace Lamp
 
 	void RenderNodePass::DrawOutputBuffer()
 	{
-		auto& specification = renderPass->GetSpecification().TargetFramebuffer->GetSpecification();
+		auto& specification = renderPass->GetSpecification().targetFramebuffer->GetSpecification();
 		const float maxWidth = 80.f;
 		const float treeWidth = ImNodes::GetNodeDimensions(id).x - 20.f;
 
@@ -983,12 +865,12 @@ namespace Lamp
 			{
 				if (m_UseViewportSize)
 				{
-					Renderer::s_pSceneData->useViewportSize.push_back(renderPass->GetSpecification().TargetFramebuffer);
+					Renderer::s_pSceneData->useViewportSize.push_back(renderPass->GetSpecification().targetFramebuffer);
 				}
 				else
 				{
 					auto& vector = Renderer::s_pSceneData->useViewportSize;
-					if (auto it = std::find(vector.begin(), vector.end(), renderPass->GetSpecification().TargetFramebuffer); it != vector.end())
+					if (auto it = std::find(vector.begin(), vector.end(), renderPass->GetSpecification().targetFramebuffer); it != vector.end())
 					{
 						vector.erase(it);
 					}
@@ -1183,7 +1065,7 @@ namespace Lamp
 
 					if (changed)
 					{
-						renderPass->GetSpecification().TargetFramebuffer->Invalidate();
+						renderPass->GetSpecification().targetFramebuffer->Invalidate();
 					}
 
 
@@ -1205,7 +1087,11 @@ namespace Lamp
 			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
 
 			GraphUUID texId = GraphUUID();
-			specification.textures.emplace(texId, std::make_pair(PassTextureSpecification(), input->id));
+			PassTextureSpecification texSpec;
+			texSpec.id = texId;
+			texSpec.attributeId = input->id;
+
+			specification.textures.push_back(texSpec);
 
 			input->data = texId;
 			input->pNode = this;
@@ -1215,28 +1101,28 @@ namespace Lamp
 			inputs.push_back(input);
 		}
 
-		for (auto& texturePair : specification.textures)
+		for (auto& textureSpec : specification.textures)
 		{
-			auto& textureSpec = texturePair.second.first;
-
 			ImGui::PushID(textureSpec.name.c_str());
 			uint32_t id = 0;
 
-			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(texturePair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(textureSpec.attributeId)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::Texture));
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::Texture));
 
-			FindAttributeByID(texturePair.second.second)->shouldDraw = false;
-			ImNodes::BeginInputAttribute(texturePair.second.second, pinShape);
+			FindAttributeByID(textureSpec.attributeId)->shouldDraw = false;
+			ImNodes::BeginInputAttribute(textureSpec.attributeId, pinShape);
 
 			if (ImGui::Button(("-##" + std::to_string(id++)).c_str()))
 			{
-				RemoveAttribute(RenderAttributeType::Texture, texturePair.second.second);
-				specification.textures.erase(texturePair.first);
-				ImNodes::EndInputAttribute();
-				ImGui::PopID();
-				break;
+				RemoveAttribute(RenderAttributeType::Texture, textureSpec.attributeId);
+				if (Utility::RemoveFromContainer(specification.textures, textureSpec))
+				{
+					ImNodes::EndInputAttribute();
+					ImGui::PopID();
+					break;
+				}
 			}
 
 			ImGui::SameLine();
@@ -1245,7 +1131,7 @@ namespace Lamp
 
 			if (UI::InputText(("##" + std::to_string(id++)), textureSpec.name))
 			{
-				SetAttributeName(name, texturePair.second.second);
+				SetAttributeName(name, textureSpec.attributeId);
 			}
 
 			ImGui::SameLine();
@@ -1274,10 +1160,13 @@ namespace Lamp
 		{
 			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
 
-			GraphUUID framebufferId = GraphUUID();
-			specification.framebuffers.emplace(framebufferId, std::make_pair(PassFramebufferSpecification(), input->id));
+			PassFramebufferSpecification buffSpec;
+			buffSpec.id = GraphUUID();
+			buffSpec.attributeId = input->id;
 
-			input->data = framebufferId;
+			specification.framebuffers.push_back(buffSpec);
+
+			input->data = buffSpec.id;
 			input->pNode = this;
 			input->name = "Framebuffer" + std::to_string(specification.framebuffers.size() - 1);
 			input->type = RenderAttributeType::Framebuffer;
@@ -1285,28 +1174,28 @@ namespace Lamp
 			inputs.push_back(input);
 		}
 
-		for (auto& framebufferPair : specification.framebuffers)
+		for (auto& framebufferSpec : specification.framebuffers)
 		{
-			auto& framebufferSpec = framebufferPair.second.first;
-
 			ImGui::PushID(framebufferSpec.name.c_str());
 			uint32_t stackId = 0;
 
-			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(framebufferPair.second.second)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
+			ImNodesPinShape pinShape = IsAttributeLinked(FindAttributeByID(framebufferSpec.attributeId)) ? ImNodesPinShape_TriangleFilled : ImNodesPinShape_Triangle;
 
 			ImNodes::PushColorStyle(ImNodesCol_Pin, Utils::GetTypeColor(RenderAttributeType::Framebuffer));
 			ImNodes::PushColorStyle(ImNodesCol_PinHovered, Utils::GetTypeHoverColor(RenderAttributeType::Framebuffer));
 
-			FindAttributeByID(framebufferPair.second.second)->shouldDraw = false;
-			ImNodes::BeginInputAttribute(framebufferPair.second.second, pinShape);
+			FindAttributeByID(framebufferSpec.attributeId)->shouldDraw = false;
+			ImNodes::BeginInputAttribute(framebufferSpec.attributeId, pinShape);
 
 			if (ImGui::Button(("-##" + std::to_string(stackId++)).c_str()))
 			{
-				RemoveAttribute(RenderAttributeType::Framebuffer, framebufferPair.second.second);
-				specification.framebuffers.erase(framebufferPair.first);
-				ImNodes::EndInputAttribute();
-				ImGui::PopID();
-				break;
+				RemoveAttribute(RenderAttributeType::Framebuffer, framebufferSpec.attributeId);
+				if (Utility::RemoveFromContainer(specification.framebuffers, framebufferSpec))
+				{
+					ImNodes::EndInputAttribute();
+					ImGui::PopID();
+					break;
+				}
 			}
 
 			ImGui::SameLine();

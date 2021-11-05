@@ -188,18 +188,14 @@
     <None Include="engine\shaders\ibl\eqCube.glsl" />
     <None Include="engine\shaders\ibl\prefilter.glsl" />
     <None Include="engine\shaders\ibl\skybox.glsl" />
-    <None Include="engine\shaders\lineShader.glsl" />
     <None Include="engine\shaders\main\composite.glsl" />
     <None Include="engine\shaders\main\lightCulling.glsl" />
-    <None Include="engine\shaders\main\lightDebug.glsl" />
     <None Include="engine\shaders\main\pbrEditor.glsl" />
     <None Include="engine\shaders\main\pbrForward.glsl" />
     <None Include="engine\shaders\main\screenSpaceSSS.glsl" />
-    <None Include="engine\shaders\main\ssao.glsl" />
     <None Include="engine\shaders\postprocess\ssao.glsl" />
     <None Include="engine\shaders\postprocess\ssaoBlur.glsl" />
     <None Include="engine\shaders\quad.glsl" />
-    <None Include="engine\shaders\selection.glsl" />
     <None Include="engine\shaders\shadows\dirShadow.glsl" />
     <None Include="engine\shaders\shadows\pointShadow.glsl" />
   </ItemGroup>

@@ -29,13 +29,8 @@ namespace Lamp
 
 	struct RenderPassSpecification
 	{
-		using RenderFunc = std::function<void()>;
-		std::vector<RenderFunc> ExtraRenders;
-
-		Ref<Framebuffer> TargetFramebuffer;
-
-		uint32_t LightIndex = 0;
-		std::string Name;
+		Ref<Framebuffer> targetFramebuffer;
+		std::string name;
 
 		ClearType clearType = ClearType::ColorDepth;
 		CullFace cullFace = CullFace::Back;
@@ -45,10 +40,10 @@ namespace Lamp
 		bool draw2D = false;
 		bool drawSkybox = false;
 
-		std::unordered_map<GraphUUID, std::pair<PassUniformSpecification, GraphUUID>> uniforms; // name, type, data, attrId
-		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId
-		std::map<GraphUUID, std::pair<PassFramebufferSpecification, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
-		std::map<GraphUUID, std::pair<PassFramebufferCommandSpecification, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
+		std::vector<PassUniformSpecification> uniforms; // name, type, data, attrId
+		std::vector<PassTextureSpecification> textures; // texture, texBindSlot, attrId
+		std::vector<PassFramebufferSpecification> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
+		std::vector<PassFramebufferCommandSpecification> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 
 	class RenderPass
@@ -72,6 +67,7 @@ namespace Lamp
 
 	private:
 		friend class RenderNodePass;
+		friend class RenderNodeTexture;
 
 		uint32_t m_ID;
 		RenderPassSpecification m_passSpecification;

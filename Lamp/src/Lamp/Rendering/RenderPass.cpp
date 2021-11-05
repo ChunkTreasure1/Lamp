@@ -18,10 +18,10 @@ namespace Lamp
 
 	void RenderPass::Render(Ref<CameraBase>& camera)
 	{
-		LP_PROFILE_SCOPE("RenderPass::Render::" + m_passSpecification.Name);
+		LP_PROFILE_SCOPE("RenderPass::Render::" + m_passSpecification.name);
 
-		RenderCommand::SetClearColor(m_passSpecification.TargetFramebuffer->GetSpecification().ClearColor);
-		m_passSpecification.TargetFramebuffer->Bind();
+		RenderCommand::SetClearColor(m_passSpecification.targetFramebuffer->GetSpecification().ClearColor);
+		m_passSpecification.targetFramebuffer->Bind();
 
 		//Clear color if i should
 		switch (m_passSpecification.clearType)
@@ -80,11 +80,10 @@ namespace Lamp
 		}
 
 		Renderer3D::EndPass();
-		m_passSpecification.TargetFramebuffer->Unbind();
+		m_passSpecification.targetFramebuffer->Unbind();
 
-		for (const auto& commandPair : m_passSpecification.framebufferCommands)
+		for (const auto& commandSpec : m_passSpecification.framebufferCommands)
 		{
-			const auto& commandSpec = commandPair.second.first;
 			if (!commandSpec.primary || !commandSpec.secondary)
 			{
 				LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);
