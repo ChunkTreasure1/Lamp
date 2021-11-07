@@ -133,6 +133,10 @@ namespace Lamp
 							}
 						}
 					}
+					else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+					{
+						computeNode->framebuffer = renderPass->m_passSpecification.targetFramebuffer;
+					}
 
 					break;
 				}

@@ -37,6 +37,8 @@ namespace Lamp
 					RemoveLink(link->id);
 				}
 
+				node->links.clear();
+
 				if (node->GetNodeType() == RenderNodeType::Start)
 				{
 					m_Specification.startNode = nullptr;

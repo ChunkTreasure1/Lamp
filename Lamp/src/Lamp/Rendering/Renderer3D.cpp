@@ -181,6 +181,18 @@ namespace Lamp
 				i++;
 			}
 
+			//Textures
+			for (const auto& textureSpec : pass->textures)
+			{
+				if (!textureSpec.texture)
+				{
+					LP_CORE_ERROR("Texture is nullptr");
+					continue;
+				}
+
+				textureSpec.texture->Bind(textureSpec.bindSlot);
+			}
+
 			/////Testing/////
 			uint32_t index = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())

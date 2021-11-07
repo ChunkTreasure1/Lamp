@@ -69,6 +69,7 @@ namespace Lamp
 				for (auto& att : framebuffer->GetSpecification().Attachments.Attachments)
 				{
 					buffer->attachments.emplace_back(Utils::TextureFormatToType(att.TextureFormat), m_bindId + idOffset, idOffset);
+					idOffset++;
 				}
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))

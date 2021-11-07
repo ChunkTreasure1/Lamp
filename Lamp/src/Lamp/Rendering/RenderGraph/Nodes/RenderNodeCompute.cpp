@@ -44,6 +44,12 @@ namespace Lamp
 		runAttr->type = RenderAttributeType::Pass;
 		runAttr->shouldDraw = true;
 		
+		Ref<RenderInputAttribute> targetBuffer = CreateRef<RenderInputAttribute>();
+		targetBuffer->name = "Target framebuffer";
+		targetBuffer->pNode = this;
+		targetBuffer->type = RenderAttributeType::Framebuffer;
+		targetBuffer->shouldDraw = true;
+
 		Ref<RenderOutputAttribute> activatedAttr = CreateRef<RenderOutputAttribute>();
 		activatedAttr->name = "Finished";
 		activatedAttr->pNode = this;
@@ -51,6 +57,7 @@ namespace Lamp
 		activatedAttr->shouldDraw = true;
 
 		inputs.push_back(runAttr);
+		inputs.push_back(targetBuffer);
 		outputs.push_back(activatedAttr);
 	}
 
@@ -152,6 +159,7 @@ namespace Lamp
 
 		if (m_computeShader)
 		{
+			m_computeShader->Bind();
 			for (const auto& uniform : m_uniforms)
 			{
 				switch (uniform.type)
