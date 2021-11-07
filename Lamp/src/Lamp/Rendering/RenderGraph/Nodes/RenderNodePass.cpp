@@ -55,6 +55,22 @@ namespace Lamp
 
 			return ImGui::Combo(id.c_str(), &selected, data.data(), data.size());
 		}
+
+		static TextureType TextureFormatToType(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+				case Lamp::FramebufferTextureFormat::None: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA8: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA16F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA32F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RG32F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RED: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::DEPTH32F: return TextureType::Depth;
+				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return TextureType::Depth;
+			}
+		}
 	}
 
 	void RenderNodePass::Initialize()
@@ -108,7 +124,7 @@ namespace Lamp
 			{
 				case RenderAttributeType::Framebuffer:
 				{
-					if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+					if (auto passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 					{
 						auto& passSpec = passNode->renderPass->m_passSpecification;
 						GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
@@ -124,6 +140,13 @@ namespace Lamp
 							if (auto buffer = Utils::GetSpecificationById<PassFramebufferSpecification>(passSpec.framebuffers, id))
 							{
 								buffer->framebuffer = renderPass->m_passSpecification.targetFramebuffer;
+
+								int idOffset = 0;
+								for (auto& att : renderPass->m_passSpecification.targetFramebuffer->GetSpecification().Attachments.Attachments)
+								{
+									buffer->attachments.emplace_back(Utils::TextureFormatToType(att.TextureFormat), m_bindId + idOffset, idOffset);
+									idOffset++;
+								}
 							}
 
 							//Framebuffer command inputs
@@ -133,7 +156,7 @@ namespace Lamp
 							}
 						}
 					}
-					else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+					else if (auto computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 					{
 						computeNode->framebuffer = renderPass->m_passSpecification.targetFramebuffer;
 					}
@@ -291,27 +314,35 @@ namespace Lamp
 
 		for (const auto& link : links)
 		{
-			if (link->pInput->pNode->id == id)
+			if (link->pInput->pNode->id == id || !link->pInput || !link->pInput->pNode)
 			{
 				continue;
 			}
 
-			if (!link->pInput)
+			switch (link->pOutput->type)
 			{
-				LP_CORE_ERROR("Input attribute is null!");
-				continue;
-			}
-			if (!link->pInput->pNode)
-			{
-				LP_CORE_ERROR("Input node is null!");
-				continue;
-			}
+				case RenderAttributeType::Pass:
+				{
+					if (link->pInput->pNode->GetNodeType() == RenderNodeType::End)
+					{
+						link->pInput->pNode->Activate(renderPass->GetSpecification().targetFramebuffer);
+					}
+					else
+					{
+						link->pInput->pNode->Activate(value);
+					}
+					break;
+				}
 
-			switch (link->pInput->pNode->GetNodeType())
-			{
-				case RenderNodeType::Pass: link->pInput->pNode->Activate(value); break;
-				case RenderNodeType::Compute: link->pInput->pNode->Activate(value); break;
-				case RenderNodeType::End: link->pInput->pNode->Activate(renderPass->GetSpecification().targetFramebuffer); break;
+				case RenderAttributeType::Framebuffer:
+				{
+					if (auto pass = dynamic_cast<RenderNodePass*>(link->pInput))
+					{
+						pass->renderPass->m_passSpecification.targetFramebuffer = renderPass->m_passSpecification.targetFramebuffer;
+					}
+
+					break;
+				}
 				default:
 					break;
 			}
@@ -340,6 +371,7 @@ namespace Lamp
 			LP_SERIALIZE_PROPERTY(height, targetBuffSpec.Height, out);
 			LP_SERIALIZE_PROPERTY(samples, targetBuffSpec.Samples, out);
 			LP_SERIALIZE_PROPERTY(clearColor, targetBuffSpec.ClearColor, out);
+			LP_SERIALIZE_PROPERTY(bindId, m_bindId, out);
 
 			out << YAML::Key << "attachments" << YAML::BeginSeq;
 			{
@@ -480,6 +512,7 @@ namespace Lamp
 		LP_DESERIALIZE_PROPERTY(height, targetBufferSpec.Height, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(samples, targetBufferSpec.Samples, bufferNode, 0);
 		LP_DESERIALIZE_PROPERTY(clearColor, targetBufferSpec.ClearColor, bufferNode, glm::vec4(0.f));
+		LP_DESERIALIZE_PROPERTY(bindId, m_bindId, bufferNode, 0);
 
 		YAML::Node attachmentsNode = bufferNode["attachments"];
 
@@ -880,6 +913,17 @@ namespace Lamp
 					}
 				}
 			}
+		}
+
+		//Bind id
+		{
+			float offset = maxWidth - ImGui::CalcTextSize("Bind ID").x;
+
+			ImGui::Text("Bind ID");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+		
+			ImGui::InputInt("##bindId", &m_bindId);
 		}
 
 		//Size

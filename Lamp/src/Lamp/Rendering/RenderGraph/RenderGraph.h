@@ -21,7 +21,7 @@ namespace Lamp
 	class RenderGraph : public Asset
 	{
 	public:
-		RenderGraph();
+		RenderGraph() = default;
 		RenderGraph(const RenderGraphSpecification& spec);
 
 		~RenderGraph() = default;

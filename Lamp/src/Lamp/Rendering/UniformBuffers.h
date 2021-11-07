@@ -47,9 +47,9 @@ namespace Lamp
 	struct SSAOData
 	{
 		glm::vec4 kernelSamples[256];
-		int kernelSize = 256;
+		int kernelSize = 64;
 		float bias = 0.025f;
-		float radius = 0.3f;
+		float radius = 0.1f;
 		float strength = 1.f;
 	};
 }

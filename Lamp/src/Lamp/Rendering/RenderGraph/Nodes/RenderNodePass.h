@@ -44,5 +44,6 @@ namespace Lamp
 		FramebufferTextureSpecification* m_lastRenamingAttachmentSpec = nullptr;
 
 		std::vector<const char*> m_shaders;
+		int m_bindId = 0;
 	};
 }

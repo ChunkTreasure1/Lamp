@@ -7,10 +7,6 @@
 
 namespace Lamp
 {
-	RenderGraph::RenderGraph()
-	{
-	}
-
 	RenderGraph::RenderGraph(const RenderGraphSpecification& spec)
 		: m_Specification(spec)
 	{
@@ -32,9 +28,9 @@ namespace Lamp
 		{
 			if (id == node->id)
 			{
-				for (const auto& link : node->links)
+				for (int i = node->links.size() - 1; i >= 0; i--)
 				{
-					RemoveLink(link->id);
+					RemoveLink(node->links[i]->id);
 				}
 
 				node->links.clear();

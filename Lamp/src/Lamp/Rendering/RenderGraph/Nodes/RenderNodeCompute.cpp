@@ -190,14 +190,14 @@ namespace Lamp
 			m_computeShader->Unbind();
 		}
 
-		for (const auto& link : links)
+		for (uint32_t i = 0; i < links.size(); i++)
 		{
-			if (link->pInput->pNode->id == id)
+			if (links[i]->pInput->pNode->id == id)
 			{
 				continue;
 			}
-
-			link->pInput->pNode->Activate(value);
+		
+			links[i]->pInput->pNode->Activate(value);
 		}
 	}
 
