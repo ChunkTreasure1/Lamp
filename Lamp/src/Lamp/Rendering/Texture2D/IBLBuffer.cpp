@@ -183,11 +183,17 @@ namespace Lamp
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//////////////////
 
-		m_TestTexture = Texture2D::Create("engine/textures/testBRDF.png");
+		FramebufferTextureSpecification irrSpec;
+		irrSpec.TextureFormat = FramebufferTextureFormat::RGBA8;
+
+		FramebufferTextureSpecification preSpec;
+		irrSpec.TextureFormat = FramebufferTextureFormat::RGBA8;
+
+		m_specification.Attachments.Attachments.push_back(irrSpec);
+		m_specification.Attachments.Attachments.push_back(preSpec);
 
 		m_Attachments[0] = m_IrradianceId;
 		m_Attachments[1] = m_PrefilterMap;
-		m_Attachments[2] = m_TestTexture->GetID();
 	}
 
 	IBLBuffer::~IBLBuffer()

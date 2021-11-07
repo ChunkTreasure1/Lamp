@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 197743197
-      position: [-28.2356262, -62.019989]
+      position: [-271.280731, -273.30722]
       type: 0
       name: DepthNormal
       clearType: 3
@@ -86,7 +86,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 2062053013
-      position: [-228.235718, 97.9799194]
+      position: [-471.280823, -113.307312]
       type: 4
       attributes:
         - attribute: Start
@@ -95,7 +95,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 662339910
-      position: [327.764343, 27.9800415]
+      position: [84.7192383, -183.30719]
       type: 7
       shader: lightCulling
       uniforms:
@@ -148,7 +148,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 465863247
-      position: [22.7643433, 201.979919]
+      position: [-220.280762, -9.30731201]
       type: 3
       uniformType: 2
       dataName: Buffer Size
@@ -159,7 +159,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1088798239
-      position: [22.7643433, 326.980011]
+      position: [-220.280762, 115.69278]
       type: 3
       uniformType: 0
       dataName: Point light count
@@ -170,7 +170,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1248830838
-      position: [814.764343, 74.9800262]
+      position: [570.719238, -136.307205]
       type: 0
       name: Forward
       clearType: 3
@@ -278,9 +278,16 @@ RenderGraph:
           uniformId: 38
           data: 0
       textures:
-        []
+        - texture: BRDF
+          guuid: 1051359787
+          bindSlot: 6
+          attrId: 191135617
       framebuffers:
-        []
+        - framebuffer: Framebuffer
+          guuid: 473952638
+          attrId: 944929494
+          attachments:
+            []
       framebufferCommands:
         []
       attributes:
@@ -312,13 +319,13 @@ RenderGraph:
           attrType: input
           id: 1795590623
           type: 2
-          shouldDraw: true
+          shouldDraw: false
           data: 172335365
         - attribute: u_Gamma
           attrType: input
           id: 1893184183
           type: 2
-          shouldDraw: true
+          shouldDraw: false
           data: 1840089332
         - attribute: u_IrradianceMap
           attrType: input
@@ -366,8 +373,20 @@ RenderGraph:
           attrType: input
           id: 759300781
           type: 2
-          shouldDraw: true
+          shouldDraw: false
           data: 157027448
+        - attribute: Framebuffer0
+          attrType: input
+          id: 944929494
+          type: 1
+          shouldDraw: true
+          data: 473952638
+        - attribute: ""
+          attrType: input
+          id: 191135617
+          type: 0
+          shouldDraw: true
+          data: 1051359787
         - attribute: Finished
           attrType: output
           id: 1766392504
@@ -378,7 +397,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1997423773
-      position: [1225.46521, 93.9235229]
+      position: [982.420105, -117.363708]
       type: 6
       attributes:
         - attribute: End
@@ -389,7 +408,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 1948246958
-      position: [388.804321, 219.163483]
+      position: [145.759216, 7.87625122]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -400,7 +419,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1763371539
-      position: [384.804321, 345.163483]
+      position: [141.759216, 133.876251]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -411,7 +430,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 2057886476
-      position: [385.804321, 473.163452]
+      position: [142.759216, 261.876221]
       type: 3
       uniformType: 0
       dataName: ForwardTileX
@@ -420,6 +439,48 @@ RenderGraph:
           attrType: output
           id: 1689781255
           type: 2
+    - Node: ""
+      id: 1327548617
+      position: [210, 406]
+      type: 1
+      usingInternal: true
+      selectedBuffer: Skybox
+      useViewportSize: false
+      bindSlot: 4
+      width: 1280
+      height: 720
+      samples: 1
+      clearColor: [1, 1, 1, 1]
+      attachments:
+        attachment0:
+          borderColor: [1, 1, 1, 1]
+          multisampled: false
+          format: 1
+          filtering: 1
+          wrap: 0
+        attachment1:
+          borderColor: [1, 1, 1, 1]
+          multisampled: false
+          format: 0
+          filtering: 1
+          wrap: 0
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 1666728160
+          type: 1
+    - Node: ""
+      id: 516259885
+      position: [39, 394]
+      type: 2
+      path: C:\Programming\Lamp\Sandbox\engine\textures\testBRDF.png
+      usingInternal: false
+      selectedTexture: ""
+      attributes:
+        - attribute: Output
+          attrType: output
+          id: 738731743
+          type: 0
   Links:
     - Link: ""
       id: 61449821
@@ -457,3 +518,11 @@ RenderGraph:
       id: 1298321978
       from: 1689781255
       to: 759300781
+    - Link: ""
+      id: 632901
+      from: 1666728160
+      to: 944929494
+    - Link: ""
+      id: 1561691039
+      from: 738731743
+      to: 191135617

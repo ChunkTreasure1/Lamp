@@ -53,6 +53,9 @@ namespace Lamp
 
 	struct PassFramebufferAttachmentSpec
 	{
+		PassFramebufferAttachmentSpec(TextureType aType = TextureType::Color, uint32_t aBindId = 0, uint32_t aAttId = 0)
+			: type(aType), bindId(aBindId), attachmentId(aAttId)
+		{}
 		bool operator==(const PassFramebufferAttachmentSpec& rhs) { return this == &rhs; }
 
 		TextureType type = TextureType::Color;

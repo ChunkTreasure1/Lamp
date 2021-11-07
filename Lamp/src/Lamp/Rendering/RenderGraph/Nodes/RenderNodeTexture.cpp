@@ -8,6 +8,7 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imgui.h>
 #include <imnodes.h>
@@ -37,7 +38,10 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
-				passNode->renderPass->m_passSpecification.textures[id].texture = texture;
+				auto& renderPassSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
+				auto tex = Utils::GetSpecificationById<PassTextureSpecification>(renderPassSpec.textures, id);
+
+				tex->texture = texture;
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 			{

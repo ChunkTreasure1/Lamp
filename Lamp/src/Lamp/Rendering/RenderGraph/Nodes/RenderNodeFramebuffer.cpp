@@ -17,6 +17,25 @@
 
 namespace Lamp
 {
+	namespace Utils
+	{
+		static TextureType TextureFormatToType(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+				case Lamp::FramebufferTextureFormat::None: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA8: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA16F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA32F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RG32F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RED: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::DEPTH32F: return TextureType::Depth;
+				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return TextureType::Depth;
+			}
+		}
+	}
+
 	void RenderNodeFramebuffer::Initialize()
 	{
 		framebuffer = Framebuffer::Create(FramebufferSpecification());
@@ -47,9 +66,9 @@ namespace Lamp
 				buffer->framebuffer = framebuffer;
 
 				int idOffset = 0;
-				for (auto& att : buffer->attachments)
+				for (auto& att : framebuffer->GetSpecification().Attachments.Attachments)
 				{
-					att.bindId = m_bindId + idOffset++;
+					buffer->attachments.emplace_back(Utils::TextureFormatToType(att.TextureFormat), m_bindId + idOffset, idOffset);
 				}
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
@@ -108,12 +127,14 @@ namespace Lamp
 			}
 		}
 
-		float offset = 130.f - ImGui::CalcTextSize("Bind slot").x;
+		offset = 50.f - ImGui::CalcTextSize("Bind slot").x;
 		ImGui::TextUnformatted("Bind slot");
 
 		ImGui::SameLine();
 		UI::ShiftCursor(offset, 0.f);
-		ImGui::InputInt("Bind slot", &m_bindId);
+		ImGui::PushItemWidth(100.f);
+		ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &m_bindId);
+		ImGui::PopItemWidth();
 
 		if (m_useInternalBuffers)
 		{
@@ -289,6 +310,7 @@ namespace Lamp
 		LP_SERIALIZE_PROPERTY(usingInternal, m_useInternalBuffers, out);
 		LP_SERIALIZE_PROPERTY(selectedBuffer, m_SelectedBufferName, out);
 		LP_SERIALIZE_PROPERTY(useViewportSize, m_useScreenSize, out);
+		LP_SERIALIZE_PROPERTY(bindSlot, m_bindId, out);
 
 		LP_SERIALIZE_PROPERTY(width, specification.Width, out);
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
@@ -326,6 +348,7 @@ namespace Lamp
 	{
 		LP_DESERIALIZE_PROPERTY(usingInternal, m_useInternalBuffers, node, false);
 		m_SelectedBufferName = node["selectedBuffer"].as<std::string>();
+		LP_DESERIALIZE_PROPERTY(bindSlot, m_bindId, node, 0);
 
 		if (m_useInternalBuffers)
 		{

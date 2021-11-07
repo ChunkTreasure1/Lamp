@@ -163,6 +163,10 @@ Assets:
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\main.rendergraph
   - Handle: 14855586085221556443
     Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph
+  - Handle: 18032960552923057834
+    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph.rendergraph
+  - Handle: 13580374614981302348
+    Path: C:\Programming\Lamp\Sandbox\engine\textures\testBRDF.png
   - Handle: 15204113846897012892
     Path: C:\Users\ivar.jonsson\Desktop\ELISLEDSEN.png
   - Handle: 5926687454795801540
