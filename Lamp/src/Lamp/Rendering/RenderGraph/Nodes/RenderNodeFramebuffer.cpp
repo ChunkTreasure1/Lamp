@@ -45,6 +45,12 @@ namespace Lamp
 
 				auto buffer = Utils::GetSpecificationById<PassFramebufferSpecification>(renderPassSpec.framebuffers, id);
 				buffer->framebuffer = framebuffer;
+
+				int idOffset = 0;
+				for (auto& att : buffer->attachments)
+				{
+					att.bindId = m_bindId + idOffset++;
+				}
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 			{
@@ -88,9 +94,9 @@ namespace Lamp
 		ImGui::SameLine();
 		UI::ShiftCursor(offset, 0.f);
 
-		if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_UseInternalBuffers))
+		if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_useInternalBuffers))
 		{
-			if (!m_UseInternalBuffers)
+			if (!m_useInternalBuffers)
 			{
 				FramebufferSpecification spec;
 				framebuffer = Framebuffer::Create(spec);
@@ -102,7 +108,14 @@ namespace Lamp
 			}
 		}
 
-		if (m_UseInternalBuffers)
+		float offset = 130.f - ImGui::CalcTextSize("Bind slot").x;
+		ImGui::TextUnformatted("Bind slot");
+
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+		ImGui::InputInt("Bind slot", &m_bindId);
+
+		if (m_useInternalBuffers)
 		{
 			ImGui::PushItemWidth(158.f);
 			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), (int)m_BufferNames.size()))
@@ -273,7 +286,7 @@ namespace Lamp
 	{
 		const auto& specification = framebuffer->GetSpecification();
 
-		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, out);
+		LP_SERIALIZE_PROPERTY(usingInternal, m_useInternalBuffers, out);
 		LP_SERIALIZE_PROPERTY(selectedBuffer, m_SelectedBufferName, out);
 		LP_SERIALIZE_PROPERTY(useViewportSize, m_useScreenSize, out);
 
@@ -311,10 +324,10 @@ namespace Lamp
 
 	void RenderNodeFramebuffer::Deserialize(YAML::Node& node)
 	{
-		LP_DESERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, node, false);
+		LP_DESERIALIZE_PROPERTY(usingInternal, m_useInternalBuffers, node, false);
 		m_SelectedBufferName = node["selectedBuffer"].as<std::string>();
 
-		if (m_UseInternalBuffers)
+		if (m_useInternalBuffers)
 		{
 			framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_SelectedBufferName];
 		}
