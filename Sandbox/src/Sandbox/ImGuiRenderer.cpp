@@ -735,6 +735,9 @@ namespace Sandbox
 
 		ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
 		ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
+		ImGui::Text("Total draw calls: %d", Renderer3D::GetStatistics().totalDrawCalls);
+		ImGui::Text("Scene draw calls: %d", Renderer3D::GetStatistics().sceneDrawCalls);
+		ImGui::Text("Other draw calls: %d", Renderer3D::GetStatistics().otherDrawCalls);
 
 		ImGui::End();
 	}
@@ -842,23 +845,23 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Editor"))
 			{
-				ImGui::MenuItem("Render Bounding Box", NULL, &g_pEnv->ShouldRenderBB);
-				ImGui::MenuItem("Render Gizmos", NULL, &g_pEnv->ShouldRenderGizmos);
+				ImGui::MenuItem("Render Bounding Box", nullptr, &g_pEnv->ShouldRenderBB);
+				ImGui::MenuItem("Render Gizmos", nullptr, &g_pEnv->ShouldRenderGizmos);
 
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Properties", NULL, &m_InspectiorOpen);
-				ImGui::MenuItem("Create", NULL, &m_CreateToolOpen);
-				ImGui::MenuItem("Log", NULL, &m_LogToolOpen);
-				ImGui::MenuItem("Level Settings", NULL, &m_LevelSettingsOpen);
-				ImGui::MenuItem("Asset Manager", NULL, &m_assetManager.GetIsOpen());
+				ImGui::MenuItem("Properties", nullptr, &m_InspectiorOpen);
+				ImGui::MenuItem("Create", nullptr, &m_CreateToolOpen);
+				ImGui::MenuItem("Log", nullptr, &m_LogToolOpen);
+				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
+				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
 
 				for (auto pWindow : m_pWindows)
 				{
-					ImGui::MenuItem(pWindow->GetLabel().c_str(), NULL, &pWindow->GetIsOpen());
+					ImGui::MenuItem(pWindow->GetLabel().c_str(), nullptr, &pWindow->GetIsOpen());
 				}
 
 				ImGui::EndMenu();
@@ -866,7 +869,7 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Rendering"))
 			{
-				ImGui::MenuItem("Settings", NULL, &m_RenderingSettingsOpen);
+				ImGui::MenuItem("Settings", nullptr, &m_RenderingSettingsOpen);
 				if (ImGui::MenuItem("Recompile shaders"))
 				{
 					Lamp::ShaderLibrary::RecompileShaders();
@@ -889,7 +892,10 @@ namespace Sandbox
 					}
 				}
 
-				ImGui::MenuItem("Play physics", NULL, &Lamp::Application::Get().GetIsSimulating());
+				if (ImGui::MenuItem("Play physics", nullptr))
+				{
+					
+				}
 
 				ImGui::EndMenu();
 			}

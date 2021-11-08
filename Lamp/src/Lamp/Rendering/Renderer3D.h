@@ -45,6 +45,15 @@ namespace Lamp
 
 		static void SetEnvironment(const std::string& path);
 
+		struct Statistics
+		{
+			uint32_t totalDrawCalls;
+			uint32_t otherDrawCalls;
+			uint32_t sceneDrawCalls;
+		};
+
+		static const Statistics& GetStatistics() { return s_renderStatistics; }
+
 	private:
 		static void CreateBaseMeshes();
 
@@ -52,5 +61,6 @@ namespace Lamp
 
 	private:
 		static RenderBuffer s_RenderBuffer;
+		static Statistics s_renderStatistics;
 	};
 }

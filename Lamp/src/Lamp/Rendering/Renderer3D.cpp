@@ -38,6 +38,7 @@ namespace Lamp
 
 	static Renderer3DStorage* s_pRenderData;
 	RenderBuffer Renderer3D::s_RenderBuffer;
+	Renderer3D::Statistics Renderer3D::s_renderStatistics;
 
 	void Renderer3D::Initialize()
 	{
@@ -58,6 +59,9 @@ namespace Lamp
 	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
 		s_pRenderData->camera = camera;
+		s_renderStatistics.totalDrawCalls = 0;
+		s_renderStatistics.otherDrawCalls = 0;
+		s_renderStatistics.sceneDrawCalls = 0;
 
 		LP_PROFILE_FUNCTION();
 
@@ -83,6 +87,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 		s_RenderBuffer.drawCalls.clear();
+		s_renderStatistics.totalDrawCalls = s_renderStatistics.sceneDrawCalls + s_renderStatistics.otherDrawCalls;
 	}
 
 	void Renderer3D::BeginPass(const RenderPassSpecification& passSpec)
@@ -212,6 +217,7 @@ namespace Lamp
 		{
 			vertexData->Bind();
 			RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
+			s_renderStatistics.sceneDrawCalls++;
 		}
 	}
 
@@ -219,12 +225,14 @@ namespace Lamp
 	{
 		s_pRenderData->cubeVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_pRenderData->cubeVertexArray, s_pRenderData->cubeVertexArray->GetIndexBuffer()->GetCount());
+		s_renderStatistics.otherDrawCalls++;
 	}
 
 	void Renderer3D::DrawQuad()
 	{
 		s_pRenderData->quadVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_pRenderData->quadVertexArray, s_pRenderData->quadVertexArray->GetIndexBuffer()->GetCount());
+		s_renderStatistics.otherDrawCalls++;
 	}
 
 	void Renderer3D::RenderQuad()

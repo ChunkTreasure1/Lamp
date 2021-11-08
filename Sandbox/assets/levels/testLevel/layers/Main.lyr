@@ -5,8 +5,8 @@ layer:
   entities:
     - entity: Entity
       position: [0, 2.87243533, 7.77864981]
-      rotation: [0, 0, 0]
-      scale: [1, 1, 1]
+      rotation: [0, 0.818734407, 0.280960351]
+      scale: [0.999998391, 0.999999762, 0.999998927]
       layerId: 0
       components:
         - name: DirectionalLightComponent
@@ -20,6 +20,32 @@ layer:
             - param: Cast Shadows
               type: Bool
               value: true
+    - entity: Entity
+      position: [-1.65676522, 3.75414181, 13.9111338]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: LightComponent
+          params:
+            - param: Intensity
+              type: Float
+              value: 1
+            - param: Radius
+              type: Float
+              value: 15
+            - param: Falloff
+              type: Float
+              value: 0
+            - param: Near plane
+              type: Float
+              value: 0.100000001
+            - param: Far plane
+              type: Float
+              value: 100
+            - param: Color
+              type: Color3
+              value: [0.980000019, 0.610000014, -0.0700000003]
   brushes:
     - brush: Brush
       meshHandle: 10994454763501493260
@@ -50,4 +76,10 @@ layer:
       position: [-0.714993715, 0.892196476, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 14307495939999770285
+      position: [-2.82602787, 1.13806415, 12.3937397]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
       layerId: 0

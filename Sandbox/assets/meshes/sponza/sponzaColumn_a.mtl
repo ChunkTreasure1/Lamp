@@ -2,7 +2,7 @@ material:
   name: sponzaColumn_a
   handle: 10112991968605391801
   textures:
-    albedo: 1596807254034736571
-    normal: 1596807254034736571
-    mro: 1596807254034736571
+    albedo: 6288801162704399594
+    normal: 10852434639602590150
+    mro: 414241012507753038
   shader: pbrForward

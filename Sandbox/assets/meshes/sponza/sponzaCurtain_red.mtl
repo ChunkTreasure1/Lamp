@@ -2,7 +2,7 @@ material:
   name: sponzaCurtain_red
   handle: 15416290866114464059
   textures:
-    albedo: 1596807254034736571
-    normal: 1596807254034736571
-    mro: 1596807254034736571
+    albedo: 5693580145831239892
+    normal: 3402483956658190032
+    mro: 3753092505565141235
   shader: pbrForward

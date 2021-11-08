@@ -83,6 +83,8 @@ Assets:
     Path: assets\meshes\sponza/sponzaVase_hanging.mtl
   - Handle: 3949351496605532555
     Path: assets\meshes\sponza/sponzaVase_round.mtl
+  - Handle: 1440397659391164769
+    Path: assets\meshes\sponza\textures\Arch\Sponza_Arch_albedo.tga
   - Handle: 15385105700162503832
     Path: assets\meshes\sponza\textures\Arch\Sponza_Arch_mro.tga
   - Handle: 2128424196460633133
@@ -111,6 +113,104 @@ Assets:
     Path: assets\meshes\sponza\textures\Chain\ChainTexture_mro.tga
   - Handle: 6348075443527336439
     Path: assets\meshes\sponza\textures\Chain\ChainTexture_normal.tga
+  - Handle: 414241012507753038
+    Path: assets\meshes\sponza\textures\Column\Column_a\Sponza_Column_a_mro.tga
+  - Handle: 10852434639602590150
+    Path: assets\meshes\sponza\textures\Column\Column_a\Sponza_Column_a_normal.tga
+  - Handle: 6288801162704399594
+    Path: assets\meshes\sponza\textures\Column\Column_a\Sponza_Column_albedo.tga
+  - Handle: 13996951226104267011
+    Path: assets\meshes\sponza\textures\Column\Column_b\Sponza_Column_b_albedo.tga
+  - Handle: 3854865103142896689
+    Path: assets\meshes\sponza\textures\Column\Column_b\Sponza_Column_b_mro.tga
+  - Handle: 16704716877025336901
+    Path: assets\meshes\sponza\textures\Column\Column_b\Sponza_Column_b_normal.tga
+  - Handle: 101780342816509645
+    Path: assets\meshes\sponza\textures\Column\Column_c\Sponza_Column_c_albedo.tga
+  - Handle: 13838541064729335965
+    Path: assets\meshes\sponza\textures\Column\Column_c\Sponza_Column_c_mro.tga
+  - Handle: 14204972676502129378
+    Path: assets\meshes\sponza\textures\Column\Column_c\Sponza_Column_c_normal.tga
+  - Handle: 9521120982377647160
+    Path: assets\meshes\sponza\textures\Curtain\Blue\Sponza_Curtain_Blue_albedo.tga
+  - Handle: 17028787182874343334
+    Path: assets\meshes\sponza\textures\Curtain\Green\Sponza_Curtain_Green_albedo.tga
+  - Handle: 5693580145831239892
+    Path: assets\meshes\sponza\textures\Curtain\Red\Sponza_Curtain_Red_albedo.tga
+  - Handle: 3753092505565141235
+    Path: assets\meshes\sponza\textures\Curtain\Sponza_Curtain_mro.tga
+  - Handle: 3402483956658190032
+    Path: assets\meshes\sponza\textures\Curtain\Sponza_Curtain_normal.tga
+  - Handle: 2720278157653355977
+    Path: assets\meshes\sponza\textures\Details\Sponza_Details_albedo.tga
+  - Handle: 13191488465545134517
+    Path: assets\meshes\sponza\textures\Details\Sponza_Details_mro.tga
+  - Handle: 2140946322056346682
+    Path: assets\meshes\sponza\textures\Details\Sponza_Details_normal.tga
+  - Handle: 15247307630783848427
+    Path: assets\meshes\sponza\textures\Fabric\Blue\Sponza_Fabric_Blue_albedo.tga
+  - Handle: 12616948225364464088
+    Path: assets\meshes\sponza\textures\Fabric\Green\Sponza_Fabric_Green_albedo.tga
+  - Handle: 8560260248046739027
+    Path: assets\meshes\sponza\textures\Fabric\Red\Sponza_Fabric_Red_albedo.tga
+  - Handle: 6213724994329339955
+    Path: assets\meshes\sponza\textures\Fabric\Sponza_Fabric_mro.tga
+  - Handle: 222447675478196122
+    Path: assets\meshes\sponza\textures\Fabric\Sponza_Fabric_normal.tga
+  - Handle: 42304322756297400
+    Path: assets\meshes\sponza\textures\FlagPole\Sponza_FlagPole_albedo.tga
+  - Handle: 10056790240237353765
+    Path: assets\meshes\sponza\textures\FlagPole\Sponza_FlagPole_mro.tga
+  - Handle: 14729432698615374519
+    Path: assets\meshes\sponza\textures\FlagPole\Sponza_FlagPole_normal.tga
+  - Handle: 6896236916686456014
+    Path: assets\meshes\sponza\textures\Floor\Sponza_Floor_albedo.tga
+  - Handle: 15713064320460463275
+    Path: assets\meshes\sponza\textures\Floor\Sponza_Floor_mro.tga
+  - Handle: 17598353164874930357
+    Path: assets\meshes\sponza\textures\Floor\Sponza_Floor_normal.tga
+  - Handle: 15166087334337187202
+    Path: assets\meshes\sponza\textures\Lion\Lion_albedo.tga
+  - Handle: 16882915094643820865
+    Path: assets\meshes\sponza\textures\Lion\Lion_mro.tga
+  - Handle: 15995194614114398796
+    Path: assets\meshes\sponza\textures\Lion\Lion_normal.tga
+  - Handle: 7033856143386042222
+    Path: assets\meshes\sponza\textures\Roof\Sponza_Roof_albedo.tga
+  - Handle: 7237241961495581814
+    Path: assets\meshes\sponza\textures\Roof\Sponza_Roof_mro.tga
+  - Handle: 3713320889361239481
+    Path: assets\meshes\sponza\textures\Roof\Sponza_Roof_normal.tga
+  - Handle: 5455859049654264962
+    Path: assets\meshes\sponza\textures\Thorn\Sponza_Thorn_albedo.tga
+  - Handle: 6923017344874650357
+    Path: assets\meshes\sponza\textures\Thorn\Sponza_Thorn_mro.tga
+  - Handle: 8181645077081453049
+    Path: assets\meshes\sponza\textures\Thorn\Sponza_Thorn_normal.tga
+  - Handle: 2686609411931972354
+    Path: assets\meshes\sponza\textures\Vase\Vase_albedo.tga
+  - Handle: 14171207157858481160
+    Path: assets\meshes\sponza\textures\Vase\Vase_mro.tga
+  - Handle: 6521504680222574475
+    Path: assets\meshes\sponza\textures\Vase\Vase_normal.tga
+  - Handle: 15109044807385293936
+    Path: assets\meshes\sponza\textures\VaseHanging\Vase_hanging_albedo.tga
+  - Handle: 16538912050323671764
+    Path: assets\meshes\sponza\textures\VaseHanging\Vase_hanging_mro.tga
+  - Handle: 2488099974019084035
+    Path: assets\meshes\sponza\textures\VaseHanging\Vase_hanging_normal.tga
+  - Handle: 14923188089177290877
+    Path: assets\meshes\sponza\textures\VasePlant\VasePlant_albedo.tga
+  - Handle: 17675860708923727627
+    Path: assets\meshes\sponza\textures\VasePlant\VasePlant_mro.tga
+  - Handle: 218384605867240221
+    Path: assets\meshes\sponza\textures\VasePlant\VasePlant_normal.tga
+  - Handle: 15673693100307154560
+    Path: assets\meshes\sponza\textures\VaseRound\VaseRound_albedo.tga
+  - Handle: 14792787018178707689
+    Path: assets\meshes\sponza\textures\VaseRound\VaseRound_mro.tga
+  - Handle: 10753338369235652402
+    Path: assets\meshes\sponza\textures\VaseRound\VaseRound_normal.tga
   - Handle: 7330277855757082519
     Path: assets\meshes\teddy\lampTestModelOnePart.lgs
   - Handle: 18292569150900447914

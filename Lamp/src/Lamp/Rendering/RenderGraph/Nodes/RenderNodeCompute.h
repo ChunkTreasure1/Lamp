@@ -17,6 +17,8 @@ namespace Lamp
 
 		Ref<Framebuffer> framebuffer;
 
+		friend class RenderNodeDynamicUniform;
+
 	private:
 		void SetupUniforms();
 		void DrawUniforms();

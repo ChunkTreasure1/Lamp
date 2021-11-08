@@ -174,7 +174,7 @@ void main()
         uint offset = index * 1024;
         for (uint i = 0; i < visibleLightCount; i++)
         {
-            visibleIndices.data[offset + i].index = 1;//visibleLightIndices[i];
+            visibleIndices.data[offset + i].index = visibleLightIndices[i];
         }
 
         if (visibleLightCount != 1024)

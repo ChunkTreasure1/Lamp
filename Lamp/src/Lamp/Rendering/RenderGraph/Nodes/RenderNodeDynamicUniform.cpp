@@ -2,6 +2,7 @@
 #include "RenderNodeDynamicUniform.h"
 
 #include "RenderNodePass.h"
+#include "RenderNodeCompute.h"
 #include "DynamicUniformRegistry.h"
 
 #include "Lamp/Utility/SerializeMacros.h"
@@ -36,12 +37,20 @@ namespace Lamp
 	{
 		for (const auto& link : links)
 		{
-			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+			if (auto passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
 				auto& renderSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
 				
 				auto uniform = Utils::GetSpecificationById<PassUniformSpecification>(renderSpec.uniforms, id);
+				uniform->pData = pData;
+				uniform->type = uniformType;
+			}
+			else if (auto passNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+			{
+				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
+
+				auto uniform = Utils::GetSpecificationById<PassUniformSpecification>(passNode->m_uniforms, id);
 				uniform->pData = pData;
 				uniform->type = uniformType;
 			}

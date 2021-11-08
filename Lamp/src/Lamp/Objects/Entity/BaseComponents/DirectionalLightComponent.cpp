@@ -20,7 +20,7 @@ namespace Lamp
 		spec.Width = 4096;
 		spec.Attachments =
 		{
-			{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Nearest, FramebufferTextureWrap::ClampToEdge }
+			{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 		};
 
 		m_pDirectionalLight->shadowBuffer = Framebuffer::Create(spec);

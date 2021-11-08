@@ -164,16 +164,15 @@ namespace Lamp
 			{
 				switch (uniform.type)
 				{
-					case UniformType::Int: m_computeShader->UploadInt(uniform.name, std::any_cast<int>(uniform.data)); break;
-					case UniformType::Float: m_computeShader->UploadFloat(uniform.name, std::any_cast<float>(uniform.data)); break;
-					case UniformType::Float2: m_computeShader->UploadFloat2(uniform.name, std::any_cast<glm::vec2>(uniform.data)); break;
-					case UniformType::Float3: m_computeShader->UploadFloat3(uniform.name, std::any_cast<glm::vec3>(uniform.data)); break;
-					case UniformType::Float4: m_computeShader->UploadFloat4(uniform.name, std::any_cast<glm::vec4>(uniform.data)); break;
-					case UniformType::Mat3: m_computeShader->UploadMat3(uniform.name, std::any_cast<glm::mat3>(uniform.data)); break;
-					case UniformType::Mat4: m_computeShader->UploadMat4(uniform.name, std::any_cast<glm::mat4>(uniform.data)); break;
-					case UniformType::Sampler2D: m_computeShader->UploadInt(uniform.name, std::any_cast<int>(uniform.data)); break;
-					case UniformType::SamplerCube: m_computeShader->UploadInt(uniform.name, std::any_cast<int>(uniform.data)); break;
-					case UniformType::RenderData: break;
+					case UniformType::Int: m_computeShader->UploadInt(uniform.name, uniform.pData ? *static_cast<int*>(uniform.pData) : std::any_cast<int>(uniform.data)); break;
+					case UniformType::Float: m_computeShader->UploadFloat(uniform.name, uniform.pData ? *static_cast<float*>(uniform.pData) : std::any_cast<float>(uniform.data)); break;
+					case UniformType::Float2: m_computeShader->UploadFloat2(uniform.name, uniform.pData ? *static_cast<glm::vec2*>(uniform.pData) : std::any_cast<glm::vec2>(uniform.data)); break;
+					case UniformType::Float3: m_computeShader->UploadFloat3(uniform.name, uniform.pData ? *static_cast<glm::vec3*>(uniform.pData) : std::any_cast<glm::vec3>(uniform.data)); break;
+					case UniformType::Float4: m_computeShader->UploadFloat4(uniform.name, uniform.pData ? *static_cast<glm::vec4*>(uniform.pData) : std::any_cast<glm::vec4>(uniform.data)); break;
+					case UniformType::Mat3: m_computeShader->UploadMat4(uniform.name, uniform.pData ? *static_cast<glm::mat3*>(uniform.pData) : std::any_cast<glm::mat3>(uniform.data)); break;
+					case UniformType::Mat4: m_computeShader->UploadMat4(uniform.name, uniform.pData ? *static_cast<glm::mat4*>(uniform.pData) : std::any_cast<glm::mat4>(uniform.data)); break;
+					case UniformType::Sampler2D: m_computeShader->UploadInt(uniform.name, uniform.pData ? *static_cast<int*>(uniform.pData) : std::any_cast<int>(uniform.data)); break;
+					case UniformType::SamplerCube: m_computeShader->UploadInt(uniform.name, uniform.pData ? *static_cast<int*>(uniform.pData) : std::any_cast<int>(uniform.data)); break;
 
 					default:
 						break;
