@@ -4,9 +4,9 @@ layer:
   active: true
   entities:
     - entity: Entity
-      position: [0, 2.87243533, 7.77864981]
-      rotation: [0, 0.818734407, 0.280960351]
-      scale: [0.999998391, 0.999999762, 0.999998927]
+      position: [0, -0.602181554, -1.51776719]
+      rotation: [-3.2718841e-08, 0.818734586, 0.280960411]
+      scale: [0.999998391, 0.999999702, 0.999998927]
       layerId: 0
       components:
         - name: DirectionalLightComponent
@@ -21,7 +21,7 @@ layer:
               type: Bool
               value: true
     - entity: Entity
-      position: [-1.65676522, 3.75414181, 13.9111338]
+      position: [1.41626692, 3.75414181, 0.810348392]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
@@ -48,38 +48,20 @@ layer:
               value: [0.980000019, 0.610000014, -0.0700000003]
   brushes:
     - brush: Brush
-      meshHandle: 10994454763501493260
-      position: [-3.19713068, 0.0418298244, -2.48263025]
-      rotation: [0, 0, 0]
-      scale: [20, 0.999999404, 20.0000038]
-      layerId: 0
-    - brush: Brush
-      meshHandle: 6595288631453100615
-      position: [-7.4505806e-09, 1.6735487, 8.23078442]
-      rotation: [0, 0, 0]
-      scale: [1, 0.999994814, 0.999994814]
-      layerId: 0
-    - brush: Brush
       meshHandle: 3247278211742412997
-      position: [1.15772152, 2.0595212, 5.21010113]
-      rotation: [0, 0, 0]
-      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      position: [-6.60226154, 0.784256339, -0.277845651]
+      rotation: [0, 1.57079637, 0]
+      scale: [0.00999974459, 0.00999999978, 0.00999974459]
       layerId: 0
     - brush: Brush
       meshHandle: 18292569150900447914
-      position: [0.545390308, 0.350266159, 6.06476545]
-      rotation: [0, 0, 0]
-      scale: [0.00999999978, 0.00999999978, 0.00999999978]
-      layerId: 0
-    - brush: Brush
-      meshHandle: 10994454763501493260
-      position: [-0.714993715, 0.892196476, 0]
-      rotation: [0, 0, 0]
-      scale: [1, 1, 1]
+      position: [-6.59614801, -0.076349929, 0.499265403]
+      rotation: [-3.14159226, 1.57030797, -3.14159226]
+      scale: [0.00999999885, 0.00999999978, 0.00999999885]
       layerId: 0
     - brush: Brush
       meshHandle: 14307495939999770285
-      position: [-2.82602787, 1.13806415, 12.3937397]
+      position: [0, 0, 0]
       rotation: [0, 0, 0]
       scale: [0.00999999978, 0.00999999978, 0.00999999978]
       layerId: 0

@@ -6,6 +6,6 @@ level:
       id: 0
       active: true
   LevelEnvironment:
-    cameraPosition: [6.60891104, 4.29397917, 11.6829195]
-    cameraRotation: [-0.347548634, 0.16010353, -0.0603532083, -0.921918809]
+    cameraPosition: [1.90909219, 3.3449614, -0.133542508]
+    cameraRotation: [0.923785627, 0.0712309256, -0.311163843, 0.211479083]
     cameraFOV: 60
