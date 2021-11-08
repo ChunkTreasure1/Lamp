@@ -31,6 +31,86 @@ Assets:
     Path: assets\meshes\head\textures\kyle_low_mro.tga
   - Handle: 5165272647848418933
     Path: assets\meshes\head\textures\kyle_low_normal.tga
+  - Handle: 14307495939999770285
+    Path: assets\meshes\sponza\Sponza.lgf
+  - Handle: 17590591413903205915
+    Path: assets\meshes\sponza\SponzaForLamp.lgs
+  - Handle: 5047332168481336064
+    Path: assets\meshes\sponza/sponza58.mtl
+  - Handle: 5518077659254576141
+    Path: assets\meshes\sponza/sponzaArch.mtl
+  - Handle: 770656472006616932
+    Path: assets\meshes\sponza/sponzaBackground.mtl
+  - Handle: 7628814569669954307
+    Path: assets\meshes\sponza/sponzaBricks.mtl
+  - Handle: 4784376951779310318
+    Path: assets\meshes\sponza/sponzaCeiling.mtl
+  - Handle: 4640124373037903815
+    Path: assets\meshes\sponza/sponzaChain.mtl
+  - Handle: 10112991968605391801
+    Path: assets\meshes\sponza/sponzaColumn_a.mtl
+  - Handle: 12772557282749348104
+    Path: assets\meshes\sponza/sponzaColumn_b.mtl
+  - Handle: 5525171455564732041
+    Path: assets\meshes\sponza/sponzaColumn_c.mtl
+  - Handle: 9962023397638409978
+    Path: assets\meshes\sponza/sponzaCurtain_blue.mtl
+  - Handle: 14633617986139248865
+    Path: assets\meshes\sponza/sponzaCurtain_green.mtl
+  - Handle: 15416290866114464059
+    Path: assets\meshes\sponza/sponzaCurtain_red.mtl
+  - Handle: 10578682728667720107
+    Path: assets\meshes\sponza/sponzaDetails.mtl
+  - Handle: 743947141228812435
+    Path: assets\meshes\sponza/sponzaFabric_blue.mtl
+  - Handle: 3928687319403170501
+    Path: assets\meshes\sponza/sponzaFabric_green.mtl
+  - Handle: 9481153863399299067
+    Path: assets\meshes\sponza/sponzaFabric_red.mtl
+  - Handle: 15762875916196242414
+    Path: assets\meshes\sponza/sponzaFlagpole.mtl
+  - Handle: 14770480207366235730
+    Path: assets\meshes\sponza/sponzaFloor.mtl
+  - Handle: 14964634729354598057
+    Path: assets\meshes\sponza/sponzaLion.mtl
+  - Handle: 8063351463971268638
+    Path: assets\meshes\sponza/sponzaRoof.mtl
+  - Handle: 1571127597728572972
+    Path: assets\meshes\sponza/sponzaThorn.mtl
+  - Handle: 16856772880056214501
+    Path: assets\meshes\sponza/sponzaVase.mtl
+  - Handle: 364206035446163031
+    Path: assets\meshes\sponza/sponzaVase_hanging.mtl
+  - Handle: 3949351496605532555
+    Path: assets\meshes\sponza/sponzaVase_round.mtl
+  - Handle: 15385105700162503832
+    Path: assets\meshes\sponza\textures\Arch\Sponza_Arch_mro.tga
+  - Handle: 2128424196460633133
+    Path: assets\meshes\sponza\textures\Arch\Sponza_Arch_normal.tga
+  - Handle: 13023619986465913697
+    Path: assets\meshes\sponza\textures\Background\Background_albedo.tga
+  - Handle: 8777914584808269054
+    Path: assets\meshes\sponza\textures\Background\Background_mro.tga
+  - Handle: 5958078260707154157
+    Path: assets\meshes\sponza\textures\Background\Background_normal.tga
+  - Handle: 4311778854268390843
+    Path: assets\meshes\sponza\textures\Bricks\Sponza_Bricks_albedo.tga
+  - Handle: 12158055907442582907
+    Path: assets\meshes\sponza\textures\Bricks\Sponza_Bricks_mro.tga
+  - Handle: 14964069523089533555
+    Path: assets\meshes\sponza\textures\Bricks\Sponza_Bricks_normal.tga
+  - Handle: 4375340822374509377
+    Path: assets\meshes\sponza\textures\Ceiling\Sponza_Ceiling_albedo.tga
+  - Handle: 13365384886462579263
+    Path: assets\meshes\sponza\textures\Ceiling\Sponza_Ceiling_mro.tga
+  - Handle: 822906155984412544
+    Path: assets\meshes\sponza\textures\Ceiling\Sponza_Ceiling_normal.tga
+  - Handle: 4624293452532926958
+    Path: assets\meshes\sponza\textures\Chain\ChainTexture_albedo.tga
+  - Handle: 5604376269294657655
+    Path: assets\meshes\sponza\textures\Chain\ChainTexture_mro.tga
+  - Handle: 6348075443527336439
+    Path: assets\meshes\sponza\textures\Chain\ChainTexture_normal.tga
   - Handle: 7330277855757082519
     Path: assets\meshes\teddy\lampTestModelOnePart.lgs
   - Handle: 18292569150900447914
@@ -153,6 +233,8 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
   - Handle: 8367631737299797705
     Path: C:\Programming\Lamp\Sandbox\assets\meshes\head\textures\ELISLEDSEN.png
+  - Handle: 924588934519139352
+    Path: C:\Programming\Lamp\Sandbox\assets\meshes\sponza\textures\Arch\Sponza_Arch_albedo.tga
   - Handle: 14426076198348094346
     Path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
   - Handle: 8832679391837945518

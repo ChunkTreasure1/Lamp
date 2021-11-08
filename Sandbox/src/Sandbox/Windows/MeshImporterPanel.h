@@ -41,6 +41,10 @@ namespace Sandbox
 		bool m_renderSkybox = false;
 		bool m_renderGrid = true;
 		glm::vec2 m_perspectiveSize;
+
+		glm::mat4 m_transform = glm::mat4(1.f);
+		glm::vec3 m_scale = glm::vec3(1.f);
+
 		std::filesystem::path m_savePath;
 
 		Ref<Lamp::Mesh> m_modelToImport;

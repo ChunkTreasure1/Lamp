@@ -1,0 +1,8 @@
+material:
+  name: sponzaFloor
+  handle: 14770480207366235730
+  textures:
+    albedo: 1596807254034736571
+    normal: 1596807254034736571
+    mro: 1596807254034736571
+  shader: pbrForward

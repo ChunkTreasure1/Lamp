@@ -195,6 +195,7 @@
     <None Include="engine\shaders\main\screenSpaceSSS.glsl" />
     <None Include="engine\shaders\postprocess\ssao.glsl" />
     <None Include="engine\shaders\postprocess\ssaoBlur.glsl" />
+    <None Include="engine\shaders\postprocess\ssaoCompute.glsl" />
     <None Include="engine\shaders\quad.glsl" />
     <None Include="engine\shaders\shadows\dirShadow.glsl" />
     <None Include="engine\shaders\shadows\pointShadow.glsl" />

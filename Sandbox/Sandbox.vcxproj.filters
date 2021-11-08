@@ -190,6 +190,9 @@
     <None Include="engine\shaders\postprocess\ssaoBlur.glsl">
       <Filter>engine\shaders\postprocess</Filter>
     </None>
+    <None Include="engine\shaders\postprocess\ssaoCompute.glsl">
+      <Filter>engine\shaders\postprocess</Filter>
+    </None>
     <None Include="engine\shaders\quad.glsl">
       <Filter>engine\shaders</Filter>
     </None>

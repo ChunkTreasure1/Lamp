@@ -165,7 +165,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_modelToImport->GetSubMeshes())
 			{
-				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				Renderer3D::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
 
@@ -175,6 +175,9 @@ namespace Sandbox
 	void MeshImporterPanel::LoadMesh()
 	{
 		m_modelToImport = MeshImporter::ImportMesh(m_importSettings);
+
+		m_transform = glm::mat4(1.f);
+		m_scale = glm::vec3(1.f);
 
 		m_savePath = m_importSettings.path.stem().string();
 		m_savePath += ".lgf";
@@ -342,6 +345,12 @@ namespace Sandbox
 
 		static std::vector<const char*> meshDirections = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
 		static int currentDirection = 0;
+
+		if (UI::PropertyAxisColor("Scale", m_scale, 0.f))
+		{
+			m_transform = glm::scale(glm::mat4(1.f), m_scale);
+		}
+
 
 		UI::PushId();
 		if (UI::BeginProperties("meshSettings", false))
