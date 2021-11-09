@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: quad
 TextureCount: 1
+InternalShader: false
 TextureNames
 {
 gizmo

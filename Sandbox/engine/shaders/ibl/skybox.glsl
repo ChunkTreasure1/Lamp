@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: Skybox
 TextureCount: 0
+InternalShader: true
 TextureNames:
 {
 }

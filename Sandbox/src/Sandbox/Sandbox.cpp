@@ -14,7 +14,7 @@
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
 #include "Windows/RenderGraphPanel.h"
-#include "Windows/LayerView.h"
+#include "Windows/LayerViewPanel.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 
@@ -47,7 +47,7 @@ namespace Sandbox
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new RenderGraphPanel("Render Graph"));
-		m_pWindows.push_back(new LayerView("Layer View"));
+		m_pWindows.push_back(new LayerViewPanel("Layer View"));
 
 		Application::Get().GetWindow().Maximize();
 

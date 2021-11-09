@@ -23,7 +23,7 @@ namespace Lamp
 	{
 	public:
 		Entity();
-		~Entity() {}
+		~Entity() = default;
 
 		virtual void OnEvent(Event& e) override;
 		virtual void Destroy() override;
@@ -56,7 +56,7 @@ namespace Lamp
 		{
 			if (auto it = m_pComponentMap.find(T::GetFactoryName()); it == m_pComponentMap.end())
 			{
-				Ref<T> c(new T(std::forward<TArgs>(mArgs)...));
+				Ref<T> c = CreateRef<T>(std::forward<TArgs>(mArgs)...);
 				c->m_pEntity = this;
 
 				m_pComponents.push_back(c);

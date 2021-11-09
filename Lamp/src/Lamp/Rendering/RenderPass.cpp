@@ -12,19 +12,19 @@ namespace Lamp
 	Ref<RenderPassManager> RenderPassManager::s_Instance = nullptr;
 
 	RenderPass::RenderPass(const RenderPassSpecification& spec)
-		: m_PassSpec(spec)
+		: m_passSpecification(spec)
 	{
 	}
 
 	void RenderPass::Render(Ref<CameraBase>& camera)
 	{
-		LP_PROFILE_SCOPE("RenderPass::Render::" + m_PassSpec.Name);
+		LP_PROFILE_SCOPE("RenderPass::Render::" + m_passSpecification.name);
 
-		RenderCommand::SetClearColor(m_PassSpec.TargetFramebuffer->GetSpecification().ClearColor);
-		m_PassSpec.TargetFramebuffer->Bind();
+		RenderCommand::SetClearColor(m_passSpecification.targetFramebuffer->GetSpecification().ClearColor);
+		m_passSpecification.targetFramebuffer->Bind();
 
 		//Clear color if i should
-		switch (m_PassSpec.clearType)
+		switch (m_passSpecification.clearType)
 		{
 			case ClearType::None:
 				break;
@@ -42,9 +42,9 @@ namespace Lamp
 				break;
 		}
 
-		Renderer3D::BeginPass(m_PassSpec);
+		Renderer3D::BeginPass(m_passSpecification);
 
-		switch (m_PassSpec.drawType)
+		switch (m_passSpecification.drawType)
 		{
 			case DrawType::All:
 				Renderer3D::DrawRenderBuffer();
@@ -65,7 +65,7 @@ namespace Lamp
 				break;
 		}
 
-		if (m_PassSpec.draw2D)
+		if (m_passSpecification.draw2D)
 		{
 			Renderer2D::BeginPass();
 
@@ -74,17 +74,16 @@ namespace Lamp
 			Renderer2D::EndPass();
 		}
 
-		if (m_PassSpec.drawSkybox)
+		if (m_passSpecification.drawSkybox)
 		{
 			g_pEnv->pLevel->GetSkybox()->Render();
 		}
 
 		Renderer3D::EndPass();
-		m_PassSpec.TargetFramebuffer->Unbind();
+		m_passSpecification.targetFramebuffer->Unbind();
 
-		for (const auto& commandPair : m_PassSpec.framebufferCommands)
+		for (const auto& commandSpec : m_passSpecification.framebufferCommands)
 		{
-			const auto& commandSpec = commandPair.second.first;
 			if (!commandSpec.primary || !commandSpec.secondary)
 			{
 				LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);

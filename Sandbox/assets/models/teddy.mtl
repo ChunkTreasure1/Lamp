@@ -1,8 +1,0 @@
-material:
-  name: teddy
-  handle: 1087971385
-  textures:
-    albedo: 3775480950542812265
-    normal: 5969456504029299388
-    mro: 876498905806854835
-  shader: pbrForward

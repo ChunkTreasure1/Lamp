@@ -31,7 +31,7 @@ namespace Lamp
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
 
-		static void BeginPass(RenderPassSpecification& passSpec);
+		static void BeginPass(const RenderPassSpecification& passSpec);
 		static void EndPass();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id = -1);
@@ -45,6 +45,15 @@ namespace Lamp
 
 		static void SetEnvironment(const std::string& path);
 
+		struct Statistics
+		{
+			uint32_t totalDrawCalls;
+			uint32_t otherDrawCalls;
+			uint32_t sceneDrawCalls;
+		};
+
+		static const Statistics& GetStatistics() { return s_renderStatistics; }
+
 	private:
 		static void CreateBaseMeshes();
 
@@ -52,5 +61,6 @@ namespace Lamp
 
 	private:
 		static RenderBuffer s_RenderBuffer;
+		static Statistics s_renderStatistics;
 	};
 }

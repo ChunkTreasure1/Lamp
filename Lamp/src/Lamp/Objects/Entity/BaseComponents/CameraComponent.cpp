@@ -11,7 +11,7 @@ namespace Lamp
 		({
 			{ PropertyType::Bool, "Is Perspective", RegisterData(&m_IsPerspective) },
 			{ PropertyType::Bool, "Is Main", RegisterData(&m_IsMain) },
-			{ PropertyType::Float, "Field Of View", RegisterData(&m_PerspectiveCamera->GetFOV()) }
+			{ PropertyType::Float, "Field Of View", RegisterData(&m_PerspectiveCamera->GetFieldOfView()) }
 		});
 	}
 
@@ -32,7 +32,7 @@ namespace Lamp
 
 	bool CameraComponent::OnViewportSizeChanged(EditorViewportSizeChangedEvent& e)
 	{
-		m_PerspectiveCamera->SetProjection(m_PerspectiveCamera->GetFOV(), (float)e.GetWidth() / (float)e.GetHeight(), 0.01f, 100.f);
+		m_PerspectiveCamera->SetProjection(m_PerspectiveCamera->GetFieldOfView(), (float)e.GetWidth() / (float)e.GetHeight(), 0.01f, 100.f);
 		return false;
 	}
 

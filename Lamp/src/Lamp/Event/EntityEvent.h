@@ -10,8 +10,7 @@ namespace Lamp
 	class ObjectPositionChangedEvent : public Event
 	{
 	public:
-		ObjectPositionChangedEvent()
-		{}
+		ObjectPositionChangedEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -27,8 +26,7 @@ namespace Lamp
 	class ObjectRotationChangedEvent : public Event
 	{
 	public:
-		ObjectRotationChangedEvent()
-		{}
+		ObjectRotationChangedEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -44,8 +42,7 @@ namespace Lamp
 	class ObjectScaleChangedEvent : public Event
 	{
 	public:
-		ObjectScaleChangedEvent()
-		{}
+		ObjectScaleChangedEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -61,8 +58,7 @@ namespace Lamp
 	class ObjectPropertyChangedEvent : public Event
 	{
 	public:
-		ObjectPropertyChangedEvent()
-		{}
+		ObjectPropertyChangedEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -78,8 +74,7 @@ namespace Lamp
 	class EntityComponentAddedEvent : public Event
 	{
 	public:
-		EntityComponentAddedEvent()
-		{}
+		EntityComponentAddedEvent() = default;
 
 		std::string ToString() const override
 		{

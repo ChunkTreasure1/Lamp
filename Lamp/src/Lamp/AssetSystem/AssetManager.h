@@ -61,7 +61,7 @@ namespace Lamp
 			if (asset == nullptr)
 			{
 				LoadAsset(path, asset);
-				m_AssetRegistry.emplace(std::make_pair(path, asset->Handle));
+				m_AssetRegistry.emplace(path, asset->Handle);
 			}
 			return std::dynamic_pointer_cast<T>(asset);
 		}

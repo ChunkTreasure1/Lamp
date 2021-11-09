@@ -1,0 +1,8 @@
+material:
+  name: sponzaBackground
+  handle: 770656472006616932
+  textures:
+    albedo: 13023619986465913697
+    normal: 5958078260707154157
+    mro: 8777914584808269054
+  shader: pbrForward

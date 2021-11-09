@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: BRDFIntegrate
 TextureCount: 0
+InternalShader: true
 TextureNames:
 {
 }

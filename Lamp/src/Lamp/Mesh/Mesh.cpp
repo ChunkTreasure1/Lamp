@@ -10,9 +10,10 @@ namespace Lamp
 {
 	void Mesh::Render(size_t id, const glm::mat4& transform)
 	{
-		for (size_t i = 0; i < m_Meshes.size(); i++)
+		for (const auto& mesh : m_Meshes)
 		{
-			Renderer3D::SubmitMesh(transform, m_Meshes[i], m_Materials[m_Meshes[i]->GetMaterialIndex()], id);
+			//TODO: Render error mesh if mesh is invalid
+			Renderer3D::SubmitMesh(transform, mesh, m_Materials[mesh->GetMaterialIndex()], id);
 		}
 	}
 }

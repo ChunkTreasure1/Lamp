@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: pointShadow
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }

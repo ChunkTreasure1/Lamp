@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: dirShadow
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }

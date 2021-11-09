@@ -4,16 +4,16 @@
 
 namespace Lamp
 {
-	struct RenderNodeEnd : public RenderNode
+	class RenderNodeEnd : public RenderNode
 	{
 	public:
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override;
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::End; }
-		virtual void Serialize(YAML::Emitter& out) override;
-		virtual void Deserialize(YAML::Node& node) override;
+		void Initialize() override;
+		void Start() override;
+		void DrawNode() override;
+		void Activate(std::any value) override;
+		RenderNodeType GetNodeType() override { return RenderNodeType::End; }
+		void Serialize(YAML::Emitter& out) override;
+		void Deserialize(YAML::Node& node) override;
 
 		Ref<Framebuffer> framebuffer;
 	};

@@ -51,6 +51,9 @@ constexpr Ref<T> CreateRef(Args&& ... args)
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template<typename T>
+using Weak = std::weak_ptr<T>;
+
 /////Global environment/////
 extern GlobalEnvironment* g_pEnv;
 ////////////////////////////

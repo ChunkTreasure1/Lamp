@@ -70,8 +70,7 @@ namespace Lamp
 			: m_Properties(properties)
 		{}
 
-		ComponentProperties()
-		{}
+		ComponentProperties() = default;
 
 		inline std::vector<ComponentProperty>& GetProperties() { return m_Properties; }
 

@@ -15,31 +15,29 @@ namespace Lamp
 		IBLBuffer(const std::string& path);
 		virtual ~IBLBuffer() override;
 
-		virtual void Bind() override;
-		virtual void Unbind() override;
-		virtual void Resize(const uint32_t width, const uint32_t height) override;
-		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
-		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override;
-		virtual void Invalidate() override {}
+		void Bind() override;
+		void Unbind() override;
+		void Resize(const uint32_t width, const uint32_t height) override;
+		int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
+		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override;
+		void Invalidate() override {}
 
-		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
-		virtual inline const uint32_t GetDepthAttachmentID() override;
-		virtual inline const uint32_t GetRendererID() override { return -1; }
+		inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
+		inline const uint32_t GetDepthAttachmentID() override;
+		inline const uint32_t GetRendererID() override { return -1; }
 
-		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+		void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-		virtual void BindColorAttachment(uint32_t id, uint32_t i);
-		virtual void BindDepthAttachment(uint32_t id);
+		void BindColorAttachment(uint32_t id, uint32_t i) override;
+		void BindDepthAttachment(uint32_t id) override;
 
-		virtual FramebufferSpecification& GetSpecification() override { return FramebufferSpecification(); }
+		FramebufferSpecification& GetSpecification() override { return m_specification; }
 
 	private:
 		Ref<Shader> m_EqCubeShader;
 		Ref<Shader> m_ConvolutionShader;
 		Ref<Shader> m_PrefilterShader;
 		Ref<Shader> m_BRDFShader;
-
-		Ref<Texture2D> m_TestTexture;
 
 		uint32_t m_CubeMapId = 0;
 		uint32_t m_HdrTextureId = 0;
@@ -50,6 +48,8 @@ namespace Lamp
 
 		glm::mat4 m_CaptureProjection;
 		std::vector<glm::mat4> m_CaptureViews;
-		std::array<uint32_t, 3> m_Attachments;
+		std::array<uint32_t, 2> m_Attachments;
+
+		FramebufferSpecification m_specification;
 	};
 }

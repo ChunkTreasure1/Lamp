@@ -1,0 +1,8 @@
+material:
+  name: sponzaCurtain_blue
+  handle: 9962023397638409978
+  textures:
+    albedo: 9521120982377647160
+    normal: 3402483956658190032
+    mro: 3753092505565141235
+  shader: pbrForward

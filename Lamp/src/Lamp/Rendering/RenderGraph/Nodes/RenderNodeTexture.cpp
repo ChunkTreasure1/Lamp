@@ -7,6 +7,8 @@
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imgui.h>
 #include <imnodes.h>
@@ -36,7 +38,10 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
-				passNode->renderPass->GetSpecification().textures[id].first.texture = texture;
+				auto& renderPassSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
+				auto tex = Utils::GetSpecificationById<PassTextureSpecification>(renderPassSpec.textures, id);
+
+				tex->texture = texture;
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 			{
@@ -64,12 +69,21 @@ namespace Lamp
 		ImGui::Text("Texture node");
 		ImNodes::EndNodeTitleBar();
 
-		ImGui::Checkbox("Use internal texture", &m_UseInternalTextures);
-		ImGui::Text("Texture:");
+		const float maxOffset = 100.f;
+
+		ImGui::PushID(("texNode" + std::to_string(id)).c_str());
+		uint32_t stackId = 0;
+
+		float offset = maxOffset - ImGui::CalcTextSize("Internal texture").x;
+		ImGui::Text("Internal texture");
+
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+		ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_UseInternalTextures);
 
 		if (m_UseInternalTextures)
 		{
-			ImGui::PushItemWidth(150.f);
+			ImGui::PushItemWidth(128.f);
 			if (ImGui::Combo("##textures", &m_CurrentlySelectedTexture, m_TextureNames.data(), (int)m_TextureNames.size()))
 			{
 				texture = Renderer::s_pSceneData->internalTextures[m_TextureNames[m_CurrentlySelectedTexture]];
@@ -95,9 +109,11 @@ namespace Lamp
 			}
 		}
 
-		DrawAttributes();
+		DrawAttributes(inputs, outputs);
 
 		ImNodes::EndNode();
+
+		ImGui::PopID();
 
 		ImNodes::PopColorStyle();
 		ImNodes::PopColorStyle();

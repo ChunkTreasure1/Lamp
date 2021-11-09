@@ -29,13 +29,8 @@ namespace Lamp
 
 	struct RenderPassSpecification
 	{
-		using RenderFunc = std::function<void()>;
-		std::vector<RenderFunc> ExtraRenders;
-
-		Ref<Framebuffer> TargetFramebuffer;
-
-		uint32_t LightIndex = 0;
-		std::string Name = "";
+		Ref<Framebuffer> targetFramebuffer;
+		std::string name;
 
 		ClearType clearType = ClearType::ColorDepth;
 		CullFace cullFace = CullFace::Back;
@@ -45,11 +40,10 @@ namespace Lamp
 		bool draw2D = false;
 		bool drawSkybox = false;
 
-		std::map<GraphUUID, PassStaticUniformSpecification> staticUniforms; // name, type, data
-		std::map<GraphUUID, std::pair<PassDynamicUniformSpecification, GraphUUID>> dynamicUniforms; // name, type, data, attrId
-		std::map<GraphUUID, std::pair<PassTextureSpecification, GraphUUID>> textures; // texture, texBindSlot, attrId
-		std::map<GraphUUID, std::pair<PassFramebufferSpecification, GraphUUID>> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
-		std::map<GraphUUID, std::pair<PassFramebufferCommandSpecification, GraphUUID>> framebufferCommands; // main buffer, secondary buffer, command, attrId
+		std::vector<PassUniformSpecification> uniforms; // name, type, data, attrId
+		std::vector<PassTextureSpecification> textures; // texture, texBindSlot, attrId
+		std::vector<PassFramebufferSpecification> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
+		std::vector<PassFramebufferCommandSpecification> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 
 	class RenderPass
@@ -64,7 +58,7 @@ namespace Lamp
 		~RenderPass() {}
 
 		inline uint32_t GetID() { return m_ID; }
-		inline RenderPassSpecification& GetSpecification() { return m_PassSpec; }
+		inline const RenderPassSpecification& GetSpecification() { return m_passSpecification; }
 
 		void Render(Ref<CameraBase>& camera);
 
@@ -72,8 +66,11 @@ namespace Lamp
 		inline void SetID(uint32_t id) { m_ID = id; }
 
 	private:
+		friend class RenderNodePass;
+		friend class RenderNodeTexture;
+
 		uint32_t m_ID;
-		RenderPassSpecification m_PassSpec;
+		RenderPassSpecification m_passSpecification;
 	};
 
 	class RenderPassManager

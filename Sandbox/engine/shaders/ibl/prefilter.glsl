@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: Prefilter
 TextureCount: 0
+InternalShader: true
 TextureNames:
 {
 }

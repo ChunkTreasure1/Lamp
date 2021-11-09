@@ -1,0 +1,8 @@
+material:
+  name: sponzaVase
+  handle: 16856772880056214501
+  textures:
+    albedo: 2686609411931972354
+    normal: 6521504680222574475
+    mro: 14171207157858481160
+  shader: pbrForward

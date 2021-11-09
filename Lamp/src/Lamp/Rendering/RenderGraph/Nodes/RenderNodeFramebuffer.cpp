@@ -6,6 +6,8 @@
 #include "Lamp/Utility/SerializeMacros.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imnodes.h>
 #include <imgui.h>
@@ -15,6 +17,25 @@
 
 namespace Lamp
 {
+	namespace Utils
+	{
+		static TextureType TextureFormatToType(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+				case Lamp::FramebufferTextureFormat::None: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA8: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA16F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RGBA32F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RG32F: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RED_INTEGER: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::RED: return TextureType::Color;
+				case Lamp::FramebufferTextureFormat::DEPTH32F: return TextureType::Depth;
+				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return TextureType::Depth;
+			}
+		}
+	}
+
 	void RenderNodeFramebuffer::Initialize()
 	{
 		framebuffer = Framebuffer::Create(FramebufferSpecification());
@@ -39,7 +60,17 @@ namespace Lamp
 			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
-				passNode->renderPass->GetSpecification().framebuffers[id].first.framebuffer = framebuffer;
+				auto& renderPassSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
+
+				auto buffer = Utils::GetSpecificationById<PassFramebufferSpecification>(renderPassSpec.framebuffers, id);
+				buffer->framebuffer = framebuffer;
+
+				int idOffset = 0;
+				for (auto& att : framebuffer->GetSpecification().Attachments.Attachments)
+				{
+					buffer->attachments.emplace_back(Utils::TextureFormatToType(att.TextureFormat), m_bindId + idOffset, idOffset);
+					idOffset++;
+				}
 			}
 			else if (RenderNodeCompute* computeNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
 			{
@@ -56,7 +87,12 @@ namespace Lamp
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(179, 53, 41, 255));
 		ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(179, 53, 41, 255));
 
+		ImGui::PushID(("framebuffer" + std::to_string(id)).c_str());
+		uint32_t stackId = 0;
+
 		ImNodes::BeginNode(id);
+
+		ImGui::PushItemWidth(200.f);
 
 		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
 		if (pos.x != position.x || pos.y != position.y)
@@ -68,11 +104,19 @@ namespace Lamp
 		ImGui::Text("Framebuffer node");
 		ImNodes::EndNodeTitleBar();
 
-		ImGui::PushItemWidth(100.f);
+		ImGui::PushItemWidth(200.f);
 
-		if (ImGui::Checkbox("Use internal framebuffer", &m_UseInternalBuffers))
+		const float maxOffset = 90.f;
+
+		float offset = 130.f - ImGui::CalcTextSize("Internal framebuffer").x;
+		ImGui::TextUnformatted("Internal framebuffer");
+		
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+
+		if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_useInternalBuffers))
 		{
-			if (!m_UseInternalBuffers)
+			if (!m_useInternalBuffers)
 			{
 				FramebufferSpecification spec;
 				framebuffer = Framebuffer::Create(spec);
@@ -84,9 +128,18 @@ namespace Lamp
 			}
 		}
 
-		if (m_UseInternalBuffers)
+		offset = 50.f - ImGui::CalcTextSize("Bind slot").x;
+		ImGui::TextUnformatted("Bind slot");
+
+		ImGui::SameLine();
+		UI::ShiftCursor(offset, 0.f);
+		ImGui::PushItemWidth(100.f);
+		ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &m_bindId);
+		ImGui::PopItemWidth();
+
+		if (m_useInternalBuffers)
 		{
-			ImGui::PushItemWidth(150.f);
+			ImGui::PushItemWidth(158.f);
 			if (ImGui::Combo("##buffers", &m_CurrentlySelectedBuffer, m_BufferNames.data(), (int)m_BufferNames.size()))
 			{
 				framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_BufferNames[m_CurrentlySelectedBuffer]];
@@ -96,53 +149,89 @@ namespace Lamp
 		}
 		else
 		{
-			if (ImGui::Checkbox("Use viewport size", &m_UseScreenSize))
+			const float treeWidth = ImNodes::GetNodeDimensions(id).x - 15.f;
+
+			if (UI::TreeNodeFramed("Settings", treeWidth))
 			{
-				if (m_UseScreenSize)
+				offset = maxOffset - ImGui::CalcTextSize("Viewport size").x;
+				ImGui::TextUnformatted("Viewport size");
+
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				if (ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &m_useScreenSize))
 				{
-					Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
-				}
-				else
-				{
-					auto& vector = Renderer::s_pSceneData->useViewportSize;
-					if (auto it = std::find(vector.begin(), vector.end(), framebuffer); it != vector.end())
+					if (m_useScreenSize)
 					{
-						vector.erase(it);
+						Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
+					}
+					else
+					{
+						auto& vector = Renderer::s_pSceneData->useViewportSize;
+						if (auto it = std::find(vector.begin(), vector.end(), framebuffer); it != vector.end())
+						{
+							vector.erase(it);
+						}
 					}
 				}
-			}
 
-			auto& specification = framebuffer->GetSpecification();
-			if (!m_UseScreenSize)
-			{
-				int width = static_cast<int>(specification.Width);
-				if (ImGui::InputInt("Width", &width))
+				auto& specification = framebuffer->GetSpecification();
+				if (!m_useScreenSize)
 				{
-					specification.Width = width;
+					int width = static_cast<int>(specification.Width);
+
+					offset = maxOffset - ImGui::CalcTextSize("Width").x;
+					ImGui::TextUnformatted("Width");
+
+					ImGui::SameLine();
+					UI::ShiftCursor(offset, 0.f);
+
+					if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &width))
+					{
+						specification.Width = width;
+					}
+
+					offset = maxOffset - ImGui::CalcTextSize("Height").x;
+					ImGui::TextUnformatted("Height");
+
+					ImGui::SameLine();
+					UI::ShiftCursor(offset, 0.f);
+
+					int height = static_cast<int>(specification.Height);
+					if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &height))
+					{
+						specification.Height = height;
+					}
 				}
 
-				int height = static_cast<int>(specification.Height);
-				if (ImGui::InputInt("Height", &height))
+				int samples = static_cast<int>(specification.Samples);
+				offset = maxOffset - ImGui::CalcTextSize("Samples").x;
+				ImGui::TextUnformatted("Samples");
+
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				if (ImGui::InputInt(("##" + std::to_string(stackId++)).c_str(), &samples))
 				{
-					specification.Height = height;
+					specification.Samples = samples;
 				}
+
+				offset = maxOffset - ImGui::CalcTextSize("Clear color").x;
+				ImGui::TextUnformatted("Clear color");
+
+				ImGui::SameLine();
+				UI::ShiftCursor(offset, 0.f);
+
+				ImGui::ColorEdit4(("##" + std::to_string(stackId++)).c_str(), glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
+
+				UI::TreeNodePop();
 			}
 
-			int samples = static_cast<int>(specification.Samples);
-			if (ImGui::InputInt("Samples", &samples))
-			{
-				specification.Samples = samples;
-			}
-
-			ImGui::PushItemWidth(200.f);
-			ImGui::ColorEdit4("Clear Color", glm::value_ptr(specification.ClearColor), ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB);
-			ImGui::PopItemWidth();
-
-			if (ImGui::TreeNode("Attachments"))
+			/*if (ImGui::TreeNode("Attachments"))
 			{
 				if (ImGui::Button("Add"))
 				{
-					specification.Attachments.Attachments.push_back(FramebufferTextureSpecification());
+					specification.Attachments.Attachments.emplace_back();
 				}
 
 				ImGui::PushItemWidth(200.f);
@@ -200,12 +289,14 @@ namespace Lamp
 				ImGui::PopItemWidth();
 
 				ImGui::TreePop();
-			}
+			}*/
 		}
 
-		DrawAttributes();
-
+		DrawAttributes(inputs, outputs);
+		ImGui::PopItemWidth();
 		ImNodes::EndNode();
+
+		ImGui::PopID();
 
 		ImGui::PopItemWidth();
 		ImNodes::PopColorStyle();
@@ -217,9 +308,10 @@ namespace Lamp
 	{
 		const auto& specification = framebuffer->GetSpecification();
 
-		LP_SERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, out);
+		LP_SERIALIZE_PROPERTY(usingInternal, m_useInternalBuffers, out);
 		LP_SERIALIZE_PROPERTY(selectedBuffer, m_SelectedBufferName, out);
-		LP_SERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, out);
+		LP_SERIALIZE_PROPERTY(useViewportSize, m_useScreenSize, out);
+		LP_SERIALIZE_PROPERTY(bindSlot, m_bindId, out);
 
 		LP_SERIALIZE_PROPERTY(width, specification.Width, out);
 		LP_SERIALIZE_PROPERTY(height, specification.Height, out);
@@ -255,23 +347,24 @@ namespace Lamp
 
 	void RenderNodeFramebuffer::Deserialize(YAML::Node& node)
 	{
-		LP_DESERIALIZE_PROPERTY(usingInternal, m_UseInternalBuffers, node, false);
+		LP_DESERIALIZE_PROPERTY(usingInternal, m_useInternalBuffers, node, false);
 		m_SelectedBufferName = node["selectedBuffer"].as<std::string>();
+		LP_DESERIALIZE_PROPERTY(bindSlot, m_bindId, node, 0);
 
-		if (m_UseInternalBuffers)
+		if (m_useInternalBuffers)
 		{
 			framebuffer = Renderer::s_pSceneData->internalFramebuffers[m_SelectedBufferName];
 		}
 		else
 		{
 			auto& specification = framebuffer->GetSpecification();
-			LP_DESERIALIZE_PROPERTY(useViewportSize, m_UseScreenSize, node, false);
+			LP_DESERIALIZE_PROPERTY(useViewportSize, m_useScreenSize, node, false);
 			LP_DESERIALIZE_PROPERTY(width, specification.Width, node, 0);
 			LP_DESERIALIZE_PROPERTY(height, specification.Height, node, 0);
 			LP_DESERIALIZE_PROPERTY(samples, specification.Samples, node, 0);
 			LP_DESERIALIZE_PROPERTY(clearColor, specification.ClearColor, node, glm::vec4(0.f));
 
-			if (m_UseScreenSize)
+			if (m_useScreenSize)
 			{
 				Renderer::s_pSceneData->useViewportSize.push_back(framebuffer);
 			}

@@ -24,13 +24,15 @@ namespace Lamp
 		Texture = 4,
 		Audio = 5,
 		EnvironmentMap = 6,
-		RenderGraph = 7
+		RenderGraph = 7,
+		MeshSource = 8
 	};
 
 	inline static std::unordered_map<std::string, AssetType> s_AssetExtensionMap =
 	{
 		{ ".level", AssetType::Level },
 		{ ".lgf", AssetType::Mesh },
+		{ ".lgs", AssetType::MeshSource },
 		{ ".mtl", AssetType::Material },
 		{ ".png", AssetType::Texture },
 		{ ".jpg", AssetType::Texture },

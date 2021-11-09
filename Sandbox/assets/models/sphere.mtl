@@ -1,8 +1,0 @@
-material:
-  name: sphere
-  handle: 3370775300
-  textures:
-    albedo: 3536854313384504482
-    normal: 16027289893487307791
-    mro: 4157263279336200044
-  shader: pbrForward

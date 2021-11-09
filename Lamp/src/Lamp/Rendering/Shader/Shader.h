@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <any>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,13 +38,26 @@ namespace Lamp
 		ComputeShader = BIT(4)
 	};
 
-	struct ShaderSpec
+	struct UniformSpecification
 	{
-		std::string Name;
-		int TextureCount;
-		std::vector<std::string> TextureNames;
-		std::map<std::string, UniformType> Uniforms;
-		int Type = 0;
+		UniformSpecification(const std::string& name, UniformType type, std::any data, uint32_t id)
+			: name(name), type(type), data(data), id(id)
+		{ }
+
+		std::string name;
+		UniformType type;
+		std::any data;
+		uint32_t id;
+	};
+
+	struct ShaderSpecification
+	{
+		int textureCount;
+		std::string name;
+		std::vector<std::string> textureNames;
+		std::vector<UniformSpecification> uniforms;
+		int type = 0;
+		bool isInternal;
 	};
 
 	class Shader
@@ -69,12 +83,12 @@ namespace Lamp
 		virtual const std::string& GetName() = 0;
 		virtual std::string& GetPath() = 0;
 
-		inline const ShaderSpec GetSpecifications() { return m_Specifications; }
+		inline const ShaderSpecification& GetSpecification() { return m_specification; }
 
 	public:
 		static Ref<Shader> Create(const std::string& path);
 
 	protected:
-		ShaderSpec m_Specifications;
+		ShaderSpecification m_specification;
 	};
 }

@@ -18,6 +18,7 @@ namespace Lamp
 	struct ImportSettings
 	{
 		std::filesystem::path path;
+		bool compileStatic = true;
 		Units units = Units::Centimeters;
 		glm::vec3 upDirection = { 0.f, 1.f, 0.f };
 	};
@@ -29,7 +30,7 @@ namespace Lamp
 
 	private:
 		static std::vector<Ref<SubMesh>> LoadMesh(const ImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials);
-		static void ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes, Units units);
-		static Ref<SubMesh> ProcessMesh(aiMesh* pMesh, const aiScene* pScene, Units units);
+		static void ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes);
+		static Ref<SubMesh> ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
 	};
 }

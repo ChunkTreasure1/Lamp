@@ -4,8 +4,9 @@
 
 namespace Lamp
 {
-	struct RenderNodePass : public RenderNode
+	class RenderNodePass : public RenderNode
 	{
+	public:
 		RenderNodePass()
 		{}
 
@@ -14,23 +15,35 @@ namespace Lamp
 		std::string name;
 		Ref<RenderPass> renderPass;
 
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override;
-		virtual void Serialize(YAML::Emitter& out) override;
-		virtual void Deserialize(YAML::Node& node) override;
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::Pass; }
+		void Initialize() override;
+		void Start() override;
+		void DrawNode() override;
+		void Activate(std::any value) override;
+		void Serialize(YAML::Emitter& out) override;
+		void Deserialize(YAML::Node& node) override;
+		RenderNodeType GetNodeType() override { return RenderNodeType::Pass; }
 
 	private:
 		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
 		void SetAttributeName(const std::string& name, GraphUUID id);
-		bool IsAttributeLinked(Ref<RenderAttribute> attr);
+
+
+		void SetupUniforms();
+
+		//Drawing
+		void DrawUniforms();
+		void DrawSettings();
+		void DrawOutputBuffer();
+		void DrawTextures();
+		void DrawFramebuffers();
 
 	private:
-		bool m_UseViewportSize = false;
 
-		std::vector<const char*> m_Shaders;
-		Ref<RenderInputAttribute> m_TargetBufferAttribute;
+		bool m_UseViewportSize = false;
+		FramebufferTextureSpecification* m_renamingAttachmentSpec = nullptr;
+		FramebufferTextureSpecification* m_lastRenamingAttachmentSpec = nullptr;
+
+		std::vector<const char*> m_shaders;
+		int m_bindId = 0;
 	};
 }
