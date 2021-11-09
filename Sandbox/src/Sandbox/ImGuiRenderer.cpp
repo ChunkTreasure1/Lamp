@@ -650,21 +650,24 @@ namespace Sandbox
 				auto& renderGraph = std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph());
 				UI::Property("TestGraph", renderGraph);
 
-				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.radius));
-				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.strength));
-				if (UI::Property("Kernel Size", const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize), 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
+				UI::EndProperties();
+			}
+
+			UI::TreeNodePop();
+		}
+
+		if (UI::TreeNodeFramed("SSAO", true))
+		{
+			if (UI::BeginProperties("ssaoProps"))
+			{
+				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.radius), true, 0.f, 1.f);
+				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.strength), true, 0.f, 1.f);
+				if (UI::Property("Kernel Size", const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize), true, 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
 				{
-					if (Renderer::GetSceneData()->ssaoData.kernelSize < 0)
-					{
-						const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize) = 0;
-					}
-					else if (Renderer::GetSceneData()->ssaoData.kernelSize > Renderer::GetSceneData()->ssaoMaxKernelSize)
-					{
-						const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize) = Renderer::GetSceneData()->ssaoMaxKernelSize;
-					}
 					Renderer::GenerateKernel();
 				}
 
+				UI::Property("Ambiance Multiplier", const_cast<float&>(Renderer::GetSceneData()->ambianceMultiplier));
 
 				UI::EndProperties();
 			}
@@ -674,7 +677,7 @@ namespace Sandbox
 
 		ImGui::End();
 	}
-
+	
 	void Sandbox::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
@@ -735,6 +738,9 @@ namespace Sandbox
 
 		ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
 		ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
+
+		ImGui::Separator();
+
 		ImGui::Text("Total draw calls: %d", Renderer3D::GetStatistics().totalDrawCalls);
 		ImGui::Text("Scene draw calls: %d", Renderer3D::GetStatistics().sceneDrawCalls);
 		ImGui::Text("Other draw calls: %d", Renderer3D::GetStatistics().otherDrawCalls);

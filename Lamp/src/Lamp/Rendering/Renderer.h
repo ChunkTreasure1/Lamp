@@ -55,6 +55,7 @@ namespace Lamp
 
 			float hdrExposure = 3.f;
 			float gamma = 2.2f;
+			float ambianceMultiplier = 0.3f;
 
 			glm::vec2 bufferSize = { 1280, 720 };
 			Ref<RenderGraph> renderGraph;

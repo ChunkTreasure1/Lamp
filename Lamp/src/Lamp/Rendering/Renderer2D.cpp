@@ -43,7 +43,7 @@ namespace Lamp
 		Ref<Texture2D> pWhiteTexture;
 		Ref<Texture2D>* TextureSlots{ new Ref<Texture2D>[RenderCommand::GetCapabilities().MaxTextureSlots] };
 
-		uint32_t TextureSlotIndex = 1; // 0 = white texture
+		uint32_t TextureSlotIndex = 0; // 0 = white texture
 		Renderer2D::Statistics Stats;
 	};
 
@@ -113,7 +113,7 @@ namespace Lamp
 		s_pStorage->pTextureShader->Bind();
 		s_pStorage->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 
-		s_pStorage->TextureSlots[0] = s_pStorage->pWhiteTexture;
+		//s_pStorage->TextureSlots[0] = s_pStorage->pWhiteTexture;
 
 		delete[] samplers;
 		////////////////////////
@@ -201,20 +201,22 @@ namespace Lamp
 		}
 
 		float textureIndex = 0.f;
+		bool textureExists = false;
 
 		auto& texture = mat->GetTextures().at("gizmo");
 
-		for (uint32_t i = 1; i < s_pStorage->TextureSlotIndex; i++)
+		for (uint32_t i = 0; i < s_pStorage->TextureSlotIndex; i++)
 		{
 			//TODO: change
 			if (s_pStorage->TextureSlots[i].get() == texture.get())
 			{
 				textureIndex = (float)i;
+				textureExists = true;
 				break;
 			}
 		}
 
-		if (textureIndex == 0.f)
+		if (textureIndex == 0.f && !textureExists)
 		{
 			textureIndex = (float)s_pStorage->TextureSlotIndex;
 			s_pStorage->TextureSlots[s_pStorage->TextureSlotIndex] = texture;
@@ -292,6 +294,6 @@ namespace Lamp
 	{
 		s_pStorage->QuadIndexCount = 0;
 		s_pStorage->QuadVertexBufferPtr = s_pStorage->QuadVertexBufferBase;
-		s_pStorage->TextureSlotIndex = 1;
+		s_pStorage->TextureSlotIndex = 0;
 	}
 }

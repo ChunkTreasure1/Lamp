@@ -374,7 +374,7 @@ namespace UI
 		return changed;
 	}
 
-	static bool Property(const std::string& text, int& value, int min = 0, int max = 0)
+	static bool Property(const std::string& text, int& value, bool useMinMax = false, int min = 0, int max = 0)
 	{
 		bool changed = false;
 
@@ -388,6 +388,16 @@ namespace UI
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 		if (ImGui::DragInt(id.c_str(), &value, 1.f, min, max))
 		{
+			if (value > max && useMinMax)
+			{
+				value = max;
+			}
+
+			if (value < min && useMinMax)
+			{
+				value = min;
+			}
+
 			changed = true;
 		}
 
@@ -414,7 +424,7 @@ namespace UI
 		return changed;
 	}
 
-	static bool Property(const std::string& text, float& value)
+	static bool Property(const std::string& text, float& value, bool useMinMax = false, float min = 0.f, float max = 0.f)
 	{
 		bool changed = false;
 
@@ -425,8 +435,18 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (ImGui::DragFloat(id.c_str(), &value, 1.f))
+		if (ImGui::DragFloat(id.c_str(), &value, 1.f, min, max))
 		{
+			if (value < min && useMinMax)
+			{
+				value = min;
+			}
+
+			if (value > max && useMinMax)
+			{
+				value = max;
+			}
+
 			changed = true;
 		}
 
@@ -557,7 +577,7 @@ namespace UI
 
 	static bool PropertyColor(const std::string& text, glm::vec3& value)
 	{
-		ImGui::NextColumn();
+		ImGui::TableNextColumn();
 		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();

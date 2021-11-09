@@ -60,7 +60,8 @@ namespace Lamp
 		static void DrawMesh(const glm::mat4& modelMatrix, const Ref<VertexArray> data, const Ref<Material> mat, size_t id = -1);
 
 	private:
-		static RenderBuffer s_RenderBuffer;
+		static RenderBuffer s_opaqueRenderBuffer;
+		static RenderBuffer s_transparentRenderBuffer;
 		static Statistics s_renderStatistics;
 	};
 }

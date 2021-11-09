@@ -32,5 +32,7 @@ namespace Lamp
 		static std::vector<Ref<SubMesh>> LoadMesh(const ImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials);
 		static void ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes);
 		static Ref<SubMesh> ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
+
+		static Ref<SubMesh> CompileStatic(const std::vector<Ref<SubMesh>> meshse);
 	};
 }

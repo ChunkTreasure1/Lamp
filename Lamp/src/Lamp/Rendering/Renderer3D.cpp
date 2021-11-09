@@ -37,7 +37,9 @@ namespace Lamp
 	};
 
 	static Renderer3DStorage* s_pRenderData;
-	RenderBuffer Renderer3D::s_RenderBuffer;
+	RenderBuffer Renderer3D::s_opaqueRenderBuffer;
+	RenderBuffer Renderer3D::s_transparentRenderBuffer;
+	
 	Renderer3D::Statistics Renderer3D::s_renderStatistics;
 
 	void Renderer3D::Initialize()
@@ -47,7 +49,8 @@ namespace Lamp
 
 		CreateBaseMeshes();
 
-		s_RenderBuffer.drawCalls.reserve(1000);
+		s_opaqueRenderBuffer.drawCalls.reserve(1000);
+		s_transparentRenderBuffer.drawCalls.reserve(500);
 	}
 
 	void Renderer3D::Shutdown()
@@ -86,7 +89,8 @@ namespace Lamp
 	void Renderer3D::End()
 	{
 		LP_PROFILE_FUNCTION();
-		s_RenderBuffer.drawCalls.clear();
+		s_opaqueRenderBuffer.drawCalls.clear();
+		s_transparentRenderBuffer.drawCalls.clear();
 		s_renderStatistics.totalDrawCalls = s_renderStatistics.sceneDrawCalls + s_renderStatistics.otherDrawCalls;
 	}
 
@@ -128,6 +132,12 @@ namespace Lamp
 							break;
 						case Lamp::RenderData::ID:
 							shaderToUse->UploadInt(uniformSpec.name, objectId);
+							break;
+						case Lamp::RenderData::MaterialUseBlending:
+							shaderToUse->UploadBool(uniformSpec.name, material->GetUseBlending());
+							break;
+						case Lamp::RenderData::MaterialBlendingMultiplier:
+							shaderToUse->UploadFloat(uniformSpec.name, material->GetBlendingMultiplier());
 							break;
 					}
 
@@ -317,7 +327,14 @@ namespace Lamp
 		data.id = id;
 		data.data = mesh->GetVertexArray();
 
-		s_RenderBuffer.drawCalls.push_back(data);
+		if (mat->GetUseBlending())
+		{
+			s_transparentRenderBuffer.drawCalls.push_back(data);
+		}
+		else
+		{
+			s_opaqueRenderBuffer.drawCalls.push_back(data);
+		}
 	}
 
 	void Renderer3D::DrawRenderBuffer()
@@ -326,19 +343,35 @@ namespace Lamp
 
 		//TODO: Should be moved to only be made once, right after render event
 		//Sort
-		const glm::vec3& pos = s_pRenderData->camera->GetPosition();
-		std::sort(s_RenderBuffer.drawCalls.begin(), s_RenderBuffer.drawCalls.end(), [&pos](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+		const glm::vec3& cameraPos = s_pRenderData->camera->GetPosition();
+		std::sort(s_opaqueRenderBuffer.drawCalls.begin(), s_opaqueRenderBuffer.drawCalls.end(), [&cameraPos](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
 			{
 				const glm::vec3& dPosOne = dataOne.transform[3];
 				const glm::vec3& dPosTwo = dataTwo.transform[3];
 
-				const float distOne = glm::exp2(pos.x - dPosOne.x) + glm::exp2(pos.y - dPosOne.y) + glm::exp2(pos.z - dPosOne.z);
-				const float distTwo = glm::exp2(pos.x - dPosTwo.x) + glm::exp2(pos.y - dPosTwo.y) + glm::exp2(pos.z - dPosTwo.z);
+				const float distOne = glm::exp2(cameraPos.x - dPosOne.x) + glm::exp2(cameraPos.y - dPosOne.y) + glm::exp2(cameraPos.z - dPosOne.z);
+				const float distTwo = glm::exp2(cameraPos.x - dPosTwo.x) + glm::exp2(cameraPos.y - dPosTwo.y) + glm::exp2(cameraPos.z - dPosTwo.z);
 
 				return distOne < distTwo;
 			});
 
-		for (const auto& data : s_RenderBuffer.drawCalls)
+		std::sort(s_transparentRenderBuffer.drawCalls.begin(), s_transparentRenderBuffer.drawCalls.end(), [&cameraPos](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distOne = glm::exp2(cameraPos.x - dPosOne.x) + glm::exp2(cameraPos.y - dPosOne.y) + glm::exp2(cameraPos.z - dPosOne.z);
+				const float distTwo = glm::exp2(cameraPos.x - dPosTwo.x) + glm::exp2(cameraPos.y - dPosTwo.y) + glm::exp2(cameraPos.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
+
+		for (const auto& data : s_opaqueRenderBuffer.drawCalls)
+		{
+			DrawMesh(data.transform, data.data, data.material, data.id);
+		}
+
+		for (const auto& data : s_transparentRenderBuffer.drawCalls)
 		{
 			DrawMesh(data.transform, data.data, data.material, data.id);
 		}

@@ -29,6 +29,11 @@ namespace Lamp
 			return asset;
 		}
 
+		if (meshes.size() > 1 && settings.compileStatic)
+		{
+			CompileStatic(meshes);
+		}
+
 		//Create materials
 
 		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
@@ -181,5 +186,19 @@ namespace Lamp
 		}
 
 		return CreateRef<SubMesh>(vertices, indices, pMesh->mMaterialIndex);
+	}
+
+	Ref<SubMesh> MeshImporter::CompileStatic(const std::vector<Ref<SubMesh>> meshes)
+	{
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
+
+		for ()
+		{
+		}
+
+		Ref<SubMesh> subMesh = CreateRef<SubMesh>();
+
+		return Ref<SubMesh>();
 	}
 }

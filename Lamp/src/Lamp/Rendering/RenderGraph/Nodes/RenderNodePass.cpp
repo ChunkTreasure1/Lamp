@@ -423,6 +423,8 @@ namespace Lamp
 
 				out << YAML::EndMap;
 			}
+
+
 		}
 		out << YAML::EndSeq; //uniforms
 
@@ -646,6 +648,8 @@ namespace Lamp
 
 		YAML::Node attributesNode = node["attributes"];
 		DeserializeAttributes(attributesNode);
+
+		ReloadUniforms();
 	}
 
 	void RenderNodePass::RemoveAttribute(RenderAttributeType type, GraphUUID compId)
@@ -695,6 +699,57 @@ namespace Lamp
 		}
 	}
 
+	void RenderNodePass::ReloadUniforms()
+	{
+		auto& uniforms = renderPass->m_passSpecification.uniforms;
+		for (int i = uniforms.size() - 1; i >= 0; i--)
+		{
+			bool exists = false;
+
+			for (const auto& uniform : renderPass->GetSpecification().renderShader->GetSpecification().uniforms)
+			{
+				if (uniform.name == uniforms[i].name)
+				{
+					exists = true;
+					break;
+				}
+			}
+
+			if (!exists)
+			{
+				uniforms.erase(uniforms.begin() + i);
+			}
+		}
+
+		for (const auto& shaderUniform : renderPass->GetSpecification().renderShader->GetSpecification().uniforms)
+		{
+			bool exists = false;
+			for (const auto& passUniform : renderPass->GetSpecification().uniforms)
+			{
+				if (shaderUniform.name == passUniform.name)
+				{
+					exists = true;
+				}
+			}
+
+			if (!exists)
+			{
+				GraphUUID uniformId = GraphUUID();
+				Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
+				renderPass->m_passSpecification.uniforms.emplace_back(shaderUniform.name, shaderUniform.type, shaderUniform.data, shaderUniform.id, uniformId, input->id);
+
+				input->pNode = this;
+				input->name = shaderUniform.name;
+				input->type = RenderAttributeType::DynamicUniform;
+				input->data = uniformId;
+
+				inputs.push_back(input);
+			}
+		}
+
+		SortUniforms();
+	}
+
 	void RenderNodePass::SetupUniforms()
 	{
 		auto& renderPassSpec = renderPass->m_passSpecification;
@@ -704,7 +759,6 @@ namespace Lamp
 
 		for (const auto& uniform : renderPassSpec.renderShader->GetSpecification().uniforms)
 		{
-
 			GraphUUID uniformId = GraphUUID();
 			Ref<RenderInputAttribute> input = CreateRef<RenderInputAttribute>();
 			renderPassSpec.uniforms.emplace_back(uniform.name, uniform.type, uniform.data, uniform.id, uniformId, input->id);
@@ -716,7 +770,13 @@ namespace Lamp
 
 			inputs.push_back(input);
 		}
-		std::sort(renderPassSpec.uniforms.begin(), renderPassSpec.uniforms.end(), [](const PassUniformSpecification& first, const PassUniformSpecification& second)
+
+		SortUniforms();
+	}
+
+	void RenderNodePass::SortUniforms()
+	{
+		std::sort(renderPass->m_passSpecification.uniforms.begin(), renderPass->m_passSpecification.uniforms.end(), [](const PassUniformSpecification& first, const PassUniformSpecification& second)
 			{
 				return first.uniformId < second.uniformId;
 			});
@@ -774,7 +834,7 @@ namespace Lamp
 				}
 				else
 				{
-					static const char* renderDataTypes[] = { "Transform", "Data", "Material", "Id" };
+					static const char* renderDataTypes[] = { "Transform", "Data", "MaterialBlendingMultiplier", "Id", "MaterialUseBlending"};
 					std::string dTypeId = "##" + std::to_string(stackId++);
 					int currentlySelectedData = (int)std::any_cast<RenderData>(uniform.data);
 					if (ImGui::Combo(dTypeId.c_str(), &currentlySelectedData, renderDataTypes, IM_ARRAYSIZE(renderDataTypes)))
@@ -922,7 +982,7 @@ namespace Lamp
 			ImGui::Text("Bind ID");
 			ImGui::SameLine();
 			UI::ShiftCursor(offset, 0.f);
-		
+
 			ImGui::InputInt("##bindId", &m_bindId);
 		}
 

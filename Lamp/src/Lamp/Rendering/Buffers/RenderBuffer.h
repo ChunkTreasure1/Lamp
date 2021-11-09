@@ -9,8 +9,9 @@ namespace Lamp
 	{
 		Transform,
 		Data,
-		Material,
-		ID
+		MaterialBlendingMultiplier,
+		ID,
+		MaterialUseBlending
 	};
 
 	struct RenderCommandData

@@ -275,12 +275,18 @@ namespace Lamp
 			float angleXZ = std::atan2f(dir.z, dir.x);
 			float angleY = -std::asin(dir.y);
 
+			const float maxDist = 10.f;
+			const float maxScale = 3.f;
+
+			float distance = glm::distance(e.GetCamera()->GetPosition(), m_Position);
+			float scale = glm::min(distance / maxDist, maxScale);
+
 			glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
 				* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
 
 			glm::mat4 transform = glm::translate(glm::mat4(1.f), m_Position)
 				* rotation
-				* glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
+				* glm::scale(glm::mat4(1.f), glm::vec3(scale));
 
 
 			Renderer2D::SubmitQuad(transform, m_gizmoMaterial, m_Id);

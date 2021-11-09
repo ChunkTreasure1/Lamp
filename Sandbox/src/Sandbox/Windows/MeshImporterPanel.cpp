@@ -346,15 +346,14 @@ namespace Sandbox
 		static std::vector<const char*> meshDirections = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
 		static int currentDirection = 0;
 
-		if (UI::PropertyAxisColor("Scale", m_scale, 0.f))
-		{
-			m_transform = glm::scale(glm::mat4(1.f), m_scale);
-		}
-
-
 		UI::PushId();
 		if (UI::BeginProperties("meshSettings", false))
 		{
+			if (UI::PropertyAxisColor("Scale", m_scale, 0.f))
+			{
+				m_transform = glm::scale(glm::mat4(1.f), m_scale);
+			}
+
 			if (UI::Combo("Units", currentUnit, units))
 			{
 				m_importSettings.units = static_cast<Units>(currentUnit);

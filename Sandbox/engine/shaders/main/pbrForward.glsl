@@ -84,6 +84,8 @@ in Out
 
 uniform Material u_Material;
 uniform int u_ObjectId;
+uniform float u_BlendingMultiplier;
+uniform bool u_UseBlending;
 
 uniform sampler2D u_DirShadowMaps[10];
 
@@ -94,6 +96,7 @@ uniform sampler2D u_BRDFLUT;
 uniform float u_Exposure;
 uniform float u_Gamma;
 uniform int u_TilesX;
+uniform float u_AmbianceMutliplier;
 
 const float PI = 3.14159265359;
 
@@ -311,7 +314,9 @@ vec3 CalculateNormal()
 
 void main()
 {
-	vec3 albedo = pow(texture(u_Material.albedo, v_In.TexCoord).rgb, vec3(u_Gamma));
+	vec4 albedoTex = texture(u_Material.albedo, v_In.TexCoord);
+	vec3 albedo = pow(albedoTex.rgb, vec3(u_Gamma));
+
 	float metallic = texture(u_Material.mro, v_In.TexCoord).r;
 	float roughness = texture(u_Material.mro, v_In.TexCoord).g;
 	float translucency = texture(u_Material.mro, v_In.TexCoord).b;
@@ -352,7 +357,7 @@ void main()
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse + specular) * 0.5;
+	vec3 ambient = (kD * diffuse + specular) * u_AmbianceMutliplier;
 
 	vec3 color = ambient + Lo;
 	color *= u_Exposure;
@@ -362,6 +367,8 @@ void main()
 	//Gamma correction
 	color = pow(color, vec3(1.0 / u_Gamma));
 
-	o_Color = vec4(color, 1.0);
+	float blendingVal = u_UseBlending ? albedoTex.a * u_BlendingMultiplier : 1.0;
+
+	o_Color = vec4(color, blendingVal);
 	o_ObjectId = u_ObjectId;
 }

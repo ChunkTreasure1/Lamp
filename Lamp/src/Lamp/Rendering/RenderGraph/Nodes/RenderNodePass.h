@@ -27,8 +27,9 @@ namespace Lamp
 		void RemoveAttribute(RenderAttributeType type, GraphUUID compId);
 		void SetAttributeName(const std::string& name, GraphUUID id);
 
-
+		void ReloadUniforms();
 		void SetupUniforms();
+		void SortUniforms();
 
 		//Drawing
 		void DrawUniforms();

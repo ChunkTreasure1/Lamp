@@ -175,6 +175,11 @@ namespace Sandbox
 		if (UI::BeginProperties("matProps", false))
 		{
 			UI::Property("Name", m_pSelectedMaterial->GetName());
+			UI::Property("Use blending", const_cast<bool&>(m_pSelectedMaterial->GetUseBlending()));
+			if (m_pSelectedMaterial->GetUseBlending())
+			{
+				UI::Property("Blending multiplier", const_cast<float&>(m_pSelectedMaterial->GetBlendingMultiplier()), true, 0.f, 1.f);
+			}
 
 			UI::EndProperties(false);
 		}

@@ -234,6 +234,8 @@ namespace Lamp
 			out << YAML::EndMap;
 
 			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
+			LP_SERIALIZE_PROPERTY(useBlending, mat->GetUseBlending(), out);
+			LP_SERIALIZE_PROPERTY(blendingMultiplier, mat->GetBlendingMultiplier(), out);
 
 			out << YAML::EndMap;
 		}
@@ -281,6 +283,14 @@ namespace Lamp
 			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
 			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
 		}
+
+		bool useBlending;
+		float blendingMultiplier;
+		LP_DESERIALIZE_PROPERTY(useBlending, useBlending, materialNode, false);
+		LP_DESERIALIZE_PROPERTY(blendingMultiplier, blendingMultiplier, materialNode, 1.f);
+
+		mat->SetUseBlending(useBlending);
+		mat->SetBlendingMutliplier(blendingMultiplier);
 
 		asset->Path = path;
 

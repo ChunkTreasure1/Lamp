@@ -6,3 +6,5 @@ material:
     normal: 218384605867240221
     mro: 17675860708923727627
   shader: pbrForward
+  useBlending: true
+  blendingMultiplier: 1
