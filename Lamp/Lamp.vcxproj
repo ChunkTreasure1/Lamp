@@ -805,7 +805,7 @@
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
@@ -839,7 +839,9 @@
     <ClCompile Include="vendor\yaml-cpp\src\exceptions.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\exp.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\memory.cpp" />
-    <ClCompile Include="vendor\yaml-cpp\src\node.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\node.cpp">
+      <ObjectFileName>$(IntDir)\node1.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="vendor\yaml-cpp\src\node_data.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodebuilder.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodeevents.cpp" />
