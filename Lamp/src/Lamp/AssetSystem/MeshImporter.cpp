@@ -97,48 +97,34 @@ namespace Lamp
 			return meshes;
 		}
 
-		ProcessNode(pScene->mRootNode, pScene, meshes, settings.units);
+		ProcessNode(pScene->mRootNode, pScene, meshes);
 
 		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace(std::make_pair(i, CreateRef<Material>(i, pScene->mMaterials[i]->GetName().C_Str())));
+			materials.emplace(i, CreateRef<Material>(i, pScene->mMaterials[i]->GetName().C_Str()));
 		}
 
 		return meshes;
 	}
 
-	void MeshImporter::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes, Units units)
+	void MeshImporter::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes)
 	{
 		for (size_t i = 0; i < pNode->mNumMeshes; i++)
 		{
 			aiMesh* pMesh = pScene->mMeshes[pNode->mMeshes[i]];
-			meshes.push_back(ProcessMesh(pMesh, pScene, units));
+			meshes.push_back(ProcessMesh(pMesh, pScene));
 		}
 
 		for (size_t i = 0; i < pNode->mNumChildren; i++)
 		{
-			ProcessNode(pNode->mChildren[i], pScene, meshes, units);
+			ProcessNode(pNode->mChildren[i], pScene, meshes);
 		}
 	}
 
-	Ref<SubMesh> MeshImporter::ProcessMesh(aiMesh* pMesh, const aiScene* pScene, Units units)
+	Ref<SubMesh> MeshImporter::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
-
-		float scale = 1.f;
-		switch (units)
-		{
-			case Lamp::Units::Centimeters:
-				scale = 1.f;
-				break;
-			case Lamp::Units::Decimeters:
-				scale = 0.1f;
-				break;
-			case Lamp::Units::Meters:
-				scale = 0.01f;
-				break;
-		}
 
 		for (size_t i = 0; i < pMesh->mNumVertices; i++)
 		{
@@ -150,9 +136,9 @@ namespace Lamp
 			glm::vec3 bitangent;
 			glm::vec2 texCoords;
 
-			pos.x = pMesh->mVertices[i].x * scale;
-			pos.y = pMesh->mVertices[i].y * scale;
-			pos.z = pMesh->mVertices[i].z * scale;
+			pos.x = pMesh->mVertices[i].x;
+			pos.y = pMesh->mVertices[i].y;
+			pos.z = pMesh->mVertices[i].z;
 
 			normal.x = pMesh->mNormals[i].x;
 			normal.y = pMesh->mNormals[i].y;

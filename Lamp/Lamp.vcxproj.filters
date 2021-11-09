@@ -183,6 +183,9 @@
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h">
+      <Filter>src\Lamp\AssetSystem</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
@@ -474,6 +477,9 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h">
+      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
       <Filter>src\Lamp\Rendering\RenderGraph</Filter>
     </ClInclude>
@@ -527,6 +533,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h">
+      <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h">
       <Filter>src\Lamp\Utility</Filter>
@@ -2132,7 +2141,7 @@
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
       <Filter>src\Lamp\Rendering\Vertices</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp">

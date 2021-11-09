@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Lamp/Utility/PlatformUtility.h"
+#include "Lamp/AssetSystem/Asset.h"
+#include "ImGuiExtension.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -14,7 +16,7 @@
 
 namespace UI
 {
-	static int s_contextId = 0;
+	static uint32_t s_contextId = 0;
 	static uint32_t s_stackId = 0;
 
 	class ScopedColor
@@ -103,13 +105,25 @@ namespace UI
 		{
 			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
 		}
-		else
-		{
-			UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
 
-			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
+		UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
+
+		return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
+	}
+
+	static bool TreeNodeFramed(const std::string& text, float width, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
+	{
+		const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
+			ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+		if (!useOther)
+		{
+			return ImGui::TreeNodeWidthEx(text.c_str(), width, nodeFlags);
 		}
 
+		UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
+
+		return ImGui::TreeNodeWidthEx(text.c_str(), width, nodeFlags);
 	}
 
 	static void TreeNodePop()
@@ -117,10 +131,15 @@ namespace UI
 		ImGui::TreePop();
 	}
 
+	static bool InputText(const std::string& id, std::string& text)
+	{
+		return ImGui::InputTextString(id.c_str(), &text);
+	}
+
 	static bool InputTextOnSameline(std::string& string, const std::string& id)
 	{
 		ImGui::SameLine();
-		return ImGui::InputTextString(id.c_str(), &string);
+		return InputText(id, string);
 	}
 
 	static void Separator(ImGuiSeparatorFlags customFlags = 0)
@@ -138,7 +157,8 @@ namespace UI
 
 	static void PushId()
 	{
-		ImGui::PushID(s_contextId++);
+		int id = s_contextId++;
+		ImGui::PushID(id);
 		s_stackId = 0;
 	}
 
@@ -154,10 +174,8 @@ namespace UI
 		{
 			return ImGui::BeginPopupContextItem();
 		}
-		else
-		{
-			return ImGui::BeginPopupContextItem(id.c_str());
-		}
+
+		return ImGui::BeginPopupContextItem(id.c_str());
 	}
 
 	static void EndPopup()
@@ -304,17 +322,39 @@ namespace UI
 
 	static void* DragDropTarget(const std::string& type)
 	{
+		void* data = nullptr;
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload(type.c_str()))
 			{
-				return pPayload->Data;
+				data = pPayload->Data;
 			}
 
 			ImGui::EndDragDropTarget();
 		}
 
-		return nullptr;
+		return data;
+	}
+
+	static void* DragDropTarget(std::initializer_list<std::string> types)
+	{
+		void* data = nullptr;
+
+		for (const auto& type : types)
+		{
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload(type.c_str()))
+				{
+					data = pPayload->Data;
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+		}
+
+		return data;
 	}
 
 	static bool ImageButton(uint32_t id, const glm::vec2& size = { 64, 64 })
@@ -469,7 +509,7 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (ImGui::InputTextString(id.c_str(), &const_cast<std::string&>(value)))
+		if (InputText(id, const_cast<std::string&>(value)))
 		{
 			changed = true;
 		}
@@ -490,7 +530,7 @@ namespace UI
 		std::string id = "##" + std::to_string(s_stackId++);
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 
-		if (ImGui::InputTextString(id.c_str(), &value))
+		if (InputText(id, value))
 		{
 			changed = true;
 		}
@@ -498,32 +538,63 @@ namespace UI
 		return changed;
 	}
 
-	static bool Property(const std::string& text, glm::vec4& value, bool useAlpha)
+	static bool PropertyColor(const std::string& text, glm::vec4& value)
 	{
-		if (useAlpha)
+		ImGui::NextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+
+		if (ImGui::ColorEdit4(id.c_str(), glm::value_ptr(value)))
 		{
-			if (ImGui::ColorEdit4(text.c_str(), glm::value_ptr(value)))
-			{
-				return true;
-			}
-		}
-		else
-		{
-			float values[3] = { value.x, value.y, value.z };
-			if (ImGui::ColorEdit3(text.c_str(), values))
-			{
-				value = glm::vec4({ values[0], values[1], values[2], 1.f });
-			}
+			return true;
 		}
 
 		return false;
 	}
 
+	static bool PropertyColor(const std::string& text, glm::vec3& value)
+	{
+		ImGui::NextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+
+		if (ImGui::ColorEdit3(id.c_str(), glm::value_ptr(value)))
+		{
+			return true;
+		}
+	}
+
 	static bool Property(const std::string& text, std::filesystem::path& path)
 	{
 		bool changed = false;
-		if (ImGui::InputTextString(text.c_str(), &path.string()))
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string sPath = path.string();
+		ImGui::PushItemWidth(ImGui::GetColumnWidth() - ImGui::CalcTextSize("Open...").x - 20.f);
+
+		std::string id = "##" + std::to_string(s_stackId++);
+		if (InputText(id, sPath))
 		{
+			path = std::filesystem::path(sPath);
+			changed = true;
+		}
+
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		if (ImGui::Button("Open...", { ImGui::GetContentRegionAvail().x, 25.f }))
+		{
+			auto newPath = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+			path = newPath;
 			changed = true;
 		}
 
@@ -536,11 +607,39 @@ namespace UI
 			changed = true;
 		}
 
-		ImGui::SameLine();
+		return changed;
+	}
 
-		if (ImGui::Button("Open..."))
+	static bool Property(const std::string& text, Ref<Lamp::Asset>& asset)
+	{
+		bool changed = false;
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		ImGui::PushItemWidth(ImGui::GetColumnWidth() - 20.f);
+		ImGui::Text("Asset: %s", asset->Path.filename().string().c_str());
+
+		ImGui::PopItemWidth();
+
+		ImGui::SameLine();
+		std::string buttonId = "Open##" + std::to_string(s_stackId++);
+		if (ImGui::Button(buttonId.c_str(), { ImGui::GetContentRegionAvail().x, 25.f }))
 		{
-			path = Lamp::FileDialogs::OpenFile("All (*.*)\0*.*\0");
+		}
+		if (BeginPopup())
+		{
+			ImGui::Text("Test");
+
+			EndPopup();
+		}
+
+		if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
+		{
+			const wchar_t* inPath = (const wchar_t*)ptr;
+			std::filesystem::path newPath = std::filesystem::path("assets") / inPath;
+
 			changed = true;
 		}
 

@@ -1,6 +1,7 @@
 #ShaderSpec
 Name: lightCulling
 TextureCount: 0
+InternalShader: true
 TextureNames
 {
 }
@@ -59,6 +60,8 @@ shared mat4 viewProjection;
 
 #define TILE_SIZE 16
 
+
+//Based on https://github.com/bcrusco/Forward-Plus-Renderer
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
 void main()
 {
@@ -132,7 +135,7 @@ void main()
 
     //Cull lights using multiple threads
     uint threadCount = TILE_SIZE * TILE_SIZE;
-    uint passCount = (1 + threadCount - 1) / threadCount;
+    uint passCount = (u_LightCount + threadCount - 1) / threadCount;
     for (uint i = 0; i < passCount; i++)
     {
         //Get light index
@@ -173,7 +176,7 @@ void main()
         uint offset = index * 1024;
         for (uint i = 0; i < visibleLightCount; i++)
         {
-            visibleIndices.data[offset + i].index = 1;//visibleLightIndices[i];
+            visibleIndices.data[offset + i].index = visibleLightIndices[i];
         }
 
         if (visibleLightCount != 1024)

@@ -13,6 +13,7 @@ namespace Lamp
 		endAttr->pNode = this;
 		endAttr->name = "End";
 		endAttr->type = RenderAttributeType::Pass;
+		endAttr->shouldDraw = true;
 
 		inputs.push_back(endAttr);
 	}
@@ -40,7 +41,7 @@ namespace Lamp
 		ImGui::Text("End");
 		ImNodes::EndNodeTitleBar();
 
-		DrawAttributes();
+		DrawAttributes(inputs, outputs);
 
 		ImNodes::EndNode();
 

@@ -2,9 +2,12 @@
 #include "RenderNodeDynamicUniform.h"
 
 #include "RenderNodePass.h"
+#include "RenderNodeCompute.h"
 #include "DynamicUniformRegistry.h"
 
 #include "Lamp/Utility/SerializeMacros.h"
+#include "Lamp/Utility/UIUtility.h"
+#include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -34,11 +37,22 @@ namespace Lamp
 	{
 		for (const auto& link : links)
 		{
-			if (RenderNodePass* passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
+			if (auto passNode = dynamic_cast<RenderNodePass*>(link->pInput->pNode))
 			{
 				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
-				passNode->renderPass->GetSpecification().dynamicUniforms[id].first.data = pData;
-				passNode->renderPass->GetSpecification().dynamicUniforms[id].first.type = uniformType;
+				auto& renderSpec = const_cast<RenderPassSpecification&>(passNode->renderPass->GetSpecification());
+				
+				auto uniform = Utils::GetSpecificationById<PassUniformSpecification>(renderSpec.uniforms, id);
+				uniform->pData = pData;
+				uniform->type = uniformType;
+			}
+			else if (auto passNode = dynamic_cast<RenderNodeCompute*>(link->pInput->pNode))
+			{
+				GraphUUID id = std::any_cast<GraphUUID>(link->pInput->data);
+
+				auto uniform = Utils::GetSpecificationById<PassUniformSpecification>(passNode->m_uniforms, id);
+				uniform->pData = pData;
+				uniform->type = uniformType;
 			}
 		}
 	}
@@ -52,6 +66,9 @@ namespace Lamp
 
 		ImNodes::BeginNode(id);
 
+		ImGui::PushID(("dynamicUniform" + std::to_string(id)).c_str());
+		uint32_t stackId = 0;
+
 		ImVec2 pos = ImNodes::GetNodeEditorSpacePos(id);
 		if (pos.x != position.x || pos.y != position.y)
 		{
@@ -64,7 +81,12 @@ namespace Lamp
 
 		ImGui::PushItemWidth(150.f);
 
-		if (ImGui::Combo("Uniform", &m_CurrentlySelectedUniform, m_Uniforms.data(), (int)m_Uniforms.size()))
+		float offset = 50.f - ImGui::CalcTextSize("Uniform").x;
+		ImGui::TextUnformatted("Uniform");
+		ImGui::SameLine();
+
+		UI::ShiftCursor(offset, 0.f);
+		if (ImGui::Combo(("##" + std::to_string(stackId++)).c_str(), &m_CurrentlySelectedUniform, m_Uniforms.data(), (int)m_Uniforms.size()))
 		{
 			auto& [name, uType, data] = DynamicUniformRegistry::s_Uniforms()[m_CurrentlySelectedUniform];
 			uniformType = uType;
@@ -72,10 +94,11 @@ namespace Lamp
 			dataName = name;
 		}
 
-		DrawAttributes();
+		DrawAttributes(inputs, outputs);
 
 		ImGui::PopItemWidth();
 
+		ImGui::PopID();
 		ImNodes::EndNode();
 
 		ImNodes::PopColorStyle();

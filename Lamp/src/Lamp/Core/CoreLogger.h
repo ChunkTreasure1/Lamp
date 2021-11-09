@@ -73,7 +73,7 @@ namespace Lamp
 				m_Messages.clear();
 			}
 
-			m_Messages.push_back(Message(prefix + " " + d, level));
+			m_Messages.emplace_back(prefix + " " + d, level);
 		}
 
 		inline std::vector<Message>& GetMessages() { return m_Messages; }

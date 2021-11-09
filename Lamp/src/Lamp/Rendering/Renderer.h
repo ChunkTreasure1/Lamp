@@ -18,6 +18,8 @@ namespace Lamp
 
 	class Renderer
 	{
+		struct SceneData;
+
 	public:
 		static void Initialize();
 		static void Shutdown();
@@ -28,8 +30,10 @@ namespace Lamp
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
 
-		static const Ref<RenderGraph> GetRenderGraph() { return s_pSceneData->renderGraph; }
+		static const Ref<RenderGraph>& GetRenderGraph() { return s_pSceneData->renderGraph; }
 		static void SetRenderGraph(Ref<RenderGraph> graph) { s_pSceneData->renderGraph = graph; }
+		static const SceneData* GetSceneData() { return s_pSceneData; }
+		static void GenerateKernel();
 
 	private:
 		static void CreateUniformBuffers();
@@ -56,11 +60,12 @@ namespace Lamp
 			Ref<RenderGraph> renderGraph;
 
 			/////SSAO/////
-			uint32_t ssaoKernelSize = 64;
-			uint32_t ssaoMaxKernelSize = 256;
+			uint32_t ssaoMaxKernelSize = 64;
+			std::vector<glm::vec3> ssaoNoise;
+			Ref<Texture2D> ssaoNoiseTexture;
 
-			float ssaoRadius = 0.5f;
-			float ssaoBias = 0.025f;
+			float aspectRatio = 16.f / 9.f;
+			float tanHalfFOV = 0.f;
 			//////////////
 		
 			/////Uniform buffers//////
@@ -72,6 +77,9 @@ namespace Lamp
 
 			DirectionalLightVPs directionalLightVPData;
 			Ref<UniformBuffer> directionalLightVPBuffer;
+
+			SSAOData ssaoData;
+			Ref<UniformBuffer> ssaoBuffer;
 			//////////////////////////
 
 			/////Shader Storage//////
@@ -90,10 +98,10 @@ namespace Lamp
 		friend class Renderer3D;
 		friend class Renderer2D;
 		friend class Skybox;
-		friend struct RenderNodeFramebuffer;
-		friend struct RenderNodePass;
-		friend struct RenderNodeCompute;
-		friend struct RenderNodeTexture;
+		friend class RenderNodeFramebuffer;
+		friend class RenderNodePass;
+		friend class RenderNodeCompute;
+		friend class RenderNodeTexture;
 		friend class Level;
 	};
 }

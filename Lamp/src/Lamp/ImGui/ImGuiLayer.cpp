@@ -139,8 +139,6 @@ namespace Lamp
 
 		ImGuiBeginEvent e;
 		Application::Get().OnEvent(e);
-
-		//ImGui::ShowDemoWindow();
 	}
 
 	void ImGuiLayer::End()

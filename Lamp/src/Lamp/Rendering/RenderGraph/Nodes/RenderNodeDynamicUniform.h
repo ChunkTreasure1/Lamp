@@ -4,19 +4,20 @@
 
 namespace Lamp
 {
-	struct RenderNodeDynamicUniform : public RenderNode
+	class RenderNodeDynamicUniform : public RenderNode
 	{
+	public:
 		RenderNodeDynamicUniform()
 			: uniformType(UniformType::Int)
 		{}
 
-		virtual void Initialize() override;
-		virtual void Start() override;
-		virtual void DrawNode() override;
-		virtual void Activate(std::any value) override {}
-		virtual RenderNodeType GetNodeType() { return RenderNodeType::DynamicUniform; }
-		virtual void Serialize(YAML::Emitter& node) override;
-		virtual void Deserialize(YAML::Node& node) override;
+		void Initialize() override;
+		void Start() override;
+		void DrawNode() override;
+		void Activate(std::any value) override {}
+		RenderNodeType GetNodeType() override { return RenderNodeType::DynamicUniform; }
+		void Serialize(YAML::Emitter& node) override;
+		void Deserialize(YAML::Node& node) override;
 
 		void* pData = nullptr;
 		UniformType uniformType;

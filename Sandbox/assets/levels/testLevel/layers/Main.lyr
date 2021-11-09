@@ -4,9 +4,9 @@ layer:
   active: true
   entities:
     - entity: Entity
-      position: [0, 0, 0]
-      rotation: [0, 0, 0]
-      scale: [1, 1, 1]
+      position: [0, -0.602181554, -1.51776719]
+      rotation: [-3.2718841e-08, 0.818734586, 0.280960411]
+      scale: [0.999998391, 0.999999702, 0.999998927]
       layerId: 0
       components:
         - name: DirectionalLightComponent
@@ -21,67 +21,47 @@ layer:
               type: Bool
               value: true
     - entity: Entity
-      position: [-1.72452307, 3.18256187, 1.69228327]
+      position: [1.41626692, 3.75414181, 0.810348392]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
       components:
-        []
-      graphkey:
-        name: Entity
-        nodes:
-          - name: Start
-            id: 0
-            position: [200, 238]
-            attributes:
-              - name: OnStart
-                attrType: output
-                id: 1
-                propType: 10
-                data: ""
-          - name: Add
-            id: 2
-            position: [406, 186]
-            attributes:
-              - name: Add
-                attrType: input
-                id: 3
-                propType: 10
-                data: ""
-              - name: A
-                attrType: input
-                id: 4
-                propType: 4
-                data: 0
-              - name: B
-                attrType: input
-                id: 5
-                propType: 4
-                data: 28
-              - name: Done
-                attrType: output
-                id: 6
-                propType: 10
-                data: ""
-              - name: Result
-                attrType: output
-                id: 7
-                propType: 4
-                data: 0
-        links:
-          - id: 8
-            from: 1
-            to: 3
+        - name: LightComponent
+          params:
+            - param: Intensity
+              type: Float
+              value: 1
+            - param: Radius
+              type: Float
+              value: 15
+            - param: Falloff
+              type: Float
+              value: 0
+            - param: Near plane
+              type: Float
+              value: 0.100000001
+            - param: Far plane
+              type: Float
+              value: 100
+            - param: Color
+              type: Color3
+              value: [0.980000019, 0.610000014, -0.0700000003]
   brushes:
     - brush: Brush
-      meshHandle: 10335344246315033883
-      position: [0, 0, 0.0790808201]
-      rotation: [0, 0, 0]
-      scale: [20, 1, 20]
+      meshHandle: 3247278211742412997
+      position: [-6.60226154, 0.784256339, -0.277845651]
+      rotation: [0, 1.57079637, 0]
+      scale: [0.00999974459, 0.00999999978, 0.00999974459]
       layerId: 0
     - brush: Brush
-      meshHandle: 1554070060000114675
-      position: [0, 0.817531705, 0]
+      meshHandle: 18292569150900447914
+      position: [-6.59614801, -0.076349929, 0.499265403]
+      rotation: [-3.14159226, 1.57030797, -3.14159226]
+      scale: [0.00999999885, 0.00999999978, 0.00999999885]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 14307495939999770285
+      position: [0, 0, 0]
       rotation: [0, 0, 0]
-      scale: [1, 1, 1]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
       layerId: 0

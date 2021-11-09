@@ -4,7 +4,7 @@
 
 namespace Lamp
 {
-	struct RenderNode;
+	class RenderNode;
 
 	class RenderGraphLoader : public AssetLoader
 	{

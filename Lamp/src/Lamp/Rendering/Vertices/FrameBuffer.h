@@ -59,12 +59,18 @@ namespace Lamp
 			: TextureFormat(format), TextureFiltering(filtering), TextureWrap(wrap), BorderColor(borderColor)
 		{}
 
+		bool operator==(const FramebufferTextureSpecification& second)
+		{
+			return this == &second;
+		}
+
 		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
 		FramebufferTexureFiltering TextureFiltering;
 		FramebufferTextureWrap TextureWrap;
 
 		bool MultiSampled = false;
 		glm::vec4 BorderColor = { 1.f, 1.f, 1.f, 1.f };
+		std::string name = "Attachment";
 	};
 
 	struct FramebufferRenderbufferSpecification

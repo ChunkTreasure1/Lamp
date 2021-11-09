@@ -21,7 +21,8 @@ namespace Lamp
 		inline const float GetYaw() const { return m_Rotation.x; }
 		inline const float GetPitch() const { return m_Rotation.y; }
 		inline const glm::mat4& GetTM() { return m_TransformMatrix; }
-		inline float& GetFOV() { return m_FOV; }
+		inline float& GetFieldOfView() { return m_fieldOfView; }
+		inline float GetAspectRatio() const { return m_aspectRatio; }
 
 		//Setting
 		inline void SetYaw(float yaw) { m_Rotation.x = yaw; }
@@ -41,7 +42,8 @@ namespace Lamp
 		glm::vec3 m_Up = { 0.f, 1.f, 0.f };
 		glm::vec3 m_Right = { 1.f, 0.f, 0.f };
 
-		float m_FOV;
+		float m_fieldOfView;
+		float m_aspectRatio;
 		bool m_FirstTime = false;
 	};
 }

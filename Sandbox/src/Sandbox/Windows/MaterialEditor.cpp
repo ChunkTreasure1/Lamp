@@ -26,12 +26,14 @@ namespace Sandbox
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
 		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
+		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
 		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
 		m_renderGraph->Start();
 
 		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
-		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/models/sphere.lgf");
+		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
+		m_pSelectedMaterial = MaterialLibrary::GetMaterial("base");
 	}
 
 	void MaterialEditor::OnEvent(Lamp::Event& e)
@@ -45,6 +47,28 @@ namespace Sandbox
 	bool MaterialEditor::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
 		return false;
+	}
+
+	void MaterialEditor::UpdateToolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.305f, 0.31f, 0.5f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.505f, 0.51f, 0.5f));
+
+		ImGui::Begin("##toolbarMaterialEditor", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		float size = ImGui::GetWindowHeight() - 4.f;
+
+		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		{
+			g_pEnv->pAssetManager->SaveAsset(m_pSelectedMaterial);
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
 	}
 
 	bool MaterialEditor::OnUpdateImGui(Lamp::ImGuiUpdateEvent& e)
@@ -71,6 +95,7 @@ namespace Sandbox
 		UpdateProperties();
 		UpdateMaterialView();
 		UpdateMaterialList();
+		UpdateToolbar();
 		return false;
 	}
 
@@ -203,7 +228,6 @@ namespace Sandbox
 			std::string id = mat->GetName() + "###mat" + std::to_string(i);
 			if (ImGui::Selectable(id.c_str()))
 			{
-				m_materialModel->SetMaterial(mat, 0);
 				m_pSelectedMaterial = mat;
 			}
 			std::string popId = mat->GetName() + "##matPop" + std::to_string(i);
@@ -243,7 +267,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_materialModel->GetSubMeshes())
 			{
-				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_materialModel->GetMaterials()[mesh->GetMaterialIndex()]);
+				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
 			}
 		}
 

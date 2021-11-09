@@ -70,7 +70,7 @@ namespace Lamp
 		inline AABB& GetBoundingBox() { return m_BoundingBox; }
 
 		static AssetType GetStaticType() { return AssetType::Mesh; }
-		virtual AssetType GetType() override { return GetStaticType(); }
+		AssetType GetType() override { return GetStaticType(); }
 		
 	private:
 		std::vector<Ref<SubMesh>> m_Meshes;

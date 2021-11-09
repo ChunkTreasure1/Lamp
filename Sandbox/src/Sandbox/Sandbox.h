@@ -14,7 +14,7 @@
 
 #include "Actions/ActionHandler.h"
 #include "Windows/BufferWindow.h"
-#include "Windows\AssetManagerPanel.h"
+#include "Windows\AssetBrowserPanel.h"
 #include "Lamp/Event/EditorEvent.h"
 #include "Lamp/Event/KeyEvent.h"
 
@@ -110,7 +110,7 @@ namespace Sandbox
 		ActionHandler m_ActionHandler;
 
 		//Asset browser
-		AssetManagerPanel m_assetManager;
+		AssetBrowserPanel m_assetManager;
 
 		//Inspector
 		bool m_MousePressed = false;

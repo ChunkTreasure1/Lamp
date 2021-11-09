@@ -8,6 +8,7 @@
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
+#include "Lamp/AssetSystem/BaseAssets.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -23,7 +24,7 @@ namespace Lamp
 		for (auto& subMesh : mesh->GetSubMeshes())
 		{
 			rout.write((char*)subMesh->GetVertices().data(), subMesh->GetVertices().size() * sizeof(Vertex));
-			rout.write((char*)subMesh->GetIndices().data(), subMesh->GetIndices().size() * sizeof(Vertex));
+			rout.write((char*)subMesh->GetIndices().data(), subMesh->GetIndices().size() * sizeof(uint32_t));
 		}
 
 		rout.close();
@@ -35,46 +36,34 @@ namespace Lamp
 		out << YAML::Key << "geometry" << YAML::Value;
 		{
 			out << YAML::BeginMap;
-			
+
 			LP_SERIALIZE_PROPERTY(name, mesh->GetName(), out);
 			LP_SERIALIZE_PROPERTY(handle, mesh->Handle, out);
 
-			out << YAML::Key << "meshes" << YAML::Value;
-			out << YAML::BeginMap;
+			out << YAML::Key << "meshes" << YAML::BeginSeq;
+			for (auto& subMesh : mesh->GetSubMeshes())
 			{
-				uint32_t meshCount = 0;
-				for (auto& subMesh : mesh->GetSubMeshes())
+				out << YAML::BeginMap;
+				out << YAML::Key << "mesh" << YAML::Value << subMesh->GetMaterialIndex();
 				{
-					out << YAML::Key << "mesh" + std::to_string(meshCount) << YAML::Value;
-					out << YAML::BeginMap;
-					{
-						LP_SERIALIZE_PROPERTY(matId, subMesh->GetMaterialIndex(), out);
-						LP_SERIALIZE_PROPERTY(verticeCount, (uint32_t)subMesh->GetVertices().size(), out);
-						LP_SERIALIZE_PROPERTY(indiceCount, (uint32_t)subMesh->GetIndices().size(), out);
-					}
-					out << YAML::EndMap;
-					meshCount++;
+					LP_SERIALIZE_PROPERTY(verticeCount, (uint32_t)subMesh->GetVertices().size(), out);
+					LP_SERIALIZE_PROPERTY(indiceCount, (uint32_t)subMesh->GetIndices().size(), out);
 				}
+				out << YAML::EndMap;
 			}
-			out << YAML::EndMap; //Meshes
+			out << YAML::EndSeq; //Meshes
 
-			out << YAML::Key << "materials" << YAML::Value;
-			out << YAML::BeginMap;
+			out << YAML::Key << "materials" << YAML::BeginSeq;
+			for (auto& mat : mesh->GetMaterials())
 			{
-				uint32_t matCount = 0;
-				for (auto& mat : mesh->GetMaterials())
+				out << YAML::BeginMap;
+				out << YAML::Key << "material" << YAML::Value << mat.second->GetName();
 				{
-					out << YAML::Key << "material" + std::to_string(matCount) << YAML::Value;
-					out << YAML::BeginMap;
-					{
-						LP_SERIALIZE_PROPERTY(name, mat.second->GetName(), out);
-						LP_SERIALIZE_PROPERTY(id, mat.first, out);
-					}
-					out << YAML::EndMap;
-					matCount++;
+					LP_SERIALIZE_PROPERTY(id, mat.first, out);
 				}
+				out << YAML::EndMap;
 			}
-			out << YAML::EndMap; //Materials
+			out << YAML::EndSeq; //Materials
 
 			out << YAML::Key << "boundingBox" << YAML::Value;
 			out << YAML::BeginMap;
@@ -102,8 +91,7 @@ namespace Lamp
 		Ref<Mesh> mesh = std::dynamic_pointer_cast<Mesh>(asset);
 
 		//Check if file exists
-		struct stat b;
-		if (!(stat(path.string().c_str(), &b) == 0))
+		if (!std::filesystem::exists(path))
 		{
 			asset->SetFlag(AssetFlag::Missing);
 			return false;
@@ -112,11 +100,14 @@ namespace Lamp
 		std::ifstream specFile(path.string() + ".spec");
 		if (!specFile.is_open())
 		{
+			asset->SetFlag(AssetFlag::Invalid);
 			return false;
 		}
 
 		std::stringstream strStream;
 		strStream << specFile.rdbuf();
+
+		specFile.close();
 
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node geoNode = root["geometry"];
@@ -127,10 +118,12 @@ namespace Lamp
 
 		//Meshes
 		YAML::Node meshesNode = geoNode["meshes"];
-		uint32_t meshCount = 0;
 		std::vector<Ref<SubMesh>> subMeshes;
 
-		while (YAML::Node meshNode = meshesNode["mesh" + std::to_string(meshCount)])
+		//Read file data
+		std::ifstream in(path, std::ios::in | std::ios::binary);
+
+		for (auto entry : meshesNode)
 		{
 			std::vector<Vertex> vertices;
 			std::vector<uint32_t> indices;
@@ -139,12 +132,11 @@ namespace Lamp
 			uint32_t verticeCountInt;
 			uint32_t indiceCountInt;
 
-			LP_DESERIALIZE_PROPERTY(matId, matIdInt, meshNode, 0);
-			LP_DESERIALIZE_PROPERTY(verticeCount, verticeCountInt, meshNode, 0);
-			LP_DESERIALIZE_PROPERTY(indiceCount, indiceCountInt, meshNode, 0);
+			LP_DESERIALIZE_PROPERTY(mesh, matIdInt, entry, 0);
+			LP_DESERIALIZE_PROPERTY(verticeCount, verticeCountInt, entry, 0);
+			LP_DESERIALIZE_PROPERTY(indiceCount, indiceCountInt, entry, 0);
 
-			//Read file data
-			std::ifstream in(path, std::ios::in | std::ios::binary);
+
 			for (size_t i = 0; i < verticeCountInt; i++)
 			{
 				Vertex vert;
@@ -159,24 +151,22 @@ namespace Lamp
 
 				indices.push_back(indice);
 			}
-			in.close();
 
 			subMeshes.push_back(CreateRef<SubMesh>(vertices, indices, matIdInt));
-			meshCount++;
 		}
+		in.close();
 
 		//Materials
 		YAML::Node materialsNode = geoNode["materials"];
-		uint32_t matCount = 0;
 		std::map<uint32_t, Ref<Material>> materials;
 
-		while (YAML::Node matNode = materialsNode["material" + std::to_string(matCount)])
+		for(auto entry : materialsNode)
 		{
 			uint32_t idInt;
 			std::string matName;
 
-			matName = matNode["name"].as<std::string>();
-			LP_DESERIALIZE_PROPERTY(id, idInt, matNode, 0);
+			matName = entry["material"].as<std::string>();
+			LP_DESERIALIZE_PROPERTY(id, idInt, entry, 0);
 
 			if (MaterialLibrary::IsMaterialLoaded(matName))
 			{
@@ -186,8 +176,6 @@ namespace Lamp
 			{
 				LP_CORE_WARN("Material {0} not loaded!", matName);
 			}
-
-			matCount++;
 		}
 
 		//Bounding box
@@ -215,21 +203,6 @@ namespace Lamp
 
 	void TextureLoader::Save(const Ref<Asset>& asset) const
 	{
-		YAML::Emitter out;
-		out << YAML::BeginMap;
-		out << YAML::Key << "TextureData" << YAML::Value;
-		{
-			out << YAML::BeginMap;
-
-			LP_SERIALIZE_PROPERTY(handle, asset->Handle, out);
-
-			out << YAML::EndMap;
-		}
-
-		out << YAML::EndMap;
-		std::ofstream fout(asset->Path.string() + ".spec");
-		fout << out.c_str();
-		fout.close();
 	}
 
 	bool EnvironmentLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
@@ -274,6 +247,15 @@ namespace Lamp
 
 	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
+		asset = CreateRef<Material>();
+		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
+
+		if (!std::filesystem::exists(path))
+		{
+			asset->SetFlag(AssetFlag::Invalid, true);
+			return false;
+		}
+
 		std::ifstream stream(path);
 		if (!stream.is_open())
 		{
@@ -283,25 +265,87 @@ namespace Lamp
 		std::stringstream strStream;
 		strStream << stream.rdbuf();
 
+		stream.close();
+
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node materialNode = root["material"];
-
-		asset = CreateRef<Material>();
-		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
 
 		mat->SetName(materialNode["name"].as<std::string>());
 		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, materialNode, AssetHandle(0));
 		mat->SetShader(ShaderLibrary::GetShader(materialNode["shader"].as<std::string>()));
 
 		YAML::Node textureNode = materialNode["textures"];
-		
-		for (auto& texName : mat->GetShader()->GetSpecifications().TextureNames)
+
+		for (auto& texName : mat->GetShader()->GetSpecification().textureNames)
 		{
 			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
 			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
 		}
 
 		asset->Path = path;
+
+		return true;
+	}
+
+	void MeshSourceLoader::Save(const Ref<Asset>& asset) const
+	{
+		Ref<MeshSource> mesh = std::dynamic_pointer_cast<MeshSource>(asset);
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "meshsource" << YAML::Value;
+		{
+			out << YAML::BeginMap;
+
+			LP_SERIALIZE_PROPERTY(handle, mesh->Handle, out);
+			LP_SERIALIZE_PROPERTY(sourcePath, mesh->m_importSettings.path.string(), out);
+			LP_SERIALIZE_PROPERTY(units, (uint32_t)mesh->m_importSettings.units, out);
+			LP_SERIALIZE_PROPERTY(upDir, mesh->m_importSettings.upDirection, out);
+			LP_SERIALIZE_PROPERTY(compileStatic, mesh->m_importSettings.compileStatic, out);
+			LP_SERIALIZE_PROPERTY(meshHandle, mesh->m_mesh, out);
+
+			out << YAML::EndMap;
+		}
+		out << YAML::EndMap;
+
+		std::ofstream fout(asset->Path);
+		fout << out.c_str();
+		fout.close();
+	}
+
+	bool MeshSourceLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	{
+		std::ifstream stream(path);
+		if (!stream.is_open())
+		{
+			return false;
+		}
+
+		std::stringstream strStream;
+		strStream << stream.rdbuf();
+		stream.close();
+
+		YAML::Node root = YAML::Load(strStream.str());
+		YAML::Node meshNode = root["meshsource"];
+
+		asset = CreateRef<MeshSource>();
+		Ref<MeshSource> meshSource = std::dynamic_pointer_cast<MeshSource>(asset);
+
+		meshSource->m_importSettings.units = meshNode["units"] ? (Units)meshNode["units"].as<uint32_t>() : Units::Centimeters;
+		LP_DESERIALIZE_PROPERTY(upDir, meshSource->m_importSettings.upDirection, meshNode, glm::vec3(0.f));
+		LP_DESERIALIZE_PROPERTY(compileStatic, meshSource->m_importSettings.compileStatic, meshNode, false);
+		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, meshNode, AssetHandle(0));
+		meshSource->m_importSettings.path = std::filesystem::path(meshNode["sourcePath"].as<std::string>());
+		if (!std::filesystem::exists(meshSource->m_importSettings.path))
+		{
+			LP_CORE_ERROR("Mesh {0} not found!", meshSource->m_importSettings.path.string());
+			meshSource->SetFlag(AssetFlag::Missing, true);
+
+			return false;
+		}
+
+		LP_DESERIALIZE_PROPERTY(meshHandle, meshSource->m_mesh, meshNode, AssetHandle(0));
+		meshSource->Path = path;
 
 		return true;
 	}

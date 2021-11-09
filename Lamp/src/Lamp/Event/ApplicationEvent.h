@@ -38,7 +38,7 @@ namespace Lamp
 	class WindowCloseEvent : public Event
 	{
 	public:
-		WindowCloseEvent() {}
+		WindowCloseEvent() = default;
 
 		EVENT_CLASS_TYPE(WindowClose);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
@@ -47,7 +47,7 @@ namespace Lamp
 	class AppTickEvent : public Event
 	{
 	public:
-		AppTickEvent() {}
+		AppTickEvent() = default;
 
 		EVENT_CLASS_TYPE(AppTick);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
@@ -113,8 +113,7 @@ namespace Lamp
 	class ImGuiBeginEvent : public Event
 	{
 	public:
-		ImGuiBeginEvent()
-		{}
+		ImGuiBeginEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -130,8 +129,7 @@ namespace Lamp
 	class ImGuiUpdateEvent : public Event 
 	{
 	public:
-		ImGuiUpdateEvent()
-		{}
+		ImGuiUpdateEvent() = default;
 
 		std::string ToString() const override
 		{

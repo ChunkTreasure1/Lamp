@@ -4,8 +4,8 @@
 #include "Lamp/AssetSystem/Asset.h"
 namespace Lamp
 {
-	struct RenderNodeEnd;
-	struct RenderNodeStart;
+	class RenderNodeEnd;
+	class RenderNodeStart;
 
 	struct RenderGraphSpecification
 	{
@@ -21,7 +21,7 @@ namespace Lamp
 	class RenderGraph : public Asset
 	{
 	public:
-		RenderGraph();
+		RenderGraph() = default;
 		RenderGraph(const RenderGraphSpecification& spec);
 
 		~RenderGraph() = default;

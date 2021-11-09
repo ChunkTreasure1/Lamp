@@ -24,7 +24,7 @@ namespace Sandbox
 		void UpdateMaterialView();
 		void UpdateProperties();
 		void UpdateMaterialList();
-
+		void UpdateToolbar();
 
 		void Render();
 		void CreateNewMaterial();
@@ -38,5 +38,6 @@ namespace Sandbox
 		std::filesystem::path m_pathOnRightClick;
 
 		glm::vec2 m_perspectiveSize = { 0.f, 0.f };
+		Ref<Lamp::Texture2D> m_saveIcon;
 	};
 }

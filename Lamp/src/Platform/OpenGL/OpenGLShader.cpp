@@ -9,19 +9,37 @@ namespace Lamp
 		{
 			switch (type)
 			{
-			case GL_INT: return UniformType::Int;
-			case GL_FLOAT: return UniformType::Float;
-			case GL_FLOAT_VEC2: return UniformType::Float2;
-			case GL_FLOAT_VEC3: return UniformType::Float3;
-			case GL_FLOAT_VEC4: return UniformType::Float4;
-			case GL_FLOAT_MAT3: return UniformType::Mat3;
-			case GL_FLOAT_MAT4: return UniformType::Mat4;
-			case GL_SAMPLER_2D: return UniformType::Sampler2D;
-			case GL_SAMPLER_CUBE: return UniformType::SamplerCube;
+				case GL_INT: return UniformType::Int;
+				case GL_FLOAT: return UniformType::Float;
+				case GL_FLOAT_VEC2: return UniformType::Float2;
+				case GL_FLOAT_VEC3: return UniformType::Float3;
+				case GL_FLOAT_VEC4: return UniformType::Float4;
+				case GL_FLOAT_MAT3: return UniformType::Mat3;
+				case GL_FLOAT_MAT4: return UniformType::Mat4;
+				case GL_SAMPLER_2D: return UniformType::Sampler2D;
+				case GL_SAMPLER_CUBE: return UniformType::SamplerCube;
 
-			default:
-				return UniformType::Int;
-				break;
+				default:
+					return UniformType::Int;
+					break;
+			}
+		}
+
+		static std::any UniformTypeToData(UniformType type)
+		{
+			switch (type)
+			{
+				case Lamp::UniformType::Int: return 0;
+				case Lamp::UniformType::Float: return 0.f;
+				case Lamp::UniformType::Float2: return glm::vec2(0.f);
+				case Lamp::UniformType::Float3: return glm::vec3(0.f);
+				case Lamp::UniformType::Float4: return glm::vec4(0.f);
+				case Lamp::UniformType::Mat3: return glm::mat3(1.f);
+				case Lamp::UniformType::Mat4: return glm::mat4(1.f);
+				case Lamp::UniformType::Sampler2D: return 0;
+				case Lamp::UniformType::SamplerCube: return 0;
+				case Lamp::UniformType::RenderData: return 0;
+				default: return 0;
 			}
 		}
 
@@ -77,20 +95,39 @@ namespace Lamp
 
 		Compile(shaderSources);
 
-		int count;
-		glGetProgramiv(m_RendererID, GL_ACTIVE_UNIFORMS, &count);
-		for (int i = 0; i < count; i++)
+		GLint activeUniforms;
+		glGetProgramInterfaceiv(m_RendererID, GL_UNIFORM, GL_ACTIVE_RESOURCES, &activeUniforms);
+
+		int samplerCount = 0;
+		for (uint32_t i = 0; i < activeUniforms; i++)
 		{
-			GLchar name[512];
-			int length;
-			int size;
-			GLenum type;
+			std::vector<GLchar> nameData(256);
+			std::vector<GLenum> properties = { GL_NAME_LENGTH, GL_TYPE, GL_BLOCK_INDEX };
+			std::vector<GLint> values(properties.size());
 
-			std::string n;
 
-			glGetActiveUniform(m_RendererID, (GLuint)i, 512, &length, &size, &type, name);
+			//Get info
+			glGetProgramResourceiv(m_RendererID, GL_UNIFORM, i, properties.size(), properties.data(), values.size(), nullptr, values.data());
 
-			m_Specifications.Uniforms.emplace(std::make_pair(name, Utils::GLUniformToUniformType(type))); //TODO: add support for arrays
+			if (values[2] != -1)
+			{
+				continue;
+			}
+
+			//Get name
+			nameData.resize(values[0]);
+			glGetProgramResourceName(m_RendererID, GL_UNIFORM, i, nameData.size(), nullptr, nameData.data());
+
+			auto type = Utils::GLUniformToUniformType(values[1]);
+			if (type == UniformType::Sampler2D)
+			{
+				m_specification.uniforms.emplace_back(std::string(nameData.data(), nameData.size() - 1), type, samplerCount, i);
+				samplerCount++;
+			}
+			else
+			{
+				m_specification.uniforms.emplace_back(std::string(nameData.data(), nameData.size() - 1), type, Utils::UniformTypeToData(type), i);
+			}
 		}
 	}
 
@@ -115,17 +152,20 @@ namespace Lamp
 		const char* nameToken = "Name:";
 		const char* textureCountToken = "TextureCount:";
 		const char* textureNamesToken = "TextureNames";
+		const char* internalShaderToken = "InternalShader:";
 		size_t nameTokenLength = strlen(nameToken);
 		size_t texCountTokenLength = strlen(textureCountToken);
 		size_t texNamesTokenLength = strlen(textureNamesToken);
-		size_t tokenPos = source.find(nameToken, 0);
+		size_t internalShaderTokenLength = strlen(internalShaderToken);
 
+
+		size_t tokenPos = source.find(nameToken, 0);
 		{
 			size_t eol = source.find_first_of("\r\n", tokenPos);
 
 			size_t begin = tokenPos + nameTokenLength + 1;
 			std::string name = source.substr(begin, eol - begin);
-			m_Specifications.Name = name;
+			m_specification.name = name;
 			tokenPos = std::string::npos;
 		}
 
@@ -136,7 +176,23 @@ namespace Lamp
 
 			size_t begin = tokenPos + texCountTokenLength + 1;
 			std::string name = source.substr(begin, eol - begin);
-			m_Specifications.TextureCount = stoi(name);
+			m_specification.textureCount = stoi(name);
+		}
+
+		{
+			tokenPos = source.find(internalShaderToken, 0);
+			size_t eol = source.find_first_of("\r\n", tokenPos);
+
+			size_t begin = tokenPos + internalShaderTokenLength + 1;
+			std::string text = source.substr(begin, eol - begin);
+			if (text == "true")
+			{
+				m_specification.isInternal = true;
+			}
+			else
+			{
+				m_specification.isInternal = false;
+			}
 		}
 
 		{
@@ -145,11 +201,11 @@ namespace Lamp
 			size_t eol = source.find_first_of("\r\n", tokenPos);
 			eol = source.find_first_of("\r\n", eol + 2);
 
-			for (int i = 0; i < m_Specifications.TextureCount; i++)
+			for (int i = 0; i < m_specification.textureCount; i++)
 			{
 				size_t pos = source.find_first_of("\r\n", eol + 2);
 				std::string name = source.substr(eol + 2, pos - eol - 2);
-				m_Specifications.TextureNames.push_back(name);
+				m_specification.textureNames.push_back(name);
 
 				eol = pos;
 			}
@@ -178,25 +234,25 @@ namespace Lamp
 			shaderSources[Utils::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
 			switch (Utils::ShaderTypeFromString(type))
 			{
-			case GL_VERTEX_SHADER:
-				m_Specifications.Type |= ShaderType::VertexShader;
-				break;
+				case GL_VERTEX_SHADER:
+					m_specification.type |= ShaderType::VertexShader;
+					break;
 
-			case GL_FRAGMENT_SHADER:
-				m_Specifications.Type |= ShaderType::FragmentShader;
-				break;
+				case GL_FRAGMENT_SHADER:
+					m_specification.type |= ShaderType::FragmentShader;
+					break;
 
-			case GL_GEOMETRY_SHADER:
-				m_Specifications.Type |= ShaderType::GeometryShader;
-				break;
+				case GL_GEOMETRY_SHADER:
+					m_specification.type |= ShaderType::GeometryShader;
+					break;
 
-			case GL_COMPUTE_SHADER:
-				m_Specifications.Type |= ShaderType::ComputeShader;
-				break;
+				case GL_COMPUTE_SHADER:
+					m_specification.type |= ShaderType::ComputeShader;
+					break;
 
-			default:
-				m_Specifications.Type = ShaderType::VertexShader;
-				break;
+				default:
+					m_specification.type = ShaderType::VertexShader;
+					break;
 			}
 		}
 
@@ -306,7 +362,7 @@ namespace Lamp
 
 			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(512);
-			glGetProgramInfoLog(program, maxLength, NULL, &infoLog[0]);
+			glGetProgramInfoLog(program, maxLength, nullptr, &infoLog[0]);
 
 			// We don't need the program anymore.
 			glDeleteProgram(program);

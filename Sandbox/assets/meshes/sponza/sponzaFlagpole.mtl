@@ -1,0 +1,8 @@
+material:
+  name: sponzaFlagpole
+  handle: 15762875916196242414
+  textures:
+    albedo: 42304322756297400
+    normal: 14729432698615374519
+    mro: 10056790240237353765
+  shader: pbrForward

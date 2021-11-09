@@ -154,6 +154,7 @@
     <ClInclude Include="src\Lamp\AssetSystem\Asset.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\AssetManager.h" />
+    <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h" />
     <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
@@ -251,6 +252,7 @@
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
@@ -269,6 +271,7 @@
     <ClInclude Include="src\Lamp\Rendering\Vertices\FrameBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexArray.h" />
     <ClInclude Include="src\Lamp\Rendering\Vertices\VertexBuffer.h" />
+    <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
     <ClInclude Include="src\Lamp\Utility\SerializeMacros.h" />
@@ -805,7 +808,7 @@
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Vertices\Framebuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Vertices\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
@@ -839,7 +842,9 @@
     <ClCompile Include="vendor\yaml-cpp\src\exceptions.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\exp.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\memory.cpp" />
-    <ClCompile Include="vendor\yaml-cpp\src\node.cpp" />
+    <ClCompile Include="vendor\yaml-cpp\src\node.cpp">
+      <ObjectFileName>$(IntDir)\node1.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="vendor\yaml-cpp\src\node_data.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodebuilder.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\nodeevents.cpp" />

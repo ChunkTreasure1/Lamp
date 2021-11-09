@@ -1,0 +1,8 @@
+material:
+  name: EyeMat
+  handle: 12262372207240023893
+  textures:
+    albedo: 2012487481358295908
+    normal: 14105642521841293496
+    mro: 12778783623854556376
+  shader: pbrForward
