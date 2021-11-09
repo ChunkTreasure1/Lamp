@@ -238,7 +238,11 @@ float DirectionalShadowCalculation(vec4 pos, uint samplerId)
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, vec4 shadowCoord, uint samplerId)
 {
-	float shadow = DirectionalShadowCalculation(shadowCoord, samplerId);
+	float shadow = 0.0;
+	if (light.castShadows)
+	{
+		shadow = DirectionalShadowCalculation(shadowCoord, samplerId);
+	}
 
 	vec3 L = normalize(light.direction.xyz);
 	vec3 H = normalize(V + L);

@@ -61,29 +61,17 @@ namespace Lamp
 
 	void Renderer3D::Begin(const Ref<CameraBase> camera)
 	{
+		LP_PROFILE_FUNCTION();
+
 		s_pRenderData->camera = camera;
 		s_renderStatistics.totalDrawCalls = 0;
 		s_renderStatistics.otherDrawCalls = 0;
 		s_renderStatistics.sceneDrawCalls = 0;
 
-		LP_PROFILE_FUNCTION();
+		DrawDirectionalShadows();
+		//DrawPointShadows();
 
-		//Draw shadow maps 
-		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
-		{
-			if (!light->castShadows)
-			{
-				continue;
-			}
-			light->shadowBuffer->Bind();
-			RenderCommand::ClearDepth();
-			BeginPass(light->shadowPass->GetSpecification());
-
-			DrawRenderBuffer();
-
-			EndPass();
-			light->shadowBuffer->Unbind();
-		}
+		SortBuffers(camera->GetPosition());
 	}
 
 	void Renderer3D::End()
@@ -214,7 +202,7 @@ namespace Lamp
 			{
 				if (!light->castShadows)
 				{
-					return;
+					continue;
 				}
 
 				shaderToUse->UploadInt("u_DirShadowMaps[" + std::to_string(index) + "]", i);
@@ -341,31 +329,6 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		//TODO: Should be moved to only be made once, right after render event
-		//Sort
-		const glm::vec3& cameraPos = s_pRenderData->camera->GetPosition();
-		std::sort(s_opaqueRenderBuffer.drawCalls.begin(), s_opaqueRenderBuffer.drawCalls.end(), [&cameraPos](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
-			{
-				const glm::vec3& dPosOne = dataOne.transform[3];
-				const glm::vec3& dPosTwo = dataTwo.transform[3];
-
-				const float distOne = glm::exp2(cameraPos.x - dPosOne.x) + glm::exp2(cameraPos.y - dPosOne.y) + glm::exp2(cameraPos.z - dPosOne.z);
-				const float distTwo = glm::exp2(cameraPos.x - dPosTwo.x) + glm::exp2(cameraPos.y - dPosTwo.y) + glm::exp2(cameraPos.z - dPosTwo.z);
-
-				return distOne < distTwo;
-			});
-
-		std::sort(s_transparentRenderBuffer.drawCalls.begin(), s_transparentRenderBuffer.drawCalls.end(), [&cameraPos](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
-			{
-				const glm::vec3& dPosOne = dataOne.transform[3];
-				const glm::vec3& dPosTwo = dataTwo.transform[3];
-
-				const float distOne = glm::exp2(cameraPos.x - dPosOne.x) + glm::exp2(cameraPos.y - dPosOne.y) + glm::exp2(cameraPos.z - dPosOne.z);
-				const float distTwo = glm::exp2(cameraPos.x - dPosTwo.x) + glm::exp2(cameraPos.y - dPosTwo.y) + glm::exp2(cameraPos.z - dPosTwo.z);
-
-				return distOne < distTwo;
-			});
-
 		for (const auto& data : s_opaqueRenderBuffer.drawCalls)
 		{
 			DrawMesh(data.transform, data.data, data.material, data.id);
@@ -404,7 +367,7 @@ namespace Lamp
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
-				});
+			});
 			s_pRenderData->quadVertexArray->AddVertexBuffer(pBuffer);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(quadIndices, (uint32_t)quadIndices.size());
 			s_pRenderData->quadVertexArray->SetIndexBuffer(indexBuffer);
@@ -447,5 +410,93 @@ namespace Lamp
 			s_pRenderData->cubeVertexArray->SetIndexBuffer(indexBuffer);
 		}
 		////////////////
+	}
+
+	void Renderer3D::SortBuffers(const glm::vec3& sortPoint)
+	{
+		std::sort(s_opaqueRenderBuffer.drawCalls.begin(), s_opaqueRenderBuffer.drawCalls.end(), [&sortPoint](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distOne = glm::exp2(sortPoint.x - dPosOne.x) + glm::exp2(sortPoint.y - dPosOne.y) + glm::exp2(sortPoint.z - dPosOne.z);
+				const float distTwo = glm::exp2(sortPoint.x - dPosTwo.x) + glm::exp2(sortPoint.y - dPosTwo.y) + glm::exp2(sortPoint.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
+
+		std::sort(s_transparentRenderBuffer.drawCalls.begin(), s_transparentRenderBuffer.drawCalls.end(), [&sortPoint](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distOne = glm::exp2(sortPoint.x - dPosOne.x) + glm::exp2(sortPoint.y - dPosOne.y) + glm::exp2(sortPoint.z - dPosOne.z);
+				const float distTwo = glm::exp2(sortPoint.x - dPosTwo.x) + glm::exp2(sortPoint.y - dPosTwo.y) + glm::exp2(sortPoint.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
+	}
+
+	void Renderer3D::DrawPointShadows()
+	{
+		LP_PROFILE_FUNCTION();
+
+		const uint32_t maxShadowCasters = 5;
+		const glm::vec3 cameraPosition = s_pRenderData->camera->GetPosition();
+
+		auto& pointLights = g_pEnv->pLevel->GetRenderUtils().GetPointLights();
+		uint32_t shadowCasterCount = std::min((uint32_t)pointLights.size(), maxShadowCasters);
+
+		//Sort lights by distance to camera
+		std::vector<PointLight*> pointLightsToUse;
+		pointLightsToUse.reserve(pointLights.size());
+
+		pointLightsToUse.insert(pointLightsToUse.end(), pointLights.begin(), pointLights.end());
+		std::sort(pointLightsToUse.begin(), pointLightsToUse.end(), [&cameraPosition](PointLight* first, PointLight* second)
+			{
+				const glm::vec3& dPosOne = first->shadowBuffer->GetPosition();
+				const glm::vec3& dPosTwo = second->shadowBuffer->GetPosition();
+
+				const float distOne = glm::exp2(cameraPosition.x - dPosOne.x) + glm::exp2(cameraPosition.y - dPosOne.y) + glm::exp2(cameraPosition.z - dPosOne.z);
+				const float distTwo = glm::exp2(cameraPosition.x - dPosTwo.x) + glm::exp2(cameraPosition.y - dPosTwo.y) + glm::exp2(cameraPosition.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
+
+		//Render shadows for nearest
+		for (uint32_t i = 0; i < shadowCasterCount; i++)
+		{
+			pointLights[i]->shadowBuffer->Bind();
+			RenderCommand::ClearDepth();
+
+			SortBuffers(pointLights[i]->shadowBuffer->GetPosition());
+			BeginPass(pointLights[i]->shadowPass->GetSpecification());
+
+			DrawRenderBuffer();
+
+			EndPass();
+			pointLights[i]->shadowBuffer->Unbind();
+		}
+	}
+
+	void Renderer3D::DrawDirectionalShadows()
+	{
+		LP_PROFILE_FUNCTION();
+
+		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+		{
+			if (!light->castShadows)
+			{
+				continue;
+			}
+			light->shadowBuffer->Bind();
+			RenderCommand::ClearDepth();
+			BeginPass(light->shadowPass->GetSpecification());
+
+			DrawRenderBuffer();
+
+			EndPass();
+			light->shadowBuffer->Unbind();
+		}
 	}
 }

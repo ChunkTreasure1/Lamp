@@ -2,6 +2,7 @@ struct DirectionalLight
 {
 	vec4 direction;
 	vec4 colorIntensity;
+	bool castShadows;
 };
 
 struct PointLight

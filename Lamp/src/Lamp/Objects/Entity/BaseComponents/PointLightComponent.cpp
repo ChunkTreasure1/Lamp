@@ -13,15 +13,7 @@ namespace Lamp
 	PointLightComponent::PointLightComponent()
 		: EntityComponent("LightComponent")
 	{
-		{
-			FramebufferSpecification spec;
-			spec.Height = 512;
-			spec.Width = 512;
-
-			m_pPointLight = new PointLight();
-
-			m_pPointLight->shadowBuffer = std::make_shared<PointShadowBuffer>(spec);
-		}
+		m_pPointLight = CreateScope<PointLight>();
 
 		SetComponentProperties
 		({
@@ -35,15 +27,13 @@ namespace Lamp
 
 		if (g_pEnv->pLevel)
 		{
-			g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight);
+			g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight.get());
 		}
 	}
 
 	PointLightComponent::~PointLightComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnregisterPointLight(m_pPointLight);
-
-		delete m_pPointLight;
+		g_pEnv->pLevel->GetRenderUtils().UnregisterPointLight(m_pPointLight.get());
 	}
 
 	void PointLightComponent::Initialize()

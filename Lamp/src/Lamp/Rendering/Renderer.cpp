@@ -108,6 +108,7 @@ namespace Lamp
 
 				s_pSceneData->directionalLightData.dirLights[index].direction = glm::vec4(direction, 1.f);
 				s_pSceneData->directionalLightData.dirLights[index].colorIntensity = glm::vec4(light->color, light->intensity);
+				s_pSceneData->directionalLightData.dirLights[index].castShadows = light->castShadows;
 				s_pSceneData->directionalLightData.lightCount++;
 
 				index++;
@@ -143,11 +144,6 @@ namespace Lamp
 			uint32_t index = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 			{
-				if (!light->castShadows)
-				{
-					continue;
-				}
-
 				s_pSceneData->directionalLightVPData.viewProjections[index] = light->viewProjection;
 				index++;
 			}

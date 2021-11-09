@@ -25,7 +25,7 @@ namespace Lamp
 
 		inline const glm::vec3& GetColor() { return m_pPointLight->color; }
 		inline const float GetFarPlane() { return m_pPointLight->farPlane; }
-		inline PointLight* GetLight() { return m_pPointLight; }
+		inline PointLight& GetLight() { return *m_pPointLight; }
 
 		//Setting
 		inline void SetIntensity(float val) { m_pPointLight->intensity = val; }
@@ -40,6 +40,6 @@ namespace Lamp
 		static std::string GetFactoryName() { return "LightComponent"; }
 
 	private:
-		PointLight* m_pPointLight;
+		Scope<PointLight> m_pPointLight;
 	};
 }

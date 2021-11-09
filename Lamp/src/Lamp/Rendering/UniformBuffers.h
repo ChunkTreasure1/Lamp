@@ -7,6 +7,8 @@ namespace Lamp
 	{
 		glm::vec4 direction;
 		glm::vec4 colorIntensity;
+		bool castShadows;
+		bool padding[15];
 	};
 
 	struct PointLightData

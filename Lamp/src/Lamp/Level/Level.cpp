@@ -87,12 +87,12 @@ namespace Lamp
 			m_Entities.emplace(pair);
 			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(lightComp->GetLight());
+				m_RenderUtils.RegisterPointLight(&lightComp->GetLight());
 			}
 
 			if (auto dirLightComp = pair.second->GetComponent<DirectionalLightComponent>())
 			{
-				m_RenderUtils.RegisterDirectionalLight(dirLightComp->GetLight());
+				m_RenderUtils.RegisterDirectionalLight(&dirLightComp->GetLight());
 			}
 		}
 

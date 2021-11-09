@@ -332,6 +332,10 @@ namespace Sandbox
 			}
 
 			UI::Property("Show Grid", m_renderGrid);
+			if (UI::Property("Compile static", m_importSettings.compileStatic))
+			{
+				LoadMesh();
+			}
 
 			UI::EndProperties(false);
 		}

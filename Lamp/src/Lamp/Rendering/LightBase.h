@@ -30,10 +30,7 @@ namespace Lamp
 
 	struct PointLight
 	{
-		PointLight()
-		{
-			id = s_lightId++;
-		}
+		PointLight();
 
 		glm::vec3 color{ 1.f, 1.f, 1.f };
 
@@ -43,7 +40,8 @@ namespace Lamp
 		float farPlane = 100.f;
 		float nearPlane = 0.01f;
 
-		uint32_t id;
+		uint32_t id = s_lightId++;
+		std::unique_ptr<RenderPass> shadowPass;
 		std::shared_ptr<PointShadowBuffer> shadowBuffer;
 	};
 }

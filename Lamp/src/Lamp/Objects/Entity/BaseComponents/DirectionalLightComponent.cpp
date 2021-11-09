@@ -13,17 +13,7 @@ namespace Lamp
 	DirectionalLightComponent::DirectionalLightComponent()
 		: EntityComponent("DirectionalLightComponent")
 	{
-		m_pDirectionalLight = new DirectionalLight();
-
-		FramebufferSpecification spec;
-		spec.Height = 4096;
-		spec.Width = 4096;
-		spec.Attachments =
-		{
-			{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
-		};
-
-		m_pDirectionalLight->shadowBuffer = Framebuffer::Create(spec);
+		m_pDirectionalLight = CreateScope<DirectionalLight>();
 
 		SetComponentProperties
 		({
@@ -34,14 +24,13 @@ namespace Lamp
 
 		if (g_pEnv->pLevel)
 		{
-			g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight);
+			g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight.get());
 		}
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnregisterDirectionalLight(m_pDirectionalLight);
-		delete m_pDirectionalLight;
+		g_pEnv->pLevel->GetRenderUtils().UnregisterDirectionalLight(m_pDirectionalLight.get());
 	}
 
 	void DirectionalLightComponent::Initialize()

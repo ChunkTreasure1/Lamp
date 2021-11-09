@@ -12,24 +12,24 @@ namespace Lamp
 		PointShadowBuffer(const FramebufferSpecification& spec);
 		virtual ~PointShadowBuffer() override;
 
-		virtual void Bind() override;
-		virtual void Unbind() override;
-		virtual void Resize(uint32_t width, uint32_t height) override;
-		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override { return -1; }
-		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override {}
+		void Bind() override;
+		void Unbind() override;
+		void Resize(uint32_t width, uint32_t height) override;
+		int ReadPixel(uint32_t attachmentIndex, int x, int y) override { return -1; }
+		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override {}
 
 		inline const std::vector<glm::mat4>& GetTransforms() { return m_Transforms; }
 
-		virtual inline const uint32_t GetColorAttachmentID(uint32_t i) override { return 0; }
-		virtual inline const uint32_t GetDepthAttachmentID() override { return m_TextureID; }
-		virtual inline const uint32_t GetRendererID() override { return m_RendererID; }
+		inline const uint32_t GetColorAttachmentID(uint32_t i) override { return 0; }
+		inline const uint32_t GetDepthAttachmentID() override { return m_TextureID; }
+		inline const uint32_t GetRendererID() override { return m_RendererID; }
 
-		virtual void ClearAttachment(uint32_t attachmentIndex, int value) {}
+		void ClearAttachment(uint32_t attachmentIndex, int value) override {}
 
-		virtual void BindColorAttachment(uint32_t id /* = 0 */, uint32_t i /* = 0 */);
-		virtual void BindDepthAttachment(uint32_t id /* = 0 */);
+		void BindColorAttachment(uint32_t id /* = 0 */, uint32_t i /* = 0 */) override;
+		void BindDepthAttachment(uint32_t id /* = 0 */) override;
 
-		virtual FramebufferSpecification& GetSpecification() { return FramebufferSpecification(); }
+		FramebufferSpecification& GetSpecification() override { return FramebufferSpecification(); }
 
 		void SetPosition(const glm::vec3& pos);
 		inline const glm::vec3& GetPosition() { return m_Position; }
@@ -40,7 +40,7 @@ namespace Lamp
 		void UpdateProjection();
 
 	private:
-		void Invalidate();
+		void Invalidate() override;
 
 	private:
 		float m_NearPlane = 0.1f;

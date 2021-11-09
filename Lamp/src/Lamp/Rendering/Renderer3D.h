@@ -56,6 +56,9 @@ namespace Lamp
 
 	private:
 		static void CreateBaseMeshes();
+		static void SortBuffers(const glm::vec3& sortPoint);
+		static void DrawPointShadows();
+		static void DrawDirectionalShadows();
 
 		static void DrawMesh(const glm::mat4& modelMatrix, const Ref<VertexArray> data, const Ref<Material> mat, size_t id = -1);
 

@@ -31,7 +31,7 @@ namespace Lamp
 
 		if (meshes.size() > 1 && settings.compileStatic)
 		{
-			CompileStatic(meshes);
+			meshes = CompileStatic(meshes, materials);
 		}
 
 		//Create materials
@@ -188,17 +188,33 @@ namespace Lamp
 		return CreateRef<SubMesh>(vertices, indices, pMesh->mMaterialIndex);
 	}
 
-	Ref<SubMesh> MeshImporter::CompileStatic(const std::vector<Ref<SubMesh>> meshes)
+	std::vector<Ref<SubMesh>> MeshImporter::CompileStatic(const std::vector<Ref<SubMesh>>& meshes, const std::map<uint32_t, Ref<Material>>& materials)
 	{
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
+		std::unordered_map<uint32_t, Ref<SubMesh>> newMeshes;
 
-		for ()
+		for (const auto& material : materials)
 		{
+			std::vector<Vertex> vertices;
+			std::vector<uint32_t> indices;
+
+			for (const auto& mesh : meshes)
+			{
+				if (mesh->GetMaterialIndex() == material.first)
+				{
+					vertices.insert(vertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
+					indices.insert(indices.end(), mesh->GetIndices().begin(), mesh->GetIndices().end());
+				}
+			}
+
+			newMeshes[material.first] = CreateRef<SubMesh>(vertices, indices, material.first);
 		}
 
-		Ref<SubMesh> subMesh = CreateRef<SubMesh>();
+		std::vector<Ref<SubMesh>> returnMeshes;
+		for (auto& mesh : newMeshes)
+		{
+			returnMeshes.push_back(mesh.second);
+		}
 
-		return Ref<SubMesh>();
+		return returnMeshes;
 	}
 }

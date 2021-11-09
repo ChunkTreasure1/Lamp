@@ -16,7 +16,7 @@ namespace Lamp
 		virtual void OnEvent(Event& e) override;
 		////////////////
 
-		inline DirectionalLight* GetLight() { return m_pDirectionalLight; }
+		inline DirectionalLight& GetLight() { return *m_pDirectionalLight; }
 
 	private:
 		bool OnRotationChanged(ObjectRotationChangedEvent& e);
@@ -27,7 +27,7 @@ namespace Lamp
 		static std::string GetFactoryName() { return "DirectionalLightComponent"; }
 
 	private:
-		DirectionalLight* m_pDirectionalLight;
+		Scope<DirectionalLight> m_pDirectionalLight;
 		const float m_size = 20.f;
 	};
 }
