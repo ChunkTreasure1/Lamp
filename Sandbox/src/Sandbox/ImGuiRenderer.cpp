@@ -583,8 +583,8 @@ namespace Sandbox
 					case Lamp::PropertyType::Float4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 					case Lamp::PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
 					case Lamp::PropertyType::Path: propertyChanged = UI::Property(prop.name, std::filesystem::path(*static_cast<std::string*>(prop.value))); break;
-					case Lamp::PropertyType::Color3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value), false); break;
-					case Lamp::PropertyType::Color4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value), true); break;
+					case Lamp::PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
+					case Lamp::PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 				}
 
 				if (propertyChanged)

@@ -105,7 +105,7 @@ namespace UI
 		{
 			return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
 		}
-		
+
 		UI::ScopedStyleFloat frameRound(ImGuiStyleVar_FrameRounding, rounding);
 
 		return ImGui::TreeNodeEx(text.c_str(), nodeFlags);
@@ -115,7 +115,7 @@ namespace UI
 	{
 		const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
 			ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-		
+
 		if (!useOther)
 		{
 			return ImGui::TreeNodeWidthEx(text.c_str(), width, nodeFlags);
@@ -538,25 +538,36 @@ namespace UI
 		return changed;
 	}
 
-	static bool Property(const std::string& text, glm::vec4& value, bool useAlpha)
+	static bool PropertyColor(const std::string& text, glm::vec4& value)
 	{
-		if (useAlpha)
+		ImGui::NextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+
+		if (ImGui::ColorEdit4(id.c_str(), glm::value_ptr(value)))
 		{
-			if (ImGui::ColorEdit4(text.c_str(), glm::value_ptr(value)))
-			{
-				return true;
-			}
-		}
-		else
-		{
-			float values[3] = { value.x, value.y, value.z };
-			if (ImGui::ColorEdit3(text.c_str(), values))
-			{
-				value = glm::vec4({ values[0], values[1], values[2], 1.f });
-			}
+			return true;
 		}
 
 		return false;
+	}
+
+	static bool PropertyColor(const std::string& text, glm::vec3& value)
+	{
+		ImGui::NextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+
+		if (ImGui::ColorEdit3(id.c_str(), glm::value_ptr(value)))
+		{
+			return true;
+		}
 	}
 
 	static bool Property(const std::string& text, std::filesystem::path& path)
