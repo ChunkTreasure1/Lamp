@@ -29,11 +29,6 @@ namespace Lamp
 			return asset;
 		}
 
-		if (meshes.size() > 1 && settings.compileStatic)
-		{
-			meshes = CompileStatic(meshes, materials);
-		}
-
 		//Create materials
 
 		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
@@ -89,7 +84,13 @@ namespace Lamp
 		Assimp::Importer importer;
 		std::vector<Ref<SubMesh>> meshes;
 
-		const aiScene* pScene = importer.ReadFile(settings.path.string(), s_MeshImportFlags);
+		uint32_t extraFlags = 0;
+		if (settings.compileStatic)
+		{
+			extraFlags |= aiProcess_OptimizeGraph;
+		}
+
+		const aiScene* pScene = importer.ReadFile(settings.path.string(), s_MeshImportFlags | extraFlags);
 		if (!pScene)
 		{
 			return meshes;

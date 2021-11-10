@@ -1,8 +1,0 @@
-material:
-  name: sponzaCurtain_green
-  handle: 14633617986139248865
-  textures:
-    albedo: 17028787182874343334
-    normal: 3402483956658190032
-    mro: 3753092505565141235
-  shader: pbrForward

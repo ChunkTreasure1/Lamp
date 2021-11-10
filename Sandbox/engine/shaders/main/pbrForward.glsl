@@ -82,12 +82,16 @@ in Out
 #include ../CommonDataStructures.h
 #include ../UniformBlocks.h
 
+#define MAX_POINT_CASTERS 5
+#define MAX_DIR_CASTERS 10
+
 uniform Material u_Material;
 uniform int u_ObjectId;
 uniform float u_BlendingMultiplier;
 uniform bool u_UseBlending;
 
-uniform sampler2D u_DirShadowMaps[10];
+uniform sampler2D u_DirShadowMaps[MAX_DIR_CASTERS];
+uniform samplerCube u_PointShadowMaps[MAX_POINT_CASTERS];
 
 uniform samplerCube u_IrradianceMap;
 uniform samplerCube u_PrefilterMap;
@@ -150,12 +154,12 @@ float PointShadowCalculation(vec3 fragPos, PointLight light, float distance)
 	int samples = 20;
 	float offset = 0.1;
 
-	//float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
+	float diskRadius = (1.0 + (distance / light.farPlane)) / 25.0;
 
 	for(int i = 0; i < samples; ++i)
     {
-        float closestDepth = 0.0; //texture(light.shadowMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-       // closestDepth *= light.farPlane;   
+        float closestDepth = texture(u_PointShadowMaps[light.samplerId], fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= light.farPlane;   
         if(currentDepth - bias > closestDepth)
             shadow += 1.0;
     }

@@ -34,6 +34,9 @@ namespace Lamp
 		Ref<CameraBase> camera;
 
 		const RenderPassSpecification* currentRenderPass = nullptr;
+		
+		const uint32_t maxShadowCasters = 5;
+		std::vector<PointLight*> pointLightsToUse;
 	};
 
 	static Renderer3DStorage* s_pRenderData;
@@ -68,8 +71,10 @@ namespace Lamp
 		s_renderStatistics.otherDrawCalls = 0;
 		s_renderStatistics.sceneDrawCalls = 0;
 
+		s_pRenderData->pointLightsToUse.clear();
+
 		DrawDirectionalShadows();
-		//DrawPointShadows();
+		DrawPointShadows();
 
 		SortBuffers(camera->GetPosition());
 	}
@@ -208,6 +213,14 @@ namespace Lamp
 				shaderToUse->UploadInt("u_DirShadowMaps[" + std::to_string(index) + "]", i);
 				light->shadowBuffer->BindDepthAttachment(i);
 				i++;
+				index++;
+			}
+
+			index = 0;
+			for (auto& light : s_pRenderData->pointLightsToUse)
+			{
+				shaderToUse->UploadInt("u_PointShadowMaps[" + std::to_string(index) + "]", index);
+				light->shadowBuffer->BindDepthAttachment(index);
 				index++;
 			}
 		}
@@ -441,42 +454,62 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		const uint32_t maxShadowCasters = 5;
 		const glm::vec3 cameraPosition = s_pRenderData->camera->GetPosition();
 
 		auto& pointLights = g_pEnv->pLevel->GetRenderUtils().GetPointLights();
-		uint32_t shadowCasterCount = std::min((uint32_t)pointLights.size(), maxShadowCasters);
+		uint32_t shadowCasterCount = std::min((uint32_t)pointLights.size(), s_pRenderData->maxShadowCasters);
+		s_pRenderData->pointLightsToUse.reserve(shadowCasterCount);
 
 		//Sort lights by distance to camera
-		std::vector<PointLight*> pointLightsToUse;
-		pointLightsToUse.reserve(pointLights.size());
+		s_pRenderData->pointLightsToUse.insert(s_pRenderData->pointLightsToUse.end(), pointLights.begin(), pointLights.end());
+		//std::sort(s_pRenderData->pointLightsToUse.begin(), s_pRenderData->pointLightsToUse.end(), [&cameraPosition](PointLight* first, PointLight* second)
+		//	{
+		//		const glm::vec3& dPosOne = first->shadowBuffer->GetPosition();
+		//		const glm::vec3& dPosTwo = second->shadowBuffer->GetPosition();
+		//
+		//		const float distOne = glm::exp2(cameraPosition.x - dPosOne.x) + glm::exp2(cameraPosition.y - dPosOne.y) + glm::exp2(cameraPosition.z - dPosOne.z);
+		//		const float distTwo = glm::exp2(cameraPosition.x - dPosTwo.x) + glm::exp2(cameraPosition.y - dPosTwo.y) + glm::exp2(cameraPosition.z - dPosTwo.z);
+		//
+		//		return distOne < distTwo;
+		//	});
 
-		pointLightsToUse.insert(pointLightsToUse.end(), pointLights.begin(), pointLights.end());
-		std::sort(pointLightsToUse.begin(), pointLightsToUse.end(), [&cameraPosition](PointLight* first, PointLight* second)
-			{
-				const glm::vec3& dPosOne = first->shadowBuffer->GetPosition();
-				const glm::vec3& dPosTwo = second->shadowBuffer->GetPosition();
+		////Render shadows for nearest
+		//for (uint32_t i = 0; i < shadowCasterCount; i++)
+		//{
+		//	s_pRenderData->pointLightsToUse[i]->shadowBuffer->Bind();
+		//	RenderCommand::ClearDepth();
 
-				const float distOne = glm::exp2(cameraPosition.x - dPosOne.x) + glm::exp2(cameraPosition.y - dPosOne.y) + glm::exp2(cameraPosition.z - dPosOne.z);
-				const float distTwo = glm::exp2(cameraPosition.x - dPosTwo.x) + glm::exp2(cameraPosition.y - dPosTwo.y) + glm::exp2(cameraPosition.z - dPosTwo.z);
+		//	SortBuffers(s_pRenderData->pointLightsToUse[i]->shadowBuffer->GetPosition());
+		//	BeginPass(s_pRenderData->pointLightsToUse[i]->shadowPass->GetSpecification());
 
-				return distOne < distTwo;
-			});
+		//	DrawRenderBuffer();
 
-		//Render shadows for nearest
-		for (uint32_t i = 0; i < shadowCasterCount; i++)
+		//	EndPass();
+		//	s_pRenderData->pointLightsToUse[i]->shadowBuffer->Unbind();
+		//}
+
+		//Upload data
+		auto& sceneData = Renderer::s_pSceneData;
+
+		PointLightData* buffer = (PointLightData*)sceneData->pointLightStorageBuffer->Map();
+		sceneData->pointLightCount = 0;
+
+		for (uint32_t i = 0; i < s_pRenderData->pointLightsToUse.size(); i++) 
 		{
-			pointLights[i]->shadowBuffer->Bind();
-			RenderCommand::ClearDepth();
+			const auto& light = s_pRenderData->pointLightsToUse[i];
 
-			SortBuffers(pointLights[i]->shadowBuffer->GetPosition());
-			BeginPass(pointLights[i]->shadowPass->GetSpecification());
+			buffer[i].position = glm::vec4(light->shadowBuffer->GetPosition(), 0.f); //TODO: Change to using other position
+			buffer[i].color = glm::vec4(light->color, 0.f);
+			buffer[i].intensity = light->intensity;
+			buffer[i].falloff = light->falloff;
+			buffer[i].farPlane = light->farPlane;
+			buffer[i].radius = light->radius;
+			buffer[i].samplerId = i;
 
-			DrawRenderBuffer();
-
-			EndPass();
-			pointLights[i]->shadowBuffer->Unbind();
+			sceneData->pointLightCount++;
 		}
+
+		sceneData->pointLightStorageBuffer->Unmap();
 	}
 
 	void Renderer3D::DrawDirectionalShadows()

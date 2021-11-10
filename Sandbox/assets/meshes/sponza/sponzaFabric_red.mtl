@@ -1,8 +1,0 @@
-material:
-  name: sponzaFabric_red
-  handle: 9481153863399299067
-  textures:
-    albedo: 8560260248046739027
-    normal: 222447675478196122
-    mro: 6213724994329339955
-  shader: pbrForward

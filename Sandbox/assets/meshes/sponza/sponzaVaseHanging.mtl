@@ -1,0 +1,10 @@
+material:
+  name: sponzaVaseHanging
+  handle: 17479316747217296941
+  textures:
+    albedo: 7314265720311772361
+    normal: 3984973000236197520
+    mro: 4671872881262398543
+  shader: pbrForward
+  useBlending: false
+  blendingMultiplier: 1

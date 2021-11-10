@@ -1,0 +1,10 @@
+material:
+  name: sponzaVegetation
+  handle: 4908409949983668187
+  textures:
+    albedo: 10656509059618592416
+    normal: 2900809408722693520
+    mro: 13218793299918412458
+  shader: pbrForward
+  useBlending: true
+  blendingMultiplier: 1

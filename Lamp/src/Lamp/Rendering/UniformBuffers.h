@@ -19,6 +19,9 @@ namespace Lamp
 		float radius;
 		float falloff;
 		float farPlane;
+
+		int samplerId;
+		int padding[3];
 	};
 
 	//Uniform buffers

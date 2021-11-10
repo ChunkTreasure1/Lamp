@@ -1,8 +1,10 @@
 material:
   name: sponzaArch
-  handle: 5518077659254576141
+  handle: 14179017622524674342
   textures:
-    albedo: 1440397659391164769
-    normal: 2128424196460633133
-    mro: 15385105700162503832
+    albedo: 2312930489971523656
+    normal: 6757230413615472574
+    mro: 8131578819765632925
   shader: pbrForward
+  useBlending: false
+  blendingMultiplier: 1

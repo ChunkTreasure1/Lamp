@@ -1,8 +1,10 @@
 material:
   name: sponzaLion
-  handle: 14964634729354598057
+  handle: 10354046932835238387
   textures:
-    albedo: 15166087334337187202
-    normal: 15995194614114398796
-    mro: 16882915094643820865
+    albedo: 8872716483255490032
+    normal: 4043571569194562132
+    mro: 10575376442074137260
   shader: pbrForward
+  useBlending: false
+  blendingMultiplier: 1

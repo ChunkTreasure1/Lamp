@@ -1,8 +1,10 @@
 material:
   name: sponzaCeiling
-  handle: 4784376951779310318
+  handle: 6678460227706460198
   textures:
-    albedo: 4375340822374509377
-    normal: 822906155984412544
-    mro: 13365384886462579263
+    albedo: 6894279800903748547
+    normal: 4320620299604845798
+    mro: 7061753512993369978
   shader: pbrForward
+  useBlending: false
+  blendingMultiplier: 1

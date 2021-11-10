@@ -33,7 +33,7 @@ namespace Lamp
 		outputs.push_back(output);
 	}
 
-	void RenderNodeDynamicUniform::Start()
+	void RenderNodeDynamicUniform::Start() 
 	{
 		for (const auto& link : links)
 		{

@@ -1,8 +1,10 @@
 material:
   name: sponzaRoof
-  handle: 8063351463971268638
+  handle: 11103038054766704130
   textures:
-    albedo: 7033856143386042222
-    normal: 3713320889361239481
-    mro: 7237241961495581814
+    albedo: 7864247019401732824
+    normal: 3740248213904193301
+    mro: 3709120279255444512
   shader: pbrForward
+  useBlending: false
+  blendingMultiplier: 1

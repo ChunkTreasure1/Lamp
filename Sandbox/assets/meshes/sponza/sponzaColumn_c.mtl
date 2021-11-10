@@ -1,8 +1,0 @@
-material:
-  name: sponzaColumn_c
-  handle: 5525171455564732041
-  textures:
-    albedo: 101780342816509645
-    normal: 14204972676502129378
-    mro: 13838541064729335965
-  shader: pbrForward

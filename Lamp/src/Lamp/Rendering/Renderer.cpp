@@ -117,28 +117,6 @@ namespace Lamp
 			s_pSceneData->directionalLightBuffer->SetData(&s_pSceneData->directionalLightData, sizeof(DirectionalLightBuffer));
 		}
 
-		//Point lights
-		{
-			PointLightData* buffer = (PointLightData*)s_pSceneData->pointLightStorageBuffer->Map();
-			s_pSceneData->pointLightCount = 0;
-
-			for (uint32_t i = 0; i < g_pEnv->pLevel->GetRenderUtils().GetPointLights().size(); i++)
-			{
-				const auto& light = g_pEnv->pLevel->GetRenderUtils().GetPointLights()[i];
-
-				buffer[i].position = glm::vec4(light->shadowBuffer->GetPosition(), 0.f); //TODO: Change to using other position
-				buffer[i].color = glm::vec4(light->color, 0.f);
-				buffer[i].intensity = light->intensity;
-				buffer[i].falloff = light->falloff;
-				buffer[i].farPlane = light->farPlane;
-				buffer[i].radius = light->radius;
-
-				s_pSceneData->pointLightCount++;
-			}
-
-			s_pSceneData->pointLightStorageBuffer->Unmap();
-		}
-
 		//Light data
 		{
 			uint32_t index = 0;

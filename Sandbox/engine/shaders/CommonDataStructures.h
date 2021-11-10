@@ -14,6 +14,8 @@ struct PointLight
 	float radius;
 	float falloff;
 	float farPlane;
+
+	int samplerId;
 };
 
 struct LightIndex

@@ -84,6 +84,20 @@ namespace Lamp
 
 			return 0;
 		}
+
+		static const std::string& StringFromShaderType(GLenum type)
+		{
+			switch (type)
+			{
+				case GL_VERTEX_SHADER: return "Vertex";
+				case GL_FRAGMENT_SHADER: return "Fragment";
+				case GL_GEOMETRY_SHADER: return "Geometry";
+				case GL_COMPUTE_SHADER: return "Compute";
+
+				default:
+					break;
+			}
+		}
 	}
 
 
@@ -341,7 +355,7 @@ namespace Lamp
 
 				glDeleteShader(shader);
 
-				LP_ERROR("{0}", infoLog.data());
+				LP_ERROR("Shader compilation failed at {0}! {1}", Utils::StringFromShaderType(type).c_str(), infoLog.data());
 				break;
 			}
 
@@ -371,7 +385,7 @@ namespace Lamp
 				glDeleteShader(id);
 
 			LP_ERROR("{0}", infoLog.data());
-			LP_CORE_ASSERT(false, "Shader link failure!");
+			LP_ASSERT(false, "Shader link failure!");
 			return;
 		}
 
