@@ -24,6 +24,7 @@ namespace std
 
 namespace Lamp
 {
+	class Texture2D;
 	class ResourceCache
 	{
 	public:

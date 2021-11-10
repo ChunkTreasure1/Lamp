@@ -11,6 +11,7 @@
 #include "Lamp/Level/Level.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include <random>
 

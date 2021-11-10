@@ -39,6 +39,7 @@ namespace Lamp
 
 		bool draw2D = false;
 		bool drawSkybox = false;
+		bool enableBlending = false;
 
 		std::vector<PassUniformSpecification> uniforms; // name, type, data, attrId
 		std::vector<PassTextureSpecification> textures; // texture, texBindSlot, attrId

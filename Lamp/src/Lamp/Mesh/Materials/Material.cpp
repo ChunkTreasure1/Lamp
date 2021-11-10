@@ -2,6 +2,7 @@
 #include "Material.h"
 
 #include "Lamp/AssetSystem/ResourceCache.h"
+#include "Lamp/Rendering/Shader/Shader.h"
 
 namespace Lamp
 {

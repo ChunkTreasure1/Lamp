@@ -513,10 +513,10 @@
     <ClInclude Include="src\Lamp\Rendering\Skybox.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\IBLBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Texture2D\Texture2D.h">
+    <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h">
@@ -576,7 +576,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
@@ -1869,6 +1869,11 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\Texture.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2135,10 +2140,10 @@
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\IBLBuffer.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Texture2D\Texture2D.cpp">
+    <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Texture2D</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Vertices\FrameBuffer.cpp">
@@ -2171,7 +2176,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
@@ -2288,5 +2293,9 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp" />
   </ItemGroup>
 </Project>

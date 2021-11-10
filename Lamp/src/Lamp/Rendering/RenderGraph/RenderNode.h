@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Lamp/Rendering/RenderPass.h"
+#include "Lamp/Rendering/Shader/Shader.h"
+
+#include <yaml-cpp/yaml.h>
 #include <string>
 
-#include "Lamp/Rendering/RenderPass.h"
-#include <yaml-cpp/yaml.h>
 
 namespace Lamp
 {

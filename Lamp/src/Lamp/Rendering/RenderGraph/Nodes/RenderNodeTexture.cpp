@@ -9,6 +9,7 @@
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Utility/UIUtility.h"
 #include "Lamp/Rendering/RenderGraph/RenderGraphUtils.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include <imgui.h>
 #include <imnodes.h>

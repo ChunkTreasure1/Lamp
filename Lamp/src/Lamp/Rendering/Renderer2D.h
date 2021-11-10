@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "Texture2D/Texture2D.h"
 #include "Cameras/OrthographicCamera.h"
 
 #include "Lamp/Core/Core.h"

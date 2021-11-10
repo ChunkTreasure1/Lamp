@@ -4,6 +4,7 @@
 #include "Vertices/VertexArray.h"
 #include "Renderer2D.h"
 #include "Shader/ShaderLibrary.h"
+#include "Textures/Texture2D.h"
 
 #include "RenderCommand.h"
 

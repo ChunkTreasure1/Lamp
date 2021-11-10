@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Lamp/Core/UUID.h"
+#include "Lamp/Rendering/Shader/Shader.h"
+
 #include <any>
 
 namespace Lamp
@@ -14,6 +17,9 @@ namespace Lamp
 	{
 		Copy = 0
 	};
+
+	class Framebuffer;
+	class Texture2D;
 
 	struct PassUniformSpecification
 	{

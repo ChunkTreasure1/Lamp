@@ -2,15 +2,14 @@
 #include "Renderer3D.h"
 
 #include "Lamp/Core/Application.h"
-#include "Lamp/Rendering/Texture2D/Texture2D.h"
 
 #include "RenderCommand.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
-#include "Lamp/Rendering/Texture2D/IBLBuffer.h"
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
+
 #include "Lamp/Level/Level.h"
-#include "Texture2D/IBLBuffer.h"
 
 #include "Buffers/UniformBuffer.h"
 #include "Buffers/ShaderStorageBuffer.h"

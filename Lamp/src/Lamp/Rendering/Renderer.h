@@ -18,9 +18,9 @@ namespace Lamp
 
 	class Renderer
 	{
+	public:
 		struct SceneData;
 
-	public:
 		static void Initialize();
 		static void Shutdown();
 
@@ -35,12 +35,6 @@ namespace Lamp
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static void GenerateKernel();
 
-	private:
-		static void CreateUniformBuffers();
-		static void CreateShaderStorageBuffers();
-		static void UpdateBuffers(const Ref<CameraBase> camera);
-
-	private: 
 		struct SceneData
 		{
 			//Data
@@ -68,7 +62,7 @@ namespace Lamp
 			float aspectRatio = 16.f / 9.f;
 			float tanHalfFOV = 0.f;
 			//////////////
-		
+
 			/////Uniform buffers//////
 			CommonRenderData commonRenderData;
 			Ref<UniformBuffer> commonDataBuffer;
@@ -93,6 +87,13 @@ namespace Lamp
 			std::map<std::string, Ref<Framebuffer>> internalFramebuffers;
 			std::vector<Ref<Framebuffer>> useViewportSize;
 		};
+
+	private:
+		static void CreateUniformBuffers();
+		static void CreateShaderStorageBuffers();
+		static void UpdateBuffers(const Ref<CameraBase> camera);
+
+	private:
 
 		static SceneData* s_pSceneData;
 

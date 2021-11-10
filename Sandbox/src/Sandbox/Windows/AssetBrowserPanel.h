@@ -1,7 +1,13 @@
 #pragma once
 
+#include "Lamp/AssetSystem/Asset.h"
+
 #include <filesystem>
-#include "Lamp/Rendering/Texture2D/Texture2D.h"
+
+namespace Lamp
+{
+	class Texture2D;
+}
 
 namespace Sandbox
 {

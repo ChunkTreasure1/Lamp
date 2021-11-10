@@ -23,6 +23,11 @@ namespace Lamp
 		RenderCommand::SetClearColor(m_passSpecification.targetFramebuffer->GetSpecification().ClearColor);
 		m_passSpecification.targetFramebuffer->Bind();
 
+		if (m_passSpecification.enableBlending)
+		{
+			RenderCommand::EnableBlending(true);
+		}
+
 		//Clear color if i should
 		switch (m_passSpecification.clearType)
 		{
@@ -80,6 +85,12 @@ namespace Lamp
 		}
 
 		Renderer3D::EndPass();
+
+		if (m_passSpecification.enableBlending)
+		{
+			RenderCommand::EnableBlending(false);
+		}
+
 		m_passSpecification.targetFramebuffer->Unbind();
 
 		for (const auto& commandSpec : m_passSpecification.framebufferCommands)

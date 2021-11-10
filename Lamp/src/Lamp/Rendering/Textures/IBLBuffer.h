@@ -4,7 +4,6 @@
 
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 
-#include "Lamp/Rendering/Texture2D/Texture2D.h"
 #include "Lamp/Rendering/Vertices/FrameBuffer.h"
 
 namespace Lamp

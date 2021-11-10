@@ -624,7 +624,24 @@ namespace Sandbox
 			return;
 		}
 
+		auto sceneData = const_cast<Renderer::SceneData*>(Renderer::GetSceneData());
+
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
+
+		if (UI::TreeNodeFramed("General", true))
+		{
+			ImGui::Text("HDR");
+			ImGui::Separator();
+			if (UI::BeginProperties("generalProps"))
+			{
+				UI::Property("Exposure", sceneData->hdrExposure);
+				UI::Property("Gamma", sceneData->gamma); 
+
+				UI::EndProperties();
+			}
+
+			UI::TreeNodePop();
+		}
 
 		if (UI::TreeNodeFramed("Render graph", true))
 		{

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Lamp/Rendering/Texture2D/Texture2D.h>
 #include <Lamp/Core/Time/Timestep.h>
 
 #include <Lamp/Event/ApplicationEvent.h>

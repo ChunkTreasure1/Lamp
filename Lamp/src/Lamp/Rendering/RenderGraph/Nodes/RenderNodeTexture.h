@@ -4,6 +4,7 @@
 
 namespace Lamp
 {
+	class Texture2D;
 	class RenderNodeTexture : public RenderNode
 	{
 	public:

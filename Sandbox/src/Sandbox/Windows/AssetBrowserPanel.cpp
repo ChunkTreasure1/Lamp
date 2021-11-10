@@ -7,6 +7,7 @@
 #include <Lamp/Utility/UIUtility.h>
 #include <Lamp/AssetSystem/BaseAssets.h>
 #include <Lamp/Mesh/Mesh.h>
+#include <Lamp/Rendering/Textures/Texture2D.h>
 
 #include <Lamp/Debug/Instrumentor.h>
 #include <Lamp/AssetSystem/ResourceCache.h>

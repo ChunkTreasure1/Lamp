@@ -1,0 +1,116 @@
+RenderGraph:
+  name: New
+  handle: 6347921305999140877
+  Nodes:
+    - Node: ""
+      id: 1209203983
+      position: [311, 66]
+      type: 0
+      name: DepthNormal
+      clearType: 3
+      drawType: 3
+      cullFace: 1
+      renderShader: depthPass
+      draw2D: false
+      drawSkybox: false
+      targetFramebuffer:
+        useViewportSize: true
+        width: 1280
+        height: 720
+        samples: 1
+        clearColor: [1, 1, 1, 1]
+        bindId: 0
+        attachments:
+          - attachment: Normal
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 2
+            filtering: 0
+            wrap: 3
+          - attachment: Depth
+            borderColor: [1, 1, 1, 1]
+            multisampled: false
+            format: 7
+            filtering: 0
+            wrap: 3
+      uniforms:
+        - uniform: u_Material.normal
+          guuid: 2139035889
+          type: 7
+          attrId: 233387404
+          uniformId: 3
+          data: 1
+        - uniform: u_Model
+          guuid: 1554514215
+          type: 9
+          attrId: 439517101
+          uniformId: 4
+          data: 0
+      textures:
+        []
+      framebuffers:
+        []
+      framebufferCommands:
+        []
+      attributes:
+        - attribute: Run
+          attrType: input
+          id: 1644992595
+          type: 3
+          shouldDraw: true
+          data: 0
+        - attribute: Target framebuffer
+          attrType: input
+          id: 1490807773
+          type: 1
+          shouldDraw: true
+          data: 1
+        - attribute: u_Material.normal
+          attrType: input
+          id: 233387404
+          type: 2
+          shouldDraw: false
+          data: 2139035889
+        - attribute: u_Model
+          attrType: input
+          id: 439517101
+          type: 2
+          shouldDraw: false
+          data: 1554514215
+        - attribute: Finished
+          attrType: output
+          id: 1318209434
+          type: 3
+        - attribute: Output buffer
+          attrType: output
+          id: 1991566162
+          type: 1
+    - Node: ""
+      id: 2035241853
+      position: [720, 210]
+      type: 6
+      attributes:
+        - attribute: End
+          attrType: input
+          id: 910013483
+          type: 3
+          shouldDraw: true
+          data: 0
+    - Node: ""
+      id: 1859652140
+      position: [112, 215]
+      type: 4
+      attributes:
+        - attribute: Start
+          attrType: output
+          id: 1439697355
+          type: 3
+  Links:
+    - Link: ""
+      id: 847414970
+      from: 1439697355
+      to: 1644992595
+    - Link: ""
+      id: 1376095949
+      from: 1318209434
+      to: 910013483

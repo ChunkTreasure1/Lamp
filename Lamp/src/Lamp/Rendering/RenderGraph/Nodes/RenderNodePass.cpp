@@ -360,6 +360,7 @@ namespace Lamp
 		LP_SERIALIZE_PROPERTY(renderShader, (specification.renderShader ? specification.renderShader->GetName() : ""), out);
 		LP_SERIALIZE_PROPERTY(draw2D, specification.draw2D, out);
 		LP_SERIALIZE_PROPERTY(drawSkybox, specification.drawSkybox, out);
+		LP_SERIALIZE_PROPERTY(blending, specification.enableBlending, out);
 
 		out << YAML::Key << "targetFramebuffer" << YAML::Value;
 		out << YAML::BeginMap;
@@ -498,6 +499,7 @@ namespace Lamp
 		specification.cullFace = (CullFace)node["cullFace"].as<uint32_t>();
 		LP_DESERIALIZE_PROPERTY(draw2D, specification.draw2D, node, false);
 		LP_DESERIALIZE_PROPERTY(drawSkybox, specification.drawSkybox, node, false);
+		LP_DESERIALIZE_PROPERTY(blending, specification.enableBlending, node, false);
 
 		std::string shaderName = node["renderShader"].as<std::string>();
 		if (!shaderName.empty())
@@ -620,7 +622,7 @@ namespace Lamp
 				LP_DESERIALIZE_PROPERTY(bindId, bindSlot, attachment, 0);
 				LP_DESERIALIZE_PROPERTY(attachmentId, attachId, attachment, 0);
 
-				attachmentSpecs.push_back({ type, bindSlot, attachId });
+				attachmentSpecs.emplace_back(type, bindSlot, attachId);
 			}
 
 			specification.framebuffers.emplace_back(nullptr, attachmentSpecs, name, guuid, attrId);
@@ -939,6 +941,17 @@ namespace Lamp
 			UI::ShiftCursor(offset, 0.f);
 
 			ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &specification.drawSkybox);
+		}
+
+		//Blending
+		{
+			float offset = distance - ImGui::CalcTextSize("Blending").x;
+
+			ImGui::TextUnformatted("Blending");
+			ImGui::SameLine();
+			UI::ShiftCursor(offset, 0.f);
+
+			ImGui::Checkbox(("##" + std::to_string(stackId++)).c_str(), &specification.enableBlending);
 		}
 
 		ImGui::PopID();

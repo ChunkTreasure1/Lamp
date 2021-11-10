@@ -1,12 +1,13 @@
 #pragma once
-#include "Lamp/Rendering/Texture2D/Texture2D.h"
-#include "Lamp/Rendering/Shader/Shader.h"
+
+#include "Lamp/AssetSystem/Asset.h"
 
 #include <unordered_map>
-#include "Lamp/AssetSystem/Asset.h"
 
 namespace Lamp
 {
+	class Texture2D;
+	class Shader;
 	class Material : public Asset
 	{
 	public:
@@ -40,7 +41,7 @@ namespace Lamp
 		inline const bool& GetUseBlending() { return m_useBlending; }
 
 		static AssetType GetStaticType() { return AssetType::Material; }
-		virtual AssetType GetType() override { return GetStaticType(); }
+		AssetType GetType() override { return GetStaticType(); }
 
 	private:
 		std::unordered_map<std::string, Ref<Texture2D>> m_pTextures;

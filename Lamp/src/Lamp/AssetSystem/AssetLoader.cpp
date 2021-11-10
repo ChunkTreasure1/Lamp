@@ -9,6 +9,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 #include "Lamp/AssetSystem/BaseAssets.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include <yaml-cpp/yaml.h>
 

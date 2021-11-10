@@ -4,7 +4,7 @@ RenderGraph:
   Nodes:
     - Node: ""
       id: 2062053013
-      position: [-1549.24438, 88.106842]
+      position: [-1607.24438, 185.106842]
       type: 4
       attributes:
         - attribute: Start
@@ -13,7 +13,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1997423773
-      position: [1170.79297, 193.410217]
+      position: [1112.79297, 290.410217]
       type: 6
       attributes:
         - attribute: End
@@ -24,7 +24,7 @@ RenderGraph:
           data: 0
     - Node: ""
       id: 626618572
-      position: [-1377.86938, -71.4075317]
+      position: [-1435.86938, 25.5924683]
       type: 0
       name: DepthNormal
       clearType: 3
@@ -33,6 +33,7 @@ RenderGraph:
       renderShader: depthPass
       draw2D: false
       drawSkybox: false
+      blending: false
       targetFramebuffer:
         useViewportSize: true
         width: 1602
@@ -107,7 +108,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1230376688
-      position: [316.600952, 9.01449585]
+      position: [258.600952, 106.014496]
       type: 0
       name: Forward
       clearType: 3
@@ -116,6 +117,7 @@ RenderGraph:
       renderShader: pbrForward
       draw2D: true
       drawSkybox: true
+      blending: true
       targetFramebuffer:
         useViewportSize: true
         width: 1602
@@ -275,13 +277,13 @@ RenderGraph:
           attrType: input
           id: 908633583
           type: 2
-          shouldDraw: false
+          shouldDraw: true
           data: 469356716
         - attribute: u_Gamma
           attrType: input
           id: 884826390
           type: 2
-          shouldDraw: false
+          shouldDraw: true
           data: 353330669
         - attribute: u_IrradianceMap
           attrType: input
@@ -329,7 +331,7 @@ RenderGraph:
           attrType: input
           id: 2134211512
           type: 2
-          shouldDraw: false
+          shouldDraw: true
           data: 1209787908
         - attribute: Texture0
           attrType: input
@@ -347,7 +349,7 @@ RenderGraph:
           attrType: input
           id: 52382406
           type: 2
-          shouldDraw: false
+          shouldDraw: true
           data: 1156112730
         - attribute: u_BlendingMultiplier
           attrType: input
@@ -371,7 +373,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1931013851
-      position: [-164.399048, 495.014465]
+      position: [-222.399048, 592.014465]
       type: 3
       uniformType: 1
       dataName: Gamma
@@ -382,7 +384,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 372049670
-      position: [-163.399048, 357.014465]
+      position: [-221.399048, 454.014465]
       type: 3
       uniformType: 1
       dataName: Exposure
@@ -393,7 +395,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1667635461
-      position: [-165.399048, 617.014465]
+      position: [-223.399048, 714.014465]
       type: 3
       uniformType: 0
       dataName: ForwardTileX
@@ -404,7 +406,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 968475831
-      position: [-85.3990479, 737.014465]
+      position: [-143.399048, 834.014465]
       type: 2
       path: C:\Programming\Lamp\Sandbox\engine\textures\testBRDF.png
       usingInternal: false
@@ -416,7 +418,7 @@ RenderGraph:
           type: 0
     - Node: ""
       id: 1707095885
-      position: [-281.399048, 737.014465]
+      position: [-339.399048, 834.014465]
       type: 1
       usingInternal: true
       selectedBuffer: Skybox
@@ -446,7 +448,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1915612417
-      position: [-120.399048, 2.01449585]
+      position: [-178.399048, 99.0144958]
       type: 7
       shader: lightCulling
       uniforms:
@@ -505,7 +507,7 @@ RenderGraph:
           type: 3
     - Node: ""
       id: 1022545888
-      position: [-1217.39893, 286.014465]
+      position: [-1275.39893, 383.014465]
       type: 3
       uniformType: 2
       dataName: Buffer Size
@@ -516,7 +518,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 1058378584
-      position: [-1218.39893, 417.014465]
+      position: [-1276.39893, 514.014465]
       type: 3
       uniformType: 0
       dataName: Point light count
@@ -527,7 +529,7 @@ RenderGraph:
           type: 2
     - Node: ""
       id: 117169085
-      position: [-880.362549, -197.547485]
+      position: [-938.362549, -100.547485]
       type: 0
       name: SSAOMain
       clearType: 3
@@ -536,6 +538,7 @@ RenderGraph:
       renderShader: ssao
       draw2D: false
       drawSkybox: false
+      blending: false
       targetFramebuffer:
         useViewportSize: true
         width: 1602
@@ -647,7 +650,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 590162694
-      position: [-1405.56714, 284.524048]
+      position: [-1463.56714, 381.524048]
       type: 2
       path: ""
       usingInternal: true
@@ -659,7 +662,7 @@ RenderGraph:
           type: 0
     - Node: ""
       id: 2052767935
-      position: [-504.973999, -172.769958]
+      position: [-562.973999, -75.7699585]
       type: 0
       name: SSAOBlur
       clearType: 3
@@ -668,6 +671,7 @@ RenderGraph:
       renderShader: ssaoBlur
       draw2D: false
       drawSkybox: false
+      blending: false
       targetFramebuffer:
         useViewportSize: true
         width: 1280
@@ -734,7 +738,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1787139982
-      position: [728.039551, 43.2661438]
+      position: [670.039551, 140.266144]
       type: 0
       name: Composite
       clearType: 3
@@ -743,6 +747,7 @@ RenderGraph:
       renderShader: composite
       draw2D: false
       drawSkybox: false
+      blending: false
       targetFramebuffer:
         useViewportSize: true
         width: 1280
@@ -850,7 +855,7 @@ RenderGraph:
           type: 1
     - Node: ""
       id: 1655679443
-      position: [-162, 231]
+      position: [-220, 328]
       type: 3
       uniformType: 1
       dataName: Ambiance multiplier

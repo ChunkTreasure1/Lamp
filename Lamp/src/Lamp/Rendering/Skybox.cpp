@@ -4,7 +4,7 @@
 #include "Vertices/VertexBuffer.h"
 #include "Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Renderer.h"
-#include "Lamp/Rendering/Texture2D/IBLBuffer.h"
+#include "Lamp/Rendering/Textures/IBLBuffer.h"
 
 namespace Lamp
 {

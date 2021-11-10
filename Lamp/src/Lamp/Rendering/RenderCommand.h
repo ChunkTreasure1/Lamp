@@ -56,6 +56,11 @@ namespace Lamp
 		{
 			s_RendererAPI->SetCullFace(face);
 		}
+		
+		static void EnableBlending(bool state) 
+		{
+			s_RendererAPI->EnableBlending(state);
+		}
 
 		static const RendererCapabilities& GetCapabilities()
 		{

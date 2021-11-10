@@ -27,7 +27,6 @@ namespace Lamp
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
 
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
@@ -98,6 +97,11 @@ namespace Lamp
 		default:
 			break;
 		}
+	}
+
+	void OpenGLRendererAPI::EnableBlending(bool state) const
+	{
+		state ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count)
