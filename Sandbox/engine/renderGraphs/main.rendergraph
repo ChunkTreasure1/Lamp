@@ -151,7 +151,7 @@ RenderGraph:
           attrId: 1031096503
           uniformId: 27
           data: 6
-        - uniform: u_AmbianceMutliplier
+        - uniform: u_AmbianceMultiplier
           guuid: 1156112730
           type: 1
           attrId: 52382406
@@ -416,36 +416,6 @@ RenderGraph:
           attrType: output
           id: 1985721635
           type: 0
-    - Node: ""
-      id: 1707095885
-      position: [-339.399048, 834.014465]
-      type: 1
-      usingInternal: true
-      selectedBuffer: Skybox
-      useViewportSize: false
-      bindSlot: 4
-      width: 1280
-      height: 720
-      samples: 1
-      clearColor: [1, 1, 1, 1]
-      attachments:
-        attachment0:
-          borderColor: [1, 1, 1, 1]
-          multisampled: false
-          format: 1
-          filtering: 1
-          wrap: 0
-        attachment1:
-          borderColor: [1, 1, 1, 1]
-          multisampled: false
-          format: 0
-          filtering: 1
-          wrap: 0
-      attributes:
-        - attribute: Output
-          attrType: output
-          id: 739334264
-          type: 1
     - Node: ""
       id: 1915612417
       position: [-178.399048, 99.0144958]
@@ -885,10 +855,6 @@ RenderGraph:
       id: 1184176659
       from: 1985721635
       to: 797604919
-    - Link: ""
-      id: 611364362
-      from: 739334264
-      to: 856083883
     - Link: ""
       id: 113897509
       from: 1148349314

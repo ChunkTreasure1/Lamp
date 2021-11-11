@@ -1,6 +1,6 @@
 #include "lppch.h"
 #include "OpenGLTextureCube.h"
-#include "Lamp/Rendering/Vertices/FrameBuffer.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 #include <glad/glad.h>
 
@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	}
 
-	OpenGLTextureCube::OpenGLTextureCube(uint32_t width, uint32_t height, const std::vector<Ref<Framebuffer>>& textures)
+	OpenGLTextureCube::OpenGLTextureCube(uint32_t width, uint32_t height)
 	{
 		glGenTextures(1, &m_rendererId);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererId);
@@ -24,11 +24,7 @@ namespace Lamp
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		for (uint32_t i = 0; i < textures.size(); i++)
-		{
-			textures[i]->Bind();
-			glCopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, 0, 0, m_faceWidth, m_faceHeight);
-		}
+
 		
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererId);
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

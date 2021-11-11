@@ -4,7 +4,7 @@
 #include "Cameras/OrthographicCamera.h"
 
 #include "Lamp/Core/Core.h"
-#include "Lamp/Rendering/Vertices/Framebuffer.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 namespace Lamp
 {

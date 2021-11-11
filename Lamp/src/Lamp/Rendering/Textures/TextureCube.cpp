@@ -6,12 +6,12 @@
 
 namespace Lamp
 {
-	Ref<TextureCube> TextureCube::Create(uint32_t width, uint32_t height, const std::vector<Ref<Framebuffer>>& textures)
+	Ref<TextureCube> TextureCube::Create(uint32_t width, uint32_t height)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTextureCube>(width, height, textures);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTextureCube>(width, height);
 		}
 
 		return nullptr;

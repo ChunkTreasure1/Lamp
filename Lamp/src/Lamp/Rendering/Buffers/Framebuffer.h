@@ -26,7 +26,7 @@ namespace Lamp
 		Depth
 	};
 
-	enum class FramebufferTexureFiltering : uint32_t
+	enum class FramebufferTextureFiltering : uint32_t
 	{
 		Nearest = 0,
 		Linear = 1,
@@ -48,11 +48,11 @@ namespace Lamp
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
-			: TextureFiltering(FramebufferTexureFiltering::Linear), TextureWrap(FramebufferTextureWrap::Repeat)
+			: TextureFiltering(FramebufferTextureFiltering::Linear), TextureWrap(FramebufferTextureWrap::Repeat)
 		{}
 		FramebufferTextureSpecification(
 			FramebufferTextureFormat format,
-			FramebufferTexureFiltering filtering = FramebufferTexureFiltering::Linear,
+			FramebufferTextureFiltering filtering = FramebufferTextureFiltering::Linear,
 			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat,
 			const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f },
 			bool sampled = false)
@@ -65,7 +65,7 @@ namespace Lamp
 		}
 
 		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
-		FramebufferTexureFiltering TextureFiltering;
+		FramebufferTextureFiltering TextureFiltering;
 		FramebufferTextureWrap TextureWrap;
 
 		bool MultiSampled = false;

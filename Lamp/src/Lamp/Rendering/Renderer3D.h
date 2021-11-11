@@ -3,7 +3,7 @@
 #include "Lamp/Mesh/SubMesh.h"
 #include "Lamp/Mesh/Materials/Material.h"
 
-#include "Lamp/Rendering/Vertices/Framebuffer.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 #include "Lamp/Core/GlobalEnvironment.h"
 #include "Buffers/RenderBuffer.h"
 

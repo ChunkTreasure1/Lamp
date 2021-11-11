@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "Lamp/Rendering/Vertices/VertexArray.h"
+#include "Lamp/Rendering/Buffers/VertexArray.h"
 
 namespace Lamp
 {

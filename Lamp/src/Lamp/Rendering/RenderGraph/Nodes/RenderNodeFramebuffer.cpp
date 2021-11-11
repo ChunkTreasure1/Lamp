@@ -379,7 +379,7 @@ namespace Lamp
 				LP_DESERIALIZE_PROPERTY(multisampled, att.MultiSampled, attachmentNode, false);
 
 				att.TextureFormat = (FramebufferTextureFormat)attachmentNode["format"].as<uint32_t>();
-				att.TextureFiltering = (FramebufferTexureFiltering)attachmentNode["filtering"].as<uint32_t>();
+				att.TextureFiltering = (FramebufferTextureFiltering)attachmentNode["filtering"].as<uint32_t>();
 				att.TextureWrap = (FramebufferTextureWrap)attachmentNode["wrap"].as<uint32_t>();
 
 				specification.Attachments.Attachments.push_back(att);

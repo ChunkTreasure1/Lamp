@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/AssetSystem/AssetManager.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include <unordered_map>
 #include <mutex>
@@ -24,7 +25,6 @@ namespace std
 
 namespace Lamp
 {
-	class Texture2D;
 	class ResourceCache
 	{
 	public:

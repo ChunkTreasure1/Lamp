@@ -528,7 +528,7 @@ namespace Lamp
 			LP_DESERIALIZE_PROPERTY(multisampled, att.MultiSampled, entry, false);
 
 			att.TextureFormat = (FramebufferTextureFormat)entry["format"].as<uint32_t>();
-			att.TextureFiltering = (FramebufferTexureFiltering)entry["filtering"].as<uint32_t>();
+			att.TextureFiltering = (FramebufferTextureFiltering)entry["filtering"].as<uint32_t>();
 			att.TextureWrap = (FramebufferTextureWrap)entry["wrap"].as<uint32_t>();
 			att.name = entry["attachment"].as<std::string>();
 
@@ -1168,7 +1168,7 @@ namespace Lamp
 
 						if (Utils::DrawCombo("Filtering", "##filtering" + attId, filtering, currentlySelectedFiltering))
 						{
-							att.TextureFiltering = (FramebufferTexureFiltering)currentlySelectedFiltering;
+							att.TextureFiltering = (FramebufferTextureFiltering)currentlySelectedFiltering;
 							changed = true;
 						}
 					}

@@ -81,7 +81,7 @@ namespace Lamp
 
 		if (m_passSpecification.drawSkybox)
 		{
-			g_pEnv->pLevel->GetSkybox()->Render();
+			g_pEnv->pLevel->GetSkybox()->Draw();
 		}
 
 		Renderer3D::EndPass();

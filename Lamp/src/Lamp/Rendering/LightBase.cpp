@@ -14,7 +14,7 @@ namespace Lamp
 		bufferSpec.Width = 4096;
 		bufferSpec.Attachments =
 		{
-			{ FramebufferTextureFormat::DEPTH32F, FramebufferTexureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+			{ FramebufferTextureFormat::DEPTH32F, FramebufferTextureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
 		};
 
 		shadowBuffer = Framebuffer::Create(bufferSpec);

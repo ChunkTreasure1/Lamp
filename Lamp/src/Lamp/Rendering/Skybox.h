@@ -1,27 +1,43 @@
 #pragma once
 
-#include "Lamp/Rendering/Vertices/VertexArray.h"
+#include "Lamp/Rendering/Buffers/VertexArray.h"
 
 #include <filesystem>
 
 namespace Lamp
 {
 	class Shader;
-	class IBLBuffer;
+	class TextureCube;
+	class TextureHDR;
+	class Mesh;
 	class Skybox
 	{
 	public:
 		Skybox(const std::filesystem::path& path);
 		~Skybox();
 
-		void Render();
+		void Draw();
 
 	public:
 		static Ref<Skybox> Create(const std::filesystem::path& path) { return CreateRef<Skybox>(path); }
 
 	private:
-		Ref<VertexArray> m_vertexArray;
-		Ref<IBLBuffer> m_iblBuffer;
-		Ref<Shader> m_shader;
+		//Shaders
+		Ref<Shader> m_eqCubeShader;
+		Ref<Shader> m_convolutionShader;
+		Ref<Shader> m_prefilterShader;
+		Ref<Shader> m_skyboxShader;
+
+		//Textures
+		Ref<TextureCube> m_cubeMap;
+		Ref<TextureCube> m_irradianceMap;
+		Ref<TextureCube> m_prefilterMap;
+		Ref<TextureHDR> m_hdrTexture;
+
+		//Data
+		glm::mat4 m_captureProjection;
+		std::array<glm::mat4, 6> m_captureViews;
+		Ref<Mesh> m_cubeMesh;
+		Ref<Framebuffer> m_framebuffer;
 	};
 }

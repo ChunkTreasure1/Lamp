@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Rendering/Vertices/VertexBuffer.h"
+#include "Lamp/Rendering/Buffers/VertexBuffer.h"
 
 namespace Lamp
 {

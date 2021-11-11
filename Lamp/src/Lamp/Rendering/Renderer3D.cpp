@@ -8,6 +8,7 @@
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/Textures/IBLBuffer.h"
 
 #include "Lamp/Level/Level.h"
 

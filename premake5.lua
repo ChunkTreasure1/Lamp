@@ -35,7 +35,7 @@ project "Lamp"
 		"4005"
 	}
 
-	linkoptions 
+	linkoptions
 	{
 		"/ignore:4006",
 		"/ignore:4099"
@@ -92,7 +92,8 @@ project "Lamp"
 		"%{LibraryDir.PhysX}/PhysXCooking_static_64.lib",	
 		"%{LibraryDir.PhysX}/PhysXExtensions_static_64.lib",
 		"%{LibraryDir.PhysX}/PhysXFoundation_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"	}
+		"%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"	
+	}
 
 	defines 
 	{

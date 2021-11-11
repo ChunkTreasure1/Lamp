@@ -24,7 +24,7 @@
 #include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Rendering/RenderGraph/RenderGraph.h>
 #include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
-#include <Lamp/Rendering/Vertices/FrameBuffer.h>
+#include <Lamp/Rendering/Buffers/FrameBuffer.h>
 
 #include <Lamp/Utility/UIUtility.h>
 #include <Lamp/Rendering/Renderer.h>

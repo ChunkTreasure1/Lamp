@@ -2,7 +2,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "Lamp/Rendering/Vertices/VertexArray.h"
+#include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Core/Core.h"
 
 namespace Lamp

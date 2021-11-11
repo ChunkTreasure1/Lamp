@@ -8,7 +8,7 @@ namespace Lamp
 	{
 	public:
 		OpenGLTextureCube(const std::filesystem::path& path);
-		OpenGLTextureCube(uint32_t width, uint32_t height, const std::vector<Ref<Framebuffer>>& textures);
+		OpenGLTextureCube(uint32_t width, uint32_t height);
 		~OpenGLTextureCube();
 
 		void Bind(uint32_t slot = 0) const override;

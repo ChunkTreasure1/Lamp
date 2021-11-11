@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vertices/Framebuffer.h"
+#include "Buffers/Framebuffer.h"
 #include "Lamp/Core/Core.h"
 #include "RenderCommand.h"
 #include "Renderer3D.h"

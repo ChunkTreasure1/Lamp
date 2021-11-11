@@ -1,5 +1,4 @@
 #include "lppch.h"
-#include "Texture.h"
 #include "TextureHDR.h"
 
 #include "Lamp/Rendering/Renderer.h"

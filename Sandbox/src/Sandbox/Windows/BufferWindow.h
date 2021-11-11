@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <Lamp/Rendering/Vertices/FrameBuffer.h>
+#include <Lamp/Rendering/Buffers/Framebuffer.h>
 #include <Lamp/Core/Core.h>
 
 namespace Sandbox

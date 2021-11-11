@@ -59,6 +59,8 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
+		g_pEnv->pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
+
 		UpdateBuffers(camera);
 		Renderer3D::Begin(camera);
 	}

@@ -105,7 +105,7 @@ namespace Lamp
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		////////////////////////////
 
-				/////Prefilter Map/////
+		////Prefilter Map/////
 		glGenTextures(1, &m_PrefilterMap);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
 		for (int i = 0; i < 6; i++)

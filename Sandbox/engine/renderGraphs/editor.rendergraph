@@ -387,36 +387,6 @@ RenderGraph:
           id: 1689781255
           type: 2
     - Node: ""
-      id: 1327548617
-      position: [518, 717]
-      type: 1
-      usingInternal: true
-      selectedBuffer: Skybox
-      useViewportSize: false
-      bindSlot: 4
-      width: 1280
-      height: 720
-      samples: 1
-      clearColor: [1, 1, 1, 1]
-      attachments:
-        attachment0:
-          borderColor: [1, 1, 1, 1]
-          multisampled: false
-          format: 1
-          filtering: 1
-          wrap: 0
-        attachment1:
-          borderColor: [1, 1, 1, 1]
-          multisampled: false
-          format: 0
-          filtering: 1
-          wrap: 0
-      attributes:
-        - attribute: Output
-          attrType: output
-          id: 1666728160
-          type: 1
-    - Node: ""
       id: 516259885
       position: [347, 705]
       type: 2
@@ -504,10 +474,6 @@ RenderGraph:
       id: 1298321978
       from: 1689781255
       to: 759300781
-    - Link: ""
-      id: 632901
-      from: 1666728160
-      to: 944929494
     - Link: ""
       id: 1561691039
       from: 738731743

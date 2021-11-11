@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "Lamp/Rendering/Vertices/Framebuffer.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 namespace Lamp
 {

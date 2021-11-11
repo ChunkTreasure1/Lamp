@@ -77,16 +77,16 @@ namespace Lamp
 			return GL_NONE;
 		}
 
-		static GLint FilteringToGL(FramebufferTexureFiltering filtering)
+		static GLint FilteringToGL(FramebufferTextureFiltering filtering)
 		{
 			switch (filtering)
 			{
-			case Lamp::FramebufferTexureFiltering::Nearest: return GL_NEAREST;
-			case Lamp::FramebufferTexureFiltering::Linear: return GL_LINEAR;
-			case Lamp::FramebufferTexureFiltering::NearestMipMapNearest: return GL_NEAREST_MIPMAP_NEAREST;
-			case Lamp::FramebufferTexureFiltering::LinearMipMapNearest: return GL_LINEAR_MIPMAP_NEAREST;
-			case Lamp::FramebufferTexureFiltering::NearestMipMapLinear: return GL_NEAREST_MIPMAP_LINEAR;
-			case Lamp::FramebufferTexureFiltering::LinearMipMapLinear: return GL_LINEAR_MIPMAP_LINEAR;
+			case Lamp::FramebufferTextureFiltering::Nearest: return GL_NEAREST;
+			case Lamp::FramebufferTextureFiltering::Linear: return GL_LINEAR;
+			case Lamp::FramebufferTextureFiltering::NearestMipMapNearest: return GL_NEAREST_MIPMAP_NEAREST;
+			case Lamp::FramebufferTextureFiltering::LinearMipMapNearest: return GL_LINEAR_MIPMAP_NEAREST;
+			case Lamp::FramebufferTextureFiltering::NearestMipMapLinear: return GL_NEAREST_MIPMAP_LINEAR;
+			case Lamp::FramebufferTextureFiltering::LinearMipMapLinear: return GL_LINEAR_MIPMAP_LINEAR;
 			}
 
 			return GL_NONE;

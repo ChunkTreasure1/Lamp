@@ -100,7 +100,7 @@ uniform sampler2D u_BRDFLUT;
 uniform float u_Exposure;
 uniform float u_Gamma;
 uniform int u_TilesX;
-uniform float u_AmbianceMutliplier;
+uniform float u_AmbianceMultiplier;
 
 const float PI = 3.14159265359;
 
@@ -365,7 +365,7 @@ void main()
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(u_IrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse + specular) * u_AmbianceMutliplier;
+	vec3 ambient = (kD * diffuse + specular) * u_AmbianceMultiplier;
 
 	vec3 color = ambient + Lo;
 	color *= u_Exposure;
