@@ -63,7 +63,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		AudioEngine::Shutdown();
 		Renderer::Shutdown();
-		
+
 		m_AssetManagerThread.join();
 
 		g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
@@ -86,8 +86,8 @@ namespace Lamp
 			AudioEngine::Update();
 			//Load 
 			{
-				LP_PROFILE_SCOPE("Application::UpdateLayers")
-					AppUpdateEvent e(timestep);
+				LP_PROFILE_SCOPE("Application::UpdateLayers");
+				AppUpdateEvent e(timestep);
 
 				for (Layer* pLayer : m_LayerStack)
 				{
@@ -96,9 +96,9 @@ namespace Lamp
 			}
 
 			{
-				LP_PROFILE_SCOPE("Application::UpdateImGui")
+				LP_PROFILE_SCOPE("Application::UpdateImGui");
 
-					m_pImGuiLayer->Begin();
+				m_pImGuiLayer->Begin();
 
 				for (Layer* pLayer : m_LayerStack)
 				{
