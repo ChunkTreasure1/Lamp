@@ -16,8 +16,7 @@ workspace "Lamp"
 	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-LibraryDir = {}
-LibraryDir["PhysX"] = "%{wks.location}/Lamp/vendor/PhysX/lib/%{cfg.buildcfg}"
+include "Dependencies.lua"
 
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
@@ -51,12 +50,18 @@ project "Lamp"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		
 		"%{prj.name}/vendor/stb_image/stb/**.h",
 		"%{prj.name}/vendor/stb_image/stb/**.cpp",
+
 		"%{prj.name}/vendor/imnodes/**.h",
 		"%{prj.name}/vendor/imnodes/**.cpp",
+
+		"%{prj.name}/vendor/VulkanMemoryAllocator/**.h",
+		"%{prj.name}/vendor/VulkanMemoryAllocator/**.cpp",
 		
 		"%{prj.name}/vendor/yaml-cpp/src/**.cpp",
 		"%{prj.name}/vendor/yaml-cpp/src/**.h",
@@ -66,33 +71,43 @@ project "Lamp"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/include",
-		"%{prj.name}/vendor/GLFW/include",
-		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/imgui/",
-		"%{prj.name}/vendor/glad/include",
-		"%{prj.name}/vendor/glm",
-		"%{prj.name}/vendor/stb_image",
-		"%{prj.name}/vendor/rapidxml",
-		"%{prj.name}/vendor/assimp/include",
-		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/PhysX/include",
-		"%{prj.name}/vendor/imnodes/",
-		"%{prj.name}/vendor/yaml-cpp/include/",
+		"%{prj.name}/vendor",
+		
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glad}",
+		"%{IncludeDir.GLM}",
+		"%{IncludeDir.STB}",
+		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.fmod}",
+		"%{IncludeDir.PhysX}",
+		"%{IncludeDir.ImNodes}",
+		"%{IncludeDir.yaml}",
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.rapidxml}"
 	}
 	
+	libdirs
+	{
+		"%{LibraryDir.VulkanSDK}",
+	}
+
 	links 
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",		
-		"%{LibraryDir.PhysX}/PhysX_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXCharacterKinematic_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXCommon_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXCooking_static_64.lib",	
-		"%{LibraryDir.PhysX}/PhysXExtensions_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXFoundation_static_64.lib",
-		"%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"	
+		"Glad",	
+
+		"%{Library.PhysX}",
+		"%{Library.PhysXCharacterKinematic}",
+		"%{Library.PhysXCommon}",
+		"%{Library.PhysXCooking}",
+		"%{Library.PhysXExtensions}",
+		"%{Library.PhysXFoundation}",
+		"%{Library.PhysXPvdSDK}",
+
+		"%{Library.Vulkan}"
 	}
 
 	defines 
@@ -115,6 +130,20 @@ project "Lamp"
 			runtime "Debug"
 			symbols "on"
 
+			libdirs
+			{
+				"%{LibraryDir.VulkanSDK_Debug}"
+			}
+
+			links
+			{
+				"%{Library.ShaderC_Debug}",
+				"%{Library.ShaderC_Utils_Debug}",
+				"%{Library.SPIRV_Cross_Debug}",
+				"%{Library.SPIRV_Cross_GLSL_Debug}",
+				"%{Library.SPIRV_Tools_Debug}",
+			}
+
 		filter "configurations:Release"
 			runtime "Release"
 			optimize "on"
@@ -125,10 +154,26 @@ project "Lamp"
 				"LP_RELEASE"
 			}
 
+			links
+			{
+				"%{Library.ShaderC_Release}",
+				"%{Library.ShaderC_Utils_Release}",
+				"%{Library.SPIRV_Cross_Release}",
+				"%{Library.SPIRV_Cross_GLSL_Release}",
+			}
+
 		filter "configurations:Dist"
 			defines { "LP_DIST", "LP_ENABLE_ASSERTS", "NDEBUG" }
 			runtime "Release"
 			optimize "on"
+
+			links
+			{
+				"%{Library.ShaderC_Release}",
+				"%{Library.ShaderC_Utils_Release}",
+				"%{Library.SPIRV_Cross_Release}",
+				"%{Library.SPIRV_Cross_GLSL_Release}",
+			}
 			
 			
 project "Sandbox"
@@ -151,38 +196,43 @@ project "Sandbox"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/engine/**.glsl",
+		"%{prj.name}/engine/**.glsl",		
+
 		"Lamp/vendor/ImGuizmo/include/**.h",
 		"Lamp/vendor/ImGuizmo/include/**.cpp",
+		
 		"Lamp/vendor/imnodes/**.h",
 		"Lamp/vendor/imnodes/**.cpp"
 	}
 
 	includedirs
 	{
-		"Lamp/src",
-		"Lamp/vendor/glm",
-		"Lamp/vendor/spdlog/include",
-		"Lamp/vendor",
-		"Lamp/vendor/glad/include",
-		"Lamp/vendor/GLFW/include",
-		"Lamp/vendor/imgui/",
-		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
-		"Lamp/vendor/assimp/include",
-		"Lamp/vendor/fmod/include",
+
+		"Lamp/src",
+		"Lamp/vendor",
 		"Game/src",
-		"Lamp/vendor/ImGuizmo/include",
-		"Lamp/vendor/bullet/src",
-		"Lamp/vendor/imnodes/",
-		"Lamp/vendor/yaml-cpp/include/",
+
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glad}",
+		"%{IncludeDir.GLM}",
+		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.fmod}", 
+		"%{IncludeDir.ImNodes}",
+		"%{IncludeDir.yaml}",
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.rapidxml}"
 	}
 	
 	libdirs
 	{
 		gamedir,
-		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod"
+
+		"%{LibraryDir.Assimp}",
+		"%{LibraryDir.fmod}"
 	}
 	
 	links
@@ -190,9 +240,10 @@ project "Sandbox"
 		"Lamp",
 		"Game",
 		"ImGui",
-		"assimp-vc143-mt.lib",
-		"fmodstudio_vc.lib",
-		"fmod_vc.lib"
+		
+		"%{Library.Assimp}",
+		"%{Library.fmod}",
+		"%{Library.fmodstudio}"
 	}
 	
 	linkoptions
@@ -253,17 +304,18 @@ project "Game"
 
 	includedirs
 	{
-		"Lamp/src",
-		"Lamp/vendor/glm",
-		"Lamp/vendor/spdlog/include",
-		"Lamp/vendor",
-		"Lamp/vendor/glad/include",
-		"Lamp/vendor/GLFW/include",
-		"Lamp/vendor/imgui/",
-		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
-		"Lamp/vendor/assimp/include",
-		"Lamp/vendor/fmod/include"
+
+		"Lamp/src",
+		"Lamp/vendor",
+
+		"%{IncludeDir.GLM}",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.glad}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.fmod}",
 	}
 	
 	filter "system:windows"
@@ -318,35 +370,36 @@ project "GameLauncher"
 
 	includedirs
 	{
-		"Lamp/src",
-		"Lamp/vendor/glm",
-		"Lamp/vendor/spdlog/include",
-		"Lamp/vendor",
-		"Lamp/vendor/glad/include",
-		"Lamp/vendor/GLFW/include",
-		"Lamp/vendor/imgui/",
-		"Lamp/vendor/rapidxml",
 		"%{prj.name}/src",
-		"Lamp/vendor/assimp/include",
-		"Lamp/vendor/fmod/include",
+
+		"Lamp/src",
 		"Game/src",
-		"%{prj.name}/vendor/PhysX/include"
+
+		"%{IncludeDir.GLM}",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.glad}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.fmod}",
+		"%{IncludeDir.PhysX}",
 	}
 
 	libdirs
 	{
 		gamedir,
-		"Lamp/vendor/assimp",
-		"Lamp/vendor/fmod"
+		"%{LibraryDir.Assimp}",
+		"%{LibraryDir.fmod}"
 	}
 
 	links
 	{
 		"Lamp",
 		"Game",
-		"assimp-vc143-mt.lib",
-		"fmodstudio_vc.lib",
-		"fmod_vc.lib"
+
+		"%{Library.Assimp}",
+		"%{Library.fmod}",
+		"%{Library.fmodstudio}"
 	}
 
 	filter "system:windows"

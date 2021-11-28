@@ -78,7 +78,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.189.2\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -91,7 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.189.2\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_sharedd.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_utild.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-cored.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-glsld.lib;C:\VulkanSDK\1.2.189.2\Lib\SPIRV-Toolsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.189.2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -102,7 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.189.2\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +119,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.189.2\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.189.2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -129,7 +131,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;LP_ENABLE_ASSERTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.189.2\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -145,7 +147,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.189.2\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.189.2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -230,9 +233,13 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
@@ -264,15 +271,12 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
+    <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h" />
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
@@ -292,8 +296,13 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanContext.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -781,8 +790,11 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
@@ -810,13 +822,11 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
@@ -829,11 +839,16 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\lppch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.cpp" />
     <ClCompile Include="vendor\imnodes\imnodes.cpp" />
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\binary.cpp" />

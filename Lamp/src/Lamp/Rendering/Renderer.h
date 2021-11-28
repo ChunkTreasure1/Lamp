@@ -88,6 +88,16 @@ namespace Lamp
 			std::vector<Ref<Framebuffer>> useViewportSize;
 		};
 
+		struct Capabilities
+		{
+			bool supportAniostopy = false;
+			uint32_t maxAniostropy = 1;
+
+			uint32_t framesInFlight = 3;
+		};
+
+		static const Capabilities& GetCapabilities() { return s_capabilities; }
+
 	private:
 		static void CreateUniformBuffers();
 		static void CreateShaderStorageBuffers();
@@ -96,6 +106,9 @@ namespace Lamp
 	private:
 
 		static SceneData* s_pSceneData;
+		static Capabilities s_capabilities;
+
+		friend class VulkanPhysicalDevice;
 
 		friend class Renderer3D;
 		friend class Renderer2D;

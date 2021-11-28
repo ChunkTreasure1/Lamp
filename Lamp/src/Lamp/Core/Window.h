@@ -37,6 +37,7 @@ namespace Lamp
 		virtual const uint32_t GetHeight() const = 0;
 		virtual const bool GetIsVSync() const = 0;
 		virtual void* GetNativeWindow() const = 0;
+		virtual const Ref<GraphicsContext> GetGraphicsContext() const = 0;
 
 		//Setting
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

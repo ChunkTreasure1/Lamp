@@ -46,7 +46,7 @@ namespace Lamp
 		{
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		}
-		else if (Renderer::GetAPI() == RendererAPI::API::DX11)
+		else if (Renderer::GetAPI() == RendererAPI::API::DX11 || Renderer::GetAPI() == RendererAPI::API::Vulkan)
 		{
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		}

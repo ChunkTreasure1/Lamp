@@ -100,9 +100,6 @@
     <Filter Include="src\Lamp\Rendering\Textures">
       <UniqueIdentifier>{E6D2FB2A-52E0-2911-DBC6-25FC47D3F5C7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\Vertices">
-      <UniqueIdentifier>{87B479F5-F3C1-A7DB-7CA8-A3C6E8B47392}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Utility">
       <UniqueIdentifier>{29CB8030-15C4-9F82-3EF6-84072A4E7F8E}</UniqueIdentifier>
     </Filter>
@@ -112,11 +109,17 @@
     <Filter Include="src\Platform\OpenGL">
       <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Platform\Vulkan">
+      <UniqueIdentifier>{81084748-ED69-2456-76D7-6A08E2375B15}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\VulkanMemoryAllocator">
+      <UniqueIdentifier>{CD0FE8DE-B9CA-D78A-6282-50D54E1C221B}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -411,6 +414,12 @@
     <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
@@ -418,6 +427,12 @@
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h">
@@ -528,18 +543,6 @@
     <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
@@ -597,11 +600,20 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\lppch.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.h">
+      <Filter>vendor\VulkanMemoryAllocator</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1881,6 +1893,9 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
+    <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2060,10 +2075,19 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp">
       <Filter>src\Lamp\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
@@ -2159,15 +2183,6 @@
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Vertices</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp">
       <Filter>src\Lamp\Utility</Filter>
     </ClCompile>
@@ -2204,6 +2219,12 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -2212,6 +2233,9 @@
     </ClCompile>
     <ClCompile Include="src\lppch.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.cpp">
+      <Filter>vendor\VulkanMemoryAllocator</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imnodes\imnodes.cpp">
       <Filter>vendor\imnodes</Filter>
@@ -2312,5 +2336,8 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
   </ItemGroup>
 </Project>

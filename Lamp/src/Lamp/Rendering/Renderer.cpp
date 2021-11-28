@@ -18,6 +18,7 @@
 namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
+	Renderer::Capabilities Renderer::s_capabilities;
 
 	void Renderer::Initialize()
 	{

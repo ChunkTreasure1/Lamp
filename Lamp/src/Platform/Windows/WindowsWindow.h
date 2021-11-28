@@ -9,31 +9,31 @@ namespace Lamp
 	{
 	public:
 		WindowsWindow(const WindowProps& props);
-		virtual ~WindowsWindow() override;
+		~WindowsWindow() override;
 
-		virtual void Update(Timestep ts) override;
-		virtual void Maximize() override;
+		void Update(Timestep ts) override;
+		void Maximize() override;
 
 		//Getting
-		virtual const uint32_t GetWidth() const override { return m_Data.Width; }
-		virtual const uint32_t GetHeight() const override { return m_Data.Height; }
-		virtual const bool GetIsVSync() const override { return m_Data.VSync; }
-		virtual void* GetNativeWindow() const override { return m_pWindow; }
-		inline Scope<GraphicsContext>& GetGraphicsContext() { return m_pContext; }
+		const uint32_t GetWidth() const override { return m_Data.Width; }
+		const uint32_t GetHeight() const override { return m_Data.Height; }
+		const bool GetIsVSync() const override { return m_Data.VSync; }
+		void* GetNativeWindow() const override { return m_pWindow; }
+		const Ref<GraphicsContext> GetGraphicsContext() const override { return m_pContext; }
 
 		//Setting
-		virtual void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		virtual void SetIsVSync(bool state) override;
-		virtual void ShowCursor(bool state) override;
-		virtual void SetSize(const glm::vec2& size) override;
+		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		void SetIsVSync(bool state) override;
+		void ShowCursor(bool state) override;
+		void SetSize(const glm::vec2& size) override;
 
 	private:
-		virtual void Init(const WindowProps& props);
-		virtual void Shutdown();
+		void Init(const WindowProps& props);
+		void Shutdown();
 
 	private:
 		GLFWwindow* m_pWindow;
-		Scope<GraphicsContext> m_pContext;
+		Ref<GraphicsContext> m_pContext;
 
 		struct WindowData
 		{

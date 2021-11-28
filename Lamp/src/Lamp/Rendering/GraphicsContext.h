@@ -11,7 +11,7 @@ namespace Lamp
 
 		virtual void Initialize() = 0;
 		virtual void SwapBuffers() = 0;
-
-		static Scope<GraphicsContext> Create(void* data);
+		
+		static Ref<GraphicsContext> Create(void* data);
 	};
 }
