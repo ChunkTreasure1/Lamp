@@ -246,6 +246,7 @@
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h" />
+    <ClInclude Include="src\Lamp\Rendering\CommandBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
@@ -267,6 +268,7 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
@@ -297,9 +299,12 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanCommandBuffer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lppch.h" />
     <ClInclude Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.h" />
@@ -799,6 +804,7 @@
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\CommandBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
@@ -818,6 +824,7 @@
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
@@ -840,8 +847,10 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanCommandBuffer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />

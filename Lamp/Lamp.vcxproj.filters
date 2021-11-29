@@ -528,6 +528,9 @@
     <ClInclude Include="src\Lamp\Rendering\Skybox.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Swapchain.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClInclude>
@@ -600,10 +603,16 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
@@ -1893,9 +1902,11 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
-    <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanCommandBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\CommandBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2171,6 +2182,9 @@
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClCompile>
@@ -2219,10 +2233,16 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
@@ -2336,8 +2356,9 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanCommandBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\CommandBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
   </ItemGroup>
 </Project>

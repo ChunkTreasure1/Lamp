@@ -2,6 +2,7 @@
 
 #include "Lamp/Core/Window.h"
 #include "Lamp/Rendering/GraphicsContext.h"
+#include "Lamp/Rendering/Swapchain.h"
 
 namespace Lamp
 {
@@ -20,6 +21,7 @@ namespace Lamp
 		const bool GetIsVSync() const override { return m_Data.VSync; }
 		void* GetNativeWindow() const override { return m_pWindow; }
 		const Ref<GraphicsContext> GetGraphicsContext() const override { return m_pContext; }
+		const Ref<Swapchain> GetSwapchain() const override { return m_swapchain; }
 
 		//Setting
 		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
@@ -34,6 +36,7 @@ namespace Lamp
 	private:
 		GLFWwindow* m_pWindow;
 		Ref<GraphicsContext> m_pContext;
+		Ref<Swapchain> m_swapchain;
 
 		struct WindowData
 		{

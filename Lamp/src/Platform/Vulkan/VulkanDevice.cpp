@@ -3,6 +3,8 @@
 
 #include "Lamp/Rendering/Renderer.h"
 
+#include "Platform/Vulkan/VulkanContext.h"
+
 #include <set>
 
 namespace Lamp
@@ -10,7 +12,7 @@ namespace Lamp
 	/////Physical device//////
 	VulkanPhysicalDevice::VulkanPhysicalDevice()
 	{
-		auto instance = VulkanContext::GetInstance();
+		auto instance = VulkanContext::GetVulkanInstance();
 
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
