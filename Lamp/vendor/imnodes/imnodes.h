@@ -3,8 +3,12 @@
 #include <stddef.h>
 #include <imgui.h>
 
-#ifndef ImNodes_NAMESPACE
-#define ImNodes_NAMESPACE ImNodes
+#ifdef IMNODES_USER_CONFIG
+#include IMNODES_USER_CONFIG
+#endif
+
+#ifndef IMNODES_NAMESPACE
+#define IMNODES_NAMESPACE ImNodes
 #endif
 
 typedef int ImNodesCol;             // -> enum ImNodesCol_
@@ -94,7 +98,7 @@ enum ImNodesAttributeFlags_
     ImNodesAttributeFlags_EnableLinkDetachWithDragClick = 1 << 0,
     // Visual snapping of an in progress link will trigger IsLink Created/Destroyed events. Allows
     // for previewing the creation of a link while dragging it across attributes. See here for demo:
-    // https://github.com/Nelarius/ImNodes/issues/41#issuecomment-647132113 NOTE: the user has to
+    // https://github.com/Nelarius/imnodes/issues/41#issuecomment-647132113 NOTE: the user has to
     // actually delete the link for this to work. A deleted link can be detected by calling
     // IsLinkDestroyed() after EndNodeEditor().
     ImNodesAttributeFlags_EnableLinkCreationOnSnap = 1 << 1
@@ -202,16 +206,22 @@ struct ImNodesContext;
 // An editor context corresponds to a set of nodes in a single workspace (created with a single
 // Begin/EndNodeEditor pair)
 //
-// By default, the library creates an editor context behind the scenes, so using any of the ImNodes
+// By default, the library creates an editor context behind the scenes, so using any of the imnodes
 // functions doesn't require you to explicitly create a context.
 struct ImNodesEditorContext;
 
 // Callback type used to specify special behavior when hovering a node in the minimap
+#ifndef ImNodesMiniMapNodeHoveringCallback
 typedef void (*ImNodesMiniMapNodeHoveringCallback)(int, void*);
+#endif
 
-namespace ImNodes_NAMESPACE
+#ifndef ImNodesMiniMapNodeHoveringCallbackUserData
+typedef void* ImNodesMiniMapNodeHoveringCallbackUserData;
+#endif
+
+namespace IMNODES_NAMESPACE
 {
-// Call this function if you are compiling ImNodes in to a dll, separate from ImGui. Calling this
+// Call this function if you are compiling imnodes in to a dll, separate from ImGui. Calling this
 // function sets the GImGui global variable, which is not shared across dll boundaries.
 void SetImGuiContext(ImGuiContext* ctx);
 
@@ -226,6 +236,9 @@ void                  EditorContextSet(ImNodesEditorContext*);
 ImVec2                EditorContextGetPanning();
 void                  EditorContextResetPanning(const ImVec2& pos);
 void                  EditorContextMoveToNode(const int node_id);
+float                 EditorContextGetZoom();
+void                  EditorContextSetZoom(float zoom, const ImVec2& zoom_centering_pos = ImVec2());
+void                  EditorContextDrawDebugInfo();
 
 ImNodesIO& GetIO();
 
@@ -244,10 +257,10 @@ void EndNodeEditor();
 // Add a navigable minimap to the editor; call before EndNodeEditor after all
 // nodes and links have been specified
 void MiniMap(
-    const float                              minimap_size_fraction = 0.2f,
-    const ImNodesMiniMapLocation             location = ImNodesMiniMapLocation_TopLeft,
-    const ImNodesMiniMapNodeHoveringCallback node_hovering_callback = NULL,
-    void*                                    node_hovering_callback_data = NULL);
+    const float                                      minimap_size_fraction = 0.2f,
+    const ImNodesMiniMapLocation                     location = ImNodesMiniMapLocation_TopLeft,
+    const ImNodesMiniMapNodeHoveringCallback         node_hovering_callback = NULL,
+    const ImNodesMiniMapNodeHoveringCallbackUserData node_hovering_callback_data = NULL);
 
 // Use PushColorStyle and PopColorStyle to modify ImNodesStyle::Colors mid-frame.
 void PushColorStyle(ImNodesCol item, unsigned int color);
@@ -403,4 +416,4 @@ void SaveEditorStateToIniFile(const ImNodesEditorContext* editor, const char* fi
 
 void LoadCurrentEditorStateFromIniFile(const char* file_name);
 void LoadEditorStateFromIniFile(ImNodesEditorContext* editor, const char* file_name);
-} // namespace ImNodes_NAMESPACE
+} // namespace IMNODES_NAMESPACE

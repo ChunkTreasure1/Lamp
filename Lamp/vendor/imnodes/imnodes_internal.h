@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImNodes.h"
+#include "imnodes.h"
 
 #include <imgui.h>
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -132,7 +132,7 @@ private:
 struct ImNodeData
 {
     int    Id;
-    ImVec2 Origin; // The node origin is in editor space
+    ImVec2 Origin; // The node origin is in grid space
     ImRect TitleBarContentRect;
     ImRect Rect;
 
@@ -242,6 +242,15 @@ struct ImNodesStyleVarElement
     }
 };
 
+// Struct for backing up ImGui's mouse state
+struct ImGuiMouseState
+{
+    ImVec2 MousePos;
+    ImVec2 MouseDelta;
+    ImVec2 MousePosPrev;
+    ImVec2 MouseClickedPos[5];
+};
+
 // [SECTION] global and editor context structs
 
 struct ImNodesEditorContext
@@ -253,11 +262,16 @@ struct ImNodesEditorContext
     ImVector<int> NodeDepthOrder;
 
     // ui related fields
-    ImVec2 Panning;
-    ImVec2 AutoPanningDelta;
+    ImVec2 Panning; // In grid space
+    ImVec2 AutoPanningDelta; // In grid space
+    float  Zoom;
+    ImRect VisibleGridRect; // In grid space
     // Minimum and maximum extents of all content in grid space. Valid after final
     // ImNodes::EndNode() call.
     ImRect GridContentBounds;
+
+    ImGuiMouseState MouseInScreenSpace;
+    ImGuiMouseState MouseInGridSpace;
 
     ImVector<int> SelectedNodeIndices;
     ImVector<int> SelectedLinkIndices;
@@ -266,23 +280,24 @@ struct ImNodesEditorContext
 
     // Mini-map state set by MiniMap()
 
-    bool                               MiniMapEnabled;
-    ImNodesMiniMapLocation             MiniMapLocation;
-    float                              MiniMapSizeFraction;
-    ImNodesMiniMapNodeHoveringCallback MiniMapNodeHoveringCallback;
-    void*                              MiniMapNodeHoveringCallbackUserData;
+    bool                                       MiniMapEnabled;
+    ImNodesMiniMapLocation                     MiniMapLocation;
+    float                                      MiniMapSizeFraction;
+    ImNodesMiniMapNodeHoveringCallback         MiniMapNodeHoveringCallback;
+    ImNodesMiniMapNodeHoveringCallbackUserData MiniMapNodeHoveringCallbackUserData;
 
-    // Mini-map state set during EndNodeEditor() call
+    // Mini-map state set during EndNodeEditor() call after CalcMiniMapLayout()
 
+    bool MiniMapMouseIsHovering;
     ImRect MiniMapRectScreenSpace;
     ImRect MiniMapContentScreenSpace;
     float  MiniMapScaling;
 
     ImNodesEditorContext()
-        : Nodes(), Pins(), Links(), Panning(0.f, 0.f), SelectedNodeIndices(), SelectedLinkIndices(),
-          ClickInteraction(), MiniMapEnabled(false), MiniMapSizeFraction(0.0f),
-          MiniMapNodeHoveringCallback(NULL), MiniMapNodeHoveringCallbackUserData(NULL),
-          MiniMapScaling(0.0f)
+        : Nodes(), Pins(), Links(), Panning(0.f, 0.f), Zoom(1.0f), SelectedNodeIndices(),
+          SelectedLinkIndices(), ClickInteraction(), MiniMapEnabled(false),
+          MiniMapSizeFraction(0.0f), MiniMapNodeHoveringCallback(NULL),
+          MiniMapNodeHoveringCallbackUserData(NULL), MiniMapScaling(0.0f)
     {
     }
 };
@@ -300,7 +315,6 @@ struct ImNodesContext
     ImVector<int> OccludedPinIndices;
 
     // Canvas extents
-    ImVec2 CanvasOriginScreenSpace;
     ImRect CanvasRectScreenSpace;
 
     // Debug helpers
@@ -348,8 +362,13 @@ struct ImNodesContext
     float AltMouseScrollDelta;
 };
 
-namespace ImNodes_NAMESPACE
+namespace IMNODES_NAMESPACE
 {
+
+void GetImGuiMouseState(ImGuiMouseState* state);
+void SetImGuiMouseState(const ImGuiMouseState& state);
+void TransformImGuiMouseStateToGridSpace(const ImNodesEditorContext& editor, ImGuiMouseState* state);
+
 static inline ImNodesEditorContext& EditorContextGet()
 {
     // No editor context was set! Did you forget to call ImNodes::CreateContext()?
@@ -369,12 +388,13 @@ static inline int ObjectPoolFind(const ImObjectPool<T>& objects, const int id)
 template<typename T>
 static inline void ObjectPoolUpdate(ImObjectPool<T>& objects)
 {
-    objects.FreeList.clear();
     for (int i = 0; i < objects.InUse.size(); ++i)
     {
-        if (!objects.InUse[i])
+        const int id = objects.Pool[i].Id;
+
+        if (!objects.InUse[i] && objects.IdMap.GetInt(id, -1) == i)
         {
-            objects.IdMap.SetInt(objects.Pool[i].Id, -1);
+            objects.IdMap.SetInt(id, -1);
             objects.FreeList.push_back(i);
             (objects.Pool.Data + i)->~T();
         }
@@ -384,7 +404,6 @@ static inline void ObjectPoolUpdate(ImObjectPool<T>& objects)
 template<>
 inline void ObjectPoolUpdate(ImObjectPool<ImNodeData>& nodes)
 {
-    nodes.FreeList.clear();
     for (int i = 0; i < nodes.InUse.size(); ++i)
     {
         if (nodes.InUse[i])
@@ -393,23 +412,21 @@ inline void ObjectPoolUpdate(ImObjectPool<ImNodeData>& nodes)
         }
         else
         {
-            const int previous_id = nodes.Pool[i].Id;
-            const int previous_idx = nodes.IdMap.GetInt(previous_id, -1);
+            const int id = nodes.Pool[i].Id;
 
-            if (previous_idx != -1)
+            if (nodes.IdMap.GetInt(id, -1) == i)
             {
-                assert(previous_idx == i);
                 // Remove node idx form depth stack the first time we detect that this idx slot is
                 // unused
                 ImVector<int>&   depth_stack = EditorContextGet().NodeDepthOrder;
                 const int* const elem = depth_stack.find(i);
                 assert(elem != depth_stack.end());
                 depth_stack.erase(elem);
-            }
 
-            nodes.IdMap.SetInt(previous_id, -1);
-            nodes.FreeList.push_back(i);
-            (nodes.Pool.Data + i)->~ImNodeData();
+                nodes.IdMap.SetInt(id, -1);
+                nodes.FreeList.push_back(i);
+                (nodes.Pool.Data + i)->~ImNodeData();
+            }
         }
     }
 }
@@ -494,4 +511,4 @@ static inline T& ObjectPoolFindOrCreateObject(ImObjectPool<T>& objects, const in
     const int index = ObjectPoolFindOrCreateIndex(objects, id);
     return objects.Pool[index];
 }
-} // namespace ImNodes_NAMESPACE
+} // namespace IMNODES_NAMESPACE
