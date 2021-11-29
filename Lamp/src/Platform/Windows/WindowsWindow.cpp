@@ -41,24 +41,21 @@ namespace Lamp
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
+#if defined(LP_DEBUG)
 		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
 		{
-		#if defined(LP_DEBUG)
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		#endif
-
 		}
 		else if (Renderer::GetAPI() == RendererAPI::API::DX11 || Renderer::GetAPI() == RendererAPI::API::Vulkan)
 		{
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		}
+#endif
 		//Create the window
 		m_pWindow = glfwCreateWindow(props.Width, props.Height, props.Title.c_str(), NULL, NULL);
 
 		m_pContext = GraphicsContext::Create(m_pWindow);
 		m_pContext->Initialize();
-
-		m_swapchain = Swapchain::Create(m_pContext, m_pContext->)
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetIsVSync(m_Data.VSync);

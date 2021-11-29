@@ -22,20 +22,18 @@ namespace Lamp
 
 		void Initialize() override;
 		void SwapBuffers() override {}
-		void* GetInstance() override { return s_instance; }
 
 		void Shutdown();
 		void Update();
 
 		Ref<VulkanDevice> GetDevice() { return m_device; }
 
-		static VkInstance GetVulkanInstance() { return s_instance; }
+		static VkInstance GetInstance() { return s_instance; }
 		static Ref<VulkanContext> Get();
 		static Ref<VulkanDevice> GetCurrentDevice() { return Get()->GetDevice(); }
 
 	private:
 		void CreateInstance();
-
 		void SetupDebugMessenger();
 		void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 

@@ -23,8 +23,6 @@ namespace Lamp
 		bool IsVSync;
 	};
 
-	class Swapchain;
-	class GraphicsContext;
 	class Window
 	{
 	public:
@@ -40,7 +38,6 @@ namespace Lamp
 		virtual const bool GetIsVSync() const = 0;
 		virtual void* GetNativeWindow() const = 0;
 		virtual const Ref<GraphicsContext> GetGraphicsContext() const = 0;
-		virtual const Ref<Swapchain> GetSwapchain() const = 0;
 
 		//Setting
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
