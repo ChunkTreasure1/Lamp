@@ -39,7 +39,7 @@ namespace Lamp
 #endif
 	}
 
-	void OpenGLContext::SwapBuffers()
+	void OpenGLContext::Update()
 	{
 		glfwSwapBuffers(m_pWindowHandle);
 	}

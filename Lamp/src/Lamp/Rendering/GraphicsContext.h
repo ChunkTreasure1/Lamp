@@ -10,7 +10,10 @@ namespace Lamp
 		virtual ~GraphicsContext() = default;
 
 		virtual void Initialize() = 0;
-		virtual void SwapBuffers() = 0;
+		virtual void Shutdown() = 0;
+		virtual void Update() = 0;
+		virtual void* GetInstance() = 0;
+		virtual void* GetDevice() = 0;
 		
 		static Ref<GraphicsContext> Create(void* data);
 	};

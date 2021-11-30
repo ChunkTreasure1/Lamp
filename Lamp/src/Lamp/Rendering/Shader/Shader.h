@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include "Lamp/AssetSystem/Asset.h"
 
 #include <string>
 
@@ -16,6 +16,23 @@
 
 namespace Lamp
 {
+	enum class ShaderUniformType
+	{
+		None = 0,
+		Bool,
+		Int,
+		UInt,
+		Float,
+		Float2,
+		Float3,
+		Float4,
+		Mat3,
+		Mat4,
+		Int2,
+		Int3,
+		Int4
+	};
+
 	enum class UniformType : uint32_t
 	{
 		Int = 0,
@@ -60,28 +77,52 @@ namespace Lamp
 		bool isInternal;
 	};
 
-	class Shader
+	struct ShaderResourceDeclaration
+	{
+		ShaderResourceDeclaration() = default;
+		ShaderResourceDeclaration(const std::string& name, uint32_t binding, uint32_t x)
+			: name(name), binding(binding)
+		{
+		}
+
+		std::string name;
+		uint32_t binding;
+	};
+
+	class Shader : public Asset
 	{
 	public:
+		struct ShaderUniform
+		{
+		public:
+			ShaderUniform() = default;
+			ShaderUniform(std::string name, ShaderUniformType type, uint32_t size, uint32_t offset);
+
+			const std::string& GetName() const { return m_name; }
+			const uint32_t GetSize() const { return m_size; }
+			const uint32_t GetOffset() const { return m_offset; }
+			ShaderUniformType GetType() { return m_type; }
+
+			static std::string UniformTypeToString(ShaderUniformType type);
+		private:
+			std::string m_name;
+			ShaderUniformType m_type = ShaderUniformType::None;
+			uint32_t m_size = 0;
+			uint32_t m_offset = 0;
+		};
+
+		struct ShaderBuffer
+		{
+			std::string name;
+			uint32_t size = 0;
+			std::unordered_map<std::string, ShaderUniform> uniforms;
+		};
+
 		virtual ~Shader() = default;
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-		virtual void Recompile() = 0;
-
-		virtual void UploadBool(const std::string& name, bool value) const = 0;
-		virtual void UploadInt(const std::string& name, int value) const = 0;
-		virtual void UploadFloat(const std::string& name, float value) const = 0;
-		virtual void UploadFloat2(const std::string& name, const glm::vec2& value) const = 0;
-		virtual void UploadFloat3(const std::string& name, const glm::vec3& value) const = 0;
-		virtual void UploadFloat4(const std::string& name, const glm::vec4& value) const = 0;
-		
-		virtual void UploadMat4(const std::string& name, const glm::mat4& mat) = 0;
-		virtual void UploadMat3(const std::string& name, const glm::mat3& mat) = 0;
-		virtual void UploadIntArray(const std::string& name, int* values, uint32_t count) const = 0;
-
+		virtual void Reload(bool forceCompile) = 0;
+		virtual void Bind() = 0;
 		virtual const std::string& GetName() = 0;
-		virtual std::string& GetPath() = 0;
 
 		inline const ShaderSpecification& GetSpecification() { return m_specification; }
 

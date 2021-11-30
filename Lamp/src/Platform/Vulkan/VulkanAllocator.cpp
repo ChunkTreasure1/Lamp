@@ -1,3 +1,4 @@
+#include "lppch.h"
 #include "VulkanAllocator.h"
 
 #include "Lamp/Core/Log.h"
@@ -19,7 +20,7 @@ namespace Lamp
 		vmaUnmapMemory(s_pData->allocator, allocation);
 	}
 
-	void VulkanAllocator::Initialize(Ref<VulkanDevice> device)
+	void VulkanAllocator::Initialize(VulkanDevice* device)
 	{
 		s_pData = new VulkanAllocatorData();
 
@@ -27,7 +28,7 @@ namespace Lamp
 		allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_2;
 		allocatorInfo.physicalDevice = device->GetPhysicalDevice()->GetHandle();
 		allocatorInfo.device = device->GetHandle();
-		allocatorInfo.instance = VulkanContext::GetInstance();
+		allocatorInfo.instance = VulkanContext::GetVulkanInstance();
 		allocatorInfo.pRecordSettings;
 
 		VkResult result = vmaCreateAllocator(&allocatorInfo, &s_pData->allocator);

@@ -42,7 +42,7 @@ namespace Lamp
 
 		void UnmapMemory(VmaAllocation allocation);
 
-		static void Initialize(Ref<VulkanDevice> device);
+		static void Initialize(VulkanDevice* device);
 		static void Shutdown();
 		static VmaAllocator& GetVMAAllocator();
 		static GPUMemoryStatistics GetStatistics();

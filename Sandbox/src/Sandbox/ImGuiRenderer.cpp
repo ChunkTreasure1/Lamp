@@ -726,25 +726,25 @@ namespace Sandbox
 			}
 		}
 
-		Ref<Lamp::Texture2D> physicsIcon = m_PhysicsIcon.GetCurrentFrame();
+		//Ref<Lamp::Texture2D> physicsIcon = m_PhysicsIcon.GetCurrentFrame();
 
 		ImGui::SameLine();
 
-		static uint32_t physicsId = physicsIcon->GetID();
+		//static uint32_t physicsId = physicsIcon->GetID();
 
-		if (ImGui::ImageButtonAnimated((ImTextureID)physicsId, (ImTextureID)physicsIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
-		{
-			if (m_SceneState == SceneState::Edit)
-			{
-				OnSimulationStart();
-				m_PhysicsIcon.Play();
-			}
-			else if (m_SceneState == SceneState::Simulating)
-			{
-				OnSimulationStop();
-				m_PhysicsIcon.Stop();
-			}
-		}
+		//if (ImGui::ImageButtonAnimated((ImTextureID)physicsId, (ImTextureID)physicsIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		//{
+		//	if (m_SceneState == SceneState::Edit)
+		//	{
+		//		OnSimulationStart();
+		//		m_PhysicsIcon.Play();
+		//	}
+		//	else if (m_SceneState == SceneState::Simulating)
+		//	{
+		//		OnSimulationStop();
+		//		m_PhysicsIcon.Stop();
+		//	}
+		//}
 		ImGui::PopStyleVar(2);
 		ImGui::End();
 	}
@@ -880,7 +880,7 @@ namespace Sandbox
 				ImGui::MenuItem("Create", nullptr, &m_CreateToolOpen);
 				ImGui::MenuItem("Log", nullptr, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
-				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
+				//ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
 
 				for (auto pWindow : m_pWindows)
 				{

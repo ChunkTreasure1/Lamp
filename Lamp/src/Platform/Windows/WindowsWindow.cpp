@@ -1,6 +1,10 @@
 #include "lppch.h"
 #include "WindowsWindow.h"
 
+#include "Platform/Vulkan/VulkanAllocator.h"
+
+#include "Lamp/Rendering/Swapchain.h"
+
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/MouseEvent.h"
@@ -15,7 +19,7 @@ namespace Lamp
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
 		LP_PROFILE_FUNCTION();
-		Init(props);
+		Initialize(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
@@ -24,7 +28,7 @@ namespace Lamp
 		Shutdown();
 	}
 
-	void WindowsWindow::Init(const WindowProps& props)
+	void WindowsWindow::Initialize(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
@@ -56,6 +60,10 @@ namespace Lamp
 
 		m_pContext = GraphicsContext::Create(m_pWindow);
 		m_pContext->Initialize();
+
+		m_swapchain = Swapchain::Create(m_pContext->GetInstance(), m_pContext->GetDevice());
+		m_swapchain->InitializeSurface(m_pWindow);
+		m_swapchain->Invalidate(m_Data.Width, m_Data.Height);
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetIsVSync(m_Data.VSync);
@@ -151,6 +159,8 @@ namespace Lamp
 
 	void WindowsWindow::Shutdown()
 	{
+		m_swapchain->Shutdown();
+		m_pContext->Shutdown();
 		glfwDestroyWindow(m_pWindow);
 		glfwTerminate();
 	}
@@ -158,8 +168,9 @@ namespace Lamp
 	void WindowsWindow::Update(Timestep ts)
 	{
 		LP_PROFILE_FUNCTION();
+		m_pContext->Update();
+		m_swapchain->Present();
 		glfwPollEvents();
-		m_pContext->SwapBuffers();
 	}
 
 	void WindowsWindow::Maximize()
@@ -201,6 +212,7 @@ namespace Lamp
 	void WindowsWindow::SetSize(const glm::vec2& size)
 	{
 		glfwSetWindowSize(m_pWindow, (uint32_t)size.x, (uint32_t)size.y);
+		m_swapchain->OnResize((uint32_t)size.x, (uint32_t)size.y);
 
 		WindowResizeEvent resize((uint32_t)size.x, (uint32_t)size.y);
 		Lamp::Application::Get().OnEvent(resize);

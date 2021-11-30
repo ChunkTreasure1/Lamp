@@ -20,6 +20,7 @@ namespace Lamp
 		const bool GetIsVSync() const override { return m_Data.VSync; }
 		void* GetNativeWindow() const override { return m_pWindow; }
 		const Ref<GraphicsContext> GetGraphicsContext() const override { return m_pContext; }
+		const Ref<Swapchain> GetSwapchain() const override { return m_swapchain; }
 
 		//Setting
 		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
@@ -28,12 +29,13 @@ namespace Lamp
 		void SetSize(const glm::vec2& size) override;
 
 	private:
-		void Init(const WindowProps& props);
+		void Initialize(const WindowProps& props);
 		void Shutdown();
 
 	private:
 		GLFWwindow* m_pWindow;
 		Ref<GraphicsContext> m_pContext;
+		Ref<Swapchain> m_swapchain;
 
 		struct WindowData
 		{

@@ -17,37 +17,15 @@
 
 namespace Lamp
 {
-	Renderer::SceneData* Renderer::s_pSceneData = new Renderer::SceneData;
+	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Renderer::Capabilities Renderer::s_capabilities;
 
 	void Renderer::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
-		ShaderLibrary::LoadShaders();
-		MaterialLibrary::LoadMaterials();
+		s_pSceneData = new Renderer::SceneData();
 
-		RenderCommand::Initialize();
-		Renderer3D::Initialize();
-		Renderer2D::Initialize();
 
-		CreateUniformBuffers();
-		CreateShaderStorageBuffers();
-
-		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(4, 4);
-		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), 0);
-		s_pSceneData->internalTextures.emplace("SSAO Noise", s_pSceneData->ssaoNoiseTexture);
-
-		//Setup dynamic uniforms
-		DynamicUniformRegistry::AddUniform("Exposure", UniformType::Float, RegisterData(&s_pSceneData->hdrExposure));
-		DynamicUniformRegistry::AddUniform("Gamma", UniformType::Float, RegisterData(&s_pSceneData->gamma));
-		DynamicUniformRegistry::AddUniform("Buffer Size", UniformType::Float2, RegisterData(&s_pSceneData->bufferSize));
-		DynamicUniformRegistry::AddUniform("ForwardTileX", UniformType::Int, RegisterData(&s_pSceneData->screenGroupX));
-		DynamicUniformRegistry::AddUniform("SSAO kernel size", UniformType::Int, RegisterData(&s_pSceneData->ssaoData.kernelSize));
-		DynamicUniformRegistry::AddUniform("Aspect ratio", UniformType::Float, RegisterData(&s_pSceneData->aspectRatio));
-		DynamicUniformRegistry::AddUniform("Tan Half FOV", UniformType::Float, RegisterData(&s_pSceneData->tanHalfFOV));
-		DynamicUniformRegistry::AddUniform("SSAO Strength", UniformType::Float, RegisterData(&s_pSceneData->ssaoData.strength));
-		DynamicUniformRegistry::AddUniform("Point light count", UniformType::Int, RegisterData(&s_pSceneData->pointLightCount));
-		DynamicUniformRegistry::AddUniform("Ambiance multiplier", UniformType::Float, RegisterData(&s_pSceneData->ambianceMultiplier));
 	}
 
 	void Renderer::Shutdown()

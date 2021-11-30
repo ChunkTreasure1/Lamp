@@ -77,7 +77,7 @@ namespace Lamp
 		VkPhysicalDeviceFeatures enabledFeatures{};
 		m_device = VulkanDevice::Create(m_physicalDevice, enabledFeatures);
 
-		VulkanAllocator::Initialize(m_device);
+		VulkanAllocator::Initialize(m_device.get());
 	}
 
 	void VulkanContext::Shutdown()

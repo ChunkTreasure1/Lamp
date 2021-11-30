@@ -25,7 +25,8 @@ namespace Lamp
 		Audio = 5,
 		EnvironmentMap = 6,
 		RenderGraph = 7,
-		MeshSource = 8
+		MeshSource = 8,
+		Shader = 9
 	};
 
 	inline static std::unordered_map<std::string, AssetType> s_AssetExtensionMap =

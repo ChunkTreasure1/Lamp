@@ -9,7 +9,8 @@
 #include "Lamp/AssetSystem/AssetManager.h"
 #include "Lamp/Objects/Entity/ComponentInclude.h"
 #include "Lamp/ImGui/ImGuiLayer.h"
-#include "CoreLogger.h"
+#include "Lamp/Core/CoreLogger.h"
+#include "Lamp/Rendering/Swapchain.h"
 
 #include <thread>
 
@@ -48,21 +49,21 @@ namespace Lamp
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Initialize();
-		AudioEngine::Initialize();
-		Physics::Initialize();
+		//AudioEngine::Initialize();
+		//Physics::Initialize();
 
 		m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_Running));
 
 		//Setup the GUI system
-		m_pImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_pImGuiLayer);
+		//m_pImGuiLayer = new ImGuiLayer();
+		//PushOverlay(m_pImGuiLayer);
 	}
 
 	Application::~Application()
 	{
 		LP_PROFILE_FUNCTION();
-		AudioEngine::Shutdown();
-		Renderer::Shutdown();
+		//AudioEngine::Shutdown();
+		//Renderer::Shutdown();
 
 		m_AssetManagerThread.join();
 
@@ -83,30 +84,33 @@ namespace Lamp
 
 			m_FrameTime.Begin();
 
-			AudioEngine::Update();
-			//Load 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateLayers");
-				AppUpdateEvent e(timestep);
+			m_pWindow->GetSwapchain()->BeginFrame();
+			Renderer::Begin(nullptr);
 
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnEvent(e);
-				}
-			}
+			//AudioEngine::Update();
+			////Load 
+			//{
+			//	LP_PROFILE_SCOPE("Application::UpdateLayers");
+			//	AppUpdateEvent e(timestep);
 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateImGui");
+			//	for (Layer* pLayer : m_LayerStack)
+			//	{
+			//		pLayer->OnEvent(e);
+			//	}
+			//}
 
-				m_pImGuiLayer->Begin();
+			//{
+			//	LP_PROFILE_SCOPE("Application::UpdateImGui");
 
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnImGuiRender(timestep);
-				}
+			//	m_pImGuiLayer->Begin();
 
-				m_pImGuiLayer->End();
-			}
+			//	for (Layer* pLayer : m_LayerStack)
+			//	{
+			//		pLayer->OnImGuiRender(timestep);
+			//	}
+
+			//	m_pImGuiLayer->End();
+			//}
 
 			m_pWindow->Update(timestep);
 
@@ -122,14 +126,14 @@ namespace Lamp
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
 		////Handle rest of events
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-		{
-			(*--it)->OnEvent(e);
-			if (e.Handled)
-			{
-				break;
-			}
-		}
+		//for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		//{
+		//	(*--it)->OnEvent(e);
+		//	if (e.Handled)
+		//	{
+		//		break;
+		//	}
+		//}
 	}
 
 	void Application::PushLayer(Layer* pLayer)

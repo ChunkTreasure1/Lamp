@@ -1896,6 +1896,9 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
     <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2339,5 +2342,7 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />
   </ItemGroup>
 </Project>

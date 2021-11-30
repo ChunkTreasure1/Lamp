@@ -21,16 +21,15 @@ namespace Lamp
 		~VulkanContext();
 
 		void Initialize() override;
-		void SwapBuffers() override {}
+		void* GetInstance() override { return s_instance; }
+		void* GetDevice() override { return m_device.get(); }
 
-		void Shutdown();
-		void Update();
+		void Shutdown() override;
+		void Update() override;
 
-		Ref<VulkanDevice> GetDevice() { return m_device; }
-
-		static VkInstance GetInstance() { return s_instance; }
+		static VkInstance GetVulkanInstance() { return s_instance; }
 		static Ref<VulkanContext> Get();
-		static Ref<VulkanDevice> GetCurrentDevice() { return Get()->GetDevice(); }
+		static VulkanDevice* GetCurrentDevice() { return static_cast<VulkanDevice*>(Get()->GetDevice()); }
 
 	private:
 		void CreateInstance();
