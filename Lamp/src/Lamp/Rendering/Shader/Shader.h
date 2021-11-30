@@ -33,50 +33,6 @@ namespace Lamp
 		Int4
 	};
 
-	enum class UniformType : uint32_t
-	{
-		Int = 0,
-		Float = 1,
-		Float2 = 2,
-		Float3 = 3,
-		Float4 = 4,
-		Mat3 = 5,
-		Mat4 = 6,
-		Sampler2D = 7,
-		SamplerCube = 8,
-		RenderData = 9
-	};
-
-	enum ShaderType
-	{
-		VertexShader = BIT(1),
-		FragmentShader = BIT(2),
-		GeometryShader = BIT(3),
-		ComputeShader = BIT(4)
-	};
-
-	struct UniformSpecification
-	{
-		UniformSpecification(const std::string& name, UniformType type, std::any data, uint32_t id)
-			: name(name), type(type), data(data), id(id)
-		{ }
-
-		std::string name;
-		UniformType type;
-		std::any data;
-		uint32_t id;
-	};
-
-	struct ShaderSpecification
-	{
-		int textureCount;
-		std::string name;
-		std::vector<std::string> textureNames;
-		std::vector<UniformSpecification> uniforms;
-		int type = 0;
-		bool isInternal;
-	};
-
 	struct ShaderResourceDeclaration
 	{
 		ShaderResourceDeclaration() = default;
@@ -123,13 +79,11 @@ namespace Lamp
 		virtual void Reload(bool forceCompile) = 0;
 		virtual void Bind() = 0;
 		virtual const std::string& GetName() = 0;
-
-		inline const ShaderSpecification& GetSpecification() { return m_specification; }
+		
+		static AssetType GetStaticType() { return AssetType::Shader; }
+		AssetType GetType() override { return GetStaticType(); }
 
 	public:
 		static Ref<Shader> Create(const std::string& path);
-
-	protected:
-		ShaderSpecification m_specification;
 	};
 }

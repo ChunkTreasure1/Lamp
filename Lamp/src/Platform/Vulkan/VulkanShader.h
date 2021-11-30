@@ -69,15 +69,12 @@ namespace Lamp
 		std::vector<VkDescriptorSetLayout> GetAllDescriptorSetLayouts();
 		std::vector<VkPushConstantRange> GetAllPushConstantRanges();
 
-		static AssetType GetStaticType() { return AssetType::Shader; }
-		AssetType GetType() override { return GetStaticType(); }
-
 	private:
 		std::unordered_map<VkShaderStageFlagBits, std::string> PreProcess(const std::string& source);
-		void CompileOrGetBinary(std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& shaderData, bool forceCompile);
-		void LoadAndCreateShaders(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& shaderData);
+		void CompileOrGetBinary(std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& outShaderData, bool forceCompile);
+		void LoadAndCreateShaders(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& outShaderData);
 		void Reflect(VkShaderStageFlagBits stageFlags, const std::vector<uint32_t>& shaderData);
-		void ReflectAllShaderStages(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& shaderData);
+		void ReflectAllShaderStages(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& outShaderData);
 		void CreateDescriptors();
 
 		std::vector<ShaderDescriptorSet> m_shaderDescriptorSets;
