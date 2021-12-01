@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
+#include "Lamp/Rendering/Buffers/UniformBufferSet.h"
 
 namespace Lamp
 {
@@ -16,7 +17,8 @@ namespace Lamp
 	struct RenderPipelineSpecification
 	{
 		Ref<Shader> shader;
-		
+		Ref<UniformBufferSet> uniformBufferSets;
+
 		Topology topology;
 		BufferLayout vertexLayout;
 
@@ -27,13 +29,9 @@ namespace Lamp
 	class RenderPipeline
 	{
 	public:
-		virtual ~RenderPipeline() = 0;
-
 		virtual void Bind(uint32_t index) const = 0;
 		virtual void SetLayout(BufferLayout layout) = 0;
 		
 		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
-
-	private:
 	};
 }

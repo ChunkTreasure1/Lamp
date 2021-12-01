@@ -36,7 +36,7 @@ namespace Lamp
 		inline const VkSwapchainKHR& GetHandle() const { return m_swapchain; }
 
 		inline const size_t GetCommandBufferCount() const { return m_commandBuffers.size(); }
-		inline const uint32_t GetCurrentFrame() const { return m_currentFrame; }
+		const uint32_t GetCurrentFrame() const override { return m_currentFrame; }
 		inline VkCommandBuffer GetDrawCommandBuffer(uint32_t index) { LP_CORE_ASSERT((index < m_commandBuffers.size()) && (index >= 0), "Index out of bounds!") return m_commandBuffers[index]; }
 		inline VkFramebuffer GetFramebuffer(uint32_t index) { LP_CORE_ASSERT(index < m_framebuffers.size() && index >= 0, "Index out of bounds!"); return m_framebuffers[index]; }
 

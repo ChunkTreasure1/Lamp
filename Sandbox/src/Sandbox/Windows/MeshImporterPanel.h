@@ -59,6 +59,6 @@ namespace Sandbox
 		Ref<Lamp::Texture2D> m_saveIcon;
 
 		//Import settings
-		Lamp::ImportSettings m_importSettings;
+		Lamp::MeshImportSettings m_importSettings;
 	};
 }

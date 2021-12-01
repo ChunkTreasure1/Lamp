@@ -37,6 +37,9 @@
     <Filter Include="engine\shaders\shadows">
       <UniqueIdentifier>{1C00CDD2-08FA-F524-F166-8C35DDFF5B91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\shaders\vulkan">
+      <UniqueIdentifier>{140BD81D-8077-9318-496B-2B76B596B580}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -195,6 +198,9 @@
     </None>
     <None Include="engine\shaders\shadows\pointShadow.glsl">
       <Filter>engine\shaders\shadows</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\testShader.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
     </None>
   </ItemGroup>
 </Project>

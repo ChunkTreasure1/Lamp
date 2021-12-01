@@ -14,6 +14,7 @@ namespace Lamp
 		virtual ~OpenGLVertexBuffer() override;
 
 		virtual void Bind() const override;
+		virtual void Bind(Ref<CommandBuffer> commandBuffer) const override {}
 		virtual void Unbind() const override;
 
 		virtual void SetBufferLayout(const BufferLayout& buff) override { m_Layout = buff; }
@@ -36,6 +37,7 @@ namespace Lamp
 		virtual ~OpenGLIndexBuffer() override;
 
 		virtual void Bind() const override;
+		virtual void Bind(Ref<CommandBuffer> commandBuffer) const override {}
 		virtual void Unbind() const override;
 
 		virtual uint32_t GetCount() override { return m_Count; }

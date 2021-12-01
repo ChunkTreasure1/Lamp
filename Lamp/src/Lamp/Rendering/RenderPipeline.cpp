@@ -3,6 +3,8 @@
 
 #include "Lamp/Rendering/Renderer.h"
 
+#include "Platform/Vulkan/VulkanRenderPipeline.h"
+
 namespace Lamp
 {
 	Ref<RenderPipeline> RenderPipeline::Create(const RenderPipelineSpecification& specification)
@@ -11,8 +13,9 @@ namespace Lamp
 		{
 			case RendererAPI::API::OpenGL:
 				break;
-			case RendererAPI::API::Vulkan:
-				break;
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanRenderPipeline>(specification);
 		}
+
+		return nullptr;
 	}
 }

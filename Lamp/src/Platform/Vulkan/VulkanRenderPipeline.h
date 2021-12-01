@@ -11,14 +11,12 @@ namespace Lamp
 	{
 	public:
 		VulkanRenderPipeline(const RenderPipelineSpecification& specification);
-		~VulkanRenderPipeline() override;
+		~VulkanRenderPipeline();
 
 		void Bind(uint32_t index) const override;
 		void SetLayout(BufferLayout layout) override;
 
 		void BindDescriptorSets(uint32_t index) const;
-
-		void SetLayout(BufferLayout layout);
 		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
 
 	private:

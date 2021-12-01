@@ -6,6 +6,7 @@
 #include "Platform/Vulkan/VulkanSwapchain.h"
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanTexture2D.h"
+#include "Platform/Vulkan/VulkanUniformBuffer.h"
 
 #include "Lamp/Core/Application.h"
 
@@ -143,7 +144,7 @@ namespace Lamp
 		{
 			VkDescriptorSetAllocateInfo allocInfo{};
 			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-			allocInfo.descriptorPool = Renderer::GetDescriptorPool();
+			allocInfo.descriptorPool = static_cast<VkDescriptorPool>(Renderer::GetDescriptorPool());
 			allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
 			allocInfo.pSetLayouts = allDescriptorLayouts.data();
 
@@ -172,7 +173,9 @@ namespace Lamp
 				{
 					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffers.at(binding)->name);
 					writeDescriptor.dstSet = m_descriptorSets[frame][set];
-					writeDescriptor.pBufferInfo = &m_specification.uniformBufferSets->Get(binding, set, frame)->GetDescriptorInfo();
+
+					auto vulkanUniformBuffer = std::dynamic_pointer_cast<VulkanUniformBuffer>(m_specification.uniformBufferSets->Get(binding, set, frame));
+					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
 					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
 				}

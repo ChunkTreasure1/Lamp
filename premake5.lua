@@ -232,7 +232,8 @@ project "Sandbox"
 		gamedir,
 
 		"%{LibraryDir.Assimp}",
-		"%{LibraryDir.fmod}"
+		"%{LibraryDir.fmod}",
+		"%{LibraryDir.VulkanSDK}"
 	}
 	
 	links
@@ -243,7 +244,8 @@ project "Sandbox"
 		
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
-		"%{Library.fmodstudio}"
+		"%{Library.fmodstudio}",
+		"%{Library.Vulkan}"
 	}
 	
 	linkoptions
@@ -266,15 +268,45 @@ project "Sandbox"
 			runtime "Debug"
 			symbols "on"
 
+			libdirs
+			{
+				"%{LibraryDir.VulkanSDK_Debug}"
+			}
+
+			links
+			{
+				"%{Library.ShaderC_Debug}",
+				"%{Library.ShaderC_Utils_Debug}",
+				"%{Library.SPIRV_Cross_Debug}",
+				"%{Library.SPIRV_Cross_GLSL_Debug}",
+				"%{Library.SPIRV_Tools_Debug}",
+			}
+
 		filter "configurations:Release"
 			defines "LP_RELEASE"
 			runtime "Release"
 			optimize "on"
 
+			links
+			{
+				"%{Library.ShaderC_Release}",
+				"%{Library.ShaderC_Utils_Release}",
+				"%{Library.SPIRV_Cross_Release}",
+				"%{Library.SPIRV_Cross_GLSL_Release}",
+			}
+
 		filter "configurations:Dist"
 			defines "LP_DIST"
 			runtime "Release"
 			optimize "on"
+
+			links
+			{
+				"%{Library.ShaderC_Release}",
+				"%{Library.ShaderC_Utils_Release}",
+				"%{Library.SPIRV_Cross_Release}",
+				"%{Library.SPIRV_Cross_GLSL_Release}",
+			}
 			
 project "Game"
 	location "Game"
@@ -316,6 +348,7 @@ project "Game"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.fmod}",
+		"%{IncludeDir.VulkanSDK}"
 	}
 	
 	filter "system:windows"
@@ -383,13 +416,15 @@ project "GameLauncher"
 		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.PhysX}",
+		"%{IncludeDir.VulkanSDK}"
 	}
 
 	libdirs
 	{
 		gamedir,
 		"%{LibraryDir.Assimp}",
-		"%{LibraryDir.fmod}"
+		"%{LibraryDir.fmod}",
+		"%{LibraryDir.VulkanSDK}"
 	}
 
 	links
@@ -399,7 +434,8 @@ project "GameLauncher"
 
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
-		"%{Library.fmodstudio}"
+		"%{Library.fmodstudio}",
+		"%{Library.Vulkan}"
 	}
 
 	filter "system:windows"
@@ -415,12 +451,42 @@ project "GameLauncher"
 			runtime "Debug"
 			symbols "on"
 
+			libdirs
+			{
+				"%{LibraryDir.VulkanSDK_Debug}"
+			}
+
+			links
+			{
+				"%{Library.ShaderC_Debug}",
+				"%{Library.ShaderC_Utils_Debug}",
+				"%{Library.SPIRV_Cross_Debug}",
+				"%{Library.SPIRV_Cross_GLSL_Debug}",
+				"%{Library.SPIRV_Tools_Debug}",
+			}
+
 		filter "configurations:Release"
 			defines "LP_RELEASE"
 			runtime "Release"
 			optimize "on"
 
+			links
+			{
+				"%{Library.ShaderC_Release}",
+				"%{Library.ShaderC_Utils_Release}",
+				"%{Library.SPIRV_Cross_Release}",
+				"%{Library.SPIRV_Cross_GLSL_Release}",
+			}
+
 		filter "configurations:Dist"
 			defines "LP_DIST"
 			runtime "Release"
 			optimize "on"
+
+			links
+			{
+				"%{Library.ShaderC_Release}",
+				"%{Library.ShaderC_Utils_Release}",
+				"%{Library.SPIRV_Cross_Release}",
+				"%{Library.SPIRV_Cross_GLSL_Release}",
+			}

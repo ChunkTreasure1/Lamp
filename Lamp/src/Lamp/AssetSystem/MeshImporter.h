@@ -15,7 +15,7 @@ namespace Lamp
 		Meters = 2
 	};
 
-	struct ImportSettings
+	struct MeshImportSettings
 	{
 		std::filesystem::path path;
 		bool compileStatic = false;
@@ -26,10 +26,10 @@ namespace Lamp
 	class MeshImporter
 	{
 	public:
-		static Ref<Mesh> ImportMesh(const ImportSettings& settings);
+		static Ref<Mesh> ImportMesh(const MeshImportSettings& settings);
 
 	private:
-		static std::vector<Ref<SubMesh>> LoadMesh(const ImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials);
+		static std::vector<Ref<SubMesh>> LoadMesh(const MeshImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials);
 		static void ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes);
 		static Ref<SubMesh> ProcessMesh(aiMesh* pMesh, const aiScene* pScene);
 

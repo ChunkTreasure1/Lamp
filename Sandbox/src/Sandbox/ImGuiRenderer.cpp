@@ -477,7 +477,7 @@ namespace Sandbox
 
 		if (ImGui::Button("Clear"))
 		{
-			Lamp::Log::GetCoreLogger()->GetMessages().clear();
+			//Lamp::Log::GetCoreLogger()->GetMessages().clear();
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Options"))
@@ -490,29 +490,29 @@ namespace Sandbox
 		ImGui::BeginChild("text");
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-		for (const auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
-		{
-			if (msg.Level == Lamp::LogLevel::Trace)
-			{
-				ImGui::TextColored(ImVec4(212.f / 255.f, 212.f / 255.f, 212.f / 255.f, 1.f), msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Info)
-			{
-				ImGui::Text(msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Warn)
-			{
-				ImGui::TextColored(ImVec4(255.f / 255.f, 235.f / 255.f, 54.f / 255.f, 1.f), msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Error)
-			{
-				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Critical)
-			{
-				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
-			}
-		}
+		//for (const auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
+		//{
+		//	if (msg.Level == Lamp::LogLevel::Trace)
+		//	{
+		//		ImGui::TextColored(ImVec4(212.f / 255.f, 212.f / 255.f, 212.f / 255.f, 1.f), msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Info)
+		//	{
+		//		ImGui::Text(msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Warn)
+		//	{
+		//		ImGui::TextColored(ImVec4(255.f / 255.f, 235.f / 255.f, 54.f / 255.f, 1.f), msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Error)
+		//	{
+		//		ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Critical)
+		//	{
+		//		ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
+		//	}
+		//}
 		ImGui::PopStyleVar();
 
 		if (autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())

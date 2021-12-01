@@ -85,12 +85,6 @@
     <Filter Include="src\Lamp\Rendering\Reflections">
       <UniqueIdentifier>{A05AA371-8C80-6DD8-75C6-F2A3618B92A4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Rendering\RenderGraph">
-      <UniqueIdentifier>{74024CD3-6028-163A-496E-9B0535333B06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Lamp\Rendering\RenderGraph\Nodes">
-      <UniqueIdentifier>{3C8B8D65-2872-4F5D-D1C2-B57ABD88C8C3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Rendering\Shader">
       <UniqueIdentifier>{F9CFA3B6-6592-D740-AE42-66CD1A44B01E}</UniqueIdentifier>
     </Filter>
@@ -426,6 +420,9 @@
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBufferSet.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
@@ -450,6 +447,9 @@
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\CommandBuffer.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -463,6 +463,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Renderer.h">
@@ -487,6 +490,9 @@
       <Filter>src\Lamp\Rendering\Shadows</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Skybox.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Swapchain.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h">
@@ -558,10 +564,37 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanCommandBuffer.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanShader.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
@@ -1851,16 +1884,7 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
-    <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2046,6 +2070,9 @@
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBufferSet.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClCompile>
@@ -2064,6 +2091,9 @@
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\CommandBuffer.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
@@ -2077,6 +2107,9 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp">
@@ -2101,6 +2134,9 @@
       <Filter>src\Lamp\Rendering\Shadows</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp">
@@ -2148,10 +2184,34 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanCommandBuffer.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
@@ -2265,14 +2325,6 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanBuffer.cpp" />
   </ItemGroup>
 </Project>

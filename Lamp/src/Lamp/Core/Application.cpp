@@ -85,7 +85,7 @@ namespace Lamp
 			m_FrameTime.Begin();
 
 			m_pWindow->GetSwapchain()->BeginFrame();
-			Renderer::Begin(nullptr);
+			//Renderer::Begin(nullptr);
 
 			//AudioEngine::Update();
 			////Load 

@@ -8,13 +8,22 @@
 
 #include <algorithm>
 
+//TODO: remove
+#include <vulkan/vulkan_core.h>
+
 namespace Lamp
 {
-	class RenderGraph;
 	class ShaderStorageBuffer;
 	class CameraBase;
 	class Texture2D;
 	class Framebuffer;
+
+	struct TestUniformBuffer
+	{
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 projection;
+	};
 
 	class Renderer
 	{
@@ -27,15 +36,15 @@ namespace Lamp
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
 
+		static void SetupBuffers();
+
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
 
-		static const Ref<RenderGraph>& GetRenderGraph() { return s_pSceneData->renderGraph; }
-		static void SetRenderGraph(Ref<RenderGraph> graph) { s_pSceneData->renderGraph = graph; }
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static void GenerateKernel();
 
-		static VkDescriptorPool GetDescriptorPool() { return s_descriptorPool; }
+		static void* GetDescriptorPool();
 
 		struct SceneData
 		{
@@ -54,7 +63,6 @@ namespace Lamp
 			float ambianceMultiplier = 0.3f;
 
 			glm::vec2 bufferSize = { 1280, 720 };
-			Ref<RenderGraph> renderGraph;
 
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 64;
@@ -109,7 +117,6 @@ namespace Lamp
 
 		static SceneData* s_pSceneData;
 		static Capabilities s_capabilities;
-		static VkDescriptorPool s_descriptorPool; //TODO: should renderer be abstracted?
 
 		friend class VulkanPhysicalDevice;
 

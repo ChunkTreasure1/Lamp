@@ -18,6 +18,8 @@ namespace Lamp
 
 		virtual void Invalidate(uint32_t& width, uint32_t& height) = 0;
 		virtual void OnResize(uint32_t width, uint32_t height) = 0;
+
+		virtual const uint32_t GetCurrentFrame() const = 0;
 	
 		static Scope<Swapchain> Create(void* instance, void* device);
 	};

@@ -5,6 +5,8 @@
 #include "Lamp/Rendering/Buffers/ShaderStorageBuffer.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/RenderPipeline.h"
+#include "Lamp/Rendering/CommandBuffer.h"
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
@@ -18,16 +20,37 @@
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 #include <vulkan/vulkan_core.h>
+#include "Lamp/AssetSystem/MeshImporter.h"
 
 namespace Lamp
 {
+	struct TempRendererStorage
+	{
+		Ref<RenderPipeline> mainPipeline;
+		Ref<Shader> mainShader;
+		Ref<CommandBuffer> commandBuffer;
+
+		TestUniformBuffer uniformBuffer;
+		Ref<UniformBufferSet> uniformBufferSet;
+
+		Ref<Mesh> teddy;
+		Ref<Texture2D> teddyTexture;
+	};
+
+	static TempRendererStorage* s_pTempStorage = nullptr;
+	static VkDescriptorPool s_descriptorPool; //TODO: should renderer be abstracted?
+
+
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Renderer::Capabilities Renderer::s_capabilities;
+
+
 
 	void Renderer::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
 		s_pSceneData = new Renderer::SceneData();
+		s_pTempStorage = new TempRendererStorage();
 
 		//TODO: this should be moved into wrapper
 		VkDescriptorPoolSize poolSizes[] =
@@ -55,6 +78,32 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 		VkResult result = vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &s_descriptorPool);
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor pool!");
+
+		SetupBuffers();
+		s_pTempStorage->mainShader = Shader::Create("engine/shaders/vulkan/testShader.glsl", true);
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.shader = s_pTempStorage->mainShader;
+		pipelineSpec.isSwapchain = true;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.uniformBufferSets = s_pTempStorage->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" },
+		};
+
+		s_pTempStorage->mainPipeline = RenderPipeline::Create(pipelineSpec);
+
+		MeshImportSettings settings;
+		settings.path = "assets/meshes/teddy/lampTestModelOnePart.fbx";
+		s_pTempStorage->teddy = MeshImporter::ImportMesh(settings);
+		s_pTempStorage->teddyTexture = Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_albedo.tga");
+
+		s_pTempStorage->commandBuffer = CommandBuffer::Create(s_pTempStorage->mainPipeline);
 	}
 
 	void Renderer::Shutdown()
@@ -80,11 +129,6 @@ namespace Lamp
 
 	void Renderer::CreateUniformBuffers()
 	{
-		s_pSceneData->commonDataBuffer = UniformBuffer::Create(sizeof(CommonRenderData), 0);
-		s_pSceneData->directionalLightBuffer = UniformBuffer::Create(sizeof(DirectionalLightBuffer), 1);
-		s_pSceneData->directionalLightVPBuffer = UniformBuffer::Create(sizeof(DirectionalLightVPs), 4);
-		
-		s_pSceneData->ssaoBuffer = UniformBuffer::Create(sizeof(SSAOData), 6);
 		GenerateKernel();
 	}
 
@@ -155,11 +199,25 @@ namespace Lamp
 		s_pSceneData->tanHalfFOV = glm::tan(glm::radians(s_pSceneData->aspectRatio) / 2.f);
 	}
 
+	void Renderer::SetupBuffers()
+	{
+		s_pTempStorage->uniformBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
+		s_pTempStorage->uniformBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
+		s_pTempStorage->uniformBuffer.projection = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+
+		s_pTempStorage->uniformBufferSet = UniformBufferSet::Create(GetCapabilities().framesInFlight);
+		s_pTempStorage->uniformBufferSet->Add(&s_pTempStorage->uniformBuffer, sizeof(TestUniformBuffer), 0, 0);
+	}
+
+	void* Renderer::GetDescriptorPool()
+	{
+		return s_descriptorPool;
+	}
+
 	static float Lerp(float a, float b, float f)
 	{
 		return a + f * (b - a);
 	}
-
 
 	void Renderer::GenerateKernel()
 	{

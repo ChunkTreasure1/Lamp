@@ -131,6 +131,7 @@ namespace Lamp
 		if (!std::filesystem::exists(path))
 		{
 			SetFlag(AssetFlag::Missing);
+			LP_CORE_ERROR("Shader {0} not found!", path.string());
 			return;
 		}
 
@@ -436,7 +437,6 @@ namespace Lamp
 				std::string uniformName = name + "." + memberName;
 				buffer.uniforms[uniformName] = ShaderUniform(uniformName, Utils::SPIRVTypeToShaderType(type), size, offset);
 			}
-			;
 		}
 
 		//Sampled images
@@ -496,6 +496,8 @@ namespace Lamp
 			//TODO: fix shader resource declaration
 			m_resources[name] = ShaderResourceDeclaration(name, binding, 1);
 		}
+
+		LP_CORE_INFO("Uniform buffers: {0}", m_shaderDescriptorSets.size());
 	}
 
 	void VulkanShader::ReflectAllShaderStages(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& shaderData)
@@ -636,6 +638,8 @@ namespace Lamp
 			{
 				m_descriptorSetLayouts.resize((size_t)(set + 1));
 			}
+
+			LP_CORE_INFO("VulkanShader::CreateDescriptors - {0}, {1}", m_name, set);
 
 			auto device = VulkanContext::GetCurrentDevice();
 			VkResult result = vkCreateDescriptorSetLayout(device->GetHandle(), &descriptorLayout, nullptr, &m_descriptorSetLayouts[set]);
