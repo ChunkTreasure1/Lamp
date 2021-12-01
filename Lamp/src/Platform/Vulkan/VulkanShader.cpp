@@ -126,6 +126,7 @@ namespace Lamp
 	{
 		Utils::CreateCacheDirectoryIfNeeded();
 		this->Path = path;
+		m_name = path.stem().string();
 
 		if (!std::filesystem::exists(path))
 		{

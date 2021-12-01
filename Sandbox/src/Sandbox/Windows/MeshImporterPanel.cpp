@@ -9,11 +9,7 @@
 #include <Platform/OpenGL/OpenGLFramebuffer.h>
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
-#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 #include <Lamp/AssetSystem/BaseAssets.h>
-
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodePass.h>
 
 #include <Lamp/Utility/UIUtility.h>
 
@@ -32,11 +28,6 @@ namespace Sandbox
 		//Setup icons
 		m_loadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
-
-		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
-		m_renderGraph->Start();
-
-		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
 	}
 
 	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
@@ -168,8 +159,6 @@ namespace Sandbox
 				Renderer3D::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
-
-		m_renderGraph->Run(m_camera->GetCamera());
 	}
 
 	void MeshImporterPanel::LoadMesh()
@@ -290,21 +279,6 @@ namespace Sandbox
 			glm::vec2 windowPos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
 			m_hoveringPerspective = ImGui::IsWindowHovered();
 			m_camera->SetControlsEnabled(m_hoveringPerspective);
-
-			if (m_renderGraph->GetSpecification().endNode->framebuffer)
-			{
-				ImVec2 panelSize = ImGui::GetContentRegionAvail();
-				if (m_perspectiveSize != *((glm::vec2*)&panelSize))
-				{
-					m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-					m_perspectiveSize = { panelSize.x, panelSize.y };
-
-					m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-				}
-
-				uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID();
-				ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-			}
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -322,13 +296,6 @@ namespace Sandbox
 		{
 			if (UI::Property("Show Skybox", m_renderSkybox))
 			{
-				for (const auto& node : m_renderGraph->GetSpecification().nodes)
-				{
-					if (auto pass = std::dynamic_pointer_cast<Lamp::RenderNodePass>(node))
-					{
-						const_cast<RenderPassSpecification&>(pass->renderPass->GetSpecification()).drawSkybox = m_renderSkybox;
-					}
-				}
 			}
 
 			UI::Property("Show Grid", m_renderGrid);

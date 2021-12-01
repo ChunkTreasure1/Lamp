@@ -21,7 +21,14 @@ namespace Lamp
 		void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& sources);
 		void CompileOrGetOpenGLBinaries();
 		void CreateProgram();
+		void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
 
-	private:
+		std::unordered_map<uint32_t, std::vector<uint32_t>> m_vulkanSPIRV;
+		std::unordered_map<uint32_t, std::vector<uint32_t>> m_openGLSPIRV;
+
+		std::unordered_map<GLenum, std::string> m_openGLSource;
+
+		uint32_t m_rendererId;
+		std::string m_name;
 	};
 }

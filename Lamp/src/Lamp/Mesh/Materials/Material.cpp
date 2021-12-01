@@ -17,10 +17,6 @@ namespace Lamp
 	void Material::SetShader(Ref<Shader> shader)
 	{
 		m_pTextures.clear();
-		for (auto& name : shader->GetSpecification().textureNames)
-		{
-			m_pTextures.emplace(name, ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png"));
-		}
 
 		m_pShader = shader;
 	}

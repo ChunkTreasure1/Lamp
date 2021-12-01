@@ -8,8 +8,6 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 
 #include <Lamp/Utility/UIUtility.h>
 
@@ -28,10 +26,6 @@ namespace Sandbox
 		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
-		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
-		m_renderGraph->Start();
-
-		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
 		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
 		m_pSelectedMaterial = MaterialLibrary::GetMaterial("base");
 	}
@@ -121,20 +115,15 @@ namespace Sandbox
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Material View");
-
-		if (m_renderGraph->GetSpecification().endNode->framebuffer)
 		{
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
 			if (m_perspectiveSize != *((glm::vec2*)&panelSize))
 			{
-				m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 				m_perspectiveSize = { panelSize.x, panelSize.y };
 
 				m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
 
-			uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
-			ImGui::Image((ImTextureID)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -275,8 +264,6 @@ namespace Sandbox
 				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
 			}
 		}
-
-		m_renderGraph->Run(m_camera->GetCamera());
 	}
 
 	void MaterialEditor::CreateNewMaterial()

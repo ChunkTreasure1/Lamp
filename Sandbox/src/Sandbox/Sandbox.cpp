@@ -13,7 +13,6 @@
 #include "Windows/MeshImporterPanel.h"
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
-#include "Windows/RenderGraphPanel.h"
 #include "Windows/LayerViewPanel.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>

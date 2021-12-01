@@ -8,7 +8,6 @@
 #include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
-#include "Lamp/Rendering/Textures/IBLBuffer.h"
 
 #include "Lamp/Level/Level.h"
 
@@ -112,120 +111,6 @@ namespace Lamp
 		shaderToUse->Bind();
 
 		{
-			LP_PROFILE_SCOPE("Uniforms");
-			for (const auto& uniformSpec : pass->uniforms)
-			{
-				if (uniformSpec.data.type() == typeid(RenderData))
-				{
-					RenderData type = std::any_cast<RenderData>(uniformSpec.data);
-					switch (type)
-					{
-						case Lamp::RenderData::Transform:
-							shaderToUse->UploadMat4(uniformSpec.name, modelMatrix);
-							break;
-						case Lamp::RenderData::ID:
-							shaderToUse->UploadInt(uniformSpec.name, objectId);
-							break;
-						case Lamp::RenderData::MaterialUseBlending:
-							shaderToUse->UploadBool(uniformSpec.name, material->GetUseBlending());
-							break;
-						case Lamp::RenderData::MaterialBlendingMultiplier:
-							shaderToUse->UploadFloat(uniformSpec.name, material->GetBlendingMultiplier());
-							break;
-					}
-
-					continue;
-				}
-
-				if (uniformSpec.pData == nullptr && !uniformSpec.data.has_value())
-				{
-					LP_CORE_ERROR("No data at {0}!", uniformSpec.name);
-					continue;
-				}
-
-				switch (uniformSpec.type)
-				{
-					case UniformType::Int: shaderToUse->UploadInt(uniformSpec.name, uniformSpec.pData ? *static_cast<int*>(uniformSpec.pData) : std::any_cast<int>(uniformSpec.data)); break;
-					case UniformType::Float: shaderToUse->UploadFloat(uniformSpec.name, uniformSpec.pData ? *static_cast<float*>(uniformSpec.pData) : std::any_cast<float>(uniformSpec.data)); break;
-					case UniformType::Float2: shaderToUse->UploadFloat2(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::vec2*>(uniformSpec.pData) : std::any_cast<glm::vec2>(uniformSpec.data)); break;
-					case UniformType::Float3: shaderToUse->UploadFloat3(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::vec3*>(uniformSpec.pData) : std::any_cast<glm::vec3>(uniformSpec.data)); break;
-					case UniformType::Float4: shaderToUse->UploadFloat4(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::vec4*>(uniformSpec.pData) : std::any_cast<glm::vec4>(uniformSpec.data)); break;
-					case UniformType::Mat3: shaderToUse->UploadMat4(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::mat3*>(uniformSpec.pData) : std::any_cast<glm::mat3>(uniformSpec.data)); break;
-					case UniformType::Mat4: shaderToUse->UploadMat4(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::mat4*>(uniformSpec.pData) : std::any_cast<glm::mat4>(uniformSpec.data)); break;
-					case UniformType::Sampler2D: shaderToUse->UploadInt(uniformSpec.name, uniformSpec.pData ? *static_cast<int*>(uniformSpec.pData) : std::any_cast<int>(uniformSpec.data)); break;
-					case UniformType::SamplerCube: shaderToUse->UploadInt(uniformSpec.name, uniformSpec.pData ? *static_cast<int*>(uniformSpec.pData) : std::any_cast<int>(uniformSpec.data)); break;
-				}
-			}
-		}
-		{
-			LP_PROFILE_SCOPE("Framebuffers");
-			//Framebuffers
-			for (const auto& spec : pass->framebuffers)
-			{
-
-				if (!spec.framebuffer)
-				{
-					LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
-					continue;
-				}
-
-				for (const auto& attachment : spec.attachments)
-				{
-					switch (attachment.type)
-					{
-						case TextureType::Color: spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId); break;
-						case TextureType::Depth: spec.framebuffer->BindDepthAttachment(attachment.bindId); break;
-					}
-				}
-			}
-		}
-		{
-			LP_PROFILE_SCOPE("Textures");
-
-			int i = 0;
-			for (const auto& textureName : material->GetShader()->GetSpecification().textureNames)
-			{
-				material->GetTextures()[textureName]->Bind(i);
-				i++;
-			}
-
-			//Textures
-			for (const auto& textureSpec : pass->textures)
-			{
-				if (!textureSpec.texture)
-				{
-					LP_CORE_ERROR("Texture is nullptr");
-					continue;
-				}
-
-				textureSpec.texture->Bind(textureSpec.bindSlot);
-			}
-
-			/////Testing/////
-			uint32_t index = 0;
-			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
-			{
-				if (!light->castShadows)
-				{
-					continue;
-				}
-
-				shaderToUse->UploadInt("u_DirShadowMaps[" + std::to_string(index) + "]", i);
-				light->shadowBuffer->BindDepthAttachment(i);
-				i++;
-				index++;
-			}
-
-			index = 0;
-			for (auto& light : s_pRenderData->pointLightsToUse)
-			{
-				shaderToUse->UploadInt("u_PointShadowMaps[" + std::to_string(index) + "]", index);
-				light->shadowBuffer->BindDepthAttachment(index);
-				index++;
-			}
-		}
-
-		{
 			vertexData->Bind();
 			RenderCommand::DrawIndexed(vertexData, vertexData->GetIndexBuffer()->GetCount());
 			s_renderStatistics.sceneDrawCalls++;
@@ -254,68 +139,11 @@ namespace Lamp
 
 		shaderToUse->Bind();
 
-		{
-			LP_PROFILE_SCOPE("Uniforms");
-			for (const auto& uniformSpec : pass->uniforms)
-			{
-				if (!uniformSpec.pData && !uniformSpec.data.has_value())
-				{
-					LP_CORE_ERROR("No data at {0}!", uniformSpec.name);
-					continue;
-				}
-
-				switch (uniformSpec.type)
-				{
-					case UniformType::Int: shaderToUse->UploadInt(uniformSpec.name, uniformSpec.pData ? *static_cast<int*>(uniformSpec.pData) : std::any_cast<int>(uniformSpec.data)); break;
-					case UniformType::Float: shaderToUse->UploadFloat(uniformSpec.name, uniformSpec.pData ? *static_cast<float*>(uniformSpec.pData) : std::any_cast<float>(uniformSpec.data)); break;
-					case UniformType::Float2: shaderToUse->UploadFloat2(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::vec2*>(uniformSpec.pData) : std::any_cast<glm::vec2>(uniformSpec.data)); break;
-					case UniformType::Float3: shaderToUse->UploadFloat3(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::vec3*>(uniformSpec.pData) : std::any_cast<glm::vec3>(uniformSpec.data)); break;
-					case UniformType::Float4: shaderToUse->UploadFloat4(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::vec4*>(uniformSpec.pData) : std::any_cast<glm::vec4>(uniformSpec.data)); break;
-					case UniformType::Mat3: shaderToUse->UploadMat4(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::mat3*>(uniformSpec.pData) : std::any_cast<glm::mat3>(uniformSpec.data)); break;
-					case UniformType::Mat4: shaderToUse->UploadMat4(uniformSpec.name, uniformSpec.pData ? *static_cast<glm::mat4*>(uniformSpec.pData) : std::any_cast<glm::mat4>(uniformSpec.data)); break;
-					case UniformType::Sampler2D: shaderToUse->UploadInt(uniformSpec.name, uniformSpec.pData ? *static_cast<int*>(uniformSpec.pData) : std::any_cast<int>(uniformSpec.data)); break;
-					case UniformType::SamplerCube: shaderToUse->UploadInt(uniformSpec.name, uniformSpec.pData ? *static_cast<int*>(uniformSpec.pData) : std::any_cast<int>(uniformSpec.data)); break;
-				}
-			}
-		}
-
-		//Framebuffers
-		for (const auto& spec : pass->framebuffers)
-		{
-			if (!spec.framebuffer)
-			{
-				LP_CORE_ERROR("Framebuffer is nullptr at {0}!", spec.name);
-				continue;
-			}
-
-			for (const auto& attachment : spec.attachments)
-			{
-				switch (attachment.type)
-				{
-					case TextureType::Color: spec.framebuffer->BindColorAttachment(attachment.bindId, attachment.attachmentId); break;
-					case TextureType::Depth: spec.framebuffer->BindDepthAttachment(attachment.bindId); break;
-				}
-			}
-		}
-
-		//Textures
-		for (const auto& textureSpec : pass->textures)
-		{
-			if (!textureSpec.texture)
-			{
-				LP_CORE_ERROR("Texture is nullptr");
-				continue;
-			}
-
-			textureSpec.texture->Bind(textureSpec.bindSlot);
-		}
-
 		DrawQuad();
 	}
 
 	void Renderer3D::SetEnvironment(const std::string& path)
 	{
-		Renderer::s_pSceneData->internalFramebuffers["Skybox"] = CreateRef<IBLBuffer>(path);
 	}
 
 	void Renderer3D::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> mat, size_t id)

@@ -161,7 +161,6 @@
     <ClInclude Include="src\Sandbox\Windows\LayerViewPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\MaterialEditor.h" />
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h" />
-    <ClInclude Include="src\Sandbox\Windows\RenderGraphPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp" />
@@ -178,7 +177,6 @@
     <ClCompile Include="src\Sandbox\Windows\LayerViewPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\MaterialEditor.cpp" />
     <ClCompile Include="src\Sandbox\Windows\MeshImporterPanel.cpp" />
-    <ClCompile Include="src\Sandbox\Windows\RenderGraphPanel.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>

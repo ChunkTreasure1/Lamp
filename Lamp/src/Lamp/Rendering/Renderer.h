@@ -35,6 +35,8 @@ namespace Lamp
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static void GenerateKernel();
 
+		static VkDescriptorPool GetDescriptorPool() { return s_descriptorPool; }
+
 		struct SceneData
 		{
 			//Data
@@ -107,6 +109,7 @@ namespace Lamp
 
 		static SceneData* s_pSceneData;
 		static Capabilities s_capabilities;
+		static VkDescriptorPool s_descriptorPool; //TODO: should renderer be abstracted?
 
 		friend class VulkanPhysicalDevice;
 

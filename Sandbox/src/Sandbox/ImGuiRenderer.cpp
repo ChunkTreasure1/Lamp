@@ -22,8 +22,6 @@
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 #include <Lamp/Rendering/Buffers/FrameBuffer.h>
 
 #include <Lamp/Utility/UIUtility.h>
@@ -72,16 +70,6 @@ namespace Sandbox
 			}
 
 			uint32_t textureID = 0;
-			if (Renderer::GetRenderGraph())
-			{
-				auto& renderGraph = Renderer::GetRenderGraph();
-
-				if (renderGraph->GetSpecification().endNode->framebuffer)
-				{
-					textureID = renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
-					m_SelectionBuffer = renderGraph->GetSpecification().endNode->framebuffer;
-				}
-			}
 			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
@@ -647,25 +635,14 @@ namespace Sandbox
 		{
 			static std::filesystem::path path = "";
 			static std::filesystem::path lastPath = "";
-			path = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
 			lastPath = path;
 
 			if (UI::BeginProperties("renderProps"))
 			{
 				if (UI::Property("Graph", path))
 				{
-					auto graph = ResourceCache::GetAsset<RenderGraph>(path);
-					if (!graph)
-					{
-						path = lastPath;
-					}
 
-					Renderer::SetRenderGraph(graph);
-					Renderer::GetRenderGraph()->Start();
 				}
-
-				auto& renderGraph = std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph());
-				UI::Property("TestGraph", renderGraph);
 
 				UI::EndProperties();
 			}

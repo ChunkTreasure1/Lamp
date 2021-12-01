@@ -96,9 +96,6 @@
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\RenderGraphPanel.h">
-      <Filter>src\Sandbox\Windows</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -141,9 +138,6 @@
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\MeshImporterPanel.cpp">
-      <Filter>src\Sandbox\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\RenderGraphPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">

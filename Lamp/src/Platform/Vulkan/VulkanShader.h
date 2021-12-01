@@ -59,6 +59,8 @@ namespace Lamp
 		~VulkanShader();
 
 		void Reload(bool forceCompile) override;
+		void Bind() override {}
+		const std::string& GetName() override { return m_name; }
 
 		inline const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStageInfos() { return m_pipelineShaderStageInfos; }
 		inline const std::vector<VkDescriptorSetLayout>& GetDescriptorSetLayouts() { return m_descriptorSetLayouts; }
@@ -86,5 +88,7 @@ namespace Lamp
 		std::unordered_map<std::string, ShaderResourceDeclaration> m_resources;
 		std::unordered_map<VkShaderStageFlagBits, std::string> m_shaderSource;
 		std::unordered_map<uint32_t, std::vector<VkDescriptorPoolSize>> m_descriptorTypes;
+
+		std::string m_name;
 	};
 }

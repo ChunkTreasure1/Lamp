@@ -5,8 +5,6 @@
 #include "RenderCommand.h"
 #include "Renderer3D.h"
 
-#include "RenderGraph/RenderPassSpecifications.h"
-
 #define LP_EXTRA_RENDER(fn) std::bind(&fn, this)
 
 namespace Lamp
@@ -40,11 +38,6 @@ namespace Lamp
 		bool draw2D = false;
 		bool drawSkybox = false;
 		bool enableBlending = false;
-
-		std::vector<PassUniformSpecification> uniforms; // name, type, data, attrId
-		std::vector<PassTextureSpecification> textures; // texture, texBindSlot, attrId
-		std::vector<PassFramebufferSpecification> framebuffers; // framebuffer, GraphFramebufferSpec, attrId
-		std::vector<PassFramebufferCommandSpecification> framebufferCommands; // main buffer, secondary buffer, command, attrId
 	};
 
 	class RenderPass

@@ -112,7 +112,6 @@ namespace Lamp
 
 		s_pStorage->pTextureShader = ShaderLibrary::GetShader("quad");
 		s_pStorage->pTextureShader->Bind();
-		s_pStorage->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 
 		//s_pStorage->TextureSlots[0] = s_pStorage->pWhiteTexture;
 

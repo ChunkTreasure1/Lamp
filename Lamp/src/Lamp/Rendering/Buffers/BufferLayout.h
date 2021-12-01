@@ -21,14 +21,14 @@ namespace Lamp
 	{
 		switch (elementType)
 		{
-			case Lamp::ElementType::Bool: return 1;
-			case Lamp::ElementType::Int: return 4;
-			case Lamp::ElementType::Float: return 4;
-			case Lamp::ElementType::Float2: return 4 * 2;
-			case Lamp::ElementType::Float3: return 4 * 3;
-			case Lamp::ElementType::Float4: return 4 * 4;
-			case Lamp::ElementType::Mat3: return 4 * 3 * 3;
-			case Lamp::ElementType::Mat4: return 4 * 4 * 4;
+			case ElementType::Bool: return 1;
+			case ElementType::Int: return 4;
+			case ElementType::Float: return 4;
+			case ElementType::Float2: return 4 * 2;
+			case ElementType::Float3: return 4 * 3;
+			case ElementType::Float4: return 4 * 4;
+			case ElementType::Mat3: return 4 * 3 * 3;
+			case ElementType::Mat4: return 4 * 4 * 4;
 		}
 
 		return 0;
@@ -44,14 +44,14 @@ namespace Lamp
 		{
 			switch (elementType)
 			{
-			case Lamp::ElementType::Bool: return 1;
-			case Lamp::ElementType::Int: return 1;
-			case Lamp::ElementType::Float: return 1;
-			case Lamp::ElementType::Float2: return 2;
-			case Lamp::ElementType::Float3: return 3;
-			case Lamp::ElementType::Float4: return 4;
-			case Lamp::ElementType::Mat3: return 3 * 3;
-			case Lamp::ElementType::Mat4: return 4 * 4;
+				case ElementType::Bool: return 1;
+				case ElementType::Int: return 1;
+				case ElementType::Float: return 1;
+				case ElementType::Float2: return 2;
+				case ElementType::Float3: return 3;
+				case ElementType::Float4: return 4;
+				case ElementType::Mat3: return 3 * 3;
+				case ElementType::Mat4: return 4 * 4;
 			}
 
 			return 0;

@@ -2,7 +2,6 @@
 #include "AssetManager.h"
 
 #include "Lamp/AssetSystem/LevelLoader.h"
-#include "Lamp/AssetSystem/RenderGraphLoader.h"
 #include "ResourceCache.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 
@@ -41,7 +40,6 @@ namespace Lamp
 		m_AssetLoaders[AssetType::MeshSource] = CreateScope<MeshSourceLoader>();
 		m_AssetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
 		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
-		m_AssetLoaders[AssetType::RenderGraph] = CreateScope<RenderGraphLoader>();
 		m_AssetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
 		m_AssetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
 		LoadAssetRegistry();

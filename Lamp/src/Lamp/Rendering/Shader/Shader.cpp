@@ -8,13 +8,13 @@
 
 namespace Lamp
 {
-	Ref<Shader> Shader::Create(const std::string& path)
+	Ref<Shader> Shader::Create(const std::filesystem::path& path, bool forceCompile)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(path);
-			case RendererAPI::API::Vulkan: return CreateRef<VulkanShader>(path);
+			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(path, forceCompile);
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanShader>(path, forceCompile);
 		}
 
 		return nullptr;

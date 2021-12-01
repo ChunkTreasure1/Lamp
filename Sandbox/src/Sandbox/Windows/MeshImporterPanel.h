@@ -57,7 +57,6 @@ namespace Sandbox
 		//Icons
 		Ref<Lamp::Texture2D> m_loadIcon;
 		Ref<Lamp::Texture2D> m_saveIcon;
-		Ref<Lamp::RenderGraph> m_renderGraph;
 
 		//Import settings
 		Lamp::ImportSettings m_importSettings;

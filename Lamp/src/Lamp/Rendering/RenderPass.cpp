@@ -92,25 +92,6 @@ namespace Lamp
 		}
 
 		m_passSpecification.targetFramebuffer->Unbind();
-
-		for (const auto& commandSpec : m_passSpecification.framebufferCommands)
-		{
-			if (!commandSpec.primary || !commandSpec.secondary)
-			{
-				LP_CORE_ERROR("Framebuffer was nullptr at {0}!", commandSpec.name);
-				continue;
-			}
-
-			switch (commandSpec.command)
-			{
-				case FramebufferCommand::Copy:
-					commandSpec.primary->Copy(commandSpec.secondary->GetRendererID(), { commandSpec.primary->GetSpecification().Width, commandSpec.primary->GetSpecification().Height }, true);
-					break;
-
-				default:
-					break;
-			}
-		}
 	}
 
 	void RenderPassManager::AddPass(Ref<RenderPass>& pass)

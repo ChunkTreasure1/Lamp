@@ -29,7 +29,7 @@ namespace Lamp
 	{
 		for (auto& shader : m_Shaders)
 		{
-			shader->Recompile();
+			shader->Reload(true);
 		}
 	}
 

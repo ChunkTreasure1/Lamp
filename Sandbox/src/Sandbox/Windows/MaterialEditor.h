@@ -34,7 +34,6 @@ namespace Sandbox
 		Ref<Lamp::Framebuffer> m_framebuffer;
 		Ref<Lamp::Mesh> m_materialModel;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
-		Ref<Lamp::RenderGraph> m_renderGraph;
 		std::filesystem::path m_pathOnRightClick;
 
 		glm::vec2 m_perspectiveSize = { 0.f, 0.f };

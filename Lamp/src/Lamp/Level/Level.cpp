@@ -9,7 +9,6 @@
 #include "Lamp/Objects/Brushes/Brush.h"
 
 #include "Lamp/GraphKey/NodeRegistry.h"
-#include "Lamp/Rendering/RenderGraph/RenderGraph.h"
 
 #include "Lamp/Objects/Entity/Base/Entity.h"
 #include "Lamp/Objects/Brushes/Brush.h"
@@ -341,14 +340,7 @@ namespace Lamp
 
 	void Level::RenderLevel(Ref<CameraBase> camera)
 	{
-		if (const auto& graph = Renderer::s_pSceneData->renderGraph)
-		{
-			graph->Run(camera);
-		}
-		else
-		{
-			RenderPassManager::Get()->RenderPasses(camera);
-		}
+		RenderPassManager::Get()->RenderPasses(camera);
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)
@@ -357,7 +349,7 @@ namespace Lamp
 		{
 			buffer->Resize(e.GetWidth(), e.GetHeight());
 		}
-		
+
 		Renderer::s_pSceneData->bufferSize = { e.GetWidth(), e.GetHeight() };
 
 		return false;

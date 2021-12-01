@@ -195,9 +195,6 @@
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClInclude>
@@ -465,42 +462,6 @@
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -527,9 +488,6 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Skybox.h">
       <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h">
       <Filter>src\Lamp\Rendering\Textures</Filter>
@@ -1899,6 +1857,10 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1911,9 +1873,6 @@
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp">
-      <Filter>src\Lamp\AssetSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp">
       <Filter>src\Lamp\AssetSystem</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp">
@@ -2117,36 +2076,6 @@
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderGraph.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderNode.cpp">
-      <Filter>src\Lamp\Rendering\RenderGraph</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
@@ -2173,9 +2102,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp">
       <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Textures</Filter>
@@ -2344,5 +2270,9 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp" />
   </ItemGroup>
 </Project>

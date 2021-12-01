@@ -36,13 +36,14 @@ namespace Lamp
 	struct ShaderResourceDeclaration
 	{
 		ShaderResourceDeclaration() = default;
-		ShaderResourceDeclaration(const std::string& name, uint32_t binding, uint32_t x)
-			: name(name), binding(binding)
+		ShaderResourceDeclaration(const std::string& name, uint32_t binding, uint32_t set)
+			: name(name), binding(binding), set(set)
 		{
 		}
 
 		std::string name;
 		uint32_t binding;
+		uint32_t set;
 	};
 
 	class Shader : public Asset
@@ -84,6 +85,6 @@ namespace Lamp
 		AssetType GetType() override { return GetStaticType(); }
 
 	public:
-		static Ref<Shader> Create(const std::string& path);
+		static Ref<Shader> Create(const std::filesystem::path& path, bool forceCompile = false);
 	};
 }

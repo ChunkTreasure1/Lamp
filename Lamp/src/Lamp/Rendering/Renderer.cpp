@@ -1,19 +1,23 @@
 #include "lppch.h"
 #include "Renderer.h"
 
-#include "RenderGraph/Nodes/DynamicUniformRegistry.h"
-#include "Shadows/PointShadowBuffer.h"
-#include "Buffers/ShaderStorageBuffer.h"
-#include "RenderCommand.h"
-#include "Renderer2D.h"
-#include "Renderer3D.h"
+#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Rendering/Buffers/ShaderStorageBuffer.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/RenderCommand.h"
+#include "Lamp/Rendering/Renderer2D.h"
+#include "Lamp/Rendering/Renderer3D.h"
 
 #include "Lamp/Level/Level.h"
-#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
-#include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include <random>
+
+//TODO: remove
+#include "Platform/Vulkan/VulkanContext.h"
+#include "Platform/Vulkan/VulkanDevice.h"
+#include <vulkan/vulkan_core.h>
 
 namespace Lamp
 {
@@ -25,7 +29,32 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		s_pSceneData = new Renderer::SceneData();
 
+		//TODO: this should be moved into wrapper
+		VkDescriptorPoolSize poolSizes[] =
+		{
+			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+		};
 
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		poolInfo.maxSets = 10000;
+		poolInfo.poolSizeCount = (uint32_t)IM_ARRAYSIZE(poolSizes);
+		poolInfo.pPoolSizes = poolSizes;
+
+		auto device = VulkanContext::GetCurrentDevice();
+		VkResult result = vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &s_descriptorPool);
+		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor pool!");
 	}
 
 	void Renderer::Shutdown()
