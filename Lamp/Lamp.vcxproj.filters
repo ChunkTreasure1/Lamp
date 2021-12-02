@@ -1891,6 +1891,8 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
+    <ClInclude Include="src\Lamp\Rendering\RendererNew.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2338,5 +2340,7 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RendererNew.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
   </ItemGroup>
 </Project>

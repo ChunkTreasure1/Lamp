@@ -251,6 +251,7 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\Lamp\Rendering\RendererNew.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
@@ -291,6 +292,7 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
@@ -803,6 +805,7 @@
     <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RendererNew.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
@@ -835,6 +838,7 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />

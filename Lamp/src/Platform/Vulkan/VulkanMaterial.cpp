@@ -21,7 +21,13 @@ namespace Lamp
 
 	void VulkanMaterial::SetTextures(const std::unordered_map<std::string, Ref<Texture2D>>& textures)
 	{
+		for (const auto& [name, texture] : textures)
+		{
+			auto it = m_shaderResources.find(name);
+			LP_CORE_ASSERT(it == m_shaderResources.end(), "Texture does not exist in material!");
+		}
 
+		m_textures = textures;
 	}
 
 	void VulkanMaterial::SetTexture(const std::string& name, Ref<Texture2D> texture)
