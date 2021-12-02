@@ -97,6 +97,7 @@ namespace Lamp
 	{
 		auto device = VulkanContext::GetCurrentDevice();
 
+		vkDeviceWaitIdle(device->GetHandle());
 		vkDestroySampler(device->GetHandle(), m_sampler, nullptr);
 		vkDestroyImageView(device->GetHandle(), m_textureView, nullptr);
 

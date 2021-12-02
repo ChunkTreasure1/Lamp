@@ -107,7 +107,7 @@ namespace Lamp
 
 		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace(i, CreateRef<Material>(i, pScene->mMaterials[i]->GetName().C_Str()));
+			materials.emplace(i, Material::Create(pScene->mMaterials[i]->GetName().C_Str(), i));
 		}
 
 		return meshes;

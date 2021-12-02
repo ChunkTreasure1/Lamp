@@ -1,23 +1,42 @@
 #include "lppch.h"
 #include "Material.h"
 
-#include "Lamp/AssetSystem/ResourceCache.h"
-#include "Lamp/Rendering/Shader/Shader.h"
+#include "Lamp/Rendering/Renderer.h"
+
+#include "Platform/Vulkan/VulkanMaterial.h"
 
 namespace Lamp
 {
-	void Material::SetTexture(const std::string& name, Ref<Texture2D> texture)
+	Ref<Material> Material::Create(Ref<Shader> shader, uint32_t id)
 	{
-		if (m_pTextures.find(name) != m_pTextures.end())
+		switch (Renderer::GetAPI())
 		{
-			m_pTextures[name] = texture;
+			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanMaterial>(shader, id);
 		}
+
+		return nullptr;
 	}
 
-	void Material::SetShader(Ref<Shader> shader)
+	Ref<Material> Material::Create()
 	{
-		m_pTextures.clear();
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanMaterial>();
+		}
 
-		m_pShader = shader;
+		return nullptr;
+	}
+
+	Ref<Material> Material::Create(const std::string& name, uint32_t index)
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanMaterial>(name, index);
+		}
+
+		return nullptr;
 	}
 }

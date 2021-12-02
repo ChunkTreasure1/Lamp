@@ -44,7 +44,9 @@ namespace Lamp
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static void GenerateKernel();
 
+		//TODO: should renderer be abstracted?
 		static void* GetDescriptorPool();
+		static void Draw();
 
 		struct SceneData
 		{

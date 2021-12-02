@@ -21,6 +21,8 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 #include <vulkan/vulkan_core.h>
 #include "Lamp/AssetSystem/MeshImporter.h"
+#include "Platform/Vulkan/VulkanSwapchain.h"
+#include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 namespace Lamp
 {
@@ -43,7 +45,6 @@ namespace Lamp
 
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Renderer::Capabilities Renderer::s_capabilities;
-
 
 
 	void Renderer::Initialize()
@@ -80,7 +81,7 @@ namespace Lamp
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor pool!");
 
 		SetupBuffers();
-		s_pTempStorage->mainShader = Shader::Create("engine/shaders/vulkan/testShader.glsl", true);
+		s_pTempStorage->mainShader = Shader::Create("engine/shaders/vulkan/testShader.glsl", false);
 
 		RenderPipelineSpecification pipelineSpec{};
 		pipelineSpec.shader = s_pTempStorage->mainShader;
@@ -99,7 +100,7 @@ namespace Lamp
 		s_pTempStorage->mainPipeline = RenderPipeline::Create(pipelineSpec);
 
 		MeshImportSettings settings;
-		settings.path = "assets/meshes/teddy/lampTestModelOnePart.fbx";
+		settings.path = "assets/meshes/teddy/teddy.fbx";
 		s_pTempStorage->teddy = MeshImporter::ImportMesh(settings);
 		s_pTempStorage->teddyTexture = Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_albedo.tga");
 
@@ -109,7 +110,9 @@ namespace Lamp
 	void Renderer::Shutdown()
 	{
 		LP_PROFILE_FUNCTION();
-		Renderer3D::Shutdown();
+		delete s_pTempStorage;
+		delete s_pSceneData;
+		//Renderer3D::Shutdown();
 	}
 
 	void Renderer::Begin(const Ref<CameraBase> camera)
@@ -118,13 +121,39 @@ namespace Lamp
 
 		//g_pEnv->pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
 
-		UpdateBuffers(camera);
-		Renderer3D::Begin(camera);
+		//UpdateBuffers(camera);
+		//Renderer3D::Begin(camera);
+	
+	
+		
+		s_pTempStorage->commandBuffer->Begin();
+
+		auto swapchain = std::dynamic_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		const uint32_t currentFrame = swapchain->GetCurrentFrame();
+
+		VkRenderPassBeginInfo renderPassBegin{};
+		renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassBegin.renderPass = swapchain->GetRenderPass();
+		renderPassBegin.framebuffer = swapchain->GetFramebuffer(currentFrame);
+		renderPassBegin.renderArea.offset = { 0, 0 };
+		renderPassBegin.renderArea.extent = swapchain->GetExtent();
+
+		std::array<VkClearValue, 2> clearColors;
+		clearColors[0].color = { 0.1f, 0.1f, 0.1f, 1.f };
+		clearColors[1].depthStencil = { 1.f, 0 };
+		renderPassBegin.clearValueCount = 2;
+		renderPassBegin.pClearValues = clearColors.data();
+
+		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(s_pTempStorage->commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
+		s_pTempStorage->mainPipeline->Bind(currentFrame);
 	}
 
 	void Renderer::End()
 	{
-		Renderer3D::End();
+		//Renderer3D::End();
+	
+		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(s_pTempStorage->commandBuffer->GetCurrentCommandBuffer()));
+		s_pTempStorage->commandBuffer->End();
 	}
 
 	void Renderer::CreateUniformBuffers()
@@ -212,6 +241,24 @@ namespace Lamp
 	void* Renderer::GetDescriptorPool()
 	{
 		return s_descriptorPool;
+	}
+
+	void Renderer::Draw()
+	{
+		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		auto vulkanPipeline = std::dynamic_pointer_cast<VulkanRenderPipeline>(s_pTempStorage->mainPipeline);
+
+		vulkanPipeline->SetTexture(s_pTempStorage->teddyTexture, 1, 0, currentFrame);
+		vulkanPipeline->BindDescriptorSets(currentFrame);
+
+		for (const auto subMesh : s_pTempStorage->teddy->GetSubMeshes())
+		{
+			subMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(s_pTempStorage->commandBuffer);
+			subMesh->GetVertexArray()->GetIndexBuffer()->Bind(s_pTempStorage->commandBuffer);
+
+			vkCmdDrawIndexed(static_cast<VkCommandBuffer>(s_pTempStorage->commandBuffer->GetCurrentCommandBuffer()), subMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		}
 	}
 
 	static float Lerp(float a, float b, float f)

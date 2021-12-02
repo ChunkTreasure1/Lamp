@@ -63,11 +63,11 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 		//AudioEngine::Shutdown();
-		//Renderer::Shutdown();
+		Renderer::Shutdown();
 
 		m_AssetManagerThread.join();
 
-		g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
+		//g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
 
 		delete g_pEnv->pAssetManager;
 		delete g_pEnv;
@@ -85,7 +85,11 @@ namespace Lamp
 			m_FrameTime.Begin();
 
 			m_pWindow->GetSwapchain()->BeginFrame();
-			//Renderer::Begin(nullptr);
+			Renderer::Begin(nullptr);
+
+			Renderer::Draw();
+
+			Renderer::End();
 
 			//AudioEngine::Update();
 			////Load 

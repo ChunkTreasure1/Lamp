@@ -176,7 +176,7 @@ namespace Sandbox
 		{
 			mat.second->SetShader(m_defaultShader);
 
-			for (auto& tex : mat.second->GetTextures())
+			for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
 			{
 				tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 			}
@@ -395,7 +395,7 @@ namespace Sandbox
 
 					ImGui::Separator();
 
-					for (auto& tex : mat.second->GetTextures())
+					for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
 					{
 						ImGui::Text(tex.first.c_str());
 

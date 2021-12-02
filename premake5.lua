@@ -122,7 +122,8 @@ project "Lamp"
 		defines 
 		{
 			"LP_PLATFORM_WINDOWS",
-			"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE",
+			"GLM_DEPTH_ZERO_TO_ONE"
 		}
 
 		filter "configurations:Debug"

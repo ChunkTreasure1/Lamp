@@ -11,7 +11,6 @@
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define LP_DEBUGBREAK() __debugbreak()
 		#define GLFW_EXPOSE_NATIVE_WIN32	
-		#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 	#else
 		#error "Platform does not support debugbreak!"
 	#endif

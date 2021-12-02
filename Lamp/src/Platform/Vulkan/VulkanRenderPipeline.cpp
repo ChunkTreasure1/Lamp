@@ -113,7 +113,7 @@ namespace Lamp
 
 		Invalidate();
 	}
-
+	   
 	void VulkanRenderPipeline::SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index)
 	{
 		auto vulkanShader = std::dynamic_pointer_cast<VulkanShader>(m_specification.shader);
@@ -218,7 +218,7 @@ namespace Lamp
 		rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
 		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+		rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 
 		VkPipelineMultisampleStateCreateInfo multisampling{};

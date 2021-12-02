@@ -250,7 +250,7 @@ namespace Lamp
 
 	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
-		asset = CreateRef<Material>();
+		asset = Material::Create();
 		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
 
 		if (!std::filesystem::exists(path))

@@ -82,7 +82,7 @@ namespace Lamp
 
 	void MaterialLibrary::LoadMaterial(const std::filesystem::path& path)
 	{
-		Ref<Asset> mat = CreateRef<Material>();
+		Ref<Asset> mat = Material::Create();
 		g_pEnv->pAssetManager->LoadAsset(path, mat);
 		if (!mat->IsValid())
 		{

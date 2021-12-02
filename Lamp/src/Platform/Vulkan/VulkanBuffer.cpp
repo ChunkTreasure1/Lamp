@@ -143,6 +143,6 @@ namespace Lamp
 
 	uint32_t VulkanIndexBuffer::GetCount()
 	{
-		return uint32_t();
+		return m_count;
 	}
 }

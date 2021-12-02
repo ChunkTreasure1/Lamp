@@ -29,9 +29,9 @@ void main()
 layout(location = 0) out vec4 o_Color;
 
 layout(location = 1) in vec2 v_TexCoords;
-//layout(binding = 1) uniform sampler2D u_Sampler;
+layout(binding = 1) uniform sampler2D u_Sampler;
 
 void main()
 {
-    o_Color = vec4(1.0, 1.0, 1.0, 1.0);//texture(u_Sampler, v_TexCoords);
+    o_Color = texture(u_Sampler, v_TexCoords);
 }

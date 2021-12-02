@@ -77,7 +77,8 @@ namespace Lamp
 		vmaGetAllocationInfo(s_pData->allocator, allocation, &allocInfo);
 
 		s_pData->totalAllocatedBytes += allocInfo.size;
-		LP_CORE_INFO("Total allocation: " + std::to_string(s_pData->totalAllocatedBytes));
+		LP_CORE_INFO("VulkanAllocator: Total allocation: " + std::to_string(s_pData->totalAllocatedBytes));
+		LP_CORE_INFO("VulkanAllocator: Currently allocated: {0}", (s_pData->totalAllocatedBytes - s_pData->totalFreedBytes));
 
 		return allocation;
 	}
@@ -94,7 +95,8 @@ namespace Lamp
 		vmaGetAllocationInfo(s_pData->allocator, allocation, &allocInfo);
 
 		s_pData->totalAllocatedBytes += allocInfo.size;
-		LP_CORE_INFO("Total allocation: " + std::to_string(s_pData->totalAllocatedBytes));
+		LP_CORE_INFO("VulkanAllocator: Total allocation: " + std::to_string(s_pData->totalAllocatedBytes));
+		LP_CORE_INFO("VulkanAllocator: Currently allocated: {0}", (s_pData->totalAllocatedBytes - s_pData->totalFreedBytes));
 
 		return allocation;
 	}
@@ -117,7 +119,8 @@ namespace Lamp
 		VmaAllocationInfo allocInfo{};
 		vmaGetAllocationInfo(s_pData->allocator, allocation, &allocInfo);
 		s_pData->totalFreedBytes += allocInfo.size;
-		LP_CORE_INFO("Total freed: " + std::to_string(s_pData->totalFreedBytes));
+		LP_CORE_INFO("VulkanAllocator: Total freed: " + std::to_string(s_pData->totalFreedBytes));
+		LP_CORE_INFO("VulkanAllocator: Currently allocated: {0}", (s_pData->totalAllocatedBytes - s_pData->totalFreedBytes));
 
 		vmaDestroyImage(s_pData->allocator, image, allocation);
 	}
@@ -130,7 +133,8 @@ namespace Lamp
 		VmaAllocationInfo allocInfo{};
 		vmaGetAllocationInfo(s_pData->allocator, allocation, &allocInfo);
 		s_pData->totalFreedBytes += allocInfo.size;
-		LP_CORE_INFO("Total freed: " + std::to_string(s_pData->totalFreedBytes));
+		LP_CORE_INFO("VulkanAllocator: Total freed: " + std::to_string(s_pData->totalFreedBytes));
+		LP_CORE_INFO("VulkanAllocator: Currently allocated: {0}", (s_pData->totalAllocatedBytes - s_pData->totalFreedBytes));
 
 		vmaDestroyBuffer(s_pData->allocator, buffer, allocation);
 	}

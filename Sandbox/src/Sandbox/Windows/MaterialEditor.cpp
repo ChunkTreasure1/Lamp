@@ -178,7 +178,7 @@ namespace Sandbox
 
 		ImGui::TextUnformatted("Textures");
 
-		for (auto& tex : m_pSelectedMaterial->GetTextures())
+		for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(m_pSelectedMaterial->GetTextures()))
 		{
 			ImGui::TextUnformatted(tex.first.c_str());
 
@@ -270,7 +270,7 @@ namespace Sandbox
 	{
 		std::filesystem::path matPath = s_assetsPath / "material.mtl";
 
-		Ref<Material> mat = CreateRef<Material>(0, "New Material");
+		Ref<Material> mat = Material::Create("New Material", 0);
 		mat->Path = matPath;
 		mat->SetShader(ShaderLibrary::GetShader("pbrForward"));
 
