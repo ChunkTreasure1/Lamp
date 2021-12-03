@@ -13,17 +13,11 @@
 
 namespace Lamp
 {
+	class RendererNew;
 	class ShaderStorageBuffer;
 	class CameraBase;
 	class Texture2D;
 	class Framebuffer;
-
-	struct TestUniformBuffer
-	{
-		alignas(16) glm::mat4 model;
-		alignas(16) glm::mat4 view;
-		alignas(16) glm::mat4 projection;
-	};
 
 	class Renderer
 	{
@@ -36,17 +30,14 @@ namespace Lamp
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
 
-		static void SetupBuffers();
-
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
 
 		static const SceneData* GetSceneData() { return s_pSceneData; }
+		static Ref<RendererNew> GetRenderer() { return s_renderer; }
 		static void GenerateKernel();
 
-		//TODO: should renderer be abstracted?
-		static void* GetDescriptorPool();
-		static void Draw();
+		static void Draw(); //TODO: remove
 
 		struct SceneData
 		{
@@ -119,6 +110,7 @@ namespace Lamp
 
 		static SceneData* s_pSceneData;
 		static Capabilities s_capabilities;
+		static Ref<RendererNew> s_renderer;
 
 		friend class VulkanPhysicalDevice;
 

@@ -7,6 +7,7 @@
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include "Lamp/Core/Application.h"
 
@@ -144,7 +145,7 @@ namespace Lamp
 		{
 			VkDescriptorSetAllocateInfo allocInfo{};
 			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-			allocInfo.descriptorPool = static_cast<VkDescriptorPool>(Renderer::GetDescriptorPool());
+			allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
 			allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
 			allocInfo.pSetLayouts = allDescriptorLayouts.data();
 

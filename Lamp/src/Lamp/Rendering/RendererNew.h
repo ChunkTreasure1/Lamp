@@ -9,6 +9,8 @@ namespace Lamp
 	class RendererNew
 	{
 	public:
+		virtual void Initialize() = 0;;
+		virtual void Shutdown() = 0;
 		virtual void Begin(const Ref<CameraBase> camera) = 0;
 		virtual void End() = 0;
 

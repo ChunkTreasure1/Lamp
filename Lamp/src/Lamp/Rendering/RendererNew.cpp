@@ -11,8 +11,10 @@ namespace Lamp
 	{
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!");
+			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!") return nullptr;
 			case RendererAPI::API::Vulkan: return CreateRef<VulkanRenderer>();
 		}
+
+		return nullptr;
 	}
 }
