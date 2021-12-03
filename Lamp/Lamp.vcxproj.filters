@@ -480,6 +480,9 @@
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RendererNew.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
@@ -540,6 +543,9 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLImGuiLayer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
@@ -579,7 +585,16 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h">
@@ -1890,11 +1905,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
-    <ClInclude Include="src\Lamp\Rendering\RendererNew.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLImGuiLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2134,6 +2144,9 @@
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\RendererNew.cpp">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClCompile>
@@ -2168,6 +2181,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLImGuiLayer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -2209,7 +2225,16 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanImGuiLayer.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp">
@@ -2341,10 +2366,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RendererNew.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLImGuiLayer.cpp" />
-    <ClCompile Include="src\Platform\vulkan\VulkanImGuiLayer.cpp" />
   </ItemGroup>
 </Project>
