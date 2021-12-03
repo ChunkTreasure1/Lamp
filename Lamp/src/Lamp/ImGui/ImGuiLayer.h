@@ -15,17 +15,9 @@ namespace Lamp
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer();
-		~ImGuiLayer();
+		virtual void Begin() = 0;
+		virtual void End() = 0;
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
-
-		void Begin();
-		void End();
-		
-	private:
-		float m_Time = 0.f;
-		ImFont* m_pFont;
+		static ImGuiLayer* Create();
 	};
 }

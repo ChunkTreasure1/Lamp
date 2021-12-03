@@ -54,7 +54,7 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 		vkDeviceWaitIdle(device->GetHandle());
 		vkDestroyDescriptorPool(device->GetHandle(), m_descriptorPool, nullptr);
-	}s
+	}
 
 	void VulkanRenderer::Initialize()
 	{

@@ -278,6 +278,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLImGuiLayer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
@@ -291,6 +292,7 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanCommandBuffer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
@@ -824,6 +826,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
@@ -837,6 +840,7 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanCommandBuffer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Platform\vulkan\VulkanImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
