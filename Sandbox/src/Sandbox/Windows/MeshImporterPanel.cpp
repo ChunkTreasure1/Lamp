@@ -176,10 +176,11 @@ namespace Sandbox
 		{
 			mat.second->SetShader(m_defaultShader);
 
-			for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
-			{
-				tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
-			}
+			//TODO: fix
+			//for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
+			//{
+			//	tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+			//}
 		}
 
 		m_shaderSelectionIds.clear();
@@ -395,35 +396,36 @@ namespace Sandbox
 
 					ImGui::Separator();
 
-					for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
-					{
-						ImGui::Text(tex.first.c_str());
+					//TODO: fix
+					//for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
+					//{
+					//	ImGui::Text(tex.first.c_str());
 
-						std::filesystem::path path;
-						if (UI::ImageButton(tex.second->GetID(), path))
-						{
-							if (!path.empty())
-							{
-								Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
-								if (newTex->IsValid())
-								{
-									tex.second = newTex;
-								}
-							}
-						}
+					//	std::filesystem::path path;
+					//	if (UI::ImageButton(tex.second->GetID(), path))
+					//	{
+					//		if (!path.empty())
+					//		{
+					//			Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
+					//			if (newTex->IsValid())
+					//			{
+					//				tex.second = newTex;
+					//			}
+					//		}
+					//	}
 
-						if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
-						{
-							const wchar_t* wPath = (const wchar_t*)ptr;
-							std::filesystem::path path(wPath);
-							AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-							if (type == AssetType::Texture)
-							{
-								tex.second = ResourceCache::GetAsset<Texture2D>(path);
-							}
-						}
-						ImGui::Separator();
-					}
+					//	if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
+					//	{
+					//		const wchar_t* wPath = (const wchar_t*)ptr;
+					//		std::filesystem::path path(wPath);
+					//		AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+					//		if (type == AssetType::Texture)
+					//		{
+					//			tex.second = ResourceCache::GetAsset<Texture2D>(path);
+					//		}
+					//	}
+					//	ImGui::Separator();
+					//}
 				}
 
 				i++;

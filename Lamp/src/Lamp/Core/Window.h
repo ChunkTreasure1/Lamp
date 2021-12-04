@@ -34,6 +34,7 @@ namespace Lamp
 		virtual ~Window() = default;
 		virtual void Update(Timestep ts) = 0;
 		virtual void Maximize() = 0;
+		virtual void OnResize(uint32_t width, uint32_t height) = 0;
 
 		//Getting
 		virtual const uint32_t GetWidth() const = 0;

@@ -178,6 +178,11 @@ namespace Lamp
 		glfwMaximizeWindow(m_pWindow);
 	}
 
+	void WindowsWindow::OnResize(uint32_t width, uint32_t height)
+	{
+		m_swapchain->OnResize(width, height);
+	}
+
 	inline void WindowsWindow::SetIsVSync(bool state)
 	{
 		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)

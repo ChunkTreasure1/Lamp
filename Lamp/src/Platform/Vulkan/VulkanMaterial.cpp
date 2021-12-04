@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "VulkanMaterial.h"
 
+#include "Platform/Vulkan/VulkanRenderPipeline.h"
+
 namespace Lamp
 {
 	VulkanMaterial::VulkanMaterial()
@@ -14,38 +16,79 @@ namespace Lamp
 		SetShader(shader);
 	}
 
+	VulkanMaterial::VulkanMaterial(const std::string& name, Ref<Shader> shader, uint32_t id)
+		: m_name(name), m_index(id)
+	{
+		SetShader(shader);
+	}
+
 	VulkanMaterial::VulkanMaterial(const std::string& name, uint32_t index)
 		: m_index(index), m_name(name)
 	{
+	}
+
+	void VulkanMaterial::Bind(Ref<RenderPipeline> renderPipeline, uint32_t currentIndex)
+	{
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(renderPipeline);
+		for (const auto& spec : m_textureSpecifications)
+		{
+			vulkanPipeline->SetTexture(spec.texture, spec.binding, spec.set, currentIndex);
+		}
 	}
 
 	void VulkanMaterial::SetTextures(const std::unordered_map<std::string, Ref<Texture2D>>& textures)
 	{
 		for (const auto& [name, texture] : textures)
 		{
-			auto it = m_shaderResources.find(name);
-			LP_CORE_ASSERT(it == m_shaderResources.end(), "Texture does not exist in material!");
-		}
+			auto texRef = FindTexture(name);
+			LP_CORE_ASSERT(texRef.has_value(), "Texture does not exist in material!");
 
-		m_textures = textures;
+			texRef->get().texture = texture;
+		}
 	}
 
 	void VulkanMaterial::SetTexture(const std::string& name, Ref<Texture2D> texture)
 	{
-		auto it = m_textures.find(name);
-		LP_CORE_ASSERT(it == m_textures.end(), "Texture does not exist in material!");
+		LP_CORE_ASSERT(texture, "Texture is nullptr!");
 
-		it->second = texture;
+		auto texRef = FindTexture(name);
+		LP_CORE_ASSERT(texRef.has_value(), "Texture does not exist in material!");
+
+		texRef->get().texture = texture;
 	}
 
 	void VulkanMaterial::SetShader(Ref<Shader> shader)
 	{
 		m_shader = std::dynamic_pointer_cast<VulkanShader>(shader);
-		m_shaderResources = m_shader->GetResources();
 
+		m_textureSpecifications.clear();
 		for (const auto& resource : m_shader->GetResources())
 		{
-			m_textures.emplace(resource.first, nullptr);
+			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set - 1, resource.second.binding, nullptr });
 		}
+	}
+
+	const std::vector<Ref<Texture2D>> VulkanMaterial::GetTextures()
+	{
+		std::vector<Ref<Texture2D>> textures;
+		for (const auto& spec : m_textureSpecifications)
+		{
+			textures.emplace_back(spec.texture);
+		}
+
+		return textures;
+	}
+
+	std::optional<std::reference_wrapper<VulkanMaterial::MaterialTextureSpecification>> VulkanMaterial::FindTexture(const std::string& name)
+	{
+		for (uint32_t i = 0; i < m_textureSpecifications.size(); i++)
+		{
+			if (m_textureSpecifications[i].name == name)
+			{
+				return m_textureSpecifications[i];
+			}
+		}
+
+		return std::nullopt;
 	}
 }

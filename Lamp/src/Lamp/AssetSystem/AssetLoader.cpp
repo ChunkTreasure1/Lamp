@@ -227,10 +227,11 @@ namespace Lamp
 			out << YAML::Key << "textures" << YAML::Value;
 			out << YAML::BeginMap;
 			{
-				for (auto& tex : mat->GetTextures())
-				{
-					LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Handle, out);
-				}
+				//TODO: fix
+				//for (auto& tex : mat->GetTextures())
+				//{
+				//	LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Handle, out);
+				//}
 			}
 			out << YAML::EndMap;
 

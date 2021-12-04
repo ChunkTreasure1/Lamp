@@ -13,6 +13,7 @@ namespace Lamp
 
 		void Update(Timestep ts) override;
 		void Maximize() override;
+		void OnResize(uint32_t width, uint32_t height) override;
 
 		//Getting
 		const uint32_t GetWidth() const override { return m_Data.Width; }

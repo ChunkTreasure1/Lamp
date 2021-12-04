@@ -158,11 +158,11 @@ namespace Lamp
 
 	void VulkanImGuiLayer::Begin()
 	{
-		Renderer::GetRenderer()->Begin(nullptr);
-
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGui::ShowDemoWindow();
 	}
 
 	void VulkanImGuiLayer::End()
@@ -184,7 +184,5 @@ namespace Lamp
 
 			glfwMakeContextCurrent(pBackup_current_context);
 		}
-
-		Renderer::GetRenderer()->End();
 	}
 }

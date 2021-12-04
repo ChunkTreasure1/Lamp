@@ -178,7 +178,8 @@ namespace Sandbox
 
 		ImGui::TextUnformatted("Textures");
 
-		for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(m_pSelectedMaterial->GetTextures()))
+		//TODO: fix
+		/*for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(m_pSelectedMaterial->GetTextures()))
 		{
 			ImGui::TextUnformatted(tex.first.c_str());
 
@@ -206,7 +207,7 @@ namespace Sandbox
 					tex.second = ResourceCache::GetAsset<Texture2D>(path);
 				}
 			}
-		}
+		}*/
 
 		ImGui::End();
 	}

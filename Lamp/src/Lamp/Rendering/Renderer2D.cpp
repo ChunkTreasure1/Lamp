@@ -203,23 +203,23 @@ namespace Lamp
 		float textureIndex = 0.f;
 		bool textureExists = false;
 
-		auto& texture = mat->GetTextures().at("gizmo");
+		//auto& texture = mat->GetTextures().at("gizmo");
 
 		for (uint32_t i = 0; i < s_pStorage->TextureSlotIndex; i++)
 		{
 			//TODO: change
-			if (s_pStorage->TextureSlots[i].get() == texture.get())
-			{
-				textureIndex = (float)i;
-				textureExists = true;
-				break;
-			}
+		//	if (s_pStorage->TextureSlots[i].get() == texture.get())
+		//	{
+		//		textureIndex = (float)i;
+		//		textureExists = true;
+		//		break;
+		//	}
 		}
 
 		if (textureIndex == 0.f && !textureExists)
 		{
 			textureIndex = (float)s_pStorage->TextureSlotIndex;
-			s_pStorage->TextureSlots[s_pStorage->TextureSlotIndex] = texture;
+		//	s_pStorage->TextureSlots[s_pStorage->TextureSlotIndex] = texture;
 			s_pStorage->TextureSlotIndex++;
 		}
 

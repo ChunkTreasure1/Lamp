@@ -49,8 +49,8 @@ namespace Lamp
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Initialize();
-		//AudioEngine::Initialize();
-		//Physics::Initialize();
+		AudioEngine::Initialize();
+		Physics::Initialize();
 
 		m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_Running));
 
@@ -62,7 +62,8 @@ namespace Lamp
 	Application::~Application()
 	{
 		LP_PROFILE_FUNCTION();
-		//AudioEngine::Shutdown();
+		Physics::Shutdown();
+		AudioEngine::Shutdown();
 		Renderer::Shutdown();
 
 		m_AssetManagerThread.join();
@@ -89,6 +90,20 @@ namespace Lamp
 
 			Renderer::Draw();
 
+
+			{
+				LP_PROFILE_SCOPE("Application::UpdateImGui");
+
+				m_pImGuiLayer->Begin();
+
+				//	for (Layer* pLayer : m_LayerStack)
+				//	{
+				//		pLayer->OnImGuiRender(timestep);
+				//	}
+
+				m_pImGuiLayer->End();
+			}
+
 			Renderer::End();
 
 			//AudioEngine::Update();
@@ -103,18 +118,6 @@ namespace Lamp
 			//	}
 			//}
 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateImGui");
-
-				m_pImGuiLayer->Begin();
-
-			//	for (Layer* pLayer : m_LayerStack)
-			//	{
-			//		pLayer->OnImGuiRender(timestep);
-			//	}
-
-				m_pImGuiLayer->End();
-			}
 
 			m_pWindow->Update(timestep);
 
@@ -167,7 +170,7 @@ namespace Lamp
 		{
 			m_Minimized = false;
 		}
-
+		m_pWindow->OnResize(e.GetWidth(), e.GetHeight());
 		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
 		return false;
 	}

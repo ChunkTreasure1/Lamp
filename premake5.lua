@@ -432,6 +432,7 @@ project "GameLauncher"
 	{
 		"Lamp",
 		"Game",
+		"ImGui",
 
 		"%{Library.Assimp}",
 		"%{Library.fmod}",

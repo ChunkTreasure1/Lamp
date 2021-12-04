@@ -80,7 +80,13 @@ namespace Lamp
 		MeshImportSettings settings;
 		settings.path = "assets/meshes/teddy/teddy.fbx";
 		m_rendererStorage->teddy = MeshImporter::ImportMesh(settings);
+		m_rendererStorage->teddy->GetMaterial(0)->SetShader(m_rendererStorage->mainShader);
+
+		auto mat = m_rendererStorage->teddy->GetMaterial(0);
 		m_rendererStorage->teddyTexture = Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_albedo.tga");
+
+		mat->SetTexture("u_Sampler", m_rendererStorage->teddyTexture);
+
 
 		m_rendererStorage->commandBuffer = CommandBuffer::Create(m_rendererStorage->mainPipeline);
 	}
@@ -125,7 +131,7 @@ namespace Lamp
 
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->mainPipeline);
 
-		vulkanPipeline->SetTexture(m_rendererStorage->teddyTexture, 1, 0, currentFrame);
+		m_rendererStorage->teddy->GetMaterial(0)->Bind(m_rendererStorage->mainPipeline, currentFrame);
 		vulkanPipeline->BindDescriptorSets(currentFrame);
 
 		for (const auto subMesh : m_rendererStorage->teddy->GetSubMeshes())
@@ -136,9 +142,9 @@ namespace Lamp
 			vkCmdDrawIndexed(static_cast<VkCommandBuffer>(m_rendererStorage->commandBuffer->GetCurrentCommandBuffer()), subMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 		}
 	}
-
+		
 	void VulkanRenderer::SetupBuffers()
-	{
+	{ 
 		m_rendererStorage->uniformBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
 		m_rendererStorage->uniformBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
 		m_rendererStorage->uniformBuffer.projection = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);

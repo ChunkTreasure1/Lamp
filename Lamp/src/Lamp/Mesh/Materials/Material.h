@@ -8,9 +8,12 @@ namespace Lamp
 {
 	class Texture2D;
 	class Shader;
+	class RenderPipeline;
 	class Material : public Asset
 	{
 	public:
+		virtual void Bind(Ref<RenderPipeline> renderPipeline, uint32_t currentIndex = 0) = 0;
+
 		//Setting
 		virtual void SetTextures(const std::unordered_map<std::string, Ref<Texture2D>>& map) = 0;
 		virtual void SetTexture(const std::string& name, Ref<Texture2D> texture) = 0;
@@ -20,7 +23,7 @@ namespace Lamp
 		virtual void SetUseBlending(bool state) = 0;
 
 		//Getting
-		virtual const std::unordered_map<std::string, Ref<Texture2D>>& GetTextures() = 0;
+		virtual const std::vector<Ref<Texture2D>> GetTextures() = 0;
 		virtual const uint32_t GetIndex() = 0;
 		virtual Ref<Shader> GetShader() = 0;
 		virtual const std::string& GetName() = 0;
