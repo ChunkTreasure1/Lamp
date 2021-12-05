@@ -6,13 +6,13 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
-layout (std140, binding = 0) uniform MeshDataBuffer
+layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
 
 } u_MeshData;
 
-layout (std140, binding = 1) uniform CameraDataBuffer
+layout (std140, binding = 0) uniform CameraDataBuffer
 {
     vec4 position;
     mat4 view;
@@ -50,7 +50,7 @@ void main()
 
 layout (location = 0) out vec4 o_Color;
 
-layout (std140, binding = 1) uniform CameraDataBuffer
+layout (std140, binding = 0) uniform CameraDataBuffer
 {
     vec4 position;
     mat4 view;
@@ -58,7 +58,7 @@ layout (std140, binding = 1) uniform CameraDataBuffer
 
 } u_CameraData;
 
-layout (std140, binding = 2) uniform DirectionalLightBuffer
+layout (std140, binding = 1) uniform DirectionalLightBuffer
 {
     vec4 direction;
     vec4 colorIntensity;
@@ -72,9 +72,9 @@ layout (location = 1) in Out
     mat3 TBN;    
 } v_In;
 
-layout (set = 0, binding = 3) uniform sampler2D u_Albedo;
-layout (set = 0, binding = 4) uniform sampler2D u_Normal;
-layout (set = 0, binding = 5) uniform sampler2D u_MRO;
+layout (set = 0, binding = 2) uniform sampler2D u_Albedo;
+layout (set = 0, binding = 3) uniform sampler2D u_Normal;
+layout (set = 0, binding = 4) uniform sampler2D u_MRO;
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;
@@ -142,7 +142,7 @@ vec3 CalculateNormal()
 void main()
 {
     vec4 albedoTex = texture(u_Albedo, v_In.texCoord);
-    vec3 albedo = pow(albedoTex.rgb, vec3(2.2));
+    vec3 albedo = albedoTex.rgb;
 
     vec3 mro = texture(u_MRO, v_In.texCoord).rgb;
     float metallic = mro.x;
@@ -157,7 +157,9 @@ void main()
 
     lightAccumulation += CalculateDirectionalLight(dirToCamera, normal, baseReflectivity, albedo, metallic, roughness);
 
-    vec3 color = vec3(0.1) + lightAccumulation;
+    vec3 color = lightAccumulation;
+
+    color = pow(abs(color), vec3(1.0 / 2.2));
 
     o_Color = vec4(color, 1.0);
 }

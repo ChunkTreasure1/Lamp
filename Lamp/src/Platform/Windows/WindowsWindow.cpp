@@ -50,11 +50,12 @@ namespace Lamp
 		{
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		}
-		else if (Renderer::GetAPI() == RendererAPI::API::DX11 || Renderer::GetAPI() == RendererAPI::API::Vulkan)
+#endif
+		if (Renderer::GetAPI() == RendererAPI::API::DX11 || Renderer::GetAPI() == RendererAPI::API::Vulkan)
 		{
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		}
-#endif
+
 		//Create the window
 		m_pWindow = glfwCreateWindow(props.Width, props.Height, props.Title.c_str(), NULL, NULL);
 

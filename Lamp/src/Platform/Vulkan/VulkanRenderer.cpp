@@ -5,9 +5,10 @@
 #include "Lamp/Rendering/Shader/Shader.h"
 #include "Lamp/Rendering/CommandBuffer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/AssetSystem/MeshImporter.h"
-#include "Lamp/Rendering/Renderer.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -132,6 +133,10 @@ namespace Lamp
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->mainPipeline);
 
 		m_rendererStorage->teddy->GetMaterial(0)->Bind(m_rendererStorage->mainPipeline, currentFrame);
+
+		m_rendererStorage->meshBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f }); // transform
+
+		vulkanPipeline->SetPushConstantData(0, &m_rendererStorage->meshBuffer);
 		vulkanPipeline->BindDescriptorSets(currentFrame);
 
 		for (const auto subMesh : m_rendererStorage->teddy->GetSubMeshes())
@@ -145,8 +150,6 @@ namespace Lamp
 		
 	void VulkanRenderer::SetupBuffers()
 	{ 
-		m_rendererStorage->meshBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
-
 		m_rendererStorage->cameraBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
 		m_rendererStorage->cameraBuffer.projection = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
 		m_rendererStorage->cameraBuffer.position = glm::vec4{ 2.f, 2.f, 2.f, 0.f };
@@ -155,8 +158,8 @@ namespace Lamp
 		m_rendererStorage->directionalLightBuffer.direction = glm::vec4{ 0.5 };
 
 		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->meshBuffer, sizeof(MeshDataBuffer), 0, 0);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraBuffer, sizeof(CameraDataBuffer), 1, 0);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightBuffer, sizeof(DirectionalLightDataTest), 2, 0);
+		//m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->meshBuffer, sizeof(MeshDataBuffer), 0, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraBuffer, sizeof(CameraDataBuffer), 0, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightBuffer, sizeof(DirectionalLightDataTest), 1, 0);
 	}
 }

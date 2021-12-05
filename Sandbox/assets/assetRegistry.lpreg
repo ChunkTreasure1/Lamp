@@ -1,6 +1,8 @@
 Assets:
   - Handle: 14311675356115887053
     Path: assets/levels/testLevel/data.level
+  - Handle: 14311675356115887053
+    Path: assets/levels/testLevel2/data.level
   - Handle: 10994454763501493260
     Path: assets\meshes\base\cube.lgf
   - Handle: 3462220506084564617

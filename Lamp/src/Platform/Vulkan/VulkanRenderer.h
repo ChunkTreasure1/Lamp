@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/Rendering/RendererNew.h"
+#include "Lamp/Rendering/RendererDataStructures.h"
 
 #include <vulkan/vulkan_core.h>
 
@@ -13,24 +14,6 @@ namespace Lamp
 	class Mesh;
 	class Texture2D;
 
-	struct MeshDataBuffer
-	{
-		alignas(16) glm::mat4 model;
-	};
-
-	struct CameraDataBuffer
-	{
-		alignas(16) glm::vec4 position;
-		alignas(16) glm::mat4 view;
-		alignas(16) glm::mat4 projection;
-	};
-
-	struct DirectionalLightDataTest
-	{
-		alignas(16) glm::vec4 direction;
-		alignas(16) glm::vec4 colorIntensity;
-	};
-
 	struct TempRendererStorage
 	{
 		Ref<RenderPipeline> mainPipeline;
@@ -42,7 +25,6 @@ namespace Lamp
 		DirectionalLightDataTest directionalLightBuffer;
 
 		Ref<UniformBufferSet> uniformBufferSet;
-
 
 		Ref<Mesh> teddy;
 	};

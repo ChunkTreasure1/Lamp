@@ -117,8 +117,8 @@ namespace Lamp
 	   
 	void VulkanRenderPipeline::SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index)
 	{
-		auto vulkanShader = std::dynamic_pointer_cast<VulkanShader>(m_specification.shader);
-		auto vulkanTexture = std::dynamic_pointer_cast<VulkanTexture2D>(texture);
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
+		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(texture);
 
 		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
 		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
@@ -130,12 +130,22 @@ namespace Lamp
 		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
 	}
 
+	void VulkanRenderPipeline::SetPushConstantData(uint32_t index, const void* data)
+	{
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
+
+		const auto& pushConstants = vulkanShader->GetPushConstantRanges();
+
+		vkCmdPushConstants(swapchain->GetDrawCommandBuffer(swapchain->GetCurrentFrame()), m_layout, pushConstants[index].shaderStage, pushConstants[index].offset, pushConstants[index].size, data);
+	}
+
 	void VulkanRenderPipeline::CreateDescriptorSets()
 	{
-		auto swapchain = std::dynamic_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto device = VulkanContext::GetCurrentDevice();
 
-		auto vulkanShader = std::dynamic_pointer_cast<VulkanShader>(m_specification.shader);
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 
 		auto allDescriptorLayouts = vulkanShader->GetAllDescriptorSetLayouts();
 
@@ -159,7 +169,7 @@ namespace Lamp
 	void VulkanRenderPipeline::SetupUniformBuffers()
 	{
 		auto device = VulkanContext::GetCurrentDevice();
-		auto vulkanShader = std::dynamic_pointer_cast<VulkanShader>(m_specification.shader);
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 
 		const uint32_t count = m_specification.isSwapchain ? Renderer::GetCapabilities().framesInFlight : 1;
 		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
@@ -175,7 +185,7 @@ namespace Lamp
 					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffers.at(binding)->name);
 					writeDescriptor.dstSet = m_descriptorSets[frame][set];
 
-					auto vulkanUniformBuffer = std::dynamic_pointer_cast<VulkanUniformBuffer>(m_specification.uniformBufferSets->Get(binding, set, frame));
+					auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_specification.uniformBufferSets->Get(binding, set, frame));
 					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
 					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
@@ -187,8 +197,8 @@ namespace Lamp
 	void VulkanRenderPipeline::Invalidate()
 	{
 		auto device = VulkanContext::GetCurrentDevice();
-		auto swapchain = std::dynamic_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
-		auto shader = std::dynamic_pointer_cast<VulkanShader>(m_specification.shader);
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto shader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 
 		CreateDescriptorSets();
 		SetupUniformBuffers();
@@ -294,7 +304,7 @@ namespace Lamp
 
 	void VulkanRenderPipeline::BindDescriptorSets(uint32_t index) const
 	{
-		auto swapchain = std::dynamic_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		vkCmdBindDescriptorSets(swapchain->GetDrawCommandBuffer(index), VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, m_descriptorSets.at(index).size(), m_descriptorSets.at(index).data(), 0, nullptr);
 	}
 }

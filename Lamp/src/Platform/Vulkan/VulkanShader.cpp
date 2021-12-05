@@ -182,7 +182,7 @@ namespace Lamp
 	std::vector<VkPushConstantRange> VulkanShader::GetAllPushConstantRanges()
 	{
 		std::vector<VkPushConstantRange> result;
-		result.reserve(m_pushConstantRanges.size());
+		result.resize(m_pushConstantRanges.size());
 		for (uint32_t i = 0; i < m_pushConstantRanges.size(); i++)
 		{
 			const auto& pushConstantRange = m_pushConstantRanges[i];

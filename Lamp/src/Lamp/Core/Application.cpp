@@ -96,17 +96,17 @@ namespace Lamp
 
 				m_pImGuiLayer->Begin();
 
-				//	for (Layer* pLayer : m_LayerStack)
-				//	{
-				//		pLayer->OnImGuiRender(timestep);
-				//	}
+				for (Layer* pLayer : m_LayerStack)
+				{
+					pLayer->OnImGuiRender(timestep);
+				}
 
 				m_pImGuiLayer->End();
 			}
 
 			Renderer::End();
 
-			//AudioEngine::Update();
+			AudioEngine::Update();
 			////Load 
 			//{
 			//	LP_PROFILE_SCOPE("Application::UpdateLayers");

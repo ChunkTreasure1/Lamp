@@ -29,39 +29,37 @@ namespace Sandbox
 	Sandbox::Sandbox()
 		: Layer("Sandbox"), m_DockspaceID(0) //m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
 	{
-		//g_pEnv->IsEditor = true;
-		//m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
-		//m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
-		//
-		//m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+		g_pEnv->IsEditor = true;
+		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
+		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
+
+		m_pLevel = CreateRef<Level>("Test"); //ResourceCache::GetAsset<Level>("assets/levels/testLevel2/data.level");
+		g_pEnv->pLevel = m_pLevel;
 		//m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
-		//ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
-		//
+		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+
 		////Make sure the sandbox controller is created after level has been loaded
-		//m_SandboxController = CreateRef<SandboxController>();
-		//Renderer::SetRenderGraph(ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/main.rendergraph"));
-		//Renderer::GetRenderGraph()->Start();
-		//
-		//m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
-		//m_pWindows.push_back(new GraphKey("Visual Scripting"));
-		//m_pWindows.push_back(new MaterialEditor("Material Editor"));
-		//m_pWindows.push_back(new RenderGraphPanel("Render Graph"));
-		//m_pWindows.push_back(new LayerViewPanel("Layer View"));
-		//
-		//Application::Get().GetWindow().Maximize();
-		//
+		m_SandboxController = CreateRef<SandboxController>();
+
+		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
+		m_pWindows.push_back(new GraphKey("Visual Scripting"));
+		m_pWindows.push_back(new MaterialEditor("Material Editor"));
+		m_pWindows.push_back(new LayerViewPanel("Layer View"));
+
+		Application::Get().GetWindow().Maximize();
+
 		//SetupFromConfig();
 	}
 
 	Sandbox::~Sandbox()
 	{
-		//for (auto p : m_pWindows)
-		//{
-		//	delete p;
-		//}
+		for (auto p : m_pWindows)
+		{
+			delete p;
+		}
 		//
 		//m_BufferWindows.clear();
-		//m_pWindows.clear();
+		m_pWindows.clear();
 	}
 
 	bool Sandbox::OnUpdate(AppUpdateEvent& e)
@@ -370,11 +368,11 @@ namespace Sandbox
 
 		g_pEnv->pLevel = nullptr;
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
-		
+
 		g_pEnv->pLevel = m_pRuntimeLevel;
 		m_pRuntimeLevel->SetIsPlaying(true);
 		m_pRuntimeLevel->OnRuntimeStart();
-		
+
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
 	}
