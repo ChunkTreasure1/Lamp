@@ -59,7 +59,7 @@ namespace Lamp
 	void VulkanRenderer::Initialize()
 	{
 		SetupBuffers();
-		m_rendererStorage->mainShader = Shader::Create("engine/shaders/vulkan/testShader.glsl", false);
+		m_rendererStorage->mainShader = Shader::Create("engine/shaders/vulkan/vulkanPbr.glsl", true);
 
 		RenderPipelineSpecification pipelineSpec{};
 		pipelineSpec.shader = m_rendererStorage->mainShader;
@@ -83,10 +83,10 @@ namespace Lamp
 		m_rendererStorage->teddy->GetMaterial(0)->SetShader(m_rendererStorage->mainShader);
 
 		auto mat = m_rendererStorage->teddy->GetMaterial(0);
-		m_rendererStorage->teddyTexture = Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_albedo.tga");
 
-		mat->SetTexture("u_Sampler", m_rendererStorage->teddyTexture);
-
+		mat->SetTexture("u_Albedo", Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_albedo.tga"));
+		mat->SetTexture("u_Normal", Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_normal.tga"));
+		mat->SetTexture("u_MRO", Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_mro.tga"));
 
 		m_rendererStorage->commandBuffer = CommandBuffer::Create(m_rendererStorage->mainPipeline);
 	}
@@ -145,11 +145,18 @@ namespace Lamp
 		
 	void VulkanRenderer::SetupBuffers()
 	{ 
-		m_rendererStorage->uniformBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
-		m_rendererStorage->uniformBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
-		m_rendererStorage->uniformBuffer.projection = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+		m_rendererStorage->meshBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
+
+		m_rendererStorage->cameraBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
+		m_rendererStorage->cameraBuffer.projection = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
+		m_rendererStorage->cameraBuffer.position = glm::vec4{ 2.f, 2.f, 2.f, 0.f };
+
+		m_rendererStorage->directionalLightBuffer.colorIntensity = glm::vec4{ 1.f };
+		m_rendererStorage->directionalLightBuffer.direction = glm::vec4{ 0.5 };
 
 		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->uniformBuffer, sizeof(TestUniformBuffer), 0, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->meshBuffer, sizeof(MeshDataBuffer), 0, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraBuffer, sizeof(CameraDataBuffer), 1, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightBuffer, sizeof(DirectionalLightDataTest), 2, 0);
 	}
 }

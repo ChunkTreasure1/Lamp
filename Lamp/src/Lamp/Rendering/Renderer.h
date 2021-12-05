@@ -100,6 +100,7 @@ namespace Lamp
 		};
 
 		static const Capabilities& GetCapabilities() { return s_capabilities; }
+		static const Ref<Texture2D> GetDefaultTexture() { return s_rendererDefaults->defaultTexture; }
 
 	private:
 		static void CreateUniformBuffers();
@@ -107,10 +108,15 @@ namespace Lamp
 		static void UpdateBuffers(const Ref<CameraBase> camera);
 
 	private:
+		struct RendererDefaults
+		{
+			Ref<Texture2D> defaultTexture;
+		};
 
 		static SceneData* s_pSceneData;
 		static Capabilities s_capabilities;
 		static Ref<RendererNew> s_renderer;
+		static Scope<RendererDefaults> s_rendererDefaults;
 
 		friend class VulkanPhysicalDevice;
 

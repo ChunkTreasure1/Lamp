@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "VulkanMaterial.h"
 
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 namespace Lamp
@@ -32,7 +34,14 @@ namespace Lamp
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(renderPipeline);
 		for (const auto& spec : m_textureSpecifications)
 		{
-			vulkanPipeline->SetTexture(spec.texture, spec.binding, spec.set, currentIndex);
+			if (spec.texture)
+			{
+				vulkanPipeline->SetTexture(spec.texture, spec.binding, spec.set, currentIndex);
+			}
+			else
+			{
+				LP_CORE_ERROR("Vulkan Material: No texture bound to {0}!", spec.name);
+			}
 		}
 	}
 
@@ -64,7 +73,7 @@ namespace Lamp
 		m_textureSpecifications.clear();
 		for (const auto& resource : m_shader->GetResources())
 		{
-			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set - 1, resource.second.binding, nullptr });
+			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set - 1, resource.second.binding, Renderer::GetDefaultTexture() });
 		}
 	}
 

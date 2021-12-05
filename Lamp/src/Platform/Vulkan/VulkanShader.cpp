@@ -51,6 +51,18 @@ namespace Lamp
 			return (VkShaderStageFlagBits)0;
 		}
 
+		static std::string StringFromShaderStage(VkShaderStageFlagBits stage)
+		{
+			switch (stage)
+			{
+				case VK_SHADER_STAGE_VERTEX_BIT: return "VERTEX_SHADER";
+				case VK_SHADER_STAGE_FRAGMENT_BIT: return "FRAGMENT_SHADER";
+				case VK_SHADER_STAGE_COMPUTE_BIT: return "COMPUTE_SHADER";
+			}
+
+			return "";
+		}
+
 		static std::filesystem::path GetCacheDirectory()
 		{
 			return "engine/shaders/cache/vulkan";
@@ -321,9 +333,9 @@ namespace Lamp
 		spirv_cross::Compiler compiler(shaderData);
 		auto resources = compiler.get_shader_resources();
 
-		LP_CORE_INFO("Shader reflection: " + Path.string());
+		LP_CORE_INFO("Vulkan Shader - Reflect: {0}, {1}", Utils::StringFromShaderStage(stageFlags), Path.string());
 
-		//Uniform buffers
+		LP_CORE_INFO("Vulkan Shader - Reflect: Uniform buffers");
 		for (const auto& resource : resources.uniform_buffers)
 		{
 			const auto& name = resource.name;
@@ -363,7 +375,7 @@ namespace Lamp
 			shaderDescriptorSet.uniformBuffers[binding] = s_uniformBuffers.at(descriptorSet).at(binding);
 		}
 
-		//Storage buffers
+		LP_CORE_INFO("Vulkan Shader - Reflect: Storage buffers");
 		for (const auto& resource : resources.storage_buffers)
 		{
 			const auto& name = resource.name;
@@ -403,7 +415,7 @@ namespace Lamp
 			shaderDescriptorSet.storageBuffers[binding] = s_storageBuffers.at(descriptorSet).at(binding);
 		}
 
-		//Push constants
+		LP_CORE_INFO("Vulkan Shader - Reflect: Push constants");
 		for (const auto& resource : resources.push_constant_buffers)
 		{
 			const auto& name = resource.name;
@@ -439,7 +451,7 @@ namespace Lamp
 			}
 		}
 
-		//Sampled images
+		LP_CORE_INFO("Vulkan Shader - Reflect: Image samplers");
 		for (const auto& resource : resources.sampled_images)
 		{
 			const auto& name = resource.name;
@@ -470,7 +482,7 @@ namespace Lamp
 			m_resources[name] = ShaderResourceDeclaration(name, binding, 1);
 		}
 
-		//Storage images
+		LP_CORE_INFO("Vulkan Shader - Reflect: Storage samplers");
 		for (const auto& resource : resources.storage_images)
 		{
 			const auto& name = resource.name;
@@ -497,7 +509,8 @@ namespace Lamp
 			m_resources[name] = ShaderResourceDeclaration(name, binding, 1);
 		}
 
-		LP_CORE_INFO("Uniform buffers: {0}", m_shaderDescriptorSets.size());
+		LP_CORE_INFO("Vulkan Shader - Reflect result:\n		Uniform buffers: {0}\n		Storage buffers: {1}\n		Image samplers: {2}\n		Storage samplers: {3}\n",
+			m_shaderDescriptorSets[0].uniformBuffers.size(), m_shaderDescriptorSets[0].storageBuffers.size(), m_shaderDescriptorSets[0].imageSamplers.size(), m_shaderDescriptorSets[0].storageSamplers.size());
 	}
 
 	void VulkanShader::ReflectAllShaderStages(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& shaderData)

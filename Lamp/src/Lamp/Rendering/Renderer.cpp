@@ -31,10 +31,16 @@ namespace Lamp
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Ref<RendererNew> Renderer::s_renderer = nullptr;
 	Renderer::Capabilities Renderer::s_capabilities;
+	Scope<Renderer::RendererDefaults> Renderer::s_rendererDefaults;
+
+	static const std::filesystem::path s_defaultTexturePath = "engine/textures/default/defaultTexture.png";
 
 	void Renderer::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
+		s_rendererDefaults = CreateScope<RendererDefaults>();
+		s_rendererDefaults->defaultTexture = Texture2D::Create(s_defaultTexturePath);
+
 		s_renderer = RendererNew::Create();
 		s_renderer->Initialize();
 
