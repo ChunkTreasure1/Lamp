@@ -75,7 +75,11 @@ namespace Lamp
 
 	VulkanFramebuffer::~VulkanFramebuffer()
 	{
-		
+		auto device = VulkanContext::GetCurrentDevice();
+		vkDeviceWaitIdle(device->GetHandle());
+
+		vkDestroyFramebuffer(device->GetHandle(), m_framebuffer, nullptr);
+		vkDestroyRenderPass(device->GetHandle(), m_renderPass, nullptr);
 	}
 
 	void VulkanFramebuffer::Bind() {}

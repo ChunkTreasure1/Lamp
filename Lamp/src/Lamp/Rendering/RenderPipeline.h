@@ -16,6 +16,7 @@ namespace Lamp
 
 	struct RenderPipelineSpecification
 	{
+		Ref<Framebuffer> framebuffer;
 		Ref<Shader> shader;
 		Ref<UniformBufferSet> uniformBufferSets;
 
@@ -31,6 +32,7 @@ namespace Lamp
 	public:
 		virtual void Bind(uint32_t index) const = 0;
 		virtual void SetLayout(BufferLayout layout) = 0;
+		virtual const RenderPipelineSpecification& GetSpecification() const = 0;
 		
 		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
 	};

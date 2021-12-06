@@ -34,6 +34,7 @@ namespace Lamp
 
 		inline VkFormat GetFormat() const { return m_colorFormat; }
 		inline const VkSwapchainKHR& GetHandle() const { return m_swapchain; }
+		inline const VkSurfaceKHR GetSurface() const { return m_surface; }
 
 		inline const size_t GetCommandBufferCount() const { return m_commandBuffers.size(); }
 		const uint32_t GetCurrentFrame() const override { return m_currentFrame; }

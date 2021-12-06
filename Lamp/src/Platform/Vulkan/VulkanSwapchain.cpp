@@ -61,38 +61,6 @@ namespace Lamp
 			}
 		}
 
-		static VulkanPhysicalDevice::QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
-		{
-			VulkanPhysicalDevice::QueueFamilyIndices indices;
-
-			uint32_t queueFamilyCount = 0;
-			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-			std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-			int i = 0;
-			for (const auto& queueFamily : queueFamilies)
-			{
-				if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-				{
-					indices.graphicsFamily = i;
-				}
-
-				VkBool32 presentSupport = false;
-				vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-
-				if (presentSupport)
-				{
-					indices.presentFamily = i;
-				}
-
-				i++;
-			}
-
-			return indices;
-		}
-
 		static VulkanSwapchain::SwapchainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
 		{
 			VulkanSwapchain::SwapchainSupportDetails details;
@@ -373,7 +341,7 @@ namespace Lamp
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 		createInfo.oldSwapchain = oldSwapchain;
 
-		VulkanPhysicalDevice::QueueFamilyIndices indices = Utils::FindQueueFamilies(m_device->GetPhysicalDevice()->GetHandle(), m_surface);
+		VulkanPhysicalDevice::QueueFamilyIndices indices = Utility::FindQueueFamilies(m_device->GetPhysicalDevice()->GetHandle(), m_surface);
 		uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
 		if (indices.graphicsFamily != indices.presentFamily)
@@ -594,7 +562,7 @@ namespace Lamp
 
 	void VulkanSwapchain::CreateCommandPools()
 	{
-		VulkanPhysicalDevice::QueueFamilyIndices queueFamilyIndices = Utils::FindQueueFamilies(m_device->GetPhysicalDevice()->GetHandle(), m_surface);
+		VulkanPhysicalDevice::QueueFamilyIndices queueFamilyIndices = Utility::FindQueueFamilies(m_device->GetPhysicalDevice()->GetHandle(), m_surface);
 
 		m_commandPools.resize(m_framebuffers.size());
 
@@ -616,7 +584,6 @@ namespace Lamp
 
 		for (uint32_t i = 0; i < m_framebuffers.size(); i++)
 		{
-
 			VkCommandBufferAllocateInfo allocInfo{};
 			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 			allocInfo.commandPool = m_commandPools[i];

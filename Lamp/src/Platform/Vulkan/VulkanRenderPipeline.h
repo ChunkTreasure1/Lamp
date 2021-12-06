@@ -19,6 +19,7 @@ namespace Lamp
 		void BindDescriptorSets(uint32_t index) const;
 		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
 		void SetPushConstantData(uint32_t index, const void* data);
+		const RenderPipelineSpecification& GetSpecification() const override { return m_specification; }
 
 	private:
 		void CreateDescriptorSets();

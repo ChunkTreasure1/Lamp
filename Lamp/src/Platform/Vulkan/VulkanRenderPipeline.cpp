@@ -8,6 +8,7 @@
 #include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
 #include "Platform/Vulkan/VulkanRenderer.h"
+#include "Platform/Vulkan/VulkanFramebuffer.h"
 
 #include "Lamp/Core/Application.h"
 
@@ -68,8 +69,8 @@ namespace Lamp
 		VkViewport viewport{};
 		viewport.x = 0.f;
 		viewport.y = 0.f;
-		viewport.width = swapchain->GetExtent().width;
-		viewport.height = swapchain->GetExtent().height;
+		viewport.width = m_specification.framebuffer->GetSpecification().width;
+		viewport.height = m_specification.framebuffer->GetSpecification().height;
 		viewport.minDepth = 0.f;
 		viewport.maxDepth = 1.f;
 
@@ -119,6 +120,8 @@ namespace Lamp
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(texture);
+
+		LP_CORE_ASSERT(index < m_descriptorSets.size(), "Index must be less than the descriptor set map size!");
 
 		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
 		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
@@ -199,6 +202,12 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto shader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
+		Ref<VulkanFramebuffer> framebuffer = nullptr;
+		
+		if (m_specification.framebuffer)
+		{
+			framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(m_specification.framebuffer);
+		}
 
 		CreateDescriptorSets();
 		SetupUniformBuffers();
@@ -291,7 +300,7 @@ namespace Lamp
 		pipelineInfo.pMultisampleState = &multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.layout = m_layout;
-		pipelineInfo.renderPass = swapchain->GetRenderPass();
+		pipelineInfo.renderPass = m_specification.isSwapchain ? swapchain->GetRenderPass() : framebuffer->GetRenderPass();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.pDepthStencilState = &depthStencil;

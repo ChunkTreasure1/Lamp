@@ -14,7 +14,7 @@ namespace Lamp
  
 		virtual void* GetCurrentCommandBuffer() = 0;
 
-		static Ref<CommandBuffer> Create(Ref<RenderPipeline> renderPipeline);
+		static Ref<CommandBuffer> Create(uint32_t count, bool swapchainTarget = false);
 
 	private:
 	};

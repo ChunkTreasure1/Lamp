@@ -20,6 +20,9 @@ namespace Lamp
 		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth /* = false */) override;
 		void Invalidate() override;
 
+		inline VkRenderPass GetRenderPass() const { return m_renderPass; }
+		inline VkFramebuffer GetFramebuffer() const { return m_framebuffer; }
+
 		void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
 		const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
@@ -38,7 +41,7 @@ namespace Lamp
 		uint32_t m_height;
 
 		VkRenderPass m_renderPass;
-		VkFramebuffer m_framebuffer;
+		VkFramebuffer m_framebuffer = nullptr;
 
 		Ref<Image2D> m_depthAttachmentImage;
 		std::vector<Ref<VulkanImage2D>> m_attachmentImages;

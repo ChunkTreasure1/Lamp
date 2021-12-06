@@ -9,7 +9,7 @@ namespace Lamp
 	class VulkanCommandBuffer : public CommandBuffer
 	{
 	public:
-		VulkanCommandBuffer(Ref<RenderPipeline> renderPipeline);
+		VulkanCommandBuffer(uint32_t count, bool swapchainTarget);
 		~VulkanCommandBuffer();
 
 		void Begin() override;
@@ -18,6 +18,7 @@ namespace Lamp
 		void* GetCurrentCommandBuffer() override;
 
 	private:
+		std::vector<VkCommandPool> m_commandPools;
 		std::vector<VkCommandBuffer> m_commandBuffers;
 	};
 }

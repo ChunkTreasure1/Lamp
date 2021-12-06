@@ -14,6 +14,7 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"
 #include "Platform/Vulkan/VulkanRenderPipeline.h"
+#include "Platform/Vulkan/VulkanFramebuffer.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -62,21 +63,31 @@ namespace Lamp
 		SetupBuffers();
 		m_rendererStorage->mainShader = Shader::Create("engine/shaders/vulkan/vulkanPbr.glsl", true);
 
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.shader = m_rendererStorage->mainShader;
-		pipelineSpec.isSwapchain = true;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.uniformBufferSets = m_rendererStorage->uniformBufferSet;
-		pipelineSpec.vertexLayout =
 		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" },
-		};
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
 
-		m_rendererStorage->mainPipeline = RenderPipeline::Create(pipelineSpec);
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = m_rendererStorage->mainShader;
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = m_rendererStorage->uniformBufferSet;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			m_rendererStorage->mainPipeline = RenderPipeline::Create(pipelineSpec);
+		}
 
 		MeshImportSettings settings;
 		settings.path = "assets/meshes/teddy/teddy.fbx";
@@ -101,14 +112,21 @@ namespace Lamp
 		m_rendererStorage->commandBuffer->Begin();
 
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(m_rendererStorage->mainPipeline->GetSpecification().framebuffer);
+
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
 		VkRenderPassBeginInfo renderPassBegin{};
 		renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBegin.renderPass = swapchain->GetRenderPass();
-		renderPassBegin.framebuffer = swapchain->GetFramebuffer(currentFrame);
+		renderPassBegin.renderPass = framebuffer->GetRenderPass();
+		renderPassBegin.framebuffer = framebuffer->GetFramebuffer();
 		renderPassBegin.renderArea.offset = { 0, 0 };
-		renderPassBegin.renderArea.extent = swapchain->GetExtent();
+
+		VkExtent2D extent;
+		extent.width = framebuffer->GetSpecification().width;
+		extent.height = framebuffer->GetSpecification().height;
+
+		renderPassBegin.renderArea.extent = extent;
 
 		std::array<VkClearValue, 2> clearColors;
 		clearColors[0].color = { 0.1f, 0.1f, 0.1f, 1.f };
@@ -132,12 +150,12 @@ namespace Lamp
 
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->mainPipeline);
 
-		m_rendererStorage->teddy->GetMaterial(0)->Bind(m_rendererStorage->mainPipeline, currentFrame);
+		m_rendererStorage->teddy->GetMaterial(0)->Bind(m_rendererStorage->mainPipeline, 0);
 
 		m_rendererStorage->meshBuffer.model = glm::scale(glm::mat4(1.f), { 0.01f, 0.01f, 0.01f }) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f }); // transform
 
 		vulkanPipeline->SetPushConstantData(0, &m_rendererStorage->meshBuffer);
-		vulkanPipeline->BindDescriptorSets(currentFrame);
+		vulkanPipeline->BindDescriptorSets(0);
 
 		for (const auto subMesh : m_rendererStorage->teddy->GetSubMeshes())
 		{
