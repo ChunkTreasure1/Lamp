@@ -10,11 +10,11 @@ namespace Lamp
 	DirectionalLight::DirectionalLight()
 	{
 		FramebufferSpecification bufferSpec;
-		bufferSpec.Height = 4096;
-		bufferSpec.Width = 4096;
-		bufferSpec.Attachments =
+		bufferSpec.height = 4096;
+		bufferSpec.width = 4096;
+		bufferSpec.attachments =
 		{
-			{ FramebufferTextureFormat::DEPTH32F, FramebufferTextureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+			{ ImageFormat::DEPTH32F, TextureFilter::Linear, TextureWrap::Clamp }
 		};
 
 		shadowBuffer = Framebuffer::Create(bufferSpec);
@@ -33,8 +33,8 @@ namespace Lamp
 	PointLight::PointLight()
 	{
 		FramebufferSpecification bufferSpec;
-		bufferSpec.Height = 512;
-		bufferSpec.Width = 512;
+		bufferSpec.height = 512;
+		bufferSpec.width = 512;
 
 		shadowBuffer = std::make_shared<PointShadowBuffer>(bufferSpec);
 

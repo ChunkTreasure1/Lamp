@@ -221,6 +221,7 @@ namespace Lamp
 			vkDestroyImageView(m_device->GetHandle(), view, nullptr);
 		}
 
+
 		VulkanAllocator allocator;
 		allocator.DestroyImage(m_depthImage, m_depthImageMemory);
 

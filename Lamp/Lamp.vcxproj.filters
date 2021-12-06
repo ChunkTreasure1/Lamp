@@ -1906,6 +1906,9 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanFramebuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\Image2D.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanImage2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2367,5 +2370,8 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanFramebuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\Image2D.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanImage2D.cpp" />
   </ItemGroup>
 </Project>

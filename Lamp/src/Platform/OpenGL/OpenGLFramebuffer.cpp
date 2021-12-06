@@ -1,4 +1,4 @@
-	#include "lppch.h"
+#include "lppch.h"
 #include "OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
@@ -23,84 +23,77 @@ namespace Lamp
 			glBindTexture(TextureTarget(multisampled), id);
 		}
 
-		static GLint FormatToInternalGL(FramebufferTextureFormat format)
+		static GLint FormatToInternalGL(ImageFormat format)
 		{
 			switch (format)
 			{
-				case Lamp::FramebufferTextureFormat::None: return GL_NONE;
-				case Lamp::FramebufferTextureFormat::RGBA8: return GL_RGBA8;
-				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA16F;
-				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;
-				case Lamp::FramebufferTextureFormat::RG32F: return GL_RG32F;
-				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_R32I;
-				case Lamp::FramebufferTextureFormat::RED: return GL_RED;
-				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
-				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+				case ImageFormat::None: return GL_NONE;
+				case ImageFormat::RGBA: return GL_RGBA8;
+				case ImageFormat::RGBA16F: return GL_RGBA16F;
+				case ImageFormat::RGBA32F: return GL_RGBA32F;
+				case ImageFormat::RG32F: return GL_RG32F;
+				case ImageFormat::R32I: return GL_R32I;
+				case ImageFormat::R32F: return GL_RED;
+				case ImageFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
+				case ImageFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
 			}
 
 			return GL_NONE;
 		}
 
-		static GLint FormatToGL(FramebufferTextureFormat format)
+		static GLint FormatToGL(ImageFormat format)
 		{
 			switch (format)
 			{
-				case Lamp::FramebufferTextureFormat::None: return GL_NONE;
-				case Lamp::FramebufferTextureFormat::RGBA8: return GL_RGBA;
-				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_RGBA;
-				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_RGBA;
-				case Lamp::FramebufferTextureFormat::RG32F: return GL_RG;
-				case Lamp::FramebufferTextureFormat::RED: return GL_RED;
-				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
-				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
-				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+				case ImageFormat::None: return GL_NONE;
+				case ImageFormat::RGBA: return GL_RGBA;
+				case ImageFormat::RGBA16F: return GL_RGBA;
+				case ImageFormat::RGBA32F: return GL_RGBA;
+				case ImageFormat::RG32F: return GL_RG;
+				case ImageFormat::R32F: return GL_RED;
+				case ImageFormat::DEPTH32F: return GL_DEPTH_COMPONENT;
+				case ImageFormat::DEPTH24STENCIL8: return GL_DEPTH_COMPONENT;
+				case ImageFormat::R32I: return GL_RED_INTEGER;
 			}
 
 			return GL_NONE;
 		}
 
-		static GLint FormatToType(FramebufferTextureFormat format)
+		static GLint FormatToType(ImageFormat format)
 		{
 			switch (format)
 			{
-				case Lamp::FramebufferTextureFormat::None: return GL_UNSIGNED_BYTE;
-				case Lamp::FramebufferTextureFormat::RGBA8: return GL_UNSIGNED_BYTE;
-				case Lamp::FramebufferTextureFormat::RGBA16F: return GL_FLOAT;
-				case Lamp::FramebufferTextureFormat::RGBA32F: return GL_FLOAT;
-				case Lamp::FramebufferTextureFormat::RG32F: return GL_FLOAT;
-				case Lamp::FramebufferTextureFormat::RED: return GL_FLOAT;
-				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_FLOAT;
-				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
-				case Lamp::FramebufferTextureFormat::RED_INTEGER: return GL_INT;
+				case ImageFormat::None: return GL_UNSIGNED_BYTE;
+				case ImageFormat::RGBA: return GL_UNSIGNED_BYTE;
+				case ImageFormat::RGBA16F: return GL_FLOAT;
+				case ImageFormat::RGBA32F: return GL_FLOAT;
+				case ImageFormat::RG32F: return GL_FLOAT;
+				case ImageFormat::R32F: return GL_FLOAT;
+				case ImageFormat::DEPTH32F: return GL_FLOAT;
+				case ImageFormat::DEPTH24STENCIL8: return GL_UNSIGNED_BYTE;
+				case ImageFormat::R32I: return GL_INT;
 			}
 
 			return GL_NONE;
 		}
 
-		static GLint FilteringToGL(FramebufferTextureFiltering filtering)
+		static GLint FilteringToGL(TextureFilter filtering)
 		{
 			switch (filtering)
 			{
-			case Lamp::FramebufferTextureFiltering::Nearest: return GL_NEAREST;
-			case Lamp::FramebufferTextureFiltering::Linear: return GL_LINEAR;
-			case Lamp::FramebufferTextureFiltering::NearestMipMapNearest: return GL_NEAREST_MIPMAP_NEAREST;
-			case Lamp::FramebufferTextureFiltering::LinearMipMapNearest: return GL_LINEAR_MIPMAP_NEAREST;
-			case Lamp::FramebufferTextureFiltering::NearestMipMapLinear: return GL_NEAREST_MIPMAP_LINEAR;
-			case Lamp::FramebufferTextureFiltering::LinearMipMapLinear: return GL_LINEAR_MIPMAP_LINEAR;
+				case TextureFilter::Nearest: return GL_NEAREST;
+				case TextureFilter::Linear: return GL_LINEAR;
 			}
 
 			return GL_NONE;
 		}
 
-		static GLint WrapToGL(FramebufferTextureWrap wrap)
+		static GLint WrapToGL(TextureWrap wrap)
 		{
 			switch (wrap)
 			{
-			case Lamp::FramebufferTextureWrap::Repeat: return GL_REPEAT;
-			case Lamp::FramebufferTextureWrap::MirroredRepeat: return GL_MIRRORED_REPEAT;
-			case Lamp::FramebufferTextureWrap::ClampToEdge: return GL_CLAMP_TO_EDGE;
-			case Lamp::FramebufferTextureWrap::ClampToBorder: return GL_CLAMP_TO_BORDER;
-			case Lamp::FramebufferTextureWrap::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
+				case TextureWrap::Repeat: return GL_REPEAT;
+				case TextureWrap::Clamp: return GL_CLAMP_TO_BORDER;
 			}
 
 			return GL_NONE;
@@ -110,11 +103,11 @@ namespace Lamp
 		{
 			switch (type)
 			{
-			case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_COMPONENTS;
-			case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_COMPONENT;
-				break;
-			default:
-				break;
+				case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_COMPONENTS;
+				case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_COMPONENT;
+					break;
+				default:
+					break;
 			}
 
 			return GL_NONE;
@@ -124,10 +117,10 @@ namespace Lamp
 		{
 			switch (type)
 			{
-			case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_ATTACHMENT0;
-			case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_ATTACHMENT;
-			default:
-				break;
+				case Lamp::FramebufferRenderbufferType::Color: return GL_COLOR_ATTACHMENT0;
+				case Lamp::FramebufferRenderbufferType::Depth: return GL_DEPTH_ATTACHMENT;
+				default:
+					break;
 			}
 
 			return GL_NONE;
@@ -139,43 +132,31 @@ namespace Lamp
 
 			if (multisample)
 			{
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, spec.Samples, Utils::FormatToInternalGL(textureSpec.TextureFormat), spec.Width, spec.Height, GL_FALSE);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, spec.samples, Utils::FormatToInternalGL(textureSpec.textureFormat), spec.width, spec.height, GL_FALSE);
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, Utils::FormatToInternalGL(textureSpec.TextureFormat), spec.Width, spec.Height, 0,
-					Utils::FormatToGL(textureSpec.TextureFormat), Utils::FormatToType(textureSpec.TextureFormat), nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, Utils::FormatToInternalGL(textureSpec.textureFormat), spec.width, spec.height, 0,
+					Utils::FormatToGL(textureSpec.textureFormat), Utils::FormatToType(textureSpec.textureFormat), nullptr);
 			}
 
 			if (!multisample)
 			{
-				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MIN_FILTER, Utils::FilteringToGL(textureSpec.TextureFiltering));
-				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MAG_FILTER, Utils::FilteringToGL(textureSpec.TextureFiltering));
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MIN_FILTER, Utils::FilteringToGL(textureSpec.textureFiltering));
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_MAG_FILTER, Utils::FilteringToGL(textureSpec.textureFiltering));
 
-				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_S, Utils::WrapToGL(textureSpec.TextureWrap));
-				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_T, Utils::WrapToGL(textureSpec.TextureWrap));
+				glTexParameteri(Utils::TextureTarget(multisample), GL_TEXTURE_WRAP_T, Utils::WrapToGL(textureSpec.textureWrap));
 
 				glTexParameterfv(Utils::TextureTarget(multisample), GL_TEXTURE_BORDER_COLOR, glm::value_ptr(textureSpec.BorderColor));
 			}
 		}
 
-		static bool IsDepthFormat(FramebufferTextureFormat format)
+		static GLint GetAttachmentType(ImageFormat format)
 		{
 			switch (format)
 			{
-			case Lamp::FramebufferTextureFormat::DEPTH32F: return true;
-			case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return true;
-			}
-
-			return false;
-		}
-
-		static GLint GetAttachmentType(FramebufferTextureFormat format)
-		{
-			switch (format)
-			{
-				case Lamp::FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
-				case Lamp::FramebufferTextureFormat::DEPTH32F: return GL_DEPTH_ATTACHMENT;
+				case ImageFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
+				case ImageFormat::DEPTH32F: return GL_DEPTH_ATTACHMENT;
 			}
 
 			return 0;
@@ -205,7 +186,7 @@ namespace Lamp
 
 	void OpenGLFramebuffer::Bind()
 	{
-		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+		glViewport(0, 0, m_Specification.width, m_Specification.height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 	}
 
@@ -222,8 +203,8 @@ namespace Lamp
 			return;
 		}
 
-		m_Specification.Width = width;
-		m_Specification.Height = height;
+		m_Specification.width = width;
+		m_Specification.height = height;
 
 		Invalidate();
 	}
@@ -236,7 +217,7 @@ namespace Lamp
 
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
-	
+
 		return pixelData;
 	}
 
@@ -249,7 +230,7 @@ namespace Lamp
 
 	inline const uint32_t OpenGLFramebuffer::GetColorAttachmentID(uint32_t i)
 	{
-		LP_CORE_ASSERT(i < m_ColorAttachmentIDs.size(), "Index out of range!"); 
+		LP_CORE_ASSERT(i < m_ColorAttachmentIDs.size(), "Index out of range!");
 		return m_ColorAttachmentIDs[i];
 	}
 
@@ -262,7 +243,7 @@ namespace Lamp
 	{
 		auto& att = m_ColorAttachmentSpecs[attachmentIndex];
 
-		glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0, Utils::FormatToGL(att.TextureFormat), GL_INT, &value);
+		glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0, Utils::FormatToGL(att.textureFormat), GL_INT, &value);
 	}
 
 	void OpenGLFramebuffer::BindColorAttachment(uint32_t id, uint32_t i)
@@ -278,9 +259,9 @@ namespace Lamp
 	void OpenGLFramebuffer::Invalidate()
 	{
 		m_ColorAttachmentSpecs.clear();
-		for (auto& format : m_Specification.Attachments.Attachments)
+		for (auto& format : m_Specification.attachments.Attachments)
 		{
-			if (!Utils::IsDepthFormat(format.TextureFormat))
+			if (!Utils::IsDepthFormat(format.textureFormat))
 			{
 				m_ColorAttachmentSpecs.emplace_back(format);
 			}
@@ -293,7 +274,7 @@ namespace Lamp
 		if (m_RendererID > 0)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
-			
+
 			if (m_ColorAttachmentIDs.size())
 			{
 				glDeleteTextures((GLsizei)m_ColorAttachmentIDs.size(), m_ColorAttachmentIDs.data());
@@ -311,7 +292,7 @@ namespace Lamp
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-		bool multisample = m_Specification.Samples > 1;
+		bool multisample = m_Specification.samples > 1;
 
 		//Create attachments
 		if (m_ColorAttachmentSpecs.size())
@@ -327,11 +308,11 @@ namespace Lamp
 			}
 		}
 
-		if (m_DepthAttachmentFormatSpec.TextureFormat != FramebufferTextureFormat::None)
+		if (m_DepthAttachmentFormatSpec.textureFormat != ImageFormat::None)
 		{
 			Utils::CreateTextures(multisample, &m_DepthAttachmentID, 1);
 			Utils::AttachTexture(m_Specification, m_DepthAttachmentFormatSpec, m_DepthAttachmentID, multisample);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, Utils::GetAttachmentType(m_DepthAttachmentFormatSpec.TextureFormat), Utils::TextureTarget(multisample), m_DepthAttachmentID, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, Utils::GetAttachmentType(m_DepthAttachmentFormatSpec.textureFormat), Utils::TextureTarget(multisample), m_DepthAttachmentID, 0);
 		}
 
 		if (m_ColorAttachmentSpecs.size() > 1)
@@ -349,13 +330,13 @@ namespace Lamp
 			glDrawBuffer(GL_NONE);
 		}
 
-		for (auto& buff : m_Specification.Attachments.Renderbuffers)
+		for (auto& buff : m_Specification.attachments.Renderbuffers)
 		{
 			uint32_t id;
 			glGenRenderbuffers(1, &id);
 			glBindRenderbuffer(GL_RENDERBUFFER, id);
 
-			glRenderbufferStorage(GL_RENDERBUFFER, Utils::RenderbufferTypeGL(buff.Format), m_Specification.Width, m_Specification.Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, Utils::RenderbufferTypeGL(buff.Format), m_Specification.width, m_Specification.height);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, Utils::RenderbufferTypeAttachment(buff.Format), GL_RENDERBUFFER, id);
 
 			m_RenderbufferIDs.push_back(id);

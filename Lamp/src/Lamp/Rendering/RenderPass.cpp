@@ -20,7 +20,7 @@ namespace Lamp
 	{
 		LP_PROFILE_SCOPE("RenderPass::Render::" + m_passSpecification.name);
 
-		RenderCommand::SetClearColor(m_passSpecification.targetFramebuffer->GetSpecification().ClearColor);
+		RenderCommand::SetClearColor(m_passSpecification.targetFramebuffer->GetSpecification().clearColor);
 		m_passSpecification.targetFramebuffer->Bind();
 
 		if (m_passSpecification.enableBlending)

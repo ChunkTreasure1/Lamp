@@ -264,6 +264,7 @@
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
     <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\Image2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h" />
@@ -293,6 +294,8 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanCommandBuffer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanFramebuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanImage2D.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
@@ -820,6 +823,7 @@
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\Image2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp" />
@@ -841,6 +845,8 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanCommandBuffer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanFramebuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanImage2D.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />

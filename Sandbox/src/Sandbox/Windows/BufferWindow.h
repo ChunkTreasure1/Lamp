@@ -12,9 +12,9 @@ namespace Sandbox
 		BufferWindow(Ref<Lamp::Framebuffer> framebuffer, const std::string& name, uint32_t texId = 0)
 			: m_FrameBuffer(framebuffer), m_Name(name)
 		{
-			for (auto& att : m_FrameBuffer->GetSpecification().Attachments.Attachments)
+			for (auto& att : m_FrameBuffer->GetSpecification().attachments.Attachments)
 			{
-				if ((uint32_t)att.TextureFormat <= 5)
+				if ((uint32_t)att.textureFormat <= 5)
 				{
 					m_TextureId = m_FrameBuffer->GetColorAttachmentID(0);
 

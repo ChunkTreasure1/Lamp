@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Platform/Vulkan/VulkanImage2D.h"
 
 #include <vulkan/vulkan_core.h>
 #include <VulkanMemoryAllocator/VulkanMemoryAllocator.h>
@@ -22,18 +23,9 @@ namespace Lamp
 		virtual const uint32_t GetHeight() const override;
 		virtual const uint32_t GetID() const override;
 
-		inline VkDescriptorImageInfo GetDescriptorInfo() const { return m_descriptorInfo; }
+		inline VkDescriptorImageInfo GetDescriptorInfo() const { return m_image->GetDescriptorInfo(); }
 
 	private:
-
-		VkImage m_texture;
-		VkImageView m_textureView;
-		VmaAllocation m_allocation;
-		VkSampler m_sampler;
-
-		VkDescriptorImageInfo m_descriptorInfo;
-
-		uint32_t m_width;
-		uint32_t m_height;
+		Ref<VulkanImage2D> m_image;
 	};
 }

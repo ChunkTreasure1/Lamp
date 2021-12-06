@@ -9,7 +9,7 @@ namespace Lamp
 	PointShadowBuffer::PointShadowBuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
-		m_Projection = glm::perspective(glm::radians(90.f), (float)spec.Width / (float)spec.Height, 0.1f, 25.f);
+		m_Projection = glm::perspective(glm::radians(90.f), (float)spec.width / (float)spec.height, 0.1f, 25.f);
 
 		SetPosition(m_Position);
 
@@ -24,7 +24,7 @@ namespace Lamp
 
 	void PointShadowBuffer::Bind()
 	{
-		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+		glViewport(0, 0, m_Specification.width, m_Specification.height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 	}
 
@@ -35,8 +35,8 @@ namespace Lamp
 
 	void PointShadowBuffer::Resize(uint32_t width, uint32_t height)
 	{
-		m_Specification.Width = width;
-		m_Specification.Height = height;
+		m_Specification.width = width;
+		m_Specification.height = height;
 
 		Invalidate();
 		m_Projection = glm::perspective(glm::radians(90.f), (float)width / (float)height, m_NearPlane, m_FarPlane);
@@ -69,7 +69,7 @@ namespace Lamp
 
 	void PointShadowBuffer::UpdateProjection()
 	{
-		m_Projection = glm::perspective(glm::radians(90.f), (float)m_Specification.Width / (float)m_Specification.Height, m_NearPlane, m_FarPlane);
+		m_Projection = glm::perspective(glm::radians(90.f), (float)m_Specification.width / (float)m_Specification.height, m_NearPlane, m_FarPlane);
 	}
 
 	void PointShadowBuffer::Invalidate()
@@ -85,7 +85,7 @@ namespace Lamp
 
 		for (int i = 0; i < 6; i++)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, m_Specification.Width, m_Specification.Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, m_Specification.width, m_Specification.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 		}
 
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

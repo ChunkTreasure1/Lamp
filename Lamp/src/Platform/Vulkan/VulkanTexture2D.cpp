@@ -9,13 +9,11 @@
 namespace Lamp
 {
 	VulkanTexture2D::VulkanTexture2D(uint32_t width, uint32_t height)
-		: m_width(width), m_height(height)
 	{
 
 	}
 
 	VulkanTexture2D::VulkanTexture2D(const std::filesystem::path& path)
-		: m_width(1), m_height(1)
 	{
 		if (!std::filesystem::exists(path))
 		{
@@ -37,9 +35,6 @@ namespace Lamp
 			return;
 		}
 
-		m_width = width;
-		m_height = height;
-
 		VkDeviceSize size = width * height * 4;
 
 		VkBuffer stagingBuffer;
@@ -56,53 +51,24 @@ namespace Lamp
 
 		stbi_image_free(imageData);
 
-		m_allocation = Utility::CreateImage(m_width, m_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VMA_MEMORY_USAGE_GPU_ONLY, m_texture);
-		Utility::TransitionImageLayout(m_texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		Utility::CopyBufferToImage(stagingBuffer, m_texture, width, height);
-		Utility::TransitionImageLayout(m_texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		ImageSpecification imageSpec{};
+		imageSpec.format = ImageFormat::RGBA;
+		imageSpec.usage = ImageUsage::Texture;
+		imageSpec.width = (uint32_t)width;
+		imageSpec.height = (uint32_t)height;
+
+		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
+
+		Utility::TransitionImageLayout(m_image->GetHandle(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		Utility::CopyBufferToImage(stagingBuffer, m_image->GetHandle(), width, height);
+		Utility::TransitionImageLayout(m_image->GetHandle(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
 
-		m_textureView = Utility::CreateImageView(m_texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-
-		VkSamplerCreateInfo samplerInfo{};
-		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = VK_FILTER_LINEAR;
-		samplerInfo.minFilter = VK_FILTER_LINEAR;
-
-		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-
-		samplerInfo.anisotropyEnable = VK_FALSE; // TODO: fix aniostropy
-		samplerInfo.maxAnisotropy = 1;
-		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-		samplerInfo.unnormalizedCoordinates = VK_FALSE;
-		samplerInfo.compareEnable = VK_FALSE;
-		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerInfo.mipLodBias = 0.f;
-		samplerInfo.minLod = 0.f;
-		samplerInfo.maxLod = 0.f;
-
-		VkResult result = vkCreateSampler(device->GetHandle(), &samplerInfo, nullptr, &m_sampler);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create texture sampler!");
-
-		m_descriptorInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		m_descriptorInfo.imageView = m_textureView;
-		m_descriptorInfo.sampler = m_sampler;
 	}
 
 	VulkanTexture2D::~VulkanTexture2D()
 	{
-		auto device = VulkanContext::GetCurrentDevice();
-
-		vkDeviceWaitIdle(device->GetHandle());
-		vkDestroySampler(device->GetHandle(), m_sampler, nullptr);
-		vkDestroyImageView(device->GetHandle(), m_textureView, nullptr);
-
-		VulkanAllocator allocator;
-		allocator.DestroyImage(m_texture, m_allocation);
 	}
 
 	void VulkanTexture2D::Bind(uint32_t slot) const
@@ -115,12 +81,12 @@ namespace Lamp
 
 	const uint32_t VulkanTexture2D::GetWidth() const
 	{
-		return m_width;
+		return m_image->GetSpecification().width;
 	}
 
 	const uint32_t VulkanTexture2D::GetHeight() const
 	{
-		return m_height;
+		return m_image->GetSpecification().height;
 	}
 
 	const uint32_t VulkanTexture2D::GetID() const

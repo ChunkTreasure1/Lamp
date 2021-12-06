@@ -40,6 +40,6 @@ namespace Lamp
 
 		FramebufferSpecification m_Specification;
 		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecs;
-		FramebufferTextureSpecification m_DepthAttachmentFormatSpec = FramebufferTextureFormat::None;
+		FramebufferTextureSpecification m_DepthAttachmentFormatSpec = ImageFormat::None;
 	};
 }

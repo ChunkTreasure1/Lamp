@@ -158,7 +158,6 @@ namespace Lamp
 		m_rendererStorage->directionalLightBuffer.direction = glm::vec4{ 0.5 };
 
 		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
-		//m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->meshBuffer, sizeof(MeshDataBuffer), 0, 0);
 		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraBuffer, sizeof(CameraDataBuffer), 0, 0);
 		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightBuffer, sizeof(DirectionalLightDataTest), 1, 0);
 	}
