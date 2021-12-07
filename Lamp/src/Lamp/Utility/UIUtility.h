@@ -14,6 +14,11 @@
 #include <string>
 #include <vector>
 
+namespace Lamp
+{
+	class Texture2D;
+}
+
 namespace UI
 {
 	static uint32_t s_contextId = 0;
@@ -68,6 +73,8 @@ namespace UI
 			ImGui::PopStyleVar();
 		}
 	};
+
+	ImTextureID GetTextureID(Ref<Lamp::Texture2D> texture);
 
 	static void ImageText(uint32_t texId, const std::string& text)
 	{
