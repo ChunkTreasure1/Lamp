@@ -142,16 +142,16 @@ namespace Sandbox
 						ImGui::TableNextRow();
 
 						ImGui::TableNextColumn();
-						uint32_t visibleIcon = obj->GetIsActive() ? m_visibleIconV->GetID() : m_visibleIconN->GetID();
+						Ref<Texture2D> visibleIcon = obj->GetIsActive() ? m_visibleIconV: m_visibleIconN;
 
-						if (ImGui::ImageButton((ImTextureID)(visibleIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+						if (ImGui::ImageButton(UI::GetTextureID(visibleIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 						{
 							obj->SetIsActive(!obj->GetIsActive());
 						}
 						ImGui::SameLine();
 						
-						uint32_t lockedIcon = obj->GetIsFrozen() ? m_lockedIcon->GetID() : m_unlockedIcon->GetID();
-						if (ImGui::ImageButton((ImTextureID)(lockedIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+						Ref<Texture2D> lockedIcon = obj->GetIsFrozen() ? m_lockedIcon : m_unlockedIcon;
+						if (ImGui::ImageButton(UI::GetTextureID(lockedIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 						{
 							obj->SetIsFrozen(!obj->GetIsFrozen());
 						}
@@ -168,7 +168,7 @@ namespace Sandbox
 						}
 
 						std::string id = obj->GetName() + "##" + obj->GetName() + std::to_string(obj->GetID());
-						if (UI::ImageSelectable(icon->GetID(), id, obj->GetIsSelected()))
+						if (UI::ImageSelectable(icon, id, obj->GetIsSelected()))
 						{
 							EditorObjectSelectedEvent e(obj);
 							Application::Get().OnEvent(e);

@@ -6,10 +6,20 @@
 
 #include "Platform/Vulkan/VulkanTexture2D.h"
 
+#include <imgui/backends/imgui_impl_vulkan.h>
+
 using namespace Lamp;
+
+static std::unordered_map<Ref<Lamp::Texture2D>, ImTextureID> s_textureIdCache;
 
 ImTextureID UI::GetTextureID(Ref<Lamp::Texture2D> texture)
 {
+	auto it = s_textureIdCache.find(texture);
+	if (it != s_textureIdCache.end())
+	{
+		return it->second;
+	}
+
 	if (Renderer::GetAPI() == RendererAPI::API::Vulkan)
 	{
 		Ref<VulkanTexture2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(texture);
@@ -19,5 +29,16 @@ ImTextureID UI::GetTextureID(Ref<Lamp::Texture2D> texture)
 		{
 			return nullptr;
 		}
+
+		ImTextureID id = ImGui_ImplVulkan_AddTexture(imageInfo.sampler, imageInfo.imageView, imageInfo.imageLayout);
+		s_textureIdCache[texture] = id;
+
+		return id;
 	}
+	else if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+	{
+		return (ImTextureID)texture->GetID();
+	}
+
+	return nullptr;
 }

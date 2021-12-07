@@ -110,7 +110,7 @@ namespace Sandbox
 		ActionHandler m_ActionHandler;
 
 		//Asset browser
-		//AssetBrowserPanel m_assetManager;
+		AssetBrowserPanel m_assetManager;
 
 		//Inspector
 		bool m_MousePressed = false;
@@ -126,7 +126,7 @@ namespace Sandbox
 		std::vector<BaseWindow*> m_pWindows;
 
 		//Play
-		//AnimatedIcon m_PhysicsIcon;
+		AnimatedIcon m_PhysicsIcon;
 
 		//Components
 		bool m_AddComponentOpen = false;

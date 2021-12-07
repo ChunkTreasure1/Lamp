@@ -21,6 +21,8 @@
 	#endif
 #endif // DEBUG
 
+#define LP_VALIDATION
+
 #ifdef LP_ENABLE_ASSERTS
 	#define LP_ASSERT(x, ...) { if(!(x)) { LP_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }
 	#define LP_CORE_ASSERT(x, ...) { if(!(x)) { LP_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }

@@ -23,7 +23,7 @@ namespace UI
 {
 	static uint32_t s_contextId = 0;
 	static uint32_t s_stackId = 0;
-
+	
 	class ScopedColor
 	{
 	public:
@@ -76,29 +76,29 @@ namespace UI
 
 	ImTextureID GetTextureID(Ref<Lamp::Texture2D> texture);
 
-	static void ImageText(uint32_t texId, const std::string& text)
+	static void ImageText(Ref<Lamp::Texture2D> texture, const std::string& text)
 	{
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
-		ImGui::Image((ImTextureID)texId, { size.y, size.y });
+		ImGui::Image(GetTextureID(texture), { size.y, size.y });
 		ImGui::SameLine();
 		ImGui::Text(text.c_str());
 	}
 
-	static bool ImageTreeNode(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
+	static bool ImageTreeNode(Ref<Lamp::Texture2D> texture, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
 	{
 		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
 		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
 
 		ImVec2 size = ImGui::CalcTextSize(fmt);
-		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
 		return ImGui::TreeNodeEx(ptr_id, flags, fmt);
 	}
 
-	static bool ImageSelectable(uint32_t texId, const std::string& text, bool selected)
+	static bool ImageSelectable(Ref<Lamp::Texture2D> texture, const std::string& text, bool selected)
 	{
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
-		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
 		return ImGui::Selectable(text.c_str(), selected, ImGuiSelectableFlags_SpanAvailWidth);
 	}

@@ -27,7 +27,7 @@ namespace Sandbox
 	using namespace Lamp;
 
 	Sandbox::Sandbox()
-		: Layer("Sandbox"), m_DockspaceID(0) //m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
+		: Layer("Sandbox"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
 	{
 		g_pEnv->IsEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
@@ -48,7 +48,7 @@ namespace Sandbox
 
 		Application::Get().GetWindow().Maximize();
 
-		//SetupFromConfig();
+		SetupFromConfig();
 	}
 
 	Sandbox::~Sandbox()
@@ -57,8 +57,6 @@ namespace Sandbox
 		{
 			delete p;
 		}
-		//
-		//m_BufferWindows.clear();
 		m_pWindows.clear();
 	}
 
@@ -99,7 +97,7 @@ namespace Sandbox
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::UIUpdate");
-			//m_PhysicsIcon.OnEvent(e);
+			m_PhysicsIcon.OnEvent(e);
 		}
 
 		{
@@ -133,7 +131,7 @@ namespace Sandbox
 		UpdateToolbar();
 		UpdateStatistics();
 
-		//m_assetManager.OnImGuiRender();
+		m_assetManager.OnImGuiRender();
 
 		for (auto& window : m_BufferWindows)
 		{

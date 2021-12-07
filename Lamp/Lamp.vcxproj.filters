@@ -480,6 +480,9 @@
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RendererNew.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -497,6 +500,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Swapchain.h">
       <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Textures\Image2D.h">
+      <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h">
       <Filter>src\Lamp\Rendering\Textures</Filter>
@@ -585,7 +591,13 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanFramebuffer.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanImage2D.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h">
@@ -1905,10 +1917,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanFramebuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\Image2D.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanImage2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2166,6 +2174,9 @@
     <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Textures\Image2D.cpp">
+      <Filter>src\Lamp\Rendering\Textures</Filter>
+    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClCompile>
@@ -2229,7 +2240,13 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanFramebuffer.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanImGuiLayer.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanImage2D.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp">
@@ -2370,8 +2387,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\VulkanFramebuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\Image2D.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanImage2D.cpp" />
   </ItemGroup>
 </Project>

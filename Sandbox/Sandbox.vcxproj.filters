@@ -202,5 +202,8 @@
     <None Include="engine\shaders\vulkan\testShader.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
+    <None Include="engine\shaders\vulkan\vulkanPbr.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
   </ItemGroup>
 </Project>
