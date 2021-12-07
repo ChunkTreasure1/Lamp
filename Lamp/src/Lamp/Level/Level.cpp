@@ -340,7 +340,7 @@ namespace Lamp
 
 	void Level::RenderLevel(Ref<CameraBase> camera)
 	{
-		RenderPassManager::Get()->RenderPasses(camera);
+		//RenderPassManager::Get()->RenderPasses(camera);
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)

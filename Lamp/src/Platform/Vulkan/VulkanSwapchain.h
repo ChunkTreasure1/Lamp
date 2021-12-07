@@ -13,6 +13,8 @@ namespace Lamp
 	class VulkanSwapchain : public Swapchain
 	{
 	public:
+		using ResizeCallback = std::function<void(uint32_t width, uint32_t height)>;
+
 		struct SwapchainSupportDetails
 		{
 			VkSurfaceCapabilitiesKHR capabilities;
@@ -32,6 +34,9 @@ namespace Lamp
 		void OnResize(uint32_t width, uint32_t height) override;
 		void Create(uint32_t& width, uint32_t& height);
 
+		inline void RegisterResizeCallback(void* owner, ResizeCallback callback) { LP_CORE_ASSERT(callback, "Callback is nullptr!"); m_resizeCallbacks.emplace(owner, callback); }
+		void UnregisterResizeCallback(void* owner);
+
 		inline VkFormat GetFormat() const { return m_colorFormat; }
 		inline const VkSwapchainKHR& GetHandle() const { return m_swapchain; }
 		inline const VkSurfaceKHR GetSurface() const { return m_surface; }
@@ -39,6 +44,7 @@ namespace Lamp
 		inline const size_t GetCommandBufferCount() const { return m_commandBuffers.size(); }
 		const uint32_t GetCurrentFrame() const override { return m_currentFrame; }
 		inline VkCommandBuffer GetDrawCommandBuffer(uint32_t index) { LP_CORE_ASSERT((index < m_commandBuffers.size()) && (index >= 0), "Index out of bounds!") return m_commandBuffers[index]; }
+		inline VkCommandPool GetDrawCommandPool(uint32_t index) { LP_CORE_ASSERT((index < m_commandPools.size()) && (index >= 0), "Index out of bounds!"); return m_commandPools[index]; }
 		inline VkFramebuffer GetFramebuffer(uint32_t index) { LP_CORE_ASSERT(index < m_framebuffers.size() && index >= 0, "Index out of bounds!"); return m_framebuffers[index]; }
 
 		inline VkRenderPass GetRenderPass() { return m_renderPass; }
@@ -55,6 +61,8 @@ namespace Lamp
 		void CreateCommandPools();
 		void CreateCommandBuffers();
 		void CreateDepthBuffer();
+
+		std::unordered_map<void*, ResizeCallback> m_resizeCallbacks;
 
 		GLFWwindow* m_pWindow;
 		VkExtent2D m_extent;

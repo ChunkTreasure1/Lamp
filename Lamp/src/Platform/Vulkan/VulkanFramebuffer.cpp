@@ -34,52 +34,72 @@ namespace Lamp
 	VulkanFramebuffer::VulkanFramebuffer(const FramebufferSpecification& spec)
 		: m_specification(spec)
 	{
-		if (m_specification.width == 0)
+		if (!m_specification.swapchainTarget)
 		{
-			m_width = Application::Get().GetWindow().GetWidth();
-			m_height = Application::Get().GetWindow().GetHeight();
-		}
-		else
-		{
-			m_width = spec.width;
-			m_height = spec.height;
-		}
-
-		for (auto& attachmentSpec : m_specification.attachments.Attachments)
-		{
-			if (Utils::IsDepthFormat(attachmentSpec.textureFormat))
+			if (m_specification.width == 0)
 			{
-				ImageSpecification imageSpec{};
-				imageSpec.format = attachmentSpec.textureFormat;
-				imageSpec.usage = ImageUsage::Attachment;
-				imageSpec.width = m_width;
-				imageSpec.height = m_height;
-
-				m_depthAttachmentImage = Image2D::Create(imageSpec);
+				m_width = Application::Get().GetWindow().GetWidth();
+				m_height = Application::Get().GetWindow().GetHeight();
 			}
 			else
 			{
-				ImageSpecification imageSpec{};
-				imageSpec.format = attachmentSpec.textureFormat;
-				imageSpec.usage = ImageUsage::Attachment;
-				imageSpec.width = m_width;
-				imageSpec.height = m_height;
-
-				m_attachmentImages.emplace_back(std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec)));
+				m_width = spec.width;
+				m_height = spec.height;
 			}
+
+			for (auto& attachmentSpec : m_specification.attachments.Attachments)
+			{
+				if (Utils::IsDepthFormat(attachmentSpec.textureFormat))
+				{
+					ImageSpecification imageSpec{};
+					imageSpec.format = attachmentSpec.textureFormat;
+					imageSpec.usage = ImageUsage::Attachment;
+					imageSpec.width = m_width;
+					imageSpec.height = m_height;
+
+					m_depthAttachmentImage = Image2D::Create(imageSpec);
+				}
+				else
+				{
+					ImageSpecification imageSpec{};
+					imageSpec.format = attachmentSpec.textureFormat;
+					imageSpec.usage = ImageUsage::Attachment;
+					imageSpec.width = m_width;
+					imageSpec.height = m_height;
+
+					m_attachmentImages.emplace_back(std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec)));
+				}
+			}
+		}
+		else
+		{
+			auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+			swapchain->RegisterResizeCallback(this, [=](uint32_t width, uint32_t height) 
+				{
+					Resize(width, height);
+				});
 		}
 
 		LP_CORE_ASSERT(m_specification.attachments.Attachments.size(), "Attachment count must be greater than zero!");
+		LP_CORE_INFO("VulkanFramebuffer: Creating!");
 		Resize(m_width, m_height);
 	}
 
 	VulkanFramebuffer::~VulkanFramebuffer()
 	{
 		auto device = VulkanContext::GetCurrentDevice();
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+
+		swapchain->UnregisterResizeCallback(this);
 		vkDeviceWaitIdle(device->GetHandle());
 
-		vkDestroyFramebuffer(device->GetHandle(), m_framebuffer, nullptr);
-		vkDestroyRenderPass(device->GetHandle(), m_renderPass, nullptr);
+		if (!m_specification.swapchainTarget)
+		{
+			vkDestroyFramebuffer(device->GetHandle(), m_framebuffer, nullptr);
+			vkDestroyRenderPass(device->GetHandle(), m_renderPass, nullptr);
+		}
+
+		LP_CORE_INFO("VulkanFramebuffer: Destroyed");
 	}
 
 	void VulkanFramebuffer::Bind() {}
@@ -88,6 +108,8 @@ namespace Lamp
 
 	void VulkanFramebuffer::Resize(const uint32_t width, const uint32_t height)
 	{
+		m_specification.width = width;
+		m_specification.height = height;
 		m_width = width;
 		m_height = height;
 

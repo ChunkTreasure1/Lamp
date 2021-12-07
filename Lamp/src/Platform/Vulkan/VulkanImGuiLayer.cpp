@@ -161,8 +161,6 @@ namespace Lamp
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		ImGui::ShowDemoWindow();
 	}
 
 	void VulkanImGuiLayer::End()

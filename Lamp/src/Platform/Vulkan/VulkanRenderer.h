@@ -16,17 +16,12 @@ namespace Lamp
 
 	struct TempRendererStorage
 	{
-		Ref<RenderPipeline> mainPipeline;
-		Ref<Shader> mainShader;
-		Ref<CommandBuffer> commandBuffer;
+		Ref<CommandBuffer> swapchainCommandBuffer;
+		Ref<CommandBuffer> renderCommandBuffer;
 
 		MeshDataBuffer meshBuffer;
-		CameraDataBuffer cameraBuffer;
-		DirectionalLightDataTest directionalLightBuffer;
 
-		Ref<UniformBufferSet> uniformBufferSet;
-
-		Ref<Mesh> teddy;
+		Ref<RenderPipeline> currentRenderPipeline;
 	};
 
 	class VulkanRenderer : public RendererNew
@@ -40,12 +35,14 @@ namespace Lamp
 		void Begin(const Ref<CameraBase> camera) override;
 		void End() override;
 
+		void BeginPass(Ref<RenderPipeline> pipeline) override;
+		void EndPass() override;
+
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 
 	private:
-		void SetupBuffers();
 
 		Scope<TempRendererStorage> m_rendererStorage;
 		VkDescriptorPool m_descriptorPool;

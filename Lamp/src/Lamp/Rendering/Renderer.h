@@ -6,10 +6,9 @@
 #include "UniformBuffers.h"
 #include "Buffers/UniformBuffer.h"
 
-#include <algorithm>
+#include "Lamp/Rendering/RendererDataStructures.h"
 
-//TODO: remove
-#include <vulkan/vulkan_core.h>
+#include <algorithm>
 
 namespace Lamp
 {
@@ -18,6 +17,9 @@ namespace Lamp
 	class CameraBase;
 	class Texture2D;
 	class Framebuffer;
+	class Mesh;
+	class UniformBufferSet;
+	class RenderPipeline;
 
 	class Renderer
 	{
@@ -37,7 +39,10 @@ namespace Lamp
 		static Ref<RendererNew> GetRenderer() { return s_renderer; }
 		static void GenerateKernel();
 
-		static void Draw(); //TODO: remove
+		static void SetupBuffers(); //TODO: remove
+		static void SwapchainBegin(); //TODO: remove
+		static void SwapchainEnd(); //TODO: remove
+		static void GeometryPass(); //TODO: remove
 
 		struct SceneData
 		{
@@ -89,6 +94,17 @@ namespace Lamp
 			std::map<std::string, Ref<Texture2D>> internalTextures;
 			std::map<std::string, Ref<Framebuffer>> internalFramebuffers;
 			std::vector<Ref<Framebuffer>> useViewportSize;
+			
+			///////////////////TESTING/////////////////
+			Ref<Mesh> teddy;
+			Ref<Shader> mainShader;
+			
+			Ref<RenderPipeline> swapchainPipeline;
+			Ref<RenderPipeline> geometryPipeline;
+
+			CameraDataBuffer cameraBuffer;
+			DirectionalLightDataTest directionalLightBufferTest;
+			Ref<UniformBufferSet> uniformBufferSet;
 		};
 
 		struct Capabilities

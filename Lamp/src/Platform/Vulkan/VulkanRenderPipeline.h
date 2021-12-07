@@ -13,12 +13,12 @@ namespace Lamp
 		VulkanRenderPipeline(const RenderPipelineSpecification& specification);
 		~VulkanRenderPipeline();
 
-		void Bind(uint32_t index) const override;
+		void Bind(Ref<CommandBuffer> commandBuffer) const override;
 		void SetLayout(BufferLayout layout) override;
 
-		void BindDescriptorSets(uint32_t index) const;
+		void BindDescriptorSets(Ref<CommandBuffer> commandBuffer, uint32_t index = -1) const;
 		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
-		void SetPushConstantData(uint32_t index, const void* data);
+		void SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data);
 		const RenderPipelineSpecification& GetSpecification() const override { return m_specification; }
 
 	private:

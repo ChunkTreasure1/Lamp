@@ -88,36 +88,36 @@ namespace Lamp
 			m_pWindow->GetSwapchain()->BeginFrame();
 			Renderer::Begin(nullptr);
 
-			Renderer::Draw();
+			Renderer::GeometryPass();
 
-
+			Renderer::SwapchainBegin();
 			{
 				LP_PROFILE_SCOPE("Application::UpdateImGui");
-
+			
 				m_pImGuiLayer->Begin();
-
+			
 				for (Layer* pLayer : m_LayerStack)
 				{
 					pLayer->OnImGuiRender(timestep);
 				}
-
+			
 				m_pImGuiLayer->End();
 			}
+			Renderer::SwapchainEnd();
 
 			Renderer::End();
 
 			AudioEngine::Update();
-			////Load 
-			//{
-			//	LP_PROFILE_SCOPE("Application::UpdateLayers");
-			//	AppUpdateEvent e(timestep);
+			//Load 
+			{
+				LP_PROFILE_SCOPE("Application::UpdateLayers");
+				AppUpdateEvent e(timestep);
 
-			//	for (Layer* pLayer : m_LayerStack)
-			//	{
-			//		pLayer->OnEvent(e);
-			//	}
-			//}
-
+				for (Layer* pLayer : m_LayerStack)
+				{
+					pLayer->OnEvent(e);
+				}
+			}
 
 			m_pWindow->Update(timestep);
 

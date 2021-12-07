@@ -164,6 +164,8 @@ namespace Lamp
 
 	void VulkanSwapchain::Shutdown()
 	{
+		vkDeviceWaitIdle(m_device->GetHandle());
+
 		for (auto& semaphore : m_presentCompleteSemaphores)
 		{
 			vkDestroySemaphore(m_device->GetHandle(), semaphore, nullptr);
@@ -244,10 +246,8 @@ namespace Lamp
 
 		vkResetFences(m_device->GetHandle(), 1, &m_inFlightFences[m_currentFrame]);
 
-		if (vkQueueSubmit(m_device->GetGraphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to submit draw command buffer!");
-		}
+		VkResult result = vkQueueSubmit(m_device->GetGraphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]);
+		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to submit queue!");
 
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -261,7 +261,6 @@ namespace Lamp
 
 		presentInfo.pImageIndices = &m_currentImageIndex;
 
-		VkResult result;
 		result = vkQueuePresentKHR(m_device->GetGraphicsQueue(), &presentInfo);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
@@ -311,6 +310,11 @@ namespace Lamp
 		m_currentImageIndex = 0;
 
 		vkDeviceWaitIdle(device);
+
+		for (const auto& callback : m_resizeCallbacks)
+		{
+			callback.second(width, height);
+		}
 	}
 
 	void VulkanSwapchain::Create(uint32_t& width, uint32_t& height)
@@ -386,6 +390,17 @@ namespace Lamp
 		vkGetSwapchainImagesKHR(m_device->GetHandle(), m_swapchain, &m_imageCount, m_images.data());
 
 		m_colorFormat = surfaceFormat.format;
+	}
+
+	void VulkanSwapchain::UnregisterResizeCallback(void* owner)
+	{
+		LP_CORE_ASSERT(owner, "Owner is nullptr!");
+		
+		auto it = m_resizeCallbacks.find(owner);
+		if (it != m_resizeCallbacks.end())
+		{
+			m_resizeCallbacks.erase(owner);
+		}
 	}
 
 	void VulkanSwapchain::FindCapabilities()

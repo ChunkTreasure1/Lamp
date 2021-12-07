@@ -13,6 +13,7 @@ namespace Lamp
 		virtual void End() = 0;
  
 		virtual void* GetCurrentCommandBuffer() = 0;
+		virtual uint32_t GetCurrentCommandBufferIndex() = 0;
 
 		static Ref<CommandBuffer> Create(uint32_t count, bool swapchainTarget = false);
 

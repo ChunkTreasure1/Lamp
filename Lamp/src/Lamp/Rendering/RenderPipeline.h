@@ -6,6 +6,7 @@
 namespace Lamp
 {
 	class Shader;
+	class CommandBuffer;
 
 	enum class Topology
 	{
@@ -30,7 +31,7 @@ namespace Lamp
 	class RenderPipeline
 	{
 	public:
-		virtual void Bind(uint32_t index) const = 0;
+		virtual void Bind(Ref<CommandBuffer> commandBuffer) const = 0;
 		virtual void SetLayout(BufferLayout layout) = 0;
 		virtual const RenderPipelineSpecification& GetSpecification() const = 0;
 		

@@ -11,6 +11,7 @@
 #include "Platform/Vulkan/VulkanFramebuffer.h"
 
 #include "Lamp/Core/Application.h"
+#include "Lamp/Rendering/CommandBuffer.h"
 
 namespace Lamp
 {
@@ -62,23 +63,27 @@ namespace Lamp
 		vkDestroyPipeline(device->GetHandle(), m_pipeline, nullptr);
 	}
 
-	void VulkanRenderPipeline::Bind(uint32_t index) const
+	void VulkanRenderPipeline::Bind(Ref<CommandBuffer> commandBuffer) const
 	{
-		//TODO: enable using non swapchain size
-		auto swapchain = std::dynamic_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto vulkanCommandBuffer = static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
+
+		VkExtent2D extent{};
+		extent.width = m_specification.framebuffer->GetSpecification().width;
+		extent.height = m_specification.framebuffer->GetSpecification().height;
+
 		VkViewport viewport{};
 		viewport.x = 0.f;
 		viewport.y = 0.f;
-		viewport.width = m_specification.framebuffer->GetSpecification().width;
-		viewport.height = m_specification.framebuffer->GetSpecification().height;
+		viewport.width = extent.width;
+		viewport.height = extent.height;
 		viewport.minDepth = 0.f;
 		viewport.maxDepth = 1.f;
 
-		VkRect2D scissor = { { 0, 0 }, swapchain->GetExtent() };
-		vkCmdSetViewport(swapchain->GetDrawCommandBuffer(index), 0, 1, &viewport);
-		vkCmdSetScissor(swapchain->GetDrawCommandBuffer(index), 0, 1, &scissor);
+		VkRect2D scissor = { { 0, 0 }, extent };
+		vkCmdSetViewport(vulkanCommandBuffer, 0, 1, &viewport);
+		vkCmdSetScissor(vulkanCommandBuffer, 0, 1, &scissor);
 
-		vkCmdBindPipeline(swapchain->GetDrawCommandBuffer(index), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+		vkCmdBindPipeline(vulkanCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 	}
 
 	void VulkanRenderPipeline::SetLayout(BufferLayout layout)
@@ -133,14 +138,14 @@ namespace Lamp
 		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
 	}
 
-	void VulkanRenderPipeline::SetPushConstantData(uint32_t index, const void* data)
+	void VulkanRenderPipeline::SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data)
 	{
-		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
+		auto vulkanCommandBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
 
 		const auto& pushConstants = vulkanShader->GetPushConstantRanges();
 
-		vkCmdPushConstants(swapchain->GetDrawCommandBuffer(swapchain->GetCurrentFrame()), m_layout, pushConstants[index].shaderStage, pushConstants[index].offset, pushConstants[index].size, data);
+		vkCmdPushConstants(vulkanCommandBuffer, m_layout, pushConstants[index].shaderStage, pushConstants[index].offset, pushConstants[index].size, data);
 	}
 
 	void VulkanRenderPipeline::CreateDescriptorSets()
@@ -306,14 +311,23 @@ namespace Lamp
 		pipelineInfo.pDepthStencilState = &depthStencil;
 		pipelineInfo.pDynamicState = &dynamicStateInfo;
 
-
 		result = vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline);
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline!");
 	}
 
-	void VulkanRenderPipeline::BindDescriptorSets(uint32_t index) const
+	void VulkanRenderPipeline::BindDescriptorSets(Ref<CommandBuffer> commandBuffer, uint32_t index) const
 	{
-		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
-		vkCmdBindDescriptorSets(swapchain->GetDrawCommandBuffer(index), VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, m_descriptorSets.at(index).size(), m_descriptorSets.at(index).data(), 0, nullptr);
+		uint32_t bindIndex = 0;
+		if (index == -1)
+		{
+			bindIndex = commandBuffer->GetCurrentCommandBufferIndex();
+		}
+		else
+		{
+			bindIndex = index;
+		}
+
+		auto vulkanCommanBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
+		vkCmdBindDescriptorSets(vulkanCommanBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, m_descriptorSets.at(bindIndex).size(), m_descriptorSets.at(bindIndex).data(), 0, nullptr);
 	}
 }
