@@ -25,6 +25,9 @@ namespace Lamp
 
 		void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
+		Ref<Image2D> GetColorAttachment(uint32_t index) const override;
+		Ref<Image2D> GetDepthAttachment() const override;
+
 		const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
 		const uint32_t GetDepthAttachmentID() override;
 		const uint32_t GetRendererID() override;
@@ -43,7 +46,7 @@ namespace Lamp
 		VkRenderPass m_renderPass;
 		VkFramebuffer m_framebuffer = nullptr;
 
-		Ref<Image2D> m_depthAttachmentImage;
+		Ref<VulkanImage2D> m_depthAttachmentImage;
 		std::vector<Ref<VulkanImage2D>> m_attachmentImages;
 
 		std::vector<VkClearValue> m_clearValues;

@@ -57,7 +57,7 @@ namespace Lamp
 					imageSpec.width = m_width;
 					imageSpec.height = m_height;
 
-					m_depthAttachmentImage = Image2D::Create(imageSpec);
+					m_depthAttachmentImage = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 				}
 				else
 				{
@@ -348,6 +348,17 @@ namespace Lamp
 
 	void VulkanFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
+	}
+
+	Ref<Image2D> VulkanFramebuffer::GetColorAttachment(uint32_t index) const
+	{
+		LP_CORE_ASSERT(index >= 0 && index < m_attachmentImages.size(), "Index out of bounds!");
+		return m_attachmentImages[index];
+	}
+
+	Ref<Image2D> VulkanFramebuffer::GetDepthAttachment() const
+	{
+		return m_depthAttachmentImage;
 	}
 
 	const uint32_t VulkanFramebuffer::GetColorAttachmentID(uint32_t i)

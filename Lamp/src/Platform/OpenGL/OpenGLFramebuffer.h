@@ -20,6 +20,9 @@ namespace Lamp
 		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth) override;
 		virtual void Invalidate() override;
 
+		Ref<Image2D> GetColorAttachment(uint32_t index) const override { return nullptr; }
+		Ref<Image2D> GetDepthAttachment() const override { return nullptr; }
+
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i /* = 0 */) override;
 		virtual inline const uint32_t GetDepthAttachmentID() override;
 		virtual inline const uint32_t GetRendererID() override { return m_RendererID; }

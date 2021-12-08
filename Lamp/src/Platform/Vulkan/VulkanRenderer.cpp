@@ -15,6 +15,7 @@
 #include "Platform/Vulkan/VulkanSwapchain.h"
 #include "Platform/Vulkan/VulkanRenderPipeline.h"
 #include "Platform/Vulkan/VulkanFramebuffer.h"
+#include "Platform/Vulkan/VulkanAllocator.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -117,6 +118,11 @@ namespace Lamp
 		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()));
 		commandBuffer->End();
 		m_rendererStorage->currentRenderPipeline = nullptr;
+	}
+
+	const uint64_t VulkanRenderer::GetMemoryUsage() const
+	{
+		return VulkanAllocator::GetStatistics().free;
 	}
 
 	void VulkanRenderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)

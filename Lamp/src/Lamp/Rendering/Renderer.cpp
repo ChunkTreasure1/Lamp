@@ -25,8 +25,12 @@ namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Ref<RendererNew> Renderer::s_renderer = nullptr;
-	Renderer::Capabilities Renderer::s_capabilities;
 	Scope<Renderer::RendererDefaults> Renderer::s_rendererDefaults;
+
+	Renderer::Capabilities Renderer::s_capabilities;
+	Renderer::Statistics Renderer::s_statistics;
+
+	static Ref<Framebuffer> s_testBuffer = nullptr;
 
 	static const std::filesystem::path s_defaultTexturePath = "engine/textures/default/defaultTexture.png";
 
@@ -42,7 +46,7 @@ namespace Lamp
 		s_pSceneData = new Renderer::SceneData();
 
 		//TODO: remove
-		s_pSceneData->mainShader = Shader::Create("engine/shaders/vulkan/vulkanPbr.glsl", false);
+		s_pSceneData->mainShader = Shader::Create("engine/shaders/vulkan/vulkanPbr.glsl", true);
 
 		MeshImportSettings settings;
 		settings.path = "assets/meshes/teddy/teddy.fbx";
@@ -95,6 +99,8 @@ namespace Lamp
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			s_testBuffer = pipelineSpec.framebuffer;
+
 			pipelineSpec.shader = s_pSceneData->mainShader;
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
@@ -134,6 +140,10 @@ namespace Lamp
 	void Renderer::End()
 	{
 		//Renderer3D::End();
+
+		s_statistics.totalDrawCalls = 0;
+		s_statistics.memoryUsage = s_renderer->GetMemoryUsage();
+
 		s_renderer->End();
 	}
 
@@ -242,7 +252,6 @@ namespace Lamp
 		}
 	}
 
-
 	void Renderer::SetupBuffers()
 	{
 		s_pSceneData->cameraBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
@@ -254,7 +263,7 @@ namespace Lamp
 
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraBuffer, sizeof(CameraDataBuffer), 0, 0);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightBuffer, sizeof(DirectionalLightDataTest), 1, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightBufferTest, sizeof(DirectionalLightDataTest), 1, 0);
 	}
 
 	void Renderer::SwapchainBegin()
@@ -279,5 +288,10 @@ namespace Lamp
 		}
 
 		s_renderer->EndPass();
+	}
+
+	Ref<Framebuffer> Renderer::GetFramebuffer()
+	{
+		return s_testBuffer;
 	}
 }

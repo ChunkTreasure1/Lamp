@@ -18,6 +18,8 @@ namespace Lamp
 		virtual void BeginPass(Ref<RenderPipeline> pipeline) = 0;
 		virtual void EndPass() = 0;
 
+		virtual const uint64_t GetMemoryUsage() const = 0;
+
 		virtual void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1) = 0;
 
 		static Ref<RendererNew> Create();

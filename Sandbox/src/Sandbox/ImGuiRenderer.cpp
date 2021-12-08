@@ -69,8 +69,7 @@ namespace Sandbox
 				g_pEnv->pLevel->OnEvent(e);
 			}
 
-			uint32_t textureID = 0;
-			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image(UI::GetTextureID(Renderer::GetFramebuffer()->GetColorAttachment(0)), ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 1, 0 }, ImVec2{ 0, 1 });
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
@@ -735,9 +734,10 @@ namespace Sandbox
 
 		ImGui::Separator();
 
-		ImGui::Text("Total draw calls: %d", Renderer3D::GetStatistics().totalDrawCalls);
-		ImGui::Text("Scene draw calls: %d", Renderer3D::GetStatistics().sceneDrawCalls);
-		ImGui::Text("Other draw calls: %d", Renderer3D::GetStatistics().otherDrawCalls);
+		const auto& stats = Renderer::GetStatistics();
+
+		ImGui::Text("Total draw calls: %d", stats.totalDrawCalls);
+		ImGui::Text("Graphics API memory usage: %d", stats.memoryUsage);
 
 		ImGui::End();
 	}

@@ -20,6 +20,9 @@ namespace Lamp
 
 		inline const std::vector<glm::mat4>& GetTransforms() { return m_Transforms; }
 
+		Ref<Image2D> GetColorAttachment(uint32_t index) const override { return nullptr; }
+		Ref<Image2D> GetDepthAttachment() const override { return nullptr; }
+
 		inline const uint32_t GetColorAttachmentID(uint32_t i) override { return 0; }
 		inline const uint32_t GetDepthAttachmentID() override { return m_TextureID; }
 		inline const uint32_t GetRendererID() override { return m_RendererID; }

@@ -50,10 +50,11 @@ namespace Lamp
 
 	GPUMemoryStatistics VulkanAllocator::GetStatistics()
 	{
-		//TODO:
-		//const auto& memoProps = GraphicsContext::GetCurrentDevice()->GetPhysicalDevice()->get;
+		const auto& memoProps = VulkanContext::GetCurrentDevice()->GetPhysicalDevice()->GetMemoryProperties();
+		GPUMemoryStatistics stats{};
+		stats.free = memoProps.memoryHeaps[0].size;
 
-		return GPUMemoryStatistics();
+		return stats;
 	}
 
 	VulkanAllocator::VulkanAllocator(const std::string& tag)

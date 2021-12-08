@@ -7,6 +7,8 @@
 namespace Lamp
 {
 	class Texture2D;
+	class Image2D;
+
 	class VulkanRenderPipeline : public RenderPipeline
 	{
 	public:
@@ -17,7 +19,10 @@ namespace Lamp
 		void SetLayout(BufferLayout layout) override;
 
 		void BindDescriptorSets(Ref<CommandBuffer> commandBuffer, uint32_t index = -1) const;
+
 		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
+		void SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index);
+
 		void SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data);
 		const RenderPipelineSpecification& GetSpecification() const override { return m_specification; }
 

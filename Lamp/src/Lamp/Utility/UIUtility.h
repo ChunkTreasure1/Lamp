@@ -17,6 +17,7 @@
 namespace Lamp
 {
 	class Texture2D;
+	class Image2D;
 }
 
 namespace UI
@@ -75,6 +76,7 @@ namespace UI
 	};
 
 	ImTextureID GetTextureID(Ref<Lamp::Texture2D> texture);
+	ImTextureID GetTextureID(Ref<Lamp::Image2D> texture);
 
 	static void ImageText(Ref<Lamp::Texture2D> texture, const std::string& text)
 	{

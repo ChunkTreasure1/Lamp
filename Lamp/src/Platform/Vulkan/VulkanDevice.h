@@ -26,6 +26,7 @@ namespace Lamp
 		const QueueFamilyIndices& GetQueueFamilyIndices() const { return m_queueFamilyIndices; }
 
 		const VkPhysicalDeviceProperties& GetProperties() const { return m_properties; }
+		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return m_memoryProperties; }
 		const VkPhysicalDeviceLimits& GetLimits() const { return m_properties.limits; }
 
 		const bool IsExtensionSupported(const std::string& extension) const;
@@ -42,6 +43,7 @@ namespace Lamp
 		VkPhysicalDevice m_physicalDevice = nullptr;
 		VkPhysicalDeviceProperties m_properties;
 		VkPhysicalDeviceFeatures m_features;
+		VkPhysicalDeviceMemoryProperties m_memoryProperties;
 
 		std::vector<VkQueueFamilyProperties> m_queueFamilyProperties;
 		std::unordered_set<std::string> m_supportedExtensions;

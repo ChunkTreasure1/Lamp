@@ -59,9 +59,9 @@ namespace Lamp
 
 		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 
-		Utility::TransitionImageLayout(m_image->GetHandle(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 		Utility::CopyBufferToImage(stagingBuffer, m_image->GetHandle(), width, height);
-		Utility::TransitionImageLayout(m_image->GetHandle(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
 

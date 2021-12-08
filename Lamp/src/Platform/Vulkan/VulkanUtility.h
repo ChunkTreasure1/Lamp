@@ -88,7 +88,7 @@ namespace Utility
 		device->FlushCommandBuffer(commandBuffer);
 	}
 
-	static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, Lamp::VulkanDevice* device)
+	static void TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, Lamp::VulkanDevice* device)
 	{
 		VkCommandBuffer commandBuffer = device->GetCommandBuffer(true);
 
@@ -102,9 +102,9 @@ namespace Utility
 
 		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		barrier.subresourceRange.baseMipLevel = 0;
-		barrier.subresourceRange.levelCount = 1;
+		barrier.subresourceRange.levelCount = VK_REMAINING_MIP_LEVELS;
 		barrier.subresourceRange.baseArrayLayer = 0;
-		barrier.subresourceRange.layerCount = 1;
+		barrier.subresourceRange.layerCount = VK_REMAINING_ARRAY_LAYERS;
 
 		VkPipelineStageFlags sourceStage;
 		VkPipelineStageFlags destStage;
@@ -133,6 +133,14 @@ namespace Utility
 			sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			destStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			destStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
 		else
 		{
 			LP_CORE_ASSERT(false, "Layout transition not supported!");
@@ -143,18 +151,15 @@ namespace Utility
 			barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 		}
 
-		barrier.srcAccessMask = 0;
-		barrier.dstAccessMask = 0;
-
 		vkCmdPipelineBarrier(commandBuffer, sourceStage, destStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
 		device->FlushCommandBuffer(commandBuffer);
 	}
 
-	static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+	static void TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
 	{
 		auto device = Lamp::VulkanContext::GetCurrentDevice();
-		TransitionImageLayout(image, format, oldLayout, newLayout, device);
+		TransitionImageLayout(image, oldLayout, newLayout, device);
 	}
 
 	static void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)

@@ -43,6 +43,7 @@ namespace Lamp
 		static void SwapchainBegin(); //TODO: remove
 		static void SwapchainEnd(); //TODO: remove
 		static void GeometryPass(); //TODO: remove
+		static Ref<Framebuffer> GetFramebuffer(); //TODO: remove
 
 		struct SceneData
 		{
@@ -115,8 +116,17 @@ namespace Lamp
 			uint32_t framesInFlight = 3;
 		};
 
+		struct Statistics
+		{
+			uint32_t totalDrawCalls = 0;
+		
+			uint64_t memoryUsage = 0;
+		};
+
 		static const Capabilities& GetCapabilities() { return s_capabilities; }
 		static const Ref<Texture2D> GetDefaultTexture() { return s_rendererDefaults->defaultTexture; }
+
+		static const Statistics& GetStatistics() { return s_statistics; }
 
 	private:
 		static void CreateUniformBuffers();
@@ -131,8 +141,11 @@ namespace Lamp
 
 		static SceneData* s_pSceneData;
 		static Capabilities s_capabilities;
+		static Statistics s_statistics;
+		
 		static Ref<RendererNew> s_renderer;
 		static Scope<RendererDefaults> s_rendererDefaults;
+
 
 		friend class VulkanPhysicalDevice;
 

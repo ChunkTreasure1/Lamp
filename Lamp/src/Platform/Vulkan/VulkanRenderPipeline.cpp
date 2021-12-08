@@ -9,6 +9,7 @@
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
 #include "Platform/Vulkan/VulkanRenderer.h"
 #include "Platform/Vulkan/VulkanFramebuffer.h"
+#include "Platform/Vulkan/VulkanUtility.h"
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Rendering/CommandBuffer.h"
@@ -133,6 +134,24 @@ namespace Lamp
 		auto descriptorWrite = shaderDescriptorSets[set].writeDescriptorSets.at(imageSamplers.at(binding).name);
 		descriptorWrite.dstSet = m_descriptorSets[index][set];
 		descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
+
+		auto device = VulkanContext::GetCurrentDevice();
+		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+	}
+
+	void VulkanRenderPipeline::SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index)
+	{
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
+		auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(image);
+		
+		//TODO: transition to right layout
+		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
+		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
+		auto descriptorWrite = shaderDescriptorSets[set].writeDescriptorSets.at(imageSamplers.at(binding).name);
+		descriptorWrite.dstSet = m_descriptorSets[index][set];
+		descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
 
 		auto device = VulkanContext::GetCurrentDevice();
 		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);

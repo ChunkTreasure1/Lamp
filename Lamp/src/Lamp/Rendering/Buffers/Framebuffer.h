@@ -85,6 +85,10 @@ namespace Lamp
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
+		virtual Ref<Image2D> GetColorAttachment(uint32_t index) const = 0;
+		virtual Ref<Image2D> GetDepthAttachment() const = 0;
+
+		//TODO: deprecate
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
 		virtual inline const uint32_t GetDepthAttachmentID() = 0;
 		virtual inline const uint32_t GetRendererID() = 0;

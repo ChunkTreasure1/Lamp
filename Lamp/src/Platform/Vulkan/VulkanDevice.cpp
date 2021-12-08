@@ -42,6 +42,8 @@ namespace Lamp
 		m_features.samplerAnisotropy = VK_TRUE;
 		vkGetPhysicalDeviceFeatures(m_physicalDevice, &m_features);
 
+		vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &m_memoryProperties);
+
 		Renderer::s_capabilities.maxAniostropy = m_properties.limits.maxSamplerAnisotropy;
 		Renderer::s_capabilities.supportAniostopy = m_features.samplerAnisotropy == VK_TRUE ? true : false;
 
