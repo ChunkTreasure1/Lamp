@@ -10,6 +10,7 @@
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer3D.h"
+#include "Lamp/Rendering/Swapchain.h"
 
 #include "Lamp/Rendering/RendererNew.h"
 
@@ -37,27 +38,18 @@ namespace Lamp
 	void Renderer::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
-		s_rendererDefaults = CreateScope<RendererDefaults>();
-		s_rendererDefaults->defaultTexture = Texture2D::Create(s_defaultTexturePath);
-
+		//TODO: remove
 		s_renderer = RendererNew::Create();
 		s_renderer->Initialize();
 
 		s_pSceneData = new Renderer::SceneData();
 
-		//TODO: remove
-		s_pSceneData->mainShader = Shader::Create("engine/shaders/vulkan/vulkanPbr.glsl", true);
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl");
 
-		MeshImportSettings settings;
-		settings.path = "assets/meshes/teddy/teddy.fbx";
-		s_pSceneData->teddy = MeshImporter::ImportMesh(settings);
-		s_pSceneData->teddy->GetMaterial(0)->SetShader(s_pSceneData->mainShader);
+		MaterialLibrary::LoadMaterials();
 
-		auto mat = s_pSceneData->teddy->GetMaterial(0);
-
-		mat->SetTexture("u_Albedo", Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_albedo.tga"));
-		mat->SetTexture("u_Normal", Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_normal.tga"));
-		mat->SetTexture("u_MRO", Texture2D::Create("assets/textures/TeddyTextures/DJTeddy_final_mro.tga"));
+		s_rendererDefaults = CreateScope<RendererDefaults>();
+		s_rendererDefaults->defaultTexture = Texture2D::Create(s_defaultTexturePath);
 
 		SetupBuffers();
 
@@ -72,7 +64,7 @@ namespace Lamp
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			pipelineSpec.shader = s_pSceneData->mainShader;
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
 			pipelineSpec.isSwapchain = true;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = s_pSceneData->uniformBufferSet;
@@ -101,7 +93,7 @@ namespace Lamp
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
 			s_testBuffer = pipelineSpec.framebuffer;
 
-			pipelineSpec.shader = s_pSceneData->mainShader;
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = s_pSceneData->uniformBufferSet;
@@ -122,29 +114,29 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 		delete s_pSceneData;
-		//Renderer3D::Shutdown();
 	}
 
 	void Renderer::Begin(const Ref<CameraBase> camera)
 	{
 		LP_PROFILE_FUNCTION();
 
-		//g_pEnv->pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
-
-		//UpdateBuffers(camera);
-		//Renderer3D::Begin(camera);
+		UpdateBuffers(camera);
 
 		s_renderer->Begin(camera);
 	}
 
 	void Renderer::End()
 	{
-		//Renderer3D::End();
 
 		s_statistics.totalDrawCalls = 0;
-		s_statistics.memoryUsage = s_renderer->GetMemoryUsage();
+		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
 		s_renderer->End();
+	}
+
+	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
+	{
+		s_renderer->SubmitMesh(transform, mesh, material, id);
 	}
 
 	void Renderer::CreateUniformBuffers()
@@ -164,14 +156,21 @@ namespace Lamp
 
 	void Renderer::UpdateBuffers(const Ref<CameraBase> camera)
 	{
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
 		//Set data in uniform buffers
-		//Common data
+		//Camera data
 		{
-			s_pSceneData->commonRenderData.cameraPosition = glm::vec4(camera->GetPosition(), 0.f);
-			s_pSceneData->commonRenderData.projection = camera->GetProjectionMatrix();
-			s_pSceneData->commonRenderData.view = camera->GetViewMatrix();
-			s_pSceneData->commonDataBuffer->SetData(&s_pSceneData->commonRenderData, sizeof(CommonRenderData));
+			auto ub = s_pSceneData->uniformBufferSet->Get(0, 0, currentFrame);
+
+			s_pSceneData->cameraRenderData.position = glm::vec4(camera->GetPosition(), 0.f);
+			s_pSceneData->cameraRenderData.projection = camera->GetProjectionMatrix();
+			s_pSceneData->cameraRenderData.view = camera->GetViewMatrix();
+
+			ub->SetData(&s_pSceneData->cameraRenderData, sizeof(CameraDataBuffer));
 		}
+
+#if 0
 
 		//Directional lights
 		{
@@ -217,7 +216,11 @@ namespace Lamp
 		Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(camera);
 		s_pSceneData->aspectRatio = perspectiveCamera->GetAspectRatio();
 		s_pSceneData->tanHalfFOV = glm::tan(glm::radians(s_pSceneData->aspectRatio) / 2.f);
+	
+	#endif
+
 	}
+
 
 	static float Lerp(float a, float b, float f)
 	{
@@ -254,15 +257,11 @@ namespace Lamp
 
 	void Renderer::SetupBuffers()
 	{
-		s_pSceneData->cameraBuffer.view = glm::lookAt(glm::vec3{ 2.f, 2.f, 2.f }, glm::vec3{ 0.f, 0.f, 0.f }, glm::vec3{ 0.f, 0.f, 1.f });
-		s_pSceneData->cameraBuffer.projection = glm::perspective(glm::radians(45.f), 16.f / 9.f, 0.1f, 100.f);
-		s_pSceneData->cameraBuffer.position = glm::vec4{ 2.f, 2.f, 2.f, 0.f };
-
 		s_pSceneData->directionalLightBufferTest.direction = glm::vec4{ 0.5 };
 		s_pSceneData->directionalLightBufferTest.colorIntensity = glm::vec4{ 1.f };
 
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraBuffer, sizeof(CameraDataBuffer), 0, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraRenderData, sizeof(CameraDataBuffer), 0, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightBufferTest, sizeof(DirectionalLightDataTest), 1, 0);
 	}
 
@@ -276,17 +275,13 @@ namespace Lamp
 		s_renderer->EndPass();
 	}
 
-	void Renderer::GeometryPass()
+	void Renderer::GeometryPassBegin()
 	{
 		s_renderer->BeginPass(s_pSceneData->geometryPipeline);
+	}
 
-		glm::mat4 model = glm::scale(glm::mat4(1.f), glm::vec3(0.01f)) * glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
-
-		for (const auto& subMesh : s_pSceneData->teddy->GetSubMeshes())
-		{
-			s_renderer->SubmitMesh(model, subMesh, s_pSceneData->teddy->GetMaterial(subMesh->GetMaterialIndex()));
-		}
-
+	void Renderer::GeometryPassEnd()
+	{
 		s_renderer->EndPass();
 	}
 

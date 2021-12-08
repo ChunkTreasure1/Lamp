@@ -78,6 +78,11 @@ namespace UI
 	ImTextureID GetTextureID(Ref<Lamp::Texture2D> texture);
 	ImTextureID GetTextureID(Ref<Lamp::Image2D> texture);
 
+	static uint64_t BytesToMBs(uint64_t input)
+	{
+		return (input / (1024 * 1024));
+	}
+
 	static void ImageText(Ref<Lamp::Texture2D> texture, const std::string& text)
 	{
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
@@ -319,7 +324,7 @@ namespace UI
 
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 		std::string id = "##" + std::to_string(s_stackId++);
-		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), items.size()))
+		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), (int)items.size()))
 		{
 			changed = true;
 		}

@@ -11,13 +11,9 @@
 //Based on Hazel
 namespace Lamp
 {
-	struct GPUMemoryStatistics
-	{
-		uint64_t allocated = 0;
-		uint64_t free = 0;
-	};
-
 	class VulkanDevice;
+	struct GPUMemoryStatistics;
+
 	class VulkanAllocator
 	{
 	public:
@@ -45,7 +41,7 @@ namespace Lamp
 		static void Initialize(VulkanDevice* device);
 		static void Shutdown();
 		static VmaAllocator& GetVMAAllocator();
-		static GPUMemoryStatistics GetStatistics();
+		static const GPUMemoryStatistics& GetStatistics();
 
 	private:
 		std::string m_tag;

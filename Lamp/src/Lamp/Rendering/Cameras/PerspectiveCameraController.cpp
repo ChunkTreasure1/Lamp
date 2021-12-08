@@ -23,21 +23,23 @@ namespace Lamp
 
 	void PerspectiveCameraController::Update(Timestep ts)
 	{
+		auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
+
 		if (Input::IsKeyPressed(LP_KEY_W))
 		{
-			m_Position += m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
+			m_Position += m_TranslationSpeed * perspectiveCamera->GetForwardDirection() * (float)ts;
 		}
 		if (Input::IsKeyPressed(LP_KEY_S))
 		{
-			m_Position -= m_TranslationSpeed * std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetFront() * (float)ts;
+			m_Position -= m_TranslationSpeed * perspectiveCamera->GetForwardDirection() * (float)ts;
 		}
 		if (Input::IsKeyPressed(LP_KEY_A))
 		{
-			m_Position -= std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
+			m_Position += m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
 		}
 		if (Input::IsKeyPressed(LP_KEY_D))
 		{
-			m_Position += std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetRight() * m_TranslationSpeed * (float)ts;
+			m_Position -= m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
 		}
 
 		//g_pEnv->DirLight.UpdateProjection(m_Position);
@@ -102,19 +104,21 @@ namespace Lamp
 		xOffset *= sensitivity;
 		yOffset *= sensitivity;
 
-		std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetYaw(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetYaw() + xOffset);
-		std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() + yOffset);
+		auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
 
-		if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() > 89.f)
+		perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() + xOffset);
+		perspectiveCamera->SetPitch(perspectiveCamera->GetPitch() + yOffset);
+
+		if (perspectiveCamera->GetPitch() > 89.f)
 		{
-			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(89.f);
+			perspectiveCamera->SetPitch(89.f);
 		}
-		if (std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->GetPitch() < -89.f)
+		if (perspectiveCamera->GetPitch() < -89.f)
 		{
-			std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->SetPitch(-89.f);
+			perspectiveCamera->SetPitch(-89.f);
 		}
 
-		std::dynamic_pointer_cast<PerspectiveCamera>(m_Camera)->UpdateVectors();
+		perspectiveCamera->UpdateVectors();
 
 		return true;
 	}

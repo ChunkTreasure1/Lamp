@@ -20,6 +20,15 @@ namespace Lamp
 	class Mesh;
 	class UniformBufferSet;
 	class RenderPipeline;
+	class SubMesh;
+	class Material;
+
+	struct GPUMemoryStatistics
+	{
+		uint64_t allocatedMemory = 0;
+		uint64_t freeMemory = 0;
+		uint64_t totalGPUMemory = 0;
+	};
 
 	class Renderer
 	{
@@ -32,6 +41,8 @@ namespace Lamp
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
 
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
+
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
 
@@ -42,7 +53,8 @@ namespace Lamp
 		static void SetupBuffers(); //TODO: remove
 		static void SwapchainBegin(); //TODO: remove
 		static void SwapchainEnd(); //TODO: remove
-		static void GeometryPass(); //TODO: remove
+		static void GeometryPassBegin(); //TODO: remove
+		static void GeometryPassEnd(); //TODO: remove
 		static Ref<Framebuffer> GetFramebuffer(); //TODO: remove
 
 		struct SceneData
@@ -73,8 +85,7 @@ namespace Lamp
 			//////////////
 
 			/////Uniform buffers//////
-			CommonRenderData commonRenderData;
-			Ref<UniformBuffer> commonDataBuffer;
+			CameraRenderData cameraRenderData;
 
 			DirectionalLightBuffer directionalLightData;
 			Ref<UniformBuffer> directionalLightBuffer;
@@ -97,13 +108,9 @@ namespace Lamp
 			std::vector<Ref<Framebuffer>> useViewportSize;
 			
 			///////////////////TESTING/////////////////
-			Ref<Mesh> teddy;
-			Ref<Shader> mainShader;
-			
 			Ref<RenderPipeline> swapchainPipeline;
 			Ref<RenderPipeline> geometryPipeline;
 
-			CameraDataBuffer cameraBuffer;
 			DirectionalLightDataTest directionalLightBufferTest;
 			Ref<UniformBufferSet> uniformBufferSet;
 		};
@@ -120,7 +127,7 @@ namespace Lamp
 		{
 			uint32_t totalDrawCalls = 0;
 		
-			uint64_t memoryUsage = 0;
+			GPUMemoryStatistics memoryStatistics;
 		};
 
 		static const Capabilities& GetCapabilities() { return s_capabilities; }

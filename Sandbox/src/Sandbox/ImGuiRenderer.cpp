@@ -63,6 +63,7 @@ namespace Sandbox
 			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
+				//Renderer::GetFramebuffer()->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
@@ -736,8 +737,12 @@ namespace Sandbox
 
 		const auto& stats = Renderer::GetStatistics();
 
+		ImGui::TextUnformatted("GPU statistics");
+		
 		ImGui::Text("Total draw calls: %d", stats.totalDrawCalls);
-		ImGui::Text("Graphics API memory usage: %d", stats.memoryUsage);
+		ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
+		ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
+		ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));
 
 		ImGui::End();
 	}

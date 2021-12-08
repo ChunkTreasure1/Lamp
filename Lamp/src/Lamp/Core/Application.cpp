@@ -86,9 +86,18 @@ namespace Lamp
 			m_FrameTime.Begin();
 
 			m_pWindow->GetSwapchain()->BeginFrame();
-			Renderer::Begin(nullptr);
 
-			Renderer::GeometryPass();
+			AudioEngine::Update();
+			//Load 
+			{
+				LP_PROFILE_SCOPE("Application::UpdateLayers");
+				AppUpdateEvent e(timestep);
+
+				for (Layer* pLayer : m_LayerStack)
+				{
+					pLayer->OnEvent(e);
+				}
+			}
 
 			Renderer::SwapchainBegin();
 			{
@@ -105,20 +114,6 @@ namespace Lamp
 			}
 			Renderer::SwapchainEnd();
 
-			Renderer::End();
-
-			AudioEngine::Update();
-			//Load 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateLayers");
-				AppUpdateEvent e(timestep);
-
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnEvent(e);
-				}
-			}
-
 			m_pWindow->Update(timestep);
 
 			m_FrameTime.End();
@@ -132,15 +127,15 @@ namespace Lamp
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-		////Handle rest of events
-		//for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-		//{
-		//	(*--it)->OnEvent(e);
-		//	if (e.Handled)
-		//	{
-		//		break;
-		//	}
-		//}
+		//Handle rest of events
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+			{
+				break;
+			}
+		}
 	}
 
 	void Application::PushLayer(Layer* pLayer)

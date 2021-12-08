@@ -86,7 +86,7 @@ namespace Lamp
 
 		VulkanAllocator::Shutdown();
 
-	#ifdef LP_DEBUG
+	#ifdef LP_VALIDATION
 		VulkanUtils::DestroyDebugUtilsMessengerEXT(s_instance, m_debugMessenger, nullptr);
 		m_device->Destroy();
 	#endif
@@ -105,7 +105,7 @@ namespace Lamp
 
 	void VulkanContext::CreateInstance()
 	{
-	#ifdef LP_DEBUG	
+	#ifdef LP_VALIDATION	
 		if (!CheckValidationLayerSupport())
 		{
 			LP_CORE_ASSERT(false, "Validation layers are enabled but none are supported!");
@@ -131,7 +131,7 @@ namespace Lamp
 
 		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 
-	#ifdef LP_DEBUG
+	#ifdef LP_VALIDATION
 		createInfo.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
 		createInfo.ppEnabledLayerNames = m_validationLayers.data();
 
@@ -149,7 +149,7 @@ namespace Lamp
 
 	void VulkanContext::SetupDebugMessenger()
 	{
-	#ifndef LP_DEBUG
+	#ifndef LP_VALIDATION
 		return;
 	#endif
 		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
@@ -214,7 +214,7 @@ namespace Lamp
 
 		std::vector<const char*> extensionsVector{ extensions, extensions + extensionCount };
 
-	#ifdef LP_DEBUG
+	#ifdef LP_VALIDATION
 		extensionsVector.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	#endif
 		return extensionsVector;

@@ -38,7 +38,7 @@ namespace Lamp
 		void BeginPass(Ref<RenderPipeline> pipeline) override;
 		void EndPass() override;
 
-		const uint64_t GetMemoryUsage() const override;
+		const GPUMemoryStatistics& GetMemoryUsage() const override;
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
 

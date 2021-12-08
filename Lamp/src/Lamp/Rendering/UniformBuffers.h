@@ -25,11 +25,11 @@ namespace Lamp
 	};
 
 	//Uniform buffers
-	struct CommonRenderData
+	struct CameraRenderData
 	{
 		glm::mat4 view;
 		glm::mat4 projection;
-		glm::vec4 cameraPosition;
+		glm::vec4 position;
 	};
 
 	struct DirectionalLightBuffer

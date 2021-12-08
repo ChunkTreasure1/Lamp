@@ -60,7 +60,8 @@ namespace Lamp
 
 		void Reload(bool forceCompile) override;
 		void Bind() override {}
-		const std::string& GetName() override { return m_name; }
+		const std::string& GetName() override { return m_specification.name; }
+		const ShaderSpecification& GetSpecification() const override { return m_specification; }
 
 		inline const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStageInfos() { return m_pipelineShaderStageInfos; }
 		inline const std::vector<VkDescriptorSetLayout>& GetDescriptorSetLayouts() { return m_descriptorSetLayouts; }
@@ -90,6 +91,6 @@ namespace Lamp
 		std::unordered_map<VkShaderStageFlagBits, std::string> m_shaderSource;
 		std::unordered_map<uint32_t, std::vector<VkDescriptorPoolSize>> m_descriptorTypes;
 
-		std::string m_name;
+		ShaderSpecification m_specification;
 	};
 }

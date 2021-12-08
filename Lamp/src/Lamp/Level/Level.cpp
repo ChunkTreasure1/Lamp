@@ -162,8 +162,8 @@ namespace Lamp
 
 	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)
 	{
-		AppRenderEvent e(camera);
-		OnEvent(e);
+		//AppRenderEvent e(camera);
+		//OnEvent(e);
 
 		RenderLevel(camera);
 	}
@@ -341,6 +341,16 @@ namespace Lamp
 	void Level::RenderLevel(Ref<CameraBase> camera)
 	{
 		//RenderPassManager::Get()->RenderPasses(camera);
+		Renderer::Begin(camera);
+
+		Renderer::GeometryPassBegin();
+
+		//AppRenderEvent e(camera);
+		//OnEvent(e);
+
+		Renderer::GeometryPassEnd();
+
+		Renderer::End();
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)

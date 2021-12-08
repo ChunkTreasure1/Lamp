@@ -15,6 +15,7 @@ namespace Lamp
 		void Reload(bool forceCompile) override;
 		void Bind() override;
 		const std::string& GetName() override;
+		const ShaderSpecification& GetSpecification() const override { return m_specification; }
 
 	private:
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
@@ -28,7 +29,7 @@ namespace Lamp
 
 		std::unordered_map<GLenum, std::string> m_openGLSource;
 
+		ShaderSpecification m_specification;
 		uint32_t m_rendererId;
-		std::string m_name;
 	};
 }

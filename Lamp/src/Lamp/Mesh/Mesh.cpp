@@ -2,6 +2,7 @@
 #include "Mesh.h"
 
 #include "Lamp/Rendering/Renderer3D.h"
+#include "Lamp/Rendering/Renderer.h"
 #include "glm/glm.hpp"
 
 #include "Lamp/Math/Math.h"
@@ -13,7 +14,7 @@ namespace Lamp
 		for (const auto& mesh : m_Meshes)
 		{
 			//TODO: Render error mesh if mesh is invalid
-			Renderer3D::SubmitMesh(transform, mesh, m_Materials[mesh->GetMaterialIndex()], id);
+			Renderer::SubmitMesh(transform, mesh, m_Materials[mesh->GetMaterialIndex()], id);
 		}
 	}
 }

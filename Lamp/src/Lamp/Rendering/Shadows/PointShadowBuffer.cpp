@@ -13,7 +13,7 @@ namespace Lamp
 
 		SetPosition(m_Position);
 
-		Invalidate();
+		//Invalidate();
 	}
 
 	PointShadowBuffer::~PointShadowBuffer()

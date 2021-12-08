@@ -164,7 +164,7 @@ project "Lamp"
 			}
 
 		filter "configurations:Dist"
-			defines { "LP_DIST", "LP_ENABLE_ASSERTS", "NDEBUG" }
+			defines { "LP_DIST", "NDEBUG" }
 			runtime "Release"
 			optimize "on"
 

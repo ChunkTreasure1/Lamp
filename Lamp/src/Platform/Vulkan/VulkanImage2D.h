@@ -19,7 +19,7 @@ namespace Lamp
 		uint32_t GetHeight() const override { return m_specification.height; }
 		float GetAspectRatio() const override { return (float)m_specification.width / (float)m_specification.height; }
 
-		inline VkDescriptorImageInfo GetDescriptorInfo() const { return m_descriptorInfo; }
+		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_descriptorInfo; }
 		inline VkImage GetHandle() const { return m_image; }
 		inline VkImageView GetImageView() const { return m_imageViews.at(0); }
 

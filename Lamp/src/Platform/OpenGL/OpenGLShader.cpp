@@ -112,7 +112,6 @@ namespace Lamp
 	OpenGLShader::OpenGLShader(const std::filesystem::path& path, bool forceCompile)
 	{
 		Path = path;
-		m_name = path.stem().string();
 
 		Utils::CreateCacheDirectoryIfNeeded();
 
@@ -134,11 +133,73 @@ namespace Lamp
 
 	const std::string& OpenGLShader::GetName()
 	{
-		return m_name;
+		return m_specification.name;
 	}
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		//Get specs
+		const char* nameToken = "Name:";
+		const char* textureCountToken = "TextureCount:";
+		const char* textureNamesToken = "TextureNames";
+		const char* internalShaderToken = "InternalShader:";
+		size_t nameTokenLength = strlen(nameToken);
+		size_t texCountTokenLength = strlen(textureCountToken);
+		size_t texNamesTokenLength = strlen(textureNamesToken);
+		size_t internalShaderTokenLength = strlen(internalShaderToken);
+
+		size_t tokenPos = source.find(nameToken, 0);
+		{
+			size_t eol = source.find_first_of("\r\n", tokenPos);
+
+			size_t begin = tokenPos + nameTokenLength + 1;
+			std::string name = source.substr(begin, eol - begin);
+			m_specification.name = name;
+			tokenPos = std::string::npos;
+		}
+
+		{
+			tokenPos = source.find(textureCountToken, 0);
+
+			size_t eol = source.find_first_of("\r\n", tokenPos);
+
+			size_t begin = tokenPos + texCountTokenLength + 1;
+			std::string name = source.substr(begin, eol - begin);
+			m_specification.textureCount = stoi(name);
+		}
+
+		{
+			tokenPos = source.find(internalShaderToken, 0);
+			size_t eol = source.find_first_of("\r\n", tokenPos);
+
+			size_t begin = tokenPos + internalShaderTokenLength + 1;
+			std::string text = source.substr(begin, eol - begin);
+			if (text == "true")
+			{
+				m_specification.internalShader = true;
+			}
+			else
+			{
+				m_specification.internalShader = false;
+			}
+		}
+
+		{
+			tokenPos = source.find(textureNamesToken, 0);
+
+			size_t eol = source.find_first_of("\r\n", tokenPos);
+			eol = source.find_first_of("\r\n", eol + 2);
+
+			for (int i = 0; i < m_specification.textureCount; i++)
+			{
+				size_t pos = source.find_first_of("\r\n", eol + 2);
+				std::string name = source.substr(eol + 2, pos - eol - 2);
+				m_specification.inputTextureNames.push_back(name);
+
+				eol = pos;
+			}
+		}
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";

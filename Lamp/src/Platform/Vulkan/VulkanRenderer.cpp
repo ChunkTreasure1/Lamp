@@ -120,9 +120,9 @@ namespace Lamp
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
 
-	const uint64_t VulkanRenderer::GetMemoryUsage() const
+	const GPUMemoryStatistics& VulkanRenderer::GetMemoryUsage() const
 	{
-		return VulkanAllocator::GetStatistics().free;
+		return VulkanAllocator::GetStatistics();
 	}
 
 	void VulkanRenderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)

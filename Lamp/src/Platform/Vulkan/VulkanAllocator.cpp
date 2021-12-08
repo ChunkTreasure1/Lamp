@@ -2,6 +2,8 @@
 #include "VulkanAllocator.h"
 
 #include "Lamp/Core/Log.h"
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Platform/Vulkan/VulkanDevice.h"
 
 namespace Lamp
@@ -14,6 +16,7 @@ namespace Lamp
 	};
 
 	static VulkanAllocatorData* s_pData = nullptr;
+	static GPUMemoryStatistics s_memoryStatistics;
 
 	void VulkanAllocator::UnmapMemory(VmaAllocation allocation)
 	{
@@ -48,13 +51,14 @@ namespace Lamp
 		return s_pData->allocator;
 	}
 
-	GPUMemoryStatistics VulkanAllocator::GetStatistics()
+	const GPUMemoryStatistics& VulkanAllocator::GetStatistics()
 	{
-		const auto& memoProps = VulkanContext::GetCurrentDevice()->GetPhysicalDevice()->GetMemoryProperties();
-		GPUMemoryStatistics stats{};
-		stats.free = memoProps.memoryHeaps[0].size;
+		const auto& memProps = VulkanContext::GetCurrentDevice()->GetPhysicalDevice()->GetMemoryProperties();
+		s_memoryStatistics.totalGPUMemory = memProps.memoryHeaps[0].size;
+		s_memoryStatistics.allocatedMemory = s_pData->totalAllocatedBytes - s_pData->totalFreedBytes;
+		s_memoryStatistics.freeMemory = s_memoryStatistics.totalGPUMemory - s_memoryStatistics.allocatedMemory;
 
-		return stats;
+		return s_memoryStatistics;
 	}
 
 	VulkanAllocator::VulkanAllocator(const std::string& tag)

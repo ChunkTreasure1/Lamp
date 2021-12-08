@@ -8,6 +8,7 @@
 
 #ifdef LP_DEBUG
 	//#define LP_PROFILING
+	#define LP_VALIDATION
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define LP_DEBUGBREAK() __debugbreak()
 		#define GLFW_EXPOSE_NATIVE_WIN32	
@@ -20,8 +21,6 @@
 		#define GLFW_EXPOSE_NATIVE_WIN32
 	#endif
 #endif // DEBUG
-
-#define LP_VALIDATION
 
 #ifdef LP_ENABLE_ASSERTS
 	#define LP_ASSERT(x, ...) { if(!(x)) { LP_ERROR("Assertion failed: {0}", __VA_ARGS__); LP_DEBUGBREAK(); } }

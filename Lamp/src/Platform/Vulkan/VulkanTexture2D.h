@@ -23,7 +23,7 @@ namespace Lamp
 		virtual const uint32_t GetHeight() const override;
 		virtual const uint32_t GetID() const override;
 
-		inline VkDescriptorImageInfo GetDescriptorInfo() const { return m_image->GetDescriptorInfo(); }
+		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_image->GetDescriptorInfo(); }
 
 	private:
 		Ref<VulkanImage2D> m_image;

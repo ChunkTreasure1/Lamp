@@ -24,6 +24,10 @@ namespace Lamp
 		inline float& GetFieldOfView() { return m_fieldOfView; }
 		inline float GetAspectRatio() const { return m_aspectRatio; }
 
+		glm::vec3 GetUpDirection() const;
+		glm::vec3 GetRightDirection() const;
+		glm::vec3 GetForwardDirection() const;
+
 		//Setting
 		inline void SetYaw(float yaw) { m_Rotation.x = yaw; }
 		inline void SetPitch(float pitch) { m_Rotation.y = pitch; }
@@ -33,6 +37,7 @@ namespace Lamp
 
 	private:
 		virtual void RecalculateViewMatrix() override;
+		glm::quat GetOrientation() const;
 
 	private:
 		glm::mat4 m_TransformMatrix;
@@ -40,7 +45,9 @@ namespace Lamp
 		glm::vec3 m_WorldUp = { 0.f, 1.f, 0.f };
 		glm::vec3 m_Front = { 0.f, 0.f, -1.f };
 		glm::vec3 m_Up = { 0.f, 1.f, 0.f };
-		glm::vec3 m_Right = { 1.f, 0.f, 0.f };
+		glm::vec3 m_Right = { -1.f, 0.f, 0.f };
+
+		glm::vec3 m_worldRotation = { 0.f, 0.f, 0.f };
 
 		float m_fieldOfView;
 		float m_aspectRatio;

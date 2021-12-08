@@ -46,6 +46,14 @@ namespace Lamp
 		uint32_t set;
 	};
 
+	struct ShaderSpecification
+	{
+		std::string name;
+		std::vector<std::string> inputTextureNames;
+		uint32_t textureCount = 0;
+		bool internalShader = true;
+	};
+
 	class Shader : public Asset
 	{
 	public:
@@ -80,6 +88,7 @@ namespace Lamp
 		virtual void Reload(bool forceCompile) = 0;
 		virtual void Bind() = 0;
 		virtual const std::string& GetName() = 0;
+		virtual const ShaderSpecification& GetSpecification() const = 0;
 		
 		static AssetType GetStaticType() { return AssetType::Shader; }
 		AssetType GetType() override { return GetStaticType(); }

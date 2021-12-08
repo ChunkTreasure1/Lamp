@@ -33,8 +33,8 @@ namespace Sandbox
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
-		m_pLevel = CreateRef<Level>("Test"); //ResourceCache::GetAsset<Level>("assets/levels/testLevel2/data.level");
-		g_pEnv->pLevel = m_pLevel;
+		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+
 		//m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 

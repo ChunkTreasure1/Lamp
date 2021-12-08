@@ -1,3 +1,14 @@
+#ShaderSpec
+Name: pbrForward
+TextureCount: 3
+InternalShader: false
+TextureNames
+{
+u_Albedo
+u_Normal
+u_MRO
+}
+
 #type vertex
 #version 450 core
 layout (location = 0) in vec3 a_Position;
@@ -14,9 +25,9 @@ layout (push_constant) uniform MeshDataBuffer
 
 layout (std140, binding = 0) uniform CameraDataBuffer
 {
-    vec4 position;
     mat4 view;
     mat4 projection;
+    vec4 position;
 
 } u_CameraData;
 
