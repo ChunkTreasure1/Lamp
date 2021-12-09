@@ -345,8 +345,8 @@ namespace Lamp
 
 		Renderer::GeometryPassBegin();
 
-		//AppRenderEvent e(camera);
-		//OnEvent(e);
+		AppRenderEvent e(camera);
+		OnEvent(e);
 
 		Renderer::GeometryPassEnd();
 

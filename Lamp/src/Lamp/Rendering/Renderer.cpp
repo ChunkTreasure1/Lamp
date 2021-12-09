@@ -44,12 +44,12 @@ namespace Lamp
 
 		s_pSceneData = new Renderer::SceneData();
 
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl");
-
-		MaterialLibrary::LoadMaterials();
-
 		s_rendererDefaults = CreateScope<RendererDefaults>();
 		s_rendererDefaults->defaultTexture = Texture2D::Create(s_defaultTexturePath);
+
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
+		MaterialLibrary::LoadMaterials();
 
 		SetupBuffers();
 

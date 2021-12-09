@@ -12,7 +12,10 @@ namespace Lamp
 {
 	class VulkanMaterial : public Material
 	{
+		struct MaterialTextureSpecification;
+
 	public:
+
 		VulkanMaterial();
 		VulkanMaterial(Ref<Shader> shader, uint32_t id);
 		VulkanMaterial(const std::string& name, Ref<Shader> shader, uint32_t id = 0);
@@ -37,6 +40,9 @@ namespace Lamp
 		const float& GetBlendingMultiplier() override { return m_blendingMultiplier; }
 		const bool& GetUseBlending() override { return m_useBlending; }
 
+		std::unordered_map<uint32_t, std::vector<VkDescriptorSet>>& GetDescriptorSets() { return m_descriptorSets; }
+		const std::vector<MaterialTextureSpecification>& GetTextureSpecification() { return m_textureSpecifications; }
+
 	private:
 		struct MaterialTextureSpecification
 		{
@@ -51,7 +57,6 @@ namespace Lamp
 			uint32_t binding;
 			Ref<Texture2D> texture;
 		};
-
 		std::optional<std::reference_wrapper<MaterialTextureSpecification>> FindTexture(const std::string& name);
 
 		uint32_t m_index;
@@ -62,6 +67,7 @@ namespace Lamp
 
 		std::vector<MaterialTextureSpecification> m_textureSpecifications;
 
+		std::unordered_map<uint32_t, std::vector<VkDescriptorSet>> m_descriptorSets;
 		Ref<VulkanShader> m_shader;
 	};
 }

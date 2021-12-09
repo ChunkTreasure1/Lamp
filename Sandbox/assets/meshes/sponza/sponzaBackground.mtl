@@ -2,9 +2,9 @@ material:
   name: sponzaBackground
   handle: 16465432135617165050
   textures:
-    albedo: 4227104880835043339
-    normal: 10563924703401963713
-    mro: 3164843566697270774
+    u_Albedo: 4227104880835043339
+    u_Normal: 10563924703401963713
+    u_MRO: 3164843566697270774
   shader: pbrForward
   useBlending: false
   blendingMultiplier: 1

@@ -2,9 +2,9 @@ material:
   name: sponzaThorn
   handle: 1130016911990836047
   textures:
-    albedo: 7919364761549206836
-    normal: 16995907805297558245
-    mro: 3276018873975790496
+    u_Albedo: 7919364761549206836
+    u_Normal: 16995907805297558245
+    u_MRO: 3276018873975790496
   shader: pbrForward
   useBlending: false
   blendingMultiplier: 1

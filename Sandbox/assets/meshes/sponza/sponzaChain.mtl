@@ -2,9 +2,9 @@ material:
   name: sponzaChain
   handle: 15060320103953420015
   textures:
-    albedo: 11149572871087736962
-    normal: 3240705260739916544
-    mro: 6020555361778114809
+    u_Albedo: 11149572871087736962
+    u_Normal: 3240705260739916544
+    u_MRO: 6020555361778114809
   shader: pbrForward
   useBlending: true
   blendingMultiplier: 1

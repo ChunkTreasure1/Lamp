@@ -106,8 +106,8 @@ namespace Lamp
 
 		auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
 
-		perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() + xOffset);
-		perspectiveCamera->SetPitch(perspectiveCamera->GetPitch() + yOffset);
+		perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() - xOffset);
+		perspectiveCamera->SetPitch(perspectiveCamera->GetPitch() - yOffset);
 
 		if (perspectiveCamera->GetPitch() > 89.f)
 		{

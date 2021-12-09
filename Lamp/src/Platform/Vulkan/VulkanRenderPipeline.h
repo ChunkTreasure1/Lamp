@@ -18,7 +18,7 @@ namespace Lamp
 		void Bind(Ref<CommandBuffer> commandBuffer) const override;
 		void SetLayout(BufferLayout layout) override;
 
-		void BindDescriptorSets(Ref<CommandBuffer> commandBuffer, uint32_t index = -1) const;
+		void BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::unordered_map<uint32_t, std::vector<VkDescriptorSet>>& descriptorSets, uint32_t index = -1) const;
 
 		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
 		void SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index);

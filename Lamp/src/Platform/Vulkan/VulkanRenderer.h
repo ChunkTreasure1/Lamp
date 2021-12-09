@@ -45,6 +45,7 @@ namespace Lamp
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 
 	private:
+		void SetupDescriptorsForRendering(Ref<Material> material);
 
 		Scope<TempRendererStorage> m_rendererStorage;
 		VkDescriptorPool m_descriptorPool;

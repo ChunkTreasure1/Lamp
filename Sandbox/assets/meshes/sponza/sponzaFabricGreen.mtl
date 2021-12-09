@@ -2,9 +2,9 @@ material:
   name: sponzaFabricGreen
   handle: 9399749854386232713
   textures:
-    albedo: 14293107274380133944
-    normal: 14784206792958894988
-    mro: 5295289911952907098
+    u_Albedo: 14293107274380133944
+    u_Normal: 14784206792958894988
+    u_MRO: 5295289911952907098
   shader: pbrForward
   useBlending: false
   blendingMultiplier: 1

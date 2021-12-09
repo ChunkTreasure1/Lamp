@@ -16,6 +16,10 @@
 #include "Platform/Vulkan/VulkanRenderPipeline.h"
 #include "Platform/Vulkan/VulkanFramebuffer.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
+#include "Platform/Vulkan/VulkanShader.h"
+#include "Platform/Vulkan/VulkanMaterial.h"
+#include "Platform/Vulkan/VulkanUniformBuffer.h"
+#include "Platform/Vulkan/VulkanTexture2D.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -129,16 +133,92 @@ namespace Lamp
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
+		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
 
-		material->Bind(m_rendererStorage->currentRenderPipeline, 0);
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		SetupDescriptorsForRendering(material);
+
 		m_rendererStorage->meshBuffer.model = transform;
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
-		vulkanPipeline->BindDescriptorSets(commandBuffer, 0);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, vulkanMaterial->GetDescriptorSets(), currentFrame);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
 
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+	}
+
+	void VulkanRenderer::SetupDescriptorsForRendering(Ref<Material> material)
+	{
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(material->GetShader());
+		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
+		auto allDescriptorLayouts = vulkanShader->GetAllDescriptorSetLayouts();
+		auto device = VulkanContext::GetCurrentDevice();
+
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		/////Allocate//////
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
+		allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
+		allocInfo.pSetLayouts = allDescriptorLayouts.data();
+
+		auto& descriptorSets = vulkanMaterial->GetDescriptorSets();
+
+		if (!descriptorSets[currentFrame].empty())
+		{
+			vkFreeDescriptorSets(device->GetHandle(), m_descriptorPool, descriptorSets[currentFrame].size(), descriptorSets[currentFrame].data());
+		}
+
+		descriptorSets[currentFrame].resize(allDescriptorLayouts.size());
+
+		VkResult result = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, descriptorSets[currentFrame].data());
+		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor sets!");
+
+		/////Update/////
+		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
+
+		for (uint32_t set = 0; set < shaderDescriptorSets.size(); set++)
+		{
+			auto& uniformBuffers = shaderDescriptorSets[set].uniformBuffers;
+
+			for (uint32_t binding = 0; binding < uniformBuffers.size(); binding++)
+			{
+				auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffers.at(binding)->name);
+				writeDescriptor.dstSet = descriptorSets[currentFrame][set];
+
+				auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(binding, set, currentFrame));
+				writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+
+				vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
+			}
+		}
+
+		auto& textureSpecification = vulkanMaterial->GetTextureSpecification();
+		for (const auto& spec : textureSpecification)
+		{
+			if (spec.texture)
+			{
+				auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(spec.texture);
+				LP_CORE_ASSERT(currentFrame < descriptorSets.size(), "Index must be less than the descriptor set map size!");
+
+				auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
+				auto& imageSamplers = shaderDescriptorSets[spec.set].imageSamplers;
+				auto descriptorWrite = shaderDescriptorSets[spec.set].writeDescriptorSets.at(imageSamplers.at(spec.binding).name);
+				descriptorWrite.dstSet = descriptorSets[currentFrame][spec.set];
+				descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
+
+				auto device = VulkanContext::GetCurrentDevice();
+				vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+			}
+			else
+			{
+				LP_CORE_ERROR("Vulkan Renderer: No texture bound to {0} in material {1}!", spec.name, material->GetName());
+			}
+		}
 	}
 }

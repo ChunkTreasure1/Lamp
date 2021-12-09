@@ -29,8 +29,7 @@ namespace Lamp::Math
 		trans = vec3(localMatrix[3]);
 		localMatrix[3] = vec4(0, 0, 0, localMatrix[3].w);
 
-		vec3 row[3], Pdum3;
-
+		vec3 row[3];
 		//Scale and shear
 		for (length_t i = 0; i < 3; ++i)
 		{
@@ -61,6 +60,7 @@ namespace Lamp::Math
 
 		return true;
 	}
+
 	bool SolveQuadric(const float& a, const float& b, const float& c, float& x0, float& x1)
 	{
 		float discr = b * b - 4 * a * c;
@@ -84,6 +84,7 @@ namespace Lamp::Math
 
 		return true;
 	}
+
 	float Max(const glm::vec3& v)
 	{
 		float max = -FLT_MAX;
