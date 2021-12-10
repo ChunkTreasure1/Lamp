@@ -36,14 +36,12 @@ namespace Lamp
 	RenderBuffer* Renderer::s_submitBufferPointer = &s_firstRenderBuffer;
 	RenderBuffer* Renderer::s_renderBufferPointer = &s_secondRenderBuffer;
 
-	static Ref<Framebuffer> s_testBuffer = nullptr;
-
 	static const std::filesystem::path s_defaultTexturePath = "engine/textures/default/defaultTexture.png";
 
 	void Renderer::Initialize()
 	{
 		LP_PROFILE_FUNCTION();
-		//TODO: remove
+
 		s_renderer = RendererNew::Create();
 		s_renderer->Initialize();
 
@@ -55,67 +53,11 @@ namespace Lamp
 		s_firstRenderBuffer.drawCalls.reserve(500);
 		s_secondRenderBuffer.drawCalls.reserve(500);
 
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl"); //TODO: remove
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
 		MaterialLibrary::LoadMaterials();
 
 		SetupBuffers();
-
-		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = true;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
-			pipelineSpec.isSwapchain = true;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = s_pSceneData->uniformBufferSet;
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
-			s_pSceneData->swapchainPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			s_testBuffer = pipelineSpec.framebuffer;
-
-			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = s_pSceneData->uniformBufferSet;
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
-			s_pSceneData->geometryPipeline = RenderPipeline::Create(pipelineSpec);
-		}
 	}
 
 	void Renderer::Shutdown()
@@ -140,6 +82,16 @@ namespace Lamp
 
 		s_renderer->End();
 		s_submitBufferPointer->drawCalls.clear();
+	}
+
+	void Renderer::BeginPass(const Ref<RenderPipeline> pipeline)
+	{
+		s_renderer->BeginPass(pipeline);
+	}
+
+	void Renderer::EndPass()
+	{
+		s_renderer->EndPass();
 	}
 
 	void Renderer::SwapBuffers()
@@ -189,26 +141,31 @@ namespace Lamp
 			ub->SetData(&s_pSceneData->cameraRenderData, sizeof(CameraDataBuffer));
 		}
 
-#if 0
-
 		//Directional lights
 		{
+			auto ub = s_pSceneData->uniformBufferSet->Get(1, 0, currentFrame);
+
 			uint32_t index = 0;
-			s_pSceneData->directionalLightData.lightCount = 0;
+			s_pSceneData->directionalLightDataBuffer.lightCount = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 			{
 				glm::vec3 direction = glm::normalize(glm::mat3(light->transform) * glm::vec3(1.f));
 
-				s_pSceneData->directionalLightData.dirLights[index].direction = glm::vec4(direction, 1.f);
-				s_pSceneData->directionalLightData.dirLights[index].colorIntensity = glm::vec4(light->color, light->intensity);
-				s_pSceneData->directionalLightData.dirLights[index].castShadows = light->castShadows;
-				s_pSceneData->directionalLightData.lightCount++;
+				s_pSceneData->directionalLightDataBuffer.dirLights[index].direction = glm::vec4(direction, 1.f);
+				s_pSceneData->directionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->color, light->intensity);
+				s_pSceneData->directionalLightDataBuffer.dirLights[index].castShadows = light->castShadows;
+				s_pSceneData->directionalLightDataBuffer.lightCount++;
 
 				index++;
+				if (index > 0)
+				{
+					break;
+				}
 			}
 
-			s_pSceneData->directionalLightBuffer->SetData(&s_pSceneData->directionalLightData, sizeof(DirectionalLightBuffer));
+			ub->SetData(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer));
 		}
+	#if 0
 
 		//Light data
 		{
@@ -275,36 +232,8 @@ namespace Lamp
 
 	void Renderer::SetupBuffers()
 	{
-		s_pSceneData->directionalLightBufferTest.direction = glm::vec4{ 0.5 };
-		s_pSceneData->directionalLightBufferTest.colorIntensity = glm::vec4{ 1.f };
-
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraRenderData, sizeof(CameraDataBuffer), 0, 0);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightBufferTest, sizeof(DirectionalLightDataTest), 1, 0);
-	}
-
-	void Renderer::SwapchainBegin()
-	{
-		s_renderer->BeginPass(s_pSceneData->swapchainPipeline);
-	}
-
-	void Renderer::SwapchainEnd()
-	{
-		s_renderer->EndPass();
-	}
-
-	void Renderer::GeometryPassBegin()
-	{
-		s_renderer->BeginPass(s_pSceneData->geometryPipeline);
-	}
-
-	void Renderer::GeometryPassEnd()
-	{
-		s_renderer->EndPass();
-	}
-
-	Ref<Framebuffer> Renderer::GetFramebuffer()
-	{
-		return s_testBuffer;
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
 	}
 }

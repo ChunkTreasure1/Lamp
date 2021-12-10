@@ -29,6 +29,9 @@ namespace Lamp
 		uint64_t allocatedMemory = 0;
 		uint64_t freeMemory = 0;
 		uint64_t totalGPUMemory = 0;
+
+		uint64_t totalAllocatedMemory = 0;
+		uint64_t totalFreedMemory = 0;
 	};
 
 	class Renderer
@@ -41,6 +44,10 @@ namespace Lamp
 
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
+
+		static void BeginPass(const Ref<RenderPipeline> pipeline);
+		static void EndPass();
+
 		static void SwapBuffers();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
@@ -55,17 +62,12 @@ namespace Lamp
 		static void GenerateKernel();
 
 		static void SetupBuffers(); //TODO: remove
-		static void SwapchainBegin(); //TODO: remove
-		static void SwapchainEnd(); //TODO: remove
-		static void GeometryPassBegin(); //TODO: remove
-		static void GeometryPassEnd(); //TODO: remove
-		static Ref<Framebuffer> GetFramebuffer(); //TODO: remove
 
 		struct SceneData
 		{
 			//Data
 			const uint32_t maxLights = 1024;
-			const uint32_t maxScreenTileBufferAlloc = 2000;
+			const uint32_t maxScreenTileBufferAlloc = 2000;	
 			const uint32_t screenTileSize = 16;
 
 			uint32_t screenTileCount = 1;
@@ -90,15 +92,11 @@ namespace Lamp
 
 			/////Uniform buffers//////
 			CameraRenderData cameraRenderData;
-
-			DirectionalLightBuffer directionalLightData;
-			Ref<UniformBuffer> directionalLightBuffer;
-
+			DirectionalLightDataBuffer directionalLightDataBuffer;
 			DirectionalLightVPs directionalLightVPData;
-			Ref<UniformBuffer> directionalLightVPBuffer;
-
 			SSAOData ssaoData;
-			Ref<UniformBuffer> ssaoBuffer;
+
+			Ref<UniformBufferSet> uniformBufferSet;
 			//////////////////////////
 
 			/////Shader Storage//////
@@ -112,25 +110,18 @@ namespace Lamp
 			std::vector<Ref<Framebuffer>> useViewportSize;
 			
 			///////////////////TESTING/////////////////
-			Ref<RenderPipeline> swapchainPipeline;
-			Ref<RenderPipeline> geometryPipeline;
-
-			DirectionalLightDataTest directionalLightBufferTest;
-			Ref<UniformBufferSet> uniformBufferSet;
 		};
 
 		struct Capabilities
 		{
 			bool supportAniostopy = false;
 			uint32_t maxAniostropy = 1;
-
 			uint32_t framesInFlight = 3;
 		};
 
 		struct Statistics
 		{
 			uint32_t totalDrawCalls = 0;
-		
 			GPUMemoryStatistics memoryStatistics;
 		};
 

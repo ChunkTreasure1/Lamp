@@ -49,7 +49,7 @@ ImTextureID UI::GetTextureID(Ref<Lamp::Image2D> texture)
 	auto it = s_imageIdCache.find(texture);
 	if (it != s_imageIdCache.end())
 	{
-		return it->second;
+	//	return it->second;
 	}
 
 	if (Renderer::GetAPI() == RendererAPI::API::Vulkan)

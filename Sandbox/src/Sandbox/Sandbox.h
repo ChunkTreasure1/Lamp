@@ -25,6 +25,7 @@
 namespace Lamp
 {
 	class Framebuffer;
+	class RenderPipeline;
 }
 
 namespace Sandbox
@@ -44,6 +45,7 @@ namespace Sandbox
 
 	private:
 		void CreateDockspace();
+		void SetupRenderPasses();
 		void GetInput();
 		void SetupFromConfig();
 		void RenderLines();
@@ -90,6 +92,8 @@ namespace Sandbox
 
 		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
 
+		std::vector<Ref<Lamp::RenderPipeline>> m_renderPasses;
+
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
@@ -100,6 +104,7 @@ namespace Sandbox
 
 		Ref<Lamp::Texture2D> m_IconPlay;
 		Ref<Lamp::Texture2D> m_IconStop;
+		Ref<Lamp::Framebuffer> m_viewportFramebuffer;
 
 		//Perspective
 		bool m_PerspectiveOpen = true;

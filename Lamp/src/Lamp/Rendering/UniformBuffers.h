@@ -3,13 +3,7 @@
 namespace Lamp
 {
 	//Lights data structs
-	struct DirectionalLightData
-	{
-		glm::vec4 direction;
-		glm::vec4 colorIntensity;
-		bool castShadows;
-		bool padding[15];
-	};
+
 
 	struct PointLightData
 	{
@@ -23,19 +17,13 @@ namespace Lamp
 		int samplerId;
 		int padding[3];
 	};
-
+		
 	//Uniform buffers
 	struct CameraRenderData
 	{
 		glm::mat4 view;
 		glm::mat4 projection;
 		glm::vec4 position;
-	};
-
-	struct DirectionalLightBuffer
-	{
-		DirectionalLightData dirLights[10];
-		uint32_t lightCount = 0;
 	};
 
 	struct DirectionalLightVPs

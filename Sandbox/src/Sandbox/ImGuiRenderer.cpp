@@ -63,14 +63,15 @@ namespace Sandbox
 			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
 				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
-				//Renderer::GetFramebuffer()->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
+				
+				m_viewportFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 				g_pEnv->pLevel->OnEvent(e);
 			}
 
-			ImGui::Image(UI::GetTextureID(Renderer::GetFramebuffer()->GetColorAttachment(0)), ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 1, 0 }, ImVec2{ 0, 1 });
+			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 1, 0 }, ImVec2{ 0, 1 });
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
@@ -743,6 +744,9 @@ namespace Sandbox
 		ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
 		ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
 		ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));
+
+		ImGui::Text("Total allocated memory: %d Mbs", UI::BytesToMBs(stats.memoryStatistics.totalAllocatedMemory));
+		ImGui::Text("Total freed memory: %d Mbs", UI::BytesToMBs(stats.memoryStatistics.totalFreedMemory));
 
 		ImGui::End();
 	}

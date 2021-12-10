@@ -3,7 +3,7 @@ layer:
   id: 0
   active: true
   entities:
-    - entity: DirectionalLight
+    - entity: Entity
       position: [0, -0.602181554, -1.51776719]
       rotation: [-3.2718841e-08, 0.818734586, 0.280960411]
       scale: [0.999998391, 0.999999702, 0.999998927]
@@ -13,14 +13,14 @@ layer:
           params:
             - param: Intensity
               type: Float
-              value: 0.0700000003
+              value: 3.36999989
             - param: Color
               type: Color3
               value: [1, 0.999989986, 0.999989986]
             - param: Cast Shadows
               type: Bool
               value: true
-    - entity: Pointlight
+    - entity: Entity
       position: [1.41626692, 3.75414181, 0.810348392]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]

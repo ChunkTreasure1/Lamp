@@ -12,7 +12,7 @@ namespace Lamp
 		VulkanImage2D(const ImageSpecification& specification, const void* data);
 		~VulkanImage2D();
 
-		void Invaidate(const void* data) override;
+		void Invalidate(const void* data) override;
 		void Release() override;
 
 		uint32_t GetWidth() const override { return m_specification.width; }

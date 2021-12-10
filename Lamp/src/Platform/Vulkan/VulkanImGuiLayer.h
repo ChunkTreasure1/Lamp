@@ -4,6 +4,7 @@
 
 namespace Lamp
 {
+	class RenderPipeline;
 	class VulkanImGuiLayer : public ImGuiLayer
 	{
 	public:
@@ -19,5 +20,7 @@ namespace Lamp
 	private:
 		float m_time = 0.f;
 		ImFont* m_font;
+
+		Ref<RenderPipeline> m_imguiPass;
 	};
 }

@@ -39,7 +39,6 @@ namespace Lamp
 		LP_CORE_ASSERT(m_physicalDevice, "Unable to find a supported device!");
 
 		//Get properties
-		m_features.samplerAnisotropy = VK_TRUE;
 		vkGetPhysicalDeviceFeatures(m_physicalDevice, &m_features);
 
 		vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &m_memoryProperties);

@@ -3,11 +3,13 @@
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Event/ApplicationEvent.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanRenderer.h"
+#include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_vulkan.h>
@@ -101,6 +103,33 @@ namespace Lamp
 
 	void VulkanImGuiLayer::OnAttach()
 	{
+		//Create render pipeline
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = true;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RGBA,
+			ImageFormat::DEPTH32F
+		};
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+		pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+		pipelineSpec.isSwapchain = true;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" },
+		};
+
+		m_imguiPass = RenderPipeline::Create(pipelineSpec);
+
+		//Create imgui layer
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImNodes::CreateContext();
@@ -212,7 +241,7 @@ namespace Lamp
 		ImGui_ImplVulkan_Init(&initInfo, swapchain->GetRenderPass());
 
 		auto device = VulkanContext::GetCurrentDevice();
-		
+
 		VkCommandBuffer commandBuffer = device->GetCommandBuffer(true);
 		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
 		device->FlushCommandBuffer(commandBuffer);
@@ -223,6 +252,7 @@ namespace Lamp
 
 	void VulkanImGuiLayer::Begin()
 	{
+		Renderer::BeginPass(m_imguiPass);
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -247,5 +277,7 @@ namespace Lamp
 
 			glfwMakeContextCurrent(pBackup_current_context);
 		}
+
+		Renderer::EndPass();
 	}
 }

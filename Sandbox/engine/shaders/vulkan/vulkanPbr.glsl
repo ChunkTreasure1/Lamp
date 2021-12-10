@@ -61,19 +61,27 @@ void main()
 
 layout (location = 0) out vec4 o_Color;
 
+struct DirectionalLight
+{
+	vec4 direction;
+	vec4 colorIntensity;
+	bool castShadows;
+};
+
 layout (std140, binding = 0) uniform CameraDataBuffer
 {
-    vec4 position;
     mat4 view;
     mat4 projection;
+    vec4 position;
 
 } u_CameraData;
 
 layout (std140, binding = 1) uniform DirectionalLightBuffer
 {
-    vec4 direction;
-    vec4 colorIntensity;
-} u_DirectionalLight;
+    DirectionalLight lights[1];
+    uint count;
+
+} u_DirectionalLights;
 
 layout (location = 1) in Out
 {
@@ -116,11 +124,11 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity)
 	return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
 }
 
-vec3 CalculateDirectionalLight(vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
     float shadow = 0.0;
 
-    vec3 lightDir = normalize(u_DirectionalLight.direction.xyz);
+    vec3 lightDir = normalize(light.direction.xyz);
     vec3 H = normalize(dirToCamera + lightDir);
 
     // Cook-Torrance BRDF
@@ -140,7 +148,7 @@ vec3 CalculateDirectionalLight(vec3 dirToCamera, vec3 normal, vec3 baseReflectiv
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * u_DirectionalLight.colorIntensity.w * u_DirectionalLight.colorIntensity.xyz;
+    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
     return lightStrength;
 }
 
@@ -166,11 +174,10 @@ void main()
     vec3 baseReflectivity = mix(globalDielectricBase, albedo, metallic);
     vec3 lightAccumulation = vec3(0.0);
 
-    lightAccumulation += CalculateDirectionalLight(dirToCamera, normal, baseReflectivity, albedo, metallic, roughness);
+    lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[0], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness);
 
     vec3 color = lightAccumulation;
-
-    color = pow(abs(color), vec3(1.0 / 2.2));
+    color = color / (color + vec3(1.0));
 
     o_Color = vec4(color, 1.0);
 }

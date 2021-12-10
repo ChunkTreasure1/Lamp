@@ -20,6 +20,14 @@ namespace Lamp
 		DEPTH24STENCIL8
 	};
 
+	enum class AniostopyLevel : uint32_t
+	{
+		X2 = 2,
+		X4 = 4,
+		X8 = 8,
+		X16 = 16
+	};
+
 	enum class ImageUsage
 	{
 		None = 0,
@@ -58,14 +66,20 @@ namespace Lamp
 
 		ImageFormat format = ImageFormat::RGBA;
 		ImageUsage usage = ImageUsage::Texture;
+		TextureWrap wrap = TextureWrap::Repeat;
+		TextureFilter filter = TextureFilter::Linear;
+
+		AniostopyLevel level = AniostopyLevel::X4;
 
 		std::string debugName;
+		bool useAniostopy = false;
+		bool dirty = false;
 	};
 
 	class Image2D
 	{
 	public:
-		virtual void Invaidate(const void* data) = 0;
+		virtual void Invalidate(const void* data) = 0;
 		virtual void Release() = 0;
 
 		virtual uint32_t GetWidth() const = 0;

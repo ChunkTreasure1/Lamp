@@ -1,25 +1,21 @@
 #include "lppch.h"
 #include "Sandbox.h"
 
-#include "Lamp/Rendering/Renderer2D.h"
-
-#include <Lamp/Event/ApplicationEvent.h>
-
-#include <Lamp/Core/Game.h>
-
-#include <Lamp/Rendering/RenderPass.h>
-
 #include "Windows/MeshImporterPanel.h"
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
 #include "Windows/LayerViewPanel.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
-
-#include <Platform/OpenGL/OpenGLFramebuffer.h>
-#include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/Rendering/RenderPass.h>
+#include "Lamp/Rendering/Renderer2D.h"
+#include "Lamp/Rendering/RenderPipeline.h"
+
+#include <Lamp/Event/ApplicationEvent.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Core/Application.h>
+#include <Lamp/Core/Game.h>
 
 namespace Sandbox
 {
@@ -48,6 +44,7 @@ namespace Sandbox
 		Application::Get().GetWindow().Maximize();
 
 		SetupFromConfig();
+		SetupRenderPasses();
 	}
 
 	Sandbox::~Sandbox()
@@ -71,6 +68,7 @@ namespace Sandbox
 		GetInput();
 
 		{
+
 			LP_PROFILE_SCOPE("Sandbox::Update::LevelUpdate")
 				switch (m_SceneState)
 				{
@@ -93,6 +91,19 @@ namespace Sandbox
 						break;
 				}
 		}
+
+		Renderer::Begin(m_SandboxController->GetCameraController()->GetCamera());
+
+		for (const auto& pass : m_renderPasses)
+		{
+			Renderer::BeginPass(pass);
+
+			Renderer::DrawBuffer();
+
+			Renderer::EndPass();
+		}
+
+		Renderer::End();
 
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::UIUpdate");
@@ -406,5 +417,35 @@ namespace Sandbox
 		g_pEnv->pLevel = m_pLevel;
 
 		m_pRuntimeLevel = nullptr;
+	}
+
+	void Sandbox::SetupRenderPasses()
+	{
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RGBA,
+			ImageFormat::DEPTH32F
+		};
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+		m_viewportFramebuffer = pipelineSpec.framebuffer;
+
+		pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" },
+		};
+
+		m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
 	}
 }

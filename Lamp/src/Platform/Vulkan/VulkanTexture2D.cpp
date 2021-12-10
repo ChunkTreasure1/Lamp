@@ -56,15 +56,15 @@ namespace Lamp
 		imageSpec.usage = ImageUsage::Texture;
 		imageSpec.width = (uint32_t)width;
 		imageSpec.height = (uint32_t)height;
+		imageSpec.mips = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
 
 		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 
 		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 		Utility::CopyBufferToImage(stagingBuffer, m_image->GetHandle(), width, height);
-		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		Utility::GenerateMipMaps(m_image->GetHandle(), width, height, imageSpec.mips);
 
 		allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
-
 	}
 
 	VulkanTexture2D::~VulkanTexture2D()

@@ -99,20 +99,18 @@ namespace Lamp
 				}
 			}
 
-			Renderer::SwapchainBegin();
 			{
 				LP_PROFILE_SCOPE("Application::UpdateImGui");
-			
+
 				m_pImGuiLayer->Begin();
-			
+
 				for (Layer* pLayer : m_LayerStack)
 				{
 					pLayer->OnImGuiRender(timestep);
 				}
-			
+
 				m_pImGuiLayer->End();
 			}
-			Renderer::SwapchainEnd();
 
 			m_pWindow->Update(timestep);
 

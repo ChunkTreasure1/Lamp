@@ -5,6 +5,8 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
 
+#include "Lamp/Rendering/Renderer.h"
+
 namespace Lamp
 {
 	namespace Utils
@@ -28,12 +30,35 @@ namespace Lamp
 
 			return (VkFormat)0;
 		}
+
+		static VkFilter LampFilterToVulkanFilter(TextureFilter filter)
+		{
+			switch (filter)
+			{
+				case TextureFilter::None: LP_CORE_ASSERT(false, "Filter must be chosen!") return VK_FILTER_LINEAR;
+				case TextureFilter::Linear: return VK_FILTER_LINEAR;
+				case TextureFilter::Nearest: return VK_FILTER_NEAREST;
+			}
+
+			return VK_FILTER_LINEAR;
+		}
+
+		static VkSamplerAddressMode LampWrapToVulkanWrap(TextureWrap wrap)
+		{
+			switch (wrap)
+			{
+				case TextureWrap::None: LP_CORE_ASSERT(false, "Wrap mode must be set!");
+				case TextureWrap::Clamp: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+				case TextureWrap::Repeat: return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+			}
+			return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		}
 	}
 
 	VulkanImage2D::VulkanImage2D(const ImageSpecification& specification, const void* data)
 		: m_specification(specification)
 	{
-		Invaidate(data);
+		Invalidate(data);
 	}
 
 	VulkanImage2D::~VulkanImage2D()
@@ -41,7 +66,7 @@ namespace Lamp
 		Release();
 	}
 
-	void VulkanImage2D::Invaidate(const void* data)
+	void VulkanImage2D::Invalidate(const void* data)
 	{
 		Release();
 
@@ -109,13 +134,14 @@ namespace Lamp
 
 		VkSamplerCreateInfo samplerCreateInfo{};
 		samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerCreateInfo.maxAnisotropy = 1.f;
-		samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
-		samplerCreateInfo.minFilter = VK_FILTER_LINEAR;
+		samplerCreateInfo.anisotropyEnable = m_specification.useAniostopy && Renderer::GetCapabilities().supportAniostopy ? VK_TRUE : VK_FALSE;
+		samplerCreateInfo.maxAnisotropy = (uint32_t)m_specification.useAniostopy > Renderer::GetCapabilities().maxAniostropy ? Renderer::GetCapabilities().maxAniostropy : (uint32_t)m_specification.useAniostopy;
+		samplerCreateInfo.magFilter = Utils::LampFilterToVulkanFilter(m_specification.filter);
+		samplerCreateInfo.minFilter = Utils::LampFilterToVulkanFilter(m_specification.filter);
 		samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerCreateInfo.addressModeV = Utils::LampWrapToVulkanWrap(m_specification.wrap);
+		samplerCreateInfo.addressModeU = Utils::LampWrapToVulkanWrap(m_specification.wrap);
+		samplerCreateInfo.addressModeW = Utils::LampWrapToVulkanWrap(m_specification.wrap);
 		samplerCreateInfo.mipLodBias = 0.f;
 		samplerCreateInfo.minLod = 0.f;
 		samplerCreateInfo.maxLod = 100.f;
@@ -147,6 +173,10 @@ namespace Lamp
 
 		VulkanAllocator allocator;
 		allocator.DestroyImage(m_image, m_allocation);
+	
+		m_image = nullptr;
+		m_allocation = nullptr;
+		m_specification.dirty = true;
 	}
 
 	void VulkanImage2D::UpdateDescriptor()

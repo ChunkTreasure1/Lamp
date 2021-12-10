@@ -180,7 +180,7 @@ namespace Lamp
 				auto& spec = const_cast<ImageSpecification&>(vulkanImage->GetSpecification());
 				spec.width = m_width;
 				spec.height = m_height;
-				m_depthAttachmentImage->Invaidate(nullptr);
+				m_depthAttachmentImage->Invalidate(nullptr);
 
 				VkAttachmentDescription& attachmentDesc = attachmentDescriptons.emplace_back();
 				attachmentDesc.flags = 0;
@@ -220,7 +220,7 @@ namespace Lamp
 					spec.height = m_height;
 
 					colorAttachment = std::reinterpret_pointer_cast<VulkanImage2D>(image);
-					colorAttachment->Invaidate(nullptr);
+					colorAttachment->Invalidate(nullptr);
 				}
 
 				VkAttachmentDescription& attachmentDescripton = attachmentDescriptons.emplace_back();
