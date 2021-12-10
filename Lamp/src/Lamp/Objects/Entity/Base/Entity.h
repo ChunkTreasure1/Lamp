@@ -18,6 +18,7 @@ namespace Lamp
 {
 	class GraphKeyGraph;
 	class EntityManager;
+	class Material;
 
 	class Entity : public Object
 	{

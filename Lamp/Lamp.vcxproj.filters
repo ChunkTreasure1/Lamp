@@ -474,9 +474,6 @@
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Renderer3D.h">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -1917,6 +1914,7 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2148,9 +2146,6 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp">
@@ -2387,5 +2382,6 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
   </ItemGroup>
 </Project>

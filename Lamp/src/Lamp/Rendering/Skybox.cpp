@@ -8,7 +8,6 @@
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 #include "Lamp/Rendering/RenderCommand.h"
-#include "Lamp/Rendering/Renderer3D.h"
 
 namespace Lamp
 {
@@ -58,7 +57,5 @@ namespace Lamp
 
 		m_cubeMap->Bind(0);
 		m_skyboxShader->Bind();
-
-		Renderer3D::DrawCube();
 	}
 }

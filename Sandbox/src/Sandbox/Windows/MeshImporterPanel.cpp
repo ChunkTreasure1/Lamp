@@ -156,7 +156,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_modelToImport->GetSubMeshes())
 			{
-				Renderer3D::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				Renderer::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
 	}

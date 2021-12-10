@@ -3,7 +3,6 @@
 #include <sstream>
 
 #include "Lamp/Core/Time/Timestep.h"
-#include "Lamp/Rendering/Renderer3D.h"
 #include "Lamp/Input/FileSystem.h"
 
 #include "Lamp/Rendering/RenderPass.h"

@@ -1,13 +1,13 @@
 #pragma once
-#include "Window.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Event/Event.h"
-
+#include "Lamp/Core/ThreadPool.h"
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
-
 #include "Lamp/Input/FileSystem.h"
+
+#include "Window.h"
 #include "Time/FrameTime.h"
 
 namespace Lamp
@@ -28,6 +28,8 @@ namespace Lamp
 		void PushOverlay(Layer* pLayer);
 
 		inline static Application& Get() { return *s_pInstance; }
+
+		inline const ThreadPool& GetThreadPool() { return m_threadPool; }
 		inline Window& GetWindow() { return *m_pWindow; }
 		inline const FrameTime& GetFrameTime() { return m_FrameTime; }
 
@@ -48,6 +50,7 @@ namespace Lamp
 		bool m_Minimized = false;
 		float m_LastFrameTime = 0.f;
 
+		ThreadPool m_threadPool;
 		FrameTime m_FrameTime;
 		std::thread m_AssetManagerThread;
 	};

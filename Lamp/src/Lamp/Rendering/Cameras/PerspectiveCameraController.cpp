@@ -6,7 +6,6 @@
 #include "Lamp/Core/Window.h"
 #include "Lamp/Core/Application.h"
 
-#include "Lamp/Rendering/Renderer3D.h"
 #include "PerspectiveCamera.h"
 
 namespace Lamp

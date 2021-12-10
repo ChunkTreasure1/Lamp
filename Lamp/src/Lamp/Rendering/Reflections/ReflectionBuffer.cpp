@@ -62,7 +62,6 @@ namespace Lamp
 				//m_PrefilterShader->UploadMat4("u_View", m_CaptureViews[j]);
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, m_TextureId, i);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				Renderer3D::DrawCube();
 			}
 		}
 	}

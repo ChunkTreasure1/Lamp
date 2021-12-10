@@ -262,7 +262,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_materialModel->GetSubMeshes())
 			{
-				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
+				Renderer::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
 			}
 		}
 	}

@@ -1,12 +1,13 @@
 #pragma once
-#include "Lamp/Rendering/Shader/Shader.h"
-#include "RendererAPI.h"
 
 #include "Lamp/Core/Application.h"
-#include "UniformBuffers.h"
-#include "Buffers/UniformBuffer.h"
 
+#include "Lamp/Rendering/Buffers/UniformBuffer.h"
 #include "Lamp/Rendering/RendererDataStructures.h"
+#include "Lamp/Rendering/Buffers/RenderBuffer.h"
+#include "Lamp/Rendering/RendererAPI.h"
+#include "Lamp/Rendering/Shader/Shader.h"
+#include "Lamp/Rendering/UniformBuffers.h"
 
 #include <algorithm>
 
@@ -40,8 +41,11 @@ namespace Lamp
 
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
+		static void SwapBuffers();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
+
+		static void DrawBuffer();
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
@@ -153,6 +157,11 @@ namespace Lamp
 		static Ref<RendererNew> s_renderer;
 		static Scope<RendererDefaults> s_rendererDefaults;
 
+		static RenderBuffer s_firstRenderBuffer;
+		static RenderBuffer s_secondRenderBuffer;
+
+		static RenderBuffer* s_submitBufferPointer;
+		static RenderBuffer* s_renderBufferPointer;
 
 		friend class VulkanPhysicalDevice;
 

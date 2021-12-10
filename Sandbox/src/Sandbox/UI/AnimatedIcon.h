@@ -3,6 +3,7 @@
 #include <Lamp/Core/Time/Timestep.h>
 
 #include <Lamp/Event/ApplicationEvent.h>
+#include <Lamp/Rendering/Textures/Texture2D.h>
 
 namespace Sandbox
 {

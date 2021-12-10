@@ -9,7 +9,6 @@
 #include "Lamp/Rendering/CommandBuffer.h"
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/Renderer2D.h"
-#include "Lamp/Rendering/Renderer3D.h"
 #include "Lamp/Rendering/Swapchain.h"
 
 #include "Lamp/Rendering/RendererNew.h"
@@ -31,6 +30,12 @@ namespace Lamp
 	Renderer::Capabilities Renderer::s_capabilities;
 	Renderer::Statistics Renderer::s_statistics;
 
+	RenderBuffer Renderer::s_firstRenderBuffer;
+	RenderBuffer Renderer::s_secondRenderBuffer;
+
+	RenderBuffer* Renderer::s_submitBufferPointer = &s_firstRenderBuffer;
+	RenderBuffer* Renderer::s_renderBufferPointer = &s_secondRenderBuffer;
+
 	static Ref<Framebuffer> s_testBuffer = nullptr;
 
 	static const std::filesystem::path s_defaultTexturePath = "engine/textures/default/defaultTexture.png";
@@ -46,6 +51,9 @@ namespace Lamp
 
 		s_rendererDefaults = CreateScope<RendererDefaults>();
 		s_rendererDefaults->defaultTexture = Texture2D::Create(s_defaultTexturePath);
+
+		s_firstRenderBuffer.drawCalls.reserve(500);
+		s_secondRenderBuffer.drawCalls.reserve(500);
 
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
@@ -127,16 +135,27 @@ namespace Lamp
 
 	void Renderer::End()
 	{
-
 		s_statistics.totalDrawCalls = 0;
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
 		s_renderer->End();
+		s_submitBufferPointer->drawCalls.clear();
+	}
+
+	void Renderer::SwapBuffers()
+	{
+		std::swap(s_submitBufferPointer, s_renderBufferPointer);
+		s_submitBufferPointer->drawCalls.clear();
 	}
 
 	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
 	{
-		s_renderer->SubmitMesh(transform, mesh, material, id);
+		s_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
+	}
+
+	void Renderer::DrawBuffer()
+	{
+		s_renderer->DrawBuffer(*s_submitBufferPointer);
 	}
 
 	void Renderer::CreateUniformBuffers()
@@ -220,7 +239,6 @@ namespace Lamp
 	#endif
 
 	}
-
 
 	static float Lerp(float a, float b, float f)
 	{

@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "Mesh.h"
 
-#include "Lamp/Rendering/Renderer3D.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "glm/glm.hpp"
 

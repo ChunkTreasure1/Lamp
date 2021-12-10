@@ -22,10 +22,10 @@ namespace Lamp
 
 	void UpdateAssetManager(bool& running)
 	{
-		while (running)
-		{
-			g_pEnv->pAssetManager->Update();
-		}
+		//while (running)
+		//{
+		//	g_pEnv->pAssetManager->Update();
+		//}
 	}
 
 	Application* Application::s_pInstance = nullptr;

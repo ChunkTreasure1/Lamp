@@ -348,6 +348,8 @@ namespace Lamp
 		AppRenderEvent e(camera);
 		OnEvent(e);
 
+		Renderer::DrawBuffer();
+
 		Renderer::GeometryPassEnd();
 
 		Renderer::End();

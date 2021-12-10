@@ -170,6 +170,7 @@
     <ClInclude Include="src\Lamp\Core\Game.h" />
     <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
+    <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\UUID.h" />
@@ -255,7 +256,6 @@
     <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererNew.h" />
@@ -747,6 +747,7 @@
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
+    <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\UUID.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
@@ -815,7 +816,6 @@
     <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RendererNew.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />

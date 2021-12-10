@@ -150,6 +150,14 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
+	void VulkanRenderer::DrawBuffer(const RenderBuffer& buffer)
+	{
+		for (const auto& command : buffer.drawCalls)
+		{
+			SubmitMesh(command.transform, command.data, command.material, command.id);
+		}
+	}
+
 	void VulkanRenderer::SetupDescriptorsForRendering(Ref<Material> material)
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(material->GetShader());

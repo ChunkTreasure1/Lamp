@@ -3,7 +3,8 @@
 #include "Buffers/Framebuffer.h"
 #include "Lamp/Core/Core.h"
 #include "RenderCommand.h"
-#include "Renderer3D.h"
+
+#include "Lamp/Rendering/Shader/Shader.h"
 
 #define LP_EXTRA_RENDER(fn) std::bind(&fn, this)
 
@@ -40,6 +41,7 @@ namespace Lamp
 		bool enableBlending = false;
 	};
 
+	class CameraBase;
 	class RenderPass
 	{
 	public:

@@ -2,7 +2,6 @@
 #include "Sandbox.h"
 
 #include "Lamp/Rendering/Renderer2D.h"
-#include "Lamp/Rendering/Renderer3D.h"
 
 #include <Lamp/Event/ApplicationEvent.h>
 
