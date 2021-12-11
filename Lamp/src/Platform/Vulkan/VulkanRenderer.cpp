@@ -9,6 +9,7 @@
 
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/AssetSystem/MeshImporter.h"
+#include "Lamp/Rendering/Cameras/CameraBase.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -75,10 +76,12 @@ namespace Lamp
 
 	void VulkanRenderer::Begin(const Ref<CameraBase> camera)
 	{
+		m_rendererStorage->camera = camera;
 	}
 
 	void VulkanRenderer::End()
 	{
+		m_rendererStorage->camera = nullptr;
 	}
 
 	void VulkanRenderer::BeginPass(Ref<RenderPipeline> pipeline)
@@ -142,7 +145,7 @@ namespace Lamp
 		m_rendererStorage->meshBuffer.model = transform;
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
-		vulkanPipeline->BindDescriptorSets(commandBuffer, vulkanMaterial->GetDescriptorSets(), currentFrame);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, vulkanMaterial->GetDescriptorSets()[currentFrame]);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
@@ -150,8 +153,10 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::DrawBuffer(const RenderBuffer& buffer)
+	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
+		SortRenderBuffer(m_rendererStorage->camera->GetPosition(), buffer);
+
 		for (const auto& command : buffer.drawCalls)
 		{
 			SubmitMesh(command.transform, command.data, command.material, command.id);
@@ -163,6 +168,12 @@ namespace Lamp
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(material->GetShader());
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
+
+		if (vulkanShader != m_rendererStorage->currentRenderPipeline->GetSpecification().shader)
+		{
+			vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
+		}
+
 		auto allDescriptorLayouts = vulkanShader->GetAllDescriptorSetLayouts();
 		auto device = VulkanContext::GetCurrentDevice();
 
@@ -175,16 +186,16 @@ namespace Lamp
 		allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
 		allocInfo.pSetLayouts = allDescriptorLayouts.data();
 
-		auto& descriptorSets = vulkanMaterial->GetDescriptorSets();
+		auto& currentDescriptorSet = vulkanMaterial->GetDescriptorSets()[currentFrame];
 
-		if (!descriptorSets[currentFrame].empty())
+		if (!currentDescriptorSet.empty())
 		{
-			vkFreeDescriptorSets(device->GetHandle(), m_descriptorPool, descriptorSets[currentFrame].size(), descriptorSets[currentFrame].data());
+			vkFreeDescriptorSets(device->GetHandle(), m_descriptorPool, currentDescriptorSet.size(), currentDescriptorSet.data());
 		}
 
-		descriptorSets[currentFrame].resize(allDescriptorLayouts.size());
+		currentDescriptorSet.resize(allDescriptorLayouts.size());
 
-		VkResult result = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, descriptorSets[currentFrame].data());
+		VkResult result = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, currentDescriptorSet.data());
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor sets!");
 
 		/////Update/////
@@ -197,7 +208,7 @@ namespace Lamp
 			for (uint32_t binding = 0; binding < uniformBuffers.size(); binding++)
 			{
 				auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffers.at(binding)->name);
-				writeDescriptor.dstSet = descriptorSets[currentFrame][set];
+				writeDescriptor.dstSet = currentDescriptorSet[set];
 
 				auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(binding, set, currentFrame));
 				writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
@@ -212,21 +223,37 @@ namespace Lamp
 			if (spec.texture)
 			{
 				auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(spec.texture);
-				LP_CORE_ASSERT(currentFrame < descriptorSets.size(), "Index must be less than the descriptor set map size!");
-
-				auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
 				auto& imageSamplers = shaderDescriptorSets[spec.set].imageSamplers;
-				auto descriptorWrite = shaderDescriptorSets[spec.set].writeDescriptorSets.at(imageSamplers.at(spec.binding).name);
-				descriptorWrite.dstSet = descriptorSets[currentFrame][spec.set];
-				descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
+				
+				auto imageNameIt = imageSamplers.find(spec.binding);
+				if (imageNameIt != imageSamplers.end())
+				{
+					auto descriptorWrite = shaderDescriptorSets[spec.set].writeDescriptorSets.at(imageNameIt->second.name);
+					descriptorWrite.dstSet = currentDescriptorSet[spec.set];
+					descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
 
-				auto device = VulkanContext::GetCurrentDevice();
-				vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+					auto device = VulkanContext::GetCurrentDevice();
+					vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+				}
 			}
 			else
 			{
 				LP_CORE_ERROR("Vulkan Renderer: No texture bound to {0} in material {1}!", spec.name, material->GetName());
 			}
 		}
+	}
+
+	void VulkanRenderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
+	{
+		std::sort(buffer.drawCalls.begin(), buffer.drawCalls.end(), [&sortPoint](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distOne = glm::exp2(sortPoint.x - dPosOne.x) + glm::exp2(sortPoint.y - dPosOne.y) + glm::exp2(sortPoint.z - dPosOne.z);
+				const float distTwo = glm::exp2(sortPoint.x - dPosTwo.x) + glm::exp2(sortPoint.y - dPosTwo.y) + glm::exp2(sortPoint.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
 	}
 }

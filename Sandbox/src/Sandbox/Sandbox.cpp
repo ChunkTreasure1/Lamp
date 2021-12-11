@@ -421,31 +421,64 @@ namespace Sandbox
 
 	void Sandbox::SetupRenderPasses()
 	{
-		FramebufferSpecification framebufferSpec{};
-		framebufferSpec.swapchainTarget = false;
-		framebufferSpec.attachments =
+		//Depth PrePass
 		{
-			ImageFormat::RGBA,
-			ImageFormat::DEPTH32F
-		};
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA16F,
+				ImageFormat::DEPTH32F
+			};
 
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		m_viewportFramebuffer = pipelineSpec.framebuffer;
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			m_viewportFramebuffer = pipelineSpec.framebuffer;
 
-		pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-		pipelineSpec.vertexLayout =
+			pipelineSpec.shader = ShaderLibrary::GetShader("depthPrePass");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+		}
+
+		//Main pass
 		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" },
-		};
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
 
-		m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			m_viewportFramebuffer = pipelineSpec.framebuffer;
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+		}
 	}
 }

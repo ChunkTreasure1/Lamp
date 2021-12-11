@@ -173,7 +173,7 @@ namespace Lamp
 		for (auto& layout : m_descriptorSetLayouts)
 		{
 			result.emplace_back(layout);
-		}
+		}   
 
 		return result;
 	}

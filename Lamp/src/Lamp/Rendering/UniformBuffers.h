@@ -3,8 +3,6 @@
 namespace Lamp
 {
 	//Lights data structs
-
-
 	struct PointLightData
 	{
 		glm::vec4 position;
@@ -23,7 +21,7 @@ namespace Lamp
 	{
 		glm::mat4 view;
 		glm::mat4 projection;
-		glm::vec4 position;
+		glm::vec4 positionAndTanHalfFOV;
 	};
 
 	struct DirectionalLightVPs
@@ -37,7 +35,7 @@ namespace Lamp
 		int index;
 	};
 
-	struct SSAOData
+	struct SSAODataBuffer
 	{
 		glm::vec4 kernelSamples[256];
 		int kernelSize = 64;

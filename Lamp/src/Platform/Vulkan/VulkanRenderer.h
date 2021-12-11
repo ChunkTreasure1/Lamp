@@ -23,6 +23,9 @@ namespace Lamp
 		MeshDataBuffer meshBuffer;
 
 		Ref<RenderPipeline> currentRenderPipeline;
+		Ref<CameraBase> camera;
+
+		std::unordered_map<uint8_t, std::unordered_map<uint32_t, VkDescriptorSet>> frameDescriptorSets;
 	};
 
 	class VulkanRenderer : public RendererNew
@@ -36,20 +39,19 @@ namespace Lamp
 		void Begin(const Ref<CameraBase> camera) override;
 		void End() override;
 
-
-
 		void BeginPass(Ref<RenderPipeline> pipeline) override;
 		void EndPass() override;
 
 		const GPUMemoryStatistics& GetMemoryUsage() const override;
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
-		void DrawBuffer(const RenderBuffer& buffer) override;
+		void DrawBuffer(RenderBuffer& buffer) override;
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 
 	private:
 		void SetupDescriptorsForRendering(Ref<Material> material);
+		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
 
 		Scope<TempRendererStorage> m_rendererStorage;
 		VkDescriptorPool m_descriptorPool;

@@ -55,6 +55,7 @@ namespace Lamp
 
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl"); //TODO: remove
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanDepthPrePass.glsl");
 		MaterialLibrary::LoadMaterials();
 
 		SetupBuffers();

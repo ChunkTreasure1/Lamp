@@ -31,7 +31,7 @@ layout (std140, binding = 0) uniform CameraDataBuffer
 
 } u_CameraData;
 
-layout (location = 1) out Out
+layout (location = 0) out Out
 {
     vec3 fragPos;
     vec2 texCoord;
@@ -83,7 +83,7 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 
 } u_DirectionalLights;
 
-layout (location = 1) in Out
+layout (location = 0) in Out
 {
     vec3 fragPos;
     vec2 texCoord;
@@ -91,9 +91,9 @@ layout (location = 1) in Out
     mat3 TBN;    
 } v_In;
 
-layout (set = 0, binding = 2) uniform sampler2D u_Albedo;
-layout (set = 0, binding = 3) uniform sampler2D u_Normal;
-layout (set = 0, binding = 4) uniform sampler2D u_MRO;
+layout (set = 0, binding = 4) uniform sampler2D u_Albedo;
+layout (set = 0, binding = 5) uniform sampler2D u_Normal;
+layout (set = 0, binding = 6) uniform sampler2D u_MRO;
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;
