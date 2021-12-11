@@ -12,9 +12,20 @@ namespace Lamp
 {
 	class VulkanMaterial : public Material
 	{
-		struct MaterialTextureSpecification;
-
 	public:
+		struct MaterialTextureSpecification
+		{
+			MaterialTextureSpecification() = default;
+			MaterialTextureSpecification(const std::string& aName, uint32_t aSet, uint32_t aBinding, Ref<Texture2D> aTexture)
+				: name(aName), set(aSet), binding(aBinding), texture(aTexture)
+			{
+			}
+
+			std::string name;
+			uint32_t set;
+			uint32_t binding;
+			Ref<Texture2D> texture;
+		};
 
 		VulkanMaterial();
 		VulkanMaterial(Ref<Shader> shader, uint32_t id);
@@ -44,19 +55,6 @@ namespace Lamp
 		const std::vector<MaterialTextureSpecification>& GetTextureSpecification() { return m_textureSpecifications; }
 
 	private:
-		struct MaterialTextureSpecification
-		{
-			MaterialTextureSpecification() = default;
-			MaterialTextureSpecification(const std::string& aName, uint32_t aSet, uint32_t aBinding, Ref<Texture2D> aTexture)
-				: name(aName), set(aSet), binding(aBinding), texture(aTexture)
-			{
-			}
-
-			std::string name;
-			uint32_t set;
-			uint32_t binding;
-			Ref<Texture2D> texture;
-		};
 		std::optional<std::reference_wrapper<MaterialTextureSpecification>> FindTexture(const std::string& name);
 
 		uint32_t m_index;

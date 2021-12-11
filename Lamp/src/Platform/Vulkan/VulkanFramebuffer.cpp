@@ -21,8 +21,8 @@ namespace Lamp
 				case ImageFormat::RGBA16F: return VK_FORMAT_R16G16B16A16_SFLOAT;
 				case ImageFormat::RGBA32F: return VK_FORMAT_R32G32B32A32_SFLOAT;
 				case ImageFormat::RG32F: return VK_FORMAT_R32G32_SFLOAT;
-				case ImageFormat::R32I: return VK_FORMAT_R8_SINT;
-				case ImageFormat::R32F: return VK_FORMAT_R16_SFLOAT;
+				case ImageFormat::R32I: return VK_FORMAT_R32_SINT;
+				case ImageFormat::R32F: return VK_FORMAT_R32_SFLOAT;
 				case ImageFormat::DEPTH32F: return VK_FORMAT_D32_SFLOAT;
 				case ImageFormat::DEPTH24STENCIL8: return VK_FORMAT_D24_UNORM_S8_UINT;
 			}

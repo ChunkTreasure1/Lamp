@@ -7,12 +7,28 @@ namespace Lamp
 {
 	class Shader;
 	class CommandBuffer;
+	class Image2D;
+	class Texture2D;
 
 	enum class Topology
 	{
 		TriangleList,
 		LineList,
 		TriangleStrip
+	};
+
+	struct FramebufferAttachmentInputSpecification
+	{
+		Ref<Image2D> attachment;
+		uint32_t set;
+		uint32_t binding;
+	};
+
+	struct TextureInputSpecification
+	{
+		Ref<Texture2D> texture;
+		uint32_t set;
+		uint32_t binding;
 	};
 
 	struct RenderPipelineSpecification
@@ -23,6 +39,8 @@ namespace Lamp
 
 		Topology topology;
 		BufferLayout vertexLayout;
+		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
+		std::vector<TextureInputSpecification> textureInputs;
 
 		glm::vec2 size;
 		bool isSwapchain;

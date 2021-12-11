@@ -145,7 +145,6 @@ namespace Lamp
 		auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(image);
 		
 		//TODO: transition to right layout
-		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
 		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
@@ -159,12 +158,15 @@ namespace Lamp
 
 	void VulkanRenderPipeline::SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data)
 	{
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
-		auto vulkanCommandBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
 
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 		const auto& pushConstants = vulkanShader->GetPushConstantRanges();
 
-		vkCmdPushConstants(vulkanCommandBuffer, m_layout, pushConstants[index].shaderStage, pushConstants[index].offset, pushConstants[index].size, data);
+		if (!pushConstants.empty())
+		{
+			auto vulkanCommandBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
+			vkCmdPushConstants(vulkanCommandBuffer, m_layout, pushConstants[index].shaderStage, pushConstants[index].offset, pushConstants[index].size, data);
+		}
 	}
 
 	void VulkanRenderPipeline::CreateDescriptorSets()
@@ -207,12 +209,12 @@ namespace Lamp
 			{
 				auto& uniformBuffers = shaderDescriptorSets[set].uniformBuffers;
 
-				for (uint32_t binding = 0; binding < uniformBuffers.size(); binding++)
+				for (const auto& uniformBuffer : uniformBuffers)
 				{
-					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffers.at(binding)->name);
+					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffer.second->name);
 					writeDescriptor.dstSet = m_descriptorSets[frame][set];
 
-					auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_specification.uniformBufferSets->Get(binding, set, frame));
+					auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_specification.uniformBufferSets->Get(uniformBuffer.second->bindPoint, set, frame));
 					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
 					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);

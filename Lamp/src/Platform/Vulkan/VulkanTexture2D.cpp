@@ -10,7 +10,13 @@ namespace Lamp
 {
 	VulkanTexture2D::VulkanTexture2D(uint32_t width, uint32_t height)
 	{
+		ImageSpecification imageSpec{};
+		imageSpec.format = ImageFormat::RGBA32F;
+		imageSpec.usage = ImageUsage::Texture;
+		imageSpec.width = (uint32_t)width;
+		imageSpec.height = (uint32_t)height;
 
+		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 	}
 
 	VulkanTexture2D::VulkanTexture2D(const std::filesystem::path& path)
@@ -77,6 +83,23 @@ namespace Lamp
 
 	void VulkanTexture2D::SetData(const void* data, uint32_t size)
 	{
+		VkBuffer stagingBuffer;
+		VmaAllocation stagingBufferMemory;
+
+		auto device = VulkanContext::GetCurrentDevice();
+
+		VkDeviceSize deviceSize = size;
+
+		stagingBufferMemory = Utility::CreateBuffer(deviceSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, stagingBuffer);
+		VulkanAllocator allocator;
+
+		void* newData = allocator.MapMemory<void>(stagingBufferMemory);
+		memcpy(newData, data, size);
+		allocator.UnmapMemory(stagingBufferMemory);
+
+		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		Utility::CopyBufferToImage(stagingBuffer, m_image->GetHandle(), m_image->GetWidth(), m_image->GetHeight());
+		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	}
 
 	const uint32_t VulkanTexture2D::GetWidth() const

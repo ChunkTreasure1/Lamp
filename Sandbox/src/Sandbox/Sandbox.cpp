@@ -433,7 +433,7 @@ namespace Sandbox
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_viewportFramebuffer = pipelineSpec.framebuffer;
+			m_depthPrePassFramebuffer = pipelineSpec.framebuffer;
 
 			pipelineSpec.shader = ShaderLibrary::GetShader("depthPrePass");
 			pipelineSpec.isSwapchain = false;
@@ -446,6 +446,45 @@ namespace Sandbox
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+		}
+
+		//SSAO main pass
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::R32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("ssaoMain");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ m_depthPrePassFramebuffer->GetColorAttachment(0), 0, 4 },
+				{ m_depthPrePassFramebuffer->GetDepthAttachment(), 0, 5 }
+			};
+
+			pipelineSpec.textureInputs =
+			{
+				{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
 			};
 
 			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));

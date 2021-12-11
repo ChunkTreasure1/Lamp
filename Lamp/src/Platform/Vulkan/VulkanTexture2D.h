@@ -24,6 +24,7 @@ namespace Lamp
 		virtual const uint32_t GetID() const override;
 
 		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_image->GetDescriptorInfo(); }
+		inline const Ref<VulkanImage2D> GetImage() const { return m_image; }
 
 	private:
 		Ref<VulkanImage2D> m_image;

@@ -21,6 +21,7 @@
 #include "Platform/Vulkan/VulkanMaterial.h"
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
 #include "Platform/Vulkan/VulkanTexture2D.h"
+#include "Platform/Vulkan/VulkanUtility.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -169,7 +170,9 @@ namespace Lamp
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 
-		if (vulkanShader != m_rendererStorage->currentRenderPipeline->GetSpecification().shader)
+		bool overrideShader = vulkanShader != m_rendererStorage->currentRenderPipeline->GetSpecification().shader;
+
+		if (overrideShader)
 		{
 			vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		}
@@ -205,16 +208,16 @@ namespace Lamp
 		{
 			auto& uniformBuffers = shaderDescriptorSets[set].uniformBuffers;
 
-			for (uint32_t binding = 0; binding < uniformBuffers.size(); binding++)
-			{
-				auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffers.at(binding)->name);
-				writeDescriptor.dstSet = currentDescriptorSet[set];
+				for (const auto& uniformBuffer : uniformBuffers)
+				{
+					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffer.second->name);
+					writeDescriptor.dstSet = currentDescriptorSet[set];
 
-				auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(binding, set, currentFrame));
-				writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+					auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(uniformBuffer.second->bindPoint, set, currentFrame));
+					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-				vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
-			}
+					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
+				}
 		}
 
 		auto& textureSpecification = vulkanMaterial->GetTextureSpecification();
@@ -224,11 +227,31 @@ namespace Lamp
 			{
 				auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(spec.texture);
 				auto& imageSamplers = shaderDescriptorSets[spec.set].imageSamplers;
-				
-				auto imageNameIt = imageSamplers.find(spec.binding);
-				if (imageNameIt != imageSamplers.end())
+
+				VulkanShader::ImageSampler* sampler = nullptr;
+
+				if (overrideShader)
 				{
-					auto descriptorWrite = shaderDescriptorSets[spec.set].writeDescriptorSets.at(imageNameIt->second.name);
+					for (const auto& imageSampler : imageSamplers)
+					{
+						if (imageSampler.second.name == spec.name)
+						{
+							sampler = const_cast<VulkanShader::ImageSampler*>(&imageSampler.second);
+						}
+					}
+				}
+				else
+				{
+					auto imageNameIt = imageSamplers.find(spec.binding);
+					if (imageNameIt != imageSamplers.end())
+					{
+						sampler = const_cast<VulkanShader::ImageSampler*>(&imageNameIt->second);
+					}
+				}
+
+				if (sampler)
+				{
+					auto descriptorWrite = shaderDescriptorSets[spec.set].writeDescriptorSets.at(sampler->name);
 					descriptorWrite.dstSet = currentDescriptorSet[spec.set];
 					descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
 
@@ -238,7 +261,57 @@ namespace Lamp
 			}
 			else
 			{
-				LP_CORE_ERROR("Vulkan Renderer: No texture bound to {0} in material {1}!", spec.name, material->GetName());
+				LP_CORE_ERROR("VulkanRenderer: No texture bound to {0} in material {1}!", spec.name, material->GetName());
+			}
+		}
+
+		auto& framebufferInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().framebufferInputs;
+		for (const auto& framebufferInput : framebufferInputs)
+		{
+			if (framebufferInput.attachment)
+			{
+				auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(framebufferInput.attachment);
+				auto& imageSamplers = shaderDescriptorSets[framebufferInput.set].imageSamplers;
+
+				auto imageSampler = imageSamplers.find(framebufferInput.binding);
+				if (imageSampler != imageSamplers.end())
+				{
+					auto descriptorWrite = shaderDescriptorSets[framebufferInput.set].writeDescriptorSets.at(imageSampler->second.name);
+					descriptorWrite.dstSet = currentDescriptorSet[framebufferInput.set];
+					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+					auto device = VulkanContext::GetCurrentDevice();
+					vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+				}
+			}
+			else
+			{
+				LP_CORE_ERROR("VulkanRenderer: No attachment bound to binding {0} in pipeline {1}!", framebufferInput.binding, "");
+			}
+		}
+
+		auto& textureInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureInputs;
+		for (const auto& textureInput : textureInputs)
+		{
+			if (textureInput.texture)
+			{
+				auto vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(textureInput.texture)->GetImage();
+				auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
+
+				auto imageSampler = imageSamplers.find(textureInput.binding);
+				if (imageSampler != imageSamplers.end())
+				{
+					auto descriptorWrite = shaderDescriptorSets[textureInput.set].writeDescriptorSets.at(imageSampler->second.name);
+					descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
+					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+					auto device = VulkanContext::GetCurrentDevice();
+					vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+				}
+			}
+			else
+			{
+				LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
 			}
 		}
 	}

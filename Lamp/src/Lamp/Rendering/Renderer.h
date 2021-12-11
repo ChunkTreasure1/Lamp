@@ -55,8 +55,6 @@ namespace Lamp
 		static void DrawBuffer();
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
-		static void SetBufferSize(const glm::vec2& size) { s_pSceneData->bufferSize = size; }
-
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static Ref<RendererNew> GetRenderer() { return s_renderer; }
 		static void GenerateKernel();
@@ -79,22 +77,18 @@ namespace Lamp
 			float gamma = 2.2f;
 			float ambianceMultiplier = 0.3f;
 
-			glm::vec2 bufferSize = { 1280, 720 };
-
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 64;
-			std::vector<glm::vec3> ssaoNoise;
+			std::vector<glm::vec4> ssaoNoise;
 			Ref<Texture2D> ssaoNoiseTexture;
-
-			float aspectRatio = 16.f / 9.f;
-			float tanHalfFOV = 0.f;
 			//////////////
 
 			/////Uniform buffers//////
-			CameraRenderData cameraRenderData;
 			DirectionalLightDataBuffer directionalLightDataBuffer;
 			DirectionalLightVPs directionalLightVPData;
 			SSAODataBuffer ssaoData;
+			CameraDataBuffer cameraData;
+			ScreenDataBuffer screenData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			//////////////////////////
@@ -134,6 +128,7 @@ namespace Lamp
 		static void CreateUniformBuffers();
 		static void CreateShaderStorageBuffers();
 		static void UpdateBuffers(const Ref<CameraBase> camera);
+		static void UpdatePassBuffers(const Ref<RenderPipeline> pipeline);
 
 	private:
 		struct RendererDefaults

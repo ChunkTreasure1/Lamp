@@ -21,6 +21,14 @@ layout (location = 0) out Out
 
 } v_Out;
 
+layout(std140, binding = 0) uniform CameraDataBuffer
+{
+	mat4 view;
+	mat4 projection;
+	vec4 positionAndTanHalfFOV;
+
+} u_CameraData;
+
 layout (std140, binding = 2) uniform SSAODataBuffer
 {
     vec4 kernelSamples[256];
@@ -29,15 +37,23 @@ layout (std140, binding = 2) uniform SSAODataBuffer
     float radius;
     float strength;
     
-} u_SSAOData
+} u_SSAOData;
+
+layout(std140, binding = 3) uniform ScreenDataBuffer
+{
+    vec2 screenSize;
+    float aspectRatio;
+
+} u_ScreenData;
 
 void main()
 {
     v_Out.texCoords = a_TexCoords;
-    v_Out.viewRay.x = a_Position.x * u_SSAOData.aspectRatio * u_SSAOData.tanHalfFOV;
-    v_Out.viewRay.y = a_Position.y * u_SSAOData.tanHalfFOV;
+    v_Out.viewRay.x = a_Position.x * u_ScreenData.aspectRatio * u_CameraData.positionAndTanHalfFOV.w;
+    v_Out.viewRay.y = a_Position.y * u_CameraData.positionAndTanHalfFOV.w;
 
     gl_Position = vec4(a_Position, 1.0);
+    gl_Position.y = -gl_Position.y;
 }
 
 #type fragment
@@ -48,7 +64,7 @@ layout(std140, binding = 0) uniform CameraDataBuffer
 {
 	mat4 view;
 	mat4 projection;
-	vec4 cameraPositionAndTanHalfFOV;
+	vec4 positionAndTanHalfFOV;
 
 } u_CameraData;
 
@@ -60,11 +76,11 @@ layout (std140, binding = 2) uniform SSAODataBuffer
     float radius;
     float strength;
 
-} u_SSAOData
+} u_SSAOData;
 
 layout(std140, binding = 3) uniform ScreenDataBuffer
 {
-    vec3 screenSize;
+    vec2 screenSize;
     float aspectRatio;
 
 } u_ScreenData;
@@ -108,23 +124,23 @@ void main()
 
     float occlusion = 1.0;
     float positionDepth = (u_CameraData.view * vec4(pos, 1.0)).z;
-    for (int i = 0; i < u_KernelSize; i++)
+    for (int i = 0; i < u_SSAOData.kernelSize; i++)
     {
-        vec4 samplePos = u_CameraData.view * vec4(pos + TBN * u_KernelSamples[i].xyz * u_Radius, 1.0);
+        vec4 samplePos = u_CameraData.view * vec4(pos + TBN * u_SSAOData.kernelSamples[i].xyz * u_SSAOData.radius, 1.0);
 
-        vec4 offset = u_Projection * samplePos;
+        vec4 offset = u_CameraData.projection * samplePos;
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5 + 0.5;
 
         float sampleDepth = (u_CameraData.view * vec4(CalculateWorldCoords(offset.xy), 1.0)).z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, u_Radius / abs(positionDepth - sampleDepth));
-        occlusion -= samplePos.z + u_Bias < sampleDepth ? rangeCheck / u_SSAOData.kernelSize : 0.0;
+        float rangeCheck = smoothstep(0.0, 1.0, u_SSAOData.radius / abs(positionDepth - sampleDepth));
+        occlusion -= samplePos.z + u_SSAOData.bias < sampleDepth ? rangeCheck / u_SSAOData.kernelSize : 0.0;
     }
 
     if(occlusion < 1.0)
     {
-        float invStrength = 1.0 - u_Strength;
+        float invStrength = 1.0 - u_SSAOData.strength;
         occlusion += invStrength;
         occlusion = clamp(occlusion, 0.0, 1.0);
     }

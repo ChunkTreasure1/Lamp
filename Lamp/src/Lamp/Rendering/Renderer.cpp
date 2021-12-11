@@ -10,7 +10,7 @@
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Swapchain.h"
-
+#include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 #include "Lamp/Rendering/RendererNew.h"
 
 #include "Lamp/Level/Level.h"
@@ -56,7 +56,12 @@ namespace Lamp
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl"); //TODO: remove
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanDepthPrePass.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSSAO.glsl");
 		MaterialLibrary::LoadMaterials();
+
+		GenerateKernel();
+		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(4, 4);
+		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
 
 		SetupBuffers();
 	}
@@ -87,6 +92,7 @@ namespace Lamp
 
 	void Renderer::BeginPass(const Ref<RenderPipeline> pipeline)
 	{
+		UpdatePassBuffers(pipeline);
 		s_renderer->BeginPass(pipeline);
 	}
 
@@ -131,15 +137,19 @@ namespace Lamp
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		//Set data in uniform buffers
+		
 		//Camera data
 		{
 			auto ub = s_pSceneData->uniformBufferSet->Get(0, 0, currentFrame);
 
-			s_pSceneData->cameraRenderData.position = glm::vec4(camera->GetPosition(), 0.f);
-			s_pSceneData->cameraRenderData.projection = camera->GetProjectionMatrix();
-			s_pSceneData->cameraRenderData.view = camera->GetViewMatrix();
+			Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(camera);
+			float tanHalfFOV = glm::tan(glm::radians(perspectiveCamera->GetFieldOfView()) / 2.f);
 
-			ub->SetData(&s_pSceneData->cameraRenderData, sizeof(CameraDataBuffer));
+			s_pSceneData->cameraData.positionAndTanHalfFOV = glm::vec4(camera->GetPosition(), tanHalfFOV);
+			s_pSceneData->cameraData.projection = camera->GetProjectionMatrix();
+			s_pSceneData->cameraData.view = camera->GetViewMatrix();
+
+			ub->SetData(&s_pSceneData->cameraData, sizeof(CameraDataBuffer));
 		}
 
 		//Directional lights
@@ -166,6 +176,13 @@ namespace Lamp
 
 			ub->SetData(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer));
 		}
+
+		//SSAO
+		{
+			auto ub = s_pSceneData->uniformBufferSet->Get(2, 0, currentFrame);
+			ub->SetData(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer));
+		}
+
 	#if 0
 
 		//Light data
@@ -180,22 +197,29 @@ namespace Lamp
 			s_pSceneData->directionalLightVPBuffer->SetData(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPs));
 		}
 
-		//SSAO
-		{
-			s_pSceneData->ssaoBuffer->SetData(&s_pSceneData->ssaoData, sizeof(SSAOData));
-		}
-
 		s_pSceneData->screenGroupX = ((uint32_t)s_pSceneData->bufferSize.x + ((uint32_t)s_pSceneData->bufferSize.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenGroupY = ((uint32_t)s_pSceneData->bufferSize.y + ((uint32_t)s_pSceneData->bufferSize.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
 
-		//SSAO
-		Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(camera);
-		s_pSceneData->aspectRatio = perspectiveCamera->GetAspectRatio();
-		s_pSceneData->tanHalfFOV = glm::tan(glm::radians(s_pSceneData->aspectRatio) / 2.f);
+
 	
 	#endif
 
+	}
+
+	void Renderer::UpdatePassBuffers(const Ref<RenderPipeline> pipeline)
+	{
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		//Screen
+		{
+			auto ub = s_pSceneData->uniformBufferSet->Get(3, 0, currentFrame);
+
+			s_pSceneData->screenData.size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
+			s_pSceneData->screenData.aspectRatio = s_pSceneData->screenData.size.x / s_pSceneData->screenData.size.y;
+
+			ub->SetData(&s_pSceneData->screenData, sizeof(ScreenDataBuffer));
+		}
 	}
 
 	static float Lerp(float a, float b, float f)
@@ -227,14 +251,16 @@ namespace Lamp
 		for (uint32_t i = 0; i < 16; i++)
 		{
 			glm::vec3 noise{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, 0.f };
-			s_pSceneData->ssaoNoise.push_back(noise);
+			s_pSceneData->ssaoNoise.push_back(glm::vec4(noise, 0.f));
 		}
 	}
 
 	void Renderer::SetupBuffers()
 	{
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraRenderData, sizeof(CameraDataBuffer), 0, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraData, sizeof(CameraDataBuffer), 0, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer), 2, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
 	}
 }

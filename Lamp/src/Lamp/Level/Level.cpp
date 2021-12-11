@@ -349,9 +349,6 @@ namespace Lamp
 		{
 			buffer->Resize(e.GetWidth(), e.GetHeight());
 		}
-
-		Renderer::s_pSceneData->bufferSize = { e.GetWidth(), e.GetHeight() };
-
 		return false;
 	}
 }

@@ -17,6 +17,7 @@ namespace Lamp
 			{
 				case ImageFormat::None: LP_CORE_ASSERT(false, "Image must have a format!");
 				case ImageFormat::R32F: return VK_FORMAT_R32_SFLOAT;
+				case ImageFormat::R32I: return VK_FORMAT_R32_SINT;
 				case ImageFormat::RGB: return VK_FORMAT_R8G8B8_UNORM;
 				case ImageFormat::RGBA: return VK_FORMAT_R8G8B8A8_UNORM;
 				case ImageFormat::RGBA16F: return VK_FORMAT_R16G16B16A16_SFLOAT;
