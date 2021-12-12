@@ -571,8 +571,11 @@ namespace Lamp
 			m_resources[name] = ShaderResourceDeclaration(name, binding, 1);
 		}
 
-		LP_CORE_INFO("Vulkan Shader - Reflect result:\n		Uniform buffers: {0}\n		Storage buffers: {1}\n		Image samplers: {2}\n		Storage samplers: {3}\n",
-			m_shaderDescriptorSets[0].uniformBuffers.size(), m_shaderDescriptorSets[0].storageBuffers.size(), m_shaderDescriptorSets[0].imageSamplers.size(), m_shaderDescriptorSets[0].storageSamplers.size());
+		if (m_shaderDescriptorSets.size() > 0)
+		{
+			LP_CORE_INFO("Vulkan Shader - Reflect result:\n		Uniform buffers: {0}\n		Storage buffers: {1}\n		Image samplers: {2}\n		Storage samplers: {3}\n",
+				m_shaderDescriptorSets[0].uniformBuffers.size(), m_shaderDescriptorSets[0].storageBuffers.size(), m_shaderDescriptorSets[0].imageSamplers.size(), m_shaderDescriptorSets[0].storageSamplers.size());
+		}
 	}
 
 	void VulkanShader::ReflectAllShaderStages(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& shaderData)

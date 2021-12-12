@@ -15,7 +15,7 @@ namespace Lamp
 	class Mesh;
 	class Texture2D;
 
-	struct TempRendererStorage
+	struct VulkanRendererStorage
 	{
 		Ref<CommandBuffer> swapchainCommandBuffer;
 		Ref<CommandBuffer> renderCommandBuffer;
@@ -25,7 +25,9 @@ namespace Lamp
 		Ref<RenderPipeline> currentRenderPipeline;
 		Ref<CameraBase> camera;
 
-		std::unordered_map<uint8_t, std::unordered_map<uint32_t, VkDescriptorSet>> frameDescriptorSets;
+		Ref<SubMesh> quadMesh;
+
+		std::vector<VkDescriptorSet> pipelineDescriptorSets;
 	};
 
 	class VulkanRenderer : public RendererNew
@@ -45,15 +47,19 @@ namespace Lamp
 		const GPUMemoryStatistics& GetMemoryUsage() const override;
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
+		void SubmitQuad();
+
 		void DrawBuffer(RenderBuffer& buffer) override;
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 
 	private:
-		void SetupDescriptorsForRendering(Ref<Material> material);
+		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
+		void SetupDescriptorsForQuadRendering();
 		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
+		void CreateBaseGeometry();
 
-		Scope<TempRendererStorage> m_rendererStorage;
+		Scope<VulkanRendererStorage> m_rendererStorage;
 		VkDescriptorPool m_descriptorPool;
 
 		std::atomic_bool m_renderingFinished = true;

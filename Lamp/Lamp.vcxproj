@@ -252,7 +252,6 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
@@ -812,7 +811,6 @@
     <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />

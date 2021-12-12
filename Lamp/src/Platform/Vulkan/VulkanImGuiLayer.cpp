@@ -4,6 +4,7 @@
 #include "Lamp/Core/Application.h"
 #include "Lamp/Event/ApplicationEvent.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"

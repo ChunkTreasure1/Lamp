@@ -53,7 +53,6 @@ void main()
     v_Out.viewRay.y = a_Position.y * u_CameraData.positionAndTanHalfFOV.w;
 
     gl_Position = vec4(a_Position, 1.0);
-    gl_Position.y = -gl_Position.y;
 }
 
 #type fragment
@@ -99,9 +98,8 @@ layout (set = 0, binding = 6) uniform sampler2D u_Noise;
 vec3 CalculateWorldCoords(vec2 coords)
 {
     float depth = texture(u_DepthMap, coords).x;
-    float z = depth * 2.0 - 1.0;
 
-    vec4 screenPos = vec4(coords * 2.0 - 1.0, z, 1.0);
+    vec4 screenPos = vec4(coords, depth, 1.0);
     vec4 viewSpace = inverse(u_CameraData.projection) * screenPos;
 
     viewSpace /= viewSpace.w;

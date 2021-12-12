@@ -23,8 +23,6 @@ namespace Sandbox
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
 		m_camera->SetPosition({ -3.f, 2.f, 3.f });
 
-		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
-
 		//Setup icons
 		m_loadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");

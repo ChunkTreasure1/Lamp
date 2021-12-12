@@ -345,10 +345,6 @@ namespace Lamp
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)
 	{
-		for (const auto& buffer : Renderer::s_pSceneData->useViewportSize)
-		{
-			buffer->Resize(e.GetWidth(), e.GetHeight());
-		}
 		return false;
 	}
 }

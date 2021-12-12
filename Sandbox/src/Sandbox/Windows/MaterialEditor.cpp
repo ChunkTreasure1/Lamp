@@ -23,7 +23,6 @@ namespace Sandbox
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
-		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
 		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");

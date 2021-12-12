@@ -46,6 +46,18 @@ namespace Lamp
 
 			return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 		}
+
+		static VkCullModeFlagBits VulkanCullModeFromCullMode(CullMode cullMode)
+		{
+			switch (cullMode)
+			{
+				case CullMode::Front: return VK_CULL_MODE_FRONT_BIT;
+				case CullMode::Back: return VK_CULL_MODE_BACK_BIT;
+				case CullMode::FrontAndBack: return VK_CULL_MODE_FRONT_AND_BACK;
+			}
+
+			return VK_CULL_MODE_BACK_BIT;
+		}
 	}
 
 	VulkanRenderPipeline::VulkanRenderPipeline(const RenderPipelineSpecification& specification)
@@ -263,7 +275,7 @@ namespace Lamp
 		rasterizer.rasterizerDiscardEnable = VK_FALSE;
 		rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
-		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizer.cullMode = Utils::VulkanCullModeFromCullMode(m_specification.cullMode);
 		rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 

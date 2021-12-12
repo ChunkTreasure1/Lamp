@@ -10,7 +10,6 @@ namespace Lamp
 	static int s_lightId = 0;
 	class PointShadowBuffer;
 	class Framebuffer;
-	class RenderPass;
 
 	struct DirectionalLight
 	{
@@ -24,7 +23,6 @@ namespace Lamp
 		glm::mat4 viewProjection = glm::mat4(1.f);
 
 		uint32_t Id = s_lightId++;
-		std::unique_ptr<RenderPass> shadowPass;
 		std::shared_ptr<Framebuffer> shadowBuffer;
 	};
 
@@ -41,7 +39,6 @@ namespace Lamp
 		float nearPlane = 0.01f;
 
 		uint32_t id = s_lightId++;
-		std::unique_ptr<RenderPass> shadowPass;
 		std::shared_ptr<PointShadowBuffer> shadowBuffer;
 	};
 }

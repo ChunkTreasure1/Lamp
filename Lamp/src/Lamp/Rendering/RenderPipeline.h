@@ -17,6 +17,19 @@ namespace Lamp
 		TriangleStrip
 	};
 
+	enum class DrawType
+	{
+		Buffer,
+		Quad
+	};
+
+	enum class CullMode
+	{
+		Front,
+		Back,
+		FrontAndBack
+	};
+
 	struct FramebufferAttachmentInputSpecification
 	{
 		Ref<Image2D> attachment;
@@ -38,7 +51,10 @@ namespace Lamp
 		Ref<UniformBufferSet> uniformBufferSets;
 
 		Topology topology;
+		DrawType drawType = DrawType::Buffer;
+		CullMode cullMode = CullMode::Back;
 		BufferLayout vertexLayout;
+
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
 		std::vector<TextureInputSpecification> textureInputs;
 

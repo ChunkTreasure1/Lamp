@@ -97,13 +97,6 @@ namespace Lamp
 			Ref<ShaderStorageBuffer> visibleLightsStorageBuffer;
 			Ref<ShaderStorageBuffer> pointLightStorageBuffer;
 			/////////////////////////
-
-			//Internal lists
-			std::map<std::string, Ref<Texture2D>> internalTextures;
-			std::map<std::string, Ref<Framebuffer>> internalFramebuffers;
-			std::vector<Ref<Framebuffer>> useViewportSize;
-			
-			///////////////////TESTING/////////////////
 		};
 
 		struct Capabilities

@@ -1,11 +1,12 @@
 #pragma once
 #include "Event.h"
-#include <sstream>
 
 #include "Lamp/Core/Time/Timestep.h"
 #include "Lamp/Input/FileSystem.h"
 
-#include "Lamp/Rendering/RenderPass.h"
+#include "Lamp/Rendering/Cameras/CameraBase.h"
+
+#include <sstream>
 
 namespace Lamp
 {
