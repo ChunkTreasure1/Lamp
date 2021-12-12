@@ -98,8 +98,9 @@ layout (set = 0, binding = 6) uniform sampler2D u_Noise;
 vec3 CalculateWorldCoords(vec2 coords)
 {
     float depth = texture(u_DepthMap, coords).x;
+    float z = depth * 2.0 - 1.0;
 
-    vec4 screenPos = vec4(coords, depth, 1.0);
+    vec4 screenPos = vec4(coords * 2.0 - 1.0, z, 1.0);
     vec4 viewSpace = inverse(u_CameraData.projection) * screenPos;
 
     viewSpace /= viewSpace.w;
