@@ -7,7 +7,7 @@ namespace Sandbox
 	SandboxController::SandboxController()
 		: m_Listener(0)
 	{
-		m_CameraController = CreateRef<Lamp::PerspectiveCameraController>(g_pEnv->pLevel->GetEnvironment().CameraFOV, 0.1f, 100.f);
+		m_CameraController = CreateRef<Lamp::PerspectiveCameraController>(g_pEnv->pLevel->GetEnvironment().CameraFOV, 0.1f, 1000.f);
 		m_CameraController->SetPosition(g_pEnv->pLevel->GetEnvironment().CameraPosition);
 		m_CameraController->SetRotation(glm::eulerAngles(g_pEnv->pLevel->GetEnvironment().CameraRotation));
 

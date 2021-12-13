@@ -31,6 +31,8 @@ Assets:
     Path: assets\meshes\head\textures\kyle_low_mro.tga
   - Handle: 5165272647848418933
     Path: assets\meshes\head\textures\kyle_low_normal.tga
+  - Handle: 15873515662996244200
+    Path: assets\meshes\sponza\Sponza.lgf
   - Handle: 5148223941914373274
     Path: assets\meshes\sponza\SponzaForLamp.lgs
   - Handle: 10163665107251789962

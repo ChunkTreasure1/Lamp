@@ -10,6 +10,7 @@ namespace Lamp
 	class TextureCube;
 	class TextureHDR;
 	class Mesh;
+	class Image2D;
 	class Skybox
 	{
 	public:

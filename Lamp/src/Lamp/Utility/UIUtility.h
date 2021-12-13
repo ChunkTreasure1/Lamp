@@ -602,6 +602,8 @@ namespace UI
 		{
 			return true;
 		}
+
+		return false;
 	}
 
 	static bool Property(const std::string& text, std::filesystem::path& path)

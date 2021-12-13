@@ -97,8 +97,6 @@ namespace Lamp
 	{
 		m_instance = static_cast<VkInstance>(instance);
 		m_device = static_cast<VulkanDevice*>(device);
-
-		VulkanAllocator::Initialize(m_device);
 	}
 
 	VulkanSwapchain::~VulkanSwapchain()
@@ -198,8 +196,6 @@ namespace Lamp
 		vkDestroyRenderPass(m_device->GetHandle(), m_renderPass, nullptr);
 		vkDestroySwapchainKHR(m_device->GetHandle(), m_swapchain, nullptr);
 		vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
-
-		VulkanAllocator::Shutdown();
 	}
 
 	void VulkanSwapchain::BeginFrame()
