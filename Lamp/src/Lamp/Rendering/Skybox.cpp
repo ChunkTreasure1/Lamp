@@ -3,9 +3,11 @@
 
 #include "Lamp/Rendering/Textures/TextureHDR.h"
 #include "Lamp/Rendering/Textures/TextureCube.h"
+#include "Lamp/Rendering/RenderPipeline.h"
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include "Lamp/Rendering/RenderCommand.h"
 
@@ -14,6 +16,8 @@ namespace Lamp
 	Skybox::Skybox(const std::filesystem::path& path)
 	{
 		m_hdrTexture = TextureHDR::Create(path);
+
+		GenerateBRDFLUT();
 
 		////Setup shaders
 		//m_eqCubeShader = ShaderLibrary::GetShader("EqCube");
@@ -44,24 +48,48 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		m_cubeMap->Bind(0);
-		m_skyboxShader->Bind();
+		//m_cubeMap->Bind(0);
+		//m_skyboxShader->Bind();
 	}
 
 	void Skybox::GenerateBRDFLUT()
 	{
 		const uint32_t brdfDim = 512;
 
-		ImageSpecification imageSpec{};
-		imageSpec.format = ImageFormat::RG16F;
-		imageSpec.usage = ImageUsage::Attachment;
-		imageSpec.width = brdfDim;
-		imageSpec.height = brdfDim;
-		imageSpec.filter = TextureFilter::Linear;
-		imageSpec.wrap = TextureWrap::Clamp;
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.width = brdfDim;
+		framebufferSpec.height = brdfDim;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RG16F
+		};
 
-		m_brdfLUT = Image2D::Create(imageSpec);
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+		m_brdfFramebuffer = pipelineSpec.framebuffer;
 
+		pipelineSpec.shader = ShaderLibrary::GetShader("BRDFIntegrate");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Quad;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
 
+		auto renderPass = RenderPipeline::Create(pipelineSpec);
+
+		Renderer::BeginPass(renderPass);
+		
+		Renderer::DrawBuffer();
+		
+		Renderer::EndPass();
 	}
 }

@@ -37,7 +37,7 @@ namespace Lamp
 		Ref<TextureCube> m_prefilterMap;
 		Ref<TextureHDR> m_hdrTexture;
 
-		Ref<Image2D> m_brdfLUT;
+		Ref<Framebuffer> m_brdfFramebuffer;
 
 		//Data
 		glm::mat4 m_captureProjection;

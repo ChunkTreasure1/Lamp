@@ -59,6 +59,7 @@ namespace Lamp
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanDepthPrePass.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSSAO.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanComposite.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanBRDF.glsl");
 		MaterialLibrary::LoadMaterials();
 
 		GenerateKernel();
