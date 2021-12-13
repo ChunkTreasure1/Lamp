@@ -13,36 +13,25 @@ namespace Lamp
 {
 	Skybox::Skybox(const std::filesystem::path& path)
 	{
-		if (path.empty() || !std::filesystem::exists(path))
-		{
-			LP_CORE_ERROR("File {0} not found!", path.string());
-			return;
-		}
-	
 		m_hdrTexture = TextureHDR::Create(path);
-		if (!m_hdrTexture->IsValid())
-		{
-			LP_CORE_ERROR("Unable to load texture {0}!", path.string());
-			return;
-		}
 
-		//Setup shaders
-		m_eqCubeShader = ShaderLibrary::GetShader("EqCube");
-		m_convolutionShader = ShaderLibrary::GetShader("Convolution");
-		m_prefilterShader = ShaderLibrary::GetShader("Prefilter");
-		m_skyboxShader = ShaderLibrary::GetShader("Skybox");
+		////Setup shaders
+		//m_eqCubeShader = ShaderLibrary::GetShader("EqCube");
+		//m_convolutionShader = ShaderLibrary::GetShader("Convolution");
+		//m_prefilterShader = ShaderLibrary::GetShader("Prefilter");
+		//m_skyboxShader = ShaderLibrary::GetShader("Skybox");
 
-		//Create views/projection
-		m_captureProjection = glm::perspective(glm::radians(90.f), 1.f, 0.1f, 100.f);
-		m_captureViews =
-		{
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-		};
+		////Create views/projection
+		//m_captureProjection = glm::perspective(glm::radians(90.f), 1.f, 0.1f, 100.f);
+		//m_captureViews =
+		//{
+		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+		//};
 
 
 	}
@@ -57,5 +46,22 @@ namespace Lamp
 
 		m_cubeMap->Bind(0);
 		m_skyboxShader->Bind();
+	}
+
+	void Skybox::GenerateBRDFLUT()
+	{
+		const uint32_t brdfDim = 512;
+
+		ImageSpecification imageSpec{};
+		imageSpec.format = ImageFormat::RG16F;
+		imageSpec.usage = ImageUsage::Attachment;
+		imageSpec.width = brdfDim;
+		imageSpec.height = brdfDim;
+		imageSpec.filter = TextureFilter::Linear;
+		imageSpec.wrap = TextureWrap::Clamp;
+
+		m_brdfLUT = Image2D::Create(imageSpec);
+
+
 	}
 }

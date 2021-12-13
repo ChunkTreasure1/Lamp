@@ -26,6 +26,7 @@ namespace Lamp
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Ref<RendererNew> Renderer::s_renderer = nullptr;
 	Scope<Renderer::RendererDefaults> Renderer::s_rendererDefaults;
+	Scope<Skybox> Renderer::s_skybox;
 
 	Renderer::Capabilities Renderer::s_capabilities;
 	Renderer::Statistics Renderer::s_statistics;
@@ -57,6 +58,7 @@ namespace Lamp
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanDepthPrePass.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSSAO.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanComposite.glsl");
 		MaterialLibrary::LoadMaterials();
 
 		GenerateKernel();
@@ -64,6 +66,8 @@ namespace Lamp
 		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
 
 		SetupBuffers();
+
+		s_skybox = CreateScope<Skybox>("assets/textures/frozen_waterfall.hdr");
 	}
 
 	void Renderer::Shutdown()
@@ -124,12 +128,12 @@ namespace Lamp
 
 	void Renderer::CreateShaderStorageBuffers()
 	{
-		s_pSceneData->pointLightStorageBuffer = ShaderStorageBuffer::Create(s_pSceneData->maxLights * sizeof(PointLightData), 2);
-
-		s_pSceneData->screenGroupX = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-		s_pSceneData->screenGroupY = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
-		s_pSceneData->visibleLightsStorageBuffer = ShaderStorageBuffer::Create(s_pSceneData->screenTileCount * sizeof(LightIndex) * s_pSceneData->maxLights, 3, DrawAccess::Static);
+		//s_pSceneData->pointLightStorageBuffer = ShaderStorageBuffer::Create(s_pSceneData->maxLights * sizeof(PointLightData), 2);
+		//
+		//s_pSceneData->screenGroupX = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
+		//s_pSceneData->screenGroupY = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
+		//s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
+		//s_pSceneData->visibleLightsStorageBuffer = ShaderStorageBuffer::Create(s_pSceneData->screenTileCount * sizeof(LightIndex) * s_pSceneData->maxLights, 3, DrawAccess::Static);
 	}
 
 	void Renderer::UpdateBuffers(const Ref<CameraBase> camera)

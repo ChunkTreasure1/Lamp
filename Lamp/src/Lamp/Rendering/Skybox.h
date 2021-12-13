@@ -22,6 +22,8 @@ namespace Lamp
 		static Ref<Skybox> Create(const std::filesystem::path& path) { return CreateRef<Skybox>(path); }
 
 	private:
+		void GenerateBRDFLUT();
+
 		//Shaders
 		Ref<Shader> m_eqCubeShader;
 		Ref<Shader> m_convolutionShader;
@@ -33,6 +35,8 @@ namespace Lamp
 		Ref<TextureCube> m_irradianceMap;
 		Ref<TextureCube> m_prefilterMap;
 		Ref<TextureHDR> m_hdrTexture;
+
+		Ref<Image2D> m_brdfLUT;
 
 		//Data
 		glm::mat4 m_captureProjection;

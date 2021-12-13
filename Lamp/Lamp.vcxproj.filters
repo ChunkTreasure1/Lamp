@@ -507,9 +507,6 @@
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
@@ -1912,6 +1909,7 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTextureHDR.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2377,5 +2375,6 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTextureHDR.cpp" />
   </ItemGroup>
 </Project>

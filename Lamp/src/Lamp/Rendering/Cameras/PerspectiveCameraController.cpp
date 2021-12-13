@@ -34,11 +34,11 @@ namespace Lamp
 		}
 		if (Input::IsKeyPressed(LP_KEY_A))
 		{
-			m_Position += m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
+			m_Position -= m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
 		}
 		if (Input::IsKeyPressed(LP_KEY_D))
 		{
-			m_Position -= m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
+			m_Position += m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
 		}
 
 		//g_pEnv->DirLight.UpdateProjection(m_Position);
@@ -105,7 +105,7 @@ namespace Lamp
 
 		auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
 
-		perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() - xOffset);
+		perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() + xOffset);
 		perspectiveCamera->SetPitch(perspectiveCamera->GetPitch() - yOffset);
 
 		if (perspectiveCamera->GetPitch() > 89.f)

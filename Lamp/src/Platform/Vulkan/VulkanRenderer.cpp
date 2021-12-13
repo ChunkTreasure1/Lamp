@@ -483,16 +483,16 @@ namespace Lamp
 		{
 			std::vector<Vertex> quadVertices =
 			{
-				Vertex({ 1.f, 1.f, 0.f }, { 1.f, 1.f }),
-				Vertex({ 1.f, -1.f, 0.f }, { 1.f, 0.f }),
-				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 0.f }),
-				Vertex({ -1.f, 1.f, 0.f }, { 0.f, 1.f }),
+				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 1.f }),
+				Vertex({ 1.f, -1.f, 0.f }, { 1.f, 1.f }),
+				Vertex({ 1.f, 1.f, 0.f }, { 1.f, 0.f }),
+				Vertex({ -1.f, 1.f, 0.f }, { 0.f, 0.f }),
 			};
 
 			std::vector<uint32_t> quadIndices =
 			{
-				0, 3, 1, // (top right - bottom right - top left)
-				1, 3, 2 // (bottom right - bottom left, top left);
+				0, 1, 2,
+				2, 3, 0
 			};
 
 			m_rendererStorage->quadMesh = CreateRef<SubMesh>(quadVertices, quadIndices, 0);

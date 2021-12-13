@@ -86,9 +86,11 @@ namespace Lamp
 
 		VkViewport viewport{};
 		viewport.x = 0.f;
-		viewport.y = 0.f;
+		viewport.y = extent.height;
+
 		viewport.width = extent.width;
 		viewport.height = extent.height;
+		viewport.height = -viewport.height;
 		viewport.minDepth = 0.f;
 		viewport.maxDepth = 1.f;
 

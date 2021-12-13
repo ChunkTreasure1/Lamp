@@ -49,7 +49,7 @@ namespace Lamp
 			switch (wrap)
 			{
 				case TextureWrap::None: LP_CORE_ASSERT(false, "Wrap mode must be set!");
-				case TextureWrap::Clamp: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+				case TextureWrap::Clamp: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 				case TextureWrap::Repeat: return VK_SAMPLER_ADDRESS_MODE_REPEAT;
 			}
 			return VK_SAMPLER_ADDRESS_MODE_REPEAT;

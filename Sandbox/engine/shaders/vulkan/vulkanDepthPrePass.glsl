@@ -47,7 +47,6 @@ void main()
 	v_Out.TBN = mat3(T, B, N);
 
 	gl_Position = u_CameraData.projection * u_CameraData.view * u_MeshData.model * vec4(a_Position, 1.0);
-	gl_Position.y = -gl_Position.y;
 }
 
 #type fragment

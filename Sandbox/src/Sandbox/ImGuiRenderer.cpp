@@ -67,13 +67,14 @@ namespace Sandbox
 				m_viewportFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 				m_depthPrePassFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 				m_ssaoMainFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
+				m_geometryFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 				g_pEnv->pLevel->OnEvent(e);
 			}
 
-			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 1, 0 }, ImVec2{ 0, 1 });
+			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
@@ -733,22 +734,28 @@ namespace Sandbox
 	{
 		ImGui::Begin("Statistics");
 
-		ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
-		ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
+		if (UI::TreeNodeFramed("Application"))
+		{
+			ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
+			ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
 
-		ImGui::Separator();
+			UI::TreeNodePop();
+		}
 
-		const auto& stats = Renderer::GetStatistics();
+		if (UI::TreeNodeFramed("GPU"))
+		{
+			const auto& stats = Renderer::GetStatistics();
 
-		ImGui::TextUnformatted("GPU statistics");
-		
-		ImGui::Text("Total draw calls: %d", stats.totalDrawCalls);
-		ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
-		ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
-		ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));
+			ImGui::Text("Total draw calls: %d", stats.totalDrawCalls);
+			ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
+			ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
+			ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));
 
-		ImGui::Text("Total allocated memory: %d Mbs", UI::BytesToMBs(stats.memoryStatistics.totalAllocatedMemory));
-		ImGui::Text("Total freed memory: %d Mbs", UI::BytesToMBs(stats.memoryStatistics.totalFreedMemory));
+			ImGui::Text("Total allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalAllocatedMemory));
+			ImGui::Text("Total freed memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalFreedMemory));
+
+			UI::TreeNodePop();
+		}
 
 		ImGui::End();
 	}

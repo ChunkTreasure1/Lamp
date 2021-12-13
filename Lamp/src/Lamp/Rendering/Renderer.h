@@ -7,7 +7,6 @@
 #include "Lamp/Rendering/Buffers/RenderBuffer.h"
 #include "Lamp/Rendering/RendererAPI.h"
 #include "Lamp/Rendering/Shader/Shader.h"
-#include "Lamp/Rendering/UniformBuffers.h"
 
 #include <algorithm>
 
@@ -23,6 +22,7 @@ namespace Lamp
 	class RenderPipeline;
 	class SubMesh;
 	class Material;
+	class Skybox;
 
 	struct GPUMemoryStatistics
 	{
@@ -85,7 +85,6 @@ namespace Lamp
 
 			/////Uniform buffers//////
 			DirectionalLightDataBuffer directionalLightDataBuffer;
-			DirectionalLightVPs directionalLightVPData;
 			SSAODataBuffer ssaoData;
 			CameraDataBuffer cameraData;
 			ScreenDataBuffer screenData;
@@ -135,6 +134,7 @@ namespace Lamp
 		
 		static Ref<RendererNew> s_renderer;
 		static Scope<RendererDefaults> s_rendererDefaults;
+		static Scope<Skybox> s_skybox;
 
 		static RenderBuffer s_firstRenderBuffer;
 		static RenderBuffer s_secondRenderBuffer;

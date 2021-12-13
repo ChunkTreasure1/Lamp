@@ -104,8 +104,10 @@ namespace Sandbox
 
 		Ref<Lamp::Texture2D> m_IconPlay;
 		Ref<Lamp::Texture2D> m_IconStop;
+
 		Ref<Lamp::Framebuffer> m_depthPrePassFramebuffer;
 		Ref<Lamp::Framebuffer> m_viewportFramebuffer;
+		Ref<Lamp::Framebuffer> m_geometryFramebuffer;
 		Ref<Lamp::Framebuffer> m_ssaoMainFramebuffer;
 
 		//Perspective
