@@ -100,5 +100,38 @@ namespace Lamp
 
 	void Skybox::GenerateIrradianceCube()
 	{
+		ScopedTimer timer{ "Generate irradiance cube" };
+
+		const uint32_t irradianceDim = 64;
+
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.width = irradianceDim;
+		framebufferSpec.height = irradianceDim;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RGBA32F
+		};
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+		m_brdfFramebuffer = pipelineSpec.framebuffer;
+
+		pipelineSpec.shader = ShaderLibrary::GetShader("irradianceCube");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Cube;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		auto renderPass = RenderPipeline::Create(pipelineSpec);
 	}
 }

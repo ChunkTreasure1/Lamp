@@ -1911,6 +1911,7 @@
     <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTextureHDR.h" />
     <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2377,5 +2378,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTextureHDR.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />
   </ItemGroup>
 </Project>

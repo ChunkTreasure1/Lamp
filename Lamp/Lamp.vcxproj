@@ -303,6 +303,7 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTextureHDR.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
@@ -854,6 +855,7 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTextureHDR.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanVertexArray.cpp" />

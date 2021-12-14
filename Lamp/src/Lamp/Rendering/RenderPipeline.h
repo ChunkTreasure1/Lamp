@@ -20,7 +20,8 @@ namespace Lamp
 	enum class DrawType
 	{
 		Buffer,
-		Quad
+		Quad,
+		Cube
 	};
 
 	enum class CullMode
