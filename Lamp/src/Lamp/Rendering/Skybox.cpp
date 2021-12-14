@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "Skybox.h"
 
+#include "Lamp/Core/Time/ScopedTimer.h"
+
 #include "Lamp/Rendering/Textures/TextureHDR.h"
 #include "Lamp/Rendering/Textures/TextureCube.h"
 #include "Lamp/Rendering/RenderPipeline.h"
@@ -18,6 +20,7 @@ namespace Lamp
 		m_hdrTexture = TextureHDR::Create(path);
 
 		GenerateBRDFLUT();
+		GenerateIrradianceCube();
 
 		////Setup shaders
 		//m_eqCubeShader = ShaderLibrary::GetShader("EqCube");
@@ -54,6 +57,8 @@ namespace Lamp
 
 	void Skybox::GenerateBRDFLUT()
 	{
+		ScopedTimer timer{ "Generate BRDFLUT" };
+
 		const uint32_t brdfDim = 512;
 
 		FramebufferSpecification framebufferSpec{};
@@ -91,5 +96,9 @@ namespace Lamp
 		Renderer::DrawBuffer();
 		
 		Renderer::EndPass();
+	}
+
+	void Skybox::GenerateIrradianceCube()
+	{
 	}
 }

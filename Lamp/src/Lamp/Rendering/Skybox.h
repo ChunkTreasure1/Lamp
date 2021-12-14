@@ -24,6 +24,7 @@ namespace Lamp
 
 	private:
 		void GenerateBRDFLUT();
+		void GenerateIrradianceCube();
 
 		//Shaders
 		Ref<Shader> m_eqCubeShader;

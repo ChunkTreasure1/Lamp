@@ -1910,6 +1910,7 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTextureHDR.h" />
+    <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">

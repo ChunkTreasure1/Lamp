@@ -172,6 +172,7 @@
     <ClInclude Include="src\Lamp\Core\Log.h" />
     <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
+    <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\UUID.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
