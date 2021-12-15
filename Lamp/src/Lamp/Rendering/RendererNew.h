@@ -24,6 +24,8 @@ namespace Lamp
 		virtual const GPUMemoryStatistics& GetMemoryUsage() const = 0;
 
 		virtual void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1) = 0;
+		virtual void SubmitQuad() = 0;
+		virtual void SubmitCube(void* pushConstant = nullptr) = 0;
 		virtual void DrawBuffer(RenderBuffer& buffer) = 0;
 
 		static Ref<RendererNew> Create();

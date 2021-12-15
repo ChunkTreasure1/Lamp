@@ -27,6 +27,8 @@ namespace Lamp
 		void GenerateIrradianceCube();
 		void GenerateEquirectangularCube();
 
+		const glm::mat4 m_perspective = glm::perspective(glm::radians(90.f), 1.f, 0.1f, 100.f);
+
 		const std::array<glm::mat4, 6> m_matrices =
 		{
 			//Positive X

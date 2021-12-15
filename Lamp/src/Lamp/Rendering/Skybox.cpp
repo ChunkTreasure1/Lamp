@@ -93,9 +93,7 @@ namespace Lamp
 		auto renderPass = RenderPipeline::Create(pipelineSpec);
 
 		Renderer::BeginPass(renderPass);
-		
-		Renderer::DrawBuffer();
-		
+		Renderer::SubmitQuad();
 		Renderer::EndPass();
 	}
 
@@ -144,7 +142,7 @@ namespace Lamp
 			for (uint32_t f = 0; f < 6; f++)
 			{
 				Renderer::BeginPass(renderPass);
-				Renderer::DrawBuffer();
+				Renderer::SubmitCube();
 				Renderer::EndPass();
 
 				m_irradianceMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), f, m);
@@ -193,5 +191,12 @@ namespace Lamp
 		};
 
 		auto renderPass = RenderPipeline::Create(pipelineSpec);
+	
+		for (uint32_t i = 0; i < 6; i++)
+		{
+			Renderer::BeginPass(renderPass);
+			Renderer::SubmitCube();
+			Renderer::EndPass();
+		}
 	}
 }

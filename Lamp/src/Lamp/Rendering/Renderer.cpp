@@ -119,6 +119,16 @@ namespace Lamp
 		s_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
 	}
 
+	void Renderer::SubmitQuad()
+	{
+		s_renderer->SubmitQuad();
+	}
+
+	void Renderer::SubmitCube(void* pushConstant)
+	{
+		s_renderer->SubmitCube(pushConstant);
+	}
+
 	void Renderer::DrawBuffer()
 	{
 		s_renderer->DrawBuffer(*s_submitBufferPointer);

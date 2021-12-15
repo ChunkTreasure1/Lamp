@@ -182,7 +182,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::SubmitCube()
+	void VulkanRenderer::SubmitCube(void* pushConstant)
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -190,6 +190,11 @@ namespace Lamp
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		SetupDescriptorsForCubeRendering();
+
+		if (pushConstant)
+		{
+			vulkanPipeline->SetPushConstantData(commandBuffer, 0, pushConstant);
+		}
 
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
 
@@ -205,25 +210,16 @@ namespace Lamp
 		{
 			case DrawType::Buffer:
 			{
-				SortRenderBuffer(m_rendererStorage->camera->GetPosition(), buffer);
+				if (m_rendererStorage->camera)
+				{
+					SortRenderBuffer(m_rendererStorage->camera->GetPosition(), buffer);
+				}
 
 				for (const auto& command : buffer.drawCalls)
 				{
 					SubmitMesh(command.transform, command.data, command.material, command.id);
 				}
 
-				break;
-			}
-
-			case DrawType::Quad:
-			{
-				SubmitQuad();
-				break;
-			}
-
-			case DrawType::Cube:
-			{
-				SubmitCube();
 				break;
 			}
 		}
