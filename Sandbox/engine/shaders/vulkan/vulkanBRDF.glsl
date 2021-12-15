@@ -37,7 +37,7 @@ layout (std140, binding = 0) uniform CameraDataBuffer
 
 } u_CameraData;
 
-const float PI = 3.14159265359;
+const float PI = 3.1415926535897932384626433832795;
 
 float RadicalInverse_VdC(uint bits)
 {

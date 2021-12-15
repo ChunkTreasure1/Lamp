@@ -13,6 +13,11 @@ namespace Lamp
 		Vertex(const glm::vec3& position, const glm::vec2& texCoords)
 			: position(position), textureCoords(texCoords)
 		{}
+
+		Vertex(const glm::vec3& position)
+			: position(position)
+		{ }
+
 		Vertex() = default;
 
 		glm::vec3 position = glm::vec3(0.f);

@@ -26,6 +26,7 @@ namespace Lamp
 		Ref<CameraBase> camera;
 
 		Ref<SubMesh> quadMesh;
+		Ref<SubMesh> cubeMesh;
 
 		std::vector<VkDescriptorSet> pipelineDescriptorSets;
 	};
@@ -48,6 +49,7 @@ namespace Lamp
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
 		void SubmitQuad();
+		void SubmitCube();
 
 		void DrawBuffer(RenderBuffer& buffer) override;
 
@@ -55,7 +57,9 @@ namespace Lamp
 
 	private:
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
-		void SetupDescriptorsForQuadRendering();
+		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
+		void SetupDescriptorsForCubeRendering(); // TODO: should be moved into singular function
+
 		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
 		void CreateBaseGeometry();
 

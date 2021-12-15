@@ -13,6 +13,10 @@ namespace Lamp
 
 		void Bind(uint32_t slot = 0) const override;
 		void SetData(const void* data, uint32_t size) override;
+		void SetData(Ref<Image2D> image, uint32_t face, uint32_t mip) override {}
+
+		void StartDataOverride() override {}
+		void FinishDataOverride() override {}
 
 		const uint32_t GetWidth() const override { return m_faceWidth; }
 		const uint32_t GetHeight() const override { return m_faceHeight; }

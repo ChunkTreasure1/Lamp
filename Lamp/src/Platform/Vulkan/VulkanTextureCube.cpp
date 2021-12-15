@@ -5,6 +5,9 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
 
+#include "Platform/Vulkan/VulkanUtility.h"
+#include "Platform/Vulkan/VulkanImage2D.h"
+
 namespace Lamp
 {
 	VulkanTextureCube::VulkanTextureCube(uint32_t width, uint32_t height)
@@ -29,6 +32,62 @@ namespace Lamp
 
 	void VulkanTextureCube::SetData(const void* data, uint32_t size)
 	{
+
+	}
+
+	void VulkanTextureCube::SetData(Ref<Image2D> image, uint32_t face, uint32_t mip)
+	{
+		auto device = VulkanContext::GetCurrentDevice();
+		auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(image);
+		auto commandBuffer = device->GetCommandBuffer(true);
+		
+		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+
+		VkImageCopy copyRegion{};
+		
+		copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		copyRegion.srcSubresource.baseArrayLayer = 0;
+		copyRegion.srcSubresource.mipLevel = 0;
+		copyRegion.srcSubresource.layerCount = 1;
+		copyRegion.srcOffset = { 0, 0, 0 };
+
+		copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		copyRegion.dstSubresource.baseArrayLayer = face;
+		copyRegion.dstSubresource.mipLevel = mip;
+		copyRegion.dstSubresource.layerCount = 1;
+		copyRegion.dstOffset = { 0, 0, 0 };
+
+		copyRegion.extent.width = m_width;
+		copyRegion.extent.height = m_height;
+		copyRegion.extent.depth = 1;
+
+		vkCmdCopyImage(commandBuffer, vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+
+		device->FlushCommandBuffer(commandBuffer);
+
+		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+	}
+
+	void VulkanTextureCube::StartDataOverride()
+	{
+		VkImageSubresourceRange subresourceRange{};
+		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subresourceRange.baseMipLevel = 0;
+		subresourceRange.levelCount = m_mipLevels;
+		subresourceRange.layerCount = 6;
+
+		Utility::TransitionImageLayout(m_image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, subresourceRange);
+	}
+
+	void VulkanTextureCube::FinishDataOverride()
+	{
+		VkImageSubresourceRange subresourceRange{};
+		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subresourceRange.baseMipLevel = 0;
+		subresourceRange.levelCount = m_mipLevels;
+		subresourceRange.layerCount = 6;
+
+		Utility::TransitionImageLayout(m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, subresourceRange);
 	}
 
 	void VulkanTextureCube::UpdateDescriptor()
@@ -45,7 +104,7 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 
 		//TODO: fix
-		const uint32_t mips = static_cast<uint32_t>(std::floor(std::log2(std::max(m_height, m_width)))) + 1;
+		m_mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(m_height, m_width)))) + 1;
 		const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
 
 		VkImageCreateInfo imageInfo{};
@@ -56,7 +115,7 @@ namespace Lamp
 		imageInfo.extent.width = m_width;
 		imageInfo.extent.height = m_height;
 		imageInfo.extent.depth = 1;
-		imageInfo.mipLevels = mips;
+		imageInfo.mipLevels = m_mipLevels;
 		imageInfo.arrayLayers = 6;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -70,7 +129,7 @@ namespace Lamp
 		imageViewInfo.format = format;
 		imageViewInfo.subresourceRange = {};
 		imageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imageViewInfo.subresourceRange.levelCount = mips;
+		imageViewInfo.subresourceRange.levelCount = m_mipLevels;
 		imageViewInfo.subresourceRange.layerCount = 6;
 		imageViewInfo.image = m_image;
 
@@ -85,7 +144,7 @@ namespace Lamp
 		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		samplerInfo.minLod = 0.f;
-		samplerInfo.maxLod = static_cast<float>(mips);
+		samplerInfo.maxLod = static_cast<float>(m_mipLevels);
 		samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 		result = vkCreateSampler(device->GetHandle(), &samplerInfo, nullptr, &m_sampler);
 

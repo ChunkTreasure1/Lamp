@@ -54,6 +54,7 @@ namespace Lamp
 				case CullMode::Front: return VK_CULL_MODE_FRONT_BIT;
 				case CullMode::Back: return VK_CULL_MODE_BACK_BIT;
 				case CullMode::FrontAndBack: return VK_CULL_MODE_FRONT_AND_BACK;
+				case CullMode::None: return VK_CULL_MODE_NONE;
 			}
 
 			return VK_CULL_MODE_BACK_BIT;

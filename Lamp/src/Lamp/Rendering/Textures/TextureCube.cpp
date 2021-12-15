@@ -2,7 +2,9 @@
 #include "TextureCube.h"
 
 #include "Lamp/Rendering/Renderer.h"
+
 #include "Platform/OpenGL/OpenGLTextureCube.h"
+#include "Platform/Vulkan/VulkanTextureCube.h"
 
 namespace Lamp
 {
@@ -12,6 +14,7 @@ namespace Lamp
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTextureCube>(width, height);
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanTextureCube>(width, height);
 		}
 
 		return nullptr;
@@ -23,6 +26,7 @@ namespace Lamp
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTextureCube>(path);
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanTextureCube>(path);
 		}
 
 		return nullptr;

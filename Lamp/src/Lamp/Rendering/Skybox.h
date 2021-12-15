@@ -25,12 +25,28 @@ namespace Lamp
 	private:
 		void GenerateBRDFLUT();
 		void GenerateIrradianceCube();
+		void GenerateEquirectangularCube();
 
-		//Shaders
-		Ref<Shader> m_eqCubeShader;
-		Ref<Shader> m_convolutionShader;
-		Ref<Shader> m_prefilterShader;
-		Ref<Shader> m_skyboxShader;
+		const std::array<glm::mat4, 6> m_matrices =
+		{
+			//Positive X
+			glm::rotate(glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f)), glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f)),
+
+			//Negative X
+			glm::rotate(glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f)), glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f)),
+
+			//Positive Y
+			glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)),
+
+			//Negative Y
+			glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f)),
+
+			//Positive Z
+			glm::rotate(glm::mat4(1.f), glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f)),
+
+			//Negative Z
+			glm::rotate(glm::mat4(1.f), glm::radians(180.f), glm::vec3(0.f, 0.f, 1.f))
+		};
 
 		//Textures
 		Ref<TextureCube> m_cubeMap;
@@ -39,11 +55,5 @@ namespace Lamp
 		Ref<TextureHDR> m_hdrTexture;
 
 		Ref<Framebuffer> m_brdfFramebuffer;
-
-		//Data
-		glm::mat4 m_captureProjection;
-		std::array<glm::mat4, 6> m_captureViews;
-		Ref<Mesh> m_cubeMesh;
-		Ref<Framebuffer> m_framebuffer;
 	};
 }

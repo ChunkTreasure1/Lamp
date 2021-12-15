@@ -60,6 +60,8 @@ namespace Lamp
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSSAO.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanComposite.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanBRDF.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanIrradiance.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanEquirectangularCube.glsl");
 		MaterialLibrary::LoadMaterials();
 
 		GenerateKernel();

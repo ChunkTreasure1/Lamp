@@ -20,6 +20,7 @@ namespace Lamp
 		m_hdrTexture = TextureHDR::Create(path);
 
 		GenerateBRDFLUT();
+		GenerateEquirectangularCube();
 		GenerateIrradianceCube();
 
 		////Setup shaders
@@ -103,6 +104,7 @@ namespace Lamp
 		ScopedTimer timer{ "Generate irradiance cube" };
 
 		const uint32_t irradianceDim = 64;
+		const uint32_t mips = static_cast<uint32_t>(std::floor(std::log2(irradianceDim))) + 1;
 
 		FramebufferSpecification framebufferSpec{};
 		framebufferSpec.swapchainTarget = false;
@@ -119,7 +121,7 @@ namespace Lamp
 
 		pipelineSpec.shader = ShaderLibrary::GetShader("irradianceCube");
 		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.cullMode = CullMode::None;
 		pipelineSpec.topology = Topology::TriangleList;
 		pipelineSpec.drawType = DrawType::Cube;
 		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
@@ -130,6 +132,64 @@ namespace Lamp
 			{ ElementType::Float3, "a_Tangent" },
 			{ ElementType::Float3, "a_Bitangent" },
 			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		auto renderPass = RenderPipeline::Create(pipelineSpec);
+		m_irradianceMap = TextureCube::Create(irradianceDim, irradianceDim);
+
+		m_irradianceMap->StartDataOverride();
+
+		for (uint32_t m = 0; m < mips; m++)
+		{
+			for (uint32_t f = 0; f < 6; f++)
+			{
+				Renderer::BeginPass(renderPass);
+				Renderer::DrawBuffer();
+				Renderer::EndPass();
+
+				m_irradianceMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), f, m);
+			}
+		}
+
+		m_irradianceMap->FinishDataOverride();
+	}
+
+	void Skybox::GenerateEquirectangularCube()
+	{
+		ScopedTimer timer{ "Generate equirectangular cube" };
+
+		const uint32_t cubemapSize = 1024;
+
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.width = cubemapSize;
+		framebufferSpec.height = cubemapSize;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RGBA16F
+		};
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+
+		pipelineSpec.shader = ShaderLibrary::GetShader("equirectangularCube");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::None;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Cube;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		pipelineSpec.textureHDRInputs =
+		{
+			{ m_hdrTexture, 0, 0 }
 		};
 
 		auto renderPass = RenderPipeline::Create(pipelineSpec);
