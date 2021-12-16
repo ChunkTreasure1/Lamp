@@ -73,7 +73,7 @@ namespace Lamp
 
 		std::string debugName;
 		bool useAniostopy = false;
-		bool dirty = false;
+		bool copyable = false;
 	};
 
 	class Image2D

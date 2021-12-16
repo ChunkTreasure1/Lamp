@@ -19,8 +19,8 @@ namespace Lamp
 	{
 		m_hdrTexture = TextureHDR::Create(path);
 
-		GenerateBRDFLUT();
-		GenerateEquirectangularCube();
+		//GenerateBRDFLUT();
+		//GenerateEquirectangularCube();
 		GenerateIrradianceCube();
 
 		////Setup shaders
@@ -40,8 +40,6 @@ namespace Lamp
 		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
 		//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
 		//};
-
-
 	}
 
 	Skybox::~Skybox()
@@ -106,11 +104,12 @@ namespace Lamp
 
 		FramebufferSpecification framebufferSpec{};
 		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.copyable = true;
 		framebufferSpec.width = irradianceDim;
 		framebufferSpec.height = irradianceDim;
 		framebufferSpec.attachments =
 		{
-			ImageFormat::RGBA32F
+			ImageFormat::RGBA16F
 		};
 
 		RenderPipelineSpecification pipelineSpec{};
@@ -141,8 +140,10 @@ namespace Lamp
 		{
 			for (uint32_t f = 0; f < 6; f++)
 			{
+				m_pushConstantData.modelViewProjection = m_perspective * m_viewMatrices[f];
+
 				Renderer::BeginPass(renderPass);
-				Renderer::SubmitCube();
+				Renderer::SubmitCube(&m_pushConstantData);
 				Renderer::EndPass();
 
 				m_irradianceMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), f, m);
@@ -160,6 +161,7 @@ namespace Lamp
 
 		FramebufferSpecification framebufferSpec{};
 		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.copyable = true;
 		framebufferSpec.width = cubemapSize;
 		framebufferSpec.height = cubemapSize;
 		framebufferSpec.attachments =
@@ -190,13 +192,21 @@ namespace Lamp
 			{ m_hdrTexture, 0, 0 }
 		};
 
-		auto renderPass = RenderPipeline::Create(pipelineSpec);
+		auto renderPass = RenderPipeline::Create(pipelineSpec); 
 	
+		m_cubeMap = TextureCube::Create(cubemapSize, cubemapSize);
+
+		m_cubeMap->StartDataOverride();
 		for (uint32_t i = 0; i < 6; i++)
 		{
+			m_pushConstantData.modelViewProjection = m_perspective * m_viewMatrices[i];
+
 			Renderer::BeginPass(renderPass);
-			Renderer::SubmitCube();
+			Renderer::SubmitCube(&m_pushConstantData);
 			Renderer::EndPass();
+
+			m_cubeMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), i, 0);
 		}
+		m_cubeMap->FinishDataOverride();
 	}
 }

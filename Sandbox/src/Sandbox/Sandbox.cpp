@@ -503,7 +503,7 @@ namespace Sandbox
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_geometryFramebuffer = pipelineSpec.framebuffer;
+			m_viewportFramebuffer = pipelineSpec.framebuffer;
 
 			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
 			pipelineSpec.isSwapchain = false;
@@ -523,39 +523,39 @@ namespace Sandbox
 
 		//Composite
 		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_viewportFramebuffer = pipelineSpec.framebuffer;
-
-			pipelineSpec.shader = ShaderLibrary::GetShader("composite");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Quad;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
-			pipelineSpec.framebufferInputs =
-			{
-				{ m_geometryFramebuffer->GetColorAttachment(0), 0, 4 },
-				{ m_ssaoMainFramebuffer->GetColorAttachment(0), 0, 5 }
-			};
-
-			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+			//FramebufferSpecification framebufferSpec{};
+			//framebufferSpec.swapchainTarget = false;
+			//framebufferSpec.attachments =
+			//{
+			//	ImageFormat::RGBA,
+			//	ImageFormat::DEPTH32F
+			//};
+			//
+			//RenderPipelineSpecification pipelineSpec{};
+			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			//m_viewportFramebuffer = pipelineSpec.framebuffer;
+			//
+			//pipelineSpec.shader = ShaderLibrary::GetShader("composite");
+			//pipelineSpec.isSwapchain = false;
+			//pipelineSpec.topology = Topology::TriangleList;
+			//pipelineSpec.drawType = DrawType::Quad;
+			//pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			//pipelineSpec.vertexLayout =
+			//{
+			//	{ ElementType::Float3, "a_Position" },
+			//	{ ElementType::Float3, "a_Normal" },
+			//	{ ElementType::Float3, "a_Tangent" },
+			//	{ ElementType::Float3, "a_Bitangent" },
+			//	{ ElementType::Float2, "a_TexCoords" },
+			//};
+			//
+			//pipelineSpec.framebufferInputs =
+			//{
+			//	{ m_geometryFramebuffer->GetColorAttachment(0), 0, 4 },
+			//	{ m_ssaoMainFramebuffer->GetColorAttachment(0), 0, 5 }
+			//};
+			//
+			//m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
 		}
 	}
 }

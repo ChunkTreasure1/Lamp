@@ -29,7 +29,7 @@ namespace Lamp
 
 		const glm::mat4 m_perspective = glm::perspective(glm::radians(90.f), 1.f, 0.1f, 100.f);
 
-		const std::array<glm::mat4, 6> m_matrices =
+		const std::array<glm::mat4, 6> m_viewMatrices =
 		{
 			//Positive X
 			glm::rotate(glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f)), glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f)),
@@ -57,5 +57,12 @@ namespace Lamp
 		Ref<TextureHDR> m_hdrTexture;
 
 		Ref<Framebuffer> m_brdfFramebuffer;
+	
+		struct PushConstantData
+		{
+			glm::mat4 modelViewProjection;
+			float depltaPhi = (2.f * glm::pi<float>()) / 180.f;
+			float deltaTheta = (2.f * glm::pi<float>()) / 64.f;
+		} m_pushConstantData;
 	};
 }

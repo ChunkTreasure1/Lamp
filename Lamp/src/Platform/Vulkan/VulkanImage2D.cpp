@@ -75,6 +75,11 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 
 		VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT;
+		if (m_specification.copyable)
+		{
+			usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		}
+
 		if (m_specification.usage == ImageUsage::Attachment)
 		{
 			if (Utils::IsDepthFormat(m_specification.format))
@@ -177,7 +182,6 @@ namespace Lamp
 	
 		m_image = nullptr;
 		m_allocation = nullptr;
-		m_specification.dirty = true;
 	}
 
 	void VulkanImage2D::UpdateDescriptor()

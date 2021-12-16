@@ -57,6 +57,7 @@ namespace Lamp
 					imageSpec.usage = ImageUsage::Attachment;
 					imageSpec.width = m_width;
 					imageSpec.height = m_height;
+					imageSpec.copyable = m_specification.copyable;
 
 					m_depthAttachmentImage = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 				}
@@ -67,6 +68,7 @@ namespace Lamp
 					imageSpec.usage = ImageUsage::Attachment;
 					imageSpec.width = m_width;
 					imageSpec.height = m_height;
+					imageSpec.copyable = m_specification.copyable;
 
 					m_attachmentImages.emplace_back(std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec)));
 				}

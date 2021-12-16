@@ -69,6 +69,7 @@ namespace Lamp
 		FramebufferAttachmentSpecification attachments;
 
 		bool swapchainTarget = false;
+		bool copyable = false;
 	};
 
 	class Framebuffer

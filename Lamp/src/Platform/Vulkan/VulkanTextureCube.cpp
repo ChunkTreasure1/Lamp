@@ -41,7 +41,7 @@ namespace Lamp
 		auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(image);
 		auto commandBuffer = device->GetCommandBuffer(true);
 		
-		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 
 		VkImageCopy copyRegion{};
 		
@@ -105,7 +105,7 @@ namespace Lamp
 
 		//TODO: fix
 		m_mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(m_height, m_width)))) + 1;
-		const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		const VkFormat format = VK_FORMAT_R16G16B16A16_SFLOAT;
 
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -125,6 +125,7 @@ namespace Lamp
 		m_allocation = allocator.AllocateImage(imageInfo, VMA_MEMORY_USAGE_GPU_ONLY, m_image);
 
 		VkImageViewCreateInfo imageViewInfo{};
+		imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
 		imageViewInfo.format = format;
 		imageViewInfo.subresourceRange = {};
@@ -137,6 +138,7 @@ namespace Lamp
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create image view");
 
 		VkSamplerCreateInfo samplerInfo{};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		samplerInfo.magFilter = VK_FILTER_LINEAR;
 		samplerInfo.minFilter = VK_FILTER_LINEAR;
 		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
