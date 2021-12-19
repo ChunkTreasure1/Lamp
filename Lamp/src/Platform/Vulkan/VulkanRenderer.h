@@ -49,7 +49,7 @@ namespace Lamp
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
 		void SubmitQuad() override;
-		void SubmitCube(void* pushConstant) override;
+		void SubmitCube() override;
 
 		void DrawBuffer(RenderBuffer& buffer) override;
 

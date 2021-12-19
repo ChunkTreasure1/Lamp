@@ -12,6 +12,7 @@
 #include "Lamp/Rendering/Renderer.h"
 
 #include "Lamp/Rendering/RenderCommand.h"
+#include "Lamp/Rendering/RendererDataStructures.h"
 
 namespace Lamp
 {
@@ -21,7 +22,7 @@ namespace Lamp
 
 		//GenerateBRDFLUT();
 		//GenerateEquirectangularCube();
-		GenerateIrradianceCube();
+		//GenerateIrradianceCube();
 
 		////Setup shaders
 		//m_eqCubeShader = ShaderLibrary::GetShader("EqCube");
@@ -140,13 +141,14 @@ namespace Lamp
 		{
 			for (uint32_t f = 0; f < 6; f++)
 			{
-				m_pushConstantData.modelViewProjection = m_perspective * m_viewMatrices[f];
+				glm::mat4 mvp = m_perspective * m_viewMatrices[f];
+				renderPass->GetSpecification().uniformBufferSets->Get(4, 0, 0)->SetData(&mvp, sizeof(glm::mat4));
 
 				Renderer::BeginPass(renderPass);
-				Renderer::SubmitCube(&m_pushConstantData);
+				Renderer::SubmitCube();
 				Renderer::EndPass();
-
-				m_irradianceMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), f, m);
+				//
+				//m_irradianceMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), f, m);
 			}
 		}
 
@@ -199,10 +201,11 @@ namespace Lamp
 		m_cubeMap->StartDataOverride();
 		for (uint32_t i = 0; i < 6; i++)
 		{
-			m_pushConstantData.modelViewProjection = m_perspective * m_viewMatrices[i];
+			glm::mat4 mvp = m_perspective * m_viewMatrices[i];
+			renderPass->GetSpecification().uniformBufferSets->Get(4, 0, 0)->SetData(&mvp, sizeof(glm::mat4));
 
 			Renderer::BeginPass(renderPass);
-			Renderer::SubmitCube(&m_pushConstantData);
+			Renderer::SubmitCube();
 			Renderer::EndPass();
 
 			m_cubeMap->SetData(renderPass->GetSpecification().framebuffer->GetColorAttachment(0), i, 0);

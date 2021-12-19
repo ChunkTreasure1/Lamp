@@ -179,7 +179,7 @@ namespace Sandbox
 		{
 			return;
 		}
-		ImGui::Begin("Properties", &m_InspectiorOpen);
+		ImGui::Begin("Properties", &m_InspectiorOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration);
 		{
 
 			ImGuiIO& io = ImGui::GetIO();
@@ -658,9 +658,9 @@ namespace Sandbox
 		{
 			if (UI::BeginProperties("ssaoProps"))
 			{
-				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.radius), true, 0.f, 1.f);
-				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.strength), true, 0.f, 1.f);
-				if (UI::Property("Kernel Size", const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize), true, 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
+				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.sizeBiasRadiusStrength.z), true, 0.f, 1.f);
+				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.sizeBiasRadiusStrength.w), true, 0.f, 1.f);
+				if (UI::Property("Kernel Size", const_cast<float&>(Renderer::GetSceneData()->ssaoData.sizeBiasRadiusStrength.x), true, 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
 				{
 					Renderer::GenerateKernel();
 				}

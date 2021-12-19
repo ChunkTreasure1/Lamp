@@ -182,20 +182,14 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::SubmitCube(void* pushConstant)
+	void VulkanRenderer::SubmitCube()
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-
 		SetupDescriptorsForCubeRendering();
 
-		if (pushConstant)
-		{
-			vulkanPipeline->SetPushConstantData(commandBuffer, 0, pushConstant);
-		}
-
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
 
 		m_rendererStorage->cubeMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);

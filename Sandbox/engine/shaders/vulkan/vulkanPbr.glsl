@@ -90,9 +90,9 @@ layout (location = 0) in Out
     mat3 TBN;    
 } v_In;
 
-layout (set = 0, binding = 4) uniform sampler2D u_Albedo;
-layout (set = 0, binding = 5) uniform sampler2D u_Normal;
-layout (set = 0, binding = 6) uniform sampler2D u_MRO;
+layout (set = 0, binding = 5) uniform sampler2D u_Albedo;
+layout (set = 0, binding = 6) uniform sampler2D u_Normal;
+layout (set = 0, binding = 7) uniform sampler2D u_MRO;
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;

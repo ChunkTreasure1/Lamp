@@ -124,9 +124,9 @@ namespace Lamp
 		s_renderer->SubmitQuad();
 	}
 
-	void Renderer::SubmitCube(void* pushConstant)
+	void Renderer::SubmitCube()
 	{
-		s_renderer->SubmitCube(pushConstant);
+		s_renderer->SubmitCube();
 	}
 
 	void Renderer::DrawBuffer()
@@ -251,13 +251,13 @@ namespace Lamp
 		std::uniform_real_distribution<float> randomFloats(0.f, 1.f);
 		std::default_random_engine generator;
 
-		for (uint32_t i = 0; i < s_pSceneData->ssaoData.kernelSize; i++)
+		for (uint32_t i = 0; i < (uint32_t)s_pSceneData->ssaoData.sizeBiasRadiusStrength.x; i++)
 		{
 			glm::vec3 sample{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, randomFloats(generator) };
 			sample = glm::normalize(sample);
 			sample *= randomFloats(generator);
 
-			float scale = float(i) / s_pSceneData->ssaoData.kernelSize;
+			float scale = float(i) / s_pSceneData->ssaoData.sizeBiasRadiusStrength.x;
 
 			scale = Lerp(0.1f, 1.f, scale * scale);
 			sample *= scale;
@@ -279,5 +279,6 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer), 2, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cubeBuffer, sizeof(CubeBuffer), 4, 0);
 	}
 }

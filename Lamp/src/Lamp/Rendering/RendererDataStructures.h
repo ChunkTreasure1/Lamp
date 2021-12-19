@@ -16,10 +16,16 @@ namespace Lamp
 		alignas(16) glm::vec4 positionAndTanHalfFOV;
 	};
 
+	struct CubeBuffer
+	{
+		alignas(16) glm::mat4 modelViewProjection;
+		alignas(16) glm::vec2 phiTheta{ (2.f * glm::pi<float>()) / 180.f, (2.f * glm::pi<float>()) / 64.f };
+	};
+
 	struct ScreenDataBuffer
 	{
 		alignas(16) glm::vec2 size;
-		float aspectRatio;
+		alignas(16) float aspectRatio;
 	};
 
 	struct DirectionalLightData
@@ -31,16 +37,13 @@ namespace Lamp
 
 	struct DirectionalLightDataBuffer
 	{
-		DirectionalLightData dirLights[1];
-		uint32_t lightCount = 0;
+		alignas(16) DirectionalLightData dirLights[1];
+		alignas(16) uint32_t lightCount = 0;
 	};
 
 	struct SSAODataBuffer
 	{
-		glm::vec4 kernelSamples[256];
-		int kernelSize = 64;
-		float bias = 0.025f;
-		float radius = 0.1f;
-		float strength = 1.f;
+		alignas(16) glm::vec4 kernelSamples[256];
+		alignas(16) glm::vec4 sizeBiasRadiusStrength{ 64.f, 0.025f, 0.1f, 1.f };
 	};
 }

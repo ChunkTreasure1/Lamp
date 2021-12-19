@@ -29,16 +29,6 @@ layout(std140, binding = 0) uniform CameraDataBuffer
 
 } u_CameraData;
 
-layout (std140, binding = 2) uniform SSAODataBuffer
-{
-    vec4 kernelSamples[256];
-    int kernelSize;
-    float bias;
-    float radius;
-    float strength;
-    
-} u_SSAOData;
-
 layout(std140, binding = 3) uniform ScreenDataBuffer
 {
     vec2 screenSize;
@@ -70,11 +60,8 @@ layout(std140, binding = 0) uniform CameraDataBuffer
 layout (std140, binding = 2) uniform SSAODataBuffer
 {
     vec4 kernelSamples[256];
-    int kernelSize;
-    float bias;
-    float radius;
-    float strength;
-
+    vec4 sizeBiasRadiusStrength;
+    
 } u_SSAOData;
 
 layout(std140, binding = 3) uniform ScreenDataBuffer
@@ -122,9 +109,9 @@ void main()
 
     float occlusion = 1.0;
     float positionDepth = (u_CameraData.view * vec4(pos, 1.0)).z;
-    for (int i = 0; i < u_SSAOData.kernelSize; i++)
+    for (int i = 0; i < int(u_SSAOData.sizeBiasRadiusStrength.x); i++)
     {
-        vec4 samplePos = u_CameraData.view * vec4(pos + TBN * u_SSAOData.kernelSamples[i].xyz * u_SSAOData.radius, 1.0);
+        vec4 samplePos = u_CameraData.view * vec4(pos + TBN * u_SSAOData.kernelSamples[i].xyz * u_SSAOData.sizeBiasRadiusStrength.z, 1.0);
 
         vec4 offset = u_CameraData.projection * samplePos;
         offset.xyz /= offset.w;
@@ -132,13 +119,13 @@ void main()
 
         float sampleDepth = (u_CameraData.view * vec4(CalculateWorldCoords(offset.xy), 1.0)).z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, u_SSAOData.radius / abs(positionDepth - sampleDepth));
-        occlusion -= samplePos.z + u_SSAOData.bias < sampleDepth ? rangeCheck / u_SSAOData.kernelSize : 0.0;
+        float rangeCheck = smoothstep(0.0, 1.0, u_SSAOData.sizeBiasRadiusStrength.z / abs(positionDepth - sampleDepth));
+        occlusion -= samplePos.z + u_SSAOData.sizeBiasRadiusStrength.y < sampleDepth ? rangeCheck / int(u_SSAOData.sizeBiasRadiusStrength.x) : 0.0;
     }
 
     if(occlusion < 1.0)
     {
-        float invStrength = 1.0 - u_SSAOData.strength;
+        float invStrength = 1.0 - u_SSAOData.sizeBiasRadiusStrength.w;
         occlusion += invStrength;
         occlusion = clamp(occlusion, 0.0, 1.0);
     }

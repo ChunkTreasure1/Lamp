@@ -57,12 +57,5 @@ namespace Lamp
 		Ref<TextureHDR> m_hdrTexture;
 
 		Ref<Framebuffer> m_brdfFramebuffer;
-	
-		struct PushConstantData
-		{
-			glm::mat4 modelViewProjection;
-			float depltaPhi = (2.f * glm::pi<float>()) / 180.f;
-			float deltaTheta = (2.f * glm::pi<float>()) / 64.f;
-		} m_pushConstantData;
 	};
 }

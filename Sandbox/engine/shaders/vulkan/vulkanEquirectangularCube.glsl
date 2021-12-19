@@ -14,20 +14,19 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
-layout (push_constant) uniform Matrix
+layout (std140, binding = 4) uniform CubeBuffer
 {
-    layout (offset = 0) mat4 modelViewProjection;
-    layout (offset = 64) float deltaPhi;
-    layout (offset = 68) float deltaTheta;
+    mat4 modelViewProjection;
+    vec2 phiTheta;
 
-} u_Properties;
+} u_CubeBuffer;
 
 layout(location = 0) out vec3 v_Position;
 
 void main()
 {
     v_Position = a_Position;
-    gl_Position =  u_Properties.modelViewProjection * vec4(a_Position, 1.0);
+    gl_Position =  u_CubeBuffer.modelViewProjection * vec4(a_Position, 1.0);
 }
 
 #type fragment
