@@ -91,23 +91,23 @@ namespace UI
 		ImGui::Text(text.c_str());
 	}
 
-	static bool ImageTreeNode(Ref<Lamp::Texture2D> texture, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
-	{
-		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
-		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
-
-		ImVec2 size = ImGui::CalcTextSize(fmt);
-		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
-		ImGui::SameLine();
-		return ImGui::TreeNodeEx(ptr_id, flags, fmt);
-	}
-
 	static bool ImageSelectable(Ref<Lamp::Texture2D> texture, const std::string& text, bool selected)
 	{
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
 		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
 		return ImGui::Selectable(text.c_str(), selected, ImGuiSelectableFlags_SpanAvailWidth);
+	}
+
+	static bool TreeNodeImage(Ref<Lamp::Texture2D> texture, const std::string& text, ImGuiTreeNodeFlags flags)
+	{
+		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
+		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
+
+		ImVec2 size = ImGui::CalcTextSize(text.c_str());
+		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::SameLine();
+		return ImGui::TreeNodeEx(text.c_str(), flags);
 	}
 
 	static bool TreeNodeFramed(const std::string& text, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
@@ -145,9 +145,9 @@ namespace UI
 		ImGui::TreePop();
 	}
 
-	static bool InputText(const std::string& id, std::string& text)
+	static bool InputText(const std::string& id, std::string& text, ImGuiInputTextFlags_ flags = ImGuiInputTextFlags_None)
 	{
-		return ImGui::InputTextString(id.c_str(), &text);
+		return ImGui::InputTextString(id.c_str(), &text, flags);
 	}
 
 	static bool InputTextOnSameline(std::string& string, const std::string& id)

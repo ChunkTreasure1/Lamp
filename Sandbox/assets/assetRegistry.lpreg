@@ -261,6 +261,8 @@ Assets:
     Path: engine/textures/ui/assetIcons/iconMaterial.png
   - Handle: 6375851401896882490
     Path: engine/textures/ui/assetIcons/iconMesh.png
+  - Handle: 4532696391263157257
+    Path: engine/textures/ui/backIcon.png
   - Handle: 626665572364075707
     Path: engine/textures/ui/directoryIcon.png
   - Handle: 11535979565681188853
@@ -335,6 +337,10 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
   - Handle: 10556133037468570950
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
+  - Handle: 1732338694660711956
+    Path: engine/textures/ui/reloadIcon.png
+  - Handle: 2418690689678969492
+    Path: engine/textures/ui/settingsIcon.png
   - Handle: 8367631737299797705
     Path: C:\Programming\Lamp\Sandbox\assets\meshes\head\textures\ELISLEDSEN.png
   - Handle: 4227104880835043339

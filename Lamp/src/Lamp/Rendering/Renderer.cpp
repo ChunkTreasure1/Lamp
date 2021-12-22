@@ -83,16 +83,15 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		UpdateBuffers(camera);
+		s_statistics.totalDrawCalls = 0;
+		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
+		UpdateBuffers(camera);
 		s_renderer->Begin(camera);
 	}
 
 	void Renderer::End()
 	{
-		s_statistics.totalDrawCalls = 0;
-		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
-
 		s_renderer->End();
 		s_submitBufferPointer->drawCalls.clear();
 	}
@@ -117,6 +116,7 @@ namespace Lamp
 	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
 	{
 		s_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
+		s_statistics.totalDrawCalls++;
 	}
 
 	void Renderer::SubmitQuad()

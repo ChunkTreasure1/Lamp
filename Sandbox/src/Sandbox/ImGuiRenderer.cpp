@@ -43,7 +43,6 @@ namespace Sandbox
 		glm::vec2 perspectivePos;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0.f, 0.f });
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
@@ -168,7 +167,7 @@ namespace Sandbox
 		}
 
 		ImGui::End();
-		ImGui::PopStyleVar(2);
+		ImGui::PopStyleVar(1);
 	}
 
 	void Sandbox::UpdateProperties()
@@ -214,7 +213,7 @@ namespace Sandbox
 
 				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 				{
-					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
+ 					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
 					Object* newSelected = Lamp::Entity::Get(pixelData);
 					if (!newSelected)
