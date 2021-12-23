@@ -116,8 +116,8 @@ namespace Sandbox
 				ImGui::PopItemWidth();
 			}
 
-			UI::ShiftCursor(0.f, -1.f);
 			ImGui::SameLine();
+			UI::ShiftCursor(0.f, -1.f);
 			{
 				UI::ScopedColor buttonBackground(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 
@@ -248,6 +248,8 @@ namespace Sandbox
 	void AssetBrowserPanel::Search(const std::string& query)
 	{
 		std::vector<std::string> queries;
+		std::vector<std::string> types;
+
 		std::string searchQuery = query;
 
 		searchQuery.push_back(' ');
@@ -257,7 +259,14 @@ namespace Sandbox
 			std::string split = searchQuery.substr(0, next);
 			searchQuery = searchQuery.substr(next + 1);
 
-			queries.emplace_back(split);
+			if (split.front() == '*')
+			{
+				types.emplace_back(split);
+			}
+			else
+			{
+				queries.emplace_back(split);
+			}
 		}
 
 		//Find all folders and files containing queries
@@ -267,6 +276,8 @@ namespace Sandbox
 		{
 			FindFoldersAndFilesWithQuery(m_directories[s_assetsPath.string()]->subDirectories, m_searchDirectories, m_searchAssets, query);
 		}
+
+
 	}
 
 	void AssetBrowserPanel::RenderFilePopup(const AssetData& data)

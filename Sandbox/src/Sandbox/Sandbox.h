@@ -13,8 +13,8 @@
 #include "SandboxController.h"
 
 #include "Actions/ActionHandler.h"
-#include "Windows/BufferWindow.h"
-#include "Windows\AssetBrowserPanel.h"
+#include "Windows/AssetBrowserPanel.h"
+#include "Windows/CreatePanel.h"
 #include "Lamp/Event/EditorEvent.h"
 #include "Lamp/Event/KeyEvent.h"
 
@@ -66,7 +66,6 @@ namespace Sandbox
 		void UpdatePerspective();
 		void UpdateProperties();
 		void UpdateAddComponent();
-		void UpdateCreateTool();
 		void UpdateLogTool();
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
@@ -100,7 +99,6 @@ namespace Sandbox
 		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
 		glm::vec2 m_PerspectiveBounds[2];
 		ImGuiID m_DockspaceID;
-		std::vector<BufferWindow> m_BufferWindows;
 
 		Ref<Lamp::Texture2D> m_IconPlay;
 		Ref<Lamp::Texture2D> m_IconStop;
@@ -120,6 +118,7 @@ namespace Sandbox
 
 		//Asset browser
 		AssetBrowserPanel m_assetManager;
+		CreatePanel m_createPanel;
 
 		//Inspector
 		bool m_MousePressed = false;
@@ -139,9 +138,6 @@ namespace Sandbox
 
 		//Components
 		bool m_AddComponentOpen = false;
-
-		//Create
-		bool m_CreateToolOpen = true;
 
 		//Logging
 		bool m_LogToolOpen = false;

@@ -46,6 +46,13 @@ layer:
             - param: Color
               type: Color3
               value: [0.965250969, 0.731486261, 0.301873893]
+    - entity: Entity
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        []
   brushes:
     - brush: Brush
       meshHandle: 3247278211742412997
@@ -64,4 +71,16 @@ layer:
       position: [0, 0, 0]
       rotation: [0, 0, 0]
       scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 10994454763501493260
+      position: [-0.644045353, 0.881139517, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+    - brush: Brush
+      meshHandle: 6595288631453100615
+      position: [-0.997240782, 1.62884104, -0.712842226]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
       layerId: 0

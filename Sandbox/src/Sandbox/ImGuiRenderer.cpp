@@ -65,7 +65,7 @@ namespace Sandbox
 				
 				m_viewportFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 				m_depthPrePassFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
-				//m_ssaoMainFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
+				m_ssaoMainFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 				//m_geometryFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
@@ -253,7 +253,7 @@ namespace Sandbox
 				UI::InputText("Name", name);
 				pEnt->SetName(name);
 
-				if (UI::TreeNodeFramed("Transform"))
+				if (UI::TreeNodeFramed("Transform", true))
 				{
 					UI::BeginProperties("transProps");
 
@@ -315,7 +315,7 @@ namespace Sandbox
 				UI::InputText("Name", name);
 				pBrush->SetName(name);
 
-				if (UI::TreeNodeFramed("Transform"))
+				if (UI::TreeNodeFramed("Transform", true))
 				{
 					UI::BeginProperties("transProp");
 
@@ -400,65 +400,6 @@ namespace Sandbox
 		}
 	}
 
-	void Sandbox::UpdateCreateTool()
-	{
-		LP_PROFILE_FUNCTION();
-
-		if (!m_CreateToolOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Create", &m_CreateToolOpen);
-
-		static bool brushListOpen = false;
-
-		if (!brushListOpen)
-		{
-			if (ImGui::Button("Entity"))
-			{
-				m_pSelectedObject = Lamp::Entity::Create();
-				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Brush"))
-			{
-				brushListOpen = !brushListOpen;
-			}
-		}
-
-		if (brushListOpen)
-		{
-			if (ImGui::Button("Back##0"))
-			{
-				brushListOpen = false;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Create"))
-			{
-
-			}	/*if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
-				{
-					m_pSelectedObject = Lamp::Brush::Create(m_SelectedFile.GetPath());
-				}*/
-
-			if (ImGui::BeginChild("Brushes"))
-			{
-				std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
-				Lamp::FileSystem::PrintBrushes(folders);
-
-			}
-			ImGui::EndChild();
-		}
-
-		ImGui::End();
-	}
-
 	void Sandbox::UpdateLogTool()
 	{
 		LP_PROFILE_FUNCTION();
@@ -531,9 +472,9 @@ namespace Sandbox
 		LP_PROFILE_FUNCTION();
 
 		bool removeComp = false;
-		bool open = UI::TreeNodeFramed(ptr->GetName(), true, 0.f, { 0.f, 2.f });
+		bool open = UI::TreeNodeFramed(ptr->GetName(), false, true, 0.f, { 0.f, 2.f });
 
-		float buttonSize = 20.f + GImGui->Style.FramePadding.y * 0.5f;
+		float buttonSize = 21.f + GImGui->Style.FramePadding.y;
 		float availRegion = ImGui::GetContentRegionAvail().x;
 
 		if (!open)
@@ -871,7 +812,7 @@ namespace Sandbox
 			if (ImGui::BeginMenu("Tools"))
 			{
 				ImGui::MenuItem("Properties", nullptr, &m_InspectiorOpen);
-				ImGui::MenuItem("Create", nullptr, &m_CreateToolOpen);
+				ImGui::MenuItem("Create", nullptr, &m_createPanel.GetIsOpen());
 				ImGui::MenuItem("Log", nullptr, &m_LogToolOpen);
 				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
 				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());

@@ -70,7 +70,7 @@ namespace Sandbox
 		char* pProps = doc.allocate_string(ToString(m_InspectiorOpen).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("Inspector", pProps));
 
-		char* pCreate = doc.allocate_string(ToString(m_CreateToolOpen).c_str());
+		char* pCreate = doc.allocate_string(ToString(m_createPanel.GetIsOpen()).c_str());
 		pWindowsOpen->append_attribute(doc.allocate_attribute("CreateTool", pCreate));
 
 		char* pLog = doc.allocate_string(ToString(m_LogToolOpen).c_str());
@@ -118,7 +118,7 @@ namespace Sandbox
 		{
 			GetValue(pWindowsOpen->first_attribute("Perspective")->value(), m_PerspectiveOpen);
 			GetValue(pWindowsOpen->first_attribute("Inspector")->value(), m_InspectiorOpen);
-			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_CreateToolOpen);
+			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_createPanel.GetIsOpen());
 			GetValue(pWindowsOpen->first_attribute("LogTool")->value(), m_LogToolOpen);
 
 			for (auto pWindow : m_pWindows)

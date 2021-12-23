@@ -110,10 +110,15 @@ namespace UI
 		return ImGui::TreeNodeEx(text.c_str(), flags);
 	}
 
-	static bool TreeNodeFramed(const std::string& text, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
+	static bool TreeNodeFramed(const std::string& text, bool alwaysOpen = false, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
 	{
-		const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
+		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
 			ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+		if (alwaysOpen)
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+		}
 
 		if (!useOther)
 		{

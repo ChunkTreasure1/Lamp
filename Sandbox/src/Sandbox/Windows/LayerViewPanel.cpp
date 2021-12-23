@@ -65,7 +65,7 @@ namespace Sandbox
 			std::string id = m_renamingLayer == layer.ID ? "###layer" + std::to_string(layer.ID) : layer.Name + "###layer" + std::to_string(layer.ID);
 
 			ImVec2 cursorPos = ImGui::GetCursorPos();
-			bool open = UI::TreeNodeFramed(id, true, 0.f, { 0.f, 1.5f });
+			bool open = UI::TreeNodeFramed(id, false, true, 0.f, { 0.f, 1.5f });
 			if (ImGui::IsItemHovered())
 			{
 				isItemHovered = true;

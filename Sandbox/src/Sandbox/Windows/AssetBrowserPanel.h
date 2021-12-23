@@ -34,12 +34,12 @@ namespace Sandbox
 	public:
 		AssetBrowserPanel();
 
-		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
-		
 		void OnImGuiRender();
 		bool& GetIsOpen() { return m_isOpen; }
 
 	private:
+		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
+		
 		void RenderControlsBar(float height);
 		void RenderDirectory(const Ref<DirectoryData> dirData);
 		void Reload();

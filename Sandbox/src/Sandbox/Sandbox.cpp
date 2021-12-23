@@ -21,7 +21,8 @@ namespace Sandbox
 	using namespace Lamp;
 
 	Sandbox::Sandbox()
-		: Layer("Sandbox"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
+		: Layer("Sandbox"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30),
+		m_createPanel(m_pSelectedObject)
 	{
 		g_pEnv->IsEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
@@ -133,7 +134,6 @@ namespace Sandbox
 
 		UpdateProperties();
 		UpdatePerspective();
-		UpdateCreateTool();
 		UpdateLogTool();
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
@@ -141,11 +141,7 @@ namespace Sandbox
 		UpdateStatistics();
 
 		m_assetManager.OnImGuiRender();
-
-		for (auto& window : m_BufferWindows)
-		{
-			window.Update();
-		}
+		m_createPanel.OnImGuiRender();
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);
