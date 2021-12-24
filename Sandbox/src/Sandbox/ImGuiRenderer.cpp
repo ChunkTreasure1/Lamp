@@ -195,55 +195,55 @@ namespace Sandbox
 			}
 			ImGui::End();
 
-			if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)
-			{
-				mousePos -= windowPos;
+			//if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)
+			//{
+			//	mousePos -= windowPos;
 
-				/////Mouse picking/////
+			//	/////Mouse picking/////
 
-				auto [mx, my] = ImGui::GetMousePos();
-				mx -= m_PerspectiveBounds[0].x;
-				my -= m_PerspectiveBounds[0].y;
+			//	auto [mx, my] = ImGui::GetMousePos();
+			//	mx -= m_PerspectiveBounds[0].x;
+			//	my -= m_PerspectiveBounds[0].y;
 
-				glm::vec2 perspectiveSize = m_PerspectiveBounds[1] - m_PerspectiveBounds[0];
-				my = perspectiveSize.y - my;
+			//	glm::vec2 perspectiveSize = m_PerspectiveBounds[1] - m_PerspectiveBounds[0];
+			//	my = perspectiveSize.y - my;
 
-				int mouseX = (int)mx;
-				int mouseY = (int)my;
+			//	int mouseX = (int)mx;
+			//	int mouseY = (int)my;
 
-				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
-				{
- 					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
+			//	if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
+			//	{
+ 		//			int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
-					Object* newSelected = Lamp::Entity::Get(pixelData);
-					if (!newSelected)
-					{
-						newSelected = Lamp::Brush::Get(pixelData);
-					}
+			//		Object* newSelected = Lamp::Entity::Get(pixelData);
+			//		if (!newSelected)
+			//		{
+			//			newSelected = Lamp::Brush::Get(pixelData);
+			//		}
 
-					if (newSelected && !newSelected->GetIsFrozen())
-					{
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(false);
-						}
+			//		if (newSelected && !newSelected->GetIsFrozen())
+			//		{
+			//			if (m_pSelectedObject)
+			//			{
+			//				m_pSelectedObject->SetIsSelected(false);
+			//			}
 
-						newSelected->SetIsSelected(true);
-						m_pSelectedObject = newSelected;
-					}
-					else
-					{
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(false);
-						}
-						m_pSelectedObject = nullptr;
-					}
-				}
+			//			newSelected->SetIsSelected(true);
+			//			m_pSelectedObject = newSelected;
+			//		}
+			//		else
+			//		{
+			//			if (m_pSelectedObject)
+			//			{
+			//				m_pSelectedObject->SetIsSelected(false);
+			//			}
+			//			m_pSelectedObject = nullptr;
+			//		}
+			//	}
 
-				m_SelectionBuffer->Unbind();
-				////////////////////////
-			}
+			//	m_SelectionBuffer->Unbind();
+			//	////////////////////////
+			//}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 			{

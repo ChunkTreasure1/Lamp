@@ -14,10 +14,6 @@ namespace Lamp
 		virtual void SetProjection(float fov, float aspect, float nearPlane, float farPlane) override;
 
 		//Getting
-		inline const glm::vec3& GetFront() const { return m_Front; }
-		inline const glm::vec3& GetUp() const { return m_Up; }
-		inline const glm::vec3& GetRight() const { return m_Right; }
-
 		inline const float GetYaw() const { return m_Rotation.x; }
 		inline const float GetPitch() const { return m_Rotation.y; }
 		inline const glm::mat4& GetTM() { return m_TransformMatrix; }

@@ -127,6 +127,7 @@ namespace Sandbox
 				UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 				UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
 				UI::ScopedColor active(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
+				UI::ScopedColor tableRow(ImGuiCol_TableRowBg, { 0.18f, 0.18f, 0.18f, 1.f });
 
 				std::string id = "##table" + std::to_string(layer.ID);
 				if (ImGui::BeginTable(id.c_str(), 3, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable))
@@ -140,8 +141,9 @@ namespace Sandbox
 					{
 						ImGui::PushID(startId);
 						ImGui::TableNextRow();
-
 						ImGui::TableNextColumn();
+
+						
 						Ref<Texture2D> visibleIcon = obj->GetIsActive() ? m_visibleIconV: m_visibleIconN;
 
 						if (ImGui::ImageButton(UI::GetTextureID(visibleIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))

@@ -2,6 +2,7 @@
 #include "PerspectiveCameraController.h"
 #include "Lamp/Input/Input.h"
 #include "Lamp/Input/KeyCodes.h"
+#include "Lamp/Input/MouseButtonCodes.h"
 
 #include "Lamp/Core/Window.h"
 #include "Lamp/Core/Application.h"
@@ -24,25 +25,74 @@ namespace Lamp
 	{
 		auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
 
-		if (Input::IsKeyPressed(LP_KEY_W))
+		const glm::vec2& mousePos{ Input::GetMouseX(), Input::GetMouseY() };
+		const glm::vec2 deltaPos = (mousePos - m_lastMousePosition) * 0.01f;
+
+		if (m_lastRightUp)
 		{
-			m_Position += m_TranslationSpeed * perspectiveCamera->GetForwardDirection() * (float)ts;
+			m_lastMousePosition = mousePos;
 		}
-		if (Input::IsKeyPressed(LP_KEY_S))
+
+		if (Input::IsMouseButtonPressed(LP_MOUSE_BUTTON_RIGHT) && !Input::IsMouseButtonPressed(LP_MOUSE_BUTTON_MIDDLE))
 		{
-			m_Position -= m_TranslationSpeed * perspectiveCamera->GetForwardDirection() * (float)ts;
+			m_lastRightUp = false;
+
+			float xOffset = mousePos.x - m_lastMousePosition.x;
+			float yOffset = m_lastMousePosition.y - mousePos.y;
+
+			float sensitivity = 0.15f;
+			xOffset *= sensitivity;
+			yOffset *= sensitivity;
+
+			auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
+
+			perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() + xOffset);
+			perspectiveCamera->SetPitch(perspectiveCamera->GetPitch() - yOffset);
+
+			if (perspectiveCamera->GetPitch() > 89.f)
+			{
+				perspectiveCamera->SetPitch(89.f);
+			}
+			if (perspectiveCamera->GetPitch() < -89.f)
+			{
+				perspectiveCamera->SetPitch(-89.f);
+			}
+
+			perspectiveCamera->UpdateVectors();
+
+			//Movement
+			if (Input::IsKeyPressed(LP_KEY_W))
+			{
+				m_Position += m_TranslationSpeed * perspectiveCamera->GetForwardDirection() * (float)ts;
+			}
+			if (Input::IsKeyPressed(LP_KEY_S))
+			{
+				m_Position -= m_TranslationSpeed * perspectiveCamera->GetForwardDirection() * (float)ts;
+			}
+			if (Input::IsKeyPressed(LP_KEY_A))
+			{
+				m_Position -= m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
+			}
+			if (Input::IsKeyPressed(LP_KEY_D))
+			{
+				m_Position += m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
+			}
 		}
-		if (Input::IsKeyPressed(LP_KEY_A))
+
+		if (Input::IsMouseButtonReleased(LP_MOUSE_BUTTON_RIGHT))
 		{
-			m_Position -= m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
+			m_lastRightUp = true;
 		}
-		if (Input::IsKeyPressed(LP_KEY_D))
+
+		if (Input::IsMouseButtonPressed(LP_MOUSE_BUTTON_MIDDLE) && !Input::IsKeyPressed(LP_KEY_LEFT_ALT))
 		{
-			m_Position += m_TranslationSpeed * perspectiveCamera->GetRightDirection() * (float)ts;
+			m_Position += -perspectiveCamera->GetRightDirection() * deltaPos.x;
+			m_Position += perspectiveCamera->GetUpDirection() * deltaPos.y;
 		}
 
 		//g_pEnv->DirLight.UpdateProjection(m_Position);
 
+		m_lastMousePosition = mousePos;
 		m_Camera->SetPosition(m_Position);
 	}
 
@@ -50,9 +100,11 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
-		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
-		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnRender));
-		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
+
+		if (Input::IsMouseButtonPressed(LP_MOUSE_BUTTON_RIGHT))
+		{
+			dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
+		}
 	}
 
 	void PerspectiveCameraController::UpdateProjection(uint32_t width, uint32_t height)
@@ -84,44 +136,6 @@ namespace Lamp
 		return true;
 	}
 
-	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
-	{
-		if (!m_HasControl)
-		{
-			m_LastX = e.GetX();
-			m_LastY = e.GetY();
-
-			m_HasControl = true;
-		}
-
-		float xOffset = e.GetX() - m_LastX;
-		float yOffset = m_LastY - e.GetY();
-		m_LastX = e.GetX();
-		m_LastY = e.GetY();
-
-		float sensitivity = 0.15f;
-		xOffset *= sensitivity;
-		yOffset *= sensitivity;
-
-		auto perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_Camera);
-
-		perspectiveCamera->SetYaw(perspectiveCamera->GetYaw() + xOffset);
-		perspectiveCamera->SetPitch(perspectiveCamera->GetPitch() - yOffset);
-
-		if (perspectiveCamera->GetPitch() > 89.f)
-		{
-			perspectiveCamera->SetPitch(89.f);
-		}
-		if (perspectiveCamera->GetPitch() < -89.f)
-		{
-			perspectiveCamera->SetPitch(-89.f);
-		}
-
-		perspectiveCamera->UpdateVectors();
-
-		return true;
-	}
-
 	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		m_TranslationSpeed += e.GetYOffset() * 0.5f;
@@ -130,11 +144,6 @@ namespace Lamp
 		{
 			m_TranslationSpeed = 0;
 		}
-		return true;
-	}
-
-	bool PerspectiveCameraController::OnRender(AppRenderEvent& e)
-	{
 		return true;
 	}
 }

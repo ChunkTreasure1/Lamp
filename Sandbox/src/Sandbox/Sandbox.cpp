@@ -8,13 +8,14 @@
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
-#include "Lamp/Rendering/Renderer2D.h"
-#include "Lamp/Rendering/RenderPipeline.h"
+#include <Lamp/Rendering/Renderer2D.h>
+#include <Lamp/Rendering/RenderPipeline.h>
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Core/Application.h>
 #include <Lamp/Core/Game.h>
+
 
 namespace Sandbox
 {
@@ -60,10 +61,7 @@ namespace Sandbox
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
-		{
-			m_SandboxController->Update(e.GetTimestep());
-		}
+		m_SandboxController->Update(e.GetTimestep());
 
 		GetInput();
 
@@ -162,26 +160,7 @@ namespace Sandbox
 			}
 		}
 
-		if (Input::IsMouseButtonReleased(1))
-		{
-			m_SandboxController->GetCameraController()->SetHasControl(false);
-			m_RightMousePressed = false;
-
-			Application::Get().GetWindow().ShowCursor(true);
-			ImGuiIO& io = ImGui::GetIO();
-			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-		}
-
-		if (Input::IsMouseButtonPressed(1) && (m_PerspectiveHover || m_RightMousePressed))
-		{
-			m_SandboxController->OnEvent(e);
-			m_RightMousePressed = true;
-
-			Application::Get().GetWindow().ShowCursor(false);
-			ImGuiIO& io = ImGui::GetIO();
-			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
-		}
-
+		m_SandboxController->OnEvent(e);
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox::OnMouseMoved));
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox::OnUpdate));
@@ -478,7 +457,7 @@ namespace Sandbox
 				{ m_depthPrePassFramebuffer->GetColorAttachment(0), 0, 4 },
 				{ m_depthPrePassFramebuffer->GetDepthAttachment(), 0, 5 }
 			};
-			
+
 			pipelineSpec.textureInputs =
 			{
 				{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
