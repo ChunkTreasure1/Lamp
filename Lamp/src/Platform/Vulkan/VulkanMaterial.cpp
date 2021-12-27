@@ -12,6 +12,19 @@ namespace Lamp
 	{
 	}
 
+	VulkanMaterial::VulkanMaterial(const Ref<Material> material)
+	{
+		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
+
+		m_index = vulkanMaterial->GetIndex();
+		m_name = vulkanMaterial->GetName();
+		m_blendingMultiplier = vulkanMaterial->GetBlendingMultiplier();
+		m_useBlending = vulkanMaterial->GetUseBlending();
+
+		SetShader(vulkanMaterial->GetShader());
+		m_textureSpecifications = vulkanMaterial->GetTextureSpecification();
+	}
+
 	VulkanMaterial::VulkanMaterial(Ref<Shader> shader, uint32_t id)
 		: m_index(id)
 	{

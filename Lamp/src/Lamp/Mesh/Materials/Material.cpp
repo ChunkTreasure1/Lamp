@@ -29,6 +29,17 @@ namespace Lamp
 		return nullptr;
 	}
 
+	Ref<Material> Material::Create(const Ref<Material> material)
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanMaterial>(material);
+		}
+
+		return nullptr;
+	}
+
 	Ref<Material> Material::Create(const std::string& name, uint32_t index)
 	{
 		switch (Renderer::GetAPI())

@@ -35,6 +35,7 @@ namespace Lamp
 
 		static Ref<Material> Create(Ref<Shader> shader, uint32_t id);
 		static Ref<Material> Create();
+		static Ref<Material> Create(const Ref<Material> material);
 		static Ref<Material> Create(const std::string& name, uint32_t index);
 	};
 }

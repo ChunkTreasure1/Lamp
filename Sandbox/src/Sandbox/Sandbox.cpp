@@ -15,6 +15,7 @@
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Core/Application.h>
 #include <Lamp/Core/Game.h>
+#include <Lamp/Core/Time/ScopedTimer.h>
 
 
 namespace Sandbox
@@ -35,7 +36,7 @@ namespace Sandbox
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
 		////Make sure the sandbox controller is created after level has been loaded
-		m_SandboxController = CreateRef<SandboxController>();
+		m_SandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
 
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
@@ -66,7 +67,6 @@ namespace Sandbox
 		GetInput();
 
 		{
-
 			LP_PROFILE_SCOPE("Sandbox::Update::LevelUpdate")
 				switch (m_SceneState)
 				{
@@ -83,10 +83,8 @@ namespace Sandbox
 					case SceneState::Simulating:
 					{
 						g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
-					}
-
-					default:
 						break;
+					}
 				}
 		}
 
@@ -128,6 +126,8 @@ namespace Sandbox
 	void Sandbox::OnImGuiRender(Timestep ts)
 	{
 		LP_PROFILE_FUNCTION();
+		ScopedTimer timerTotal{};
+
 		CreateDockspace();
 
 		UpdateProperties();
@@ -138,11 +138,24 @@ namespace Sandbox
 		UpdateToolbar();
 		UpdateStatistics();
 
-		m_assetManager.OnImGuiRender();
-		m_createPanel.OnImGuiRender();
+		{
+			ScopedTimer timer{};
+			m_assetManager.OnImGuiRender();
+		
+			m_assetManagerTime = timer.GetTime();
+		}
+		
+		{
+			ScopedTimer timer{};
+			m_createPanel.OnImGuiRender();
+			
+			m_createPanelTime = timer.GetTime();
+		}
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);
+
+		m_uiTotalTime = timerTotal.GetTime();
 	}
 
 	void Sandbox::OnEvent(Event& e)

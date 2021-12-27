@@ -1,10 +1,12 @@
 #include "LayerViewPanel.h"
 
-#include <imgui/imgui_stdlib.h>
 #include <Lamp/Utility/UIUtility.h>
 #include <Lamp/Core/Application.h>
+#include <Lamp/Core/Time/ScopedTimer.h>
 
 #include <Lamp/AssetSystem/ResourceCache.h>
+
+#include <imgui/imgui_stdlib.h>
 
 namespace Sandbox
 {
@@ -33,6 +35,8 @@ namespace Sandbox
 	bool LayerViewPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
+
+		ScopedTimer timer{};
 
 		if (!m_IsOpen)
 		{
@@ -241,6 +245,8 @@ namespace Sandbox
 		}
 
 		ImGui::End();
+
+		m_deltaTime = timer.GetTime();
 
 		return false;
 	}

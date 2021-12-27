@@ -100,6 +100,10 @@ namespace Sandbox
 		glm::vec2 m_PerspectiveBounds[2];
 		ImGuiID m_DockspaceID;
 
+		float m_assetManagerTime = 0.f;
+		float m_createPanelTime = 0.f;
+		float m_uiTotalTime = 0.f;
+
 		Ref<Lamp::Texture2D> m_IconPlay;
 		Ref<Lamp::Texture2D> m_IconStop;
 

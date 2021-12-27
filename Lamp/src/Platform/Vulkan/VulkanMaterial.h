@@ -28,6 +28,7 @@ namespace Lamp
 		};
 
 		VulkanMaterial();
+		VulkanMaterial(const Ref<Material> material);
 		VulkanMaterial(Ref<Shader> shader, uint32_t id);
 		VulkanMaterial(const std::string& name, Ref<Shader> shader, uint32_t id = 0);
 		VulkanMaterial(const std::string& name, uint32_t index);

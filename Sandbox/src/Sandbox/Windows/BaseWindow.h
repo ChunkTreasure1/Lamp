@@ -12,7 +12,7 @@ namespace Sandbox
 		using RenderFunc = std::function<void()>;
 
 		BaseWindow(std::string_view name)
-			: m_name(name), m_IsOpen(false)
+			: m_name(name), m_IsOpen(false), m_deltaTime(0.f)
 		{}
 
 		virtual void OnEvent(Lamp::Event& e) = 0;
@@ -21,6 +21,7 @@ namespace Sandbox
 		inline bool& GetIsOpen() { return m_IsOpen; }
 		inline const std::string& GetLabel() { return m_name; }
 		inline std::vector<RenderFunc>& GetRenderFuncs() { return m_renderFuncs; }
+		inline const float GetDeltaTime() { return m_deltaTime; }
 
 		const std::string GetName()
 		{
@@ -34,6 +35,7 @@ namespace Sandbox
 		std::string m_name;
 		bool m_IsOpen;
 		bool m_isFocused;
+		float m_deltaTime;
 
 		ActionHandler m_ActionHandler;
 

@@ -12,6 +12,7 @@
 #include <Lamp/AssetSystem/BaseAssets.h>
 
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/Core/Time/ScopedTimer.h>
 
 namespace Sandbox
 {
@@ -30,6 +31,8 @@ namespace Sandbox
 
 	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
+		ScopedTimer timer{};
+
 		if (!m_IsOpen)
 		{
 			return false;
@@ -56,6 +59,8 @@ namespace Sandbox
 		UpdateMaterial();
 		UpdateToolbar();
 		UpdateMeshConstruction();
+
+		m_deltaTime = timer.GetTime();
 
 		return false;
 	}

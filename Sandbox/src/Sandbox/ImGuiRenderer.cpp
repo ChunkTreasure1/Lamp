@@ -676,8 +676,23 @@ namespace Sandbox
 
 		if (UI::TreeNodeFramed("Application"))
 		{
-			ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
-			ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
+			ImGui::Text("Frame time: %f ms", Application::Get().GetFrameTime().GetFrameTime() * 1000);
+			ImGui::Text("Frames per second: %f FPS", Application::Get().GetFrameTime().GetFramesPerSecond());
+
+			UI::TreeNodePop();
+		}
+
+		if (UI::TreeNodeFramed("UI"))
+		{
+			ImGui::Text("Total time: %f ms", m_uiTotalTime * 1000.f);
+			ImGui::Text("Asset Manager: %f ms", m_assetManagerTime * 1000.f);
+			ImGui::Text("Create panel: %f ms", m_createPanelTime * 1000.f);
+
+			for (const auto window : m_pWindows)
+			{
+				std::string text = window->GetName() + ": %f ms";
+				ImGui::Text(text.c_str(), window->GetDeltaTime() * 1000.f);
+			}
 
 			UI::TreeNodePop();
 		}

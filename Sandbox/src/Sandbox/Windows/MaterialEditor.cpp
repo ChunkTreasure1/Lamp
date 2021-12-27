@@ -8,7 +8,7 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-
+#include <Lamp/Core/Time/ScopedTimer.h>
 #include <Lamp/Utility/UIUtility.h>
 
 namespace Sandbox
@@ -66,6 +66,8 @@ namespace Sandbox
 
 	bool MaterialEditor::OnUpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
+		ScopedTimer timer{};
+
 		if (!m_IsOpen)
 		{
 			return false;
@@ -89,6 +91,8 @@ namespace Sandbox
 		UpdateMaterialView();
 		UpdateMaterialList();
 		UpdateToolbar();
+
+		m_deltaTime = timer.GetTime();
 		return false;
 	}
 

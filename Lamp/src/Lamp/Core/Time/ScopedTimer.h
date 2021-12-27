@@ -14,12 +14,16 @@ public:
 		m_startTime = std::chrono::high_resolution_clock::now();
 	}
 
-	~ScopedTimer()
+	ScopedTimer()
 	{
-		LP_CORE_INFO("{0} took {1} seconds!", m_name, GetTime());
+		m_startTime = std::chrono::high_resolution_clock::now();
 	}
 
-	inline float GetTime() 
+	~ScopedTimer()
+	{
+	}
+
+	inline float GetTime()
 	{
 		return std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - m_startTime).count();
 	};

@@ -202,7 +202,7 @@ namespace Sandbox
 	{
 		std::string id = dirData->path.stem().string() + "##" + std::to_string(dirData->handle);
 
-		auto flags = (dirData->selected ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None) | ImGuiTreeNodeFlags_OpenOnArrow;
+		auto flags = (dirData->selected ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None);
 
 		bool open = UI::TreeNodeImage(m_directoryTexture, id.c_str(), flags);
 
