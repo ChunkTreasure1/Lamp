@@ -57,8 +57,8 @@ namespace Lamp
 		copyRegion.dstSubresource.layerCount = 1;
 		copyRegion.dstOffset = { 0, 0, 0 };
 
-		copyRegion.extent.width = m_width;
-		copyRegion.extent.height = m_height;
+		copyRegion.extent.width = static_cast<uint32_t>(m_width * glm::pow(0.5f, mip));
+		copyRegion.extent.height = static_cast<uint32_t>(m_height * glm::pow(0.5f, mip));
 		copyRegion.extent.depth = 1;
 
 		vkCmdCopyImage(commandBuffer, vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);

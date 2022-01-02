@@ -99,7 +99,7 @@ namespace Lamp
 
 		VmaAllocationInfo allocInfo;
 		vmaGetAllocationInfo(s_pData->allocator, allocation, &allocInfo);
-
+		
 		s_pData->totalAllocatedBytes += allocInfo.size;
 
 		return allocation;

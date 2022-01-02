@@ -19,13 +19,13 @@ namespace Lamp
 		return nullptr;
 	}
 
-	Ref<Texture2D> Texture2D::Create(const std::filesystem::path& path)
+	Ref<Texture2D> Texture2D::Create(const std::filesystem::path& path, bool generateMips)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTexture2D>(path);
-			case RendererAPI::API::Vulkan: return CreateRef<VulkanTexture2D>(path);
+			case RendererAPI::API::Vulkan: return CreateRef<VulkanTexture2D>(path, generateMips);
 		}
 
 		return nullptr;

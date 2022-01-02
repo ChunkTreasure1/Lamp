@@ -21,6 +21,10 @@ public:
 
 	~ScopedTimer()
 	{
+		if (!m_name.empty())
+		{
+			LP_CORE_INFO("{0} finished in {1} ms!", m_name, GetTime());
+		}
 	}
 
 	inline float GetTime()

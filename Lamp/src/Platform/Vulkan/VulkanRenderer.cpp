@@ -21,7 +21,7 @@
 #include "Platform/Vulkan/VulkanMaterial.h"
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
 #include "Platform/Vulkan/VulkanTexture2D.h"
-#include "Platform/Vulkan/VulkanTextureHDR.h"
+#include "Platform/Vulkan/VulkanTextureCube.h"
 #include "Platform/Vulkan/VulkanUtility.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
@@ -188,7 +188,7 @@ namespace Lamp
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
 		SetupDescriptorsForCubeRendering();
-
+	
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
 
@@ -357,31 +357,6 @@ namespace Lamp
 				if (textureInput.texture)
 				{
 					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(textureInput.texture)->GetImage();
-					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
-
-					auto imageSampler = imageSamplers.find(textureInput.binding);
-					if (imageSampler != imageSamplers.end())
-					{
-						auto descriptorWrite = shaderDescriptorSets[textureInput.set].writeDescriptorSets.at(imageSampler->second.name);
-						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
-						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
-					}
-				}
-				else
-				{
-					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
-				}
-			}
-
-			auto& textureHDRInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureHDRInputs;
-			for (const auto& textureInput : textureHDRInputs)
-			{
-				if (textureInput.texture)
-				{
-					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureHDR>(textureInput.texture)->GetImage();
 					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
 
 					auto imageSampler = imageSamplers.find(textureInput.binding);
@@ -580,6 +555,31 @@ namespace Lamp
 				if (textureInput.texture)
 				{
 					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(textureInput.texture)->GetImage();
+					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
+
+					auto imageSampler = imageSamplers.find(textureInput.binding);
+					if (imageSampler != imageSamplers.end())
+					{
+						auto descriptorWrite = shaderDescriptorSets[textureInput.set].writeDescriptorSets.at(imageSampler->second.name);
+						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
+						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+						auto device = VulkanContext::GetCurrentDevice();
+						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+					}
+				}
+				else
+				{
+					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
+				}
+			}
+
+			auto& textureCubeInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureCubeInputs;
+			for (const auto& textureInput : textureCubeInputs)
+			{
+				if (textureInput.texture)
+				{
+					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(textureInput.texture);
 					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
 
 					auto imageSampler = imageSamplers.find(textureInput.binding);

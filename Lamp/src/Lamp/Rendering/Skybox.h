@@ -8,7 +8,7 @@ namespace Lamp
 {
 	class Shader;
 	class TextureCube;
-	class TextureHDR;
+	class Texture2D;
 	class Mesh;
 	class Image2D;
 	class Skybox
@@ -54,8 +54,8 @@ namespace Lamp
 		Ref<TextureCube> m_cubeMap;
 		Ref<TextureCube> m_irradianceMap;
 		Ref<TextureCube> m_prefilterMap;
-		Ref<TextureHDR> m_hdrTexture;
 
+		Ref<Texture2D> m_hdrTexture;
 		Ref<Framebuffer> m_brdfFramebuffer;
 	};
 }

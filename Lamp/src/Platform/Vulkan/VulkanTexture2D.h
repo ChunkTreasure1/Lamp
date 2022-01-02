@@ -12,16 +12,16 @@ namespace Lamp
 	{
 	public:
 		VulkanTexture2D(uint32_t width, uint32_t height);
-		VulkanTexture2D(const std::filesystem::path& path);
+		VulkanTexture2D(const std::filesystem::path& path, bool generateMips);
 
 		~VulkanTexture2D();
 
-		virtual void Bind(uint32_t slot /* = 0 */) const override;
-		virtual void SetData(const void* data, uint32_t size) override;
+		void Bind(uint32_t slot /* = 0 */) const override;
+		void SetData(const void* data, uint32_t size) override;
 
-		virtual const uint32_t GetWidth() const override;
-		virtual const uint32_t GetHeight() const override;
-		virtual const uint32_t GetID() const override;
+		const uint32_t GetWidth() const override;
+		const uint32_t GetHeight() const override;
+		const uint32_t GetID() const override;
 
 		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_image->GetDescriptorInfo(); }
 		inline const Ref<VulkanImage2D> GetImage() const { return m_image; }

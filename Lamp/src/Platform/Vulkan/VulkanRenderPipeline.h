@@ -7,6 +7,7 @@
 namespace Lamp
 {
 	class Texture2D;
+	class TextureHDR;
 	class Image2D;
 
 	class VulkanRenderPipeline : public RenderPipeline
@@ -21,6 +22,7 @@ namespace Lamp
 		void BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::vector<VkDescriptorSet>& descriptorSets) const;
 
 		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
+		void SetTexture(Ref<TextureHDR> texture, uint32_t binding, uint32_t set, uint32_t index);
 		void SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index);
 
 		void SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data);

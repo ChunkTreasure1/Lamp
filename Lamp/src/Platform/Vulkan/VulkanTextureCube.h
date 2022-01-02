@@ -22,6 +22,8 @@ namespace Lamp
 		const uint32_t GetHeight() const override { return m_height; }
 		const uint32_t GetID() const override { return 0; }
 
+		inline VkDescriptorImageInfo& GetDescriptorInfo() { return m_descriptorInfo; }
+
 		void StartDataOverride() override;
 		void FinishDataOverride() override;
 

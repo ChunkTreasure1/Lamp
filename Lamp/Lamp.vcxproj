@@ -263,11 +263,11 @@
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
+    <ClInclude Include="src\Lamp\Rendering\SkyboxNew.h" />
     <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\Image2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h" />
     <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
@@ -285,7 +285,6 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
@@ -304,7 +303,6 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanTextureHDR.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanVertexArray.h" />
@@ -822,11 +820,11 @@
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\SkyboxNew.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\Image2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
@@ -837,7 +835,6 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
@@ -856,7 +853,6 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanTextureHDR.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />

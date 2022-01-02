@@ -272,8 +272,8 @@ namespace Lamp
 
 			{
 				VkSubpassDependency& dependency = dependencies.emplace_back();
-				dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-				dependency.dstSubpass = 0;
+				dependency.srcSubpass = 0;
+				dependency.dstSubpass = VK_SUBPASS_EXTERNAL;
 				dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 				dependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 				dependency.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;

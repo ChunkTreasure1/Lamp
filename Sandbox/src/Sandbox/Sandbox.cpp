@@ -10,6 +10,7 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/Renderer2D.h>
 #include <Lamp/Rendering/RenderPipeline.h>
+#include <Lamp/Rendering/SkyboxNew.h>
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -32,8 +33,9 @@ namespace Sandbox
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
 
-		//m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
+		//m_pLevel->SetSkybox();
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+
 
 		////Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
@@ -60,6 +62,9 @@ namespace Sandbox
 
 	bool Sandbox::OnUpdate(AppUpdateEvent& e)
 	{
+		Ref<Skybox> box = CreateRef<Skybox>("assets/textures/frozen_waterfall.hdr");
+
+
 		LP_PROFILE_FUNCTION();
 
 		m_SandboxController->Update(e.GetTimestep());

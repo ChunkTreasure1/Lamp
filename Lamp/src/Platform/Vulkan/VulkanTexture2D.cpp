@@ -19,7 +19,7 @@ namespace Lamp
 		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 	}
 
-	VulkanTexture2D::VulkanTexture2D(const std::filesystem::path& path)
+	VulkanTexture2D::VulkanTexture2D(const std::filesystem::path& path, bool generateMips)
 	{
 		if (!std::filesystem::exists(path))
 		{
@@ -28,11 +28,27 @@ namespace Lamp
 			return;
 		}
 
+		VkDeviceSize size;
+		ImageFormat format;
+		void* imageData = nullptr;
+
 		int width;
 		int height;
 		int channels;
+
 		stbi_set_flip_vertically_on_load(1);
-		uint8_t* imageData = stbi_load(path.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
+
+		if (stbi_is_hdr(path.string().c_str()))
+		{
+			imageData = stbi_loadf(path.string().c_str(), &width, &height, &channels, 4);
+			size = width * height * 4 * sizeof(float);
+		}
+		else
+		{
+			imageData = stbi_load(path.string().c_str(), &width, &height, &channels, 4);
+			size = width * height * 4;
+		}
+
 
 		if (!imageData)
 		{
@@ -40,8 +56,6 @@ namespace Lamp
 			SetFlag(AssetFlag::Invalid);
 			return;
 		}
-
-		VkDeviceSize size = width * height * 4;
 
 		VkBuffer stagingBuffer;
 		VmaAllocation stagingBufferMemory;
@@ -58,11 +72,11 @@ namespace Lamp
 		stbi_image_free(imageData);
 
 		ImageSpecification imageSpec{};
-		imageSpec.format = ImageFormat::RGBA;
+		imageSpec.format = stbi_is_hdr(path.string().c_str()) ? ImageFormat::RGBA32F : ImageFormat::RGBA;
 		imageSpec.usage = ImageUsage::Texture;
 		imageSpec.width = (uint32_t)width;
 		imageSpec.height = (uint32_t)height;
-		imageSpec.mips = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+		imageSpec.mips = generateMips ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 1;
 
 		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
 

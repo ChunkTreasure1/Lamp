@@ -504,9 +504,6 @@
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h">
       <Filter>src\Lamp\Utility</Filter>
     </ClInclude>
@@ -556,9 +553,6 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
@@ -1909,9 +1903,9 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanTextureHDR.h" />
     <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
+    <ClInclude Include="src\Lamp\Rendering\SkyboxNew.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2172,9 +2166,6 @@
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp">
       <Filter>src\Lamp\Rendering\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp">
-      <Filter>src\Lamp\Rendering\Textures</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp">
       <Filter>src\Lamp\Utility</Filter>
     </ClCompile>
@@ -2203,9 +2194,6 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
@@ -2377,7 +2365,7 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanTextureHDR.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\SkyboxNew.cpp" />
   </ItemGroup>
 </Project>

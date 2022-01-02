@@ -154,6 +154,23 @@ namespace Lamp
 		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
 	}
 
+	void VulkanRenderPipeline::SetTexture(Ref<TextureHDR> texture, uint32_t binding, uint32_t set, uint32_t index)
+	{
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
+		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(texture);
+
+		LP_CORE_ASSERT(index < m_descriptorSets.size(), "Index must be less than the descriptor set map size!");
+
+		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
+		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
+		auto descriptorWrite = shaderDescriptorSets[set].writeDescriptorSets.at(imageSamplers.at(binding).name);
+		descriptorWrite.dstSet = m_descriptorSets[index][set];
+		descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
+
+		auto device = VulkanContext::GetCurrentDevice();
+		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+	}
+
 	void VulkanRenderPipeline::SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index)
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);

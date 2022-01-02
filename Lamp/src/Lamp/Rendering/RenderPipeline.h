@@ -9,7 +9,7 @@ namespace Lamp
 	class CommandBuffer;
 	class Image2D;
 	class Texture2D;
-	class TextureHDR;
+	class TextureCube;
 
 	enum class Topology
 	{
@@ -47,9 +47,9 @@ namespace Lamp
 		uint32_t binding;
 	};
 
-	struct TextureHDRInputSpecification //TODO: rethink
+	struct TextureCubeInputSpecification
 	{
-		Ref<TextureHDR> texture;
+		Ref<TextureCube> texture;
 		uint32_t set;
 		uint32_t binding;
 	};
@@ -67,7 +67,7 @@ namespace Lamp
 
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
 		std::vector<TextureInputSpecification> textureInputs;
-		std::vector<TextureHDRInputSpecification> textureHDRInputs;
+		std::vector<TextureCubeInputSpecification> textureCubeInputs;
 
 		glm::vec2 size;
 		bool isSwapchain;

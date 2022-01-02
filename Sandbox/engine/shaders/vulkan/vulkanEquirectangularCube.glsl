@@ -14,14 +14,14 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
+layout (location = 0) out vec3 v_Position;
+
 layout (std140, binding = 4) uniform CubeBuffer
 {
     mat4 modelViewProjection;
     vec2 phiTheta;
 
 } u_CubeBuffer;
-
-layout(location = 0) out vec3 v_Position;
 
 void main()
 {

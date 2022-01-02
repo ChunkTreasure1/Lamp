@@ -25,6 +25,9 @@ namespace Lamp
 		void SetVertices(std::vector<Vertex>& pVertices, uint32_t size) override;
 		void SetData(const void* data, uint32_t size) override;
 
+		//TODO: remove
+		inline VkBuffer GetBuffer() { return m_buffer; }
+
 	private:
 		VkBuffer m_buffer = nullptr;
 		VmaAllocation m_bufferAllocation = nullptr;
@@ -42,6 +45,9 @@ namespace Lamp
 		void Unbind() const override;
 
 		uint32_t GetCount() override;
+
+		//TODO: remove
+		inline VkBuffer GetBuffer() { return m_buffer; }
 
 	private:
 		uint32_t m_count;

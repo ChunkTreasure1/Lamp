@@ -34,7 +34,8 @@ namespace Lamp
 	
 		VkDescriptorImageInfo m_descriptorInfo;
 		VkImage m_image = nullptr;
-		VkSampler m_sampler;
+		VkSampler m_sampler = nullptr;
+
 		std::map<uint32_t, VkImageView> m_imageViews;
 	};
 }
