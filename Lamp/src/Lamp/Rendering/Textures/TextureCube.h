@@ -2,9 +2,10 @@
 
 #include "Lamp/AssetSystem/Asset.h"
 
+#include "Lamp/Rendering/Textures/Image2D.h"
+
 namespace Lamp
 {
-	class Image2D;
 	class TextureCube : public Asset
 	{
 	public:
@@ -19,7 +20,9 @@ namespace Lamp
 		virtual void StartDataOverride() = 0;
 		virtual void FinishDataOverride() = 0;
 
-		static Ref<TextureCube> Create(uint32_t width, uint32_t height);
+		virtual const uint32_t GetMipLevelCount() const = 0;
+
+		static Ref<TextureCube> Create(ImageFormat format, uint32_t width, uint32_t height);
 		static Ref<TextureCube> Create(const std::filesystem::path& path);
 
 		static AssetType GetStaticType() { return AssetType::Texture; }

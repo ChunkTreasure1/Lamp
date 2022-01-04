@@ -145,4 +145,9 @@ namespace Lamp
 	{
 		return m_swapchainTarget ? Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame() : m_currentCommandPool;
 	}
+
+	VkCommandBuffer VulkanCommandBuffer::GetCommandBuffer(uint32_t index)
+	{
+		return m_commandBuffers[index];
+	}
 }

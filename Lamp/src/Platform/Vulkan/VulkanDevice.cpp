@@ -117,6 +117,11 @@ namespace Lamp
 				indices.graphicsFamily = i;
 				indices.presentFamily = i;
 			}
+
+			if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT)
+			{
+				indices.computeFamily = i;
+			}
 		}
 
 		return indices;
@@ -158,7 +163,13 @@ namespace Lamp
 		result = vkCreateCommandPool(m_logicalDevice, &commandPoolInfo, nullptr, &m_commandPool);
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create command pool!");
 
+		commandPoolInfo.queueFamilyIndex = m_physicalDevice->m_queueFamilyIndices.computeFamily.value();
+
+		result = vkCreateCommandPool(m_logicalDevice, &commandPoolInfo, nullptr, &m_computeCommandPool);
+		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create command pool!");
+
 		vkGetDeviceQueue(m_logicalDevice, m_physicalDevice->m_queueFamilyIndices.graphicsFamily.value(), 0, &m_graphicsQueue);
+		vkGetDeviceQueue(m_logicalDevice, m_physicalDevice->m_queueFamilyIndices.computeFamily.value(), 0, &m_computeQueue);
 	}
 
 	VulkanDevice::~VulkanDevice()
@@ -167,6 +178,7 @@ namespace Lamp
 
 	void VulkanDevice::Destroy()
 	{
+		vkDestroyCommandPool(m_logicalDevice, m_computeCommandPool, nullptr);
 		vkDestroyCommandPool(m_logicalDevice, m_commandPool, nullptr);
 		vkDeviceWaitIdle(m_logicalDevice);
 		vkDestroyDevice(m_logicalDevice, nullptr);
@@ -206,13 +218,13 @@ namespace Lamp
 		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
 	}
 
-	VkCommandBuffer VulkanDevice::GetCommandBuffer(bool begin)
+	VkCommandBuffer VulkanDevice::GetCommandBuffer(bool begin, bool compute)
 	{
 		VkCommandBuffer commandBuffer;
 
 		VkCommandBufferAllocateInfo allocateInfo{};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = m_commandPool;
+		allocateInfo.commandPool = compute ? m_computeCommandPool : m_commandPool;
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocateInfo.commandBufferCount = 1;
 

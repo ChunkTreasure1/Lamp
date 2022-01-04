@@ -16,10 +16,10 @@ namespace Lamp
 		alignas(16) glm::vec4 positionAndTanHalfFOV;
 	};
 
-	struct CubeBuffer
+	struct MaterialBuffer
 	{
-		alignas(16) glm::mat4 modelViewProjection;
-		alignas(16) glm::vec2 phiTheta{ (2.f * glm::pi<float>()) / 180.f, (2.f * glm::pi<float>()) / 64.f };
+		alignas(16) glm::vec4 ambienceExposureBlendingGamma; //TODO: Some parameters should be moved to other buffer
+		alignas(16) bool useBlending;
 	};
 
 	struct ScreenDataBuffer

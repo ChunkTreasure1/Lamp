@@ -296,6 +296,7 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanImage2D.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderComputePipeline.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h" />
@@ -846,6 +847,7 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanImage2D.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderComputePipeline.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp" />

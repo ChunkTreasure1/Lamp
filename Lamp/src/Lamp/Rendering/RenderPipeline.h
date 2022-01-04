@@ -63,6 +63,8 @@ namespace Lamp
 		Topology topology;
 		DrawType drawType = DrawType::Buffer;
 		CullMode cullMode = CullMode::Back;
+		bool drawSkybox = false;
+
 		BufferLayout vertexLayout;
 
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
@@ -81,5 +83,15 @@ namespace Lamp
 		virtual const RenderPipelineSpecification& GetSpecification() const = 0;
 		
 		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
+	};
+
+	class RenderComputePipeline
+	{
+	public:
+		virtual void Begin(Ref<CommandBuffer> commandBuffer = nullptr) = 0;
+		virtual void End() = 0;
+
+		virtual Ref<Shader> GetShader() = 0;
+		static Ref<RenderComputePipeline> Create(Ref<Shader> computeShader);
 	};
 }

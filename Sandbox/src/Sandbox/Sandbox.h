@@ -26,6 +26,7 @@ namespace Lamp
 {
 	class Framebuffer;
 	class RenderPipeline;
+	class Skybox;
 }
 
 namespace Sandbox

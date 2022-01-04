@@ -4,58 +4,12 @@
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
+#include "Platform/Vulkan/VulkanUtility.h"
 
 #include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
 {
-	namespace Utils
-	{
-		static VkFormat LampFormatToVulkanFormat(ImageFormat format)
-		{
-			switch (format)
-			{
-				case ImageFormat::None: LP_CORE_ASSERT(false, "Image must have a format!");
-				case ImageFormat::R32F: return VK_FORMAT_R32_SFLOAT;
-				case ImageFormat::R32I: return VK_FORMAT_R32_SINT;
-				case ImageFormat::RGB: return VK_FORMAT_R8G8B8_UNORM;
-				case ImageFormat::RGBA: return VK_FORMAT_R8G8B8A8_UNORM;
-				case ImageFormat::RGBA16F: return VK_FORMAT_R16G16B16A16_SFLOAT;
-				case ImageFormat::RGBA32F: return VK_FORMAT_R32G32B32A32_SFLOAT;
-				case ImageFormat::RG16F: return VK_FORMAT_R16G16_SFLOAT;
-				case ImageFormat::RG32F: return VK_FORMAT_R32G32B32_SFLOAT;
-				case ImageFormat::SRGB: return VK_FORMAT_R8G8B8A8_SRGB;
-				case ImageFormat::DEPTH32F: return VK_FORMAT_D32_SFLOAT;
-				case ImageFormat::DEPTH24STENCIL8: return VK_FORMAT_D24_UNORM_S8_UINT;
-			}
-
-			return (VkFormat)0;
-		}
-
-		static VkFilter LampFilterToVulkanFilter(TextureFilter filter)
-		{
-			switch (filter)
-			{
-				case TextureFilter::None: LP_CORE_ASSERT(false, "Filter must be chosen!") return VK_FILTER_LINEAR;
-				case TextureFilter::Linear: return VK_FILTER_LINEAR;
-				case TextureFilter::Nearest: return VK_FILTER_NEAREST;
-			}
-
-			return VK_FILTER_LINEAR;
-		}
-
-		static VkSamplerAddressMode LampWrapToVulkanWrap(TextureWrap wrap)
-		{
-			switch (wrap)
-			{
-				case TextureWrap::None: LP_CORE_ASSERT(false, "Wrap mode must be set!");
-				case TextureWrap::Clamp: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-				case TextureWrap::Repeat: return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-			}
-			return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		}
-	}
-
 	VulkanImage2D::VulkanImage2D(const ImageSpecification& specification, const void* data)
 		: m_specification(specification)
 	{
@@ -106,7 +60,7 @@ namespace Lamp
 			aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 		}
 
-		VkFormat format = Utils::LampFormatToVulkanFormat(m_specification.format);
+		VkFormat format = Utility::LampFormatToVulkanFormat(m_specification.format);
 
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -142,12 +96,12 @@ namespace Lamp
 		samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		samplerCreateInfo.anisotropyEnable = m_specification.useAniostopy && Renderer::GetCapabilities().supportAniostopy ? VK_TRUE : VK_FALSE;
 		samplerCreateInfo.maxAnisotropy = (uint32_t)m_specification.useAniostopy > Renderer::GetCapabilities().maxAniostropy ? Renderer::GetCapabilities().maxAniostropy : (uint32_t)m_specification.useAniostopy;
-		samplerCreateInfo.magFilter = Utils::LampFilterToVulkanFilter(m_specification.filter);
-		samplerCreateInfo.minFilter = Utils::LampFilterToVulkanFilter(m_specification.filter);
+		samplerCreateInfo.magFilter = Utility::LampFilterToVulkanFilter(m_specification.filter);
+		samplerCreateInfo.minFilter = Utility::LampFilterToVulkanFilter(m_specification.filter);
 		samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerCreateInfo.addressModeV = Utils::LampWrapToVulkanWrap(m_specification.wrap);
-		samplerCreateInfo.addressModeU = Utils::LampWrapToVulkanWrap(m_specification.wrap);
-		samplerCreateInfo.addressModeW = Utils::LampWrapToVulkanWrap(m_specification.wrap);
+		samplerCreateInfo.addressModeV = Utility::LampWrapToVulkanWrap(m_specification.wrap);
+		samplerCreateInfo.addressModeU = Utility::LampWrapToVulkanWrap(m_specification.wrap);
+		samplerCreateInfo.addressModeW = Utility::LampWrapToVulkanWrap(m_specification.wrap);
 		samplerCreateInfo.mipLodBias = 0.f;
 		samplerCreateInfo.minLod = 0.f;
 		samplerCreateInfo.maxLod = 100.f;

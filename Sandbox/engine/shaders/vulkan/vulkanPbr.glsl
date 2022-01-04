@@ -82,6 +82,13 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 
 } u_DirectionalLights;
 
+layout (std140, binding = 4) uniform MaterialBuffer
+{
+    vec4 ambienceExposureBlendingGamma;
+    bool useBlending;
+
+} u_MaterialBuffer;
+
 layout (location = 0) in Out
 {
     vec3 fragPos;
@@ -93,6 +100,10 @@ layout (location = 0) in Out
 layout (set = 0, binding = 5) uniform sampler2D u_Albedo;
 layout (set = 0, binding = 6) uniform sampler2D u_Normal;
 layout (set = 0, binding = 7) uniform sampler2D u_MRO;
+
+layout (set = 0, binding = 8) uniform samplerCube u_IrradianceMap;
+layout (set = 0, binding = 9) uniform samplerCube u_PrefilterMap;
+layout (set = 0, binding = 10) uniform sampler2D u_BRDFLUT;
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;
@@ -117,6 +128,28 @@ float geometrySmith(float NdotV, float NdotL, float roughness)
 	return ggx1 * ggx2;
 }
 
+vec3 ACESTonemap(vec3 color)
+{
+	mat3 m1 = mat3(
+		0.59719, 0.07600, 0.02840,
+		0.35458, 0.90834, 0.13383,
+		0.04823, 0.01566, 0.83777
+	);
+	mat3 m2 = mat3(
+		1.60475, -0.10208, -0.00327,
+		-0.53108, 1.10813, -0.07276,
+		-0.07367, -0.00605, 1.07602
+	);
+	vec3 v = m1 * color;
+	vec3 a = v * (v + 0.0245786) - 0.000090537;
+	vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
+	return clamp(m2 * (a / b), 0.0, 1.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 baseReflectivity, float roughness)
+{
+	return baseReflectivity + (max(vec3(1.0 - roughness), baseReflectivity) - baseReflectivity) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+}
 
 vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity)
 {
@@ -175,8 +208,28 @@ void main()
 
     lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[0], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness);
 
-    vec3 color = lightAccumulation;
-    color = color / (color + vec3(1.0));
+    vec3 reflectVec = reflect(-dirToCamera, normal);
 
-    o_Color = vec4(color, 1.0);
+    int maxReflectionLOD = textureQueryLevels(u_PrefilterMap);
+    vec3 prefilterColor = textureLod(u_PrefilterMap, reflectVec, roughness * float(maxReflectionLOD)).rgb;
+    vec3 F = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
+    
+    vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(normal, dirToCamera), 0.0), roughness)).rg;
+    vec3 specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
+
+    vec3 kS = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;
+
+    vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
+    vec3 diffuse = irradiance * albedo;
+    vec3 ambient = (kD * diffuse + specular) * u_MaterialBuffer.ambienceExposureBlendingGamma.x;
+
+    vec3 color = ambient + lightAccumulation;
+    color *= u_MaterialBuffer.ambienceExposureBlendingGamma.y;
+
+    color = ACESTonemap(color);
+
+    float blendingVal = u_MaterialBuffer.useBlending ? albedoTex.a * u_MaterialBuffer.ambienceExposureBlendingGamma.z : 1.0;
+    o_Color = vec4(color, blendingVal);
 }

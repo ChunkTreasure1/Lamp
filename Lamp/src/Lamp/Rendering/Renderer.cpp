@@ -15,6 +15,7 @@
 
 #include "Lamp/Level/Level.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
+#include "Lamp/Core/Time/ScopedTimer.h"
 
 #include <random>
 
@@ -26,7 +27,6 @@ namespace Lamp
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
 	Ref<RendererNew> Renderer::s_renderer = nullptr;
 	Scope<Renderer::RendererDefaults> Renderer::s_rendererDefaults;
-	Scope<Skybox> Renderer::s_skybox;
 
 	Renderer::Capabilities Renderer::s_capabilities;
 	Renderer::Statistics Renderer::s_statistics;
@@ -60,18 +60,21 @@ namespace Lamp
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSSAO.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanComposite.glsl");
 		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanBRDF.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanIrradiance.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanTestIrr.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanEquirectangularCube.glsl");
+		
+		ShaderLibrary::AddShader("engine/shaders/vulkan/equirectangularToCubeMap.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/environmentMipFilter.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/environmentIrradiance.glsl");
+		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSkybox.glsl");
+
 		MaterialLibrary::LoadMaterials();
 
 		GenerateKernel();
+		GenerateBRDF();
+
 		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(4, 4);
 		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
 
 		SetupBuffers();
-
-		s_skybox = CreateScope<Skybox>("assets/textures/frozen_waterfall.hdr");
 	}
 
 	void Renderer::Shutdown()
@@ -201,6 +204,16 @@ namespace Lamp
 			ub->SetData(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer));
 		}
 
+		//Material
+		{
+			s_pSceneData->materialData.ambienceExposureBlendingGamma.x = s_pSceneData->ambianceMultiplier;
+			s_pSceneData->materialData.ambienceExposureBlendingGamma.y = s_pSceneData->hdrExposure;
+			s_pSceneData->materialData.ambienceExposureBlendingGamma.w = s_pSceneData->gamma;
+
+			auto ub = s_pSceneData->uniformBufferSet->Get(4, 0, currentFrame);
+			ub->SetData(&s_pSceneData->materialData, sizeof(MaterialBuffer));
+		}
+
 	#if 0
 
 		//Light data
@@ -218,8 +231,6 @@ namespace Lamp
 		s_pSceneData->screenGroupX = ((uint32_t)s_pSceneData->bufferSize.x + ((uint32_t)s_pSceneData->bufferSize.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenGroupY = ((uint32_t)s_pSceneData->bufferSize.y + ((uint32_t)s_pSceneData->bufferSize.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
-
-
 	
 	#endif
 
@@ -238,6 +249,47 @@ namespace Lamp
 
 			ub->SetData(&s_pSceneData->screenData, sizeof(ScreenDataBuffer));
 		}
+	}
+
+	void Renderer::GenerateBRDF()
+	{
+		ScopedTimer timer{ "Generate BRDFLUT" };
+
+		const uint32_t brdfDim = 512;
+
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.width = brdfDim;
+		framebufferSpec.height = brdfDim;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RG16F
+		};
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+		s_pSceneData->brdfFramebuffer = pipelineSpec.framebuffer;
+
+		pipelineSpec.shader = ShaderLibrary::GetShader("BRDFIntegrate");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Quad;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		auto renderPass = RenderPipeline::Create(pipelineSpec);
+
+		Renderer::BeginPass(renderPass);
+		Renderer::SubmitQuad();
+		Renderer::EndPass();
 	}
 
 	static float Lerp(float a, float b, float f)
@@ -280,6 +332,6 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer), 2, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cubeBuffer, sizeof(CubeBuffer), 4, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->materialData, sizeof(MaterialBuffer), 4, 0);
 	}
 }

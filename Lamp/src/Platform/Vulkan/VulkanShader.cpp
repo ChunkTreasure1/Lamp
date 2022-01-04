@@ -166,6 +166,123 @@ namespace Lamp
 		CreateDescriptors();
 	}
 
+	VulkanShader::ShaderMaterialDescriptorSet VulkanShader::CreateDescriptorSets(uint32_t set)
+	{
+		ShaderMaterialDescriptorSet result;
+		auto device = VulkanContext::GetCurrentDevice();
+
+		LP_CORE_ASSERT(m_descriptorTypes.find(set) != m_descriptorTypes.end(), "Descriptor set not found!");
+
+		VkDescriptorPoolCreateInfo descriptorPoolInfo{};
+		descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		descriptorPoolInfo.pNext = nullptr;
+		descriptorPoolInfo.poolSizeCount = (uint32_t)m_descriptorTypes.at(set).size();
+		descriptorPoolInfo.pPoolSizes = m_descriptorTypes.at(set).data();
+		descriptorPoolInfo.maxSets = 1;
+
+		VkResult vkResult = vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool);
+		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to create pool!");
+
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = result.pool;
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &m_descriptorSetLayouts[set];
+
+		result.descriptorSets.emplace_back();
+		vkResult = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, result.descriptorSets.data());
+		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to allocate descriptor sets!");
+
+		return result;
+	}
+
+	VulkanShader::ShaderMaterialDescriptorSet VulkanShader::CreateDescriptorSets(uint32_t set, uint32_t count)
+	{
+		ShaderMaterialDescriptorSet result;
+
+		auto device = VulkanContext::GetCurrentDevice();
+
+		std::unordered_map<uint32_t, std::vector<VkDescriptorPoolSize>> poolSizes;
+		for (uint32_t set = 0; set < m_shaderDescriptorSets.size(); set++)
+		{
+			auto& shaderDescriptorSet = m_shaderDescriptorSets[set];
+			if (!shaderDescriptorSet)
+			{
+				continue;
+			}
+
+			if (shaderDescriptorSet.uniformBuffers.size())
+			{
+				VkDescriptorPoolSize& typeCount = poolSizes[set].emplace_back();
+				typeCount.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				typeCount.descriptorCount = (uint32_t)shaderDescriptorSet.uniformBuffers.size() * count;
+			}
+			if (shaderDescriptorSet.storageBuffers.size())
+			{
+				VkDescriptorPoolSize& typeCount = poolSizes[set].emplace_back();
+				typeCount.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+				typeCount.descriptorCount = (uint32_t)shaderDescriptorSet.storageBuffers.size() * count;
+			}
+			if (shaderDescriptorSet.imageSamplers.size())
+			{
+				VkDescriptorPoolSize& typeCount = poolSizes[set].emplace_back();
+				typeCount.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				uint32_t descriptorSetCount = 0;
+				for (auto&& [binding, imageSampler] : shaderDescriptorSet.imageSamplers)
+					descriptorSetCount += imageSampler.arraySize;
+
+				typeCount.descriptorCount = descriptorSetCount * count;
+			}
+			if (shaderDescriptorSet.storageSamplers.size())
+			{
+				VkDescriptorPoolSize& typeCount = poolSizes[set].emplace_back();
+				typeCount.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+				typeCount.descriptorCount = (uint32_t)shaderDescriptorSet.storageSamplers.size() * count;
+			}
+		}
+
+		LP_CORE_ASSERT(poolSizes.find(set) != poolSizes.end(), "Set not found!");
+
+		VkDescriptorPoolCreateInfo descriptorPoolInfo = {};
+		descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		descriptorPoolInfo.pNext = nullptr;
+		descriptorPoolInfo.poolSizeCount = (uint32_t)poolSizes.at(set).size();
+		descriptorPoolInfo.pPoolSizes = poolSizes.at(set).data();
+		descriptorPoolInfo.maxSets = count;
+
+		VkResult vkResult = vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool);
+		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to create descriptor pool!");
+
+		result.descriptorSets.resize(count);
+
+		for (uint32_t i = 0; i < count; i++)
+		{
+			VkDescriptorSetAllocateInfo allocInfo = {};
+			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			allocInfo.descriptorPool = result.pool;
+			allocInfo.descriptorSetCount = 1;
+			allocInfo.pSetLayouts = &m_descriptorSetLayouts[set];
+
+			vkResult = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &result.descriptorSets[i]);
+			LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to allocate descriptor set");
+		}
+		return result;
+	}
+
+	const VkWriteDescriptorSet* VulkanShader::GetDescriptorSet(const std::string& name, uint32_t set) const
+	{
+		LP_CORE_ASSERT(set < m_shaderDescriptorSets.size(), "Set must be less than the descriptor set count");
+		LP_CORE_ASSERT(m_shaderDescriptorSets[set], "Descriptor set is null!");
+
+		if (m_shaderDescriptorSets.at(set).writeDescriptorSets.find(name) == m_shaderDescriptorSets.at(set).writeDescriptorSets.end())
+		{
+			LP_CORE_WARN("Shader {0} does not contain requested descriptor set {1}", "", name);
+			return nullptr;
+		}
+
+		return &m_shaderDescriptorSets.at(set).writeDescriptorSets.at(name);
+	}
+
 	std::vector<VkDescriptorSetLayout> VulkanShader::GetAllDescriptorSetLayouts()
 	{
 		std::vector<VkDescriptorSetLayout> result;

@@ -31,11 +31,12 @@ namespace Sandbox
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
+		SetupRenderPasses();
+
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+		m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr", m_viewportFramebuffer);
 
-		//m_pLevel->SetSkybox();
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
-
 
 		////Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
@@ -48,7 +49,6 @@ namespace Sandbox
 		Application::Get().GetWindow().Maximize();
 
 		SetupFromConfig();
-		SetupRenderPasses();
 	}
 
 	Sandbox::~Sandbox()
@@ -62,9 +62,6 @@ namespace Sandbox
 
 	bool Sandbox::OnUpdate(AppUpdateEvent& e)
 	{
-		Ref<Skybox> box = CreateRef<Skybox>("assets/textures/frozen_waterfall.hdr");
-
-
 		LP_PROFILE_FUNCTION();
 
 		m_SandboxController->Update(e.GetTimestep());
@@ -509,6 +506,17 @@ namespace Sandbox
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
 				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 10 }
+			};
+
+			pipelineSpec.textureCubeInputs =
+			{
+				{ m_skybox->GetIrradiance(), 0, 8 },
+				{ m_skybox->GetFilteredEnvironment(), 0, 9 }
 			};
 
 			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));

@@ -75,9 +75,11 @@ namespace Lamp
 			uint32_t screenGroupY = 1;
 			uint32_t pointLightCount = 0;
 
-			float hdrExposure = 3.f;
+			float hdrExposure = 1.f;
 			float gamma = 2.2f;
 			float ambianceMultiplier = 0.3f;
+
+			Ref<Framebuffer> brdfFramebuffer;
 
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 64;
@@ -90,7 +92,7 @@ namespace Lamp
 			SSAODataBuffer ssaoData;
 			CameraDataBuffer cameraData;
 			ScreenDataBuffer screenData;
-			CubeBuffer cubeBuffer;
+			MaterialBuffer materialData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			//////////////////////////
@@ -124,6 +126,7 @@ namespace Lamp
 		static void CreateShaderStorageBuffers();
 		static void UpdateBuffers(const Ref<CameraBase> camera);
 		static void UpdatePassBuffers(const Ref<RenderPipeline> pipeline);
+		static void GenerateBRDF();
 
 	private:
 		struct RendererDefaults

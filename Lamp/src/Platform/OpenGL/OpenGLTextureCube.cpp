@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	}
 
-	OpenGLTextureCube::OpenGLTextureCube(uint32_t width, uint32_t height)
+	OpenGLTextureCube::OpenGLTextureCube(ImageFormat format, uint32_t width, uint32_t height)
 	{
 		glGenTextures(1, &m_rendererId);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererId);

@@ -36,15 +36,15 @@ namespace Lamp
 		int height;
 		int channels;
 
-		stbi_set_flip_vertically_on_load(1);
-
 		if (stbi_is_hdr(path.string().c_str()))
 		{
+			stbi_set_flip_vertically_on_load(0);
 			imageData = stbi_loadf(path.string().c_str(), &width, &height, &channels, 4);
 			size = width * height * 4 * sizeof(float);
 		}
 		else
 		{
+			stbi_set_flip_vertically_on_load(1);
 			imageData = stbi_load(path.string().c_str(), &width, &height, &channels, 4);
 			size = width * height * 4;
 		}

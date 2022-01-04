@@ -16,6 +16,7 @@ namespace Lamp
 		struct QueueFamilyIndices
 		{
 			std::optional<uint32_t> graphicsFamily;
+			std::optional<uint32_t> computeFamily;
 			std::optional<uint32_t> presentFamily;
 		};
 
@@ -57,6 +58,8 @@ namespace Lamp
 		~VulkanDevice();
 
 		inline VkQueue GetGraphicsQueue() { return m_graphicsQueue; }
+		inline VkQueue GetComputeQueue() { return m_computeQueue; }
+
 		inline const Ref<VulkanPhysicalDevice> GetPhysicalDevice() const { return m_physicalDevice; }
 		inline VkDevice GetHandle() const { return m_logicalDevice; }
 
@@ -65,7 +68,7 @@ namespace Lamp
 		void FlushCommandBuffer(VkCommandBuffer commandBuffer);
 		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
 
-		VkCommandBuffer GetCommandBuffer(bool begin);
+		VkCommandBuffer GetCommandBuffer(bool begin, bool compute = false);
 		VkCommandBuffer CreateSecondaryCommandBuffer();
 
 		static Ref<VulkanDevice> Create(Ref<VulkanPhysicalDevice> physicalDevice, VkPhysicalDeviceFeatures enabledFeatures);
@@ -74,10 +77,13 @@ namespace Lamp
 		VkDevice m_logicalDevice = nullptr;
 		Ref<VulkanPhysicalDevice> m_physicalDevice;
 		VkPhysicalDeviceFeatures m_enabledFeatures;
+
 		VkCommandPool m_commandPool;
+		VkCommandPool m_computeCommandPool;
 
 		const std::vector<const char*> m_validationLayers = { "VK_LAYER_KHRONOS_validation" };
 
 		VkQueue m_graphicsQueue;
+		VkQueue m_computeQueue;
 	};
 }

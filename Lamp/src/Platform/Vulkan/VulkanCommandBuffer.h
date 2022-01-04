@@ -18,6 +18,8 @@ namespace Lamp
 		void* GetCurrentCommandBuffer() override;
 		uint32_t GetCurrentCommandBufferIndex() override;
 
+		VkCommandBuffer GetCommandBuffer(uint32_t index);
+
 	private:
 		std::vector<VkCommandPool> m_commandPools;
 		std::vector<VkCommandBuffer> m_commandBuffers;

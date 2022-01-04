@@ -9,7 +9,7 @@ namespace Lamp
 	class VulkanTextureCube : public TextureCube
 	{
 	public:
-		VulkanTextureCube(uint32_t width, uint32_t height);
+		VulkanTextureCube(ImageFormat format, uint32_t width, uint32_t height);
 		VulkanTextureCube(const std::filesystem::path& path);
 
 		~VulkanTextureCube();
@@ -22,13 +22,19 @@ namespace Lamp
 		const uint32_t GetHeight() const override { return m_height; }
 		const uint32_t GetID() const override { return 0; }
 
+		const uint32_t GetMipLevelCount() const override;
+		inline VkImage GetImage() const { return m_image; }
+
+		VkImageView CreateImageViewSingleMip(uint32_t mip);
+
 		inline VkDescriptorImageInfo& GetDescriptorInfo() { return m_descriptorInfo; }
 
 		void StartDataOverride() override;
 		void FinishDataOverride() override;
 
+		void GenerateMips(bool readOnly);
+
 	private:
-		void UpdateDescriptor();
 
 		void Invalidate();
 		void Release();
@@ -36,12 +42,13 @@ namespace Lamp
 		uint32_t m_width;
 		uint32_t m_height;
 		uint32_t m_mipLevels;
+
+		ImageFormat m_format;
 	
 		VmaAllocation m_allocation = nullptr;
 		VkDescriptorImageInfo m_descriptorInfo;
 		VkImage m_image = nullptr;
-		VkSampler m_sampler;
 
-		VkImageView m_imageView;
+		bool m_mipsGenerated = false;
 	};
 }

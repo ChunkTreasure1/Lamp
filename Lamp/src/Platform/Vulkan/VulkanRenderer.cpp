@@ -10,6 +10,7 @@
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/AssetSystem/MeshImporter.h"
 #include "Lamp/Rendering/Cameras/CameraBase.h"
+#include "Lamp/Level/Level.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -156,6 +157,13 @@ namespace Lamp
 
 		m_rendererStorage->meshBuffer.model = transform;
 
+		auto materialData = Renderer::GetSceneData()->materialData;
+		materialData.ambienceExposureBlendingGamma.z = material->GetBlendingMultiplier();
+		materialData.useBlending = material->GetUseBlending();
+
+		auto materialUB = vulkanPipeline->GetSpecification().uniformBufferSets->Get(4, 0, currentFrame);
+		materialUB->SetData(&materialData, sizeof(MaterialBuffer));
+
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, vulkanMaterial->GetDescriptorSets()[currentFrame]);
 
@@ -216,6 +224,11 @@ namespace Lamp
 
 				break;
 			}
+		}
+
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox)
+		{
+			g_pEnv->pLevel->GetSkybox()->Draw();
 		}
 	}
 
@@ -375,6 +388,34 @@ namespace Lamp
 					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
 				}
 			}
+		
+			auto& cubeTextureInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureCubeInputs;
+			for (const auto& textureInput : cubeTextureInputs)
+			{
+				if (textureInput.texture)
+				{
+					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(textureInput.texture);
+					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
+
+					auto imageSampler = imageSamplers.find(textureInput.binding);
+					if (imageSampler != imageSamplers.end())
+					{
+						auto descriptorWrite = shaderDescriptorSets[textureInput.set].writeDescriptorSets.at(imageSampler->second.name);
+						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
+						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+						auto device = VulkanContext::GetCurrentDevice();
+						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+					}
+				}
+				else
+				{
+					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
+				}
+			}
+
+			//Set cubemaps and brdf
+			
 		}
 	}
 

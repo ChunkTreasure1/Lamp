@@ -55,6 +55,12 @@ namespace Lamp
 			operator bool() const { return !(storageBuffers.empty() && uniformBuffers.empty() && imageSamplers.empty() && storageSamplers.empty()); }
 		};
 
+		struct ShaderMaterialDescriptorSet
+		{
+			VkDescriptorPool pool = nullptr;
+			std::vector<VkDescriptorSet> descriptorSets;
+		};
+
 		VulkanShader(const std::filesystem::path& path, bool forceCompile);
 		~VulkanShader();
 
@@ -69,6 +75,10 @@ namespace Lamp
 		inline const std::vector<ShaderDescriptorSet>& GetDescriptorSets() { return m_shaderDescriptorSets; }
 		inline const std::vector<PushConstantRange>& GetPushConstantRanges() { return m_pushConstantRanges; }
 		inline const std::unordered_map<std::string, ShaderResourceDeclaration>& GetResources() { return m_resources; }
+
+		ShaderMaterialDescriptorSet CreateDescriptorSets(uint32_t set = 0);
+		ShaderMaterialDescriptorSet CreateDescriptorSets(uint32_t set, uint32_t count);
+		const VkWriteDescriptorSet* GetDescriptorSet(const std::string& name, uint32_t set = 0) const;
 
 		std::vector<VkDescriptorSetLayout> GetAllDescriptorSetLayouts();
 		std::vector<VkPushConstantRange> GetAllPushConstantRanges();
