@@ -276,8 +276,6 @@ namespace Sandbox
 		{
 			FindFoldersAndFilesWithQuery(m_directories[s_assetsPath.string()]->subDirectories, m_searchDirectories, m_searchAssets, query);
 		}
-
-
 	}
 
 	void AssetBrowserPanel::RenderFilePopup(const AssetData& data)
@@ -367,14 +365,26 @@ namespace Sandbox
 	{
 		for (const auto& dir : dirList)
 		{
-			if (dir->path.stem().string().find(query) != std::string::npos)
+			std::string dirStem = dir->path.stem().string();
+			std::transform(dirStem.begin(), dirStem.end(), dirStem.begin(), [](unsigned char c) 
+				{
+					return std::tolower(c);
+				});
+
+			if (dirStem.find(query) != std::string::npos)
 			{
 				directories.emplace_back(dir);
 			}
 
 			for (const auto& asset : dir->assets)
 			{
-				if (asset.path.stem().string().find(query) != std::string::npos)
+				std::string assetStem = asset.path.stem().string();
+				std::transform(assetStem.begin(), assetStem.end(), assetStem.begin(), [](unsigned char c)
+					{
+						return std::tolower(c);
+					});
+
+				if (assetStem.find(query) != std::string::npos)
 				{
 					assets.emplace_back(asset);
 				}

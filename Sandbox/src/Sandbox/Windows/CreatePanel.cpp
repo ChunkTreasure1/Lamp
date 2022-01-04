@@ -262,6 +262,12 @@ namespace Sandbox
 		{
 			for (const auto& asset : dir->assets)
 			{
+				std::string assetStem = asset.path.stem().string();
+				std::transform(assetStem.begin(), assetStem.end(), assetStem.begin(), [](unsigned char c)
+					{
+						return std::tolower(c);
+					});
+
 				if (asset.path.stem().string().find(query) != std::string::npos)
 				{
 					m_searchAssets.emplace_back(asset);
