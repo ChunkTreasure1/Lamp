@@ -36,7 +36,6 @@ namespace Sandbox
 		//m_pLevel->SetSkybox();
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
-
 		////Make sure the sandbox controller is created after level has been loaded
 		m_SandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
 
@@ -62,9 +61,6 @@ namespace Sandbox
 
 	bool Sandbox::OnUpdate(AppUpdateEvent& e)
 	{
-		Ref<Skybox> box = CreateRef<Skybox>("assets/textures/frozen_waterfall.hdr");
-
-
 		LP_PROFILE_FUNCTION();
 
 		m_SandboxController->Update(e.GetTimestep());

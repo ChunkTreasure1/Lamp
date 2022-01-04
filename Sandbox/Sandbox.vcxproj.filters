@@ -84,6 +84,9 @@
     <ClInclude Include="src\Sandbox\Windows\BaseWindow.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox\Windows\CreatePanel.h">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\GraphKey.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
@@ -96,7 +99,6 @@
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\CreatePanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -129,6 +131,9 @@
     <ClCompile Include="src\Sandbox\Windows\AssetBrowserPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox\Windows\CreatePanel.cpp">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
@@ -144,7 +149,6 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\CreatePanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\depthPass.glsl">
@@ -201,7 +205,34 @@
     <None Include="engine\shaders\vulkan\testShader.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
+    <None Include="engine\shaders\vulkan\vulkanBRDF.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanComposite.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanDepthPrePass.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanEquirectangularCube.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanIrradiance.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
     <None Include="engine\shaders\vulkan\vulkanPbr.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanPbrEditor.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanQuad.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanSSAO.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\vulkanTestIrr.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
   </ItemGroup>
