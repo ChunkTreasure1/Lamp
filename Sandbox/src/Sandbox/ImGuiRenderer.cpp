@@ -562,6 +562,16 @@ namespace Sandbox
 
 		if (UI::TreeNodeFramed("General", true))
 		{
+			ImGui::Text("Environment");
+			ImGui::Separator();
+			if (UI::BeginProperties("sceneProps"))
+			{
+				UI::Property("LOD", sceneData->environmentSettings.environmentLod);
+				UI::Property("Multiplier", sceneData->environmentSettings.environmentMultiplier);
+
+				UI::EndProperties();
+			}
+
 			ImGui::Text("HDR");
 			ImGui::Separator();
 			if (UI::BeginProperties("generalProps"))

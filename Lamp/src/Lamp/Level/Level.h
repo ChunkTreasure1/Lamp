@@ -83,7 +83,7 @@ namespace Lamp
 		inline Ref<Skybox> GetSkybox() { return m_skybox; }
 
 		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
-		inline void SetSkybox(const std::filesystem::path& path, Ref<Framebuffer> output) { m_skybox = Skybox::Create(path, output); }
+		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
 
 		static AssetType GetStaticType() { return AssetType::Level; }
 		AssetType GetType() override { return GetStaticType(); }

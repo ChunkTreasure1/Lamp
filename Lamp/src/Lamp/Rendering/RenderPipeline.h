@@ -63,6 +63,8 @@ namespace Lamp
 		Topology topology;
 		DrawType drawType = DrawType::Buffer;
 		CullMode cullMode = CullMode::Back;
+		bool depthTest = true;
+		bool depthWrite = true;
 		bool drawSkybox = false;
 
 		BufferLayout vertexLayout;

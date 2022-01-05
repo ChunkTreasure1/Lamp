@@ -24,7 +24,7 @@
 
 namespace Lamp
 {
-	Skybox::Skybox(const std::filesystem::path& path, Ref<Framebuffer> framebuffer)
+	Skybox::Skybox(const std::filesystem::path& path)
 	{
 		Ref<Texture2D> hdrTexture = Texture2D::Create(path, false);
 
@@ -147,50 +147,9 @@ namespace Lamp
 
 		m_irradianceMap = irradianceMap;
 		m_filteredEnvironment = envFiltered;
-
-		GenerateBRDFLUT();
 	}
 
 	Skybox::~Skybox()
 	{
-	}
-
-	void Skybox::Draw()
-	{
-		LP_PROFILE_FUNCTION();
-
-		Renderer::BeginPass(m_skyboxPipeline);
-
-		Renderer::SubmitCube();
-
-		Renderer::EndPass();
-	}
-
-	void Skybox::GenerateBRDFLUT()
-	{
-
-	}
-
-	void Skybox::CreateSkyboxPipeline(Ref<Framebuffer> output)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Back;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::Cube;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-		pipelineSpec.framebuffer = output;
-		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_skyboxPipeline = RenderPipeline::Create(pipelineSpec);
 	}
 }

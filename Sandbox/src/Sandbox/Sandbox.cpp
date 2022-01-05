@@ -10,7 +10,6 @@
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/Renderer2D.h>
 #include <Lamp/Rendering/RenderPipeline.h>
-#include <Lamp/Rendering/SkyboxNew.h>
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -31,10 +30,8 @@ namespace Sandbox
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
-		SetupRenderPasses();
-
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
-		m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr", m_viewportFramebuffer);
+		m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -49,6 +46,7 @@ namespace Sandbox
 		Application::Get().GetWindow().Maximize();
 
 		SetupFromConfig();
+		SetupRenderPasses();
 	}
 
 	Sandbox::~Sandbox()
@@ -499,6 +497,7 @@ namespace Sandbox
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.drawSkybox = true;
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -515,8 +514,8 @@ namespace Sandbox
 
 			pipelineSpec.textureCubeInputs =
 			{
-				{ m_skybox->GetIrradiance(), 0, 8 },
-				{ m_skybox->GetFilteredEnvironment(), 0, 9 }
+				{ g_pEnv->pLevel->GetSkybox()->GetIrradiance() , 0, 8 },
+				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 9 } // should not be set heres
 			};
 
 			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));

@@ -3,6 +3,8 @@
 #include "Lamp/Rendering/RendererNew.h"
 #include "Lamp/Rendering/RendererDataStructures.h"
 
+#include "Platform/Vulkan/VulkanShader.h"
+
 #include <vulkan/vulkan_core.h>
 #include <atomic>
 
@@ -29,6 +31,7 @@ namespace Lamp
 		Ref<SubMesh> cubeMesh;
 
 		std::vector<VkDescriptorSet> pipelineDescriptorSets;
+		std::vector<VulkanShader::ShaderMaterialDescriptorSet> shaderDescriptorSets;
 	};
 
 	class VulkanRenderer : public RendererNew
@@ -49,7 +52,8 @@ namespace Lamp
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
 		void SubmitQuad() override;
-		void SubmitCube() override;
+
+		void DrawSkybox();
 
 		void DrawBuffer(RenderBuffer& buffer) override;
 
@@ -58,12 +62,15 @@ namespace Lamp
 	private:
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
 		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
-		void SetupDescriptorsForCubeRendering(); // TODO: should be moved into singular function
+		void SetupDescriptorsForSkyboxRendering();
 
 		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
 		void CreateBaseGeometry();
+		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);
 
 		Scope<VulkanRendererStorage> m_rendererStorage;
+		Ref<RenderPipeline> m_skyboxPipeline;
+
 		VkDescriptorPool m_descriptorPool;
 
 		std::atomic_bool m_renderingFinished = true;

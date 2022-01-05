@@ -31,7 +31,7 @@ void main()
 	mat4 rotView = mat4(mat3(u_CameraData.view));
 	vec4 clipPos = u_CameraData.projection * rotView * vec4(a_Position, 1.0);
 	
-	gl_Position = clipPos.xyww;
+	gl_Position = clipPos;
 }
 
 #type fragment
@@ -40,14 +40,21 @@ layout (location = 0) out vec4 FragColor;
 
 layout (location = 0) in vec3 v_LocalPos;
 
-layout (binding = 5) uniform samplerCube u_EnvironmentMap;
+layout (binding = 1) uniform samplerCube u_EnvironmentMap;
+
+layout (push_constant) uniform Uniforms
+{
+    float environmentLod;
+    float environmentMultiplier;
+
+} u_Uniforms;
 
 void main()
 {		
-    vec3 envColor = textureLod(u_EnvironmentMap, v_LocalPos, float(1.2)).rgb;
+    vec4 envColor = textureLod(u_EnvironmentMap, v_LocalPos, float(u_Uniforms.environmentLod)) * u_Uniforms.environmentMultiplier;
     
     // HDR tonemap and gamma correct
-    envColor = envColor / (envColor + vec3(1.0));
+    envColor = envColor / (envColor + vec4(1.0));
     
-    FragColor = vec4(envColor, 1.0);
+    FragColor = vec4(envColor.xyz, 1.0);
 }

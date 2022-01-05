@@ -4,6 +4,7 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Textures/Image2D.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -302,7 +303,6 @@ namespace Utility
 		device->FlushCommandBuffer(commandBuffer);
 	}
 
-
 	static void GenerateMipMaps(VkImage image, uint32_t width, uint32_t height, uint32_t mipLevels)
 	{
 		auto device = Lamp::VulkanContext::GetCurrentDevice();
@@ -490,6 +490,19 @@ namespace Utility
 		}
 
 		return (VkFormat)0;
+	}
+
+	static VkAttachmentLoadOp LampLoadToVulkanLoadOp(Lamp::ClearMode clearMode)
+	{
+
+		switch (clearMode)
+		{
+			case Lamp::ClearMode::Clear: return VK_ATTACHMENT_LOAD_OP_CLEAR;
+			case Lamp::ClearMode::Load: return VK_ATTACHMENT_LOAD_OP_LOAD;
+			case Lamp::ClearMode::DontCare: return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		}
+
+		return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	}
 
 	static VkFilter LampFilterToVulkanFilter(Lamp::TextureFilter filter)

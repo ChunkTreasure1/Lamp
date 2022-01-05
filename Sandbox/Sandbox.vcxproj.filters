@@ -202,6 +202,15 @@
     <None Include="engine\shaders\shadows\pointShadow.glsl">
       <Filter>engine\shaders\shadows</Filter>
     </None>
+    <None Include="engine\shaders\vulkan\environmentIrradiance.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\environmentMipFilter.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\equirectangularToCubeMap.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
     <None Include="engine\shaders\vulkan\testShader.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
@@ -212,12 +221,6 @@
       <Filter>engine\shaders\vulkan</Filter>
     </None>
     <None Include="engine\shaders\vulkan\vulkanDepthPrePass.glsl">
-      <Filter>engine\shaders\vulkan</Filter>
-    </None>
-    <None Include="engine\shaders\vulkan\vulkanEquirectangularCube.glsl">
-      <Filter>engine\shaders\vulkan</Filter>
-    </None>
-    <None Include="engine\shaders\vulkan\vulkanIrradiance.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
     <None Include="engine\shaders\vulkan\vulkanPbr.glsl">
@@ -232,7 +235,7 @@
     <None Include="engine\shaders\vulkan\vulkanSSAO.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
-    <None Include="engine\shaders\vulkan\vulkanTestIrr.glsl">
+    <None Include="engine\shaders\vulkan\vulkanSkybox.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
   </ItemGroup>

@@ -219,7 +219,13 @@
     <ClInclude Include="src\Lamp\Core\Log.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Core\ThreadPool.h">
+      <Filter>src\Lamp\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h">
+      <Filter>src\Lamp\Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h">
       <Filter>src\Lamp\Core\Time</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h">
@@ -588,6 +594,9 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderComputePipeline.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
@@ -604,6 +613,9 @@
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h">
@@ -1902,11 +1914,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
-    <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
-    <ClInclude Include="src\Lamp\Rendering\SkyboxNew.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanRenderComputePipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1934,6 +1941,9 @@
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Log.cpp">
+      <Filter>src\Lamp\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Core\ThreadPool.cpp">
       <Filter>src\Lamp\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp">
@@ -2230,6 +2240,9 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderComputePipeline.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
@@ -2246,6 +2259,9 @@
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp">
@@ -2365,9 +2381,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\SkyboxNew.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanRenderComputePipeline.cpp" />
   </ItemGroup>
 </Project>

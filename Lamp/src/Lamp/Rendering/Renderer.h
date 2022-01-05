@@ -34,6 +34,12 @@ namespace Lamp
 		uint64_t totalFreedMemory = 0;
 	};
 
+	struct EnvironmentSettings
+	{
+		float environmentLod = 1.f;
+		float environmentMultiplier = 1.f;
+	};
+
 	class Renderer
 	{
 	public:
@@ -52,7 +58,6 @@ namespace Lamp
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
 		static void SubmitQuad();
-		static void SubmitCube();
 
 		static void DrawBuffer();
 
@@ -78,6 +83,8 @@ namespace Lamp
 			float hdrExposure = 1.f;
 			float gamma = 2.2f;
 			float ambianceMultiplier = 0.3f;
+
+			EnvironmentSettings environmentSettings;
 
 			Ref<Framebuffer> brdfFramebuffer;
 

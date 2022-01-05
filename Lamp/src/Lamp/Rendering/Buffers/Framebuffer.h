@@ -10,6 +10,13 @@ namespace Lamp
 		Depth
 	};
 
+	enum class ClearMode : uint32_t
+	{
+		Clear,
+		Load,
+		DontCare
+	};
+
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
@@ -32,8 +39,10 @@ namespace Lamp
 		ImageFormat textureFormat;
 		TextureFilter textureFiltering;
 		TextureWrap textureWrap;
+		ClearMode clearMode = ClearMode::Clear;
 
 		bool MultiSampled = false;
+		
 		glm::vec4 BorderColor = { 1.f, 1.f, 1.f, 1.f };
 		std::string name = "Attachment";
 	};

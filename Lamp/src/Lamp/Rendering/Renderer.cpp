@@ -69,12 +69,12 @@ namespace Lamp
 		MaterialLibrary::LoadMaterials();
 
 		GenerateKernel();
-		GenerateBRDF();
 
 		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(4, 4);
 		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
 
 		SetupBuffers();
+		GenerateBRDF();
 	}
 
 	void Renderer::Shutdown()
@@ -126,11 +126,6 @@ namespace Lamp
 	void Renderer::SubmitQuad()
 	{
 		s_renderer->SubmitQuad();
-	}
-
-	void Renderer::SubmitCube()
-	{
-		s_renderer->SubmitCube();
 	}
 
 	void Renderer::DrawBuffer()

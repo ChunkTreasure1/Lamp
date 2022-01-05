@@ -11,6 +11,7 @@
 #include "Lamp/AssetSystem/MeshImporter.h"
 #include "Lamp/Rendering/Cameras/CameraBase.h"
 #include "Lamp/Level/Level.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -120,7 +121,6 @@ namespace Lamp
 		renderPassBegin.pClearValues = clearColors.data();
 
 		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
-		pipeline->Bind(commandBuffer);
 	}
 
 	void VulkanRenderer::EndPass()
@@ -130,12 +130,18 @@ namespace Lamp
 		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()));
 		commandBuffer->End();
 
+		auto device = VulkanContext::GetCurrentDevice();
 		if (!m_rendererStorage->pipelineDescriptorSets.empty())
 		{
-			auto device = VulkanContext::GetCurrentDevice();
 			vkFreeDescriptorSets(device->GetHandle(), m_descriptorPool, m_rendererStorage->pipelineDescriptorSets.size(), m_rendererStorage->pipelineDescriptorSets.data());
 			m_rendererStorage->pipelineDescriptorSets.clear();
 		}
+
+		for (const auto& descriptor : m_rendererStorage->shaderDescriptorSets)
+		{
+			vkDestroyDescriptorPool(device->GetHandle(), descriptor.pool, nullptr);
+		}
+		m_rendererStorage->shaderDescriptorSets.clear();
 
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
@@ -150,6 +156,8 @@ namespace Lamp
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
+
+		vulkanPipeline->Bind(commandBuffer);
 
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
@@ -178,6 +186,8 @@ namespace Lamp
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
+		vulkanPipeline->Bind(commandBuffer);
+
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		SetupDescriptorsForQuadRendering();
@@ -190,15 +200,17 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::SubmitCube()
+	void VulkanRenderer::DrawSkybox()
 	{
-		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_skyboxPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		SetupDescriptorsForCubeRendering();
-	
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
-		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
+		vulkanPipeline->Bind(commandBuffer);
+
+		SetupDescriptorsForSkyboxRendering();
+
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &Renderer::GetSceneData()->environmentSettings);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[0].descriptorSets);
 
 		m_rendererStorage->cubeMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		m_rendererStorage->cubeMesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
@@ -208,6 +220,16 @@ namespace Lamp
 
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox)
+		{
+			if (!m_skyboxPipeline || m_skyboxPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
+			{
+				CreateSkyboxPipeline(m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer);
+			}
+
+			DrawSkybox();
+		}
+
 		switch (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType)
 		{
 			case DrawType::Buffer:
@@ -224,11 +246,6 @@ namespace Lamp
 
 				break;
 			}
-		}
-
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox)
-		{
-			g_pEnv->pLevel->GetSkybox()->Draw();
 		}
 	}
 
@@ -388,7 +405,7 @@ namespace Lamp
 					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
 				}
 			}
-		
+
 			auto& cubeTextureInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureCubeInputs;
 			for (const auto& textureInput : cubeTextureInputs)
 			{
@@ -415,7 +432,7 @@ namespace Lamp
 			}
 
 			//Set cubemaps and brdf
-			
+
 		}
 	}
 
@@ -518,128 +535,31 @@ namespace Lamp
 		}
 	}
 
-	void VulkanRenderer::SetupDescriptorsForCubeRendering()
+	void VulkanRenderer::SetupDescriptorsForSkyboxRendering()
 	{
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
-		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
-
-		auto allDescriptorLayouts = vulkanShader->GetAllDescriptorSetLayouts();
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_skyboxPipeline->GetSpecification().shader);
 		auto device = VulkanContext::GetCurrentDevice();
 
+		auto descriptorSet = vulkanShader->CreateDescriptorSets();
+		auto skybox = g_pEnv->pLevel->GetSkybox();
+		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(skybox->GetFilteredEnvironment());
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-		/////Allocate//////
-		VkDescriptorSetAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
-		allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
-		allocInfo.pSetLayouts = allDescriptorLayouts.data();
+		std::array<VkWriteDescriptorSet, 2> writeDescriptors;
 
-		auto& currentDescriptorSet = m_rendererStorage->pipelineDescriptorSets;
-		currentDescriptorSet.resize(allDescriptorLayouts.size());
+		writeDescriptors[0] = *vulkanShader->GetDescriptorSet("u_EnvironmentMap");
+		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[0].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
 
-		VkResult result = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, currentDescriptorSet.data());
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor sets!");
+		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_skyboxPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
+	
+		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
+		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[1].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-		/////Update/////
-		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
+		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 
-		if (!shaderDescriptorSets.empty())
-		{
-			//Uniform buffers
-			for (uint32_t set = 0; set < shaderDescriptorSets.size(); set++)
-			{
-				auto& uniformBuffers = shaderDescriptorSets[set].uniformBuffers;
-
-				for (const auto& uniformBuffer : uniformBuffers)
-				{
-					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffer.second->name);
-					writeDescriptor.dstSet = currentDescriptorSet[set];
-
-					auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(uniformBuffer.second->bindPoint, set, currentFrame));
-					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
-
-					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
-				}
-			}
-
-			//Framebuffer textures
-			auto& framebufferInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().framebufferInputs;
-			for (const auto& framebufferInput : framebufferInputs)
-			{
-				if (framebufferInput.attachment)
-				{
-					auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(framebufferInput.attachment);
-					auto& imageSamplers = shaderDescriptorSets[framebufferInput.set].imageSamplers;
-
-					auto imageSampler = imageSamplers.find(framebufferInput.binding);
-					if (imageSampler != imageSamplers.end())
-					{
-						auto descriptorWrite = shaderDescriptorSets[framebufferInput.set].writeDescriptorSets.at(imageSampler->second.name);
-						descriptorWrite.dstSet = currentDescriptorSet[framebufferInput.set];
-						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
-					}
-				}
-				else
-				{
-					LP_CORE_ERROR("VulkanRenderer: No attachment bound to binding {0} in pipeline {1}!", framebufferInput.binding, "");
-				}
-			}
-
-			//Other textures
-			auto& textureInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureInputs;
-			for (const auto& textureInput : textureInputs)
-			{
-				if (textureInput.texture)
-				{
-					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(textureInput.texture)->GetImage();
-					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
-
-					auto imageSampler = imageSamplers.find(textureInput.binding);
-					if (imageSampler != imageSamplers.end())
-					{
-						auto descriptorWrite = shaderDescriptorSets[textureInput.set].writeDescriptorSets.at(imageSampler->second.name);
-						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
-						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
-					}
-				}
-				else
-				{
-					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
-				}
-			}
-
-			auto& textureCubeInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureCubeInputs;
-			for (const auto& textureInput : textureCubeInputs)
-			{
-				if (textureInput.texture)
-				{
-					auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(textureInput.texture);
-					auto& imageSamplers = shaderDescriptorSets[textureInput.set].imageSamplers;
-
-					auto imageSampler = imageSamplers.find(textureInput.binding);
-					if (imageSampler != imageSamplers.end())
-					{
-						auto descriptorWrite = shaderDescriptorSets[textureInput.set].writeDescriptorSets.at(imageSampler->second.name);
-						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
-						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
-					}
-				}
-				else
-				{
-					LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
-				}
-			}
-		}
+		m_rendererStorage->shaderDescriptorSets.emplace_back(descriptorSet);
 	}
 
 	void VulkanRenderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
@@ -711,5 +631,29 @@ namespace Lamp
 			m_rendererStorage->cubeMesh = CreateRef<SubMesh>(positions, indices, 0);
 		}
 		//////////////
+	}
+
+	void VulkanRenderer::CreateSkyboxPipeline(Ref<Framebuffer> framebuffer)
+	{
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.depthWrite = false;
+		pipelineSpec.cullMode = CullMode::Back;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Cube;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		m_skyboxPipeline = RenderPipeline::Create(pipelineSpec);
 	}
 }

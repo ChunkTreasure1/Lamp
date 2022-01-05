@@ -189,7 +189,7 @@ namespace Lamp
 				attachmentDesc.flags = 0;
 				attachmentDesc.format = Utils::LampFormatToVulkanFormat(attachmentSpec.textureFormat);
 				attachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT;
-				attachmentDesc.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // add more OPs
+				attachmentDesc.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
 				attachmentDesc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				attachmentDesc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 				attachmentDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;

@@ -310,8 +310,8 @@ namespace Lamp
 
 		VkPipelineDepthStencilStateCreateInfo depthStencil{};
 		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		depthStencil.depthTestEnable = VK_TRUE;
-		depthStencil.depthWriteEnable = VK_TRUE;
+		depthStencil.depthTestEnable = m_specification.depthTest ? VK_TRUE : VK_FALSE;
+		depthStencil.depthWriteEnable = m_specification.depthWrite ? VK_TRUE : VK_FALSE;
 		depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 		depthStencil.depthBoundsTestEnable = VK_FALSE;
 		depthStencil.stencilTestEnable = VK_FALSE;
