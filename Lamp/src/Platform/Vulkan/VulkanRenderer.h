@@ -64,7 +64,6 @@ namespace Lamp
 		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
 		void SetupDescriptorsForSkyboxRendering();
 
-		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
 		void CreateBaseGeometry();
 		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);
 

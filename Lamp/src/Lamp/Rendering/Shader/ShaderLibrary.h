@@ -13,13 +13,13 @@ namespace Lamp
 		static void LoadShaders();
 		static void RecompileShaders();
 
-		static Ref<Shader>& GetShader(const std::string& name);
-		static std::vector<Ref<Shader>>& GetShaders() { return m_Shaders; }
+		static Ref<Shader> GetShader(const std::string& name);
+		static std::vector<Ref<Shader>>& GetShaders() { return m_shaders; }
 
 	private:
 		ShaderLibrary() = delete;
 
 	private:
-		static std::vector<Ref<Shader>> m_Shaders;
+		static std::vector<Ref<Shader>> m_shaders;
 	};
 }

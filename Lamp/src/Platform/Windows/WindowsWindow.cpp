@@ -9,6 +9,8 @@
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/MouseEvent.h"
 
+#include <stb/stb_image.h>
+
 namespace Lamp
 {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -68,6 +70,14 @@ namespace Lamp
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetIsVSync(m_Data.VSync);
+
+		{
+			GLFWimage icon;
+			int channels;
+			icon.pixels = stbi_load("engine/textures/icon.png", &icon.width, &icon.height, &channels, 4);
+			glfwSetWindowIcon(m_pWindow, 1, &icon);
+			stbi_image_free(icon.pixels);
+		}
 
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)

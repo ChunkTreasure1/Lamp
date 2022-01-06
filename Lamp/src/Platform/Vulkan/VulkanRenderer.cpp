@@ -234,11 +234,6 @@ namespace Lamp
 		{
 			case DrawType::Buffer:
 			{
-				if (m_rendererStorage->camera)
-				{
-					SortRenderBuffer(m_rendererStorage->camera->GetPosition(), buffer);
-				}
-
 				for (const auto& command : buffer.drawCalls)
 				{
 					SubmitMesh(command.transform, command.data, command.material, command.id);
@@ -552,7 +547,7 @@ namespace Lamp
 		writeDescriptors[0].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
 
 		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_skyboxPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
-	
+
 		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
 		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[1].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
@@ -560,20 +555,6 @@ namespace Lamp
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 
 		m_rendererStorage->shaderDescriptorSets.emplace_back(descriptorSet);
-	}
-
-	void VulkanRenderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
-	{
-		std::sort(buffer.drawCalls.begin(), buffer.drawCalls.end(), [&sortPoint](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
-			{
-				const glm::vec3& dPosOne = dataOne.transform[3];
-				const glm::vec3& dPosTwo = dataTwo.transform[3];
-
-				const float distOne = glm::exp2(sortPoint.x - dPosOne.x) + glm::exp2(sortPoint.y - dPosOne.y) + glm::exp2(sortPoint.z - dPosOne.z);
-				const float distTwo = glm::exp2(sortPoint.x - dPosTwo.x) + glm::exp2(sortPoint.y - dPosTwo.y) + glm::exp2(sortPoint.z - dPosTwo.z);
-
-				return distOne < distTwo;
-			});
 	}
 
 	void VulkanRenderer::CreateBaseGeometry()

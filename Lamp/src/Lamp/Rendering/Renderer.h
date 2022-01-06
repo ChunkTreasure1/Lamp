@@ -133,7 +133,9 @@ namespace Lamp
 		static void CreateShaderStorageBuffers();
 		static void UpdateBuffers(const Ref<CameraBase> camera);
 		static void UpdatePassBuffers(const Ref<RenderPipeline> pipeline);
+		static void DrawDirectionalShadows();
 		static void GenerateBRDF();
+		static void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
 
 	private:
 		struct RendererDefaults

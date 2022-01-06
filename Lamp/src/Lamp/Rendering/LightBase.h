@@ -10,6 +10,7 @@ namespace Lamp
 	static int s_lightId = 0;
 	class PointShadowBuffer;
 	class Framebuffer;
+	class RenderPipeline;
 
 	struct DirectionalLight
 	{
@@ -20,10 +21,13 @@ namespace Lamp
 		bool castShadows = true;
 
 		glm::mat4 transform = glm::mat4(1.f);
-		glm::mat4 viewProjection = glm::mat4(1.f);
+		glm::mat4 view = glm::mat4(1.f);
+		glm::mat4 projection = glm::mat4(1.f);
 
 		uint32_t Id = s_lightId++;
+
 		std::shared_ptr<Framebuffer> shadowBuffer;
+		std::shared_ptr<RenderPipeline> shadowPipeline;
 	};
 
 	struct PointLight

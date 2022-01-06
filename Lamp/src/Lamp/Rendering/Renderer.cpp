@@ -54,18 +54,7 @@ namespace Lamp
 		s_firstRenderBuffer.drawCalls.reserve(500);
 		s_secondRenderBuffer.drawCalls.reserve(500);
 
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanPbr.glsl"); //TODO: remove
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanQuad.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanDepthPrePass.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSSAO.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanComposite.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanBRDF.glsl");
-		
-		ShaderLibrary::AddShader("engine/shaders/vulkan/equirectangularToCubeMap.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/environmentMipFilter.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/environmentIrradiance.glsl");
-		ShaderLibrary::AddShader("engine/shaders/vulkan/vulkanSkybox.glsl");
-
+		ShaderLibrary::LoadShaders();
 		MaterialLibrary::LoadMaterials();
 
 		GenerateKernel();
@@ -90,7 +79,10 @@ namespace Lamp
 		s_statistics.totalDrawCalls = 0;
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
+		DrawDirectionalShadows();
+
 		UpdateBuffers(camera);
+		SortRenderBuffer(camera->GetPosition(), *s_submitBufferPointer);
 		s_renderer->Begin(camera);
 	}
 
@@ -246,6 +238,35 @@ namespace Lamp
 		}
 	}
 
+	void Renderer::DrawDirectionalShadows()
+	{
+		LP_PROFILE_FUNCTION();
+
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+		CameraDataBuffer cameraData = Renderer::GetSceneData()->cameraData;
+
+		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+		{
+			if (!light->castShadows)
+			{
+				continue;
+			}
+
+			CameraDataBuffer newCameraData = cameraData;
+			newCameraData.view = light->view;
+			newCameraData.projection = light->projection;
+			
+			auto ub = light->shadowPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame);
+			ub->SetData(&cameraData, sizeof(CameraDataBuffer));
+
+			BeginPass(light->shadowPipeline);
+
+			DrawBuffer();
+
+			EndPass();
+		}
+	}
+
 	void Renderer::GenerateBRDF()
 	{
 		ScopedTimer timer{ "Generate BRDFLUT" };
@@ -285,6 +306,20 @@ namespace Lamp
 		Renderer::BeginPass(renderPass);
 		Renderer::SubmitQuad();
 		Renderer::EndPass();
+	}
+
+	void Renderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
+	{
+		std::sort(buffer.drawCalls.begin(), buffer.drawCalls.end(), [&sortPoint](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distOne = glm::exp2(sortPoint.x - dPosOne.x) + glm::exp2(sortPoint.y - dPosOne.y) + glm::exp2(sortPoint.z - dPosOne.z);
+				const float distTwo = glm::exp2(sortPoint.x - dPosTwo.x) + glm::exp2(sortPoint.y - dPosTwo.y) + glm::exp2(sortPoint.z - dPosTwo.z);
+
+				return distOne < distTwo;
+			});
 	}
 
 	static float Lerp(float a, float b, float f)

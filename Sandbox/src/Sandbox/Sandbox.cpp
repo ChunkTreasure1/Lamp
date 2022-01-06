@@ -31,7 +31,7 @@ namespace Sandbox
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
-		m_pLevel->SetSkybox("assets/textures/frozen_waterfall.hdr");
+		m_pLevel->SetSkybox("assets/textures/brightForest.hdr");
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -515,7 +515,7 @@ namespace Sandbox
 			pipelineSpec.textureCubeInputs =
 			{
 				{ g_pEnv->pLevel->GetSkybox()->GetIrradiance() , 0, 8 },
-				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 9 } // should not be set heres
+				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 9 } // should not be set here
 			};
 
 			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
