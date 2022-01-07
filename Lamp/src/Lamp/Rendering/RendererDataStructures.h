@@ -7,6 +7,7 @@ namespace Lamp
 	struct MeshDataBuffer
 	{
 		alignas(16) glm::mat4 model;
+		alignas(16) glm::vec2 blendingUseBlending;
 	};
 
 	struct CameraDataBuffer
@@ -14,12 +15,7 @@ namespace Lamp
 		alignas(16) glm::mat4 view;
 		alignas(16) glm::mat4 projection;
 		alignas(16) glm::vec4 positionAndTanHalfFOV;
-	};
-
-	struct MaterialBuffer
-	{
-		alignas(16) glm::vec4 ambienceExposureBlendingGamma; //TODO: Some parameters should be moved to other buffer
-		alignas(16) bool useBlending;
+		alignas(16) glm::vec2 ambienceExposure;
 	};
 
 	struct ScreenDataBuffer

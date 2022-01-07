@@ -79,7 +79,7 @@ namespace Lamp
 		s_statistics.totalDrawCalls = 0;
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
-		DrawDirectionalShadows();
+		//DrawDirectionalShadows();
 
 		UpdateBuffers(camera);
 		SortRenderBuffer(camera->GetPosition(), *s_submitBufferPointer);
@@ -153,6 +153,8 @@ namespace Lamp
 			Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(camera);
 			float tanHalfFOV = glm::tan(glm::radians(perspectiveCamera->GetFieldOfView()) / 2.f);
 
+			s_pSceneData->cameraData.ambienceExposure.x = s_pSceneData->ambianceMultiplier;
+			s_pSceneData->cameraData.ambienceExposure.y = s_pSceneData->hdrExposure;
 			s_pSceneData->cameraData.positionAndTanHalfFOV = glm::vec4(camera->GetPosition(), tanHalfFOV);
 			s_pSceneData->cameraData.projection = camera->GetProjectionMatrix();
 			s_pSceneData->cameraData.view = camera->GetViewMatrix();
@@ -189,16 +191,6 @@ namespace Lamp
 		{
 			auto ub = s_pSceneData->uniformBufferSet->Get(2, 0, currentFrame);
 			ub->SetData(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer));
-		}
-
-		//Material
-		{
-			s_pSceneData->materialData.ambienceExposureBlendingGamma.x = s_pSceneData->ambianceMultiplier;
-			s_pSceneData->materialData.ambienceExposureBlendingGamma.y = s_pSceneData->hdrExposure;
-			s_pSceneData->materialData.ambienceExposureBlendingGamma.w = s_pSceneData->gamma;
-
-			auto ub = s_pSceneData->uniformBufferSet->Get(4, 0, currentFrame);
-			ub->SetData(&s_pSceneData->materialData, sizeof(MaterialBuffer));
 		}
 
 	#if 0
@@ -243,7 +235,6 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-		CameraDataBuffer cameraData = Renderer::GetSceneData()->cameraData;
 
 		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 		{
@@ -252,12 +243,9 @@ namespace Lamp
 				continue;
 			}
 
-			CameraDataBuffer newCameraData = cameraData;
-			newCameraData.view = light->view;
-			newCameraData.projection = light->projection;
 			
 			auto ub = light->shadowPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame);
-			ub->SetData(&cameraData, sizeof(CameraDataBuffer));
+			ub->SetData(&light->viewProjection, sizeof(glm::mat4));
 
 			BeginPass(light->shadowPipeline);
 
@@ -362,6 +350,5 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer), 2, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->materialData, sizeof(MaterialBuffer), 4, 0);
 	}
 }

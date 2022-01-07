@@ -20,6 +20,7 @@ layout (location = 4) in vec2 a_TexCoords;
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
+    vec2 blendingUseBlending;
 
 } u_MeshData;
 
@@ -28,6 +29,7 @@ layout (std140, binding = 0) uniform CameraDataBuffer
     mat4 view;
     mat4 projection;
     vec4 position;
+    vec2 ambienceExposure;
 
 } u_CameraData;
 
@@ -72,6 +74,7 @@ layout (std140, binding = 0) uniform CameraDataBuffer
     mat4 view;
     mat4 projection;
     vec4 position;
+    vec2 ambienceExposure;
 
 } u_CameraData;
 
@@ -82,12 +85,13 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 
 } u_DirectionalLights;
 
-layout (std140, binding = 4) uniform MaterialBuffer
+layout (push_constant) uniform MeshDataBuffer
 {
-    vec4 ambienceExposureBlendingGamma;
-    bool useBlending;
+    mat4 model;
+    vec2 blendingUseBlending;
 
-} u_MaterialBuffer;
+} u_MeshData;
+
 
 layout (location = 0) in Out
 {
@@ -223,13 +227,13 @@ void main()
 
     vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
     vec3 diffuse = irradiance * albedo;
-    vec3 ambient = (kD * diffuse + specular) * u_MaterialBuffer.ambienceExposureBlendingGamma.x;
+    vec3 ambient = (kD * diffuse + specular) * u_CameraData.ambienceExposure.x;
 
     vec3 color = ambient + lightAccumulation;
-    color *= u_MaterialBuffer.ambienceExposureBlendingGamma.y;
+    color *= u_CameraData.ambienceExposure.y;
 
     color = ACESTonemap(color);
 
-    float blendingVal = u_MaterialBuffer.useBlending ? albedoTex.a * u_MaterialBuffer.ambienceExposureBlendingGamma.z : 1.0;
+    float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedoTex.a * u_MeshData.blendingUseBlending.x : 1.0;
     o_Color = vec4(color, blendingVal);
 }

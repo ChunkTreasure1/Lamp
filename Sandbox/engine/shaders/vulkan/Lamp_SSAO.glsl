@@ -23,9 +23,10 @@ layout (location = 0) out Out
 
 layout(std140, binding = 0) uniform CameraDataBuffer
 {
-	mat4 view;
-	mat4 projection;
-	vec4 positionAndTanHalfFOV;
+    mat4 view;
+    mat4 projection;
+    vec4 positionAndTanHalfFOV;
+    vec2 ambienceExposure;
 
 } u_CameraData;
 
@@ -51,9 +52,10 @@ layout (location = 0) out float o_Color;
 
 layout(std140, binding = 0) uniform CameraDataBuffer
 {
-	mat4 view;
-	mat4 projection;
-	vec4 positionAndTanHalfFOV;
+    mat4 view;
+    mat4 projection;
+    vec4 position;
+    vec2 ambienceExposure;
 
 } u_CameraData;
 

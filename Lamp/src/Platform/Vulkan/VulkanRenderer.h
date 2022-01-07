@@ -22,8 +22,6 @@ namespace Lamp
 		Ref<CommandBuffer> swapchainCommandBuffer;
 		Ref<CommandBuffer> renderCommandBuffer;
 
-		MeshDataBuffer meshBuffer;
-
 		Ref<RenderPipeline> currentRenderPipeline;
 		Ref<CameraBase> camera;
 

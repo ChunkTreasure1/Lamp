@@ -163,16 +163,12 @@ namespace Lamp
 
 		SetupDescriptorsForMaterialRendering(material);
 
-		m_rendererStorage->meshBuffer.model = transform;
+		MeshDataBuffer meshData;
+		meshData.model = transform;
+		meshData.blendingUseBlending.x = material->GetBlendingMultiplier();
+		meshData.blendingUseBlending.y = static_cast<float>(material->GetUseBlending());
 
-		auto materialData = Renderer::GetSceneData()->materialData;
-		materialData.ambienceExposureBlendingGamma.z = material->GetBlendingMultiplier();
-		materialData.useBlending = material->GetUseBlending();
-
-		auto materialUB = vulkanPipeline->GetSpecification().uniformBufferSets->Get(4, 0, currentFrame);
-		materialUB->SetData(&materialData, sizeof(MaterialBuffer));
-
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_rendererStorage->meshBuffer);
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, vulkanMaterial->GetDescriptorSets()[currentFrame]);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
@@ -286,6 +282,8 @@ namespace Lamp
 
 		if (!shaderDescriptorSets.empty())
 		{
+			std::vector<VkWriteDescriptorSet> writeDescriptors;
+
 			//Uniform buffers
 			for (uint32_t set = 0; set < shaderDescriptorSets.size(); set++)
 			{
@@ -299,7 +297,7 @@ namespace Lamp
 					auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(uniformBuffer.second->bindPoint, set, currentFrame));
 					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
+					writeDescriptors.emplace_back(writeDescriptor);
 				}
 			}
 
@@ -339,8 +337,7 @@ namespace Lamp
 						descriptorWrite.dstSet = currentDescriptorSet[spec.set];
 						descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
 
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+						writeDescriptors.emplace_back(descriptorWrite);
 					}
 				}
 				else
@@ -365,8 +362,7 @@ namespace Lamp
 						descriptorWrite.dstSet = currentDescriptorSet[framebufferInput.set];
 						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
 
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+						writeDescriptors.emplace_back(descriptorWrite);
 					}
 				}
 				else
@@ -391,8 +387,7 @@ namespace Lamp
 						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
 						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
 
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+						writeDescriptors.emplace_back(descriptorWrite);
 					}
 				}
 				else
@@ -416,8 +411,7 @@ namespace Lamp
 						descriptorWrite.dstSet = currentDescriptorSet[textureInput.set];
 						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
 
-						auto device = VulkanContext::GetCurrentDevice();
-						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+						writeDescriptors.emplace_back(descriptorWrite);
 					}
 				}
 				else
@@ -426,8 +420,8 @@ namespace Lamp
 				}
 			}
 
-			//Set cubemaps and brdf
-
+			auto device = VulkanContext::GetCurrentDevice();
+			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 		}
 	}
 

@@ -190,7 +190,6 @@ namespace Lamp
 
 	void VulkanRenderPipeline::SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data)
 	{
-
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 		const auto& pushConstants = vulkanShader->GetPushConstantRanges();
 

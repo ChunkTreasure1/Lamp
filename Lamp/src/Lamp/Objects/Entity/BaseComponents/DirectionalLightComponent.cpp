@@ -58,7 +58,6 @@ namespace Lamp
 
 		glm::mat4 view = glm::lookAt(glm::vec3(0.f) - dir * m_size, glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 		glm::mat4 projection = glm::ortho(-m_size, m_size, -m_size, m_size, 0.1f, 100.f);
-		m_pDirectionalLight->view = view;
-		m_pDirectionalLight->projection = projection;
+		m_pDirectionalLight->viewProjection = projection * view;
 	}
 }

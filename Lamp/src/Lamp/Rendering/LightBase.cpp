@@ -17,10 +17,14 @@ namespace Lamp
 		bufferSpec.width = 4096;
 		bufferSpec.attachments =
 		{
+			ImageFormat::RGBA16F,
 			ImageFormat::DEPTH32F
 		};
 
 		shadowBuffer = Framebuffer::Create(bufferSpec);
+
+		Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
+		uniformBufferSet->Add(&viewProjection, sizeof(glm::mat4), 0, 0);
 
 		RenderPipelineSpecification pipelineSpec{};
 		pipelineSpec.framebuffer = shadowBuffer;
