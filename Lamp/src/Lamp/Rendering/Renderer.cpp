@@ -76,30 +76,31 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		s_statistics.totalDrawCalls = 0;
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
-		//DrawDirectionalShadows();
+		DrawDirectionalShadows();
 
 		UpdateBuffers(camera);
-		SortRenderBuffer(camera->GetPosition(), *s_submitBufferPointer);
+		SortRenderBuffer(camera->GetPosition(), *s_renderBufferPointer);
 		s_renderer->Begin(camera);
 	}
 
 	void Renderer::End()
 	{
+		LP_PROFILE_FUNCTION();
 		s_renderer->End();
-		s_submitBufferPointer->drawCalls.clear();
 	}
 
 	void Renderer::BeginPass(const Ref<RenderPipeline> pipeline)
 	{
+		LP_PROFILE_FUNCTION();
 		UpdatePassBuffers(pipeline);
 		s_renderer->BeginPass(pipeline);
 	}
 
 	void Renderer::EndPass()
 	{
+		LP_PROFILE_FUNCTION();
 		s_renderer->EndPass();
 	}
 
@@ -107,6 +108,7 @@ namespace Lamp
 	{
 		std::swap(s_submitBufferPointer, s_renderBufferPointer);
 		s_submitBufferPointer->drawCalls.clear();
+		s_statistics.totalDrawCalls = 0;
 	}
 
 	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
@@ -122,7 +124,8 @@ namespace Lamp
 
 	void Renderer::DrawBuffer()
 	{
-		s_renderer->DrawBuffer(*s_submitBufferPointer);
+		LP_PROFILE_FUNCTION();
+		s_renderer->DrawBuffer(*s_renderBufferPointer);
 	}
 
 	void Renderer::CreateUniformBuffers()
@@ -142,6 +145,8 @@ namespace Lamp
 
 	void Renderer::UpdateBuffers(const Ref<CameraBase> camera)
 	{
+		LP_PROFILE_FUNCTION();
+
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		//Set data in uniform buffers
@@ -217,6 +222,7 @@ namespace Lamp
 
 	void Renderer::UpdatePassBuffers(const Ref<RenderPipeline> pipeline)
 	{
+		LP_PROFILE_FUNCTION();
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		//Screen

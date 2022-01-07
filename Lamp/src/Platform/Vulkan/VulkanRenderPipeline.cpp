@@ -136,7 +136,7 @@ namespace Lamp
 
 		Invalidate();
 	}
-	   
+
 	void VulkanRenderPipeline::SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index)
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
@@ -175,7 +175,7 @@ namespace Lamp
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 		auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(image);
-		
+
 		//TODO: transition to right layout
 
 		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
@@ -260,7 +260,7 @@ namespace Lamp
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto shader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 		Ref<VulkanFramebuffer> framebuffer = nullptr;
-		
+
 		if (m_specification.framebuffer)
 		{
 			framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(m_specification.framebuffer);

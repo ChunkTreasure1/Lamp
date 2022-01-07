@@ -18,8 +18,8 @@ namespace Lamp
 
 	PointShadowBuffer::~PointShadowBuffer()
 	{
-		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(1, &m_TextureID);
+		//glDeleteFramebuffers(1, &m_RendererID);
+		//glDeleteTextures(1, &m_TextureID);
 	}
 
 	void PointShadowBuffer::Bind()

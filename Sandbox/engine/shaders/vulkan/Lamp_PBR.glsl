@@ -20,7 +20,6 @@ layout (location = 4) in vec2 a_TexCoords;
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
-    vec2 blendingUseBlending;
 
 } u_MeshData;
 
@@ -87,8 +86,7 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 
 layout (push_constant) uniform MeshDataBuffer
 {
-    mat4 model;
-    vec2 blendingUseBlending;
+    layout(offset = 64) vec2 blendingUseBlending;
 
 } u_MeshData;
 

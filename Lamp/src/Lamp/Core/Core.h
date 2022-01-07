@@ -5,9 +5,10 @@
 
 #define BIT(x) (1 << x)
 #define LP_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define LP_BIND_THREAD_FN(fn) std::bind(&fn, this)
 
 #ifdef LP_DEBUG
-	//#define LP_PROFILING
+	#define LP_PROFILING
 	#define LP_VALIDATION
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define LP_DEBUGBREAK() __debugbreak()

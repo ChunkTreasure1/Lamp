@@ -170,6 +170,7 @@
     <ClInclude Include="src\Lamp\Core\Game.h" />
     <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
+    <ClInclude Include="src\Lamp\Core\Thread.h" />
     <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
     <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
@@ -746,6 +747,7 @@
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
+    <ClCompile Include="src\Lamp\Core\Thread.cpp" />
     <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\UUID.cpp" />

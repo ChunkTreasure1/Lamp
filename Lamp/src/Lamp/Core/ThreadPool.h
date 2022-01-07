@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Lamp/Core/Thread.h"
+
 #include <vector>
 #include <thread>
 #include <string>
@@ -10,16 +12,18 @@ namespace Lamp
 	class ThreadPool
 	{
 	public:
+
 		ThreadPool();
 		~ThreadPool();
 
-		void AddThread(const std::string& name, Ref<std::thread> thread);
+		void AddThread(const std::string& name, Thread::ThreadFunction function);
 		void JoinAndRemove(const std::string& name);
 		void Join(const std::string& name);
+		void JoinAll();
 
-		const Ref<std::thread> Get(const std::string& name) const;
+		const Thread& Get(const std::string& name) const;
 
 	private:
-		std::unordered_map<std::string, Ref<std::thread>> m_threadPool;
+		std::unordered_map<std::string, Thread> m_threadPool;
 	};
 }

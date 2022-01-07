@@ -686,8 +686,10 @@ namespace Sandbox
 
 		if (UI::TreeNodeFramed("Application"))
 		{
-			ImGui::Text("Frame time: %f ms", Application::Get().GetFrameTime().GetFrameTime() * 1000);
-			ImGui::Text("Frames per second: %f FPS", Application::Get().GetFrameTime().GetFramesPerSecond());
+			ImGui::Text("Render time: %f ms", Application::Get().GetMainFrameTime().GetFrameTime() * 1000);
+			ImGui::Text("Update time: %f ms", Application::Get().GetUpdateFrameTime().GetFrameTime() * 1000);
+			
+			ImGui::Text("Frames per second: %f FPS", Application::Get().GetMainFrameTime().GetFramesPerSecond());
 
 			UI::TreeNodePop();
 		}
@@ -711,7 +713,7 @@ namespace Sandbox
 		{
 			const auto& stats = Renderer::GetStatistics();
 
-			ImGui::Text("Total draw calls: %d", stats.totalDrawCalls);
+			ImGui::Text("Total draw calls: %d", stats.totalDrawCalls.load());
 			ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
 			ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
 			ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));

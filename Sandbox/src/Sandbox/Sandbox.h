@@ -43,6 +43,7 @@ namespace Sandbox
 
 		void OnImGuiRender(Lamp::Timestep ts) override;
 		void OnEvent(Lamp::Event& e) override;
+		void OnRender() override; //TODO: fix so that it's not confused with app render event
 
 	private:
 		void CreateDockspace();

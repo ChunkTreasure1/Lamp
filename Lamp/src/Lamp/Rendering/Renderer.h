@@ -118,7 +118,7 @@ namespace Lamp
 
 		struct Statistics
 		{
-			uint32_t totalDrawCalls = 0;
+			std::atomic<uint32_t> totalDrawCalls = 0;
 			GPUMemoryStatistics memoryStatistics;
 		};
 

@@ -88,19 +88,6 @@ namespace Sandbox
 				}
 		}
 
-		Renderer::Begin(m_SandboxController->GetCameraController()->GetCamera());
-
-		for (const auto& pass : m_renderPasses)
-		{
-			Renderer::BeginPass(pass);
-
-			Renderer::DrawBuffer();
-
-			Renderer::EndPass();
-		}
-
-		Renderer::End();
-
 		{
 			LP_PROFILE_SCOPE("Sandbox3D::Update::UIUpdate");
 			m_PhysicsIcon.OnEvent(e);
@@ -182,6 +169,22 @@ namespace Sandbox
 		dispatcher.Dispatch<ImGuiBeginEvent>(LP_BIND_EVENT_FN(Sandbox::OnImGuiBegin));
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Sandbox::OnViewportSizeChanged));
 		dispatcher.Dispatch<EditorObjectSelectedEvent>(LP_BIND_EVENT_FN(Sandbox::OnObjectSelected));
+	}
+
+	void Sandbox::OnRender()
+	{
+		Renderer::Begin(m_SandboxController->GetCameraController()->GetCamera());
+
+		for (const auto& pass : m_renderPasses)
+		{
+			Renderer::BeginPass(pass);
+
+			Renderer::DrawBuffer();
+
+			Renderer::EndPass();
+		}
+
+		Renderer::End();
 	}
 
 	bool Sandbox::OnKeyPressed(KeyPressedEvent& e)
