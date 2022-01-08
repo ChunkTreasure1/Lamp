@@ -32,12 +32,19 @@ layout (std140, binding = 0) uniform CameraDataBuffer
 
 } u_CameraData;
 
+layout(std140, binding = 4) uniform DirectionalLightData
+{
+    mat4 directionalLightVPs[10];
+    uint count;
+} u_DirectionalLightVPs;
+
 layout (location = 0) out Out
 {
     vec3 fragPos;
     vec2 texCoord;
     vec3 normal;
     mat3 TBN;    
+    vec4 shadowCoords[10];
 } v_Out;
 
 void main()
@@ -52,6 +59,12 @@ void main()
     vec3 N = normalize(vec3(u_MeshData.model * vec4(a_Normal, 0.0)));
 
     v_Out.TBN = mat3(T, B, N);
+
+    //Shadow calculation
+    for (uint i = 0; i < u_DirectionalLightVPs.count; i++)
+    {
+        v_Out.shadowCoords[i] = u_DirectionalLightVPs[i] * u_Model * vec4(a_Position, 1.0);
+    }
 
     gl_Position = u_CameraData.projection * u_CameraData.view * u_MeshData.model * vec4(a_Position, 1.0);
 }
@@ -96,7 +109,8 @@ layout (location = 0) in Out
     vec3 fragPos;
     vec2 texCoord;
     vec3 normal;
-    mat3 TBN;    
+    mat3 TBN;
+    vec4 shadowCoords[10];    
 } v_In;
 
 layout (set = 0, binding = 5) uniform sampler2D u_Albedo;
@@ -106,6 +120,8 @@ layout (set = 0, binding = 7) uniform sampler2D u_MRO;
 layout (set = 0, binding = 8) uniform samplerCube u_IrradianceMap;
 layout (set = 0, binding = 9) uniform samplerCube u_PrefilterMap;
 layout (set = 0, binding = 10) uniform sampler2D u_BRDFLUT;
+
+layout (set = 0, binding = 11) uniform samplerCube u_DirShadowMaps;
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;
@@ -158,9 +174,36 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity)
 	return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
 }
 
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+float CalculateDirectionalShadow(uint lightIndex)
+{
+    vec3 pos = v_In.shadowCoords[lightIndex];
+
+    vec3 projCoords = pos.xyz / pos.w;
+    
+    float closestDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+    const float bias = 0.05;
+    float shadow = 0.0;
+
+    vec2 texelSize = 1.0 / textureSize(u_DirShadowMaps[lightIndex], 0);
+    for(int x = -1; x <= 1; x++)
+    {
+        for(int y = -1; y <= 1; y++)
+        {
+        
+        }        
+    }
+
+}
+
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, uint lightIndex)
 {
     float shadow = 0.0;
+    if (light.castShadows)
+    {
+        shadow = 
+    }
 
     vec3 lightDir = normalize(light.direction.xyz);
     vec3 H = normalize(dirToCamera + lightDir);
@@ -208,7 +251,7 @@ void main()
     vec3 baseReflectivity = mix(globalDielectricBase, albedo, metallic);
     vec3 lightAccumulation = vec3(0.0);
 
-    lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[0], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness);
+    lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[0], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness, 0); //TODO: Setup using multiple instead
 
     vec3 reflectVec = reflect(-dirToCamera, normal);
 

@@ -36,5 +36,9 @@ void main()
 #type fragment
 #version 440
 
+layout (location = 0) out vec4 o_Color;
+
 void main()
-{}
+{
+    o_Color = vec4(0.0, 0.0, 0.0, 1.0);
+}

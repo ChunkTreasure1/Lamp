@@ -20,8 +20,9 @@ namespace Lamp
 		float intensity = 1.f;
 		bool castShadows = true;
 
-		glm::mat4 transform = glm::mat4(1.f);
 		glm::mat4 viewProjection = glm::mat4(1.f);
+
+		glm::mat4 transform = glm::mat4(1.f);
 
 		uint32_t Id = s_lightId++;
 

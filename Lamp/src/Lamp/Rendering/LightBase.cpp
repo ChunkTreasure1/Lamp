@@ -33,7 +33,7 @@ namespace Lamp
 		pipelineSpec.cullMode = CullMode::Front;
 		pipelineSpec.topology = Topology::TriangleList;
 		pipelineSpec.drawType = DrawType::Buffer;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.uniformBufferSets = uniformBufferSet;
 		pipelineSpec.vertexLayout =
 		{
 			{ ElementType::Float3, "a_Position" },

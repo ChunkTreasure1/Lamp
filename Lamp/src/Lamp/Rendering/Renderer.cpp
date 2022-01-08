@@ -198,20 +198,22 @@ namespace Lamp
 			ub->SetData(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer));
 		}
 
-	#if 0
 
 		//Light data
 		{
 			uint32_t index = 0;
 			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
 			{
-				s_pSceneData->directionalLightVPData.viewProjections[index] = light->viewProjection;
+				s_pSceneData->directionalLightVPData.directionalLightVPs[index] = light->viewProjection;
 				index++;
 			}
-			s_pSceneData->directionalLightVPData.lightCount = index;
-			s_pSceneData->directionalLightVPBuffer->SetData(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPs));
+			s_pSceneData->directionalLightVPData.count = index;
+
+			auto ub = s_pSceneData->uniformBufferSet->Get(4, 0, currentFrame);
+			ub->SetData(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPBuffer));
 		}
 
+	#if 0
 		s_pSceneData->screenGroupX = ((uint32_t)s_pSceneData->bufferSize.x + ((uint32_t)s_pSceneData->bufferSize.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenGroupY = ((uint32_t)s_pSceneData->bufferSize.y + ((uint32_t)s_pSceneData->bufferSize.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
@@ -356,5 +358,6 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer), 2, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
 	}
 }

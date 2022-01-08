@@ -76,6 +76,7 @@ namespace Lamp
 
 		VkPhysicalDeviceFeatures enabledFeatures{};
 		enabledFeatures.samplerAnisotropy = VK_TRUE;
+		enabledFeatures.pipelineStatisticsQuery = VK_TRUE;
 
 		m_device = VulkanDevice::Create(m_physicalDevice, enabledFeatures);
 

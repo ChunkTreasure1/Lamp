@@ -99,6 +99,7 @@ namespace Lamp
 			SSAODataBuffer ssaoData;
 			CameraDataBuffer cameraData;
 			ScreenDataBuffer screenData;
+			DirectionalLightVPBuffer directionalLightVPData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			//////////////////////////

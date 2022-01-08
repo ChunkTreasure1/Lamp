@@ -99,6 +99,7 @@ namespace Lamp
 
 		auto commandBuffer = pipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 		commandBuffer->Begin();
+		pipeline->Bind(commandBuffer);
 
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
@@ -157,8 +158,6 @@ namespace Lamp
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
 
-		vulkanPipeline->Bind(commandBuffer);
-
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		SetupDescriptorsForMaterialRendering(material);
@@ -182,8 +181,6 @@ namespace Lamp
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		vulkanPipeline->Bind(commandBuffer);
-
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		SetupDescriptorsForQuadRendering();
@@ -200,8 +197,6 @@ namespace Lamp
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_skyboxPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
-
-		vulkanPipeline->Bind(commandBuffer);
 
 		SetupDescriptorsForSkyboxRendering();
 

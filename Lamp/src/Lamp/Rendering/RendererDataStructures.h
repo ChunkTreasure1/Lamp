@@ -37,6 +37,12 @@ namespace Lamp
 		alignas(16) uint32_t lightCount = 0;
 	};
 
+	struct DirectionalLightVPBuffer
+	{
+		alignas(16) glm::mat4 directionalLightVPs[10];
+		alignas(16) uint32_t count;
+	};
+
 	struct SSAODataBuffer
 	{
 		alignas(16) glm::vec4 kernelSamples[256];
