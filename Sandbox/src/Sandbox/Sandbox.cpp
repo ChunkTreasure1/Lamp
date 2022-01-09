@@ -512,13 +512,13 @@ namespace Sandbox
 
 			pipelineSpec.framebufferInputs =
 			{
-				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 10 }
+				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
 			pipelineSpec.textureCubeInputs =
 			{
-				{ g_pEnv->pLevel->GetSkybox()->GetIrradiance() , 0, 8 },
-				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 9 } // should not be set here
+				{ g_pEnv->pLevel->GetSkybox()->GetIrradiance() , 0, 5 },
+				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 6 } // should not be set here
 			};
 
 			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));

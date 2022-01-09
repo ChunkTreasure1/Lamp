@@ -29,6 +29,8 @@ namespace Lamp
 		Ref<SubMesh> cubeMesh;
 
 		std::vector<VkDescriptorSet> pipelineDescriptorSets;
+		std::vector<VkDescriptorSet> currentMeshDescriptorSets;
+
 		std::vector<VulkanShader::ShaderMaterialDescriptorSet> shaderDescriptorSets;
 	};
 
@@ -61,6 +63,9 @@ namespace Lamp
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
 		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
 		void SetupDescriptorsForSkyboxRendering();
+
+		void FreePipelineDescriptors();
+		void UpdatePerPassDescriptors();
 
 		void CreateBaseGeometry();
 		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);

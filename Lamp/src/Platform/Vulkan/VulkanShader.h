@@ -75,11 +75,13 @@ namespace Lamp
 		inline const std::vector<ShaderDescriptorSet>& GetDescriptorSets() { return m_shaderDescriptorSets; }
 		inline const std::vector<PushConstantRange>& GetPushConstantRanges() { return m_pushConstantRanges; }
 		inline const std::unordered_map<std::string, ShaderResourceDeclaration>& GetResources() { return m_resources; }
+		inline const uint32_t GetDescriptorSetLayoutCount() { return m_descriptorSetLayouts.size(); }
 
 		ShaderMaterialDescriptorSet CreateDescriptorSets(uint32_t set = 0);
 		ShaderMaterialDescriptorSet CreateDescriptorSets(uint32_t set, uint32_t count);
 		const VkWriteDescriptorSet* GetDescriptorSet(const std::string& name, uint32_t set = 0) const;
 
+		VkDescriptorSetLayout GetDescriptorSetLayout(uint32_t set);
 		std::vector<VkDescriptorSetLayout> GetAllDescriptorSetLayouts();
 		std::vector<VkPushConstantRange> GetAllPushConstantRanges();
 

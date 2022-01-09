@@ -39,7 +39,7 @@ namespace Lamp
 	void MaterialLibrary::LoadMaterials()
 	{
 		std::vector<std::string> paths;
-		FileSystem::GetAllFilesOfType(paths, ".mtl", "assets");
+		FileSystem::GetAllFilesOfType(".mtl", "assets", paths);
 
 		for (std::string& path : paths)
 		{
@@ -47,7 +47,7 @@ namespace Lamp
 		}
 
 		paths.clear();
-		FileSystem::GetAllFilesOfType(paths, ".mtl", "engine");
+		FileSystem::GetAllFilesOfType(".mtl", "engine", paths);
 		for (std::string& path : paths)
 		{
 			LoadMaterial(path);

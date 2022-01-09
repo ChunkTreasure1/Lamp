@@ -283,6 +283,13 @@ namespace Lamp
 		return &m_shaderDescriptorSets.at(set).writeDescriptorSets.at(name);
 	}
 
+	VkDescriptorSetLayout VulkanShader::GetDescriptorSetLayout(uint32_t set)
+	{
+		LP_CORE_ASSERT(set < m_descriptorSetLayouts.size() && set >= 0, "Index out of bounds!");
+
+		return m_descriptorSetLayouts[set];
+	}
+
 	std::vector<VkDescriptorSetLayout> VulkanShader::GetAllDescriptorSetLayouts()
 	{
 		std::vector<VkDescriptorSetLayout> result;
@@ -657,8 +664,7 @@ namespace Lamp
 			imageSampler.name = name;
 			imageSampler.arraySize = arraySize;
 
-			//TODO: fix shader resource declaration
-			m_resources[name] = ShaderResourceDeclaration(name, binding, 1);
+			m_resources[name] = ShaderResourceDeclaration(name, binding, descriptorSet);
 		}
 
 		LP_CORE_INFO("Vulkan Shader - Reflect: Storage samplers");
@@ -684,8 +690,7 @@ namespace Lamp
 			imageSampler.name = name;
 			imageSampler.shaderStage = stageFlags;
 
-			//TODO: fix shader resource declaration
-			m_resources[name] = ShaderResourceDeclaration(name, binding, 1);
+			m_resources[name] = ShaderResourceDeclaration(name, binding, descriptorSet);
 		}
 
 		if (m_shaderDescriptorSets.size() > 0)

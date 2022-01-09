@@ -86,7 +86,7 @@ namespace Lamp
 		m_textureSpecifications.clear();
 		for (const auto& resource : m_shader->GetResources())
 		{
-			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set - 1, resource.second.binding, Renderer::GetDefaultTexture() });
+			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set, resource.second.binding, Renderer::GetDefaultTexture() });
 		}
 	}
 

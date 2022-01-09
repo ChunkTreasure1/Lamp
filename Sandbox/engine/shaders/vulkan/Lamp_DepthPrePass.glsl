@@ -62,7 +62,7 @@ layout (location = 0) in Out
 	mat3 TBN;
 } v_In;
 
-layout (set = 0, binding = 5) uniform sampler2D u_Normal;
+layout (set = 1, binding = 9) uniform sampler2D u_Normal;
 
 vec3 CalculateNormal()
 {
