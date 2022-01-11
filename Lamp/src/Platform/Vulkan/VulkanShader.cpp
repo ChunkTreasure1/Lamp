@@ -12,6 +12,7 @@ namespace Lamp
 {
 	namespace Utils
 	{
+
 		static std::string ReadFromFile(const std::filesystem::path& path)
 		{
 			std::string result;

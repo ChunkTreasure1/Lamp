@@ -30,6 +30,7 @@
 
 #define PER_PASS_DESCRIPTOR_SET 0
 #define PER_MESH_DESCRIPTOR_SET 1
+#define MAX_DIRECTIONAL_LIGHT_SHADOWS 10
 
 namespace Lamp
 {
@@ -126,6 +127,8 @@ namespace Lamp
 		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
 
 		UpdatePerPassDescriptors();
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(pipeline);
+		vulkanPipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
 	}
 
 	void VulkanRenderer::EndPass()
@@ -163,7 +166,7 @@ namespace Lamp
 		meshData.blendingUseBlending.y = static_cast<float>(material->GetUseBlending());
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
-		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
+		vulkanPipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->currentMeshDescriptorSets[PER_MESH_DESCRIPTOR_SET], PER_MESH_DESCRIPTOR_SET);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
@@ -493,6 +496,46 @@ namespace Lamp
 			writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
 			writeDescriptors.emplace_back(writeDescriptor);
+		}
+
+		std::vector<VkDescriptorImageInfo> descriptorInfos;
+		descriptorInfos.reserve(10);
+
+		//Directional lights
+		{
+			auto it = shaderDescriptorSet.writeDescriptorSets.find("u_DirShadowMaps");
+			if (it != shaderDescriptorSet.writeDescriptorSets.end())
+			{
+				auto writeDescriptor = it->second;
+
+				writeDescriptor.dstSet = currentDescriptorSet;
+
+				uint32_t i = 0;
+				for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+				{
+					if (!light->castShadows)
+					{
+						continue;
+					}
+
+					if (i >= MAX_DIRECTIONAL_LIGHT_SHADOWS)
+					{
+						break;
+					}
+
+					descriptorInfos.emplace_back(std::reinterpret_pointer_cast<VulkanImage2D>(light->shadowBuffer->GetDepthAttachment())->GetDescriptorInfo());
+
+					i++;
+				}
+				
+				writeDescriptor.descriptorCount = descriptorInfos.size();
+				writeDescriptor.pImageInfo = descriptorInfos.data();
+
+				if (writeDescriptor.descriptorCount > 0)
+				{
+					writeDescriptors.emplace_back(writeDescriptor);
+				}
+			}
 		}
 
 		//Framebuffer textures

@@ -118,12 +118,13 @@ layout (set = 0, binding = 5) uniform samplerCube u_IrradianceMap;
 layout (set = 0, binding = 6) uniform samplerCube u_PrefilterMap;
 layout (set = 0, binding = 7) uniform sampler2D u_BRDFLUT;
 
+layout (set = 0, binding = 11) uniform sampler2D u_DirShadowMaps[10];
+
 //Per object
 layout (set = 1, binding = 8) uniform sampler2D u_Albedo;
 layout (set = 1, binding = 9) uniform sampler2D u_Normal;
 layout (set = 1, binding = 10) uniform sampler2D u_MRO;
 
-//layout (set = 0, binding = 11) uniform sampler2D u_DirShadowMaps[10];
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;
@@ -176,45 +177,46 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity)
 	return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
 }
 
-// float CalculateDirectionalShadow(uint lightIndex)
-// {
-//     vec4 pos = v_In.shadowCoords[lightIndex];
+float CalculateDirectionalShadow(uint lightIndex)
+{
+    vec4 pos = v_In.shadowCoords[lightIndex];
 
-//     vec3 projCoords = pos.xyz / pos.w;
+    vec3 projCoords = pos.xyz / pos.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float closestDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+    const float bias = 0.05;
+    float shadow = 0.0;
+
+    vec2 texelSize = 1.0 / textureSize(u_DirShadowMaps[lightIndex], 0);
+    for(int x = -1; x <= 1; x++)
+    {
+        for(int y = -1; y <= 1; y++)
+        {
+            float pcfDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
+        }        
+    }
+
+    shadow /= 9.0;
+
+    if (projCoords.z > 1.0)
+    {
+        shadow = 0.0;
+    }
     
-//     float closestDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy).r;
-//     float currentDepth = projCoords.z;
-
-//     const float bias = 0.05;
-//     float shadow = 0.0;
-
-//     vec2 texelSize = 1.0 / textureSize(u_DirShadowMaps[lightIndex], 0);
-//     for(int x = -1; x <= 1; x++)
-//     {
-//         for(int y = -1; y <= 1; y++)
-//         {
-//             float pcfDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy + vec2(x, y) * texelSize).r;
-//             shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
-//         }        
-//     }
-
-//     shadow /= 9.0;
-
-//     if (projCoords.z > 1.0)
-//     {
-//         shadow = 0.0;
-//     }
-    
-//     return shadow;
-// }
+    return shadow;
+}
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness, uint lightIndex)
 {
     float shadow = 0.0;
-    // if (light.castShadows)
-    // {
-    //     shadow = CalculateDirectionalShadow(lightIndex);
-    // }
+    if (light.castShadows)
+    {
+        shadow = CalculateDirectionalShadow(lightIndex);
+    }
 
     vec3 lightDir = normalize(light.direction.xyz);
     vec3 H = normalize(dirToCamera + lightDir);

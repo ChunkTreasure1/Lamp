@@ -17,8 +17,8 @@ namespace Lamp
 		bufferSpec.width = 4096;
 		bufferSpec.attachments =
 		{
-			ImageFormat::RGBA16F,
-			ImageFormat::DEPTH32F
+			ImageFormat::RGBA,
+			{ ImageFormat::DEPTH32F, TextureFilter::Linear, TextureWrap::Clamp }
 		};
 
 		shadowBuffer = Framebuffer::Create(bufferSpec);

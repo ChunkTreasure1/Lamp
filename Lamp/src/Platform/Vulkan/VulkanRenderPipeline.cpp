@@ -367,9 +367,15 @@ namespace Lamp
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline!");
 	}
 
-	void VulkanRenderPipeline::BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::vector<VkDescriptorSet>& descriptorSets) const
+	void VulkanRenderPipeline::BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::vector<VkDescriptorSet>& descriptorSets, uint32_t startSet) const
 	{
 		auto vulkanCommanBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
-		vkCmdBindDescriptorSets(vulkanCommanBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+		vkCmdBindDescriptorSets(vulkanCommanBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, startSet, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+	}
+
+	void VulkanRenderPipeline::BindDescriptorSet(Ref<CommandBuffer> commandBuffer, VkDescriptorSet descriptorSet, uint32_t set) const
+	{
+		auto vulkanCommandBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
+		vkCmdBindDescriptorSets(vulkanCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, set, 1, &descriptorSet, 0, nullptr);
 	}
 }

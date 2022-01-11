@@ -78,7 +78,7 @@ namespace Lamp
 
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 
-		//DrawDirectionalShadows();
+		DrawDirectionalShadows();
 
 		UpdateBuffers(camera);
 		SortRenderBuffer(camera->GetPosition(), *s_renderBufferPointer);
