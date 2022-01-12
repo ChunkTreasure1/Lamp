@@ -30,7 +30,7 @@ namespace Lamp
 		pipelineSpec.framebuffer = shadowBuffer;
 		pipelineSpec.shader = ShaderLibrary::GetShader("directionalShadow");
 		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.cullMode = CullMode::Back;
 		pipelineSpec.topology = Topology::TriangleList;
 		pipelineSpec.drawType = DrawType::Buffer;
 		pipelineSpec.uniformBufferSets = uniformBufferSet;

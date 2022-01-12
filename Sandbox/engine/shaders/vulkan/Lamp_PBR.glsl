@@ -118,7 +118,7 @@ layout (set = 0, binding = 5) uniform samplerCube u_IrradianceMap;
 layout (set = 0, binding = 6) uniform samplerCube u_PrefilterMap;
 layout (set = 0, binding = 7) uniform sampler2D u_BRDFLUT;
 
-layout (set = 0, binding = 11) uniform sampler2D u_DirShadowMaps[10];
+layout (set = 0, binding = 11) uniform sampler2D u_DirShadowMaps[1];
 
 //Per object
 layout (set = 1, binding = 8) uniform sampler2D u_Albedo;
@@ -182,7 +182,7 @@ float CalculateDirectionalShadow(uint lightIndex)
     vec4 pos = v_In.shadowCoords[lightIndex];
 
     vec3 projCoords = pos.xyz / pos.w;
-    projCoords = projCoords * 0.5 + 0.5;
+    projCoords.xy = projCoords.xy * 0.5 + 0.5;
 
     float closestDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy).r;
     float currentDepth = projCoords.z;
@@ -238,7 +238,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 no
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
+    vec3 lightStrength = ((shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
     return lightStrength;
 }
 

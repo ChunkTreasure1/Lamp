@@ -159,6 +159,7 @@ namespace Lamp
 		vulkanPipeline->Bind(commandBuffer);
 
 		SetupDescriptorsForMaterialRendering(material);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
 
 		MeshDataBuffer meshData;
 		meshData.model = transform;
@@ -166,7 +167,6 @@ namespace Lamp
 		meshData.blendingUseBlending.y = static_cast<float>(material->GetUseBlending());
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
-		vulkanPipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->currentMeshDescriptorSets[PER_MESH_DESCRIPTOR_SET], PER_MESH_DESCRIPTOR_SET);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);

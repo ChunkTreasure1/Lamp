@@ -29,6 +29,8 @@ namespace Lamp
 		void SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data);
 		const RenderPipelineSpecification& GetSpecification() const override { return m_specification; }
 
+		inline const uint32_t GetDescriptorSetCount() const { return m_descriptorSets.at(0).size(); }
+
 	private:
 		void CreateDescriptorSets();
 		void SetupUniformBuffers();
