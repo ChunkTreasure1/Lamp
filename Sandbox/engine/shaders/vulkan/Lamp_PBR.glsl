@@ -183,6 +183,7 @@ float CalculateDirectionalShadow(uint lightIndex)
 
     vec3 projCoords = pos.xyz / pos.w;
     projCoords.xy = projCoords.xy * 0.5 + 0.5;
+    projCoords.y = -projCoords.y;
 
     float closestDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy).r;
     float currentDepth = projCoords.z;
@@ -238,7 +239,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 no
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-    vec3 lightStrength = ((shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
+    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
     return lightStrength;
 }
 
