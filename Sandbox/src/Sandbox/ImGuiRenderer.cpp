@@ -46,26 +46,28 @@ namespace Sandbox
 		ImGui::Begin("Perspective");
 		{
 			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
-			m_PerspectiveFocused = ImGui::IsWindowFocused();
+			m_perspectiveHover = ImGui::IsWindowHovered();
+			m_sandboxController->GetCameraController()->SetControlsEnabled(m_perspectiveHover);
+			m_perspectiveFocused = ImGui::IsWindowFocused();
+
+			m_sandboxController->GetCameraController()->SetActive(m_perspectiveHover);
 
 			//Viewport bounds
 			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
 			auto viewportOffset = ImGui::GetWindowPos();
 
-			m_PerspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-			m_PerspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+			m_perspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+			m_perspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
-			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
+			if (m_perspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
-				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
+				m_perspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 				
-				m_viewportFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
-				m_depthPrePassFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
-				m_ssaoMainFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
+				m_viewportFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
+				m_depthPrePassFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
+				m_ssaoMainFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
 				//m_geometryFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
@@ -73,7 +75,7 @@ namespace Sandbox
 				g_pEnv->pLevel->OnEvent(e);
 			}
 
-			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
+			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
@@ -103,7 +105,7 @@ namespace Sandbox
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
 
-			ImGuizmo::SetRect(m_PerspectiveBounds[0].x, m_PerspectiveBounds[0].y, m_PerspectiveBounds[1].x - m_PerspectiveBounds[0].x, m_PerspectiveBounds[1].y - m_PerspectiveBounds[0].y);
+			ImGuizmo::SetRect(m_perspectiveBounds[0].x, m_perspectiveBounds[0].y, m_perspectiveBounds[1].x - m_perspectiveBounds[0].x, m_perspectiveBounds[1].y - m_perspectiveBounds[0].y);
 
 			bool snap = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_CONTROL);
 			bool duplicate = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_SHIFT);
@@ -117,8 +119,8 @@ namespace Sandbox
 			float snapValues[3] = { snapValue, snapValue, snapValue };
 
 			ImGuizmo::Manipulate(
-				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
-				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
+				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
+				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
 				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 

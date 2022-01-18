@@ -25,6 +25,7 @@
 #include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanTextureCube.h"
 #include "Platform/Vulkan/VulkanUtility.h"
+#include "Platform/Vulkan/VulkanRenderComputePipeline.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -182,7 +183,6 @@ namespace Lamp
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		vulkanPipeline->Bind(commandBuffer);
-
 		SetupDescriptorsForQuadRendering();
 
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
@@ -235,6 +235,17 @@ namespace Lamp
 				break;
 			}
 		}
+	}
+
+	Ref<RenderComputePipeline> VulkanRenderer::CreateLightCullingPipeline()
+	{
+		Ref<Shader> lightCullingShader = ShaderLibrary::GetShader("lightCulling");
+		Ref<VulkanRenderComputePipeline> lightCullingPipeline = std::reinterpret_pointer_cast<VulkanRenderComputePipeline>(RenderComputePipeline::Create(lightCullingShader));
+	
+		Ref<VulkanShader> vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(lightCullingShader);
+
+		auto descriptorSet = vulkanShader->CreateDescriptorSets();
+		std::array<VkWriteDescriptorSet, 5> writeDescriptors;
 	}
 
 	void VulkanRenderer::SetupDescriptorsForMaterialRendering(Ref<Material> material)

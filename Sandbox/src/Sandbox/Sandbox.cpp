@@ -36,7 +36,7 @@ namespace Sandbox
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
 		////Make sure the sandbox controller is created after level has been loaded
-		m_SandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
+		m_sandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
 
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
@@ -62,7 +62,7 @@ namespace Sandbox
 	{
 		LP_PROFILE_FUNCTION();
 
-		m_SandboxController->Update(e.GetTimestep());
+		m_sandboxController->Update(e.GetTimestep());
 
 		GetInput();
 
@@ -72,7 +72,7 @@ namespace Sandbox
 				{
 					case SceneState::Edit:
 					{
-						g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
+						g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
 						break;
 					}
 					case SceneState::Play:
@@ -82,7 +82,7 @@ namespace Sandbox
 					}
 					case SceneState::Simulating:
 					{
-						g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_SandboxController->GetCameraController()->GetCamera());
+						g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
 						break;
 					}
 				}
@@ -160,7 +160,7 @@ namespace Sandbox
 			}
 		}
 
-		m_SandboxController->OnEvent(e);
+		m_sandboxController->OnEvent(e);
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LP_BIND_EVENT_FN(Sandbox::OnMouseMoved));
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Sandbox::OnUpdate));
@@ -173,7 +173,7 @@ namespace Sandbox
 
 	void Sandbox::OnRender()
 	{
-		Renderer::Begin(m_SandboxController->GetCameraController()->GetCamera());
+		Renderer::Begin(m_sandboxController->GetCameraController()->GetCamera());
 
 		for (const auto& pass : m_renderPasses)
 		{
@@ -296,7 +296,7 @@ namespace Sandbox
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 
-		m_SandboxController->GetCameraController()->UpdateProjection(width, height);
+		m_sandboxController->GetCameraController()->UpdateProjection(width, height);
 
 		return false;
 	}
@@ -324,7 +324,7 @@ namespace Sandbox
 			m_MousePressed = false;
 		}
 
-		if (m_PerspectiveFocused)
+		if (m_perspectiveFocused)
 		{
 			if (Input::IsKeyPressed(LP_KEY_1))
 			{

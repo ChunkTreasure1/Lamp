@@ -523,7 +523,7 @@ namespace Lamp
 		LP_CORE_INFO("Vulkan Shader - Reflect: {0}, {1}", Utils::StringFromShaderStage(stageFlags), Path.string());
 
 		LP_CORE_INFO("Vulkan Shader - Reflect: Uniform buffers");
-		for (const auto& resource : resources.uniform_buffers)
+		for (const auto& resource : resources.uniform_buffers) 
 		{
 			const auto& name = resource.name;
 			auto& bufferType = compiler.get_type(resource.base_type_id);

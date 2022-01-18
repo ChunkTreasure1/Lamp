@@ -104,7 +104,7 @@ namespace Lamp
 
 	Ref<VulkanContext> VulkanContext::Get()
 	{
-		return std::dynamic_pointer_cast<VulkanContext>(Application::Get().GetWindow().GetGraphicsContext());
+		return std::reinterpret_pointer_cast<VulkanContext>(Application::Get().GetWindow().GetGraphicsContext());
 	}
 
 	void VulkanContext::CreateInstance()

@@ -54,10 +54,11 @@ namespace Lamp
 		void SubmitQuad() override;
 
 		void DrawSkybox();
-
 		void DrawBuffer(RenderBuffer& buffer) override;
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
+		
+		Ref<RenderComputePipeline> CreateLightCullingPipeline();
 
 	private:
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);

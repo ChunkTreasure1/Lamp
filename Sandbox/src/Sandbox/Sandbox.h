@@ -85,7 +85,7 @@ namespace Sandbox
 
 	private:
 		Scope<Game> m_pGame;
-		Ref<SandboxController> m_SandboxController;
+		Ref<SandboxController> m_sandboxController;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 
 		Ref<Lamp::Level> m_pLevel = nullptr;
@@ -98,8 +98,8 @@ namespace Sandbox
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };
 		glm::vec4 m_ClearColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
-		glm::vec2 m_PerspectiveSize = glm::vec2(0.f);
-		glm::vec2 m_PerspectiveBounds[2];
+		glm::vec2 m_perspectiveSize = glm::vec2(0.f);
+		glm::vec2 m_perspectiveBounds[2];
 		ImGuiID m_DockspaceID;
 
 		float m_assetManagerTime = 0.f;
@@ -116,7 +116,7 @@ namespace Sandbox
 
 		//Perspective
 		bool m_PerspectiveOpen = true;
-		bool m_PerspectiveFocused = false;
+		bool m_perspectiveFocused = false;
 		bool m_RightMousePressed = false;
 
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
@@ -128,7 +128,7 @@ namespace Sandbox
 
 		//Inspector
 		bool m_MousePressed = false;
-		bool m_PerspectiveHover = false;
+		bool m_perspectiveHover = false;
 
 		Lamp::Object* m_pSelectedObject = nullptr;
 		bool m_InspectiorOpen = true;

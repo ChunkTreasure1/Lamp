@@ -12,7 +12,7 @@ namespace Lamp
 	{
 	public:
 		CameraControllerBase()
-			: m_AspectRatio(16.f/9.f)
+			: m_aspectRatio(16.f/9.f)
 		{}
 		virtual ~CameraControllerBase() {}
 
@@ -24,21 +24,21 @@ namespace Lamp
 		//Getting
 		Ref<CameraBase>& GetCamera() { return m_Camera; }
 		const Ref<CameraBase>& GetCamera() const { return m_Camera; }
-		inline const glm::vec3& GetPosition() { return m_Position; }
+		inline const glm::vec3& GetPosition() { return m_position; }
 
 		//Setting
-		inline void SetAspectRatio(float ratio) { m_AspectRatio = ratio; }
-		inline void SetPosition(const glm::vec3& pos) { m_Position = pos; m_Camera->SetPosition(pos); }
+		inline void SetAspectRatio(float ratio) { m_aspectRatio = ratio; }
+		inline void SetPosition(const glm::vec3& pos) { m_position = pos; m_Camera->SetPosition(pos); }
 		inline void SetRotation(const glm::vec3& rot) { m_Rotation = rot; m_Camera->SetRotation(rot); }
 		inline void SetControlsEnabled(bool state) { m_ControlsEnabled = state; }
 
 	protected:
 		Ref<CameraBase> m_Camera;
 
-		glm::vec3 m_Position = { 0.f, 0.f, 0.f };
+		glm::vec3 m_position = { 0.f, 0.f, 0.f };
 		glm::vec3 m_Rotation = { 0.f, 0.f, 0.f };
 
-		float m_AspectRatio;
+		float m_aspectRatio;
 		bool m_ControlsEnabled = false;
 	};
 }
