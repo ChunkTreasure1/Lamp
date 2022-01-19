@@ -8,6 +8,7 @@
 #include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
 #include "Lamp/Event/EditorEvent.h"
 #include "Lamp/Rendering/Skybox.h"
+#include "Lamp/World/Terrain.h"
 
 #include <string>
 #include <glm/gtc/quaternion.hpp>
@@ -20,6 +21,7 @@ namespace Lamp
 	class Brush;
 	class Entity;
 	class CameraBase;
+	class Terrain;
 
 	class RenderUtils
 	{
@@ -84,11 +86,14 @@ namespace Lamp
 
 		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
 		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
+		inline void SetTerrain(Ref<Terrain> terrain) { m_terrain = terrain; }
 
 		static AssetType GetStaticType() { return AssetType::Level; }
 		AssetType GetType() override { return GetStaticType(); }
 
 		void OnEvent(Event& e);
+		bool OnRenderEvent(AppRenderEvent& e);
+
 		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);
 		void UpdateSimulation(Timestep ts, Ref<CameraBase>& camera);
 		void UpdateRuntime(Timestep ts);
@@ -121,6 +126,8 @@ namespace Lamp
 		bool m_LastShowedGizmos = false;
 
 		Ref<Skybox> m_skybox;
+		Ref<Terrain> m_terrain;
+
 		std::map<uint32_t, Brush*> m_Brushes;
 		std::map<uint32_t, Entity*> m_Entities;
 		std::vector<ObjectLayer> m_Layers;

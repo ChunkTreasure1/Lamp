@@ -254,6 +254,7 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
@@ -276,6 +277,7 @@
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
     <ClInclude Include="src\Lamp\Utility\UIUtility.h" />
     <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h" />
+    <ClInclude Include="src\Lamp\World\Terrain.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -301,6 +303,7 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanShaderStorageBuffer.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
@@ -827,6 +830,7 @@
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
+    <ClCompile Include="src\Lamp\World\Terrain.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
@@ -852,6 +856,7 @@
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanShaderStorageBuffer.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />

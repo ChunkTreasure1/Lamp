@@ -24,7 +24,8 @@ namespace Lamp
 
 		if (g_pEnv->pLevel)
 		{
-			g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight.get());
+			auto& utils = g_pEnv->pLevel->GetRenderUtils();
+			utils.RegisterDirectionalLight(m_pDirectionalLight.get());
 		}
 	}
 

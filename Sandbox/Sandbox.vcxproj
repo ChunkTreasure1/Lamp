@@ -205,6 +205,7 @@
     <None Include="engine\shaders\vulkan\Lamp_EnvironmentIrradiance.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EnvironmentMipFilter.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EquirectangularToCubeMap.glsl" />
+    <None Include="engine\shaders\vulkan\Lamp_LightCulling.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_PBR.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Quad.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_SSAO.glsl" />

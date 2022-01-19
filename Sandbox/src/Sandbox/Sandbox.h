@@ -2,24 +2,28 @@
 
 #include <Lamp.h>
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
-
-#include <glm/gtc/type_ptr.hpp>
-#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
-#include <ImGuizmo/ImGuizmo.h>
-#include <Lamp/Objects/Brushes/Brush.h>
-#include <Lamp/Event/MouseEvent.h>
 #include "SandboxController.h"
 
 #include "Actions/ActionHandler.h"
+
 #include "Windows/AssetBrowserPanel.h"
 #include "Windows/CreatePanel.h"
-#include "Lamp/Event/EditorEvent.h"
-#include "Lamp/Event/KeyEvent.h"
 
 #include "UI/AnimatedIcon.h"
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+
+#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
+
+#include <Lamp/Objects/Brushes/Brush.h>
+#include <Lamp/Event/MouseEvent.h>
+#include <Lamp/Event/EditorEvent.h>
+#include <Lamp/Event/KeyEvent.h>
+#include <Lamp/Rendering/RenderPass.h>
+
+#include <glm/gtc/type_ptr.hpp>
+#include <ImGuizmo/ImGuizmo.h>
 #include <Game/Game.h>
 
 namespace Lamp
@@ -27,6 +31,9 @@ namespace Lamp
 	class Framebuffer;
 	class RenderPipeline;
 	class Skybox;
+	class Terrain;
+
+	struct RenderPass;
 }
 
 namespace Sandbox
@@ -50,7 +57,6 @@ namespace Sandbox
 		void SetupRenderPasses();
 		void GetInput();
 		void SetupFromConfig();
-		void RenderLines();
 
 		void OnLevelPlay();
 		void OnLevelStop();
@@ -90,10 +96,10 @@ namespace Sandbox
 
 		Ref<Lamp::Level> m_pLevel = nullptr;
 		Ref<Lamp::Level> m_pRuntimeLevel = nullptr;
+		 
+		std::vector<Lamp::RenderPass> m_renderPasses;
 
-		std::vector<std::pair<glm::vec3, glm::vec3>> m_Lines;
-
-		std::vector<Ref<Lamp::RenderPipeline>> m_renderPasses;
+		Ref<Lamp::Terrain> m_terrain;
 
 		//---------------Editor-----------------
 		glm::vec3 m_FColor = glm::vec3{ 0.1f, 0.1f, 0.1f };

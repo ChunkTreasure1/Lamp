@@ -16,6 +16,10 @@ namespace Lamp
 	class UniformBufferSet;
 	class Mesh;
 	class Texture2D;
+	class RenderComputePipeline;
+	class Image2D;
+	class UniformBuffer;
+	class ShaderStorageBuffer;
 
 	struct VulkanRendererStorage
 	{
@@ -38,7 +42,7 @@ namespace Lamp
 	{
 	public:
 		VulkanRenderer();
-		~VulkanRenderer();
+		~VulkanRenderer() override;
 
 		void Initialize() override;
 		void Shutdown() override;
@@ -58,7 +62,7 @@ namespace Lamp
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 		
-		Ref<RenderComputePipeline> CreateLightCullingPipeline();
+		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBuffer> lightBuffer, Ref<ShaderStorageBuffer> visibleLightsBuffer, Ref<Image2D> depthImage) override;
 
 	private:
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);

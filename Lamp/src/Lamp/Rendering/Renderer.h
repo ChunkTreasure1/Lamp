@@ -13,6 +13,7 @@
 namespace Lamp
 {
 	class RendererNew;
+	class RenderComputePipeline;
 	class ShaderStorageBuffer;
 	class CameraBase;
 	class Texture2D;
@@ -23,6 +24,7 @@ namespace Lamp
 	class SubMesh;
 	class Material;
 	class Skybox;
+	class Image2D;
 
 	struct GPUMemoryStatistics
 	{
@@ -66,7 +68,7 @@ namespace Lamp
 		static Ref<RendererNew> GetRenderer() { return s_renderer; }
 		static void GenerateKernel();
 
-		static void SetupBuffers(); //TODO: remove
+		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
 
 		struct SceneData
 		{
@@ -78,11 +80,10 @@ namespace Lamp
 			uint32_t screenTileCount = 1;
 			uint32_t screenGroupX = 1;
 			uint32_t screenGroupY = 1;
-			uint32_t pointLightCount = 0;
 
 			float hdrExposure = 1.f;
 			float gamma = 2.2f;
-			float ambianceMultiplier = 0.3f;
+			float ambianceMultiplier = 0.5f;
 
 			EnvironmentSettings environmentSettings;
 
@@ -100,8 +101,10 @@ namespace Lamp
 			CameraDataBuffer cameraData;
 			ScreenDataBuffer screenData;
 			DirectionalLightVPBuffer directionalLightVPData;
+			LightCullingBuffer lightCullingData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
+			Ref<UniformBuffer> lightCullingBuffer;
 			//////////////////////////
 
 			/////Shader Storage//////
@@ -129,8 +132,9 @@ namespace Lamp
 		static const Statistics& GetStatistics() { return s_statistics; }
 
 	private:
-		static void CreateUniformBuffers();
+		static void CreateUniformBuffers(); //TODO: remove
 		static void CreateShaderStorageBuffers();
+
 		static void UpdateBuffers(const Ref<CameraBase> camera);
 		static void UpdatePassBuffers(const Ref<RenderPipeline> pipeline);
 		static void DrawDirectionalShadows();

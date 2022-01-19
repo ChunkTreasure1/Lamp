@@ -13,6 +13,8 @@
 #include "Lamp/Objects/Entity/Base/Entity.h"
 #include "Lamp/Objects/Brushes/Brush.h"
 
+#include "Lamp/World/Terrain.h"
+
 namespace Lamp
 {
 	RenderUtils::~RenderUtils()
@@ -158,6 +160,17 @@ namespace Lamp
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Level::OnViewportResize));
+		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Level::OnRenderEvent));
+	}
+
+	bool Level::OnRenderEvent(AppRenderEvent& e)
+	{
+		if (m_terrain)
+		{
+			Lamp::Renderer::SubmitMesh(glm::mat4(1.f), m_terrain->GetMesh()->GetSubMeshes()[0], m_terrain->GetMesh()->GetMaterial(0));
+		}
+
+		return false;
 	}
 
 	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)

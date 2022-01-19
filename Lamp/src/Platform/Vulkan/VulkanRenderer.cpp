@@ -26,6 +26,7 @@
 #include "Platform/Vulkan/VulkanTextureCube.h"
 #include "Platform/Vulkan/VulkanUtility.h"
 #include "Platform/Vulkan/VulkanRenderComputePipeline.h"
+#include "Platform/Vulkan/VulkanShaderStorageBuffer.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -237,15 +238,51 @@ namespace Lamp
 		}
 	}
 
-	Ref<RenderComputePipeline> VulkanRenderer::CreateLightCullingPipeline()
+	//TODO: Find better way to save execute function
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> VulkanRenderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBuffer> lightBuffer, Ref<ShaderStorageBuffer> visibleLightsBuffer, Ref<Image2D> depthImage)
 	{
 		Ref<Shader> lightCullingShader = ShaderLibrary::GetShader("lightCulling");
 		Ref<VulkanRenderComputePipeline> lightCullingPipeline = std::reinterpret_pointer_cast<VulkanRenderComputePipeline>(RenderComputePipeline::Create(lightCullingShader));
-	
+
 		Ref<VulkanShader> vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(lightCullingShader);
 
-		auto descriptorSet = vulkanShader->CreateDescriptorSets();
-		std::array<VkWriteDescriptorSet, 5> writeDescriptors;
+		auto func = [=]()
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+
+			std::array<VkWriteDescriptorSet, 5> writeDescriptors;
+			auto descriptorSet = vulkanShader->CreateDescriptorSets();
+
+			auto vulkanCameraDataBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(cameraDataBuffer);
+			writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
+			writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[0].pBufferInfo = &vulkanCameraDataBuffer->GetDescriptorInfo();
+
+			auto vulkanLightCullingBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(lightCullingBuffer);
+			writeDescriptors[1] = *vulkanShader->GetDescriptorSet("LightCullingBuffer");
+			writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[1].pBufferInfo = &vulkanLightCullingBuffer->GetDescriptorInfo();
+
+			auto vulkanLightStorageBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(lightBuffer);
+			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("LightBuffer");
+			writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[2].pBufferInfo = &vulkanLightStorageBuffer->GetDescriptorInfo();
+
+			auto vulkanVisibleLightsBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(visibleLightsBuffer);
+			writeDescriptors[3] = *vulkanShader->GetDescriptorSet("VisibleLightsBuffer");
+			writeDescriptors[3].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[3].pBufferInfo = &vulkanVisibleLightsBuffer->GetDescriptorInfo();
+
+			auto vulkanDepthImage = std::reinterpret_pointer_cast<VulkanImage2D>(depthImage);
+			writeDescriptors[4] = *vulkanShader->GetDescriptorSet("u_DepthMap");
+			writeDescriptors[4].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[4].pImageInfo = &vulkanDepthImage->GetDescriptorInfo();
+
+			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+			lightCullingPipeline->Execute(descriptorSet.descriptorSets.data(), (uint32_t)descriptorSet.descriptorSets.size(), Renderer::GetSceneData()->screenGroupX, Renderer::GetSceneData()->screenGroupY, 1);
+		};
+
+		return std::make_pair(lightCullingPipeline, func);
 	}
 
 	void VulkanRenderer::SetupDescriptorsForMaterialRendering(Ref<Material> material)
@@ -285,7 +322,7 @@ namespace Lamp
 		//Update
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
-		auto& textureSpecification = vulkanMaterial->GetTextureSpecification();
+		auto& textureSpecification = vulkanMaterial->GetTextureSpecification(); 
 		for (const auto& spec : textureSpecification)
 		{
 			if (spec.set != 1) // TODO: should only material texture descriptors be in material?

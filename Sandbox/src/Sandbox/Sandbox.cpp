@@ -16,6 +16,7 @@
 #include <Lamp/Core/Application.h>
 #include <Lamp/Core/Game.h>
 #include <Lamp/Core/Time/ScopedTimer.h>
+#include <Lamp/World/Terrain.h>
 
 
 namespace Sandbox
@@ -32,6 +33,7 @@ namespace Sandbox
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
 		m_pLevel->SetSkybox("assets/textures/brightForest.hdr");
+		m_pLevel->SetTerrain(CreateRef<Terrain>("assets/textures/iceland_heightmap.png"));
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -177,11 +179,18 @@ namespace Sandbox
 
 		for (const auto& pass : m_renderPasses)
 		{
-			Renderer::BeginPass(pass);
+			if (pass.graphicsPipeline)
+			{
+				Renderer::BeginPass(pass.graphicsPipeline);
 
-			Renderer::DrawBuffer();
+				Renderer::DrawBuffer();
 
-			Renderer::EndPass();
+				Renderer::EndPass();
+			}
+			else
+			{
+				pass.computeExcuteCommand();
+			}
 		}
 
 		Renderer::End();
@@ -352,13 +361,6 @@ namespace Sandbox
 		}
 	}
 
-	void Sandbox::RenderLines()
-	{
-		for (auto& p : m_Lines)
-		{
-		}
-	}
-
 	void Sandbox::OnLevelPlay()
 	{
 		m_SceneState = SceneState::Play;
@@ -438,7 +440,16 @@ namespace Sandbox
 				{ ElementType::Float2, "a_TexCoords" },
 			};
 
-			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Light culling
+		{
+			auto& pass = m_renderPasses.emplace_back();
+			auto [pipeline, command] = Renderer::CreateLightCullingPipeline(m_depthPrePassFramebuffer->GetDepthAttachment());
+			pass.computePipeline = pipeline;
+			pass.computeExcuteCommand = command;
 		}
 
 		//SSAO main pass
@@ -479,7 +490,8 @@ namespace Sandbox
 				{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
 			};
 
-			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Main pass
@@ -521,7 +533,8 @@ namespace Sandbox
 				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 6 } // should not be set here
 			};
 
-			m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Composite

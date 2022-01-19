@@ -226,6 +226,9 @@
     <None Include="engine\shaders\vulkan\Lamp_EquirectangularToCubeMap.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
+    <None Include="engine\shaders\vulkan\Lamp_LightCulling.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
     <None Include="engine\shaders\vulkan\Lamp_PBR.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>

@@ -35,14 +35,11 @@ namespace Lamp
 	{
 		glNamedBufferSubData(m_RendererID, 0, size, data);
 	}
-
 	void* OpenGLShaderStorageBuffer::Map()
 	{
-		return glMapNamedBuffer(m_RendererID, GL_READ_WRITE);
+		return nullptr;
 	}
-
 	void OpenGLShaderStorageBuffer::Unmap()
 	{
-		glUnmapNamedBuffer(m_RendererID);
 	}
 }

@@ -97,6 +97,9 @@
     <Filter Include="src\Lamp\Utility">
       <UniqueIdentifier>{29CB8030-15C4-9F82-3EF6-84072A4E7F8E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Lamp\World">
+      <UniqueIdentifier>{1D36887C-0904-7C82-F297-ECA8DE0458E7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
@@ -471,6 +474,9 @@
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
+      <Filter>src\Lamp\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -536,6 +542,9 @@
     </ClInclude>
     <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h">
       <Filter>src\Lamp\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\World\Terrain.h">
+      <Filter>src\Lamp\World</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -610,6 +619,9 @@
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanShader.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanShaderStorageBuffer.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h">
@@ -2186,6 +2198,9 @@
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp">
       <Filter>src\Lamp\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\World\Terrain.cpp">
+      <Filter>src\Lamp\World</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -2259,6 +2274,9 @@
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanShaderStorageBuffer.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp">

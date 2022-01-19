@@ -48,4 +48,28 @@ namespace Lamp
 		alignas(16) glm::vec4 kernelSamples[256];
 		alignas(16) glm::vec4 sizeBiasRadiusStrength{ 64.f, 0.025f, 0.1f, 1.f };
 	};
+
+	struct LightCullingBuffer
+	{
+		alignas(16) glm::vec2 screenSize;
+		alignas(16) uint32_t lightCount;
+	};
+
+	struct PointLightData
+	{
+		alignas(16) glm::vec4 position;
+		alignas(16) glm::vec4 color;
+
+		float intensity;
+		float radius;
+		float falloff;
+		float farPlane;
+
+		alignas(16) int samplerId;
+	};
+
+	struct LightIndex
+	{
+		int index;
+	};
 }
