@@ -15,7 +15,8 @@ namespace Lamp
 	{
 		TriangleList,
 		LineList,
-		TriangleStrip
+		TriangleStrip,
+		PatchList
 	};
 
 	enum class DrawType
@@ -75,6 +76,9 @@ namespace Lamp
 
 		glm::vec2 size;
 		bool isSwapchain;
+	
+		bool useTessellation = false;
+		uint32_t tessellationControlPoints = 4;
 	};
 
 	class RenderPipeline

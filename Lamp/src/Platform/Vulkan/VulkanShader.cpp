@@ -48,6 +48,14 @@ namespace Lamp
 			{
 				return VK_SHADER_STAGE_COMPUTE_BIT;
 			}
+			else if (type == "tesselationControl")
+			{
+				return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+			}
+			else if (type == "tesselationEvaluation")
+			{
+				return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+			}
 
 			return (VkShaderStageFlagBits)0;
 		}
@@ -59,6 +67,8 @@ namespace Lamp
 				case VK_SHADER_STAGE_VERTEX_BIT: return "VERTEX_SHADER";
 				case VK_SHADER_STAGE_FRAGMENT_BIT: return "FRAGMENT_SHADER";
 				case VK_SHADER_STAGE_COMPUTE_BIT: return "COMPUTE_SHADER";
+				case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return "TESSELATION_CONTROL_SHADER";
+				case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return "TESSELATION_EVALUATION_SHADER";
 			}
 
 			return "";
@@ -76,6 +86,8 @@ namespace Lamp
 				case VK_SHADER_STAGE_VERTEX_BIT: return ".vertex.cached";
 				case VK_SHADER_STAGE_FRAGMENT_BIT: return ".fragment.cached";
 				case VK_SHADER_STAGE_COMPUTE_BIT: return ".compute.cached";
+				case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return "tessControl.cached";
+				case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return "tessEvaluation.cached";
 			}
 
 			return "";
@@ -88,6 +100,8 @@ namespace Lamp
 				case VK_SHADER_STAGE_VERTEX_BIT: return shaderc_vertex_shader;
 				case VK_SHADER_STAGE_FRAGMENT_BIT: return shaderc_fragment_shader;
 				case VK_SHADER_STAGE_COMPUTE_BIT: return shaderc_compute_shader;
+				case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return shaderc_tess_control_shader;
+				case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return shaderc_tess_evaluation_shader;
 			}
 
 			LP_CORE_ASSERT(false, "Stage not supported!");

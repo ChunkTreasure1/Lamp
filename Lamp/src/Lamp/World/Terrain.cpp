@@ -17,43 +17,23 @@ namespace Lamp
 		uint8_t* data = stbi_load(aHeightMap.string().c_str(), &width, &height, &channels, 0);
 
 		std::vector<Vertex> vertices;
-		const float yScale = 64.f / 256.f; //TODO: move to some form of settings
-		const float yShift = 16.f;		   //TODO: move to some form of settings
 
-		for (uint32_t i = 0; i < height; i++)
+		const uint32_t resolution = 20;
+		for (uint32_t i = 0; i <= resolution - 1; i++)
 		{
-			for (uint32_t j = 0; j < width; j++)
+			for (uint32_t j = 0; j <= resolution - 1; j++)
 			{
-				uint8_t* texel = data + (j + width * i) * channels;
-				uint8_t y = texel[0];
-
-				vertices.emplace_back(glm::vec3{ -height / 2.f + i, (int)y * yScale - yShift, -width / 2.f + j });
+				vertices.emplace_back(glm::vec3{ -width / 2.f + width * i / resolution, 0.f, -height / 2.f + height * j / resolution }, glm::vec2{ i / (float)resolution, j / (float)resolution });
+				vertices.emplace_back(glm::vec3{ -width / 2.f + width * (i + 1) / resolution, 0.f, -height / 2.f + height * j / resolution }, glm::vec2{ (i + 1) / (float)resolution, j / (float)resolution });
+				vertices.emplace_back(glm::vec3{ -width / 2.f + width * i / resolution, 0.f, -height / 2.f + height * (j + 1) / resolution }, glm::vec2{ i / (float)resolution, (j + 1) / (float)resolution });
+				vertices.emplace_back(glm::vec3{ -width / 2.f + width * (i + 1) / resolution, 0.f, -height / 2.f + height * (j + 1) / resolution }, glm::vec2{ (i + 1) / (float)resolution, (j + 1) / (float)resolution });
 			}
-		}
+		}   
 
 		stbi_image_free(data);
 
-		std::vector<uint32_t> indices;
-		for (uint32_t i = 0; i < height - 1; i++)
-		{
-			for (uint32_t j = 0; j < width; j++)
-			{
-				for (uint32_t k = 0; k < 2; k++)
-				{
-					indices.emplace_back(j + width * (i + k));
-				}
-			}
-		}
-
-		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size());
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indices.size());
-
-		Ref<VertexArray> vertexArray = VertexArray::Create();
-		vertexArray->AddVertexBuffer(vertexBuffer);
-		vertexArray->SetIndexBuffer(indexBuffer);
-
 		std::vector<Ref<SubMesh>> subMesh;
-		subMesh.push_back(CreateRef<SubMesh>(vertices, indices, 0));
+		subMesh.push_back(CreateRef<SubMesh>(vertices, std::vector<uint32_t>(), 0));
 
 		std::map<uint32_t, Ref<Material>> materials;
 		materials[0] = MaterialLibrary::GetMaterial("base");

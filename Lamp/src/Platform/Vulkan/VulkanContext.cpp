@@ -78,6 +78,7 @@ namespace Lamp
 		enabledFeatures.samplerAnisotropy = VK_TRUE;
 		enabledFeatures.pipelineStatisticsQuery = VK_TRUE;
 		enabledFeatures.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
+		enabledFeatures.tessellationShader = VK_TRUE;
 
 		m_device = VulkanDevice::Create(m_physicalDevice, enabledFeatures);
 

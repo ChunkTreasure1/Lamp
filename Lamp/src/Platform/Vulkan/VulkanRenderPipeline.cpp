@@ -42,6 +42,7 @@ namespace Lamp
 				case Topology::TriangleList: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 				case Topology::LineList: return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 				case Topology::TriangleStrip: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+				case Topology::PatchList: return VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
 			}
 
 			return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
@@ -297,6 +298,10 @@ namespace Lamp
 		rasterizer.cullMode = Utils::VulkanCullModeFromCullMode(m_specification.cullMode);
 		rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
+		
+		VkPipelineTessellationStateCreateInfo tessellation{};
+		tessellation.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+		tessellation.patchControlPoints = m_specification.tessellationControlPoints;
 
 		VkPipelineMultisampleStateCreateInfo multisampling{};
 		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -362,6 +367,7 @@ namespace Lamp
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.pDepthStencilState = &depthStencil;
 		pipelineInfo.pDynamicState = &dynamicStateInfo;
+		pipelineInfo.pTessellationState = m_specification.useTessellation ? &tessellation : nullptr;
 
 		result = vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline);
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline!");
