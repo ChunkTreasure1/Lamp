@@ -167,7 +167,7 @@ namespace Lamp
 	{
 		if (m_terrain)
 		{
-			Lamp::Renderer::SubmitMesh(glm::mat4(1.f), m_terrain->GetMesh()->GetSubMeshes()[0], m_terrain->GetMesh()->GetMaterial(0));
+			//Lamp::Renderer::SubmitMesh(glm::mat4(1.f), m_terrain->GetMesh()->GetSubMeshes()[0], m_terrain->GetMesh()->GetMaterial(0));
 		}
 
 		return false;

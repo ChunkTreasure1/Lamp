@@ -2,15 +2,17 @@
 
 namespace Lamp
 {
-	class Mesh;
+	class VertexBuffer;
+	class IndexBuffer;
 	class Terrain
 	{
 	public:
 		Terrain(const std::filesystem::path& aHeightMap);
 
-		inline Ref<Mesh> GetMesh() const { return m_terrainMesh; }
+		//inline Ref<Mesh> GetMesh() const { return m_terrainMesh; }
 
 	private:
-		Ref<Mesh> m_terrainMesh;
+		Ref<VertexBuffer> m_vertexBuffer;
+		Ref<IndexBuffer> m_indexBuffer;
 	};
 }

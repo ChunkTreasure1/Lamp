@@ -25,6 +25,12 @@
     <Filter Include="engine\shaders">
       <UniqueIdentifier>{F463528C-E031-4692-C9C5-B6B8B53222F7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\shaders\cache">
+      <UniqueIdentifier>{175EAB9A-03ED-3464-AC0B-495F9879450A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\shaders\cache\vulkan">
+      <UniqueIdentifier>{D7DF1330-43ED-4116-CCD3-3D0138E00DCD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="engine\shaders\opengl">
       <UniqueIdentifier>{08AB250D-7417-E107-3D0B-7965A9360370}</UniqueIdentifier>
     </Filter>
@@ -154,6 +160,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="engine\shaders\cache\vulkan\Lamp_Terrain.glsl">
+      <Filter>engine\shaders\cache\vulkan</Filter>
+    </None>
     <None Include="engine\shaders\opengl\depthPass.glsl">
       <Filter>engine\shaders\opengl</Filter>
     </None>
@@ -239,6 +248,9 @@
       <Filter>engine\shaders\vulkan</Filter>
     </None>
     <None Include="engine\shaders\vulkan\Lamp_Skybox.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_Terrain.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
   </ItemGroup>
