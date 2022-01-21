@@ -48,11 +48,11 @@ namespace Lamp
 			{
 				return VK_SHADER_STAGE_COMPUTE_BIT;
 			}
-			else if (type == "tesselationControl")
+			else if (type == "tessellationControl")
 			{
 				return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
 			}
-			else if (type == "tesselationEvaluation")
+			else if (type == "tessellationEvaluation")
 			{
 				return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
 			}
@@ -67,8 +67,8 @@ namespace Lamp
 				case VK_SHADER_STAGE_VERTEX_BIT: return "VERTEX_SHADER";
 				case VK_SHADER_STAGE_FRAGMENT_BIT: return "FRAGMENT_SHADER";
 				case VK_SHADER_STAGE_COMPUTE_BIT: return "COMPUTE_SHADER";
-				case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return "TESSELATION_CONTROL_SHADER";
-				case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return "TESSELATION_EVALUATION_SHADER";
+				case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return "TESSELLATION_CONTROL_SHADER";
+				case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return "TESSELLATION_EVALUATION_SHADER";
 			}
 
 			return "";
@@ -412,7 +412,13 @@ namespace Lamp
 
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
-			LP_CORE_ASSERT(type == "vertex" || type == "fragment" || type == "pixel" || type == "compute", "Invalid shader type!");
+
+			LP_CORE_ASSERT(type == "vertex" || 
+				type == "fragment" || 
+				type == "pixel" || 
+				type == "compute" || 
+				type == "tessellationEvaluation" || 
+				type == "tessellationControl", "Invalid shader type!");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 			pos = source.find(typeToken, nextLinePos);
