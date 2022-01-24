@@ -3,15 +3,21 @@
 
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
 #include "Lamp/Rendering/Buffers/VertexArray.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/RenderPipeline.h"
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Mesh/Mesh.h"
+
+#include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 //TODO: remove
 #include <stb/stb_image.h>
 
 namespace Lamp
 {
-	Terrain::Terrain(const std::filesystem::path& aHeightMap)
+	Terrain::Terrain(const std::filesystem::path& aHeightMap, Ref<Framebuffer> framebuffer)
 	{
 		int width, height, channels;
 		uint8_t* data = stbi_load(aHeightMap.string().c_str(), &width, &height, &channels, 0);
@@ -55,5 +61,38 @@ namespace Lamp
 
 		m_vertexBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size());
 		m_indexBuffer = IndexBuffer::Create(indices, indices.size());
+	
+		SetupRenderPass(framebuffer);
+	}
+
+	void Terrain::Draw()
+	{
+		Renderer::BeginPass(m_pipeline);
+		Renderer::EndPass();
+	}
+
+	void Terrain::SetupRenderPass(Ref<Framebuffer> framebuffer)
+	{
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::PatchList;
+		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
+	
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		m_pipeline = RenderPipeline::Create(pipelineSpec);
+	}
+
+	void Terrain::SetupDescriptors()
+	{
 	}
 }

@@ -58,6 +58,7 @@ namespace Lamp
 		void SubmitQuad() override;
 
 		void DrawSkybox();
+		void DrawTerrain();
 		void DrawBuffer(RenderBuffer& buffer) override;
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
@@ -74,9 +75,12 @@ namespace Lamp
 
 		void CreateBaseGeometry();
 		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);
+		void CreateTerrainPipeline(Ref<Framebuffer> framebuffer);
 
 		Scope<VulkanRendererStorage> m_rendererStorage;
+
 		Ref<RenderPipeline> m_skyboxPipeline;
+		Ref<RenderPipeline> m_terrainPipeline;
 
 		VkDescriptorPool m_descriptorPool;
 

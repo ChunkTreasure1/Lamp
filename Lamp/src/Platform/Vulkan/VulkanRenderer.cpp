@@ -212,6 +212,24 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->cubeMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
+	void VulkanRenderer::DrawTerrain()
+	{
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_terrainPipeline);
+		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
+	
+		vulkanPipeline->Bind(commandBuffer);
+
+		MeshDataBuffer meshData;
+		meshData.model = glm::mat4(1.f);
+		meshData.blendingUseBlending.x = 0.f;
+		meshData.blendingUseBlending.y = 0.f;
+
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[0].descriptorSets);
+
+
+	}
+
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
 		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox)
@@ -742,5 +760,26 @@ namespace Lamp
 		};
 
 		m_skyboxPipeline = RenderPipeline::Create(pipelineSpec);
+	}
+
+	void VulkanRenderer::CreateTerrainPipeline(Ref<Framebuffer> framebuffer)
+	{
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::PatchList;
+		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
+
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		m_terrainPipeline = RenderPipeline::Create(pipelineSpec);
 	}
 }
