@@ -52,7 +52,7 @@ namespace Lamp
 	struct LevelEnvironment
 	{
 		glm::vec3 CameraPosition{ 0.f, 0.f, 0.f };
-		glm::quat CameraRotation;
+		glm::quat CameraRotation{ 0.f, 0.f, 0.f, 0.f };
 
 		float CameraFOV = 60.f;
 

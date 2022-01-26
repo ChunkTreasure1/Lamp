@@ -492,9 +492,6 @@
     <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RendererNew.h">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h">
       <Filter>src\Lamp\Rendering\Shader</Filter>
     </ClInclude>
@@ -2166,9 +2163,6 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RendererNew.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">

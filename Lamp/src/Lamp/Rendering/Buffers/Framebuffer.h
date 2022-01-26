@@ -20,7 +20,7 @@ namespace Lamp
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
-			: textureFiltering(TextureFilter::Linear), textureWrap(TextureWrap::Repeat)
+			: textureFiltering(TextureFilter::Linear), textureWrap(TextureWrap::Repeat), textureFormat(ImageFormat::RGBA)
 		{}
 		FramebufferTextureSpecification(
 			ImageFormat format,

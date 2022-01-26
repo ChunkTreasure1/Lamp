@@ -8,11 +8,12 @@
 #include "Lamp/Rendering/RendererAPI.h"
 #include "Lamp/Rendering/Shader/Shader.h"
 
+#include <vulkan/vulkan.h>
+
 #include <algorithm>
 
 namespace Lamp
 {
-	class RendererNew;
 	class RenderComputePipeline;
 	class ShaderStorageBuffer;
 	class CameraBase;
@@ -25,6 +26,7 @@ namespace Lamp
 	class Material;
 	class Skybox;
 	class Image2D;
+	class VulkanRenderer;
 
 	struct GPUMemoryStatistics
 	{
@@ -59,13 +61,14 @@ namespace Lamp
 		static void SwapBuffers();
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets);
 		static void SubmitQuad();
 
 		static void DrawBuffer();
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static const SceneData* GetSceneData() { return s_pSceneData; }
-		static Ref<RendererNew> GetRenderer() { return s_renderer; }
+		static Ref<VulkanRenderer> GetRenderer() { return s_renderer; }
 		static void GenerateKernel();
 
 		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
@@ -153,7 +156,7 @@ namespace Lamp
 		static Capabilities s_capabilities;
 		static Statistics s_statistics;
 		
-		static Ref<RendererNew> s_renderer;
+		static Ref<VulkanRenderer> s_renderer;
 		static Scope<RendererDefaults> s_rendererDefaults;
 		static Scope<Skybox> s_skybox;
 

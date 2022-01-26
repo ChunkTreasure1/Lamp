@@ -11,11 +11,12 @@
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
-#include "Lamp/Rendering/RendererNew.h"
 
 #include "Lamp/Level/Level.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Core/Time/ScopedTimer.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <random>
 
@@ -25,7 +26,7 @@
 namespace Lamp
 {
 	Renderer::SceneData* Renderer::s_pSceneData = nullptr;
-	Ref<RendererNew> Renderer::s_renderer = nullptr;
+	Ref<VulkanRenderer> Renderer::s_renderer = nullptr;
 	Scope<Renderer::RendererDefaults> Renderer::s_rendererDefaults;
 
 	Renderer::Capabilities Renderer::s_capabilities;
@@ -43,7 +44,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		s_renderer = RendererNew::Create();
+		s_renderer = VulkanRenderer::Create();
 		s_renderer->Initialize();
 
 		s_pSceneData = new Renderer::SceneData();
@@ -116,6 +117,11 @@ namespace Lamp
 	{
 		s_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
 		s_statistics.totalDrawCalls++;
+	}
+
+	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets)
+	{
+		s_renderer->SubmitMesh(transform, mesh, material, descriptorSets);
 	}
 
 	void Renderer::SubmitQuad()

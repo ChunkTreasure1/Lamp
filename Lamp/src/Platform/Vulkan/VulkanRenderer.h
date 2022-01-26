@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lamp/Rendering/RendererNew.h"
 #include "Lamp/Rendering/RendererDataStructures.h"
+#include "Lamp/Rendering/Buffers/RenderBuffer.h"
 
 #include "Platform/Vulkan/VulkanShader.h"
 
@@ -21,6 +21,9 @@ namespace Lamp
 	class UniformBuffer;
 	class ShaderStorageBuffer;
 	class Terrain;
+	class SubMesh;
+	class CameraBase;
+	class Material;
 
 	struct VulkanRendererStorage
 	{
@@ -39,32 +42,35 @@ namespace Lamp
 		std::vector<VulkanShader::ShaderMaterialDescriptorSet> shaderDescriptorSets;
 	};
 
-	class VulkanRenderer : public RendererNew
+	class VulkanRenderer
 	{
 	public:
 		VulkanRenderer();
-		~VulkanRenderer() override;
+		~VulkanRenderer();
 
-		void Initialize() override;
-		void Shutdown() override;
-		void Begin(const Ref<CameraBase> camera) override;
-		void End() override;
+		void Initialize();
+		void Shutdown();
+		void Begin(const Ref<CameraBase> camera);
+		void End();
 
-		void BeginPass(Ref<RenderPipeline> pipeline) override;
-		void EndPass() override;
+		void BeginPass(Ref<RenderPipeline> pipeline);
+		void EndPass();
 
-		const GPUMemoryStatistics& GetMemoryUsage() const override;
+		const GPUMemoryStatistics& GetMemoryUsage() const;
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
-		void SubmitQuad() override;
+		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets);
+		void SubmitQuad();
 
 		void DrawSkybox();
 		void DrawTerrain();
-		void DrawBuffer(RenderBuffer& buffer) override;
+		void DrawBuffer(RenderBuffer& buffer);
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 		
-		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBuffer> lightBuffer, Ref<ShaderStorageBuffer> visibleLightsBuffer, Ref<Image2D> depthImage) override;
+		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBuffer> lightBuffer, Ref<ShaderStorageBuffer> visibleLightsBuffer, Ref<Image2D> depthImage);
+
+		static Ref<VulkanRenderer> Create();
 
 	private:
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);

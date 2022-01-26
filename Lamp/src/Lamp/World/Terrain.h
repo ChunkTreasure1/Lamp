@@ -33,7 +33,6 @@ namespace Lamp
 		Ref<Texture2D> m_heightMap;
 
 		glm::mat4 m_transform;
-
 		std::vector<VulkanShader::ShaderMaterialDescriptorSet> m_descriptorSets;
 	};
 }

@@ -180,6 +180,22 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
+	void VulkanRenderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets)
+	{
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
+		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
+
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		vulkanPipeline->Bind(commandBuffer);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, descriptorSets);
+
+		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
+		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
+
+		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+	}
+
 	void VulkanRenderer::SubmitQuad()
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
@@ -320,6 +336,11 @@ namespace Lamp
 		};
 
 		return std::make_pair(lightCullingPipeline, func);
+	}
+
+	Ref<VulkanRenderer> VulkanRenderer::Create()
+	{
+		return CreateRef<VulkanRenderer>();
 	}
 
 	void VulkanRenderer::SetupDescriptorsForMaterialRendering(Ref<Material> material)
