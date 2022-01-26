@@ -55,6 +55,9 @@ namespace Lamp
 		glm::quat CameraRotation;
 
 		float CameraFOV = 60.f;
+
+		float terrainScale = 64.f;
+		float terrainShift = 16.f;
 	};
 
 	class Level : public Asset

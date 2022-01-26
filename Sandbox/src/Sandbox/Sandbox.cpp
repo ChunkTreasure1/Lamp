@@ -33,7 +33,7 @@ namespace Sandbox
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
 		m_pLevel->SetSkybox("assets/textures/brightForest.hdr");
-		m_pLevel->SetTerrain(CreateRef<Terrain>("assets/textures/iceland_heightmap.png"));
+		//m_pLevel->SetTerrain(CreateRef<Terrain>("assets/textures/iceland_heightmap.png"));
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -513,6 +513,7 @@ namespace Sandbox
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
 			pipelineSpec.drawSkybox = true;
+			pipelineSpec.drawTerrain = true;
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },

@@ -6,27 +6,27 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Mesh/Mesh.h"
 
 #include "Platform/Vulkan/VulkanRenderPipeline.h"
 
-//TODO: remove
-#include <stb/stb_image.h>
-
 namespace Lamp
 {
-	Terrain::Terrain(const std::filesystem::path& aHeightMap, Ref<Framebuffer> framebuffer)
+	Terrain::Terrain(const std::filesystem::path& aHeightMap)
 	{
-		int width, height, channels;
-		uint8_t* data = stbi_load(aHeightMap.string().c_str(), &width, &height, &channels, 0);
+		m_heightMap = Texture2D::Create(aHeightMap);
 
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 
 		const uint32_t patchSize = 64;
 		const float uvScale = 1.f;
+
+		const uint32_t vertexCount = patchSize * patchSize;
+		vertices.resize(vertexCount);
 
 		const float wx = 2.f;
 		const float wy = 2.f;
@@ -35,7 +35,9 @@ namespace Lamp
 		{
 			for (uint32_t y = 0; y < patchSize; y++)
 			{
-				vertices.emplace_back(glm::vec3{ x * wx + wx / 2.f - (float)patchSize * wx / 2.f, 0.f, y * wy + wy / 2.f - (float)patchSize * wy / 2.f }, glm::vec2{ (float)x / patchSize, (float)y / patchSize } * uvScale);
+				uint32_t index = (x + y * patchSize);
+				vertices[index].position = { x * wx + wx / 2.f - (float)patchSize * wx / 2.f, 0.f, y * wy + wy / 2.f - patchSize * wy / 2.f };
+				vertices[index].textureCoords = glm::vec2{ (float)x / patchSize, (float)y / patchSize } * uvScale;
 			}
 		}
 
@@ -57,39 +59,17 @@ namespace Lamp
 			}
 		}
 
-		stbi_image_free(data);
-
 		m_vertexBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size());
 		m_indexBuffer = IndexBuffer::Create(indices, indices.size());
-	
-		SetupRenderPass(framebuffer);
+		m_transform = glm::scale(glm::mat4(1.f), glm::vec3{ 2.f, 1.f, 2.f });
 	}
 
 	void Terrain::Draw()
 	{
-		Renderer::BeginPass(m_pipeline);
-		Renderer::EndPass();
 	}
 
 	void Terrain::SetupRenderPass(Ref<Framebuffer> framebuffer)
 	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Front;
-		pipelineSpec.topology = Topology::PatchList;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
-	
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_pipeline = RenderPipeline::Create(pipelineSpec);
 	}
 
 	void Terrain::SetupDescriptors()

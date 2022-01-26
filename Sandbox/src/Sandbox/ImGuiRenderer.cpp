@@ -546,6 +546,18 @@ namespace Sandbox
 
 		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
 
+		ImGui::TextUnformatted("Terrain");
+		ImGui::Separator();
+
+		if (UI::BeginProperties("Terrain"))
+		{
+			UI::Property("Height", const_cast<float&>(Renderer::GetSceneData()->terrainData.heightMultiplier));
+
+			UI::EndProperties();
+		}
+
+		ImGui::Separator();
+
 		ImGui::End();
 	}
 

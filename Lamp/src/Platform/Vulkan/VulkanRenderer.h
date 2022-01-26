@@ -20,6 +20,7 @@ namespace Lamp
 	class Image2D;
 	class UniformBuffer;
 	class ShaderStorageBuffer;
+	class Terrain;
 
 	struct VulkanRendererStorage
 	{
@@ -69,6 +70,7 @@ namespace Lamp
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
 		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
 		void SetupDescriptorsForSkyboxRendering();
+		void SetupDescriptorsForTerrainRendering();
 
 		void FreePipelineDescriptors();
 		void UpdatePerPassDescriptors();
@@ -81,6 +83,8 @@ namespace Lamp
 
 		Ref<RenderPipeline> m_skyboxPipeline;
 		Ref<RenderPipeline> m_terrainPipeline;
+
+		Ref<Terrain> m_testTerrain;
 
 		VkDescriptorPool m_descriptorPool;
 

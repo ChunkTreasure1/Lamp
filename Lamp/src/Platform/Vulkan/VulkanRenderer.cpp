@@ -28,6 +28,8 @@
 #include "Platform/Vulkan/VulkanRenderComputePipeline.h"
 #include "Platform/Vulkan/VulkanShaderStorageBuffer.h"
 
+#include "Lamp/World/Terrain.h"
+
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
 #define PER_PASS_DESCRIPTOR_SET 0
@@ -80,6 +82,8 @@ namespace Lamp
 		m_rendererStorage->renderCommandBuffer = CommandBuffer::Create(3, false);
 
 		CreateBaseGeometry();
+
+		m_testTerrain = CreateRef<Terrain>("assets/textures/iceland_heightmap.png");
 	}
 
 	void VulkanRenderer::Shutdown()
@@ -216,18 +220,23 @@ namespace Lamp
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_terrainPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
-	
+
 		vulkanPipeline->Bind(commandBuffer);
 
+		SetupDescriptorsForTerrainRendering();
+
 		MeshDataBuffer meshData;
-		meshData.model = glm::mat4(1.f);
+		meshData.model = m_testTerrain->GetTransform();
 		meshData.blendingUseBlending.x = 0.f;
 		meshData.blendingUseBlending.y = 0.f;
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
-		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[0].descriptorSets);
+		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[1].descriptorSets);
 
+		m_testTerrain->GetVertexBuffer()->Bind(commandBuffer);
+		m_testTerrain->GetIndexBuffer()->Bind(commandBuffer);
 
+		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_testTerrain->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
@@ -240,6 +249,16 @@ namespace Lamp
 			}
 
 			DrawSkybox();
+		}
+
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain)
+		{
+			if (!m_terrainPipeline || m_terrainPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
+			{
+				CreateTerrainPipeline(m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer);
+			}
+
+			DrawTerrain();
 		}
 
 		switch (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType)
@@ -340,7 +359,7 @@ namespace Lamp
 		//Update
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
-		auto& textureSpecification = vulkanMaterial->GetTextureSpecification(); 
+		auto& textureSpecification = vulkanMaterial->GetTextureSpecification();
 		for (const auto& spec : textureSpecification)
 		{
 			if (spec.set != 1) // TODO: should only material texture descriptors be in material?
@@ -505,6 +524,37 @@ namespace Lamp
 		m_rendererStorage->shaderDescriptorSets.emplace_back(descriptorSet);
 	}
 
+	void VulkanRenderer::SetupDescriptorsForTerrainRendering()
+	{
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_terrainPipeline->GetSpecification().shader);
+		auto device = VulkanContext::GetCurrentDevice();
+		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		auto descriptorSet = vulkanShader->CreateDescriptorSets();
+
+		std::array<VkWriteDescriptorSet, 3> writeDescriptors;
+
+		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_terrainPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
+		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::GetSceneData()->terrainDataBuffer);
+
+		writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
+		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[0].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+
+		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("LightCullingBuffer");
+		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[1].pBufferInfo = &vulkanTerrainBuffer->GetDescriptorInfo();
+
+		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(m_testTerrain->GetHeightMap());
+		writeDescriptors[2] = *vulkanShader->GetDescriptorSet("u_HeightMap");
+		writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
+
+		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+
+		m_rendererStorage->shaderDescriptorSets.emplace_back(descriptorSet);
+	}
+
 	void VulkanRenderer::FreePipelineDescriptors()
 	{
 		auto device = VulkanContext::GetCurrentDevice();
@@ -593,7 +643,7 @@ namespace Lamp
 
 					i++;
 				}
-				
+
 				writeDescriptor.descriptorCount = descriptorInfos.size();
 				writeDescriptor.pImageInfo = descriptorInfos.data();
 
@@ -769,7 +819,9 @@ namespace Lamp
 		pipelineSpec.cullMode = CullMode::Front;
 		pipelineSpec.topology = Topology::PatchList;
 		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
 		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
+		pipelineSpec.useTessellation = true;
 
 		pipelineSpec.vertexLayout =
 		{

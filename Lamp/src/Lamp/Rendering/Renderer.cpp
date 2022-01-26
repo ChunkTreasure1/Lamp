@@ -189,6 +189,11 @@ namespace Lamp
 			ub->SetData(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer));
 		}
 
+		//Terrain data
+		{
+			s_pSceneData->terrainDataBuffer->SetData(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
+		}
+
 		//SSAO
 		{
 			auto ub = s_pSceneData->uniformBufferSet->Get(2, 0, currentFrame);
@@ -394,5 +399,6 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
 
 		s_pSceneData->lightCullingBuffer = UniformBuffer::Create(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
+		s_pSceneData->terrainDataBuffer = UniformBuffer::Create(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
 	}
 }

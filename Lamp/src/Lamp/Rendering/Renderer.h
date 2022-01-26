@@ -102,9 +102,11 @@ namespace Lamp
 			ScreenDataBuffer screenData;
 			DirectionalLightVPBuffer directionalLightVPData;
 			LightCullingBuffer lightCullingData;
+			TerrainDataBuffer terrainData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			Ref<UniformBuffer> lightCullingBuffer;
+			Ref<UniformBuffer> terrainDataBuffer;
 			//////////////////////////
 
 			/////Shader Storage//////

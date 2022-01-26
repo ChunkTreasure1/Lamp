@@ -15,12 +15,14 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
-layout (location = 0) out vec2 v_TexCoords;
+layout (location = 0) out vec2 o_TexCoords;
+layout (location = 1) out vec3 o_Normal;
 
 void main()
 {
     gl_Position = vec4(a_Position, 1.0);
-    v_TexCoords = a_TexCoords;
+    o_TexCoords = a_TexCoords;
+    o_Normal = a_Normal;
 }
 
 #type tessellationControl
@@ -28,34 +30,41 @@ void main()
 
 layout (vertices = 4) out;
 
-layout (location = 1) out vec2 v_TexCoords[];
-
 layout (location = 0) in vec2 a_TexCoords[];
+layout (location = 1) in vec3 a_Normal[];
+
+layout (location = 0) out vec2 o_TexCoords[4];
+layout (location = 1) out vec3 o_Normal[4];
 
 void main()
 {
-    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
-    v_TexCoords[gl_InvocationID] = a_TexCoords[gl_InvocationID];
-
     if(gl_InvocationID == 0)
     {
         gl_TessLevelOuter[0] = 16;
         gl_TessLevelOuter[1] = 16;
-        gl_TessLevelOuter[2] = 16;
+        gl_TessLevelOuter[2] = 16; // move to set tesselation factor using UBO
         gl_TessLevelOuter[3] = 16;
 
         gl_TessLevelInner[0] = 16;
         gl_TessLevelInner[1] = 16;
     }
+
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    o_TexCoords[gl_InvocationID] = a_TexCoords[gl_InvocationID];
+    o_Normal[gl_InvocationID] = a_Normal[gl_InvocationID];
 }
 
 #type tessellationEvaluation
 #version 450
 
-layout (quads, fractional_odd_spacing, ccw) in;
-layout (location = 1) in vec2 v_TexCoords[];
+layout (quads, equal_spacing, ccw) in;
 
-layout (location = 0) out float o_Height;
+layout (location = 0) in vec2 a_TexCoords[];
+layout (location = 1) in vec3 a_Normal[];
+
+layout (location = 0) out vec3 o_Normal;
+layout (location = 1) out vec2 o_TexCoords;
+layout (location = 2) out vec3 o_Position;
 
 layout (std140, binding = 0) uniform CameraDataBuffer
 {
@@ -66,51 +75,39 @@ layout (std140, binding = 0) uniform CameraDataBuffer
 
 } u_CameraData;
 
+layout (std140, binding = 1) uniform TerrainDataBuffer
+{
+    float heightMultiplier; 
+
+} u_TerrainData;
+
+layout (set = 0, binding = 2) uniform sampler2D u_HeightMap;
+
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
 
 } u_MeshData;
 
-layout (set = 0, binding = 1) uniform sampler2D u_HeightMap;
-
 void main()
 {
-    //Get patch coordiantes
-    float u = gl_TessCoord.x;
-    float v = gl_TessCoord.y;
+    //Interpolate UVs
+    vec2 uv1 = mix(a_TexCoords[0], a_TexCoords[1], gl_TessCoord.x);
+    vec2 uv2 = mix(a_TexCoords[3], a_TexCoords[2], gl_TessCoord.x);
+    o_TexCoords = mix(uv1, uv2, gl_TessCoord.y);
 
-    //Get control point texture coords
-    vec2 t00 = v_TexCoords[0];
-    vec2 t01 = v_TexCoords[1];
-    vec2 t10 = v_TexCoords[2];
-    vec2 t11 = v_TexCoords[3];
+    //Interpolate normals
 
-    //Bilinear filtering
-    vec2 t0 = (t01 - t00) * u + t00;
-    vec2 t1 = (t11 - t10) * u + t10;
-    vec2 texCoord = (t1 - t0) * v + t0;
+    //Interpolate positions
+    vec4 pos1 = mix(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_TessCoord.x);
+    vec4 pos2 = mix(gl_in[3].gl_Position, gl_in[2].gl_Position, gl_TessCoord.x);
+    vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
-    //Get y height
-    o_Height = texture(u_HeightMap, texCoord).y * 64.0 - 16.0; // scale and shift, set from menu
+    //Displace
+    pos.y += textureLod(u_HeightMap, o_TexCoords, 0.0).r * u_TerrainData.heightMultiplier;
 
-    //Get control point position coords
-    vec4 p00 = gl_in[0].gl_Position;
-    vec4 p01 = gl_in[1].gl_Position;
-    vec4 p10 = gl_in[2].gl_Position;
-    vec4 p11 = gl_in[3].gl_Position;
-
-    vec4 uVec = p01 - p00;
-    vec4 vVec = p10 - p00;
-    vec4 normal = normalize(vec4(cross(vVec.xyz, uVec.xyz), 0));
-
-    vec4 p0 = (p01 - p00) * u + p00;
-    vec4 p1 = (p11 - p10) * u + p10;
-    vec4 p = (p1 - p0) * v + p0;
-
-    p += normal * o_Height;
-
-    gl_Position = u_CameraData.projection * u_CameraData.view * u_MeshData.model * p;
+    gl_Position = u_CameraData.projection * u_CameraData.view * u_MeshData.model * pos;
+    o_Position = pos.xyz;
 }
 
 #type fragment
@@ -118,10 +115,11 @@ void main()
 
 layout(location = 0) out vec4 o_Color;
 
-layout(location = 0) in float o_Height;
+layout(location = 0) in vec3 o_Normal;
+layout(location = 1) in vec2 o_TexCoords;
+layout(location = 2) in vec3 o_Position;
 
 void main()
 {
-    float h = (o_Height + 16) / 64;
-    o_Color = vec4(h, h, h, 1.0);
+    o_Color = vec4(o_Position.y, o_Position.y, o_Position.y, 1.0);
 }

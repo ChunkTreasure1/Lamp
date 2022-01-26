@@ -67,6 +67,7 @@ namespace Lamp
 		bool depthTest = true;
 		bool depthWrite = true;
 		bool drawSkybox = false;
+		bool drawTerrain = false;
 
 		BufferLayout vertexLayout;
 

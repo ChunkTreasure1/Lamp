@@ -72,4 +72,9 @@ namespace Lamp
 	{
 		int index;
 	};
+
+	struct TerrainDataBuffer
+	{
+		alignas(16) float heightMultiplier = 0.f;
+	};
 }
