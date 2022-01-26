@@ -68,7 +68,7 @@ layer:
       layerId: 0
     - brush: Brush
       meshHandle: 10163665107251789962
-      position: [0, 0, 0]
+      position: [0, 2.90199733, 0]
       rotation: [0, 0, 0]
       scale: [0.00999999978, 0.00999999978, 0.00999999978]
       layerId: 0

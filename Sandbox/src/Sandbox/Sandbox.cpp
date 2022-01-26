@@ -33,7 +33,7 @@ namespace Sandbox
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
 		m_pLevel->SetSkybox("assets/textures/brightForest.hdr");
-		//m_pLevel->SetTerrain(CreateRef<Terrain>("assets/textures/iceland_heightmap.png"));
+		m_pLevel->SetTerrain(CreateRef<Terrain>("assets/textures/iceland_heightmap.png"));
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -536,6 +536,14 @@ namespace Sandbox
 
 			auto& pass = m_renderPasses.emplace_back();
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Terrain
+		{
+			if (g_pEnv->pLevel->GetTerrain())
+			{
+				g_pEnv->pLevel->GetTerrain()->SetupRenderPipeline(m_viewportFramebuffer); // TODO: use geometry framebuffer images instead
+			}
 		}
 
 		//Composite

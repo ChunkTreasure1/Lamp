@@ -75,24 +75,7 @@ namespace Lamp
 		}
 
 		Level(const Level& level);
-
 		~Level();
-
-		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
-		inline const std::string& GetName() { return m_Name; }
-		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
-		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities; }
-		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
-		inline bool GetIsPlaying() { return m_IsPlaying; }
-		inline RenderUtils& GetRenderUtils() { return m_RenderUtils; }
-		inline Ref<Skybox> GetSkybox() { return m_skybox; }
-
-		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
-		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
-		inline void SetTerrain(Ref<Terrain> terrain) { m_terrain = terrain; }
-
-		static AssetType GetStaticType() { return AssetType::Level; }
-		AssetType GetType() override { return GetStaticType(); }
 
 		void OnEvent(Event& e);
 		bool OnRenderEvent(AppRenderEvent& e);
@@ -116,13 +99,31 @@ namespace Lamp
 		void AddToLayer(Object* obj);
 		void RemoveFromLayer(Object* obj);
 
+		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
+		inline const std::string& GetName() { return m_Name; }
+		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
+		
+		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities; }
+		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
+		inline bool GetIsPlaying() { return m_IsPlaying; }
+		
+		inline RenderUtils& GetRenderUtils() { return m_RenderUtils; }
+		inline Ref<Skybox> GetSkybox() { return m_skybox; }
+		inline Ref<Terrain> GetTerrain() { return m_terrain; }
+
+		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
+		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
+		inline void SetTerrain(Ref<Terrain> terrain) { m_terrain = terrain; }
+
+		static AssetType GetStaticType() { return AssetType::Level; }
+		AssetType GetType() override { return GetStaticType(); }
+
 		friend class LevelLoader;
 
 	private:
 		void RenderLevel(Ref<CameraBase> camera);
 		bool OnViewportResize(EditorViewportSizeChangedEvent& e);
 
-	private:
 		std::string m_Name;
 		LevelEnvironment m_Environment;
 		bool m_IsPlaying = false;

@@ -62,22 +62,29 @@ namespace Lamp
 				indices[index + 3] = (indices[index] + 1);
 			}
 		}
-
-		m_vertexBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * vertices.size());
-		m_indexBuffer = IndexBuffer::Create(indices, indices.size());
+		
+		m_mesh = CreateRef<SubMesh>(vertices, indices, 0);
 		m_transform = glm::scale(glm::mat4(1.f), glm::vec3{ 2.f, 1.f, 2.f });
+	
+	}
+
+	Terrain::~Terrain()
+	{
+
 	}
 
 	void Terrain::Draw()
 	{
+		Renderer::SubmitMesh(m_transform, m_mesh, nullptr, m_descriptorSet.descriptorSets);
 	}
 
-	void Terrain::SetupRenderPass(Ref<Framebuffer> framebuffer)
+	Ref<RenderPipeline> Terrain::SetupRenderPipeline(Ref<Framebuffer> framebuffer)
 	{
 		RenderPipelineSpecification pipelineSpec{};
 		pipelineSpec.isSwapchain = false;
 		pipelineSpec.cullMode = CullMode::Front;
 		pipelineSpec.topology = Topology::PatchList;
+		pipelineSpec.drawType = DrawType::Terrain;
 		pipelineSpec.framebuffer = framebuffer;
 		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
 		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
@@ -93,10 +100,21 @@ namespace Lamp
 		};
 
 		m_pipeline = RenderPipeline::Create(pipelineSpec);
+	
+		SetupDescriptors();
+
+		return m_pipeline;
 	}
 
 	void Terrain::SetupDescriptors()
 	{
+		if (m_descriptorSet.pool)
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
+			m_descriptorSet.pool = nullptr;
+		}
+
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_pipeline->GetSpecification().shader);
 		auto device = VulkanContext::GetCurrentDevice();
 		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
@@ -106,8 +124,6 @@ namespace Lamp
 
 		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
 		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::GetSceneData()->terrainDataBuffer);
-
-		auto descriptorSet = vulkanShader->CreateDescriptorSets();
 
 		writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
 		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
@@ -123,7 +139,6 @@ namespace Lamp
 		writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
-
-		m_descriptorSets.emplace_back(descriptorSet);
+		m_descriptorSet = descriptorSet;
 	}
 }

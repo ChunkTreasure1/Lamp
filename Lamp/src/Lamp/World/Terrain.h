@@ -8,31 +8,30 @@ namespace Lamp
 	class IndexBuffer;
 	class Framebuffer;
 	class Texture2D;
+	class SubMesh;
 
 	class Terrain
 	{
 	public:
 		Terrain(const std::filesystem::path& aHeightMap);
-		//inline Ref<Mesh> GetMesh() const { return m_terrainMesh; }
+		~Terrain();
 
 		inline const glm::mat4& GetTransform() const { return m_transform; }
-		inline Ref<VertexBuffer> GetVertexBuffer() { return m_vertexBuffer; }
-		inline Ref<IndexBuffer> GetIndexBuffer() { return m_indexBuffer; }
-
 		inline Ref<Texture2D> GetHeightMap() { return m_heightMap; }
+		inline Ref<RenderPipeline> GetPipeline() { return m_pipeline; }
 
+		Ref<RenderPipeline> SetupRenderPipeline(Ref<Framebuffer> framebuffer);
 		void Draw();
 
 	private:
-		void SetupRenderPass(Ref<Framebuffer> framebuffer);
 		void SetupDescriptors();
 
-		Ref<VertexBuffer> m_vertexBuffer;
-		Ref<IndexBuffer> m_indexBuffer;
+		Ref<SubMesh> m_mesh;
+
 		Ref<RenderPipeline> m_pipeline;
 		Ref<Texture2D> m_heightMap;
 
 		glm::mat4 m_transform;
-		std::vector<VulkanShader::ShaderMaterialDescriptorSet> m_descriptorSets;
+		VulkanShader::ShaderMaterialDescriptorSet m_descriptorSet;
 	};
 }

@@ -23,7 +23,9 @@ namespace Lamp
 	{
 		Buffer,
 		Quad,
-		Cube
+		Cube,
+		Terrain,
+		Skybox
 	};
 
 	enum class CullMode

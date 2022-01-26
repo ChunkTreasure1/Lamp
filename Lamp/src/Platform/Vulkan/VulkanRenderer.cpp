@@ -190,6 +190,11 @@ namespace Lamp
 		vulkanPipeline->Bind(commandBuffer);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, descriptorSets);
 
+		MeshDataBuffer meshData;
+		meshData.model = transform;
+
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
+
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
 
@@ -248,11 +253,6 @@ namespace Lamp
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[1].descriptorSets);
-
-		m_testTerrain->GetVertexBuffer()->Bind(commandBuffer);
-		m_testTerrain->GetIndexBuffer()->Bind(commandBuffer);
-
-		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_testTerrain->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
@@ -269,12 +269,12 @@ namespace Lamp
 
 		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain)
 		{
-			if (!m_terrainPipeline || m_terrainPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
-			{
-				CreateTerrainPipeline(m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer);
-			}
+			auto pipeline = m_rendererStorage->currentRenderPipeline;
 
-			DrawTerrain();
+			m_rendererStorage->currentRenderPipeline = g_pEnv->pLevel->GetTerrain()->GetPipeline();
+			g_pEnv->pLevel->GetTerrain()->Draw();
+
+			m_rendererStorage->currentRenderPipeline = pipeline;
 		}
 
 		switch (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType)
@@ -285,6 +285,13 @@ namespace Lamp
 				{
 					SubmitMesh(command.transform, command.data, command.material, command.id);
 				}
+
+				break;
+			}
+			
+			case DrawType::Terrain:
+			{
+				g_pEnv->pLevel->GetTerrain()->Draw();
 
 				break;
 			}
