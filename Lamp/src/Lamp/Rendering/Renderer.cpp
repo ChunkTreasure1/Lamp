@@ -7,7 +7,6 @@
 #include "Lamp/Rendering/Textures/Texture2D.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/CommandBuffer.h"
-#include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"

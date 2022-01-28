@@ -24,60 +24,42 @@ ImTextureID UI::GetTextureID(Ref<Lamp::Texture2D> texture)
 		return it->second;
 	}
 
-	if (Renderer::GetAPI() == RendererAPI::API::Vulkan)
+	Ref<VulkanTexture2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(texture);
+	const VkDescriptorImageInfo& imageInfo = vulkanTexture->GetDescriptorInfo();
+
+	if (!imageInfo.imageView)
 	{
-		Ref<VulkanTexture2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(texture);
-		const VkDescriptorImageInfo& imageInfo = vulkanTexture->GetDescriptorInfo();
-
-		if (!imageInfo.imageView)
-		{
-			return nullptr;
-		}
-
-		ImTextureID id = ImGui_ImplVulkan_AddTexture(imageInfo.sampler, imageInfo.imageView, imageInfo.imageLayout);
-		s_textureIdCache[texture] = id;
-
-		return id;
-	}
-	else if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
-	{
-		return (ImTextureID)texture->GetID();
+		return nullptr;
 	}
 
-	return nullptr;
+	ImTextureID id = ImGui_ImplVulkan_AddTexture(imageInfo.sampler, imageInfo.imageView, imageInfo.imageLayout);
+	s_textureIdCache[texture] = id;
+
+	return id;
 }
 
 ImTextureID UI::GetTextureID(Ref<Lamp::Image2D> texture)
 {
-	if (Renderer::GetAPI() == RendererAPI::API::Vulkan)
+	Ref<VulkanImage2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanImage2D>(texture);
+	const VkDescriptorImageInfo& imageInfo = vulkanTexture->GetDescriptorInfo();
+
+	if (!imageInfo.imageView)
 	{
-		Ref<VulkanImage2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanImage2D>(texture);
-		const VkDescriptorImageInfo& imageInfo = vulkanTexture->GetDescriptorInfo();
-
-		if (!imageInfo.imageView)
-		{
-			return nullptr;
-		}
-
-		ImTextureID id = ImGui_ImplVulkan_AddTexture(imageInfo.sampler, imageInfo.imageView, imageInfo.imageLayout);
-
-		auto it = s_imageIdCache.find(texture);
-		if (it != s_imageIdCache.end())
-		{
-			auto device = VulkanContext::GetCurrentDevice();
-
-			VkDescriptorSet descriptor = (VkDescriptorSet)it->second;
-			vkFreeDescriptorSets(device->GetHandle(), std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool(), 1, &descriptor);
-		}
-
-		s_imageIdCache[texture] = id;
-
-		return id;
-	}
-	else if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
-	{
-		//return (ImTextureID)texture->GetID();
+		return nullptr;
 	}
 
-	return nullptr;
+	ImTextureID id = ImGui_ImplVulkan_AddTexture(imageInfo.sampler, imageInfo.imageView, imageInfo.imageLayout);
+
+	auto it = s_imageIdCache.find(texture);
+	if (it != s_imageIdCache.end())
+	{
+		auto device = VulkanContext::GetCurrentDevice();
+
+		VkDescriptorSet descriptor = (VkDescriptorSet)it->second;
+		vkFreeDescriptorSets(device->GetHandle(), std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool(), 1, &descriptor);
+	}
+
+	s_imageIdCache[texture] = id;
+
+	return id;
 }

@@ -11,7 +11,6 @@
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 #include "Lamp/Rendering/Renderer.h"
 
-#include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/RendererDataStructures.h"
 
 #include "Platform/Vulkan/VulkanRenderComputePipeline.h"

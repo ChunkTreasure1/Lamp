@@ -1,23 +1,13 @@
 #include "lppch.h"
 #include "Shader.h"
 
-#include "Lamp/Rendering/Renderer.h"
-
-#include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/Vulkan/VulkanShader.h"
 
 namespace Lamp
 {
 	Ref<Shader> Shader::Create(const std::filesystem::path& path, bool forceCompile)
 	{
-		switch (Renderer::GetAPI())
-		{
-			case RendererAPI::API::None: LP_CORE_ASSERT(false, "None is not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(path, forceCompile);
-			case RendererAPI::API::Vulkan: return CreateRef<VulkanShader>(path, forceCompile);
-		}
-
-		return nullptr;
+		return CreateRef<VulkanShader>(path, forceCompile);
 	}
 
 	Shader::ShaderUniform::ShaderUniform(std::string name, ShaderUniformType type, uint32_t size, uint32_t offset)

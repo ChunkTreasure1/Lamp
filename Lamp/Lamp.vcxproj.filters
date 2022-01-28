@@ -103,9 +103,6 @@
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Platform\OpenGL">
-      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Platform\Vulkan">
       <UniqueIdentifier>{81084748-ED69-2456-76D7-6A08E2375B15}</UniqueIdentifier>
     </Filter>
@@ -471,9 +468,6 @@
     <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RenderCommand.h">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
@@ -484,9 +478,6 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\RendererAPI.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h">
@@ -543,39 +534,6 @@
     <ClInclude Include="src\Lamp\World\Terrain.h">
       <Filter>src\Lamp\World</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLImGuiLayer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
@@ -610,9 +568,6 @@
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h">
-      <Filter>src\Platform\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\VulkanRendererAPI.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanShader.h">
@@ -2150,9 +2105,6 @@
     <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
@@ -2160,9 +2112,6 @@
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp">
-      <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp">
       <Filter>src\Lamp\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp">
@@ -2194,39 +2143,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\World\Terrain.cpp">
       <Filter>src\Lamp\World</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLImGuiLayer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp">
       <Filter>src\Platform\Vulkan</Filter>
@@ -2262,9 +2178,6 @@
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp">
-      <Filter>src\Platform\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\VulkanRendererAPI.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp">

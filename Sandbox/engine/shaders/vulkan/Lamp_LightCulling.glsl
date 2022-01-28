@@ -107,7 +107,7 @@ void main()
         minDepth = uintBitsToFloat(minDepthInt);
         maxDepth = uintBitsToFloat(maxDepthInt);
 
-        vec2 negativeStep = (2.0 * vec2(tileId) / vec2(tileNumber));
+        vec2 negativeStep = (2.0 * vec2(tileId)) / vec2(tileNumber);
         vec2 positiveStep = (2.0 * vec2(tileId + ivec2(1, 1))) / vec2(tileNumber);
 
         //Setup frustum planes 
@@ -148,6 +148,7 @@ void main()
 
         vec4 position = u_LightBuffer.pointLights[lightIndex].position;
         float radius = u_LightBuffer.pointLights[lightIndex].radius;
+        radius += radius * 0.3;
 
         //Check if light is in frustum
         float distance = 0.0;

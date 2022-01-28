@@ -3,7 +3,6 @@
 
 #include "imgui.h"
 
-#include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/AssetSystem/AssetManager.h"
@@ -197,7 +196,6 @@ namespace Lamp
 			m_minimized = false;
 		}
 		m_pWindow->OnResize(e.GetWidth(), e.GetHeight());
-		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
 		return false;
 	}
 }

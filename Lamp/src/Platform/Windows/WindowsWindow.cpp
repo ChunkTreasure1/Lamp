@@ -47,16 +47,7 @@ namespace Lamp
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
-#if defined(LP_DEBUG)
-		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
-		{
-			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		}
-#endif
-		if (Renderer::GetAPI() == RendererAPI::API::DX11 || Renderer::GetAPI() == RendererAPI::API::Vulkan)
-		{
-			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		}
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 		//Create the window
 		m_pWindow = glfwCreateWindow(props.Width, props.Height, props.Title.c_str(), NULL, NULL);
@@ -196,33 +187,18 @@ namespace Lamp
 
 	inline void WindowsWindow::SetIsVSync(bool state)
 	{
-		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
-		{
-			if (state)
-			{
-				glfwSwapInterval(1);
-			}
-			else
-			{
-				glfwSwapInterval(0);
-			}
-		}
-
 		m_Data.VSync = state;
 	}
 
 	void WindowsWindow::ShowCursor(bool state)
 	{
-		if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+		if (!state)
 		{
-			if (!state)
-			{
-				glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			}
-			else
-			{
-				glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			}
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+		else
+		{
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
 	}
 	void WindowsWindow::SetSize(const glm::vec2& size)

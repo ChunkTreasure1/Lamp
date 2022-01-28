@@ -27,7 +27,7 @@ namespace Sandbox
 		: Layer("Sandbox"), m_DockspaceID(0), m_PhysicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30),
 		m_createPanel(m_pSelectedObject)
 	{
-		g_pEnv->IsEditor = true;
+		g_pEnv->isEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 

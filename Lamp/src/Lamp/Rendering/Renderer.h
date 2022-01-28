@@ -5,7 +5,6 @@
 #include "Lamp/Rendering/Buffers/UniformBuffer.h"
 #include "Lamp/Rendering/RendererDataStructures.h"
 #include "Lamp/Rendering/Buffers/RenderBuffer.h"
-#include "Lamp/Rendering/RendererAPI.h"
 #include "Lamp/Rendering/Shader/Shader.h"
 
 #include <vulkan/vulkan.h>
@@ -66,7 +65,6 @@ namespace Lamp
 
 		static void DrawBuffer();
 
-		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static Ref<VulkanRenderer> GetRenderer() { return s_renderer; }
 		static void GenerateKernel();

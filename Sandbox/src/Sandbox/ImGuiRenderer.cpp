@@ -350,7 +350,7 @@ namespace Sandbox
 				}
 			}
 
-			if (typeid(m_pSelectedObject) == typeid(Lamp::Entity))
+			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 			{
 				if (ImGui::Button("Add Component"))
 				{
@@ -548,7 +548,8 @@ namespace Sandbox
 		{
 			UI::Property("Height", const_cast<float&>(Renderer::GetSceneData()->terrainData.heightMultiplier));
 
-			UI::EndProperties();
+			UI::EndProperties(false);
+			UI::PopId();
 		}
 
 		ImGui::Separator();
@@ -839,8 +840,8 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Editor"))
 			{
-				ImGui::MenuItem("Render Bounding Box", nullptr, &g_pEnv->ShouldRenderBB);
-				ImGui::MenuItem("Render Gizmos", nullptr, &g_pEnv->ShouldRenderGizmos);
+				ImGui::MenuItem("Render Bounding Box", nullptr, &g_pEnv->shouldRenderBB);
+				ImGui::MenuItem("Render Gizmos", nullptr, &g_pEnv->shouldRenderGizmos);
 
 				ImGui::EndMenu();
 			}
