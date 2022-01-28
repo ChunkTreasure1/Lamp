@@ -12,8 +12,8 @@ namespace Sandbox
 {
 	using namespace Lamp;
 
-	LayerViewPanel::LayerViewPanel(std::string_view name)
-		: BaseWindow(name)
+	LayerViewPanel::LayerViewPanel(std::string_view name, Lamp::Object** selectedObject)
+		: BaseWindow(name), m_pSelectedObject(selectedObject)
 	{
 		m_entityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
 		m_brushIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/AssetIcons/iconMesh.png");
@@ -124,8 +124,6 @@ namespace Sandbox
 				ImGui::PopItemWidth();
 			}
 
-			const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
-
 			if (open)
 			{
 				UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
@@ -193,6 +191,7 @@ namespace Sandbox
 							if (ImGui::Selectable(removeText.c_str()))
 							{
 								obj->Destroy();
+								*m_pSelectedObject = nullptr;
 								objectDestroyed = true;
 							}
 

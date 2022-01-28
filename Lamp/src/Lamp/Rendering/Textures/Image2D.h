@@ -50,13 +50,6 @@ namespace Lamp
 		Nearest
 	};
 
-	enum class TextureType
-	{
-		None = 0,
-		Texture2D,
-		TextureCube
-	};
-
 	struct ImageSpecification
 	{
 		uint32_t width = 1;

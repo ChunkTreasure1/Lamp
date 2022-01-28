@@ -43,7 +43,7 @@ namespace Sandbox
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
-		m_pWindows.push_back(new LayerViewPanel("Layer View"));
+		m_pWindows.push_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
 
 		Application::Get().GetWindow().Maximize();
 

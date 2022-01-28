@@ -110,7 +110,6 @@ namespace Sandbox
 			ImGui::Text(m_CurrentlyOpenGraph->GetSpecification().name.c_str());
 		}
 
-		bool mainHovered = IsHovered({ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, { ImGui::GetWindowSize().x, ImGui::GetWindowSize().y });
 		ImNodes::BeginNodeEditor();
 		if (m_CurrentlyOpenGraph)
 		{

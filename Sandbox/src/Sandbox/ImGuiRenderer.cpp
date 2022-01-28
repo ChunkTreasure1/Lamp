@@ -40,12 +40,9 @@ namespace Sandbox
 			return;
 		}
 
-		glm::vec2 perspectivePos;
-
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Perspective");
 		{
-			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
 			m_perspectiveHover = ImGui::IsWindowHovered();
 			m_sandboxController->GetCameraController()->SetControlsEnabled(m_perspectiveHover);
 			m_perspectiveFocused = ImGui::IsWindowFocused();
@@ -186,13 +183,11 @@ namespace Sandbox
 			ImGuiIO& io = ImGui::GetIO();
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 			glm::vec2 windowPos;
-			glm::vec2 windowSize;
 			bool perspHover = false;
 
 			ImGui::Begin("Perspective");
 			{
 				windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-				windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 				perspHover = ImGui::IsWindowHovered();
 			}
 			ImGui::End();
@@ -355,7 +350,7 @@ namespace Sandbox
 				}
 			}
 
-			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+			if (typeid(m_pSelectedObject) == typeid(Lamp::Entity))
 			{
 				if (ImGui::Button("Add Component"))
 				{

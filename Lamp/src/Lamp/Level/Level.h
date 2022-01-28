@@ -36,7 +36,7 @@ namespace Lamp
 		bool UnregisterDirectionalLight(DirectionalLight* light);
 
 		void RegisterMeshComponent(uint32_t id, MeshComponent* mesh);
-		bool UnegisterMeshComponent(uint32_t id);
+		void UnegisterMeshComponent(uint32_t id);
 
 		inline const std::vector<PointLight*>& GetPointLights() { return m_PointLights; }
 		inline const std::vector<DirectionalLight*>& GetDirectionalLights() { return m_DirectionalLights; }
@@ -63,16 +63,8 @@ namespace Lamp
 	class Level : public Asset
 	{
 	public:
-		Level(const std::string& name)
-			: m_Name(name)
-		{
-		}
-
-		Level()
-		{
-			//Reserve 100 layer slots
-			m_Layers.reserve(100);
-		}
+		Level(const std::string& name);
+		Level();
 
 		Level(const Level& level);
 		~Level();
@@ -100,7 +92,7 @@ namespace Lamp
 		void RemoveFromLayer(Object* obj);
 
 		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
-		inline const std::string& GetName() { return m_Name; }
+		inline const std::string& GetName() { return m_name; }
 		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
 		
 		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities; }
@@ -118,23 +110,26 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::Level; }
 		AssetType GetType() override { return GetStaticType(); }
 
-		friend class LevelLoader;
 
 	private:
+		friend class LevelLoader;
+
 		void RenderLevel(Ref<CameraBase> camera);
 		bool OnViewportResize(EditorViewportSizeChangedEvent& e);
 
-		std::string m_Name;
-		LevelEnvironment m_Environment;
+		std::string m_name;
 		bool m_IsPlaying = false;
 		bool m_LastShowedGizmos = false;
+
+		LevelEnvironment m_Environment;
+		RenderUtils m_RenderUtils;
 
 		Ref<Skybox> m_skybox;
 		Ref<Terrain> m_terrain;
 
 		std::map<uint32_t, Brush*> m_Brushes;
 		std::map<uint32_t, Entity*> m_Entities;
+
 		std::vector<ObjectLayer> m_Layers;
-		RenderUtils m_RenderUtils;
 	};
 }

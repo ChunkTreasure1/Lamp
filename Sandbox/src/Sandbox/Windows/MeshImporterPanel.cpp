@@ -280,7 +280,6 @@ namespace Sandbox
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Import Perspective");
 		{
-			glm::vec2 windowPos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
 			m_hoveringPerspective = ImGui::IsWindowHovered();
 			m_camera->SetControlsEnabled(m_hoveringPerspective);
 		}

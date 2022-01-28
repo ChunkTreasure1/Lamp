@@ -5,15 +5,6 @@
 
 namespace Lamp
 {
-	enum class RenderData
-	{
-		Transform,
-		Data,
-		MaterialBlendingMultiplier,
-		ID,
-		MaterialUseBlending
-	};
-
 	struct RenderCommandData
 	{
 		RenderCommandData() 

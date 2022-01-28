@@ -58,8 +58,8 @@ namespace Lamp
 	private:
 		std::optional<std::reference_wrapper<MaterialTextureSpecification>> FindTexture(const std::string& name);
 
-		uint32_t m_index;
 		std::string m_name;
+		uint32_t m_index;
 
 		float m_blendingMultiplier = 0.f;
 		bool m_useBlending = false;

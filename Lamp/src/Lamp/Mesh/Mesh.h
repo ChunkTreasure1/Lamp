@@ -20,13 +20,6 @@ namespace Lamp
 		glm::vec3 StartMin = glm::vec3(0.f);
 	};
 
-	struct SubMeshData
-	{
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
-		uint32_t matId;
-	};
-
 	class Mesh : public Asset
 	{
 	public:

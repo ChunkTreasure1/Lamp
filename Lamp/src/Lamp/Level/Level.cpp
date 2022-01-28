@@ -65,14 +65,20 @@ namespace Lamp
 		m_MeshComponents.insert(std::make_pair(id, mesh));
 	}
 
-	bool RenderUtils::UnegisterMeshComponent(uint32_t id)
+	void RenderUtils::UnegisterMeshComponent(uint32_t id)
 	{
-		if (m_MeshComponents.find(id) != m_MeshComponents.end())
-		{
-			m_MeshComponents.erase(id);
-			return true;
-		}
-		return false;
+		m_MeshComponents.erase(id);
+	}
+
+	Level::Level(const std::string& name)
+		: m_name(name)
+	{
+	}
+
+	Level::Level()
+	{
+		//Reserve 100 layer slots
+		m_Layers.reserve(100);
 	}
 
 	Level::Level(const Level& level)
@@ -138,7 +144,7 @@ namespace Lamp
 
 		m_skybox = level.m_skybox;
 		m_Environment = level.m_Environment;
-		m_Name = level.m_Name;
+		m_name = level.m_name;
 	}
 
 	Level::~Level()
@@ -241,14 +247,14 @@ namespace Lamp
 			node->ActivateOutput(0);
 		}
 
-		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
-		g_pEnv->ShouldRenderGizmos = false;
+		m_LastShowedGizmos = g_pEnv->shouldRenderGizmos;
+		g_pEnv->shouldRenderGizmos = false;
 	}
 
 	void Level::OnRuntimeEnd()
 	{
 		Physics::DestroyScene();
-		g_pEnv->ShouldRenderGizmos = m_LastShowedGizmos;
+		g_pEnv->shouldRenderGizmos = m_LastShowedGizmos;
 	}
 
 	void Level::OnSimulationStart()

@@ -149,7 +149,7 @@ namespace Lamp
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node levelNode = root["level"];
 
-		level->m_Name = levelNode["name"].as<std::string>();
+		level->m_name = levelNode["name"].as<std::string>();
 		LP_DESERIALIZE_PROPERTY(handle, level->Handle, levelNode, (AssetHandle)0);
 
 		YAML::Node envNode = levelNode["LevelEnvironment"];

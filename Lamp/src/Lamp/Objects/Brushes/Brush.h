@@ -12,9 +12,10 @@ namespace Lamp
 	{
 	public:
 		Brush(Ref<Mesh> model);
+		~Brush() override = default;
 
-		virtual void OnEvent(Event& e) override;
-		virtual void Destroy() override;
+		void OnEvent(Event& e) override;
+		void Destroy() override;
 
 		//Getting
 		inline const Ref<Mesh>& GetModel() const { return m_Mesh; }

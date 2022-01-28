@@ -35,9 +35,9 @@ namespace Lamp
 		float m_translationSpeed = 5.f;
 		float m_scrollTranslationSpeed = 30.f;
 
+		float m_fov = 45.f;
 		float m_nearPlane = 0.1f;
 		float m_farPlane = 100.f;
-		float m_fov = 45.f;
 
 		float m_currentDeltaTime = 0.f;
 

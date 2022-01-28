@@ -27,8 +27,8 @@ namespace Sandbox
 		Ref<Lamp::Texture2D> m_CurrentTexture;
 
 		float m_AnimTime;
-		float m_PerFrameTime;
 		uint32_t m_FrameCount;
+		float m_PerFrameTime;
 		bool m_Playing = false;
 
 		float m_CurrTime = 0.f;

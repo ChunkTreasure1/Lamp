@@ -128,6 +128,9 @@ namespace Sandbox
 		ImGuizmo::OPERATION m_ImGuizmoOperation = ImGuizmo::TRANSLATE;
 		ActionHandler m_ActionHandler;
 
+		//Play
+		AnimatedIcon m_PhysicsIcon;
+
 		//Asset browser
 		AssetBrowserPanel m_assetManager;
 		CreatePanel m_createPanel;
@@ -144,9 +147,6 @@ namespace Sandbox
 
 		//Windows
 		std::vector<BaseWindow*> m_pWindows;
-
-		//Play
-		AnimatedIcon m_PhysicsIcon;
 
 		//Components
 		bool m_AddComponentOpen = false;
