@@ -14,7 +14,7 @@
 namespace Lamp
 {
 	class RenderComputePipeline;
-	class ShaderStorageBuffer;
+	class ShaderStorageBufferSet;
 	class CameraBase;
 	class Texture2D;
 	class Framebuffer;
@@ -111,8 +111,7 @@ namespace Lamp
 			//////////////////////////
 
 			/////Shader Storage//////
-			Ref<ShaderStorageBuffer> visibleLightsStorageBuffer;
-			Ref<ShaderStorageBuffer> pointLightStorageBuffer;
+			Ref<ShaderStorageBufferSet> shaderStorageBufferSet;
 			/////////////////////////
 		};
 
@@ -136,7 +135,6 @@ namespace Lamp
 
 	private:
 		static void CreateUniformBuffers(); //TODO: remove
-		static void CreateShaderStorageBuffers();
 
 		static void UpdateBuffers(const Ref<CameraBase> camera);
 		static void UpdatePassBuffers(const Ref<RenderPipeline> pipeline);

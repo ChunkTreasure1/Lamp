@@ -63,7 +63,6 @@ namespace Lamp
 		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
 
 		CreateUniformBuffers();
-		CreateShaderStorageBuffers();
 		GenerateBRDF();
 	}
 
@@ -132,17 +131,6 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 		s_renderer->DrawBuffer(*s_renderBufferPointer);
-	}
-
-	void Renderer::CreateShaderStorageBuffers()
-	{
-		s_pSceneData->pointLightStorageBuffer = ShaderStorageBuffer::Create(s_pSceneData->maxLights * sizeof(PointLightData));
-		
-		s_pSceneData->screenGroupX = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-		s_pSceneData->screenGroupY = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
-		
-		s_pSceneData->visibleLightsStorageBuffer = ShaderStorageBuffer::Create(s_pSceneData->screenTileCount * sizeof(LightIndex) * s_pSceneData->maxLights);
 	}
 
 	void Renderer::UpdateBuffers(const Ref<CameraBase> camera)
@@ -223,8 +211,9 @@ namespace Lamp
 		//Point lights
 		{
 			auto& pointLights = g_pEnv->pLevel->GetRenderUtils().GetPointLights();
+			auto pointlightStorageBuffer = s_pSceneData->shaderStorageBufferSet->Get(12, 0, currentFrame);
 
-			PointLightData* buffer = (PointLightData*)s_pSceneData->pointLightStorageBuffer->Map();
+			PointLightData* buffer = (PointLightData*)pointlightStorageBuffer->Map();
 
 			s_pSceneData->lightCullingData.lightCount = 0;
 
@@ -243,7 +232,7 @@ namespace Lamp
 				s_pSceneData->lightCullingData.lightCount++;
 			}
 
-			s_pSceneData->pointLightStorageBuffer->Unmap();
+			pointlightStorageBuffer->Unmap();
 
 			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
 		}
@@ -260,6 +249,7 @@ namespace Lamp
 
 			s_pSceneData->screenData.size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
 			s_pSceneData->screenData.aspectRatio = s_pSceneData->screenData.size.x / s_pSceneData->screenData.size.y;
+			s_pSceneData->screenData.xScreenTiles = s_pSceneData->screenGroupX;
 
 			ub->SetData(&s_pSceneData->screenData, sizeof(ScreenDataBuffer));
 		}
@@ -267,13 +257,13 @@ namespace Lamp
 		//Light culling buffer
 		{
 			glm::vec2 size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
-
+			
 			s_pSceneData->screenGroupX = ((uint32_t)size.x + ((uint32_t)size.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 			s_pSceneData->screenGroupY = ((uint32_t)size.y + ((uint32_t)size.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
 			s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
-
+			
 			s_pSceneData->lightCullingData.screenSize = size;
-			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
+			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData.screenSize, sizeof(glm::vec2));
 		}
 	}
 
@@ -385,17 +375,18 @@ namespace Lamp
 		for (uint32_t i = 0; i < 16; i++)
 		{
 			glm::vec3 noise{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, 0.f };
-			s_pSceneData->ssaoNoise.push_back(glm::vec4(noise, 0.f));
+			s_pSceneData->ssaoNoise.emplace_back(noise, 0.f);
 		}
 	}
 
 	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<Image2D> depthImage)
 	{
-		return s_renderer->CreateLightCullingPipeline(s_pSceneData->uniformBufferSet->Get(0), s_pSceneData->lightCullingBuffer, s_pSceneData->pointLightStorageBuffer, s_pSceneData->visibleLightsStorageBuffer, depthImage);
+		return s_renderer->CreateLightCullingPipeline(s_pSceneData->uniformBufferSet->Get(0), s_pSceneData->lightCullingBuffer, s_pSceneData->shaderStorageBufferSet, depthImage);
 	}
 
 	void Renderer::CreateUniformBuffers()
 	{
+		/////Uniform buffer//////
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraData, sizeof(CameraDataBuffer), 0, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
@@ -405,5 +396,14 @@ namespace Lamp
 
 		s_pSceneData->lightCullingBuffer = UniformBuffer::Create(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
 		s_pSceneData->terrainDataBuffer = UniformBuffer::Create(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
+
+		/////Shader storage/////
+		s_pSceneData->screenGroupX = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
+		s_pSceneData->screenGroupY = (s_pSceneData->maxScreenTileBufferAlloc + (s_pSceneData->maxScreenTileBufferAlloc % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
+		s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
+
+		s_pSceneData->shaderStorageBufferSet = ShaderStorageBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
+		s_pSceneData->shaderStorageBufferSet->Add(s_pSceneData->maxLights * sizeof(PointLightData), 12, 0);
+		s_pSceneData->shaderStorageBufferSet->Add(s_pSceneData->screenTileCount * sizeof(LightIndex) * s_pSceneData->maxLights, 13, 0);
 	}
 }

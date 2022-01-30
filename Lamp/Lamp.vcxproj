@@ -239,6 +239,7 @@
     <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBufferSet.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h" />
@@ -788,6 +789,7 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBufferSet.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />

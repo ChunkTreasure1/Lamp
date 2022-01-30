@@ -37,7 +37,7 @@ layout(std140, binding = 0) uniform CameraDataBuffer
 layout(std140, binding = 1) uniform LightCullingBuffer
 {
     vec2 screenSize;
-    int lightCount;
+    uint lightCount;
 } u_LightCullingBuffer;
 
 layout(std430, binding = 2) readonly buffer LightBuffer
@@ -148,7 +148,6 @@ void main()
 
         vec4 position = u_LightBuffer.pointLights[lightIndex].position;
         float radius = u_LightBuffer.pointLights[lightIndex].radius;
-        radius += radius * 0.3;
 
         //Check if light is in frustum
         float distance = 0.0;

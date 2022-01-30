@@ -8,10 +8,6 @@ namespace Lamp
 	{
 	}
 
-	UniformBufferSet::~UniformBufferSet()
-	{
-	}
-
 	void UniformBufferSet::Add(const void* pData, uint32_t dataSize, uint32_t binding, uint32_t set)
 	{
 		for (uint32_t i = 0; i < m_count; i++)

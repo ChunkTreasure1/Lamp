@@ -512,6 +512,7 @@ namespace Sandbox
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
 			pipelineSpec.drawSkybox = true;
 			pipelineSpec.drawTerrain = true;
 			pipelineSpec.vertexLayout =

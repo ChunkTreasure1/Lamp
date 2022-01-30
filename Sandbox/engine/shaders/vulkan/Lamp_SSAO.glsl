@@ -34,6 +34,7 @@ layout(std140, binding = 3) uniform ScreenDataBuffer
 {
     vec2 screenSize;
     float aspectRatio;
+    uint xScreenTiles;
 
 } u_ScreenData;
 

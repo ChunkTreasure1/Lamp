@@ -119,6 +119,7 @@ namespace Lamp
 		pipelineSpec.isSwapchain = true;
 		pipelineSpec.topology = Topology::TriangleList;
 		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
 		pipelineSpec.vertexLayout =
 		{
 			{ ElementType::Float3, "a_Position" },

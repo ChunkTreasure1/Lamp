@@ -9,7 +9,7 @@ namespace Lamp
 
 	void ShaderLibrary::AddShader(const std::string& path)
 	{
-		Ref<Shader> shader = Shader::Create(path, false); //TODO: fix force compile
+		Ref<Shader> shader = Shader::Create(path, true); //TODO: fix force compile
 
 		m_shaders.push_back(shader);
 	}

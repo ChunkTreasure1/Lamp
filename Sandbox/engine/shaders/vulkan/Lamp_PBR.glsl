@@ -81,6 +81,22 @@ struct DirectionalLight
 	bool castShadows;
 };
 
+struct PointLight
+{
+    vec4 position;
+    vec4 color;
+
+    float intensity;
+    float radius;
+    float falloff;
+    float farPlane;
+};
+
+struct LightIndex
+{
+    int index;
+};
+
 layout (std140, binding = 0) uniform CameraDataBuffer
 {
     mat4 view;
@@ -97,12 +113,28 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 
 } u_DirectionalLights;
 
+layout (std140, binding = 3) uniform ScreenDataBuffer
+{
+    vec2 screenSize;
+    float aspectRatio;
+    uint xScreenTiles;
+} u_ScreenData;
+
+layout (std430, binding = 12) readonly buffer LightBuffer
+{
+    PointLight lights[1024];
+} u_LightBuffer;
+
+layout (std430, binding = 13) readonly buffer VisibleLightsBuffer
+{
+    LightIndex data[];
+} u_VisibleIndices;
+
 layout (push_constant) uniform MeshDataBuffer
 {
     layout(offset = 64) vec2 blendingUseBlending;
 
 } u_MeshData;
-
 
 layout (location = 0) in Out
 {
@@ -243,6 +275,46 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 no
     return lightStrength;
 }
 
+vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
+{
+    float distance = length(light.position.xyz - fragPos);
+    float shadow = 0.0;
+
+    if (distance > light.radius)
+    {
+        return vec3(0.0);
+    }
+
+    //Radiance
+    vec3 dirToLight = normalize(light.position.xyz - fragPos);
+    vec3 H = normalize(dirToCamera + dirToLight);
+
+    float attenuation = clamp(1.0 - distance / light.radius, 0.0, 1.0);
+    attenuation *= attenuation;
+
+    vec3 radiance = (light.color.xyz * light.intensity) * attenuation;
+
+    //Cook-Torrance BRDF
+    float NdotV = max(dot(normal, dirToCamera), 0.0000001);
+    float NdotL = max(dot(normal, dirToLight), 0.0000001);
+    float HdotV = max(dot(H, dirToCamera), 0.0);
+    float NdotH = max(dot(normal, H), 0.0);
+
+    float d = distributionGGX(NdotH, roughness);
+	float g = geometrySmith(NdotV, NdotL, roughness);
+	vec3 f = fresnelSchlick(HdotV, baseReflectivity);
+
+    vec3 specular = d * g * f;
+    specular /= 4.0 * NdotV * NdotL;
+
+    //Energy conservation
+    vec3 kD = vec3(1.0) - f;
+    kD *= 1.0 - metallic;
+
+    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular)) * radiance * NdotL;
+    return lightStrength;
+}
+
 vec3 CalculateNormal()
 {
     vec3 tangentNormal = texture(u_Normal, v_In.texCoord).xyz * 2.0 - 1.0;
@@ -251,6 +323,7 @@ vec3 CalculateNormal()
 
 void main()
 {
+    //Pre calculations
     vec4 albedoTex = texture(u_Albedo, v_In.texCoord);
     vec3 albedo = albedoTex.rgb;
 
@@ -265,10 +338,22 @@ void main()
     vec3 baseReflectivity = mix(globalDielectricBase, albedo, metallic);
     vec3 lightAccumulation = vec3(0.0);
 
+    //Light calculation
     lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[0], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness, 0); //TODO: Setup using multiple instead
 
-    vec3 reflectVec = reflect(-dirToCamera, normal);
+    ivec2 location = ivec2(gl_FragCoord.xy);
+    ivec2 tileId = location / ivec2(16, 16);
+    uint index = tileId.y * u_ScreenData.xScreenTiles + tileId.x;
 
+    uint offset = index * 1024;
+    for(int i = 0; i < 1024 && u_VisibleIndices.data[offset + i].index != -1; ++i)
+    {
+        uint index = u_VisibleIndices.data[offset + i].index;
+        lightAccumulation += CalculatePointLight(u_LightBuffer.lights[index], dirToCamera, normal, baseReflectivity, metallic, roughness, albedo, v_In.fragPos);
+    }
+
+    //Final calculations
+    vec3 reflectVec = reflect(-dirToCamera, normal);
     int maxReflectionLOD = textureQueryLevels(u_PrefilterMap);
     vec3 prefilterColor = textureLod(u_PrefilterMap, reflectVec, roughness * float(maxReflectionLOD)).rgb;
     vec3 F = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);

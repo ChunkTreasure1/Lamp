@@ -299,7 +299,7 @@ namespace Lamp
 	}
 
 	//TODO: Find better way to save execute function
-	std::pair<Ref<RenderComputePipeline>, std::function<void()>> VulkanRenderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBuffer> lightBuffer, Ref<ShaderStorageBuffer> visibleLightsBuffer, Ref<Image2D> depthImage)
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> VulkanRenderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage)
 	{
 		Ref<Shader> lightCullingShader = ShaderLibrary::GetShader("lightCulling");
 		Ref<VulkanRenderComputePipeline> lightCullingPipeline = std::reinterpret_pointer_cast<VulkanRenderComputePipeline>(RenderComputePipeline::Create(lightCullingShader));
@@ -309,6 +309,7 @@ namespace Lamp
 		auto func = [=]()
 		{
 			auto device = VulkanContext::GetCurrentDevice();
+			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 			std::array<VkWriteDescriptorSet, 5> writeDescriptors;
 			auto descriptorSet = vulkanShader->CreateDescriptorSets();
@@ -323,12 +324,12 @@ namespace Lamp
 			writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
 			writeDescriptors[1].pBufferInfo = &vulkanLightCullingBuffer->GetDescriptorInfo();
 
-			auto vulkanLightStorageBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(lightBuffer);
+			auto vulkanLightStorageBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(shaderStorageSet->Get(12, 0, currentFrame));
 			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("LightBuffer");
 			writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
 			writeDescriptors[2].pBufferInfo = &vulkanLightStorageBuffer->GetDescriptorInfo();
 
-			auto vulkanVisibleLightsBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(visibleLightsBuffer);
+			auto vulkanVisibleLightsBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(shaderStorageSet->Get(13, 0, currentFrame));
 			writeDescriptors[3] = *vulkanShader->GetDescriptorSet("VisibleLightsBuffer");
 			writeDescriptors[3].dstSet = descriptorSet.descriptorSets[0];
 			writeDescriptors[3].pBufferInfo = &vulkanVisibleLightsBuffer->GetDescriptorInfo();
@@ -638,6 +639,19 @@ namespace Lamp
 
 			auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(vulkanPipeline->GetSpecification().uniformBufferSets->Get(uniformBuffer.second->bindPoint, 0, currentFrame));
 			writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+
+			writeDescriptors.emplace_back(writeDescriptor);
+		}
+
+		auto& shaderBuffers = shaderDescriptorSet.storageBuffers;
+		//Shader buffers
+		for (const auto& shaderBuffer : shaderBuffers)
+		{
+			auto writeDescriptor = shaderDescriptorSet.writeDescriptorSets.at(shaderBuffer.second->name);
+			writeDescriptor.dstSet = currentDescriptorSet;
+
+			auto vulkanShaderBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(vulkanPipeline->GetSpecification().shaderStorageBufferSets->Get(shaderBuffer.second->bindPoint, 0, currentFrame));
+			writeDescriptor.pBufferInfo = &vulkanShaderBuffer->GetDescriptorInfo();
 
 			writeDescriptors.emplace_back(writeDescriptor);
 		}

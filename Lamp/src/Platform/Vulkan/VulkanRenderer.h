@@ -20,6 +20,7 @@ namespace Lamp
 	class Image2D;
 	class UniformBuffer;
 	class ShaderStorageBuffer;
+	class ShaderStorageBufferSet;
 	class Terrain;
 	class SubMesh;
 	class CameraBase;
@@ -68,7 +69,7 @@ namespace Lamp
 
 		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
 		
-		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBuffer> lightBuffer, Ref<ShaderStorageBuffer> visibleLightsBuffer, Ref<Image2D> depthImage);
+		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage);
 
 		static Ref<VulkanRenderer> Create();
 

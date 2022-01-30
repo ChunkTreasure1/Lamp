@@ -2,6 +2,7 @@
 
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
 #include "Lamp/Rendering/Buffers/UniformBufferSet.h"
+#include "Lamp/Rendering/Buffers/ShaderStorageBufferSet.h"
 
 namespace Lamp
 {
@@ -62,6 +63,7 @@ namespace Lamp
 		Ref<Framebuffer> framebuffer;
 		Ref<Shader> shader;
 		Ref<UniformBufferSet> uniformBufferSets;
+		Ref<ShaderStorageBufferSet> shaderStorageBufferSets;
 
 		Topology topology;
 		DrawType drawType = DrawType::Buffer;

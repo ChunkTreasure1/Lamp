@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		UniformBufferSet(uint32_t count);
-		~UniformBufferSet();
+		~UniformBufferSet() = default;
 
 		void Add(const void* pData, uint32_t dataSize, uint32_t binding, uint32_t set);
 		Ref<UniformBuffer> Get(uint32_t binding, uint32_t set = 0, uint32_t index = 0);

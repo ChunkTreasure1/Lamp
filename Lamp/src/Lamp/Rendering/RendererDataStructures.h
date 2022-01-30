@@ -22,6 +22,7 @@ namespace Lamp
 	{
 		alignas(16) glm::vec2 size;
 		alignas(16) float aspectRatio;
+		uint32_t xScreenTiles;
 	};
 
 	struct DirectionalLightData
@@ -52,7 +53,7 @@ namespace Lamp
 	struct LightCullingBuffer
 	{
 		alignas(16) glm::vec2 screenSize;
-		alignas(16) uint32_t lightCount;
+		uint32_t lightCount;
 	};
 
 	struct PointLightData
