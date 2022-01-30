@@ -221,7 +221,7 @@ namespace Lamp
 			{
 				const auto& light = pointLights[i];
 
-				buffer[i].position = glm::vec4(light->shadowBuffer->GetPosition(), 0.f);
+				buffer[i].position = glm::vec4(light->shadowBuffer->GetPosition(), 1.f);
 				buffer[i].color = glm::vec4(light->color, 0.f);
 				buffer[i].intensity = light->intensity;
 				buffer[i].falloff = light->falloff;

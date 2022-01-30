@@ -14,7 +14,7 @@ namespace Lamp
 		m_shaders.push_back(shader);
 	}
 
-		void ShaderLibrary::LoadShaders()
+	void ShaderLibrary::LoadShaders()
 	{
 		std::vector<std::string> paths;
 		FileSystem::GetAllFilesOfType(".glsl", "engine/shaders/vulkan", paths);

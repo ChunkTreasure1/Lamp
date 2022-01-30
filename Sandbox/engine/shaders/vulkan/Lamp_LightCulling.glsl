@@ -86,7 +86,6 @@ void main()
     barrier();
 
     //Calculate min and max depth values
-    float maxDepth, minDepth;
     vec2 texCoords = vec2(location) / u_LightCullingBuffer.screenSize;
 
     float depth = texture(u_DepthMap, texCoords).r;
@@ -104,19 +103,19 @@ void main()
     //Calculate frustum planes on one thread
     if (gl_LocalInvocationIndex == 0)
     {
-        minDepth = uintBitsToFloat(minDepthInt);
-        maxDepth = uintBitsToFloat(maxDepthInt);
+        float minDepth = uintBitsToFloat(minDepthInt);
+        float maxDepth = uintBitsToFloat(maxDepthInt);
 
         vec2 negativeStep = (2.0 * vec2(tileId)) / vec2(tileNumber);
         vec2 positiveStep = (2.0 * vec2(tileId + ivec2(1, 1))) / vec2(tileNumber);
 
         //Setup frustum planes 
-        frustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); //Left
-        frustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0+ positiveStep.x); //Right
-        frustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); //Bottom
-        frustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); //Top
-        frustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); //Near
-        frustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); //Far
+		frustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
+		frustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0 + positiveStep.x); // Right
+		frustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); // Bottom
+		frustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); // Top
+		frustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); // Near
+		frustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); // Far
 
         //Transform LRTB planes
         for (uint i = 0; i < 4; i++)
@@ -148,6 +147,7 @@ void main()
 
         vec4 position = u_LightBuffer.pointLights[lightIndex].position;
         float radius = u_LightBuffer.pointLights[lightIndex].radius;
+        radius += radius * 0.3;
 
         //Check if light is in frustum
         float distance = 0.0;

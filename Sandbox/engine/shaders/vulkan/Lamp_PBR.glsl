@@ -150,7 +150,7 @@ layout (set = 0, binding = 5) uniform samplerCube u_IrradianceMap;
 layout (set = 0, binding = 6) uniform samplerCube u_PrefilterMap;
 layout (set = 0, binding = 7) uniform sampler2D u_BRDFLUT;
 
-layout (set = 0, binding = 11) uniform sampler2D u_DirShadowMaps[1];
+layout (set = 0, binding = 11) uniform sampler2DShadow u_DirShadowMaps[1];
 
 //Per object
 layout (set = 1, binding = 8) uniform sampler2D u_Albedo;
@@ -209,6 +209,22 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity)
 	return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
 }
 
+float InterleavedGradientNoise(vec2 vec)
+{
+    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
+    return fract(magic.z * dot(vec, magic.xy));
+}
+
+vec2 VogelDiskSample(int sampleIndex, int samplesCount, float phi)
+{
+    const float goldenAngle = 2.4;
+
+    float r = sqrt(sampleIndex + 0.5) / sqrt(samplesCount);
+    float theta = sampleIndex * goldenAngle * phi;
+
+    return r * vec2(cos(theta), sin(theta));
+}
+
 float CalculateDirectionalShadow(uint lightIndex)
 {
     vec4 pos = v_In.shadowCoords[lightIndex];
@@ -217,29 +233,17 @@ float CalculateDirectionalShadow(uint lightIndex)
     projCoords.xy = projCoords.xy * 0.5 + 0.5;
     projCoords.y = -projCoords.y;
 
-    float closestDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy).r;
-    float currentDepth = projCoords.z;
-
-    const float bias = 0.05;
+    vec2 texelSize = 1.0 / textureSize(u_DirShadowMaps[lightIndex], 0);
     float shadow = 0.0;
 
-    vec2 texelSize = 1.0 / textureSize(u_DirShadowMaps[lightIndex], 0);
-    for(int x = -1; x <= 1; x++)
+    const float noise = InterleavedGradientNoise(gl_FragCoord.xy);
+
+    for (int i = 0; i < 16; ++i)
     {
-        for(int y = -1; y <= 1; y++)
-        {
-            float pcfDepth = texture(u_DirShadowMaps[lightIndex], projCoords.xy + vec2(x, y) * texelSize).r;
-            shadow += currentDepth > pcfDepth ? 1.0 : 0.0;
-        }        
+        vec2 sampleOffset = VogelDiskSample(i, 16, noise);
+        shadow += texture(u_DirShadowMaps[lightIndex], vec3(projCoords.xy + sampleOffset * texelSize * 5.5, projCoords.z - 0.001)).x * (1.0 / 16.0);
     }
 
-    shadow /= 9.0;
-
-    if (projCoords.z > 1.0)
-    {
-        shadow = 0.0;
-    }
-    
     return shadow;
 }
 
@@ -271,7 +275,7 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 no
 	vec3 kD = vec3(1.0) - f;
 	kD *= 1.0 - metallic;
 
-    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
+    vec3 lightStrength = (shadow * (kD * albedo / PI + specular) * vec3(1.0) * NdotL) * light.colorIntensity.w * light.colorIntensity.xyz;
     return lightStrength;
 }
 

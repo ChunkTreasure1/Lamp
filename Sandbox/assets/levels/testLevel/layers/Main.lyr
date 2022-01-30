@@ -3,7 +3,7 @@ layer:
   id: 0
   active: true
   entities:
-    - entity: Light
+    - entity: Entity
       position: [0, 9.62425041, 0]
       rotation: [-0.777768135, -7.82311105e-08, 0.128070876]
       scale: [0.999995649, 0.999996424, 0.999997139]
@@ -16,11 +16,11 @@ layer:
               value: 2
             - param: Color
               type: Color3
-              value: [1, 0, 0]
+              value: [1, 0.999989986, 0.999989986]
             - param: Cast Shadows
               type: Bool
               value: true
-    - entity: Player
+    - entity: Entity
       position: [0, 6.02083206, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
@@ -71,7 +71,7 @@ layer:
             - param: Layer
               type: Int
               value: 0
-    - entity: Ground
+    - entity: Entity
       position: [0, 3.4852283, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
@@ -88,6 +88,32 @@ layer:
             - param: Is Trigger
               type: Bool
               value: false
+    - entity: Entity
+      position: [-2.2896471, 5.74372196, -0.479638368]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: LightComponent
+          params:
+            - param: Intensity
+              type: Float
+              value: 3
+            - param: Radius
+              type: Float
+              value: 7
+            - param: Falloff
+              type: Float
+              value: 0
+            - param: Near plane
+              type: Float
+              value: 0.100000001
+            - param: Far plane
+              type: Float
+              value: 100
+            - param: Color
+              type: Color3
+              value: [1, 1, 1]
   brushes:
     - brush: Sponza
       meshHandle: 15873515662996244200

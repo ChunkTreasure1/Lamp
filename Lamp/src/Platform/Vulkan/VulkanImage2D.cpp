@@ -106,7 +106,9 @@ namespace Lamp
 		samplerCreateInfo.minLod = 0.f;
 		samplerCreateInfo.maxLod = 100.f;
 		samplerCreateInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-		
+		samplerCreateInfo.compareEnable = m_specification.comparable ? VK_TRUE : VK_FALSE;
+		samplerCreateInfo.compareOp = VK_COMPARE_OP_LESS;
+
 		result = vkCreateSampler(device->GetHandle(), &samplerCreateInfo, nullptr, &m_sampler);
 
 		UpdateDescriptor();

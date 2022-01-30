@@ -15,6 +15,7 @@ namespace Lamp
 		bufferSpec.swapchainTarget = false;
 		bufferSpec.height = 4096;
 		bufferSpec.width = 4096;
+		bufferSpec.shadow = true;
 		bufferSpec.attachments =
 		{
 			ImageFormat::RGBA,

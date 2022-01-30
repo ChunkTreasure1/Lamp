@@ -79,6 +79,7 @@ namespace Lamp
 
 		bool swapchainTarget = false;
 		bool copyable = false;
+		bool shadow = false;
 	};
 
 	class Framebuffer
