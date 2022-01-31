@@ -257,7 +257,7 @@ namespace Lamp
 
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox)
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && g_pEnv->pLevel->GetSkybox())
 		{
 			if (!m_skyboxPipeline || m_skyboxPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
 			{
@@ -267,7 +267,7 @@ namespace Lamp
 			DrawSkybox();
 		}
 
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain)
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && g_pEnv->pLevel->GetTerrain())
 		{
 			auto pipeline = m_rendererStorage->currentRenderPipeline;
 
@@ -528,6 +528,11 @@ namespace Lamp
 
 	void VulkanRenderer::SetupDescriptorsForSkyboxRendering()
 	{
+		if (!g_pEnv->pLevel->GetSkybox())
+		{
+			return;
+		}
+
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_skyboxPipeline->GetSpecification().shader);
 		auto device = VulkanContext::GetCurrentDevice();
 

@@ -16,13 +16,13 @@ namespace Lamp
 {
 	Entity::Entity()
 	{
-		m_Name = "Entity";
+		m_name = "Entity";
 		m_gizmoMaterial = MaterialLibrary::GetMaterial("gizmoEntity");
 	}
 
 	void Entity::OnEvent(Event& e)
 	{
-		if (!m_IsActive)
+		if (!m_isActive)
 		{
 			return;
 		}
@@ -46,7 +46,7 @@ namespace Lamp
 		auto& entites = g_pEnv->pLevel->GetEntities();
 		g_pEnv->pLevel->RemoveFromLayer(this);
 
-		entites.erase(m_Id);
+		entites.erase(m_id);
 		delete this;
 	}
 
@@ -121,27 +121,29 @@ namespace Lamp
 	{
 		Entity* copy = new Entity();
 
+		copy->m_name = entity->m_name;
+
 		DuplicateComponents(copy, entity);
 
 		if (entity->m_graphKeyGraph)
 		{
 			copy->m_graphKeyGraph = CreateRef<GraphKeyGraph>(*entity->m_graphKeyGraph);
 		}
-		copy->m_Transform = entity->m_Transform;
-		copy->SetPosition(entity->m_Position);
-		copy->SetRotation(entity->m_Rotation);
-		copy->SetScale(entity->m_Scale);
-		copy->m_LayerID = entity->m_LayerID;
+		copy->m_transform = entity->m_transform;
+		copy->SetPosition(entity->m_position);
+		copy->SetRotation(entity->m_rotation);
+		copy->SetScale(entity->m_scale);
+		copy->m_layer = entity->m_layer;
 
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetEntities().emplace(copy->m_Id, copy);
+			g_pEnv->pLevel->GetEntities().emplace(copy->m_id, copy);
 			g_pEnv->pLevel->AddToLayer(copy);
 		}
 		else
 		{
-			copy->m_Id = entity->m_Id;
+			copy->m_id = entity->m_id;
 		}
 
 		return copy;
@@ -149,9 +151,9 @@ namespace Lamp
 
 	bool Entity::OnRenderEvent(AppRenderEvent& e)
 	{
-		if (g_pEnv->shouldRenderGizmos && m_IsActive)
+		if (g_pEnv->shouldRenderGizmos && m_isActive)
 		{
-			glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_Position);
+			glm::vec3 dir = glm::normalize(e.GetCamera()->GetPosition() - m_position);
 
 			float angleXZ = std::atan2f(dir.z, dir.x);
 			float angleY = -std::asin(dir.y);
@@ -159,13 +161,13 @@ namespace Lamp
 			const float maxDist = 10.f;
 			const float maxScale = 3.f;
 
-			float distance = glm::distance(e.GetCamera()->GetPosition(), m_Position);
+			float distance = glm::distance(e.GetCamera()->GetPosition(), m_position);
 			float scale = glm::min(distance / maxDist, maxScale);
 
 			glm::mat4 rotation = glm::rotate(glm::mat4(1.f), -angleXZ + glm::radians(90.f), { 0.f, 1.f, 0.f })
 				* glm::rotate(glm::mat4(1.f), angleY, { 1.f, 0.f, 0.f });
 
-			glm::mat4 transform = glm::translate(glm::mat4(1.f), m_Position)
+			glm::mat4 transform = glm::translate(glm::mat4(1.f), m_position)
 				* rotation
 				* glm::scale(glm::mat4(1.f), glm::vec3(scale));
 
@@ -190,7 +192,7 @@ namespace Lamp
 				{
 					case Lamp::PropertyType::String:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -201,7 +203,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Bool:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -212,7 +214,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Int:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -223,7 +225,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -234,7 +236,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float2:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -245,7 +247,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float3:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -256,7 +258,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float4:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -267,7 +269,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Path:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -278,7 +280,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Color3:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -289,7 +291,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Color4:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;

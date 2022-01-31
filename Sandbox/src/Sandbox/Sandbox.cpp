@@ -69,25 +69,25 @@ namespace Sandbox
 		GetInput();
 
 		{
-			LP_PROFILE_SCOPE("Sandbox::Update::LevelUpdate")
-				switch (m_SceneState)
+			LP_PROFILE_SCOPE("Sandbox::Update::LevelUpdate");
+			switch (m_SceneState)
+			{
+				case SceneState::Edit:
 				{
-					case SceneState::Edit:
-					{
-						g_pEnv->pLevel->UpdateEditor(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
-						break;
-					}
-					case SceneState::Play:
-					{
-						g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
-						break;
-					}
-					case SceneState::Simulating:
-					{
-						g_pEnv->pLevel->UpdateSimulation(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
-						break;
-					}
+					g_pEnv->pLevel->UpdateEditor(e.GetTimestep());
+					break;
 				}
+				case SceneState::Play:
+				{
+					g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
+					break;
+				}
+				case SceneState::Simulating:
+				{
+					g_pEnv->pLevel->UpdateSimulation(e.GetTimestep());
+					break;
+				}
+			}
 		}
 
 		{
@@ -101,7 +101,7 @@ namespace Sandbox
 			{
 				if (pWindow->GetIsOpen())
 				{
-					for (auto pFunc : pWindow->GetRenderFuncs())
+					for (const auto& pFunc : pWindow->GetRenderFuncs())
 					{
 						pFunc();
 					}
@@ -130,14 +130,14 @@ namespace Sandbox
 		{
 			ScopedTimer timer{};
 			m_assetManager.OnImGuiRender();
-		
+
 			m_assetManagerTime = timer.GetTime();
 		}
-		
+
 		{
 			ScopedTimer timer{};
 			m_createPanel.OnImGuiRender();
-			
+
 			m_createPanelTime = timer.GetTime();
 		}
 
@@ -175,25 +175,26 @@ namespace Sandbox
 
 	void Sandbox::OnRender()
 	{
-		Renderer::Begin(m_sandboxController->GetCameraController()->GetCamera());
-
-		for (const auto& pass : m_renderPasses)
+		switch (m_SceneState)
 		{
-			if (pass.graphicsPipeline)
+			case SceneState::Edit:
 			{
-				Renderer::BeginPass(pass.graphicsPipeline);
-
-				Renderer::DrawBuffer();
-
-				Renderer::EndPass();
+				m_pLevel->RenderEditor(m_sandboxController->GetCameraController()->GetCamera());
+				break;
 			}
-			else
+
+			case SceneState::Play:
 			{
-				pass.computeExcuteCommand();
+				m_pLevel->RenderRuntime();
+				break;
+			}
+
+			case SceneState::Simulating:
+			{
+				m_pLevel->RenderSimulation(m_sandboxController->GetCameraController()->GetCamera());
+				break;
 			}
 		}
-
-		Renderer::End();
 	}
 
 	bool Sandbox::OnKeyPressed(KeyPressedEvent& e)
@@ -370,8 +371,8 @@ namespace Sandbox
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
 
 		g_pEnv->pLevel = m_pRuntimeLevel;
-		m_pRuntimeLevel->SetIsPlaying(true);
 		m_pRuntimeLevel->OnRuntimeStart();
+		m_pRuntimeLevel->SetIsPlaying(true);
 
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
@@ -384,6 +385,7 @@ namespace Sandbox
 
 		m_pRuntimeLevel->OnRuntimeEnd();
 		g_pEnv->pLevel = m_pLevel;
+		m_pLevel->SetIsPlaying(false);
 
 		m_pRuntimeLevel = nullptr;
 		m_pGame = nullptr;
@@ -395,8 +397,8 @@ namespace Sandbox
 		m_pSelectedObject = nullptr;
 
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
-		m_pRuntimeLevel->SetIsPlaying(true);
 		g_pEnv->pLevel = m_pRuntimeLevel;
+		m_pRuntimeLevel->SetIsPlaying(true);
 		m_pRuntimeLevel->OnSimulationStart();
 	}
 
@@ -407,12 +409,15 @@ namespace Sandbox
 
 		m_pRuntimeLevel->OnSimulationEnd();
 		g_pEnv->pLevel = m_pLevel;
+		m_pLevel->SetIsPlaying(false);
 
 		m_pRuntimeLevel = nullptr;
 	}
 
 	void Sandbox::SetupRenderPasses()
 	{
+		std::vector<Lamp::RenderPass> renderPasses;
+
 		//Depth PrePass
 		{
 			FramebufferSpecification framebufferSpec{};
@@ -440,13 +445,13 @@ namespace Sandbox
 				{ ElementType::Float2, "a_TexCoords" },
 			};
 
-			auto& pass = m_renderPasses.emplace_back();
+			auto& pass = renderPasses.emplace_back();
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Light culling
 		{
-			auto& pass = m_renderPasses.emplace_back();
+			auto& pass = renderPasses.emplace_back();
 			auto [pipeline, command] = Renderer::CreateLightCullingPipeline(m_depthPrePassFramebuffer->GetDepthAttachment());
 			pass.computePipeline = pipeline;
 			pass.computeExcuteCommand = command;
@@ -490,7 +495,7 @@ namespace Sandbox
 				{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
 			};
 
-			auto& pass = m_renderPasses.emplace_back();
+			auto& pass = renderPasses.emplace_back();
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
@@ -535,7 +540,7 @@ namespace Sandbox
 				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 6 } // should not be set here
 			};
 
-			auto& pass = m_renderPasses.emplace_back();
+			auto& pass = renderPasses.emplace_back();
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
@@ -583,5 +588,7 @@ namespace Sandbox
 			//
 			//m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
 		}
+
+		m_pLevel->SetRenderPasses(renderPasses);
 	}
 }

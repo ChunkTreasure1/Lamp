@@ -153,9 +153,9 @@ namespace Lamp
 		LP_DESERIALIZE_PROPERTY(handle, level->Handle, levelNode, (AssetHandle)0);
 
 		YAML::Node envNode = levelNode["LevelEnvironment"];
-		LP_DESERIALIZE_PROPERTY(cameraPosition, level->m_Environment.CameraPosition, envNode, glm::vec3(0.f));
-		LP_DESERIALIZE_PROPERTY(cameraRotation, level->m_Environment.CameraRotation, envNode, glm::quat());
-		LP_DESERIALIZE_PROPERTY(cameraFOV, level->m_Environment.CameraFOV, envNode, 60.f);
+		LP_DESERIALIZE_PROPERTY(cameraPosition, level->m_environment.CameraPosition, envNode, glm::vec3(0.f));
+		LP_DESERIALIZE_PROPERTY(cameraRotation, level->m_environment.CameraRotation, envNode, glm::quat());
+		LP_DESERIALIZE_PROPERTY(cameraFOV, level->m_environment.CameraFOV, envNode, 60.f);
 
 		//Layers
 		YAML::Node layersNode = levelNode["layers"];
@@ -206,9 +206,9 @@ namespace Lamp
 
 		level->m_Brushes = brushes;
 		level->m_Entities = entities;
-		level->m_Layers = layers;
+		level->m_layers = layers;
 
-		if (level->m_Layers.empty())
+		if (level->m_layers.empty())
 		{
 			level->AddLayer(ObjectLayer("Main", 0, true));
 		}
@@ -386,6 +386,9 @@ namespace Lamp
 	{
 		uint32_t layerId = entry["layerId"].as<uint32_t>();
 		Entity* entity = Entity::Create(true, layerId);
+
+		std::string name = entry["entity"].as<std::string>();
+		entity->SetName(name);
 
 		glm::vec3 pos;
 		LP_DESERIALIZE_PROPERTY(position, pos, entry, glm::vec3(0.f));

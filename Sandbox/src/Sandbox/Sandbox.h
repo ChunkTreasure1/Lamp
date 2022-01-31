@@ -97,8 +97,6 @@ namespace Sandbox
 		Ref<Lamp::Level> m_pLevel = nullptr;
 		Ref<Lamp::Level> m_pRuntimeLevel = nullptr;
 		 
-		std::vector<Lamp::RenderPass> m_renderPasses;
-
 		Ref<Lamp::Terrain> m_terrain;
 
 		//---------------Editor-----------------

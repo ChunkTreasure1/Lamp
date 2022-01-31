@@ -295,6 +295,7 @@ vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 b
 
     float attenuation = clamp(1.0 - distance / light.radius, 0.0, 1.0);
     attenuation *= attenuation;
+    attenuation = mix(attenuation, 1.0, light.falloff);
 
     vec3 radiance = (light.color.xyz * light.intensity) * attenuation;
 
@@ -343,7 +344,10 @@ void main()
     vec3 lightAccumulation = vec3(0.0);
 
     //Light calculation
-    lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[0], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness, 0); //TODO: Setup using multiple instead
+    for(int i = 0; i < u_DirectionalLights.count; ++i)
+    {
+        lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[i], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness, i);
+    }
 
     ivec2 location = ivec2(gl_FragCoord.xy);
     ivec2 tileId = location / ivec2(16, 16);

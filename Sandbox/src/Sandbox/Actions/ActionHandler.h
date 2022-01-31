@@ -40,7 +40,7 @@ namespace Sandbox
 			if (pObj)
 			{
 				glm::mat4 mat = std::any_cast<glm::mat4>(lastData);
-				pObj->SetModelMatrix(mat);
+				pObj->SetTransform(mat);
 			}
 		}
 	};

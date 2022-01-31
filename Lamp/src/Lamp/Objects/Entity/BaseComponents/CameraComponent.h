@@ -19,32 +19,38 @@ namespace Lamp
 		CameraComponent()
 			: EntityComponent("CameraComponent")
 		{
-			m_PerspectiveCamera = CreateRef<PerspectiveCamera>(60.f, 0.1f, 100.f);
+			m_perspectiveCamera = CreateRef<PerspectiveCamera>(60.f, 0.1f, 100.f);
 		}
 		~CameraComponent() {}
 
 		//////Base//////
-		virtual void Initialize() override;
-		virtual void OnEvent(Lamp::Event& someE) override;
+		void Initialize() override;
+		void OnEvent(Lamp::Event& someE) override;
 		////////////////
 
-		inline void SetIsMain(bool state) { m_IsMain = state; }
-		inline bool GetIsMain() { return m_IsMain; }
-		inline Ref<CameraBase> GetCamera() { return std::dynamic_pointer_cast<CameraBase>(m_PerspectiveCamera); }
+		inline void SetIsMain(bool state) { m_isMain = state; }
+		inline bool GetIsMain() { return m_isMain; }
+		inline Ref<CameraBase> GetCamera() { return std::dynamic_pointer_cast<CameraBase>(m_perspectiveCamera); }
 
 	private:
 		bool OnUpdate(AppUpdateEvent& e);
 		bool OnViewportSizeChanged(EditorViewportSizeChangedEvent& e);
+		bool OnPropertyUpdated(ObjectPropertyChangedEvent& e);
 
 	public:
 		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }
 		static std::string GetFactoryName() { return "CameraComponent"; }
 
 	private:
-		bool m_IsPerspective = true;
-		bool m_IsMain = false;
+		bool m_isPerspective = true;
+		bool m_isMain = false;
 
-		Ref<PerspectiveCamera> m_PerspectiveCamera;
+		float m_nearPlane = 0.01f;
+		float m_farPlane = 1000.f;
+
+		float m_currentAspectRatio = 1.7f;
+
+		Ref<PerspectiveCamera> m_perspectiveCamera;
 		Ref<OrthographicCamera> m_OrthographicCamera;
 	};
 }

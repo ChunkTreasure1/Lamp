@@ -9,7 +9,7 @@ namespace Lamp
 	Brush::Brush(Ref<Mesh> model)
 		: m_Mesh(model)
 	{
-		m_Name = "Brush";
+		m_name = "Brush";
 	}
 
 	void Brush::OnEvent(Event& e)
@@ -22,7 +22,7 @@ namespace Lamp
 	void Brush::Destroy()
 	{
 		g_pEnv->pLevel->RemoveFromLayer(this);
-		g_pEnv->pLevel->GetBrushes().erase(m_Id);
+		g_pEnv->pLevel->GetBrushes().erase(m_id);
 
 		delete this;
 	}
@@ -63,12 +63,12 @@ namespace Lamp
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_Id, pBrush));
+			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_id, pBrush));
 			g_pEnv->pLevel->AddToLayer(pBrush);
 		}
 		else
 		{
-			pBrush->m_Id = main->m_Id;
+			pBrush->m_id = main->m_id;
 		}
 
 		pBrush->SetLayerID(main->GetLayerID());
@@ -101,9 +101,9 @@ namespace Lamp
 
 	bool Brush::OnRender(AppRenderEvent& e)
 	{	
-		if (m_IsActive)
+		if (m_isActive)
 		{
-			m_Mesh->Render(m_Id, GetTransform());
+			m_Mesh->Render(m_id, GetTransform());
 		}
 
 		return false;
@@ -116,8 +116,8 @@ namespace Lamp
 
 	bool Brush::OnScaleChanged(ObjectScaleChangedEvent& e)
 	{
-		m_Mesh->GetBoundingBox().Max = m_Scale * m_Mesh->GetBoundingBox().StartMax;
-		m_Mesh->GetBoundingBox().Min = m_Scale * m_Mesh->GetBoundingBox().StartMin;
+		m_Mesh->GetBoundingBox().Max = m_scale * m_Mesh->GetBoundingBox().StartMax;
+		m_Mesh->GetBoundingBox().Min = m_scale * m_Mesh->GetBoundingBox().StartMin;
 
 		return false;
 	}

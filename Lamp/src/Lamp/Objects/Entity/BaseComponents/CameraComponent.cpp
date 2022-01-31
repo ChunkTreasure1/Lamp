@@ -9,9 +9,11 @@ namespace Lamp
 	{
 		SetComponentProperties
 		({
-			{ PropertyType::Bool, "Is Perspective", RegisterData(&m_IsPerspective) },
-			{ PropertyType::Bool, "Is Main", RegisterData(&m_IsMain) },
-			{ PropertyType::Float, "Field Of View", RegisterData(&m_PerspectiveCamera->GetFieldOfView()) }
+			{ PropertyType::Bool, "Is Perspective", RegisterData(&m_isPerspective) },
+			{ PropertyType::Bool, "Is Main", RegisterData(&m_isMain) },
+			{ PropertyType::Float, "Field Of View", RegisterData(&m_perspectiveCamera->GetFieldOfView()) },
+			{ PropertyType::Float, "Near Plane", RegisterData(&m_nearPlane) },
+			{ PropertyType::Float, "Far Plane", RegisterData(&m_farPlane) }
 		});
 	}
 
@@ -20,19 +22,29 @@ namespace Lamp
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(CameraComponent::OnUpdate));
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(CameraComponent::OnViewportSizeChanged));
+		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(CameraComponent::OnPropertyUpdated));
 	}
 
 	bool CameraComponent::OnUpdate(AppUpdateEvent& e)
 	{
-		m_PerspectiveCamera->SetPosition(m_pEntity->GetPosition());
-		m_PerspectiveCamera->SetRotation(m_pEntity->GetRotation());
+		m_perspectiveCamera->SetPosition(m_pEntity->GetPosition());
+		m_perspectiveCamera->SetRotation(m_pEntity->GetRotation());
 
 		return false;
 	}
 
 	bool CameraComponent::OnViewportSizeChanged(EditorViewportSizeChangedEvent& e)
 	{
-		m_PerspectiveCamera->SetProjection(m_PerspectiveCamera->GetFieldOfView(), (float)e.GetWidth() / (float)e.GetHeight(), 0.01f, 100.f);
+		m_currentAspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
+
+		m_perspectiveCamera->SetProjection(m_perspectiveCamera->GetFieldOfView(), m_currentAspectRatio, m_nearPlane, m_farPlane);
+		return false;
+	}
+
+	bool CameraComponent::OnPropertyUpdated(ObjectPropertyChangedEvent& e)
+	{
+		m_perspectiveCamera->SetProjection(m_perspectiveCamera->GetFieldOfView(), m_currentAspectRatio, m_nearPlane, m_farPlane);
+
 		return false;
 	}
 

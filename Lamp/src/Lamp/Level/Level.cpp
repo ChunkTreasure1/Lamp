@@ -73,12 +73,15 @@ namespace Lamp
 	Level::Level(const std::string& name)
 		: m_name(name)
 	{
+		m_layers.reserve(100);
+	
+		m_layers.emplace_back("Main", 0, true);
 	}
 
 	Level::Level()
 	{
 		//Reserve 100 layer slots
-		m_Layers.reserve(100);
+		m_layers.reserve(100);
 	}
 
 	Level::Level(const Level& level)
@@ -94,18 +97,18 @@ namespace Lamp
 			m_Entities.emplace(pair);
 			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(&lightComp->GetLight());
+				m_renderUtils.RegisterPointLight(&lightComp->GetLight());
 			}
 
 			if (auto dirLightComp = pair.second->GetComponent<DirectionalLightComponent>())
 			{
-				m_RenderUtils.RegisterDirectionalLight(&dirLightComp->GetLight());
+				m_renderUtils.RegisterDirectionalLight(&dirLightComp->GetLight());
 			}
 		}
 
 		for (auto& brush : m_Brushes)
 		{
-			for (auto& layer : m_Layers)
+			for (auto& layer : m_layers)
 			{
 				if (brush.second->GetLayerID() == layer.ID)
 				{
@@ -114,15 +117,15 @@ namespace Lamp
 			}
 		}
 
-		for (const auto& layer : level.m_Layers)
+		for (const auto& layer : level.m_layers)
 		{
 			ObjectLayer l(layer.Name, layer.ID, layer.Active);
-			m_Layers.push_back(l);
+			m_layers.push_back(l);
 		}
 
 		for (auto& entity : m_Entities)
 		{
-			for (auto& layer : m_Layers)
+			for (auto& layer : m_layers)
 			{
 				if (entity.second->GetLayerID() == layer.ID)
 				{
@@ -133,7 +136,7 @@ namespace Lamp
 
 		for (auto& brush : m_Brushes)
 		{
-			for (auto& layer : m_Layers)
+			for (auto& layer : m_layers)
 			{
 				if (brush.second->GetLayerID() == layer.ID)
 				{
@@ -143,7 +146,7 @@ namespace Lamp
 		}
 
 		m_skybox = level.m_skybox;
-		m_Environment = level.m_Environment;
+		m_environment = level.m_environment;
 		m_name = level.m_name;
 	}
 
@@ -166,34 +169,15 @@ namespace Lamp
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Level::OnViewportResize));
-		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Level::OnRenderEvent));
 	}
 
-	bool Level::OnRenderEvent(AppRenderEvent& e)
+	void Level::UpdateEditor(Timestep ts)
 	{
-		if (m_terrain)
-		{
-			//Lamp::Renderer::SubmitMesh(glm::mat4(1.f), m_terrain->GetMesh()->GetSubMeshes()[0], m_terrain->GetMesh()->GetMaterial(0));
-		}
-
-		return false;
 	}
 
-	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)
-	{
-		AppRenderEvent e(camera);
-		OnEvent(e);
-
-		RenderLevel(camera);
-	}
-	void Level::UpdateSimulation(Timestep ts, Ref<CameraBase>& camera)
+	void Level::UpdateSimulation(Timestep ts)
 	{
 		Physics::GetScene()->Simulate(ts);
-
-		AppRenderEvent e(camera);
-		OnEvent(e);
-
-		RenderLevel(camera);
 	}
 
 	void Level::UpdateRuntime(Timestep ts)
@@ -202,18 +186,37 @@ namespace Lamp
 		OnEvent(e);
 
 		Physics::GetScene()->Simulate(ts);
+	}
 
-		Ref<CameraBase> camera;
-		for (auto& it : m_Entities)
+	void Level::RenderEditor(const Ref<CameraBase> camera)
+	{
+		AppRenderEvent e(camera);
+		OnEvent(e);
+
+		RenderLevel(camera);
+	}
+
+	void Level::RenderSimulation(const Ref<CameraBase> camera)
+	{
+		AppRenderEvent e(camera);
+		OnEvent(e);
+
+		RenderLevel(camera);
+	}
+
+	void Level::RenderRuntime()
+	{
+		Ref<CameraBase> camera = nullptr;
+		for (const auto& it : m_Entities)
 		{
-			if (auto& comp = it.second->GetComponent<CameraComponent>())
+			if (const auto comp = it.second->GetComponent<CameraComponent>())
 			{
 				camera = comp->GetCamera();
 				break;
 			}
 		}
 
-		if (camera)
+		if (camera.get())
 		{
 			AppRenderEvent e(camera);
 			OnEvent(e);
@@ -247,14 +250,14 @@ namespace Lamp
 			node->ActivateOutput(0);
 		}
 
-		m_LastShowedGizmos = g_pEnv->shouldRenderGizmos;
+		m_lastShowedGizmos = g_pEnv->shouldRenderGizmos;
 		g_pEnv->shouldRenderGizmos = false;
 	}
 
 	void Level::OnRuntimeEnd()
 	{
 		Physics::DestroyScene();
-		g_pEnv->shouldRenderGizmos = m_LastShowedGizmos;
+		g_pEnv->shouldRenderGizmos = m_lastShowedGizmos;
 	}
 
 	void Level::OnSimulationStart()
@@ -270,12 +273,12 @@ namespace Lamp
 
 	void Level::AddLayer(const ObjectLayer& layer)
 	{
-		m_Layers.push_back(layer);
+		m_layers.push_back(layer);
 	}
 
 	void Level::RemoveLayer(uint32_t id)
 	{
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (layer.ID == id)
 			{
@@ -286,9 +289,9 @@ namespace Lamp
 			}
 		}
 
-		if (auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [id](ObjectLayer& layer) { return id == layer.ID; }); it != m_Layers.end())
+		if (auto it = std::find_if(m_layers.begin(), m_layers.end(), [id](ObjectLayer& layer) { return id == layer.ID; }); it != m_layers.end())
 		{
-			m_Layers.erase(it);
+			m_layers.erase(it);
 		}
 	}
 
@@ -297,7 +300,7 @@ namespace Lamp
 		ObjectLayer* currObjLayer;
 		ObjectLayer* newObjLayer;
 
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (layer.ID == currLayer)
 			{
@@ -335,7 +338,7 @@ namespace Lamp
 
 	void Level::AddToLayer(Object* obj)
 	{
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (layer.ID == obj->GetLayerID())
 			{
@@ -347,7 +350,7 @@ namespace Lamp
 
 	void Level::RemoveFromLayer(Object* obj)
 	{
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj); it != layer.Objects.end())
 			{
@@ -357,9 +360,27 @@ namespace Lamp
 		}
 	}
 
-	void Level::RenderLevel(Ref<CameraBase> camera)
+	void Level::RenderLevel(const Ref<CameraBase> camera)
 	{
+		Renderer::Begin(camera);
 
+		for (const auto& pass : m_renderPasses)
+		{
+			if (pass.graphicsPipeline)
+			{
+				Renderer::BeginPass(pass.graphicsPipeline);
+
+				Renderer::DrawBuffer();
+
+				Renderer::EndPass();
+			}
+			else
+			{
+				pass.computeExcuteCommand();
+			}
+		}
+
+		Renderer::End();
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)

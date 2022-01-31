@@ -3,7 +3,7 @@ layer:
   id: 0
   active: true
   entities:
-    - entity: Entity
+    - entity: Skylight
       position: [0, 9.62425041, 0]
       rotation: [-0.777768135, -7.82311105e-08, 0.128070876]
       scale: [0.999995649, 0.999996424, 0.999997139]
@@ -20,7 +20,7 @@ layer:
             - param: Cast Shadows
               type: Bool
               value: true
-    - entity: Entity
+    - entity: Player
       position: [0, 6.02083206, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
@@ -71,7 +71,18 @@ layer:
             - param: Layer
               type: Int
               value: 0
-    - entity: Entity
+        - name: CameraComponent
+          params:
+            - param: Is Perspective
+              type: Bool
+              value: true
+            - param: Is Main
+              type: Bool
+              value: true
+            - param: Field Of View
+              type: Float
+              value: 60
+    - entity: Floor
       position: [0, 3.4852283, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
@@ -88,7 +99,7 @@ layer:
             - param: Is Trigger
               type: Bool
               value: false
-    - entity: Entity
+    - entity: Light
       position: [-2.2896471, 5.74372196, -0.479638368]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]

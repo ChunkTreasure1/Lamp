@@ -22,45 +22,45 @@ namespace Lamp
 		void AddRotation(const glm::vec3& rot);
 		void SetScale(const glm::vec3& scale);
 
-		void SetModelMatrix(const glm::mat4& mat);
-		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetLayerID(uint32_t id) { m_LayerID = id; }
+		void SetTransform(const glm::mat4& mat);
+		inline void SetName(const std::string& name) { m_name = name; }
+		inline void SetLayerID(uint32_t id) { m_layer = id; }
 
-		inline void SetIsFrozen(bool state) { m_IsFrozen = state; }
-		inline void SetIsActive(bool state) { m_IsActive = state; }
-		inline void SetIsSelected(bool state) { m_IsSelected = state; }
+		inline void SetIsFrozen(bool state) { m_isFrozen = state; }
+		inline void SetIsActive(bool state) { m_isActive = state; }
+		inline void SetIsSelected(bool state) { m_isSelected = state; }
 
 		//Getting
-		inline const glm::vec3& GetPosition() const { return m_Position; }
-		inline const glm::vec3& GetRotation() const { return m_Rotation; }
-		inline const glm::vec3& GetScale() const { return m_Scale; }
+		inline const glm::vec3& GetPosition() const { return m_position; }
+		inline const glm::vec3& GetRotation() const { return m_rotation; }
+		inline const glm::vec3& GetScale() const { return m_scale; }
 
 		const glm::mat4& GetTransform();
-		inline const std::string& GetName() const { return m_Name; }
+		inline const std::string& GetName() const { return m_name; }
 
-		inline uint32_t GetLayerID() const { return m_LayerID; }
-		inline bool GetIsFrozen() const { return m_IsFrozen; }
-		inline bool GetIsActive() const { return m_IsActive; }
+		inline uint32_t GetLayerID() const { return m_layer; }
+		inline bool GetIsFrozen() const { return m_isFrozen; }
+		inline bool GetIsActive() const { return m_isActive; }
 		
-		inline const uint32_t GetID() const { return m_Id; }
-		inline const bool GetIsSelected() const { return m_IsSelected; }
+		inline const uint32_t GetID() const { return m_id; }
+		inline const bool GetIsSelected() const { return m_isSelected; }
 
 		virtual void OnEvent(Event& e) {}
 		virtual void Destroy() = 0;
 
 	protected:
-		bool m_IsActive = true;
-		bool m_IsFrozen = false;
-		bool m_IsSelected = false;
+		bool m_isActive = true;
+		bool m_isFrozen = false;
+		bool m_isSelected = false;
 
-		glm::vec3 m_Position = { 0.f, 0.f, 0.f };
-		glm::vec3 m_Rotation = { 0.f, 0.f, 0.f };
-		glm::vec3 m_Scale = { 0.f, 0.f, 0.f };
+		glm::vec3 m_position = { 0.f, 0.f, 0.f };
+		glm::vec3 m_rotation = { 0.f, 0.f, 0.f };
+		glm::vec3 m_scale = { 0.f, 0.f, 0.f };
 
-		glm::mat4 m_Transform = glm::mat4(1.f);
-		std::string m_Name;
+		glm::mat4 m_transform = glm::mat4(1.f);
+		std::string m_name;
 
-		uint32_t m_LayerID = 0;
-		uint32_t m_Id;
+		uint32_t m_layer = 0;
+		uint32_t m_id;
 	};
 }

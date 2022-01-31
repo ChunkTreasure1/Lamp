@@ -192,6 +192,9 @@ namespace Lamp
 
 	void WindowsWindow::ShowCursor(bool state)
 	{
+		static std::mutex lockMutex;
+		std::lock_guard lock{ lockMutex };
+
 		if (!state)
 		{
 			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -201,6 +204,7 @@ namespace Lamp
 			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
 	}
+
 	void WindowsWindow::SetSize(const glm::vec2& size)
 	{
 		glfwSetWindowSize(m_pWindow, (uint32_t)size.x, (uint32_t)size.y);
