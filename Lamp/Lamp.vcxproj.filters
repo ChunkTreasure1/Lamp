@@ -1882,6 +1882,7 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.h" />
+    <ClInclude Include="src\Lamp\Level\Environment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2314,5 +2315,6 @@
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.cpp" />
+    <ClCompile Include="src\Lamp\Level\Environment.cpp" />
   </ItemGroup>
 </Project>

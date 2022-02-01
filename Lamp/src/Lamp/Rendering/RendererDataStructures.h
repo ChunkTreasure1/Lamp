@@ -6,8 +6,17 @@ namespace Lamp
 {
 	struct MeshDataBuffer
 	{
-		alignas(16) glm::mat4 model;
-		alignas(16) glm::vec2 blendingUseBlending;
+		glm::mat4 model;
+
+		float useAlbedo;
+		float useNormal;
+		float useMRO;
+		float useSkybox;
+	
+		glm::vec2 blendingUseBlending;
+		glm::vec2 mroColor;
+		glm::vec4 albedoColor;
+		glm::vec4 normalColor;
 	};
 
 	struct CameraDataBuffer

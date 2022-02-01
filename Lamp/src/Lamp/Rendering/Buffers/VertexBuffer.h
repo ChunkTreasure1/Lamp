@@ -1,10 +1,9 @@
 #pragma once
 
-#include <functional>
 #include "BufferLayout.h"
-#include <glm/glm.hpp>
 
-#include "Lamp/Core/Core.h"
+#include <glm/glm.hpp>
+#include <functional>
 
 namespace Lamp
 {

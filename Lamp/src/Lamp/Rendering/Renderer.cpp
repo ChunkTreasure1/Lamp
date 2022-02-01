@@ -163,7 +163,7 @@ namespace Lamp
 
 			uint32_t index = 0;
 			s_pSceneData->directionalLightDataBuffer.lightCount = 0;
-			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+			for (const auto& light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
 			{
 				glm::vec3 direction = glm::normalize(glm::mat3(light->transform) * glm::vec3(1.f));
 
@@ -197,7 +197,7 @@ namespace Lamp
 		//Light data
 		{
 			uint32_t index = 0;
-			for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+			for (const auto& light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
 			{
 				s_pSceneData->directionalLightVPData.directionalLightVPs[index] = light->viewProjection;
 				index++;
@@ -210,7 +210,7 @@ namespace Lamp
 
 		//Point lights
 		{
-			auto& pointLights = g_pEnv->pLevel->GetRenderUtils().GetPointLights();
+			auto& pointLights = g_pEnv->pLevel->GetEnvironment().GetPointLights();
 			auto pointlightStorageBuffer = s_pSceneData->shaderStorageBufferSet->Get(12, 0, currentFrame);
 
 			PointLightData* buffer = (PointLightData*)pointlightStorageBuffer->Map();
@@ -273,7 +273,7 @@ namespace Lamp
 
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-		for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+		for (const auto& light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
 		{
 			if (!light->castShadows)
 			{

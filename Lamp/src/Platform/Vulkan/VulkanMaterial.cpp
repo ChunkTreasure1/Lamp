@@ -18,8 +18,7 @@ namespace Lamp
 
 		m_index = vulkanMaterial->GetIndex();
 		m_name = vulkanMaterial->GetName();
-		m_blendingMultiplier = vulkanMaterial->GetBlendingMultiplier();
-		m_useBlending = vulkanMaterial->GetUseBlending();
+		m_materialData = vulkanMaterial->GetMaterialData();
 
 		SetShader(vulkanMaterial->GetShader());
 		m_textureSpecifications = vulkanMaterial->GetTextureSpecification();
@@ -103,11 +102,11 @@ namespace Lamp
 
 	std::optional<std::reference_wrapper<VulkanMaterial::MaterialTextureSpecification>> VulkanMaterial::FindTexture(const std::string& name)
 	{
-		for (uint32_t i = 0; i < m_textureSpecifications.size(); i++)
+		for (auto& textureSpecification : m_textureSpecifications)
 		{
-			if (m_textureSpecifications[i].name == name)
+			if (textureSpecification.name == name)
 			{
-				return m_textureSpecifications[i];
+				return textureSpecification;
 			}
 		}
 

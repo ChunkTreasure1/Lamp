@@ -17,7 +17,6 @@ layout (location = 4) in vec2 a_TexCoords;
 layout (location = 0) out Out
 {
     vec2 texCoords;
-    vec2 viewRay;
 
 } v_Out;
 
@@ -41,9 +40,6 @@ layout(std140, binding = 3) uniform ScreenDataBuffer
 void main()
 {
     v_Out.texCoords = a_TexCoords;
-    v_Out.viewRay.x = a_Position.x * u_ScreenData.aspectRatio * u_CameraData.positionAndTanHalfFOV.w;
-    v_Out.viewRay.y = a_Position.y * u_CameraData.positionAndTanHalfFOV.w;
-
     gl_Position = vec4(a_Position, 1.0);
 }
 
@@ -77,7 +73,6 @@ layout(std140, binding = 3) uniform ScreenDataBuffer
 layout (location = 0) in Out
 {
     vec2 texCoords;
-    vec2 viewRay;
     
 } v_In;
 
@@ -118,19 +113,12 @@ void main()
 
         vec4 offset = u_CameraData.projection * samplePos;
         offset.xyz /= offset.w;
-        offset.xyz = offset.xyz * 0.5 + 0.5;
+        offset.xy = offset.xy * 0.5 + 0.5;
 
         float sampleDepth = (u_CameraData.view * vec4(CalculateWorldCoords(offset.xy), 1.0)).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, u_SSAOData.sizeBiasRadiusStrength.z / abs(positionDepth - sampleDepth));
         occlusion -= samplePos.z + u_SSAOData.sizeBiasRadiusStrength.y < sampleDepth ? rangeCheck / int(u_SSAOData.sizeBiasRadiusStrength.x) : 0.0;
-    }
-
-    if(occlusion < 1.0)
-    {
-        float invStrength = 1.0 - u_SSAOData.sizeBiasRadiusStrength.w;
-        occlusion += invStrength;
-        occlusion = clamp(occlusion, 0.0, 1.0);
     }
 
     o_Color = occlusion;

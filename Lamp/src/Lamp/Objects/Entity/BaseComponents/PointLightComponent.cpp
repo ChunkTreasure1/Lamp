@@ -27,13 +27,13 @@ namespace Lamp
 
 		if (g_pEnv->pLevel)
 		{
-			g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight.get());
+			g_pEnv->pLevel->GetEnvironment().RegisterPointLight(m_pPointLight.get());
 		}
 	}
 
 	PointLightComponent::~PointLightComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnregisterPointLight(m_pPointLight.get());
+		g_pEnv->pLevel->GetEnvironment().UnregisterPointLight(m_pPointLight.get());
 	}
 
 	void PointLightComponent::Initialize()

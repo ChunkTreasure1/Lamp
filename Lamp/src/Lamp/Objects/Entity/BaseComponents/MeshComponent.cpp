@@ -14,12 +14,10 @@ namespace Lamp
 
 	MeshComponent::~MeshComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnegisterMeshComponent(m_pEntity->GetID());
 	}
 
 	void MeshComponent::Initialize()
 	{
-		g_pEnv->pLevel->GetRenderUtils().RegisterMeshComponent(m_pEntity->GetID(), this);
 	}
 
 	void MeshComponent::OnEvent(Event& e)

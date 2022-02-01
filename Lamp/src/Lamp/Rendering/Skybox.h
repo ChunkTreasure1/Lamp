@@ -3,6 +3,8 @@
 #include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 
+#include "Lamp/AssetSystem/Asset.h"
+
 #include <filesystem>
 
 namespace Lamp
@@ -14,7 +16,7 @@ namespace Lamp
 	class Image2D;
 	class RenderPipeline;
 
-	class Skybox
+	class Skybox : public Asset
 	{
 	public:
 		Skybox(const std::filesystem::path& path);
@@ -24,7 +26,9 @@ namespace Lamp
 		inline Ref<TextureCube> GetFilteredEnvironment() const { return m_filteredEnvironment; }
 		inline Ref<Image2D> GetBRDF() const { return m_brdfFramebuffer->GetColorAttachment(0); }
 
-	public:
+		static AssetType GetStaticType() { return AssetType::EnvironmentMap; }
+		AssetType GetType() override { return GetStaticType(); }
+
 		static Ref<Skybox> Create(const std::filesystem::path& path) { return CreateRef<Skybox>(path); }
 
 	private:

@@ -167,10 +167,22 @@ namespace Lamp
 		SetupDescriptorsForMaterialRendering(material);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
 
+		const auto& matData = material->GetMaterialData();
+
 		MeshDataBuffer meshData;
 		meshData.model = transform;
-		meshData.blendingUseBlending.x = material->GetBlendingMultiplier();
-		meshData.blendingUseBlending.y = static_cast<float>(material->GetUseBlending());
+		meshData.blendingUseBlending.x = matData.blendingMultiplier;
+		meshData.blendingUseBlending.y = static_cast<float>(matData.useBlending);
+		
+		meshData.useAlbedo = static_cast<float>(matData.useAlbedo);
+		meshData.useNormal = static_cast<float>(matData.useNormal);
+		meshData.useMRO = static_cast<float>(matData.useMRO);
+
+		meshData.mroColor = matData.mroColor;
+		meshData.albedoColor = matData.albedoColor;
+		meshData.normalColor = matData.normalColor;
+		
+		meshData.useSkybox = static_cast<float>(g_pEnv->pLevel->HasSkybox());
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
 
@@ -228,7 +240,17 @@ namespace Lamp
 
 		SetupDescriptorsForSkyboxRendering();
 
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &Renderer::GetSceneData()->environmentSettings);
+		struct SkyboxData
+		{
+			float environmentLod = 1.f;
+			float environmentMultiplier = 1.f;
+
+		} skyData;
+
+		skyData.environmentLod = g_pEnv->pLevel->GetEnvironment().GetSkybox().environmentLod;
+		skyData.environmentMultiplier = g_pEnv->pLevel->GetEnvironment().GetSkybox().environmentMultiplier;
+
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &skyData);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[0].descriptorSets);
 
 		m_rendererStorage->cubeMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
@@ -257,7 +279,7 @@ namespace Lamp
 
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && g_pEnv->pLevel->GetSkybox())
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && g_pEnv->pLevel->HasSkybox())
 		{
 			if (!m_skyboxPipeline || m_skyboxPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
 			{
@@ -267,12 +289,12 @@ namespace Lamp
 			DrawSkybox();
 		}
 
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && g_pEnv->pLevel->GetTerrain())
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && g_pEnv->pLevel->HasTerrain())
 		{
 			auto pipeline = m_rendererStorage->currentRenderPipeline;
 
-			m_rendererStorage->currentRenderPipeline = g_pEnv->pLevel->GetTerrain()->GetPipeline();
-			g_pEnv->pLevel->GetTerrain()->Draw();
+			m_rendererStorage->currentRenderPipeline = g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->GetPipeline();
+			g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->Draw();
 
 			m_rendererStorage->currentRenderPipeline = pipeline;
 		}
@@ -291,7 +313,14 @@ namespace Lamp
 			
 			case DrawType::Terrain:
 			{
-				g_pEnv->pLevel->GetTerrain()->Draw();
+				g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->Draw();
+
+				break;
+			}
+
+			case DrawType::Quad:
+			{
+				SubmitQuad();
 
 				break;
 			}
@@ -528,7 +557,7 @@ namespace Lamp
 
 	void VulkanRenderer::SetupDescriptorsForSkyboxRendering()
 	{
-		if (!g_pEnv->pLevel->GetSkybox())
+		if (!g_pEnv->pLevel->HasSkybox())
 		{
 			return;
 		}
@@ -537,7 +566,7 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 
 		auto descriptorSet = vulkanShader->CreateDescriptorSets();
-		auto skybox = g_pEnv->pLevel->GetSkybox();
+		auto skybox = g_pEnv->pLevel->GetEnvironment().GetSkybox().skybox;
 		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(skybox->GetFilteredEnvironment());
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
@@ -614,7 +643,7 @@ namespace Lamp
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		LP_ASSERT(vulkanShader->GetDescriptorSetLayoutCount() > 0, "Descriptor set layouts must be greater than zero!");
-		LP_ASSERT(vulkanShader->GetDescriptorSets().size() > 0, "Descriptor set count must be greater than zero!");
+		LP_ASSERT(!vulkanShader->GetDescriptorSets().empty(), "Descriptor set count must be greater than zero!");
 
 		auto descriptorLayout = vulkanShader->GetDescriptorSetLayout(PER_PASS_DESCRIPTOR_SET);
 		auto& shaderDescriptorSet = vulkanShader->GetDescriptorSets()[PER_PASS_DESCRIPTOR_SET];
@@ -674,7 +703,7 @@ namespace Lamp
 				writeDescriptor.dstSet = currentDescriptorSet;
 
 				uint32_t i = 0;
-				for (const auto& light : g_pEnv->pLevel->GetRenderUtils().GetDirectionalLights())
+				for (auto light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
 				{
 					if (!light->castShadows)
 					{

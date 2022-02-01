@@ -17,59 +17,6 @@
 
 namespace Lamp
 {
-	RenderUtils::~RenderUtils()
-	{
-		m_PointLights.clear();
-	}
-
-	void RenderUtils::RegisterPointLight(Lamp::PointLight* light)
-	{
-		m_PointLights.push_back(light);
-	}
-
-	bool RenderUtils::UnregisterPointLight(Lamp::PointLight* light)
-	{
-		for (int i = 0; i < m_PointLights.size(); i++)
-		{
-			if (m_PointLights[i]->id == light->id)
-			{
-				m_PointLights.erase(m_PointLights.begin() + i);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void RenderUtils::RegisterDirectionalLight(DirectionalLight* light)
-	{
-		m_DirectionalLights.push_back(light);
-	}
-
-	bool RenderUtils::UnregisterDirectionalLight(DirectionalLight* light)
-	{
-		for (int i = 0; i < m_DirectionalLights.size(); i++)
-		{
-			if (m_DirectionalLights[i]->Id == light->Id)
-			{
-				m_DirectionalLights.erase(m_DirectionalLights.begin() + i);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void RenderUtils::RegisterMeshComponent(uint32_t id, Lamp::MeshComponent* mesh)
-	{
-		m_MeshComponents.insert(std::make_pair(id, mesh));
-	}
-
-	void RenderUtils::UnegisterMeshComponent(uint32_t id)
-	{
-		m_MeshComponents.erase(id);
-	}
-
 	Level::Level(const std::string& name)
 		: m_name(name)
 	{
@@ -86,27 +33,27 @@ namespace Lamp
 
 	Level::Level(const Level& level)
 	{
-		for (auto& brush : level.m_Brushes)
+		for (auto& brush : level.m_brushes)
 		{
-			m_Brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
+			m_brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
 		}
 
-		for (auto& entity : level.m_Entities)
+		for (auto& entity : level.m_entities)
 		{
 			std::pair pair = std::make_pair(entity.first, Entity::Duplicate(entity.second, false));
-			m_Entities.emplace(pair);
+			m_entities.emplace(pair);
 			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
-				m_renderUtils.RegisterPointLight(&lightComp->GetLight());
+				m_environment.RegisterPointLight(&lightComp->GetLight());
 			}
 
 			if (auto dirLightComp = pair.second->GetComponent<DirectionalLightComponent>())
 			{
-				m_renderUtils.RegisterDirectionalLight(&dirLightComp->GetLight());
+				m_environment.RegisterDirectionalLight(&dirLightComp->GetLight());
 			}
 		}
 
-		for (auto& brush : m_Brushes)
+		for (auto& brush : m_brushes)
 		{
 			for (auto& layer : m_layers)
 			{
@@ -123,7 +70,7 @@ namespace Lamp
 			m_layers.push_back(l);
 		}
 
-		for (auto& entity : m_Entities)
+		for (auto& entity : m_entities)
 		{
 			for (auto& layer : m_layers)
 			{
@@ -134,7 +81,7 @@ namespace Lamp
 			}
 		}
 
-		for (auto& brush : m_Brushes)
+		for (auto& brush : m_brushes)
 		{
 			for (auto& layer : m_layers)
 			{
@@ -145,7 +92,6 @@ namespace Lamp
 			}
 		}
 
-		m_skybox = level.m_skybox;
 		m_environment = level.m_environment;
 		m_name = level.m_name;
 	}
@@ -157,12 +103,12 @@ namespace Lamp
 
 	void Level::OnEvent(Event& e)
 	{
-		for (auto& it : m_Entities)
+		for (auto& it : m_entities)
 		{
 			it.second->OnEvent(e);
 		}
 
-		for (auto& it : m_Brushes)
+		for (auto& it : m_brushes)
 		{
 			it.second->OnEvent(e);
 		}
@@ -207,7 +153,7 @@ namespace Lamp
 	void Level::RenderRuntime()
 	{
 		Ref<CameraBase> camera = nullptr;
-		for (const auto& it : m_Entities)
+		for (const auto& it : m_entities)
 		{
 			if (const auto comp = it.second->GetComponent<CameraComponent>())
 			{
@@ -227,13 +173,13 @@ namespace Lamp
 
 	void Level::Shutdown()
 	{
-		for (auto& ent : m_Entities)
+		for (auto& ent : m_entities)
 		{
 			delete ent.second;
 			ent.second = nullptr;
 		}
 
-		for (auto& brush : m_Brushes)
+		for (auto& brush : m_brushes)
 		{
 			delete brush.second;
 			brush.second = nullptr;

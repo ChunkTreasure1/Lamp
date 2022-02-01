@@ -161,7 +161,7 @@ namespace Lamp
 		YAML::Node materialsNode = geoNode["materials"];
 		std::map<uint32_t, Ref<Material>> materials;
 
-		for(auto entry : materialsNode)
+		for (auto entry : materialsNode)
 		{
 			uint32_t idInt;
 			std::string matName;
@@ -236,8 +236,17 @@ namespace Lamp
 			out << YAML::EndMap;
 
 			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
-			LP_SERIALIZE_PROPERTY(useBlending, mat->GetUseBlending(), out);
-			LP_SERIALIZE_PROPERTY(blendingMultiplier, mat->GetBlendingMultiplier(), out);
+
+			const auto& matData = mat->GetMaterialData();
+			LP_SERIALIZE_PROPERTY(useBlending, matData.useBlending, out);
+			LP_SERIALIZE_PROPERTY(useAlbedo, matData.useAlbedo, out);
+			LP_SERIALIZE_PROPERTY(useNormal, matData.useNormal, out);
+			LP_SERIALIZE_PROPERTY(useMRO, matData.useMRO, out);
+
+			LP_SERIALIZE_PROPERTY(blendingMultiplier, matData.blendingMultiplier, out);
+			LP_SERIALIZE_PROPERTY(mroColor, matData.mroColor, out);
+			LP_SERIALIZE_PROPERTY(albedoColor, matData.albedoColor, out);
+			LP_SERIALIZE_PROPERTY(normalColor, matData.normalColor, out);
 
 			out << YAML::EndMap;
 		}
@@ -286,13 +295,18 @@ namespace Lamp
 			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
 		}
 
-		bool useBlending;
-		float blendingMultiplier;
-		LP_DESERIALIZE_PROPERTY(useBlending, useBlending, materialNode, false);
-		LP_DESERIALIZE_PROPERTY(blendingMultiplier, blendingMultiplier, materialNode, 1.f);
+		auto& matData = const_cast<MaterialData&>(mat->GetMaterialData());
 
-		mat->SetUseBlending(useBlending);
-		mat->SetBlendingMutliplier(blendingMultiplier);
+		LP_DESERIALIZE_PROPERTY(useBlending, matData.useBlending, materialNode, false);
+		LP_DESERIALIZE_PROPERTY(useAlbedo, matData.useAlbedo, materialNode, true);
+		LP_DESERIALIZE_PROPERTY(useNormal, matData.useNormal, materialNode, true);
+		LP_DESERIALIZE_PROPERTY(useMRO, matData.useMRO, materialNode, true);
+
+		LP_DESERIALIZE_PROPERTY(blendingMultiplier, matData.blendingMultiplier, materialNode, 1.f);
+
+		LP_DESERIALIZE_PROPERTY(mroColor, matData.mroColor, materialNode, glm::vec2(0.f, 1.f));
+		LP_DESERIALIZE_PROPERTY(albedoColor, matData.albedoColor, materialNode, glm::vec4(1.f, 1.f, 1.f, 1.f));
+		LP_DESERIALIZE_PROPERTY(normalColor, matData.normalColor, materialNode, glm::vec4(0.f, 1.f, 0.f, 0.f));
 
 		asset->Path = path;
 

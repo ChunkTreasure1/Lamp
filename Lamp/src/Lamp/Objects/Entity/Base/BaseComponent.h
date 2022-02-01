@@ -15,6 +15,10 @@ namespace Lamp
 	class EntityComponent
 	{
 	public:
+		virtual ~EntityComponent() {};
+		virtual void Initialize() {}
+		virtual void OnEvent(Event& e) {}
+
 
 		//Setting
 		inline void SetComponentProperties(const ComponentProperties& properties) { m_ComponentProperties = properties; }
@@ -23,10 +27,6 @@ namespace Lamp
 		inline Entity* GetEntity() { return m_pEntity; }
 		inline ComponentProperties& GetComponentProperties() { return m_ComponentProperties; }
 		inline const std::string& GetName() { return m_Name; }
-
-		//Base
-		virtual void Initialize() {}
-		virtual void OnEvent(Event& e) {}
 
 	protected:
 		EntityComponent(std::string name)

@@ -21,6 +21,13 @@ namespace Lamp
 {
 	Terrain::Terrain(const std::filesystem::path& aHeightMap)
 	{
+		if (!std::filesystem::exists(aHeightMap))
+		{
+			LP_CORE_ERROR("[Terrain]: Unable to load file {0}!", aHeightMap.string());
+			m_isValid = false;
+			return;
+		}
+
 		m_heightMap = Texture2D::Create(aHeightMap);
 
 		std::vector<Vertex> vertices;
@@ -76,6 +83,11 @@ namespace Lamp
 	void Terrain::Draw()
 	{
 		Renderer::SubmitMesh(m_transform, m_mesh, nullptr, m_descriptorSet.descriptorSets);
+	}
+
+	Ref<Terrain> Terrain::Create(const std::filesystem::path& heightMap)
+	{
+		return CreateRef<Terrain>(heightMap);
 	}
 
 	Ref<RenderPipeline> Terrain::SetupRenderPipeline(Ref<Framebuffer> framebuffer)

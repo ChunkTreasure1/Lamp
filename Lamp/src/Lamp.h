@@ -13,6 +13,3 @@
 #include <Lamp/Objects/Entity/Base/Entity.h>
 #include <Lamp/Objects/Entity/Base/BaseComponent.h>
 #include <Lamp/Objects/Brushes/Brush.h>
-
-#include <Lamp/Rendering/Textures/Texture2D.h>
-#include <Lamp/Rendering/Buffers/Framebuffer.h>

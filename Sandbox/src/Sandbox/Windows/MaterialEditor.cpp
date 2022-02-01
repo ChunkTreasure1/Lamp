@@ -167,10 +167,31 @@ namespace Sandbox
 		if (UI::BeginProperties("matProps", false))
 		{
 			UI::Property("Name", m_pSelectedMaterial->GetName());
-			UI::Property("Use blending", const_cast<bool&>(m_pSelectedMaterial->GetUseBlending()));
-			if (m_pSelectedMaterial->GetUseBlending())
+		
+			auto& matData = const_cast<MaterialData&>(m_pSelectedMaterial->GetMaterialData());
+			
+			UI::Property("Use blending", matData.useBlending);
+			if (matData.useBlending)
 			{
-				UI::Property("Blending multiplier", const_cast<float&>(m_pSelectedMaterial->GetBlendingMultiplier()), true, 0.f, 1.f);
+				UI::Property("Blending multiplier", matData.blendingMultiplier, true, 0.f, 1.f);
+			}
+
+			UI::Property("Use albedo map", matData.useAlbedo);
+			if (!matData.useAlbedo)
+			{
+				UI::Property("Albedo color", matData.albedoColor);
+			}
+
+			UI::Property("Use normal map", matData.useNormal);
+			if (!matData.useNormal)
+			{
+				UI::Property("Normal color", matData.normalColor);
+			}
+
+			UI::Property("Use MRO map", matData.useMRO);
+			if (!matData.useMRO)
+			{
+				UI::Property("Metal roughness", matData.mroColor, 0.f, 1.f);
 			}
 
 			UI::EndProperties(false);

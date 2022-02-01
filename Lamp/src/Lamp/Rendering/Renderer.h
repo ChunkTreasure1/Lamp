@@ -37,12 +37,6 @@ namespace Lamp
 		uint64_t totalFreedMemory = 0;
 	};
 
-	struct EnvironmentSettings
-	{
-		float environmentLod = 1.f;
-		float environmentMultiplier = 1.f;
-	};
-
 	class Renderer
 	{
 	public:
@@ -85,8 +79,6 @@ namespace Lamp
 			float hdrExposure = 1.f;
 			float gamma = 2.2f;
 			float ambianceMultiplier = 0.5f;
-
-			EnvironmentSettings environmentSettings;
 
 			Ref<Framebuffer> brdfFramebuffer;
 

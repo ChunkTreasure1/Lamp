@@ -82,6 +82,12 @@ layer:
             - param: Field Of View
               type: Float
               value: 60
+            - param: Near Plane
+              type: Float
+              value: 0.00999999978
+            - param: Far Plane
+              type: Float
+              value: 1000
     - entity: Floor
       position: [0, 3.4852283, 0]
       rotation: [0, 0, 0]

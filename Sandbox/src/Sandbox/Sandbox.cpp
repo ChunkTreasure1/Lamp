@@ -32,8 +32,6 @@ namespace Sandbox
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
-		m_pLevel->SetSkybox("assets/textures/brightForest.hdr");
-		m_pLevel->SetTerrain(CreateRef<Terrain>("assets/textures/iceland_heightmap.png"));
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -459,44 +457,44 @@ namespace Sandbox
 
 		//SSAO main pass
 		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::R32F
-			};
+			//FramebufferSpecification framebufferSpec{};
+			//framebufferSpec.swapchainTarget = false;
+			//framebufferSpec.attachments =
+			//{
+			//	ImageFormat::R32F
+			//};
 
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_ssaoMainFramebuffer = pipelineSpec.framebuffer;
+			//RenderPipelineSpecification pipelineSpec{};
+			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			//m_ssaoMainFramebuffer = pipelineSpec.framebuffer;
 
-			pipelineSpec.shader = ShaderLibrary::GetShader("ssaoMain");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Quad;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
+			//pipelineSpec.shader = ShaderLibrary::GetShader("ssaoMain");
+			//pipelineSpec.isSwapchain = false;
+			//pipelineSpec.topology = Topology::TriangleList;
+			//pipelineSpec.drawType = DrawType::Quad;
+			//pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			//pipelineSpec.vertexLayout =
+			//{
+			//	{ ElementType::Float3, "a_Position" },
+			//	{ ElementType::Float3, "a_Normal" },
+			//	{ ElementType::Float3, "a_Tangent" },
+			//	{ ElementType::Float3, "a_Bitangent" },
+			//	{ ElementType::Float2, "a_TexCoords" },
+			//};
 
-			pipelineSpec.framebufferInputs =
-			{
-				{ m_depthPrePassFramebuffer->GetColorAttachment(0), 0, 4 },
-				{ m_depthPrePassFramebuffer->GetDepthAttachment(), 0, 5 }
-			};
+			//pipelineSpec.framebufferInputs =
+			//{
+			//	{ m_depthPrePassFramebuffer->GetColorAttachment(0), 0, 4 },
+			//	{ m_depthPrePassFramebuffer->GetDepthAttachment(), 0, 5 }
+			//};
 
-			pipelineSpec.textureInputs =
-			{
-				{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
-			};
+			//pipelineSpec.textureInputs =
+			//{
+			//	{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
+			//};
 
-			auto& pass = renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			//auto& pass = renderPasses.emplace_back();
+			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Main pass
@@ -536,8 +534,8 @@ namespace Sandbox
 
 			pipelineSpec.textureCubeInputs =
 			{
-				{ g_pEnv->pLevel->GetSkybox()->GetIrradiance() , 0, 5 },
-				{ g_pEnv->pLevel->GetSkybox()->GetFilteredEnvironment(), 0, 6 } // should not be set here
+				{ g_pEnv->pLevel->GetEnvironment().GetSkybox().skybox->GetIrradiance() , 0, 5 },
+				{ g_pEnv->pLevel->GetEnvironment().GetSkybox().skybox->GetFilteredEnvironment(), 0, 6 } // should not be set here
 			};
 
 			auto& pass = renderPasses.emplace_back();
@@ -546,9 +544,9 @@ namespace Sandbox
 
 		//Terrain
 		{
-			if (g_pEnv->pLevel->GetTerrain())
+			if (g_pEnv->pLevel->HasTerrain())
 			{
-				g_pEnv->pLevel->GetTerrain()->SetupRenderPipeline(m_viewportFramebuffer); // TODO: use geometry framebuffer images instead
+				g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->SetupRenderPipeline(m_viewportFramebuffer); // TODO: use geometry framebuffer images instead
 			}
 		}
 
@@ -561,11 +559,11 @@ namespace Sandbox
 			//	ImageFormat::RGBA,
 			//	ImageFormat::DEPTH32F
 			//};
-			//
+
 			//RenderPipelineSpecification pipelineSpec{};
 			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
 			//m_viewportFramebuffer = pipelineSpec.framebuffer;
-			//
+
 			//pipelineSpec.shader = ShaderLibrary::GetShader("composite");
 			//pipelineSpec.isSwapchain = false;
 			//pipelineSpec.topology = Topology::TriangleList;
@@ -579,14 +577,15 @@ namespace Sandbox
 			//	{ ElementType::Float3, "a_Bitangent" },
 			//	{ ElementType::Float2, "a_TexCoords" },
 			//};
-			//
+
 			//pipelineSpec.framebufferInputs =
 			//{
 			//	{ m_geometryFramebuffer->GetColorAttachment(0), 0, 4 },
 			//	{ m_ssaoMainFramebuffer->GetColorAttachment(0), 0, 5 }
 			//};
-			//
-			//m_renderPasses.emplace_back(RenderPipeline::Create(pipelineSpec));
+
+			//auto& pass = renderPasses.emplace_back();
+			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		m_pLevel->SetRenderPasses(renderPasses);

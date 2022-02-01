@@ -16,12 +16,8 @@ namespace Lamp
 	{
 	public:
 
-		CameraComponent()
-			: EntityComponent("CameraComponent")
-		{
-			m_perspectiveCamera = CreateRef<PerspectiveCamera>(60.f, 0.1f, 100.f);
-		}
-		~CameraComponent() {}
+		CameraComponent();
+		~CameraComponent() override;
 
 		//////Base//////
 		void Initialize() override;
@@ -30,7 +26,7 @@ namespace Lamp
 
 		inline void SetIsMain(bool state) { m_isMain = state; }
 		inline bool GetIsMain() { return m_isMain; }
-		inline Ref<CameraBase> GetCamera() { return std::dynamic_pointer_cast<CameraBase>(m_perspectiveCamera); }
+		inline Ref<CameraBase> GetCamera() { return std::reinterpret_pointer_cast<CameraBase>(m_perspectiveCamera); }
 
 	private:
 		bool OnUpdate(AppUpdateEvent& e);

@@ -1,12 +1,17 @@
 #include "lppch.h"
 #include "LevelLoader.h"
 
+#include "Lamp/AssetSystem/AssetManager.h"
+
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Utility/SerializeMacros.h"
+
 #include "Lamp/Level/Level.h"
-#include "AssetManager.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
+
 #include "Lamp/Objects/Brushes/Brush.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
+
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
 
@@ -38,13 +43,30 @@ namespace Lamp
 			}
 			out << YAML::EndSeq;
 
-			out << YAML::Key << "LevelEnvironment" << YAML::Value;
+			out << YAML::Key << "Environment" << YAML::Value;
 			out << YAML::BeginMap;
 			{
+				LP_SERIALIZE_PROPERTY(cameraPosition, level->GetEnvironment().GetCameraPosition(), out);
+				LP_SERIALIZE_PROPERTY(cameraRotation, level->GetEnvironment().GetCameraRotation(), out);
+				LP_SERIALIZE_PROPERTY(cameraFOV, level->GetEnvironment().GetCameraFOV(), out);
 
-				LP_SERIALIZE_PROPERTY(cameraPosition, level->GetEnvironment().CameraPosition, out);
-				LP_SERIALIZE_PROPERTY(cameraRotation, level->GetEnvironment().CameraRotation, out);
-				LP_SERIALIZE_PROPERTY(cameraFOV, level->GetEnvironment().CameraFOV, out);
+				out << YAML::Key << "Skybox" << YAML::Value;
+				out << YAML::BeginMap;
+				{
+					LP_SERIALIZE_PROPERTY(environmentLod, level->GetEnvironment().GetSkybox().environmentLod, out);
+					LP_SERIALIZE_PROPERTY(environmentMultiplier, level->GetEnvironment().GetSkybox().environmentMultiplier, out);
+					LP_SERIALIZE_PROPERTY(skybox, level->GetEnvironment().GetSkybox().skybox->Path.string(), out);
+				}
+				out << YAML::EndMap;
+			
+				out << YAML::Key << "Terrain" << YAML::Value;
+				out << YAML::BeginMap;
+				{
+					LP_SERIALIZE_PROPERTY(terrainScale, level->GetEnvironment().GetTerrain().terrainScale, out);
+					LP_SERIALIZE_PROPERTY(terrainShift, level->GetEnvironment().GetTerrain().terrainShift, out);
+					LP_SERIALIZE_PROPERTY(terrain, level->GetEnvironment().GetTerrain().terrain->GetHeightMap()->Path.string(), out);
+				}
+				out << YAML::EndMap;
 			}
 			out << YAML::EndMap;
 
@@ -152,10 +174,38 @@ namespace Lamp
 		level->m_name = levelNode["name"].as<std::string>();
 		LP_DESERIALIZE_PROPERTY(handle, level->Handle, levelNode, (AssetHandle)0);
 
-		YAML::Node envNode = levelNode["LevelEnvironment"];
-		LP_DESERIALIZE_PROPERTY(cameraPosition, level->m_environment.CameraPosition, envNode, glm::vec3(0.f));
-		LP_DESERIALIZE_PROPERTY(cameraRotation, level->m_environment.CameraRotation, envNode, glm::quat());
-		LP_DESERIALIZE_PROPERTY(cameraFOV, level->m_environment.CameraFOV, envNode, 60.f);
+		//Environment
+		{
+			YAML::Node envNode = levelNode["Environment"];
+
+			LP_DESERIALIZE_PROPERTY(cameraPosition, const_cast<glm::vec3&>(level->m_environment.GetCameraPosition()), envNode, glm::vec3(0.f));
+			LP_DESERIALIZE_PROPERTY(cameraRotation, const_cast<glm::quat&>(level->m_environment.GetCameraRotation()), envNode, glm::quat());
+			LP_DESERIALIZE_PROPERTY(cameraFOV, const_cast<float&>(level->m_environment.GetCameraFOV()), envNode, 60.f);
+		
+			//Terrain
+			{
+				YAML::Node terrainNode = envNode["Terrain"];
+
+				auto& terrain = const_cast<TerrainData&>(level->m_environment.GetTerrain());
+				LP_DESERIALIZE_PROPERTY(terrainScale, terrain.terrainScale, terrainNode, 64.f);
+				LP_DESERIALIZE_PROPERTY(terrainShift, terrain.terrainShift, terrainNode, 16.f);
+				
+				std::string terrPath = terrainNode["terrain"] ? terrainNode["terrain"].as<std::string>() : "";
+				terrain.terrain = Terrain::Create(terrPath);
+			}
+
+			//Skybox
+			{
+				YAML::Node skyboxNode = envNode["Skybox"];
+
+				auto& skybox = const_cast<SkyboxData&>(level->m_environment.GetSkybox());
+				LP_DESERIALIZE_PROPERTY(environmentLod, skybox.environmentLod, skyboxNode, 1.f);
+				LP_DESERIALIZE_PROPERTY(environmentMultiplier, skybox.environmentMultiplier, skyboxNode, 1.f);
+			
+				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode.as<std::string>() : "";
+				skybox.skybox = Skybox::Create(skyboxPath);
+			}
+		}
 
 		//Layers
 		YAML::Node layersNode = levelNode["layers"];
@@ -204,8 +254,8 @@ namespace Lamp
 			}
 		}
 
-		level->m_Brushes = brushes;
-		level->m_Entities = entities;
+		level->m_brushes = brushes;
+		level->m_entities = entities;
 		level->m_layers = layers;
 
 		if (level->m_layers.empty())

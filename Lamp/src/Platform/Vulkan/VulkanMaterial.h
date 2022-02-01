@@ -41,19 +41,17 @@ namespace Lamp
 		void SetTexture(const std::string& name, Ref<Texture2D> texture) override;
 		
 		void SetShader(Ref<Shader> shader) override;
-		void SetName(const std::string& name) override { m_name = name; }
-		void SetBlendingMutliplier(float value) override {}
-		void SetUseBlending(bool state) override {}
+		inline void SetName(const std::string& name) override { m_name = name; }
 
 		const std::vector<Ref<Texture2D>> GetTextures() override;
-		const uint32_t GetIndex() override { return m_index; }
-		Ref<Shader> GetShader() override { return m_shader; }
-		const std::string& GetName() override { return m_name; }
-		const float& GetBlendingMultiplier() override { return m_blendingMultiplier; }
-		const bool& GetUseBlending() override { return m_useBlending; }
+		inline const uint32_t GetIndex() override { return m_index; }
+		inline Ref<Shader> GetShader() override { return m_shader; }
+		
+		inline const std::string& GetName() override { return m_name; }
+		inline std::unordered_map<uint32_t, std::vector<VkDescriptorSet>>& GetDescriptorSets() { return m_descriptorSets; }
+		inline const std::vector<MaterialTextureSpecification>& GetTextureSpecification() { return m_textureSpecifications; }
 
-		std::unordered_map<uint32_t, std::vector<VkDescriptorSet>>& GetDescriptorSets() { return m_descriptorSets; }
-		const std::vector<MaterialTextureSpecification>& GetTextureSpecification() { return m_textureSpecifications; }
+		inline const MaterialData& GetMaterialData() const override { return m_materialData; }
 
 	private:
 		std::optional<std::reference_wrapper<MaterialTextureSpecification>> FindTexture(const std::string& name);
@@ -61,8 +59,7 @@ namespace Lamp
 		std::string m_name;
 		uint32_t m_index;
 
-		float m_blendingMultiplier = 0.f;
-		bool m_useBlending = false;
+		MaterialData m_materialData;
 
 		std::vector<MaterialTextureSpecification> m_textureSpecifications;
 

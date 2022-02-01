@@ -132,7 +132,16 @@ layout (std430, binding = 13) readonly buffer VisibleLightsBuffer
 
 layout (push_constant) uniform MeshDataBuffer
 {
-    layout(offset = 64) vec2 blendingUseBlending;
+    layout(offset = 64) float useAlbedo;
+    layout(offset = 68) float useNormal;
+    layout(offset = 72) float useMRO;
+    layout(offset = 76) float useSkybox;
+
+    layout(offset = 80) vec2 blendingUseBlending;
+    layout(offset = 88) vec2 metalRoughness;
+
+    layout(offset = 96) vec4 albedoColor;
+    layout(offset = 112) vec4 normalColor;
 
 } u_MeshData;
 
@@ -320,33 +329,62 @@ vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 b
     return lightStrength;
 }
 
-vec3 CalculateNormal()
+vec3 CalculateNormal(vec3 normalVec)
 {
-    vec3 tangentNormal = texture(u_Normal, v_In.texCoord).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = normalVec * 2.0 - 1.0;
     return normalize(v_In.TBN * tangentNormal);
 }
 
 void main()
 {
     //Pre calculations
-    vec4 albedoTex = texture(u_Albedo, v_In.texCoord);
-    vec3 albedo = albedoTex.rgb;
+    vec4 albedo;
+    vec3 normal;
 
-    vec3 mro = texture(u_MRO, v_In.texCoord).rgb;
-    float metallic = mro.x;
-    float roughness = mro.y;
-    float translucency = mro.z;
+    float metallic;
+    float roughness;
+    float translucency = 0.0;
 
-    vec3 normal = normalize(CalculateNormal());
+    if (bool(u_MeshData.useAlbedo))
+    {
+        albedo = texture(u_Albedo, v_In.texCoord);
+    }
+    else
+    {
+        albedo = u_MeshData.albedoColor;
+    }
+
+    if (bool(u_MeshData.useNormal))
+    {
+        normal = CalculateNormal(texture(u_Normal, v_In.texCoord).rgb);
+    }
+    else
+    {
+        normal = u_MeshData.normalColor.rgb;
+    }
+
+    if (bool(u_MeshData.useMRO))
+    {
+        vec3 mro = texture(u_MRO, v_In.texCoord).rgb;
+        metallic = mro.r;
+        roughness = mro.g;
+        translucency = mro.b;
+    }
+    else
+    {
+        metallic = u_MeshData.metalRoughness.x;
+        roughness = u_MeshData.metalRoughness.y;
+    }
+
     vec3 dirToCamera = normalize(u_CameraData.position.xyz - v_In.fragPos);
 
-    vec3 baseReflectivity = mix(globalDielectricBase, albedo, metallic);
+    vec3 baseReflectivity = mix(globalDielectricBase, albedo.xyz, metallic);
     vec3 lightAccumulation = vec3(0.0);
 
     //Light calculation
     for(int i = 0; i < u_DirectionalLights.count; ++i)
     {
-        lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[i], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness, i);
+        lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[i], dirToCamera, normal, baseReflectivity, albedo.xyz, metallic, roughness, i);
     }
 
     ivec2 location = ivec2(gl_FragCoord.xy);
@@ -357,24 +395,37 @@ void main()
     for(int i = 0; i < 1024 && u_VisibleIndices.data[offset + i].index != -1; ++i)
     {
         uint index = u_VisibleIndices.data[offset + i].index;
-        lightAccumulation += CalculatePointLight(u_LightBuffer.lights[index], dirToCamera, normal, baseReflectivity, metallic, roughness, albedo, v_In.fragPos);
+        lightAccumulation += CalculatePointLight(u_LightBuffer.lights[index], dirToCamera, normal, baseReflectivity, metallic, roughness, albedo.xyz, v_In.fragPos);
     }
 
     //Final calculations
-    vec3 reflectVec = reflect(-dirToCamera, normal);
-    int maxReflectionLOD = textureQueryLevels(u_PrefilterMap);
-    vec3 prefilterColor = textureLod(u_PrefilterMap, reflectVec, roughness * float(maxReflectionLOD)).rgb;
-    vec3 F = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
-    
-    vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(normal, dirToCamera), 0.0), roughness)).rg;
-    vec3 specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
+    vec3 diffuse = albedo.xyz;
+    vec2 envBRDF = vec2(0.5, 0.5);
+    vec3 specular;
 
+    vec3 F = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
+
+    if (bool(u_MeshData.useSkybox))
+    {
+        vec3 reflectVec = reflect(-dirToCamera, normal);
+        int maxReflectionLOD = textureQueryLevels(u_PrefilterMap);
+        vec3 prefilterColor = textureLod(u_PrefilterMap, reflectVec, roughness * float(maxReflectionLOD)).rgb;
+
+        vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(normal, dirToCamera), 0.0), roughness)).rg;
+        vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
+
+        specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
+        diffuse *= irradiance;
+    }
+    else
+    {
+        specular = (F * envBRDF.x + envBRDF.y);
+    }
+   
     vec3 kS = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;
 
-    vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
-    vec3 diffuse = irradiance * albedo;
     vec3 ambient = (kD * diffuse + specular) * u_CameraData.ambienceExposure.x;
 
     vec3 color = ambient + lightAccumulation;
@@ -382,6 +433,6 @@ void main()
 
     color = ACESTonemap(color);
 
-    float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedoTex.a * u_MeshData.blendingUseBlending.x : 1.0;
+    float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedo.a * u_MeshData.blendingUseBlending.x : 1.0;
     o_Color = vec4(color, blendingVal);
 }

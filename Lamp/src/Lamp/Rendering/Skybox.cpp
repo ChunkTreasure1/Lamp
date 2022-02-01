@@ -25,6 +25,14 @@ namespace Lamp
 {
 	Skybox::Skybox(const std::filesystem::path& path)
 	{
+		Path = path;
+		if (!std::filesystem::exists(path))
+		{
+			LP_CORE_ERROR("[Skybox]: Unable to load file {0}!", path.string());
+			SetFlag(AssetFlag::Missing);
+			return;
+		}
+
 		Ref<Texture2D> hdrTexture = Texture2D::Create(path, false);
 
 		const uint32_t cubemapSize = 1024;

@@ -64,14 +64,14 @@ namespace Sandbox
 				
 				m_viewportFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
 				m_depthPrePassFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
-				m_ssaoMainFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
+				//m_ssaoMainFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
 				//m_geometryFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 				g_pEnv->pLevel->OnEvent(e);
 			}
-
+			 
 			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
@@ -567,6 +567,7 @@ namespace Sandbox
 		}
 
 		auto sceneData = const_cast<Renderer::SceneData*>(Renderer::GetSceneData());
+		auto& levelEnv = g_pEnv->pLevel->GetEnvironment();
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
@@ -576,8 +577,10 @@ namespace Sandbox
 			ImGui::Separator();
 			if (UI::BeginProperties("sceneProps"))
 			{
-				UI::Property("LOD", sceneData->environmentSettings.environmentLod);
-				UI::Property("Multiplier", sceneData->environmentSettings.environmentMultiplier);
+				auto& skybox = const_cast<SkyboxData&>(g_pEnv->pLevel->GetEnvironment().GetSkybox());
+
+				UI::Property("LOD", skybox.environmentLod);
+				UI::Property("Multiplier", skybox.environmentMultiplier);
 
 				UI::EndProperties();
 			}
@@ -586,7 +589,7 @@ namespace Sandbox
 			ImGui::Separator();
 			if (UI::BeginProperties("generalProps"))
 			{
-				UI::Property("Exposure", sceneData->hdrExposure);
+				UI::Property("Exposure", sceneData->hdrExposure); // move to level environment
 				UI::Property("Gamma", sceneData->gamma); 
 
 				UI::EndProperties();

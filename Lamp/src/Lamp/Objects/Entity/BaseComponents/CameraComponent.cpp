@@ -5,6 +5,16 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(CameraComponent);
 
+	CameraComponent::CameraComponent()
+		: EntityComponent("CameraComponent"), m_farPlane(1000.f), m_nearPlane(0.01f)
+	{
+		m_perspectiveCamera = CreateRef<PerspectiveCamera>(60.f, m_nearPlane, m_farPlane);
+	}
+
+	CameraComponent::~CameraComponent()
+	{
+	}
+
 	void CameraComponent::Initialize()
 	{
 		SetComponentProperties

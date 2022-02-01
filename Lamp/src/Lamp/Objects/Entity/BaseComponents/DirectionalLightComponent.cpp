@@ -24,14 +24,14 @@ namespace Lamp
 
 		if (g_pEnv->pLevel)
 		{
-			auto& utils = g_pEnv->pLevel->GetRenderUtils();
-			utils.RegisterDirectionalLight(m_pDirectionalLight.get());
+			auto& env = g_pEnv->pLevel->GetEnvironment();
+			env.RegisterDirectionalLight(m_pDirectionalLight.get());
 		}
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnregisterDirectionalLight(m_pDirectionalLight.get());
+		g_pEnv->pLevel->GetEnvironment().UnregisterDirectionalLight(m_pDirectionalLight.get());
 	}
 
 	void DirectionalLightComponent::Initialize()

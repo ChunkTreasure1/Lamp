@@ -9,7 +9,7 @@ namespace Lamp
 	{
 	public:
 		DirectionalLightComponent();
-		~DirectionalLightComponent();
+		~DirectionalLightComponent() override;
 
 		//////Base//////
 		virtual void Initialize() override;
