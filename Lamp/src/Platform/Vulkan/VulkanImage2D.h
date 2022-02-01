@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		VulkanImage2D(const ImageSpecification& specification, const void* data);
-		~VulkanImage2D();
+		~VulkanImage2D() override;
 
 		void Invalidate(const void* data) override;
 		void Release() override;

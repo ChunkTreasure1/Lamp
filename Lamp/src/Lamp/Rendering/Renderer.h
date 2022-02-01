@@ -26,6 +26,7 @@ namespace Lamp
 	class Skybox;
 	class Image2D;
 	class VulkanRenderer;
+	class TextureCube;
 
 	struct GPUMemoryStatistics
 	{
@@ -81,6 +82,7 @@ namespace Lamp
 			float ambianceMultiplier = 0.5f;
 
 			Ref<Framebuffer> brdfFramebuffer;
+			Ref<TextureCube> blackCubeTexture;
 
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 64;

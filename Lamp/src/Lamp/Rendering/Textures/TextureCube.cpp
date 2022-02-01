@@ -5,9 +5,9 @@
 
 namespace Lamp
 {
-	Ref<TextureCube> TextureCube::Create(ImageFormat format, uint32_t width, uint32_t height)
+	Ref<TextureCube> TextureCube::Create(ImageFormat format, uint32_t width, uint32_t height, const void* data)
 	{
-		return CreateRef<VulkanTextureCube>(format, width, height);
+		return CreateRef<VulkanTextureCube>(format, width, height, data);
 	}
 
 	Ref<TextureCube> TextureCube::Create(const std::filesystem::path& path)

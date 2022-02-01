@@ -14,7 +14,7 @@ namespace Lamp
 	class ShaderStorageBuffer
 	{
 	public:
-		virtual ~ShaderStorageBuffer() {}
+		virtual ~ShaderStorageBuffer() = default;
 		virtual void SetData(const void* data, uint32_t size) = 0;
 		virtual void* Map() = 0;
 		virtual void Unmap() = 0;

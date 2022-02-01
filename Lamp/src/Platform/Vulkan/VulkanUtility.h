@@ -252,6 +252,11 @@ namespace Utility
 			sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 			destStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_GENERAL)
+		{
+			sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+			destStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
 
 		// Put barrier inside setup command buffer
 		vkCmdPipelineBarrier(commandBuffer, sourceStage, destStage, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);

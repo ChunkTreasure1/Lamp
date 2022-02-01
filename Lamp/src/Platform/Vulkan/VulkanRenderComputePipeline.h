@@ -11,10 +11,11 @@ namespace Lamp
 	{
 	public:
 		VulkanRenderComputePipeline(Ref<Shader> computeShader);
+		~VulkanRenderComputePipeline() override = default;
 
-		virtual void Begin(Ref<CommandBuffer> commandBuffer = nullptr) override;
-		virtual void End();
-		virtual Ref<Shader> GetShader() override { return m_shader; }
+		void Begin(Ref<CommandBuffer> commandBuffer = nullptr) override;
+		void End();
+		Ref<Shader> GetShader() override { return m_shader; }
 
 		void Execute(VkDescriptorSet* descriptorSets, uint32_t descriptorSetCount, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
 		void Dispatch(VkDescriptorSet descriptorSet, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);

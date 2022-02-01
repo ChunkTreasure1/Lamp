@@ -5,6 +5,7 @@
 #include "Lamp/Rendering/Buffers/ShaderStorageBuffer.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/Textures/TextureCube.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/CommandBuffer.h"
 #include "Lamp/Rendering/Renderer2D.h"
@@ -64,6 +65,9 @@ namespace Lamp
 
 		CreateUniformBuffers();
 		GenerateBRDF();
+
+		uint32_t blackCubeTextureData[6] = { 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
+		s_pSceneData->blackCubeTexture = TextureCube::Create(ImageFormat::RGBA, 1, 1, &blackCubeTextureData);
 	}
 
 	void Renderer::Shutdown()

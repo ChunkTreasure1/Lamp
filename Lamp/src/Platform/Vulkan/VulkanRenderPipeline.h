@@ -14,7 +14,7 @@ namespace Lamp
 	{
 	public:
 		VulkanRenderPipeline(const RenderPipelineSpecification& specification);
-		~VulkanRenderPipeline();
+		~VulkanRenderPipeline() override;
 
 		void Bind(Ref<CommandBuffer> commandBuffer) const override;
 		void SetLayout(BufferLayout layout) override;

@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		VulkanCommandBuffer(uint32_t count, bool swapchainTarget);
-		~VulkanCommandBuffer();
+		~VulkanCommandBuffer() override;
 
 		void Begin() override;
 		void End() override;

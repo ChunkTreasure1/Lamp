@@ -89,6 +89,8 @@ namespace Lamp
 	class RenderPipeline
 	{
 	public:
+		virtual ~RenderPipeline() = default;
+
 		virtual void Bind(Ref<CommandBuffer> commandBuffer) const = 0;
 		virtual void SetLayout(BufferLayout layout) = 0;
 		virtual const RenderPipelineSpecification& GetSpecification() const = 0;
@@ -99,6 +101,8 @@ namespace Lamp
 	class RenderComputePipeline
 	{
 	public:
+		virtual ~RenderComputePipeline() = default;
+
 		virtual void Begin(Ref<CommandBuffer> commandBuffer = nullptr) = 0;
 		virtual void End() = 0;
 

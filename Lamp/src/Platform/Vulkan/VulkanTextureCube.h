@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lamp/Rendering/Textures/TextureCube.h"
+#include "Lamp/Core/Buffer.h"
 
 #include <VulkanMemoryAllocator/VulkanMemoryAllocator.h>
 
@@ -9,10 +10,10 @@ namespace Lamp
 	class VulkanTextureCube : public TextureCube
 	{
 	public:
-		VulkanTextureCube(ImageFormat format, uint32_t width, uint32_t height);
+		VulkanTextureCube(ImageFormat format, uint32_t width, uint32_t height, const void* data = nullptr);
 		VulkanTextureCube(const std::filesystem::path& path);
 
-		~VulkanTextureCube();
+		~VulkanTextureCube() override;
 
 		void Bind(uint32_t slot /* = 0 */) const override;
 		void SetData(const void* data, uint32_t size) override;
@@ -44,6 +45,7 @@ namespace Lamp
 		uint32_t m_mipLevels;
 
 		ImageFormat m_format;
+		Buffer m_localBuffer;
 	
 		VmaAllocation m_allocation = nullptr;
 		VkDescriptorImageInfo m_descriptorInfo;

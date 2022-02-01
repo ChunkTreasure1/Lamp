@@ -10,7 +10,7 @@ namespace Lamp
 	{
 	public:
 		VulkanFramebuffer(const FramebufferSpecification& spec);
-		~VulkanFramebuffer();
+		~VulkanFramebuffer() override;
 
 		void Bind() override;
 		void Unbind() override;

@@ -73,6 +73,7 @@ namespace Lamp
 	class Image2D
 	{
 	public:
+		virtual ~Image2D() = default;
 		virtual void Invalidate(const void* data) = 0;
 		virtual void Release() = 0;
 

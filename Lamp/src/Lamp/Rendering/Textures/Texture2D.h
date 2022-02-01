@@ -7,6 +7,8 @@ namespace Lamp
 	class Texture2D : public Asset
 	{
 	public:
+		virtual ~Texture2D() = default;
+
 		virtual void Bind(uint32_t slot = 0) const = 0;
 		virtual void SetData(const void* data, uint32_t size) = 0;
 

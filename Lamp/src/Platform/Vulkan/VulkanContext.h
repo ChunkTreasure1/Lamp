@@ -18,7 +18,7 @@ namespace Lamp
 	{
 	public:
 		VulkanContext(GLFWwindow* window);
-		~VulkanContext();
+		~VulkanContext() override;
 
 		void Initialize() override;
 		void* GetInstance() override { return s_instance; }

@@ -10,9 +10,15 @@
 
 namespace Lamp
 {
-	VulkanTextureCube::VulkanTextureCube(ImageFormat format, uint32_t width, uint32_t height)
+	VulkanTextureCube::VulkanTextureCube(ImageFormat format, uint32_t width, uint32_t height, const void* data)
 		: m_width(width), m_height(height), m_format(format)
 	{
+		if (data)
+		{
+			uint32_t size = width * height * 4 * 6;
+			m_localBuffer = Buffer::Copy(data, size);
+		}
+
 		Invalidate();
 	}
 
@@ -218,6 +224,23 @@ namespace Lamp
 		m_descriptorInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
 		//TODO: copy data
+		if (m_localBuffer)
+		{
+			VkBuffer stagingBuffer;
+			VmaAllocation stagingBufferMemory;
+
+			stagingBufferMemory = Utility::CreateBuffer(m_localBuffer.Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, stagingBuffer);
+			
+			uint8_t* data = allocator.MapMemory<uint8_t>(stagingBufferMemory);
+			memcpy(data, m_localBuffer.pData, m_localBuffer.Size);
+			allocator.UnmapMemory(m_allocation);
+
+			Utility::TransitionImageLayout(m_image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+			Utility::CopyBufferToImage(stagingBuffer, m_image, m_width, m_height);
+
+			Utility::TransitionImageLayout(m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_descriptorInfo.imageLayout);
+			allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
+		}
 
 		VkImageSubresourceRange subresourceRange{};
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;

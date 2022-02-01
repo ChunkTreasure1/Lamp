@@ -62,7 +62,7 @@ namespace Lamp
 		};
 
 		VulkanShader(const std::filesystem::path& path, bool forceCompile);
-		~VulkanShader();
+		~VulkanShader() override;
 
 		void Reload(bool forceCompile) override;
 		void Bind() override {}

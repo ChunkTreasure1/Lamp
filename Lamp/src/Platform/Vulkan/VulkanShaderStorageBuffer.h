@@ -11,7 +11,7 @@ namespace Lamp
 	{
 	public:
 		VulkanShaderStorageBuffer(uint32_t size);
-		~VulkanShaderStorageBuffer();
+		~VulkanShaderStorageBuffer() override;
 
 		void SetData(const void* data, uint32_t size) override;
 		void* Map() override;

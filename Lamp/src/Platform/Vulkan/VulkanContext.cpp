@@ -93,9 +93,9 @@ namespace Lamp
 
 	#ifdef LP_VALIDATION
 		VulkanUtils::DestroyDebugUtilsMessengerEXT(s_instance, m_debugMessenger, nullptr);
-		m_device->Destroy();
 	#endif
 
+		m_device->Destroy();
 		vkDestroyInstance(s_instance, nullptr);
 	}
 
