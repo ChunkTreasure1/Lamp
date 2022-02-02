@@ -119,7 +119,7 @@ namespace Sandbox
 		Ref<Lamp::Framebuffer> m_ssaoMainFramebuffer;
 
 		//Perspective
-		bool m_PerspectiveOpen = true;
+		bool m_perspectiveOpen = true;
 		bool m_perspectiveFocused = false;
 		bool m_RightMousePressed = false;
 
@@ -138,7 +138,7 @@ namespace Sandbox
 		bool m_perspectiveHover = false;
 
 		Lamp::Object* m_pSelectedObject = nullptr;
-		bool m_InspectiorOpen = true;
+		bool m_inspectorOpen = true;
 
 		glm::vec2 m_MouseHoverPos = glm::vec2(0, 0);
 		glm::vec2 m_WindowSize = glm::vec2(0, 0);
@@ -150,7 +150,7 @@ namespace Sandbox
 		bool m_AddComponentOpen = false;
 
 		//Logging
-		bool m_LogToolOpen = false;
+		bool m_logToolOpen = false;
 
 		//Level settings
 		bool m_LevelSettingsOpen = false;

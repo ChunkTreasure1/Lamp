@@ -83,6 +83,7 @@ namespace Lamp
 
 			Ref<Framebuffer> brdfFramebuffer;
 			Ref<TextureCube> blackCubeTexture;
+			Ref<Texture2D> whiteTexture;
 
 			/////SSAO/////
 			uint32_t ssaoMaxKernelSize = 64;

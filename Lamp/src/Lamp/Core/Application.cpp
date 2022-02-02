@@ -47,9 +47,12 @@ namespace Lamp
 		m_pWindow = Window::Create(props);
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		m_levelManager = CreateScope<LevelManager>();
+
 		Renderer::Initialize();
 		AudioEngine::Initialize();
 		Physics::Initialize();
+
 
 		m_threadPool.AddThread("Update", LP_BIND_THREAD_FN(Application::UpdateApplication));
 
@@ -69,8 +72,6 @@ namespace Lamp
 
 		//m_AssetManagerThread.join();
 		m_threadPool.JoinAll();
-
-		g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
 
 		delete g_pEnv->pAssetManager;
 		delete g_pEnv;

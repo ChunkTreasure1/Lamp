@@ -157,6 +157,7 @@
     <ClInclude Include="src\Sandbox\Windows\AssetBrowserPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\BaseWindow.h" />
     <ClInclude Include="src\Sandbox\Windows\CreatePanel.h" />
+    <ClInclude Include="src\Sandbox\Windows\EnvironmentEditorPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\GraphKey.h" />
     <ClInclude Include="src\Sandbox\Windows\LayerViewPanel.h" />
     <ClInclude Include="src\Sandbox\Windows\MaterialEditor.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="src\Sandbox\UI\AnimatedIcon.cpp" />
     <ClCompile Include="src\Sandbox\Windows\AssetBrowserPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\CreatePanel.cpp" />
+    <ClCompile Include="src\Sandbox\Windows\EnvironmentEditorPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp" />
     <ClCompile Include="src\Sandbox\Windows\LayerViewPanel.cpp" />
     <ClCompile Include="src\Sandbox\Windows\MaterialEditor.cpp" />

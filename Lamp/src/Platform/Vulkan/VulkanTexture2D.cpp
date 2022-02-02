@@ -9,10 +9,10 @@
 
 namespace Lamp
 {
-	VulkanTexture2D::VulkanTexture2D(uint32_t width, uint32_t height)
+	VulkanTexture2D::VulkanTexture2D(ImageFormat format, uint32_t width, uint32_t height)
 	{
 		ImageSpecification imageSpec{};
-		imageSpec.format = ImageFormat::RGBA32F;
+		imageSpec.format = format;
 		imageSpec.usage = ImageUsage::Texture;
 		imageSpec.width = (uint32_t)width;
 		imageSpec.height = (uint32_t)height;

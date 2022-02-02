@@ -5,6 +5,8 @@
 #include "Lamp/Level/Level.h"
 #include "Lamp/Event/EntityEvent.h"
 
+#include "Lamp/Level/LevelManager.h"
+
 namespace Lamp
 {
 	void ContactListener::onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
@@ -35,7 +37,7 @@ namespace Lamp
 
 	void ContactListener::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
 	{
-		if (!g_pEnv->pLevel->IsPlaying())
+		if (!LevelManager::GetActive()->IsPlaying())
 		{
 			return;
 		}
@@ -70,7 +72,7 @@ namespace Lamp
 
 	void ContactListener::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 	{
-		if (g_pEnv->pLevel->IsPlaying())
+		if (LevelManager::GetActive()->IsPlaying())
 			return;
 
 		for (uint32_t i = 0; i < count; i++)

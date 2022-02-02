@@ -5,6 +5,7 @@
 #include "Windows/GraphKey.h"
 #include "Windows/MaterialEditor.h"
 #include "Windows/LayerViewPanel.h"
+#include "Windows/EnvironmentEditorPanel.h"
 
 #include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
@@ -31,8 +32,7 @@ namespace Sandbox
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
-		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
-		const_cast<SkyboxData&>(m_pLevel->GetEnvironment().GetSkybox()).skybox = CreateRef<Skybox>("assets/textures/brightForest.hdr");
+		//m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
@@ -43,6 +43,7 @@ namespace Sandbox
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
 		m_pWindows.push_back(new MaterialEditor("Material Editor"));
 		m_pWindows.push_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
+		m_pWindows.push_back(new EnvironmentEditorPanel("Environment Panel"));
 
 		Application::Get().GetWindow().Maximize();
 
@@ -73,17 +74,17 @@ namespace Sandbox
 			{
 				case SceneState::Edit:
 				{
-					g_pEnv->pLevel->UpdateEditor(e.GetTimestep());
+					LevelManager::GetActive()->UpdateEditor(e.GetTimestep());
 					break;
 				}
 				case SceneState::Play:
 				{
-					g_pEnv->pLevel->UpdateRuntime(e.GetTimestep());
+					LevelManager::GetActive()->UpdateRuntime(e.GetTimestep());
 					break;
 				}
 				case SceneState::Simulating:
 				{
-					g_pEnv->pLevel->UpdateSimulation(e.GetTimestep());
+					LevelManager::GetActive()->UpdateSimulation(e.GetTimestep());
 					break;
 				}
 			}
@@ -218,14 +219,14 @@ namespace Sandbox
 				else if (control && !shift)
 				{
 
-					if (g_pEnv->pLevel->Path.empty())
+					if (LevelManager::GetActive()->Path.empty())
 					{
 						SaveLevelAs();
 						break;
 					}
 					else
 					{
-						g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+						g_pEnv->pAssetManager->SaveAsset(LevelManager::GetActive());
 					}
 				}
 				break;
@@ -366,10 +367,10 @@ namespace Sandbox
 		m_SceneState = SceneState::Play;
 		m_pSelectedObject = nullptr;
 
-		g_pEnv->pLevel = nullptr;
+		LevelManager::Get()->SetActive(nullptr);
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
 
-		g_pEnv->pLevel = m_pRuntimeLevel;
+		LevelManager::Get()->SetActive(m_pRuntimeLevel);
 		m_pRuntimeLevel->OnRuntimeStart();
 		m_pRuntimeLevel->SetIsPlaying(true);
 
@@ -383,7 +384,8 @@ namespace Sandbox
 		m_pSelectedObject = nullptr;
 
 		m_pRuntimeLevel->OnRuntimeEnd();
-		g_pEnv->pLevel = m_pLevel;
+
+		LevelManager::Get()->SetActive(m_pLevel);
 		m_pLevel->SetIsPlaying(false);
 
 		m_pRuntimeLevel = nullptr;
@@ -396,7 +398,7 @@ namespace Sandbox
 		m_pSelectedObject = nullptr;
 
 		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
-		g_pEnv->pLevel = m_pRuntimeLevel;
+		LevelManager::Get()->SetActive(m_pRuntimeLevel);
 		m_pRuntimeLevel->SetIsPlaying(true);
 		m_pRuntimeLevel->OnSimulationStart();
 	}
@@ -407,7 +409,7 @@ namespace Sandbox
 		m_pSelectedObject = nullptr;
 
 		m_pRuntimeLevel->OnSimulationEnd();
-		g_pEnv->pLevel = m_pLevel;
+		LevelManager::Get()->SetActive(m_pLevel);
 		m_pLevel->SetIsPlaying(false);
 
 		m_pRuntimeLevel = nullptr;
@@ -535,8 +537,8 @@ namespace Sandbox
 
 			pipelineSpec.textureCubeInputs =
 			{
-				{ g_pEnv->pLevel->GetEnvironment().GetSkybox().skybox->GetIrradiance() , 0, 5 },
-				{ g_pEnv->pLevel->GetEnvironment().GetSkybox().skybox->GetFilteredEnvironment(), 0, 6 } // should not be set here
+				{ LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetIrradiance() , 0, 5 },
+				{ LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetFilteredEnvironment(), 0, 6 } // should not be set here
 			};
 
 			auto& pass = renderPasses.emplace_back();
@@ -545,9 +547,9 @@ namespace Sandbox
 
 		//Terrain
 		{
-			if (g_pEnv->pLevel->HasTerrain())
+			if (LevelManager::GetActive()->HasTerrain())
 			{
-				g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->SetupRenderPipeline(m_viewportFramebuffer); // TODO: use geometry framebuffer images instead
+				LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->SetupRenderPipeline(m_viewportFramebuffer); // TODO: use geometry framebuffer images instead
 			}
 		}
 

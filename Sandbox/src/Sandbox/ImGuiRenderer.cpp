@@ -35,7 +35,7 @@ namespace Sandbox
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (!m_PerspectiveOpen)
+		if (!m_perspectiveOpen)
 		{
 			return;
 		}
@@ -69,7 +69,7 @@ namespace Sandbox
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
-				g_pEnv->pLevel->OnEvent(e);
+				LevelManager::GetActive()->OnEvent(e);
 			}
 			 
 			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
@@ -173,11 +173,11 @@ namespace Sandbox
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (!m_InspectiorOpen)
+		if (!m_inspectorOpen)
 		{
 			return;
 		}
-		ImGui::Begin("Properties", &m_InspectiorOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration);
+		ImGui::Begin("Properties", &m_inspectorOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration);
 		{
 
 			ImGuiIO& io = ImGui::GetIO();
@@ -403,12 +403,12 @@ namespace Sandbox
 
 		static bool autoScroll = true;
 
-		if (!m_LogToolOpen)
+		if (!m_logToolOpen)
 		{
 			return;
 		}
 
-		ImGui::Begin("Log", &m_LogToolOpen);
+		ImGui::Begin("Log", &m_logToolOpen);
 
 		if (ImGui::BeginPopup("Options"))
 		{
@@ -567,24 +567,11 @@ namespace Sandbox
 		}
 
 		auto sceneData = const_cast<Renderer::SceneData*>(Renderer::GetSceneData());
-		auto& levelEnv = g_pEnv->pLevel->GetEnvironment();
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
 		if (UI::TreeNodeFramed("General", true))
 		{
-			ImGui::Text("Environment");
-			ImGui::Separator();
-			if (UI::BeginProperties("sceneProps"))
-			{
-				auto& skybox = const_cast<SkyboxData&>(g_pEnv->pLevel->GetEnvironment().GetSkybox());
-
-				UI::Property("LOD", skybox.environmentLod);
-				UI::Property("Multiplier", skybox.environmentMultiplier);
-
-				UI::EndProperties();
-			}
-
 			ImGui::Text("HDR");
 			ImGui::Separator();
 			if (UI::BeginProperties("generalProps"))
@@ -813,13 +800,20 @@ namespace Sandbox
 
 				if (ImGui::MenuItem("Save", "Ctrl + S"))
 				{
-					if (g_pEnv->pLevel->Path.empty())
+					if (!LevelManager::GetActive())
 					{
-						SaveLevelAs();
+						LP_WARN("Trying to save when no level was loaded!");
 					}
 					else
 					{
-						g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+						if (!std::filesystem::exists(LevelManager::GetActive()->Path))
+						{
+							SaveLevelAs();
+						}
+						else
+						{
+							g_pEnv->pAssetManager->SaveAsset(LevelManager::GetActive());
+						}
 					}
 				}
 
@@ -851,9 +845,9 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Properties", nullptr, &m_InspectiorOpen);
+				ImGui::MenuItem("Properties", nullptr, &m_inspectorOpen);
 				ImGui::MenuItem("Create", nullptr, &m_createPanel.GetIsOpen());
-				ImGui::MenuItem("Log", nullptr, &m_LogToolOpen);
+				ImGui::MenuItem("Log", nullptr, &m_logToolOpen);
 				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
 				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
 

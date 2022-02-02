@@ -1,16 +1,21 @@
 #include "lppch.h"
 #include "Entity.h"
 
+#include "ComponentRegistry.h"
+
 #include "Lamp/Level/Level.h"
+#include "Lamp/Level/LevelManager.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
+
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Renderer2D.h"
+
 #include "Lamp/AssetSystem/ResourceCache.h"
 
-#include <glm/ext/matrix_transform.hpp>
 #include "Lamp/GraphKey/GraphKeyGraph.h"
-#include "ComponentRegistry.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/BoxColliderComponent.h"
-#include "Lamp/Mesh/Materials/MaterialLibrary.h"
+
+#include <glm/ext/matrix_transform.hpp>
 
 namespace Lamp
 {
@@ -43,8 +48,14 @@ namespace Lamp
 
 	void Entity::Destroy()
 	{
-		auto& entites = g_pEnv->pLevel->GetEntities();
-		g_pEnv->pLevel->RemoveFromLayer(this);
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to remove entity when no level is loaded!");
+			return;
+		}
+
+		auto& entites = LevelManager::GetActive()->GetEntities();
+		LevelManager::GetActive()->RemoveFromLayer(this);
 
 		entites.erase(m_id);
 		delete this;
@@ -97,21 +108,37 @@ namespace Lamp
 
 	Entity* Entity::Create(bool saveable, uint32_t layer)
 	{
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to create entity when no level was loaded!");
+			return nullptr;
+		}
+
 		Entity* pEnt = new Entity();
 		pEnt->SetLayerID(layer);
 		pEnt->SetSaveable(saveable);
 
-		g_pEnv->pLevel->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
-		g_pEnv->pLevel->AddToLayer(pEnt);
+		auto level = LevelManager::GetActive();
+
+		level->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
+		level->AddToLayer(pEnt);
 
 		return pEnt;
 	}
 
 	Entity* Entity::Get(uint32_t id)
 	{
-		if (auto it = g_pEnv->pLevel->GetEntities().find(id); it != g_pEnv->pLevel->GetEntities().end())
+		if (!LevelManager::GetActive())
 		{
-			return g_pEnv->pLevel->GetEntities().at(id);
+			LP_CORE_ERROR("Trying to get entity when no level was loaded!");
+			return nullptr;
+		}
+
+		auto level = LevelManager::GetActive();
+
+		if (auto it = level->GetEntities().find(id); it != level->GetEntities().end())
+		{
+			return level->GetEntities().at(id);
 		}
 
 		return nullptr;
@@ -119,6 +146,12 @@ namespace Lamp
 
 	Entity* Entity::Duplicate(Entity* entity, bool addToLevel)
 	{
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to duplicate entity when no level was loaded!");
+			return nullptr;
+		}
+
 		Entity* copy = new Entity();
 
 		copy->m_name = entity->m_name;
@@ -138,8 +171,10 @@ namespace Lamp
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetEntities().emplace(copy->m_id, copy);
-			g_pEnv->pLevel->AddToLayer(copy);
+			auto level = LevelManager::GetActive();
+
+			level->GetEntities().emplace(copy->m_id, copy);
+			level->AddToLayer(copy);
 		}
 		else
 		{

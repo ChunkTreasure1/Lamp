@@ -23,6 +23,7 @@ namespace Lamp
 	}
 
 	VulkanTextureCube::VulkanTextureCube(const std::filesystem::path& path)
+		: m_width(1), m_height(1), m_mipLevels(1), m_format(ImageFormat::RGBA)
 	{
 		//TODO: implement
 	}

@@ -8,7 +8,7 @@ namespace Sandbox
 	{
 	public:
 		LayerViewPanel(std::string_view name, Lamp::Object** selectedObject);
-		virtual void OnEvent(Lamp::Event& e) override;
+		void OnEvent(Lamp::Event& e) override;
 
 	private:
 		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);

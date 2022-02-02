@@ -14,6 +14,7 @@ namespace Sandbox
 		BaseWindow(std::string_view name)
 			: m_name(name), m_IsOpen(false), m_deltaTime(0.f)
 		{}
+		virtual ~BaseWindow() = default;
 
 		virtual void OnEvent(Lamp::Event& e) = 0;
 

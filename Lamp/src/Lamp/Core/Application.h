@@ -1,10 +1,15 @@
 #pragma once
 #include "Lamp/Rendering/Renderer.h"
+
 #include "Lamp/Event/Event.h"
-#include "Lamp/Core/ThreadPool.h"
 #include "Lamp/Event/ApplicationEvent.h"
+
+#include "Lamp/Core/ThreadPool.h"
+
 #include "Lamp/Layer/Layer.h"
 #include "Lamp/Layer/LayerStack.h"
+#include "Lamp/Level/LevelManager.h"
+
 #include "Lamp/Input/FileSystem.h"
 
 #include "Window.h"
@@ -44,7 +49,9 @@ namespace Lamp
 		static Application* s_pInstance;
 
 	private:
-		std::unique_ptr<Window> m_pWindow;
+		Scope<Window> m_pWindow;
+		Scope<LevelManager> m_levelManager;
+
 		ImGuiLayer* m_pImGuiLayer;
 		LayerStack m_LayerStack;
 

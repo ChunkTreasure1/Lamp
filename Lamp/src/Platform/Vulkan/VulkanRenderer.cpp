@@ -181,7 +181,12 @@ namespace Lamp
 		meshData.albedoColor = matData.albedoColor;
 		meshData.normalColor = matData.normalColor;
 
-		meshData.useSkybox = g_pEnv->pLevel->HasSkybox();
+		meshData.useSkybox = false;
+
+		if (LevelManager::GetActive() && LevelManager::GetActive()->HasSkybox())
+		{
+
+		}
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &transform);
 		vulkanPipeline->SetPushConstantData(commandBuffer, 1, &meshData);
@@ -244,8 +249,8 @@ namespace Lamp
 
 		} skyData;
 
-		skyData.environmentLod = g_pEnv->pLevel->GetEnvironment().GetSkybox().environmentLod;
-		skyData.environmentMultiplier = g_pEnv->pLevel->GetEnvironment().GetSkybox().environmentMultiplier;
+		skyData.environmentLod = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentLod;
+		skyData.environmentMultiplier = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentMultiplier;
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &skyData);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[0].descriptorSets);
@@ -271,7 +276,7 @@ namespace Lamp
 
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && g_pEnv->pLevel->HasSkybox())
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && LevelManager::GetActive()->HasSkybox())
 		{
 			if (!m_skyboxPipeline || m_skyboxPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
 			{
@@ -281,12 +286,12 @@ namespace Lamp
 			DrawSkybox();
 		}
 
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && g_pEnv->pLevel->HasTerrain())
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && LevelManager::GetActive()->HasTerrain())
 		{
 			auto pipeline = m_rendererStorage->currentRenderPipeline;
 
-			m_rendererStorage->currentRenderPipeline = g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->GetPipeline();
-			g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->Draw();
+			m_rendererStorage->currentRenderPipeline = LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->GetPipeline();
+			LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->Draw();
 
 			m_rendererStorage->currentRenderPipeline = pipeline;
 		}
@@ -305,7 +310,7 @@ namespace Lamp
 
 			case DrawType::Terrain:
 			{
-				g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->Draw();
+				LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->Draw();
 
 				break;
 			}
@@ -417,31 +422,34 @@ namespace Lamp
 				continue;
 			}
 
+			Ref<VulkanTexture2D> vulkanTexture;
+
 			if (spec.texture)
 			{
-				auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(spec.texture);
-				auto& imageSamplers = shaderDescriptorSet.imageSamplers;
-
-				VulkanShader::ImageSampler* sampler = nullptr;
-
-				auto imageNameIt = imageSamplers.find(spec.binding);
-				if (imageNameIt != imageSamplers.end())
-				{
-					sampler = const_cast<VulkanShader::ImageSampler*>(&imageNameIt->second);
-				}
-
-				if (sampler)
-				{
-					auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(sampler->name);
-					descriptorWrite.dstSet = currentDescriptorSet;
-					descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
-
-					writeDescriptors.emplace_back(descriptorWrite);
-				}
+				vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(spec.texture);
 			}
 			else
 			{
-				LP_CORE_ERROR("[VulkanRenderer] No texture bound to {0} in material {1}!", spec.name, material->GetName());
+				vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->whiteTexture);
+			}
+
+			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
+
+			VulkanShader::ImageSampler* sampler = nullptr;
+
+			auto imageNameIt = imageSamplers.find(spec.binding);
+			if (imageNameIt != imageSamplers.end())
+			{
+				sampler = const_cast<VulkanShader::ImageSampler*>(&imageNameIt->second);
+			}
+
+			if (sampler)
+			{
+				auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(sampler->name);
+				descriptorWrite.dstSet = currentDescriptorSet;
+				descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
+
+				writeDescriptors.emplace_back(descriptorWrite);
 			}
 		}
 
@@ -549,7 +557,7 @@ namespace Lamp
 
 	void VulkanRenderer::SetupDescriptorsForSkyboxRendering()
 	{
-		if (!g_pEnv->pLevel->HasSkybox())
+		if (!LevelManager::GetActive()->HasSkybox())
 		{
 			return;
 		}
@@ -558,7 +566,7 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 
 		auto descriptorSet = vulkanShader->CreateDescriptorSets();
-		auto skybox = g_pEnv->pLevel->GetEnvironment().GetSkybox().skybox;
+		auto skybox = LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox;
 		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(skybox->GetFilteredEnvironment());
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
@@ -686,6 +694,7 @@ namespace Lamp
 		descriptorInfos.reserve(10);
 
 		//Directional lights
+		if (LevelManager::GetActive())
 		{
 			auto it = shaderDescriptorSet.writeDescriptorSets.find("u_DirShadowMaps");
 			if (it != shaderDescriptorSet.writeDescriptorSets.end())
@@ -695,7 +704,7 @@ namespace Lamp
 				writeDescriptor.dstSet = currentDescriptorSet;
 
 				uint32_t i = 0;
-				for (auto light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
+				for (auto light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
 				{
 					if (!light->castShadows)
 					{
@@ -726,24 +735,27 @@ namespace Lamp
 		auto& framebufferInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().framebufferInputs;
 		for (const auto& framebufferInput : framebufferInputs)
 		{
+			Ref<VulkanImage2D> vulkanImage;
+
 			if (framebufferInput.attachment)
 			{
-				auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(framebufferInput.attachment);
-				auto& imageSamplers = shaderDescriptorSet.imageSamplers;
-
-				auto imageSampler = imageSamplers.find(framebufferInput.binding);
-				if (imageSampler != imageSamplers.end())
-				{
-					auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
-					descriptorWrite.dstSet = currentDescriptorSet;
-					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-					writeDescriptors.emplace_back(descriptorWrite);
-				}
+				vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(framebufferInput.attachment);
 			}
 			else
 			{
-				LP_CORE_ERROR("VulkanRenderer: No attachment bound to binding {0} in pipeline {1}!", framebufferInput.binding, "");
+				vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->whiteTexture)->GetImage();
+			}
+
+			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
+
+			auto imageSampler = imageSamplers.find(framebufferInput.binding);
+			if (imageSampler != imageSamplers.end())
+			{
+				auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
+				descriptorWrite.dstSet = currentDescriptorSet;
+				descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+				writeDescriptors.emplace_back(descriptorWrite);
 			}
 		}
 
@@ -751,59 +763,55 @@ namespace Lamp
 		auto& textureInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureInputs;
 		for (const auto& textureInput : textureInputs)
 		{
+			Ref<VulkanTexture2D> vulkanImage;
+
 			if (textureInput.texture)
 			{
-				auto vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(textureInput.texture)->GetImage();
-				auto& imageSamplers = shaderDescriptorSet.imageSamplers;
+				vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(textureInput.texture);
 
-				auto imageSampler = imageSamplers.find(textureInput.binding);
-				if (imageSampler != imageSamplers.end())
-				{
-					auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
-					descriptorWrite.dstSet = currentDescriptorSet;
-					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-					writeDescriptors.emplace_back(descriptorWrite);
-				}
 			}
 			else
 			{
-				LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
+				vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->whiteTexture);
+			}
+
+			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
+
+			auto imageSampler = imageSamplers.find(textureInput.binding);
+			if (imageSampler != imageSamplers.end())
+			{
+				auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
+				descriptorWrite.dstSet = currentDescriptorSet;
+				descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+				writeDescriptors.emplace_back(descriptorWrite);
 			}
 		}
 
 		auto& cubeTextureInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().textureCubeInputs;
 		for (const auto& textureInput : cubeTextureInputs)
 		{
+			Ref<VulkanTextureCube> vulkanImage;
+
 			if (textureInput.texture)
 			{
-				auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(textureInput.texture);
-				auto& imageSamplers = shaderDescriptorSet.imageSamplers;
-
-				auto imageSampler = imageSamplers.find(textureInput.binding);
-				if (imageSampler != imageSamplers.end())
-				{
-					auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
-					descriptorWrite.dstSet = currentDescriptorSet;
-					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-					writeDescriptors.emplace_back(descriptorWrite);
-				}
+				vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(textureInput.texture);
 			}
 			else
 			{
-				auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(Renderer::GetSceneData()->blackCubeTexture);
-				auto& imageSamplers = shaderDescriptorSet.imageSamplers;
+				vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(Renderer::GetSceneData()->blackCubeTexture);
+			}
 
-				auto imageSampler = imageSamplers.find(textureInput.binding);
-				if (imageSampler != imageSamplers.end())
-				{
-					auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
-					descriptorWrite.dstSet = currentDescriptorSet;
-					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
 
-					writeDescriptors.emplace_back(descriptorWrite);
-				}
+			auto imageSampler = imageSamplers.find(textureInput.binding);
+			if (imageSampler != imageSamplers.end())
+			{
+				auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
+				descriptorWrite.dstSet = currentDescriptorSet;
+				descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+				writeDescriptors.emplace_back(descriptorWrite);
 			}
 		}
 

@@ -2,6 +2,8 @@
 #include "Brush.h"
 
 #include "Lamp/Level/Level.h"
+#include "Lamp/Level/LevelManager.h"
+
 #include "Lamp/AssetSystem/ResourceCache.h"
 
 namespace Lamp
@@ -21,26 +23,48 @@ namespace Lamp
 
 	void Brush::Destroy()
 	{
-		g_pEnv->pLevel->RemoveFromLayer(this);
-		g_pEnv->pLevel->GetBrushes().erase(m_id);
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to destroy brush when no level was loaded!");
+			return;
+		}
+
+		auto level = LevelManager::GetActive();
+
+		level->RemoveFromLayer(this);
+		level->GetBrushes().erase(m_id);
 
 		delete this;
 	}
 
 	Brush* Brush::Create(const std::filesystem::path& path)
 	{
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to create brush when no level was loaded!");
+			return nullptr;
+		}
+
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
 		Brush* brush = new Brush(model);
 		brush->SetLayerID(0);
 
-		g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
-		g_pEnv->pLevel->AddToLayer(brush);
+		auto level = LevelManager::GetActive();
+
+		level->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
+		level->AddToLayer(brush);
 
 		return brush;
 	}
 
 	Brush* Brush::Create(const std::filesystem::path& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name)
 	{
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to create brush when no level was loaded!");
+			return nullptr;
+		}
+
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
 		Brush* brush = new Brush(model);
 
@@ -50,21 +74,31 @@ namespace Lamp
 		brush->SetLayerID(layerId);
 		brush->SetName(name);
 
-		g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
-		g_pEnv->pLevel->AddToLayer(brush);
+		auto level = LevelManager::GetActive();
+
+		level->GetBrushes().emplace(std::make_pair(brush->GetID(), brush));
+		level->AddToLayer(brush);
 
 		return brush;
 	}
 
 	Brush* Brush::Duplicate(Brush* main, bool addToLevel)
 	{
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to duplicate brush when no level was loaded!");
+			return nullptr;
+		}
+
 		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(main->GetModel()->Path);
 		Brush* pBrush = new Brush(model);
 
 		if (addToLevel)
 		{
-			g_pEnv->pLevel->GetBrushes().emplace(std::make_pair(pBrush->m_id, pBrush));
-			g_pEnv->pLevel->AddToLayer(pBrush);
+			auto level = LevelManager::GetActive();
+
+			level->GetBrushes().emplace(std::make_pair(pBrush->m_id, pBrush));
+			level->AddToLayer(pBrush);
 		}
 		else
 		{
@@ -91,9 +125,17 @@ namespace Lamp
 
 	Brush* Brush::Get(uint32_t id)
 	{
-		if (auto& it = g_pEnv->pLevel->GetBrushes().find(id); it != g_pEnv->pLevel->GetBrushes().end())
+		if (!LevelManager::GetActive())
 		{
-			return g_pEnv->pLevel->GetBrushes().at(id);
+			LP_CORE_ERROR("Trying to get brush when no level was loaded!");
+			return nullptr;
+		}
+
+		auto level = LevelManager::GetActive();
+
+		if (auto& it = level->GetBrushes().find(id); it != level->GetBrushes().end())
+		{
+			return level->GetBrushes().at(id);
 		}
 
 		return nullptr;

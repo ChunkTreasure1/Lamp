@@ -4,6 +4,8 @@
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
+#include "Lamp/Level/LevelManager.h"
+
 namespace Sandbox
 {
 	void Sandbox::SaveLevelAs()
@@ -11,8 +13,8 @@ namespace Sandbox
 		std::filesystem::path filepath = Lamp::FileDialogs::SaveFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
-			g_pEnv->pLevel->Path = filepath;
-			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+			Lamp::LevelManager::GetActive()->Path = filepath;
+			g_pEnv->pAssetManager->SaveAsset(Lamp::LevelManager::GetActive());
 		}
 	}
 
@@ -33,13 +35,13 @@ namespace Sandbox
 
 	void Sandbox::NewLevel()
 	{
-		if (!g_pEnv->pLevel->Path.empty())
+		if (Lamp::LevelManager::GetActive() && !Lamp::LevelManager::GetActive()->Path.empty())
 		{
-			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+			g_pEnv->pAssetManager->SaveAsset(Lamp::LevelManager::GetActive());
 		}
 
 		m_pLevel = CreateRef<Lamp::Level>("New Level");
-		g_pEnv->pLevel = m_pLevel;
+		Lamp::LevelManager::Get()->SetActive(m_pLevel);
 		m_pSelectedObject = nullptr;
 	}
 

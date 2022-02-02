@@ -376,7 +376,7 @@ namespace Sandbox
 
 		ImGui::Begin("Graphs");
 
-		for (auto& pEnt : g_pEnv->pLevel->GetEntities())
+		for (auto& pEnt : LevelManager::GetActive()->GetEntities())
 		{
 			if (pEnt.second)
 			{

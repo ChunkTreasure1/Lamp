@@ -60,7 +60,7 @@ namespace Lamp
 
 		GenerateKernel();
 
-		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(4, 4);
+		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(ImageFormat::RGBA32F, 4, 4);
 		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
 
 		CreateUniformBuffers();
@@ -68,6 +68,10 @@ namespace Lamp
 
 		uint32_t blackCubeTextureData[6] = { 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
 		s_pSceneData->blackCubeTexture = TextureCube::Create(ImageFormat::RGBA, 1, 1, &blackCubeTextureData);
+
+		uint32_t whiteTextureData = 0xffffffff;
+		s_pSceneData->whiteTexture = Texture2D::Create(ImageFormat::RGBA, 1, 1);
+		s_pSceneData->whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 	}
 
 	void Renderer::Shutdown()
@@ -162,12 +166,13 @@ namespace Lamp
 		}
 
 		//Directional lights
+		if (LevelManager::GetActive())
 		{
 			auto ub = s_pSceneData->uniformBufferSet->Get(1, 0, currentFrame);
 
 			uint32_t index = 0;
 			s_pSceneData->directionalLightDataBuffer.lightCount = 0;
-			for (const auto& light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
+			for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
 			{
 				glm::vec3 direction = glm::normalize(glm::mat3(light->transform) * glm::vec3(1.f));
 
@@ -199,9 +204,10 @@ namespace Lamp
 
 
 		//Light data
+		if (LevelManager::GetActive())
 		{
 			uint32_t index = 0;
-			for (const auto& light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
+			for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
 			{
 				s_pSceneData->directionalLightVPData.directionalLightVPs[index] = light->viewProjection;
 				index++;
@@ -213,8 +219,9 @@ namespace Lamp
 		}
 
 		//Point lights
+		if (LevelManager::GetActive())
 		{
-			auto& pointLights = g_pEnv->pLevel->GetEnvironment().GetPointLights();
+			auto& pointLights = LevelManager::GetActive()->GetEnvironment().GetPointLights();
 			auto pointlightStorageBuffer = s_pSceneData->shaderStorageBufferSet->Get(12, 0, currentFrame);
 
 			PointLightData* buffer = (PointLightData*)pointlightStorageBuffer->Map();
@@ -277,7 +284,7 @@ namespace Lamp
 
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-		for (const auto& light : g_pEnv->pLevel->GetEnvironment().GetDirectionalLights())
+		for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
 		{
 			if (!light->castShadows)
 			{

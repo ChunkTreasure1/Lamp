@@ -300,6 +300,9 @@
     <ClInclude Include="src\Lamp\Layer\LayerStack.h">
       <Filter>src\Lamp\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Level\Environment.h">
+      <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Level\Level.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
@@ -424,6 +427,9 @@
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.h">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h">
@@ -1881,8 +1887,7 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.h" />
-    <ClInclude Include="src\Lamp\Level\Environment.h" />
+    <ClInclude Include="src\Lamp\Level\LevelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1968,6 +1973,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp">
       <Filter>src\Lamp\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Level\Environment.cpp">
+      <Filter>src\Lamp\Level</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Level\Level.cpp">
       <Filter>src\Lamp\Level</Filter>
@@ -2069,6 +2077,9 @@
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp">
+      <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.cpp">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp">
@@ -2314,7 +2325,6 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.cpp" />
-    <ClCompile Include="src\Lamp\Level\Environment.cpp" />
+    <ClCompile Include="src\Lamp\Level\LevelManager.cpp" />
   </ItemGroup>
 </Project>

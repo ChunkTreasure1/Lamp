@@ -292,7 +292,9 @@ namespace Lamp
 		for (auto& texName : mat->GetShader()->GetSpecification().inputTextureNames)
 		{
 			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
-			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
+			auto path = g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle);
+
+			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(path));
 		}
 
 		auto& matData = const_cast<MaterialData&>(mat->GetMaterialData());

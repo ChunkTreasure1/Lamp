@@ -1,7 +1,10 @@
 #include "lppch.h"
 #include "DirectionalLightComponent.h"
+
 #include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Objects/Entity/Base/Entity.h"
+
+#include "Lamp/Level/LevelManager.h"
 #include "Lamp/Level/Level.h"
 
 #include <glm/gtx/quaternion.hpp>
@@ -22,16 +25,22 @@ namespace Lamp
 			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
 		});
 
-		if (g_pEnv->pLevel)
+		if (LevelManager::GetActive())
 		{
-			auto& env = g_pEnv->pLevel->GetEnvironment();
+			auto& env = LevelManager::GetActive()->GetEnvironment();
 			env.RegisterDirectionalLight(m_pDirectionalLight.get());
 		}
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
 	{
-		g_pEnv->pLevel->GetEnvironment().UnregisterDirectionalLight(m_pDirectionalLight.get());
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to unregister when no level is loaded!");
+			return;
+		}
+
+		LevelManager::GetActive()->GetEnvironment().UnregisterDirectionalLight(m_pDirectionalLight.get());
 	}
 
 	void DirectionalLightComponent::Initialize()

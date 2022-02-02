@@ -2,6 +2,7 @@
 #include "LevelLoader.h"
 
 #include "Lamp/AssetSystem/AssetManager.h"
+#include "Lamp/Core/Application.h"
 
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Utility/SerializeMacros.h"
@@ -148,9 +149,12 @@ namespace Lamp
 
 	bool LevelLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
+		LevelLoadStartedEvent startEvent(path);
+		Application::Get().OnEvent(startEvent);
+
 		asset = CreateRef<Level>();
 		Ref<Level> level = std::dynamic_pointer_cast<Level>(asset);
-		g_pEnv->pLevel = level;
+		LevelManager::Get()->SetActive(level);
 
 		if (!std::filesystem::exists(path))
 		{
@@ -274,6 +278,9 @@ namespace Lamp
 		}
 
 		level->Path = path;
+
+		LevelLoadFinishedEvent endEvent(path);
+		Application::Get().OnEvent(endEvent);
 
 		return true;
 	}

@@ -98,7 +98,7 @@ namespace Lamp
 		////////////////////
 
 		////////Textures////////
-		s_pStorage->pWhiteTexture = Texture2D::Create(1, 1);
+		s_pStorage->pWhiteTexture = Texture2D::Create(ImageFormat::RGBA, 1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_pStorage->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 

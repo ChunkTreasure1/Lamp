@@ -2,8 +2,11 @@
 #include "PointLightComponent.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Rendering/LightBase.h"
+
+#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+
+#include "Lamp/Level/LevelManager.h"
 #include "Lamp/Level/Level.h"
 
 namespace Lamp
@@ -25,15 +28,20 @@ namespace Lamp
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
 		});
 
-		if (g_pEnv->pLevel)
+		if (LevelManager::GetActive())
 		{
-			g_pEnv->pLevel->GetEnvironment().RegisterPointLight(m_pPointLight.get());
+			LevelManager::GetActive()->GetEnvironment().RegisterPointLight(m_pPointLight.get());
 		}
 	}
 
 	PointLightComponent::~PointLightComponent()
 	{
-		g_pEnv->pLevel->GetEnvironment().UnregisterPointLight(m_pPointLight.get());
+		if (!LevelManager::GetActive())
+		{
+			LP_CORE_ERROR("Trying to unregister when no level was loaded!");
+		}
+
+		LevelManager::GetActive()->GetEnvironment().UnregisterPointLight(m_pPointLight.get());
 	}
 
 	void PointLightComponent::Initialize()

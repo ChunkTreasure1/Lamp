@@ -11,7 +11,7 @@ namespace Lamp
 	class VulkanTexture2D : public Texture2D
 	{
 	public:
-		VulkanTexture2D(uint32_t width, uint32_t height);
+		VulkanTexture2D(ImageFormat format, uint32_t width, uint32_t height);
 		VulkanTexture2D(const std::filesystem::path& path, bool generateMips);
 
 		~VulkanTexture2D() override;
