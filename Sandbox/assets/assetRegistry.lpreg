@@ -347,21 +347,19 @@ Assets:
     Path: engine/textures/ui/searchIcon.png
   - Handle: 2418690689678969492
     Path: engine/textures/ui/settingsIcon.png
-  - Handle: 8367631737299797705
-    Path: C:\Programming\Lamp\Sandbox\assets\meshes\head\textures\ELISLEDSEN.png
   - Handle: 4227104880835043339
-    Path: C:\Programming\Lamp\Sandbox\assets\meshes\sponza\textures\Background\Background_albedo.tga
+    Path: assets\meshes\sponza\textures\Background\Background_albedo.tga
   - Handle: 14426076198348094346
-    Path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
+    Path: assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
   - Handle: 8832679391837945518
-    Path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_normal.tga
+    Path: assets\textures\TeddyTextures\DJTeddy_final_normal.tga
   - Handle: 16897032606846204281
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\editor.rendergraph
+    Path: engine\renderGraphs\editor.rendergraph
   - Handle: 14877024273708001692
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\main.rendergraph
+    Path: engine\renderGraphs\main.rendergraph
   - Handle: 14855586085221556443
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph
+    Path: engine\renderGraphs\testGraph
   - Handle: 18032960552923057834
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph.rendergraph
+    Path: engine\renderGraphs\testGraph.rendergraph
   - Handle: 6347921305999140877
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testing.rendergraph
+    Path: engine\renderGraphs\testing.rendergraph
