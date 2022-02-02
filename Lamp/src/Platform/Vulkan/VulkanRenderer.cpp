@@ -170,21 +170,21 @@ namespace Lamp
 		const auto& matData = material->GetMaterialData();
 
 		MeshDataBuffer meshData;
-		meshData.model = transform;
 		meshData.blendingUseBlending.x = matData.blendingMultiplier;
-		meshData.blendingUseBlending.y = static_cast<float>(matData.useBlending);
-		
-		meshData.useAlbedo = static_cast<float>(matData.useAlbedo);
-		meshData.useNormal = static_cast<float>(matData.useNormal);
-		meshData.useMRO = static_cast<float>(matData.useMRO);
+		meshData.blendingUseBlending.y = matData.useBlending;
+
+		meshData.useAlbedo = matData.useAlbedo;
+		meshData.useNormal = matData.useNormal;
+		meshData.useMRO = matData.useMRO;
 
 		meshData.mroColor = matData.mroColor;
 		meshData.albedoColor = matData.albedoColor;
 		meshData.normalColor = matData.normalColor;
-		
-		meshData.useSkybox = static_cast<float>(g_pEnv->pLevel->HasSkybox());
 
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
+		meshData.useSkybox = g_pEnv->pLevel->HasSkybox();
+
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &transform);
+		vulkanPipeline->SetPushConstantData(commandBuffer, 1, &meshData);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
@@ -202,10 +202,7 @@ namespace Lamp
 		vulkanPipeline->Bind(commandBuffer);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, descriptorSets);
 
-		MeshDataBuffer meshData;
-		meshData.model = transform;
-
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &transform);
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
@@ -268,12 +265,7 @@ namespace Lamp
 
 		SetupDescriptorsForTerrainRendering();
 
-		MeshDataBuffer meshData;
-		meshData.model = m_testTerrain->GetTransform();
-		meshData.blendingUseBlending.x = 0.f;
-		meshData.blendingUseBlending.y = 0.f;
-
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &meshData);
+		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &m_testTerrain->GetTransform());
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[1].descriptorSets);
 	}
 
@@ -310,7 +302,7 @@ namespace Lamp
 
 				break;
 			}
-			
+
 			case DrawType::Terrain:
 			{
 				g_pEnv->pLevel->GetEnvironment().GetTerrain().terrain->Draw();
@@ -800,7 +792,18 @@ namespace Lamp
 			}
 			else
 			{
-				LP_CORE_ERROR("VulkanRenderer: No texture bound to binding {0} in pipeline {1}!", textureInput.binding, "");
+				auto vulkanImage = std::reinterpret_pointer_cast<VulkanTextureCube>(Renderer::GetSceneData()->blackCubeTexture);
+				auto& imageSamplers = shaderDescriptorSet.imageSamplers;
+
+				auto imageSampler = imageSamplers.find(textureInput.binding);
+				if (imageSampler != imageSamplers.end())
+				{
+					auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(imageSampler->second.name);
+					descriptorWrite.dstSet = currentDescriptorSet;
+					descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+
+					writeDescriptors.emplace_back(descriptorWrite);
+				}
 			}
 		}
 

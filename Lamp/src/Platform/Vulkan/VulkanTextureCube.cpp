@@ -233,7 +233,7 @@ namespace Lamp
 			
 			uint8_t* data = allocator.MapMemory<uint8_t>(stagingBufferMemory);
 			memcpy(data, m_localBuffer.pData, m_localBuffer.Size);
-			allocator.UnmapMemory(m_allocation);
+			allocator.UnmapMemory(stagingBufferMemory);
 
 			Utility::TransitionImageLayout(m_image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 			Utility::CopyBufferToImage(stagingBuffer, m_image, m_width, m_height);

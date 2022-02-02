@@ -18,7 +18,16 @@ layout (location = 4) in vec2 a_TexCoords;
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
+    vec4 albedoColor;
+    vec4 normalColor;
+
     vec2 blendingUseBlending;
+    vec2 metalRoughness;
+
+    bool useAlbedo;
+    bool useNormal;
+    bool useMRO;
+    bool useSkybox;
 
 } u_MeshData;
 

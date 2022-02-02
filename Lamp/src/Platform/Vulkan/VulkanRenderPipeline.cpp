@@ -194,7 +194,7 @@ namespace Lamp
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 		const auto& pushConstants = vulkanShader->GetPushConstantRanges();
 
-		if (!pushConstants.empty())
+		if (!pushConstants.empty() && index < pushConstants.size())
 		{
 			auto vulkanCommandBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
 			vkCmdPushConstants(vulkanCommandBuffer, m_layout, pushConstants[index].shaderStage, pushConstants[index].offset, pushConstants[index].size, data);

@@ -32,6 +32,7 @@ namespace Sandbox
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 
 		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+		const_cast<SkyboxData&>(m_pLevel->GetEnvironment().GetSkybox()).skybox = CreateRef<Skybox>("assets/textures/brightForest.hdr");
 
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 

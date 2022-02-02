@@ -6,17 +6,16 @@ namespace Lamp
 {
 	struct MeshDataBuffer
 	{
-		glm::mat4 model;
-
-		float useAlbedo;
-		float useNormal;
-		float useMRO;
-		float useSkybox;
-	
-		glm::vec2 blendingUseBlending;
-		glm::vec2 mroColor;
 		glm::vec4 albedoColor;
 		glm::vec4 normalColor;
+
+		glm::vec2 blendingUseBlending;
+		glm::vec2 mroColor;
+
+		uint32_t useAlbedo;
+		uint32_t useNormal;
+		uint32_t useMRO;
+		uint32_t useSkybox;
 	};
 
 	struct CameraDataBuffer

@@ -132,16 +132,16 @@ layout (std430, binding = 13) readonly buffer VisibleLightsBuffer
 
 layout (push_constant) uniform MeshDataBuffer
 {
-    layout(offset = 64) float useAlbedo;
-    layout(offset = 68) float useNormal;
-    layout(offset = 72) float useMRO;
-    layout(offset = 76) float useSkybox;
+    layout(offset = 64) vec4 albedoColor;
+    vec4 normalColor;
 
-    layout(offset = 80) vec2 blendingUseBlending;
-    layout(offset = 88) vec2 metalRoughness;
+    vec2 blendingUseBlending;
+    vec2 metalRoughness;
 
-    layout(offset = 96) vec4 albedoColor;
-    layout(offset = 112) vec4 normalColor;
+    uint useAlbedo;
+    uint useNormal;
+    uint useMRO;
+    uint useSkybox;
 
 } u_MeshData;
 
