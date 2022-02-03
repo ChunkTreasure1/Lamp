@@ -306,6 +306,9 @@
     <ClInclude Include="src\Lamp\Level\Level.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Level\LevelManager.h">
+      <Filter>src\Lamp\Level</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Level\ObjectLayer.h">
       <Filter>src\Lamp\Level</Filter>
     </ClInclude>
@@ -1887,7 +1890,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Level\LevelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -1978,6 +1980,9 @@
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Level\Level.cpp">
+      <Filter>src\Lamp\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Level\LevelManager.cpp">
       <Filter>src\Lamp\Level</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Level\ObjectLayer.cpp">
@@ -2325,6 +2330,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Level\LevelManager.cpp" />
   </ItemGroup>
 </Project>

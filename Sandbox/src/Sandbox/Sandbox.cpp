@@ -31,13 +31,11 @@ namespace Sandbox
 		g_pEnv->isEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
-
-		//m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
-
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
-		////Make sure the sandbox controller is created after level has been loaded
-		m_sandboxController = CreateRef<SandboxController>(); // TODO: improve dependencies
+		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+
+		m_sandboxController = CreateRef<SandboxController>();
 
 		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
 		m_pWindows.push_back(new GraphKey("Visual Scripting"));
@@ -48,7 +46,6 @@ namespace Sandbox
 		Application::Get().GetWindow().Maximize();
 
 		SetupFromConfig();
-		SetupRenderPasses();
 	}
 
 	Sandbox::~Sandbox()
@@ -175,6 +172,11 @@ namespace Sandbox
 
 	void Sandbox::OnRender()
 	{
+		if (!LevelManager::GetActive())
+		{
+			return;
+		}
+
 		switch (m_SceneState)
 		{
 			case SceneState::Edit:
@@ -413,184 +415,5 @@ namespace Sandbox
 		m_pLevel->SetIsPlaying(false);
 
 		m_pRuntimeLevel = nullptr;
-	}
-
-	void Sandbox::SetupRenderPasses()
-	{
-		std::vector<Lamp::RenderPass> renderPasses;
-
-		//Depth PrePass
-		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA16F,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_depthPrePassFramebuffer = pipelineSpec.framebuffer;
-
-			pipelineSpec.shader = ShaderLibrary::GetShader("depthPrePass");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
-			auto& pass = renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		//Light culling
-		{
-			auto& pass = renderPasses.emplace_back();
-			auto [pipeline, command] = Renderer::CreateLightCullingPipeline(m_depthPrePassFramebuffer->GetDepthAttachment());
-			pass.computePipeline = pipeline;
-			pass.computeExcuteCommand = command;
-		}
-
-		//SSAO main pass
-		{
-			//FramebufferSpecification framebufferSpec{};
-			//framebufferSpec.swapchainTarget = false;
-			//framebufferSpec.attachments =
-			//{
-			//	ImageFormat::R32F
-			//};
-
-			//RenderPipelineSpecification pipelineSpec{};
-			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			//m_ssaoMainFramebuffer = pipelineSpec.framebuffer;
-
-			//pipelineSpec.shader = ShaderLibrary::GetShader("ssaoMain");
-			//pipelineSpec.isSwapchain = false;
-			//pipelineSpec.topology = Topology::TriangleList;
-			//pipelineSpec.drawType = DrawType::Quad;
-			//pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			//pipelineSpec.vertexLayout =
-			//{
-			//	{ ElementType::Float3, "a_Position" },
-			//	{ ElementType::Float3, "a_Normal" },
-			//	{ ElementType::Float3, "a_Tangent" },
-			//	{ ElementType::Float3, "a_Bitangent" },
-			//	{ ElementType::Float2, "a_TexCoords" },
-			//};
-
-			//pipelineSpec.framebufferInputs =
-			//{
-			//	{ m_depthPrePassFramebuffer->GetColorAttachment(0), 0, 4 },
-			//	{ m_depthPrePassFramebuffer->GetDepthAttachment(), 0, 5 }
-			//};
-
-			//pipelineSpec.textureInputs =
-			//{
-			//	{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
-			//};
-
-			//auto& pass = renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		//Main pass
-		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_viewportFramebuffer = pipelineSpec.framebuffer;
-
-			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
-			pipelineSpec.drawSkybox = true;
-			pipelineSpec.drawTerrain = true;
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
-			pipelineSpec.framebufferInputs =
-			{
-				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
-			};
-
-			pipelineSpec.textureCubeInputs =
-			{
-				{ LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetIrradiance() , 0, 5 },
-				{ LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetFilteredEnvironment(), 0, 6 } // should not be set here
-			};
-
-			auto& pass = renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		//Terrain
-		{
-			if (LevelManager::GetActive()->HasTerrain())
-			{
-				LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->SetupRenderPipeline(m_viewportFramebuffer); // TODO: use geometry framebuffer images instead
-			}
-		}
-
-		//Composite
-		{
-			//FramebufferSpecification framebufferSpec{};
-			//framebufferSpec.swapchainTarget = false;
-			//framebufferSpec.attachments =
-			//{
-			//	ImageFormat::RGBA,
-			//	ImageFormat::DEPTH32F
-			//};
-
-			//RenderPipelineSpecification pipelineSpec{};
-			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			//m_viewportFramebuffer = pipelineSpec.framebuffer;
-
-			//pipelineSpec.shader = ShaderLibrary::GetShader("composite");
-			//pipelineSpec.isSwapchain = false;
-			//pipelineSpec.topology = Topology::TriangleList;
-			//pipelineSpec.drawType = DrawType::Quad;
-			//pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			//pipelineSpec.vertexLayout =
-			//{
-			//	{ ElementType::Float3, "a_Position" },
-			//	{ ElementType::Float3, "a_Normal" },
-			//	{ ElementType::Float3, "a_Tangent" },
-			//	{ ElementType::Float3, "a_Bitangent" },
-			//	{ ElementType::Float2, "a_TexCoords" },
-			//};
-
-			//pipelineSpec.framebufferInputs =
-			//{
-			//	{ m_geometryFramebuffer->GetColorAttachment(0), 0, 4 },
-			//	{ m_ssaoMainFramebuffer->GetColorAttachment(0), 0, 5 }
-			//};
-
-			//auto& pass = renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		m_pLevel->SetRenderPasses(renderPasses);
 	}
 }

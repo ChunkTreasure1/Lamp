@@ -89,8 +89,7 @@ namespace Lamp
 		imageViewCreateInfo.subresourceRange.layerCount = m_specification.layers;
 		imageViewCreateInfo.image = m_image;
 
-		VkResult result = vkCreateImageView(device->GetHandle(), &imageViewCreateInfo, nullptr, &m_imageViews[0]);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create image view!");
+		LP_VK_CHECK(vkCreateImageView(device->GetHandle(), &imageViewCreateInfo, nullptr, &m_imageViews[0]));
 
 		VkSamplerCreateInfo samplerCreateInfo{};
 		samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -109,7 +108,7 @@ namespace Lamp
 		samplerCreateInfo.compareEnable = m_specification.comparable ? VK_TRUE : VK_FALSE;
 		samplerCreateInfo.compareOp = VK_COMPARE_OP_LESS;
 
-		result = vkCreateSampler(device->GetHandle(), &samplerCreateInfo, nullptr, &m_sampler);
+		LP_VK_CHECK(vkCreateSampler(device->GetHandle(), &samplerCreateInfo, nullptr, &m_sampler));
 
 		UpdateDescriptor();
 	}

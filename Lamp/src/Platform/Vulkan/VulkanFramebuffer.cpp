@@ -319,8 +319,7 @@ namespace Lamp
 		renderPassInfo.dependencyCount = (uint32_t)dependencies.size();
 		renderPassInfo.pDependencies = dependencies.data();
 
-		VkResult result = vkCreateRenderPass(device, &renderPassInfo, nullptr, &m_renderPass);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create render pass!");
+		LP_VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &m_renderPass));
 
 		std::vector<VkImageView> attachments(m_attachmentImages.size());
 		for (uint32_t i = 0; i < m_attachmentImages.size(); i++)
@@ -347,8 +346,7 @@ namespace Lamp
 		framebufferInfo.height = m_height;
 		framebufferInfo.layers = 1;
 
-		result = vkCreateFramebuffer(device, &framebufferInfo, nullptr, &m_framebuffer);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create framebuffer");
+		LP_VK_CHECK(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &m_framebuffer));
 	}
 
 	void VulkanFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)

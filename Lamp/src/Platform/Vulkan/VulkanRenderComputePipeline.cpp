@@ -5,6 +5,7 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanCommandBuffer.h"
+#include "Platform/Vulkan/VulkanUtility.h"
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Rendering/Swapchain.h"
@@ -47,27 +48,26 @@ namespace Lamp
 		{
 			VkQueue computeQueue = VulkanContext::GetCurrentDevice()->GetComputeQueue();
 
-			vkEndCommandBuffer(m_activeComputeCommandBuffer);
+			LP_VK_CHECK(vkEndCommandBuffer(m_activeComputeCommandBuffer));
 
 			if (!s_computeFence)
 			{
 				VkFenceCreateInfo fenceCreateInfo{};
 				fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-				VkResult result = vkCreateFence(device, &fenceCreateInfo, nullptr, &s_computeFence);
-				LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create fence!");
+				LP_VK_CHECK(vkCreateFence(device, &fenceCreateInfo, nullptr, &s_computeFence));
 			}
 
-			vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX);
-			vkResetFences(device, 1, &s_computeFence);
+			LP_VK_CHECK(vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX));
+			LP_VK_CHECK(vkResetFences(device, 1, &s_computeFence));
 
 			VkSubmitInfo computeSubmitInfo{};
 			computeSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			computeSubmitInfo.commandBufferCount = 1;
 			computeSubmitInfo.pCommandBuffers = &m_activeComputeCommandBuffer;
 			
-			VkResult result = vkQueueSubmit(computeQueue, 1, &computeSubmitInfo, s_computeFence);
-			vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX);
+			LP_VK_CHECK(vkQueueSubmit(computeQueue, 1, &computeSubmitInfo, s_computeFence));
+			LP_VK_CHECK(vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX));
 		}
 
 		m_activeComputeCommandBuffer = nullptr;
@@ -140,8 +140,7 @@ namespace Lamp
 			pipelineLayoutCreateInfo.pPushConstantRanges = pushConstantRanges.data();
 		}
 
-		VkResult result = vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &m_computePipelineLayout);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline layout!");
+		LP_VK_CHECK(vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &m_computePipelineLayout));
 
 		VkComputePipelineCreateInfo pipelineCreateInfo{};
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
@@ -154,9 +153,7 @@ namespace Lamp
 		VkPipelineCacheCreateInfo pipelineCacheCreateInfo{};
 		pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-		result = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &m_computePipelineCache);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline cache!");
-
-		result = vkCreateComputePipelines(device, m_computePipelineCache, 1, &pipelineCreateInfo, nullptr, &m_computePipeline);
+		LP_VK_CHECK(vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &m_computePipelineCache));
+		LP_VK_CHECK(vkCreateComputePipelines(device, m_computePipelineCache, 1, &pipelineCreateInfo, nullptr, &m_computePipeline));
 	}
 }

@@ -38,9 +38,9 @@ ImTextureID UI::GetTextureID(Ref<Lamp::Texture2D> texture)
 	return id;
 }
 
-ImTextureID UI::GetTextureID(Ref<Lamp::Image2D> texture)
+ImTextureID UI::GetTextureID(Ref<Lamp::Image2D> image)
 {
-	Ref<VulkanImage2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanImage2D>(texture);
+	Ref<VulkanImage2D> vulkanTexture = std::reinterpret_pointer_cast<VulkanImage2D>(image);
 	const VkDescriptorImageInfo& imageInfo = vulkanTexture->GetDescriptorInfo();
 
 	if (!imageInfo.imageView)
@@ -49,17 +49,5 @@ ImTextureID UI::GetTextureID(Ref<Lamp::Image2D> texture)
 	}
 
 	ImTextureID id = ImGui_ImplVulkan_AddTexture(imageInfo.sampler, imageInfo.imageView, imageInfo.imageLayout);
-
-	auto it = s_imageIdCache.find(texture);
-	if (it != s_imageIdCache.end())
-	{
-		auto device = VulkanContext::GetCurrentDevice();
-
-		VkDescriptorSet descriptor = (VkDescriptorSet)it->second;
-		vkFreeDescriptorSets(device->GetHandle(), std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool(), 1, &descriptor);
-	}
-
-	s_imageIdCache[texture] = id;
-
 	return id;
 }

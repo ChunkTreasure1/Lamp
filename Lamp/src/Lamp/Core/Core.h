@@ -8,7 +8,7 @@
 #define LP_BIND_THREAD_FN(fn) std::bind(&fn, this)
 
 #ifdef LP_DEBUG
-	#define LP_PROFILING
+	//#define LP_PROFILING
 	#define LP_VALIDATION
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define LP_DEBUGBREAK() __debugbreak()
@@ -21,6 +21,7 @@
 	#if defined(LP_PLATFORM_WINDOWS)
 		#define GLFW_EXPOSE_NATIVE_WIN32
 	#endif
+	#define LP_VK_CHECK
 #endif // DEBUG
 
 #ifdef LP_ENABLE_ASSERTS

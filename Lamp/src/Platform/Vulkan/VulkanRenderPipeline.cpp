@@ -222,8 +222,7 @@ namespace Lamp
 
 			m_descriptorSets[i].resize(allDescriptorLayouts.size());
 
-			VkResult result = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, m_descriptorSets[i].data());
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor sets!");
+			LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, m_descriptorSets[i].data()));
 		}
 	}
 
@@ -348,8 +347,7 @@ namespace Lamp
 		pipelineLayoutInfo.pushConstantRangeCount = (uint32_t)pushConstantRanges.size();
 		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
 
-		VkResult result = vkCreatePipelineLayout(device->GetHandle(), &pipelineLayoutInfo, nullptr, &m_layout);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline layout!");
+		LP_VK_CHECK(vkCreatePipelineLayout(device->GetHandle(), &pipelineLayoutInfo, nullptr, &m_layout));
 
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -369,8 +367,7 @@ namespace Lamp
 		pipelineInfo.pDynamicState = &dynamicStateInfo;
 		pipelineInfo.pTessellationState = m_specification.useTessellation ? &tessellation : nullptr;
 
-		result = vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create pipeline!");
+		LP_VK_CHECK(vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline));
 	}
 
 	void VulkanRenderPipeline::BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::vector<VkDescriptorSet>& descriptorSets, uint32_t startSet) const

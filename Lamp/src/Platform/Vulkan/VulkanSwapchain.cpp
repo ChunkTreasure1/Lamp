@@ -105,8 +105,7 @@ namespace Lamp
 
 	void VulkanSwapchain::InitializeSurface(void* window)
 	{
-		VkResult result = glfwCreateWindowSurface(m_instance, static_cast<GLFWwindow*>(window), nullptr, &m_surface);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create window surface!");
+		LP_VK_CHECK(glfwCreateWindowSurface(m_instance, static_cast<GLFWwindow*>(window), nullptr, &m_surface));
 
 		uint32_t queueCount;
 		vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetPhysicalDevice()->GetHandle(), &queueCount, nullptr);
@@ -201,19 +200,8 @@ namespace Lamp
 	void VulkanSwapchain::BeginFrame()
 	{
 		vkWaitForFences(m_device->GetHandle(), 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
-		VkResult result = vkResetCommandPool(m_device->GetHandle(), m_commandPools[m_currentFrame], 0);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to reset command buffer!");
-
-		result = vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, m_presentCompleteSemaphores[m_currentFrame], VK_NULL_HANDLE, &m_currentImageIndex);
-
-		if (result == VK_ERROR_OUT_OF_DATE_KHR)
-		{
-			return;
-		}
-		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-		{
-			throw std::runtime_error("failed to acquire swap chain image!");
-		}
+		LP_VK_CHECK(vkResetCommandPool(m_device->GetHandle(), m_commandPools[m_currentFrame], 0));
+		LP_VK_CHECK(vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, m_presentCompleteSemaphores[m_currentFrame], VK_NULL_HANDLE, &m_currentImageIndex));
 
 		if (m_imagesInFlight[m_currentImageIndex] != VK_NULL_HANDLE)
 		{
@@ -242,8 +230,7 @@ namespace Lamp
 
 		vkResetFences(m_device->GetHandle(), 1, &m_inFlightFences[m_currentFrame]);
 
-		VkResult result = vkQueueSubmit(m_device->GetGraphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to submit queue!");
+		LP_VK_CHECK(vkQueueSubmit(m_device->GetGraphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]));
 
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -257,15 +244,7 @@ namespace Lamp
 
 		presentInfo.pImageIndices = &m_currentImageIndex;
 
-		result = vkQueuePresentKHR(m_device->GetGraphicsQueue(), &presentInfo);
-
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
-		{
-		}
-		else if (result != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to present swap chain image!");
-		}
+		LP_VK_CHECK(vkQueuePresentKHR(m_device->GetGraphicsQueue(), &presentInfo));
 
 		m_currentFrame = (m_currentFrame + 1) % Renderer::GetCapabilities().framesInFlight;
 	}
@@ -515,8 +494,7 @@ namespace Lamp
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		VkResult result = vkCreateRenderPass(m_device->GetHandle(), &renderPassInfo, nullptr, &m_renderPass);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create render pass!");
+		LP_VK_CHECK(vkCreateRenderPass(m_device->GetHandle(), &renderPassInfo, nullptr, &m_renderPass));
 	}
 
 	void VulkanSwapchain::CreateImageViews()
@@ -540,8 +518,7 @@ namespace Lamp
 			createInfo.subresourceRange.baseArrayLayer = 0;
 			createInfo.subresourceRange.layerCount = 1;
 
-			VkResult result = vkCreateImageView(m_device->GetHandle(), &createInfo, nullptr, &m_imageViews[i]);
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create image view!")
+			LP_VK_CHECK(vkCreateImageView(m_device->GetHandle(), &createInfo, nullptr, &m_imageViews[i]));
 		}
 	}
 
@@ -566,8 +543,7 @@ namespace Lamp
 			framebufferInfo.height = m_extent.height;
 			framebufferInfo.layers = 1;
 
-			VkResult result = vkCreateFramebuffer(m_device->GetHandle(), &framebufferInfo, nullptr, &m_framebuffers[i]);
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create framebuffer!");
+			LP_VK_CHECK(vkCreateFramebuffer(m_device->GetHandle(), &framebufferInfo, nullptr, &m_framebuffers[i]));
 		}
 	}
 
@@ -584,8 +560,7 @@ namespace Lamp
 			poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 			poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-			VkResult result = vkCreateCommandPool(m_device->GetHandle(), &poolInfo, nullptr, &m_commandPools[i]);
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create command pool!");
+			LP_VK_CHECK(vkCreateCommandPool(m_device->GetHandle(), &poolInfo, nullptr, &m_commandPools[i]));
 		}
 	}
 
@@ -601,8 +576,7 @@ namespace Lamp
 			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			allocInfo.commandBufferCount = 1;
 
-			VkResult result = vkAllocateCommandBuffers(m_device->GetHandle(), &allocInfo, &m_commandBuffers[i]);
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to allocate command buffers!");
+			LP_VK_CHECK(vkAllocateCommandBuffers(m_device->GetHandle(), &allocInfo, &m_commandBuffers[i]));
 		}
 	}
 

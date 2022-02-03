@@ -72,6 +72,9 @@ namespace Lamp
 		inline std::vector<ObjectLayer>& GetLayers() { return m_layers; }
 		inline bool IsPlaying() const { return m_isPlaying; }
 
+		inline const Ref<Image2D> GetFinalRenderedImage() const { return m_renderPasses.back().graphicsPipeline->GetSpecification().framebuffer->GetColorAttachment(0); }
+		inline const Ref<Framebuffer> GetGeometryFramebuffer() const { return m_geometryFramebuffer; }
+
 		inline const bool HasTerrain() const { return m_environment.GetTerrain().terrain != nullptr && m_environment.GetTerrain().terrain->IsValid(); }
 		inline const bool HasSkybox() const { return m_environment.GetSkybox().skybox != nullptr && !m_environment.GetSkybox().skybox->IsFlagSet(AssetFlag::Missing) && !m_environment.GetSkybox().skybox->IsFlagSet(AssetFlag::Invalid); }
 
@@ -81,11 +84,12 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::Level; }
 		AssetType GetType() override { return GetStaticType(); }
 
-
 	private:
 		friend class LevelLoader;
 
+		void SetupRenderPasses();
 		void RenderLevel(const Ref<CameraBase> camera);
+
 		bool OnViewportResize(EditorViewportSizeChangedEvent& e);
 
 		std::string m_name;
@@ -97,9 +101,10 @@ namespace Lamp
 		std::map<uint32_t, Entity*> m_entities;
 
 		std::vector<ObjectLayer> m_layers;
+		std::vector<RenderPass> m_renderPasses;
 
 		//Move from here
 		bool m_lastShowedGizmos = false;
-		std::vector<RenderPass> m_renderPasses;
+		Ref<Framebuffer> m_geometryFramebuffer;
 	};
 }

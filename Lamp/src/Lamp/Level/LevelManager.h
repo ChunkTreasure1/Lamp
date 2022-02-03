@@ -11,6 +11,7 @@ namespace Lamp
 		~LevelManager();
 
 		void SetActive(Ref<Level> level);
+		void Load(const std::filesystem::path& path);
 
 		static LevelManager* Get();
 		static Ref<Level> GetActive();

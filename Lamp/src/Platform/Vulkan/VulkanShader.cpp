@@ -3,6 +3,8 @@
 
 #include "VulkanDevice.h"
 
+#include "Platform/Vulkan/VulkanUtility.h"
+
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
 #include <spirv-tools/libspirv.h>
@@ -195,8 +197,7 @@ namespace Lamp
 		descriptorPoolInfo.pPoolSizes = m_descriptorTypes.at(set).data();
 		descriptorPoolInfo.maxSets = 1;
 
-		VkResult vkResult = vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool);
-		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to create pool!");
+		LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool));
 
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -205,8 +206,7 @@ namespace Lamp
 		allocInfo.pSetLayouts = &m_descriptorSetLayouts[set];
 
 		result.descriptorSets.emplace_back();
-		vkResult = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, result.descriptorSets.data());
-		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to allocate descriptor sets!");
+		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, result.descriptorSets.data()));
 
 		return result;
 	}
@@ -265,8 +265,7 @@ namespace Lamp
 		descriptorPoolInfo.pPoolSizes = poolSizes.at(set).data();
 		descriptorPoolInfo.maxSets = count;
 
-		VkResult vkResult = vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool);
-		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to create descriptor pool!");
+		LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool));
 
 		result.descriptorSets.resize(count);
 
@@ -278,8 +277,7 @@ namespace Lamp
 			allocInfo.descriptorSetCount = 1;
 			allocInfo.pSetLayouts = &m_descriptorSetLayouts[set];
 
-			vkResult = vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &result.descriptorSets[i]);
-			LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to allocate descriptor set");
+			LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &result.descriptorSets[i]));
 		}
 		return result;
 	}
@@ -522,8 +520,7 @@ namespace Lamp
 			moduleCreateInfo.pCode = data.data();
 
 			VkShaderModule shaderModule;
-			VkResult result = vkCreateShaderModule(device, &moduleCreateInfo, nullptr, &shaderModule);
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create shader module!");
+			LP_VK_CHECK(vkCreateShaderModule(device, &moduleCreateInfo, nullptr, &shaderModule));
 
 			VkPipelineShaderStageCreateInfo& shaderStage = m_pipelineShaderStageInfos.emplace_back();
 			shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -863,8 +860,7 @@ namespace Lamp
 			LP_CORE_INFO("VulkanShader::CreateDescriptors - {0}, {1}", m_specification.name, set);
 
 			auto device = VulkanContext::GetCurrentDevice();
-			VkResult result = vkCreateDescriptorSetLayout(device->GetHandle(), &descriptorLayout, nullptr, &m_descriptorSetLayouts[set]);
-			LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create descriptor set layout!");
+			LP_VK_CHECK(vkCreateDescriptorSetLayout(device->GetHandle(), &descriptorLayout, nullptr, &m_descriptorSetLayouts[set]));
 		}
 	}
 }

@@ -76,8 +76,6 @@ namespace Lamp
 		BufferLayout vertexLayout;
 
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
-		std::vector<TextureInputSpecification> textureInputs;
-		std::vector<TextureCubeInputSpecification> textureCubeInputs;
 
 		glm::vec2 size;
 		bool isSwapchain;

@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "LevelManager.h"
 
+#include "Lamp/AssetSystem/ResourceCache.h"
+
 namespace Lamp
 {
 	LevelManager* LevelManager::s_instance = nullptr;
@@ -30,6 +32,11 @@ namespace Lamp
 			m_activeLevel->Shutdown();
 		}
 		m_activeLevel = level;
+	}
+
+	void LevelManager::Load(const std::filesystem::path& path)
+	{
+		m_activeLevel = ResourceCache::GetAsset<Level>(path);
 	}
 
 	LevelManager* LevelManager::Get()

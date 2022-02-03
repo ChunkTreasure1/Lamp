@@ -2,6 +2,7 @@
 #include "VulkanDevice.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
+#include "Platform/Vulkan/VulkanUtility.h"
 
 #include "Lamp/Rendering/Renderer.h"
 
@@ -152,21 +153,18 @@ namespace Lamp
 		deviceCreateInfo.ppEnabledLayerNames = m_validationLayers.data();
 	#endif
 
-		VkResult result = vkCreateDevice(m_physicalDevice->GetHandle(), &deviceCreateInfo, nullptr, &m_logicalDevice);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create logical device!");
+		LP_VK_CHECK(vkCreateDevice(m_physicalDevice->GetHandle(), &deviceCreateInfo, nullptr, &m_logicalDevice));
 
 		VkCommandPoolCreateInfo commandPoolInfo{};
 		commandPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		commandPoolInfo.queueFamilyIndex = m_physicalDevice->m_queueFamilyIndices.graphicsFamily.value();
 		commandPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-		result = vkCreateCommandPool(m_logicalDevice, &commandPoolInfo, nullptr, &m_commandPool);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create command pool!");
+		LP_VK_CHECK(vkCreateCommandPool(m_logicalDevice, &commandPoolInfo, nullptr, &m_commandPool));
 
 		commandPoolInfo.queueFamilyIndex = m_physicalDevice->m_queueFamilyIndices.computeFamily.value();
 
-		result = vkCreateCommandPool(m_logicalDevice, &commandPoolInfo, nullptr, &m_computeCommandPool);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create command pool!");
+		LP_VK_CHECK(vkCreateCommandPool(m_logicalDevice, &commandPoolInfo, nullptr, &m_computeCommandPool));
 
 		vkGetDeviceQueue(m_logicalDevice, m_physicalDevice->m_queueFamilyIndices.graphicsFamily.value(), 0, &m_graphicsQueue);
 		vkGetDeviceQueue(m_logicalDevice, m_physicalDevice->m_queueFamilyIndices.computeFamily.value(), 0, &m_computeQueue);
@@ -193,8 +191,7 @@ namespace Lamp
 	{
 		LP_CORE_ASSERT(commandBuffer != VK_NULL_HANDLE, "Command buffer is null!");
 
-		VkResult result = vkEndCommandBuffer(commandBuffer);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to end command buffer!");
+		LP_VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -206,13 +203,9 @@ namespace Lamp
 		fenceInfo.flags = 0;
 
 		VkFence fence;
-		result = vkCreateFence(m_logicalDevice, &fenceInfo, nullptr, &fence);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create fence!");
-
-		result = vkQueueSubmit(queue, 1, &submitInfo, fence);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to submit queue!");
-
-		result = vkWaitForFences(m_logicalDevice, 1, &fence, VK_TRUE, UINT64_MAX);
+		LP_VK_CHECK(vkCreateFence(m_logicalDevice, &fenceInfo, nullptr, &fence));
+		LP_VK_CHECK(vkQueueSubmit(queue, 1, &submitInfo, fence));
+		LP_VK_CHECK(vkWaitForFences(m_logicalDevice, 1, &fence, VK_TRUE, UINT64_MAX));
 
 		vkDestroyFence(m_logicalDevice, fence, nullptr);
 		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
@@ -228,14 +221,14 @@ namespace Lamp
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocateInfo.commandBufferCount = 1;
 
-		VkResult result = vkAllocateCommandBuffers(m_logicalDevice, &allocateInfo, &commandBuffer);
+		LP_VK_CHECK(vkAllocateCommandBuffers(m_logicalDevice, &allocateInfo, &commandBuffer));
 
 		if (begin)
 		{
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-			result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+			LP_VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 		}
 
 		return commandBuffer;

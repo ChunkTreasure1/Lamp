@@ -99,8 +99,7 @@ namespace Lamp
 		viewInfo.image = m_image;
 
 		VkImageView result;
-		VkResult vkResult = vkCreateImageView(device->GetHandle(), &viewInfo, nullptr, &result);
-		LP_CORE_ASSERT(vkResult == VK_SUCCESS, "Unable to create image view!");
+		LP_VK_CHECK(vkCreateImageView(device->GetHandle(), &viewInfo, nullptr, &result));
 
 		return result;
 	}
@@ -267,8 +266,7 @@ namespace Lamp
 		samplerInfo.anisotropyEnable = VK_FALSE;
 		samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 
-		VkResult result = vkCreateSampler(device->GetHandle(), &samplerInfo, nullptr, &m_descriptorInfo.sampler);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create sampler");
+		LP_VK_CHECK(vkCreateSampler(device->GetHandle(), &samplerInfo, nullptr, &m_descriptorInfo.sampler));
 
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -283,8 +281,7 @@ namespace Lamp
 		viewInfo.subresourceRange.levelCount = mipCount;
 		viewInfo.image = m_image;
 
-		result = vkCreateImageView(device->GetHandle(), &viewInfo, nullptr, &m_descriptorInfo.imageView);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create image view");
+		LP_VK_CHECK(vkCreateImageView(device->GetHandle(), &viewInfo, nullptr, &m_descriptorInfo.imageView));
 	}
 
 	void VulkanTextureCube::Release()

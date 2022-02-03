@@ -2,6 +2,8 @@
 
 #include "Lamp/Core/Application.h"
 
+#include "Platform/Vulkan/VulkanUtility.h"
+
 #include "VulkanContext.h"
 #include "VulkanDevice.h"
 #include "VulkanAllocator.h"
@@ -148,8 +150,7 @@ namespace Lamp
 		createInfo.ppEnabledLayerNames = nullptr;
 	#endif
 
-		VkResult result = vkCreateInstance(&createInfo, nullptr, &s_instance);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create vulkan instance!");
+		LP_VK_CHECK(vkCreateInstance(&createInfo, nullptr, &s_instance));
 	}
 
 	void VulkanContext::SetupDebugMessenger()
@@ -160,8 +161,7 @@ namespace Lamp
 		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
 		PopulateDebugMessengerCreateInfo(createInfo);
 
-		VkResult result = VulkanUtils::CreateDebugUtilsMessengerEXT(s_instance, &createInfo, nullptr, &m_debugMessenger);
-		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create DebugMessenger!");
+		LP_VK_CHECK(VulkanUtils::CreateDebugUtilsMessengerEXT(s_instance, &createInfo, nullptr, &m_debugMessenger));
 	}
 
 	void VulkanContext::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)

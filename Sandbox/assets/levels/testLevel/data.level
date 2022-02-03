@@ -5,7 +5,13 @@ level:
     - layer: Main
       id: 0
       active: true
-  LevelEnvironment:
-    cameraPosition: [-4.07806873, 6.38045454, 0.59177047]
-    cameraRotation: [0.338342249, -0.0634815544, 0.938600481, 0.0228863303]
+  Environment:
+    cameraPosition: [7.34117174, 5.11500931, -0.10259138]
+    cameraRotation: [0.708308995, 0.279722154, 0.528877437, -0.37462312]
     cameraFOV: 60
+    Skybox:
+      environmentLod: 1
+      environmentMultiplier: 1
+      skybox: C:\Programming\Lamp\Sandbox\assets\textures\brightForest.hdr
+    Terrain:
+      {}

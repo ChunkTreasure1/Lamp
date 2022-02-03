@@ -62,17 +62,19 @@ namespace Sandbox
 			{
 				m_perspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 				
-				m_viewportFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
-				m_depthPrePassFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
-				//m_ssaoMainFramebuffer->Resize((uint32_t)m_perspectiveSize.x, (uint32_t)m_perspectiveSize.y);
-				//m_geometryFramebuffer->Resize((uint32_t)m_PerspectiveSize.x, (uint32_t)m_PerspectiveSize.y);
-
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
-				LevelManager::GetActive()->OnEvent(e);
+				
+				if (LevelManager::GetActive())
+				{
+					LevelManager::GetActive()->OnEvent(e);
+				}
 			}
 			 
-			ImGui::Image(UI::GetTextureID(m_viewportFramebuffer->GetColorAttachment(0)), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
+			if (LevelManager::GetActive())
+			{
+				ImGui::Image(UI::GetTextureID(LevelManager::GetActive()->GetFinalRenderedImage()), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
+			}
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{

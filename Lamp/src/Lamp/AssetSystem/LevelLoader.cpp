@@ -54,18 +54,24 @@ namespace Lamp
 				out << YAML::Key << "Skybox" << YAML::Value;
 				out << YAML::BeginMap;
 				{
-					LP_SERIALIZE_PROPERTY(environmentLod, level->GetEnvironment().GetSkybox().environmentLod, out);
-					LP_SERIALIZE_PROPERTY(environmentMultiplier, level->GetEnvironment().GetSkybox().environmentMultiplier, out);
-					LP_SERIALIZE_PROPERTY(skybox, level->GetEnvironment().GetSkybox().skybox->Path.string(), out);
+					if (level->HasSkybox())
+					{
+						LP_SERIALIZE_PROPERTY(environmentLod, level->GetEnvironment().GetSkybox().environmentLod, out);
+						LP_SERIALIZE_PROPERTY(environmentMultiplier, level->GetEnvironment().GetSkybox().environmentMultiplier, out);
+						LP_SERIALIZE_PROPERTY(skybox, level->GetEnvironment().GetSkybox().skybox->Path.string(), out);
+					}
 				}
 				out << YAML::EndMap;
 			
 				out << YAML::Key << "Terrain" << YAML::Value;
 				out << YAML::BeginMap;
 				{
-					LP_SERIALIZE_PROPERTY(terrainScale, level->GetEnvironment().GetTerrain().terrainScale, out);
-					LP_SERIALIZE_PROPERTY(terrainShift, level->GetEnvironment().GetTerrain().terrainShift, out);
-					LP_SERIALIZE_PROPERTY(terrain, level->GetEnvironment().GetTerrain().terrain->GetHeightMap()->Path.string(), out);
+					if (level->HasTerrain())
+					{
+						LP_SERIALIZE_PROPERTY(terrainScale, level->GetEnvironment().GetTerrain().terrainScale, out);
+						LP_SERIALIZE_PROPERTY(terrainShift, level->GetEnvironment().GetTerrain().terrainShift, out);
+						LP_SERIALIZE_PROPERTY(terrain, level->GetEnvironment().GetTerrain().terrain->GetHeightMap()->Path.string(), out);
+					}
 				}
 				out << YAML::EndMap;
 			}
@@ -206,7 +212,7 @@ namespace Lamp
 				LP_DESERIALIZE_PROPERTY(environmentLod, skybox.environmentLod, skyboxNode, 1.f);
 				LP_DESERIALIZE_PROPERTY(environmentMultiplier, skybox.environmentMultiplier, skyboxNode, 1.f);
 			
-				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode.as<std::string>() : "";
+				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode["skybox"].as<std::string>() : "";
 				skybox.skybox = Skybox::Create(skyboxPath);
 			}
 		}

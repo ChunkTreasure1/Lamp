@@ -76,9 +76,7 @@ namespace Lamp
 	}
 
 	Terrain::~Terrain()
-	{
-
-	}
+	{}
 
 	void Terrain::Draw()
 	{
