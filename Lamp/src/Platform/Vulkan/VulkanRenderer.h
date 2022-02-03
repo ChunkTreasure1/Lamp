@@ -91,8 +91,6 @@ namespace Lamp
 		Ref<RenderPipeline> m_skyboxPipeline;
 		Ref<RenderPipeline> m_terrainPipeline;
 
-		Ref<Terrain> m_testTerrain;
-
 		VkDescriptorPool m_descriptorPool;
 
 		std::atomic_bool m_renderingFinished = true;

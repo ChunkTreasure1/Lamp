@@ -78,7 +78,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.198.1\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.189.2\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -91,8 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.198.1\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_sharedd.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_utild.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-cored.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-glsld.lib;C:\VulkanSDK\1.2.198.1\Lib\SPIRV-Toolsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.198.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.189.2\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_sharedd.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_utild.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-cored.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-glsld.lib;C:\VulkanSDK\1.2.189.2\Lib\SPIRV-Toolsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.189.2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -103,7 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.198.1\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.189.2\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -119,8 +119,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.198.1\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.198.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.189.2\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.189.2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -131,7 +131,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;LP_DIST;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.198.1\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.189.2\Include;vendor\rapidxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -147,8 +147,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.198.1\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.198.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.189.2\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.189.2\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.189.2\Lib\spirv-cross-glsl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.189.2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
