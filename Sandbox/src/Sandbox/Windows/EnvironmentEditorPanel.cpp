@@ -48,7 +48,11 @@ namespace Sandbox
 					UI::Property("Light Multiplier", skyboxData.environmentMultiplier);
 
 					static std::filesystem::path skyboxPath;
-					skyboxPath = skyboxData.skybox->Path;
+
+					if (skyboxData.skybox)
+					{
+						skyboxPath = skyboxData.skybox->Path;
+					}
 
 					if (UI::Property("Texture", skyboxPath))
 					{

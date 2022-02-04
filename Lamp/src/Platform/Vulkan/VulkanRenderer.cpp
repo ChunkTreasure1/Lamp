@@ -91,7 +91,7 @@ namespace Lamp
 		m_rendererStorage->swapchainCommandBuffer = CommandBuffer::Create(3, true);
 		m_rendererStorage->renderCommandBuffer = CommandBuffer::Create(3, false);
 
-		CreateBaseGeometry();
+		m_rendererStorage->quadMesh = SubMesh::CreateQuad();
 	}
 
 	void VulkanRenderer::Shutdown()
@@ -194,7 +194,7 @@ namespace Lamp
 
 		meshData.useSkybox = false;
 
-		if (LevelManager::GetActive() && LevelManager::GetActive()->HasSkybox())
+		if (LevelManager::IsLevelLoaded() && LevelManager::GetActive()->HasSkybox())
 		{
 			meshData.useSkybox = true;
 		}
@@ -208,7 +208,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets)
+	void VulkanRenderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -218,7 +218,10 @@ namespace Lamp
 		vulkanPipeline->Bind(commandBuffer);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, descriptorSets);
 
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &transform);
+		if (pushConstant)
+		{
+			vulkanPipeline->SetPushConstantData(commandBuffer, 0, pushConstant);
+		}
 
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
@@ -244,44 +247,15 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::DrawSkybox()
-	{
-		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_skyboxPipeline);
-		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
-
-		vulkanPipeline->Bind(commandBuffer);
-
-		SetupDescriptorsForSkyboxRendering();
-
-		struct SkyboxData
-		{
-			float environmentLod = 1.f;
-			float environmentMultiplier = 1.f;
-
-		} skyData;
-
-		skyData.environmentLod = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentLod;
-		skyData.environmentMultiplier = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentMultiplier;
-
-		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &skyData);
-		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->shaderDescriptorSets[0].descriptorSets);
-
-		m_rendererStorage->cubeMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
-		m_rendererStorage->cubeMesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
-
-		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->cubeMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
-	}
-
 	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
 	{
 		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && LevelManager::GetActive()->HasSkybox())
 		{
-			if (!m_skyboxPipeline || m_skyboxPipeline->GetSpecification().framebuffer != m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer)
-			{
-				CreateSkyboxPipeline(m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer);
-			}
+			auto pipeline = m_rendererStorage->currentRenderPipeline;
+			m_rendererStorage->currentRenderPipeline = LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetPipeline();
+			LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->Draw();
 
-			DrawSkybox();
+			m_rendererStorage->currentRenderPipeline = pipeline;
 		}
 
 		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && LevelManager::GetActive()->HasTerrain())
@@ -539,38 +513,6 @@ namespace Lamp
  		}
 	}
 
-	void VulkanRenderer::SetupDescriptorsForSkyboxRendering()
-	{
-		if (!LevelManager::GetActive()->HasSkybox())
-		{
-			return;
-		}
-
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_skyboxPipeline->GetSpecification().shader);
-		auto device = VulkanContext::GetCurrentDevice();
-
-		auto descriptorSet = vulkanShader->CreateDescriptorSets();
-		auto skybox = LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox;
-		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(skybox->GetFilteredEnvironment());
-		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-
-		std::array<VkWriteDescriptorSet, 2> writeDescriptors;
-
-		writeDescriptors[0] = *vulkanShader->GetDescriptorSet("u_EnvironmentMap");
-		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
-		writeDescriptors[0].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
-
-		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_skyboxPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
-
-		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
-		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
-		writeDescriptors[1].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
-
-		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
-
-		m_rendererStorage->shaderDescriptorSets.emplace_back(descriptorSet);
-	}
-
 	void VulkanRenderer::UpdatePerPassDescriptors()		
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
@@ -588,14 +530,12 @@ namespace Lamp
 		//Allocate descriptors
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &descriptorLayout;
 
 		m_rendererStorage->pipelineDescriptorSets.clear();
 		auto& currentDescriptorSet = m_rendererStorage->pipelineDescriptorSets.emplace_back();
-
-		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &currentDescriptorSet));
+		currentDescriptorSet = AllocateDescriptorSet(allocInfo);
 
 		//Update descriptors
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
@@ -738,113 +678,5 @@ namespace Lamp
 		}
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
-	}
-
-	void VulkanRenderer::ResetDescriptors()
-	{
-	}
-
-	void VulkanRenderer::CreateBaseGeometry()
-	{
-		/////Quad/////
-		{
-			std::vector<Vertex> quadVertices =
-			{
-				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 1.f }),
-				Vertex({  1.f, -1.f, 0.f }, { 1.f, 1.f }),
-				Vertex({  1.f,  1.f, 0.f }, { 1.f, 0.f }),
-				Vertex({ -1.f,  1.f, 0.f }, { 0.f, 0.f }),
-			};
-
-			std::vector<uint32_t> quadIndices =
-			{
-				0, 1, 2,
-				2, 3, 0
-			};
-
-			m_rendererStorage->quadMesh = CreateRef<SubMesh>(quadVertices, quadIndices, 0);
-		}
-		//////////////
-
-		/////Cube/////
-		{
-			std::vector<Vertex> positions =
-			{
-				Vertex({-1, -1, -1}),
-				Vertex({ 1, -1, -1}),
-				Vertex({ 1,  1, -1}),
-				Vertex({-1,  1, -1}),
-				Vertex({-1, -1,  1}),
-				Vertex({ 1, -1,  1}),
-				Vertex({ 1,  1,  1}),
-				Vertex({-1,  1,  1}),
-			};
-
-			std::vector<uint32_t> indices =
-			{
-				0, 1, 3,
-				3, 1, 2,
-				1, 5, 2,
-				2, 5, 6,
-				5, 4, 6,
-				6, 4, 7,
-				4, 0, 7,
-				7, 0, 3,
-				3, 2, 7,
-				7, 2, 5,
-				4, 5, 0,
-				0, 5, 1
-			};
-
-			m_rendererStorage->cubeMesh = CreateRef<SubMesh>(positions, indices, 0);
-		}
-		//////////////
-	}
-
-	void VulkanRenderer::CreateSkyboxPipeline(Ref<Framebuffer> framebuffer)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.depthWrite = false;
-		pipelineSpec.cullMode = CullMode::Back;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::Cube;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_skyboxPipeline = RenderPipeline::Create(pipelineSpec);
-	}
-
-	void VulkanRenderer::CreateTerrainPipeline(Ref<Framebuffer> framebuffer)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Front;
-		pipelineSpec.topology = Topology::PatchList;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
-		pipelineSpec.useTessellation = true;
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_terrainPipeline = RenderPipeline::Create(pipelineSpec);
 	}
 }

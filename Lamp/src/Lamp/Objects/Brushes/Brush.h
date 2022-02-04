@@ -21,7 +21,7 @@ namespace Lamp
 		inline const Ref<Mesh>& GetModel() const { return m_Mesh; }
 
 	public:
-		static Brush* Create(const std::filesystem::path& path);
+		static Brush* Create(const std::filesystem::path& path, bool addToLevel = true);
 		static Brush* Create(const std::filesystem::path& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name);
 		static Brush* Duplicate(Brush* main, bool addToLevel);
 		static Brush* Get(uint32_t id);

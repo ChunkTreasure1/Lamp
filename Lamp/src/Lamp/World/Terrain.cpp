@@ -76,11 +76,18 @@ namespace Lamp
 	}
 
 	Terrain::~Terrain()
-	{}
+	{
+		if (m_descriptorSet.pool)
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
+			m_descriptorSet.pool = nullptr;
+		}
+	}
 
 	void Terrain::Draw()
 	{
-		Renderer::SubmitMesh(m_transform, m_mesh, nullptr, m_descriptorSet.descriptorSets);
+		Renderer::SubmitMesh(m_mesh, nullptr, m_descriptorSet.descriptorSets, (void*)glm::value_ptr(m_transform));
 	}
 
 	Ref<Terrain> Terrain::Create(const std::filesystem::path& heightMap)
@@ -130,7 +137,7 @@ namespace Lamp
 		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		auto descriptorSet = vulkanShader->CreateDescriptorSets();
-		std::array<VkWriteDescriptorSet, 3> writeDescriptors;
+		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
 		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
 		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::GetSceneData()->terrainDataBuffer);
@@ -144,9 +151,12 @@ namespace Lamp
 		writeDescriptors[1].pBufferInfo = &vulkanTerrainBuffer->GetDescriptorInfo();
 
 		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(m_heightMap);
-		writeDescriptors[2] = *vulkanShader->GetDescriptorSet("u_HeightMap");
-		writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
-		writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
+		if (vulkanTexture)
+		{
+			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("u_HeightMap");
+			writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
+		}
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 		m_descriptorSet = descriptorSet;

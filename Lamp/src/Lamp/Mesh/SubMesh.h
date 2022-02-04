@@ -18,10 +18,12 @@ namespace Lamp
 		inline std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		inline std::vector<Vertex>& GetVertices() { return m_Vertices; }
 
+		static Ref<SubMesh> CreateBox();
+		static Ref<SubMesh> CreateQuad();
+
 	private:
 		void SetupMesh();
 
-	private:
 		std::vector<uint32_t> m_Indices;
 		std::vector<Vertex> m_Vertices;
 

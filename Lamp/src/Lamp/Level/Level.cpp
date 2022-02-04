@@ -117,37 +117,39 @@ namespace Lamp
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Level::OnViewportResize));
 	}
 
-	void Level::UpdateEditor(Timestep ts)
+	void Level::UpdateEditor(Timestep ts, const Ref<CameraBase> renderCamera)
 	{
+		AppRenderEvent e(renderCamera);
+		OnEvent(e);
 	}
 
 	void Level::UpdateSimulation(Timestep ts)
 	{
 		Physics::GetScene()->Simulate(ts);
+		
+		AppRenderEvent e(nullptr);
+		OnEvent(e);
 	}
 
-	void Level::UpdateRuntime(Timestep ts)
+	void Level::UpdateRuntime(Timestep ts, const Ref<CameraBase> renderCamera)
 	{
 		AppUpdateEvent e(ts);
 		OnEvent(e);
 
+		AppRenderEvent renderE(renderCamera);
+		OnEvent(renderE);
+
 		Physics::GetScene()->Simulate(ts);
 	}
 
-	void Level::RenderEditor(const Ref<CameraBase> camera)
+	void Level::RenderEditor()
 	{
-		AppRenderEvent e(camera);
-		OnEvent(e);
-
-		RenderLevel(camera);
+		RenderLevel();
 	}
 
-	void Level::RenderSimulation(const Ref<CameraBase> camera)
+	void Level::RenderSimulation()
 	{
-		AppRenderEvent e(camera);
-		OnEvent(e);
-
-		RenderLevel(camera);
+		RenderLevel();
 	}
 
 	void Level::RenderRuntime()
@@ -167,7 +169,7 @@ namespace Lamp
 			AppRenderEvent e(camera);
 			OnEvent(e);
 
-			RenderLevel(camera);
+			RenderLevel();
 		}
 	}
 
@@ -465,10 +467,8 @@ namespace Lamp
 		}
 	}
 
-	void Level::RenderLevel(const Ref<CameraBase> camera)
+	void Level::RenderLevel()
 	{
-		Renderer::Begin(camera);
-
 		for (const auto& pass : m_renderPasses)
 		{
 			if (pass.graphicsPipeline)
@@ -484,8 +484,6 @@ namespace Lamp
 				pass.computeExcuteCommand();
 			}
 		}
-
-		Renderer::End();
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)

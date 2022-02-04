@@ -35,12 +35,9 @@ namespace Lamp
 		Ref<CameraBase> camera;
 
 		Ref<SubMesh> quadMesh;
-		Ref<SubMesh> cubeMesh;
 
 		std::vector<VkDescriptorSet> pipelineDescriptorSets;
 		std::vector<VkDescriptorSet> currentMeshDescriptorSets;
-
-		std::vector<VulkanShader::ShaderMaterialDescriptorSet> shaderDescriptorSets;
 	};
 
 	class VulkanRenderer
@@ -60,10 +57,9 @@ namespace Lamp
 		const GPUMemoryStatistics& GetMemoryUsage() const;
 
 		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
-		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets);
+		void SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
 		void SubmitQuad();
 
-		void DrawSkybox();
 		void DrawBuffer(RenderBuffer& buffer);
 
 		VkDescriptorSet AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo);
@@ -74,14 +70,8 @@ namespace Lamp
 	private:
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
 		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
-		void SetupDescriptorsForSkyboxRendering();
 
 		void UpdatePerPassDescriptors();
-		void ResetDescriptors();
-
-		void CreateBaseGeometry();
-		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);
-		void CreateTerrainPipeline(Ref<Framebuffer> framebuffer);
 
 		Scope<VulkanRendererStorage> m_rendererStorage;
 

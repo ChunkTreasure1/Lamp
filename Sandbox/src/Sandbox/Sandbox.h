@@ -93,9 +93,9 @@ namespace Sandbox
 		Ref<SandboxController> m_sandboxController;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
 
-		Ref<Lamp::Level> m_pLevel = nullptr;
-		Ref<Lamp::Level> m_pRuntimeLevel = nullptr;
-		 
+		Ref<Lamp::Level> m_runtimeLevel = nullptr;
+		Ref<Lamp::Level> m_editLevel = nullptr;
+
 		Ref<Lamp::Terrain> m_terrain;
 
 		//---------------Editor-----------------

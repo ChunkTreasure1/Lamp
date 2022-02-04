@@ -28,7 +28,7 @@ namespace Lamp
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
 		});
 
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			LevelManager::GetActive()->GetEnvironment().RegisterPointLight(m_pPointLight.get());
 		}
@@ -36,7 +36,7 @@ namespace Lamp
 
 	PointLightComponent::~PointLightComponent()
 	{
-		if (!LevelManager::GetActive())
+		if (!LevelManager::IsLevelLoaded())
 		{
 			LP_CORE_ERROR("Trying to unregister when no level was loaded!");
 		}

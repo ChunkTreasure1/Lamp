@@ -114,7 +114,7 @@ namespace Lamp
 			m_mainFrameTime.Begin();
 
 			m_renderReady = true;
-
+			 
 			while (!m_updateReady)
 			{}
 
@@ -125,6 +125,11 @@ namespace Lamp
 			m_pWindow->GetSwapchain()->BeginFrame();
 
 			AudioEngine::Update();
+
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnRender();
+			}
 
 			{
 				LP_PROFILE_SCOPE("Application::UpdateImGui");
@@ -137,11 +142,6 @@ namespace Lamp
 				}
 
 				m_pImGuiLayer->End();
-			}
-
-			for (Layer* pLayer : m_LayerStack)
-			{
-				pLayer->OnRender();
 			}
 
 			m_pWindow->Update(m_currentTimeStep);

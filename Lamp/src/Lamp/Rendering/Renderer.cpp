@@ -125,9 +125,9 @@ namespace Lamp
 		s_statistics.totalDrawCalls++;
 	}
 
-	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets)
+	void Renderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
 	{
-		s_renderer->SubmitMesh(transform, mesh, material, descriptorSets);
+		s_renderer->SubmitMesh(mesh, material, descriptorSets, pushConstant);
 	}
 
 	void Renderer::SubmitQuad()
@@ -166,7 +166,7 @@ namespace Lamp
 		}
 
 		//Directional lights
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			auto ub = s_pSceneData->uniformBufferSet->Get(1, 0, currentFrame);
 
@@ -204,7 +204,7 @@ namespace Lamp
 
 
 		//Light data
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			uint32_t index = 0;
 			for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
@@ -219,7 +219,7 @@ namespace Lamp
 		}
 
 		//Point lights
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			auto& pointLights = LevelManager::GetActive()->GetEnvironment().GetPointLights();
 			auto pointlightStorageBuffer = s_pSceneData->shaderStorageBufferSet->Get(12, 0, currentFrame);
@@ -281,6 +281,11 @@ namespace Lamp
 	void Renderer::DrawDirectionalShadows()
 	{
 		LP_PROFILE_FUNCTION();
+
+		if (!LevelManager::IsLevelLoaded())
+		{
+			return;
+		}
 
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 

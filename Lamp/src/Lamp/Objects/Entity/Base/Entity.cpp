@@ -48,7 +48,7 @@ namespace Lamp
 
 	void Entity::Destroy()
 	{
-		if (!LevelManager::GetActive())
+		if (!LevelManager::IsLevelLoaded())
 		{
 			LP_CORE_ERROR("Trying to remove entity when no level is loaded!");
 			return;
@@ -106,9 +106,9 @@ namespace Lamp
 		return false;
 	}
 
-	Entity* Entity::Create(bool saveable, uint32_t layer)
+	Entity* Entity::Create(bool saveable, uint32_t layer, bool addToLevel)
 	{
-		if (!LevelManager::GetActive())
+		if (!LevelManager::IsLevelLoaded() && addToLevel)
 		{
 			LP_CORE_ERROR("Trying to create entity when no level was loaded!");
 			return nullptr;
@@ -118,17 +118,20 @@ namespace Lamp
 		pEnt->SetLayerID(layer);
 		pEnt->SetSaveable(saveable);
 
-		auto level = LevelManager::GetActive();
+		if (addToLevel)
+		{
+			auto level = LevelManager::GetActive();
 
-		level->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
-		level->AddToLayer(pEnt);
+			level->GetEntities().emplace(std::make_pair(pEnt->GetID(), pEnt));
+			level->AddToLayer(pEnt);
+		}
 
 		return pEnt;
 	}
 
 	Entity* Entity::Get(uint32_t id)
 	{
-		if (!LevelManager::GetActive())
+		if (!LevelManager::IsLevelLoaded())
 		{
 			LP_CORE_ERROR("Trying to get entity when no level was loaded!");
 			return nullptr;
@@ -146,7 +149,7 @@ namespace Lamp
 
 	Entity* Entity::Duplicate(Entity* entity, bool addToLevel)
 	{
-		if (!LevelManager::GetActive())
+		if (!LevelManager::IsLevelLoaded())
 		{
 			LP_CORE_ERROR("Trying to duplicate entity when no level was loaded!");
 			return nullptr;

@@ -65,13 +65,13 @@ namespace Sandbox
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 				
-				if (LevelManager::GetActive())
-				{
-					LevelManager::GetActive()->OnEvent(e);
-				}
+				//if (LevelManager::IsLevelLoaded())
+				//{
+				//	LevelManager::GetActive()->OnEvent(e);
+				//}
 			}
 			 
-			if (LevelManager::GetActive())
+			if (LevelManager::IsLevelLoaded())
 			{
 				ImGui::Image(UI::GetTextureID(LevelManager::GetActive()->GetFinalRenderedImage()), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 			}
@@ -802,7 +802,7 @@ namespace Sandbox
 
 				if (ImGui::MenuItem("Save", "Ctrl + S"))
 				{
-					if (!LevelManager::GetActive())
+					if (!LevelManager::IsLevelLoaded())
 					{
 						LP_WARN("Trying to save when no level was loaded!");
 					}

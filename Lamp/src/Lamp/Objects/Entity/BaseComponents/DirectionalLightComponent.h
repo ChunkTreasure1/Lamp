@@ -18,15 +18,15 @@ namespace Lamp
 
 		inline DirectionalLight& GetLight() { return *m_pDirectionalLight; }
 
-	private:
-		bool OnRotationChanged(ObjectRotationChangedEvent& e);
-		void UpdateLight();
-
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<DirectionalLightComponent>(); }
 		static std::string GetFactoryName() { return "DirectionalLightComponent"; }
 
 	private:
+		friend class LevelLoader;
+
+		bool OnRotationChanged(ObjectRotationChangedEvent& e);
+		void UpdateLight();
+
 		Scope<DirectionalLight> m_pDirectionalLight;
 		const float m_size = 20.f;
 	};

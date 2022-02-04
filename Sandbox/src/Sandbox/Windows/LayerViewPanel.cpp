@@ -53,7 +53,7 @@ namespace Sandbox
 		int startId = 0;
 		bool isItemHovered = false;
 
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			auto level = LevelManager::GetActive();
 

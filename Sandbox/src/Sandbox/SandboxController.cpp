@@ -17,7 +17,7 @@ namespace Sandbox
 	{
 		m_CameraController->Update(ts);
 
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			auto& env = LevelManager::GetActive()->GetEnvironment();
 

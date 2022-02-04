@@ -39,12 +39,12 @@ namespace Lamp
 
 		void OnEvent(Event& e);
 
-		void UpdateEditor(Timestep ts);
+		void UpdateEditor(Timestep ts, const Ref<CameraBase> renderCamera);
 		void UpdateSimulation(Timestep ts);
-		void UpdateRuntime(Timestep ts);
+		void UpdateRuntime(Timestep ts, const Ref<CameraBase> renderCamera);
 
-		void RenderEditor(const Ref<CameraBase> camera);
-		void RenderSimulation(const Ref<CameraBase> camera);
+		void RenderEditor();
+		void RenderSimulation();
 		void RenderRuntime();
 
 		void Shutdown();
@@ -88,7 +88,7 @@ namespace Lamp
 		friend class LevelLoader;
 
 		void SetupRenderPasses();
-		void RenderLevel(const Ref<CameraBase> camera);
+		void RenderLevel();
 
 		bool OnViewportResize(EditorViewportSizeChangedEvent& e);
 

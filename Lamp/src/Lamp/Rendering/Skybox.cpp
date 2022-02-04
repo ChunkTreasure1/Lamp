@@ -12,6 +12,7 @@
 #include "Lamp/Rendering/Renderer.h"
 
 #include "Lamp/Rendering/RendererDataStructures.h"
+#include "Lamp/Rendering/Swapchain.h"
 
 #include "Platform/Vulkan/VulkanRenderComputePipeline.h"
 #include "Platform/Vulkan/VulkanContext.h"
@@ -20,6 +21,7 @@
 #include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanUtility.h"
+#include "Platform/Vulkan/VulkanUniformBuffer.h"
 
 namespace Lamp
 {
@@ -154,9 +156,94 @@ namespace Lamp
 
 		m_irradianceMap = irradianceMap;
 		m_filteredEnvironment = envFiltered;
+
+		m_cubeMesh = SubMesh::CreateBox();
 	}
 
 	Skybox::~Skybox()
 	{
+		if (m_descriptorSet.pool)
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
+			m_descriptorSet.pool = nullptr;
+		}
+	}
+
+	Ref<RenderPipeline> Skybox::SetupRenderPipeline(Ref<Framebuffer> framebuffer)
+	{
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.depthWrite = false;
+		pipelineSpec.cullMode = CullMode::Back;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Cube;
+		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		m_pipeline = RenderPipeline::Create(pipelineSpec);
+
+		SetupDescriptors();
+
+		return m_pipeline;
+	}
+
+	void Skybox::Draw()
+	{
+		struct SkyboxData
+		{
+			float environmentLod = 1.f;
+			float environmentMultiplier = 1.f;
+
+		} skyData;
+
+		skyData.environmentLod = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentLod;
+		skyData.environmentMultiplier = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentMultiplier;
+
+		Renderer::SubmitMesh(m_cubeMesh, nullptr, m_descriptorSet.descriptorSets, static_cast<void*>(&skyData));
+	}
+
+	void Skybox::SetupDescriptors()
+	{
+		if (m_descriptorSet.pool)
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
+			m_descriptorSet.pool = nullptr;
+		}
+
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_pipeline->GetSpecification().shader);
+		auto device = VulkanContext::GetCurrentDevice();
+
+		auto descriptorSet = vulkanShader->CreateDescriptorSets();
+		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(m_filteredEnvironment);
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		std::array<VkWriteDescriptorSet, 2> writeDescriptors;
+
+		if (vulkanEnvironment)
+		{
+			writeDescriptors[0] = *vulkanShader->GetDescriptorSet("u_EnvironmentMap");
+			writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[0].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
+		}
+
+		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
+
+		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
+		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[1].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+
+		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 	}
 }

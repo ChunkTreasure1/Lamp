@@ -29,19 +29,18 @@ namespace Sandbox
 
 	void Sandbox::OpenLevel(const std::filesystem::path& path)
 	{
-		m_pLevel = Lamp::ResourceCache::GetAsset<Lamp::Level>(path);
+		Lamp::LevelManager::Get()->SetActive(Lamp::ResourceCache::GetAsset<Lamp::Level>(path));
 		m_pSelectedObject = nullptr;
 	}
 
 	void Sandbox::NewLevel()
 	{
-		if (Lamp::LevelManager::GetActive() && !Lamp::LevelManager::GetActive()->Path.empty())
+		if (Lamp::LevelManager::IsLevelLoaded() && !Lamp::LevelManager::GetActive()->Path.empty())
 		{
 			g_pEnv->pAssetManager->SaveAsset(Lamp::LevelManager::GetActive());
 		}
 
-		m_pLevel = CreateRef<Lamp::Level>("New Level");
-		Lamp::LevelManager::Get()->SetActive(m_pLevel);
+		Lamp::LevelManager::Get()->SetActive(CreateRef<Lamp::Level>("New Level"));
 		m_pSelectedObject = nullptr;
 	}
 

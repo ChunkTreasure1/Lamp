@@ -285,7 +285,7 @@ namespace Lamp
 		vkCmdBeginRenderPass(drawCommandBuffer, &beginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 		
 		VkCommandBufferInheritanceInfo inheritInfo{};
-		inheritInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		inheritInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritInfo.renderPass = swapChain->GetRenderPass();
 		inheritInfo.framebuffer = swapChain->GetCurrentFramebuffer();
 
@@ -294,7 +294,7 @@ namespace Lamp
 		bufBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		bufBeginInfo.pInheritanceInfo = &inheritInfo;
 
-		LP_VK_CHECK(vkBeginCommandBuffer(s_imGuiCommandBuffer[commandBufferIndex], &cmdBufferInfo));
+		LP_VK_CHECK(vkBeginCommandBuffer(s_imGuiCommandBuffer[commandBufferIndex], &bufBeginInfo));
 
 		VkViewport viewport{};
 		viewport.x = 0.f;

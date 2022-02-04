@@ -33,7 +33,7 @@ namespace Sandbox
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 
-		m_pLevel = ResourceCache::GetAsset<Level>("assets/levels/testLevel/data.level");
+		LevelManager::Get()->Load("assets/levels/testLevel/data.level");
 
 		m_sandboxController = CreateRef<SandboxController>();
 
@@ -65,23 +65,27 @@ namespace Sandbox
 
 		GetInput();
 
+		if (LevelManager::GetActive())
 		{
 			LP_PROFILE_SCOPE("Sandbox::Update::LevelUpdate");
+
+			auto level = LevelManager::GetActive();
+
 			switch (m_SceneState)
 			{
 				case SceneState::Edit:
 				{
-					LevelManager::GetActive()->UpdateEditor(e.GetTimestep());
+					level->UpdateEditor(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
 					break;
 				}
 				case SceneState::Play:
 				{
-					LevelManager::GetActive()->UpdateRuntime(e.GetTimestep());
+					level->UpdateRuntime(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
 					break;
 				}
 				case SceneState::Simulating:
 				{
-					LevelManager::GetActive()->UpdateSimulation(e.GetTimestep());
+					level->UpdateSimulation(e.GetTimestep());
 					break;
 				}
 			}
@@ -127,7 +131,6 @@ namespace Sandbox
 		{
 			ScopedTimer timer{};
 			m_assetManager.OnImGuiRender();
-
 			m_assetManagerTime = timer.GetTime();
 		}
 
@@ -172,31 +175,35 @@ namespace Sandbox
 
 	void Sandbox::OnRender()
 	{
-		if (!LevelManager::GetActive())
+		Renderer::Begin(m_sandboxController->GetCameraController()->GetCamera());
+
+		if (LevelManager::GetActive())
 		{
-			return;
+			auto level = LevelManager::GetActive();
+
+			switch (m_SceneState)
+			{
+				case SceneState::Edit:
+				{
+					level->RenderEditor();
+					break;
+				}
+
+				case SceneState::Play:
+				{
+					level->RenderRuntime();
+					break;
+				}
+
+				case SceneState::Simulating:
+				{
+					level->RenderSimulation();
+					break;
+				}
+			}
 		}
 
-		switch (m_SceneState)
-		{
-			case SceneState::Edit:
-			{
-				m_pLevel->RenderEditor(m_sandboxController->GetCameraController()->GetCamera());
-				break;
-			}
-
-			case SceneState::Play:
-			{
-				m_pLevel->RenderRuntime();
-				break;
-			}
-
-			case SceneState::Simulating:
-			{
-				m_pLevel->RenderSimulation(m_sandboxController->GetCameraController()->GetCamera());
-				break;
-			}
-		}
+		Renderer::End();
 	}
 
 	bool Sandbox::OnKeyPressed(KeyPressedEvent& e)
@@ -369,12 +376,12 @@ namespace Sandbox
 		m_SceneState = SceneState::Play;
 		m_pSelectedObject = nullptr;
 
-		LevelManager::Get()->SetActive(nullptr);
-		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
+		m_editLevel = LevelManager::GetActive();
+		m_runtimeLevel = CreateRef<Level>(*m_editLevel);
 
-		LevelManager::Get()->SetActive(m_pRuntimeLevel);
-		m_pRuntimeLevel->OnRuntimeStart();
-		m_pRuntimeLevel->SetIsPlaying(true);
+		LevelManager::Get()->SetActive(m_runtimeLevel);
+		m_runtimeLevel->OnRuntimeStart();
+		m_runtimeLevel->SetIsPlaying(true);
 
 		m_pGame = CreateScope<Game>();
 		m_pGame->OnStart();
@@ -385,12 +392,12 @@ namespace Sandbox
 		m_SceneState = SceneState::Edit;
 		m_pSelectedObject = nullptr;
 
-		m_pRuntimeLevel->OnRuntimeEnd();
+		m_runtimeLevel->OnRuntimeEnd();
 
-		LevelManager::Get()->SetActive(m_pLevel);
-		m_pLevel->SetIsPlaying(false);
+		LevelManager::Get()->SetActive(m_editLevel);
+		m_editLevel->SetIsPlaying(false);
 
-		m_pRuntimeLevel = nullptr;
+		m_runtimeLevel = nullptr;
 		m_pGame = nullptr;
 	}
 
@@ -399,10 +406,12 @@ namespace Sandbox
 		m_SceneState = SceneState::Simulating;
 		m_pSelectedObject = nullptr;
 
-		m_pRuntimeLevel = CreateRef<Level>(*m_pLevel);
-		LevelManager::Get()->SetActive(m_pRuntimeLevel);
-		m_pRuntimeLevel->SetIsPlaying(true);
-		m_pRuntimeLevel->OnSimulationStart();
+		m_editLevel = LevelManager::GetActive();
+		m_runtimeLevel = CreateRef<Level>(*m_editLevel);
+
+		LevelManager::Get()->SetActive(m_runtimeLevel);
+		m_runtimeLevel->SetIsPlaying(true);
+		m_runtimeLevel->OnSimulationStart();
 	}
 
 	void Sandbox::OnSimulationStop()
@@ -410,10 +419,10 @@ namespace Sandbox
 		m_SceneState = SceneState::Edit;
 		m_pSelectedObject = nullptr;
 
-		m_pRuntimeLevel->OnSimulationEnd();
-		LevelManager::Get()->SetActive(m_pLevel);
-		m_pLevel->SetIsPlaying(false);
+		m_runtimeLevel->OnSimulationEnd();
+		LevelManager::Get()->SetActive(m_editLevel);
+		m_editLevel->SetIsPlaying(false);
 
-		m_pRuntimeLevel = nullptr;
+		m_runtimeLevel = nullptr;
 	}
 }

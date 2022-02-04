@@ -47,7 +47,7 @@ namespace Lamp
 		bool AddComponent(Ref<EntityComponent> comp);
 		bool RemoveComponent(Ref<EntityComponent> comp);
 
-		static Entity* Create(bool saveable = false, uint32_t layer = 0);
+		static Entity* Create(bool saveable = false, uint32_t layer = 0, bool addToLevel = true);
 		static Entity* Get(uint32_t id);
 		static Entity* Duplicate(Entity* entity, bool addToLevel = true);
 

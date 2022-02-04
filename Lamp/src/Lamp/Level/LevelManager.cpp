@@ -27,6 +27,8 @@ namespace Lamp
 
 	void LevelManager::SetActive(Ref<Level> level)
 	{
+		std::lock_guard lock{ m_mutex };
+
 		if (m_activeLevel)
 		{
 			m_activeLevel->Shutdown();
@@ -34,9 +36,14 @@ namespace Lamp
 		m_activeLevel = level;
 	}
 
+	Ref<Level> LevelManager::GetActiveLevel()
+	{
+		return m_activeLevel;
+	}
+
 	void LevelManager::Load(const std::filesystem::path& path)
 	{
-		m_activeLevel = ResourceCache::GetAsset<Level>(path);
+		SetActive(ResourceCache::GetAsset<Level>(path));
 	}
 
 	LevelManager* LevelManager::Get()
@@ -44,10 +51,15 @@ namespace Lamp
 		return s_instance;
 	}
 
+	const bool LevelManager::IsLevelLoaded()
+	{
+		return s_instance->m_activeLevel != nullptr;
+	}
+
 	Ref<Level> LevelManager::GetActive()
 	{
 		LP_CORE_ASSERT(s_instance, "Instance does not exist!");
 		
-		return s_instance->m_activeLevel;
+		return s_instance->GetActiveLevel();
 	}
 }

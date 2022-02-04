@@ -25,7 +25,7 @@ namespace Lamp
 			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
 		});
 
-		if (LevelManager::GetActive())
+		if (LevelManager::IsLevelLoaded())
 		{
 			auto& env = LevelManager::GetActive()->GetEnvironment();
 			env.RegisterDirectionalLight(m_pDirectionalLight.get());
@@ -34,7 +34,7 @@ namespace Lamp
 
 	DirectionalLightComponent::~DirectionalLightComponent()
 	{
-		if (!LevelManager::GetActive())
+		if (!LevelManager::IsLevelLoaded())
 		{
 			LP_CORE_ERROR("Trying to unregister when no level is loaded!");
 			return;

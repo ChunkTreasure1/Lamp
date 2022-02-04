@@ -16,6 +16,10 @@
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
 
+//These components needs to be exclusively registered
+#include "Lamp/Objects/Entity/BaseComponents/DirectionalLightComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
+
 #include <yaml-cpp/yaml.h>
 
 namespace Lamp
@@ -160,7 +164,6 @@ namespace Lamp
 
 		asset = CreateRef<Level>();
 		Ref<Level> level = std::dynamic_pointer_cast<Level>(asset);
-		LevelManager::Get()->SetActive(level);
 
 		if (!std::filesystem::exists(path))
 		{
@@ -202,6 +205,7 @@ namespace Lamp
 				
 				std::string terrPath = terrainNode["terrain"] ? terrainNode["terrain"].as<std::string>() : "";
 				terrain.terrain = Terrain::Create(terrPath);
+				terrain.terrain->SetupRenderPipeline(level->GetGeometryFramebuffer());
 			}
 
 			//Skybox
@@ -214,6 +218,7 @@ namespace Lamp
 			
 				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode["skybox"].as<std::string>() : "";
 				skybox.skybox = Skybox::Create(skyboxPath);
+				skybox.skybox->SetupRenderPipeline(level->GetGeometryFramebuffer());
 			}
 		}
 
@@ -253,14 +258,14 @@ namespace Lamp
 			YAML::Node brushesNode = layerNode["brushes"];
 			for (const auto entry : brushesNode)
 			{
-				DeserializeBrush(entry, brushes);
+				DeserializeBrush(entry, brushes, level);
 			}
 
 			//Entities
 			YAML::Node entitiesNode = layerNode["entities"];
 			for (auto entry : entitiesNode)
 			{
-				DeserializeEntity(entry, entities);
+				DeserializeEntity(entry, entities, level);
 			}
 		}
 
@@ -445,10 +450,10 @@ namespace Lamp
 		out << YAML::EndMap;
 	}
 
-	void LevelLoader::DeserializeEntity(const YAML::Node& entry, std::map<uint32_t, Entity*>& entities) const
+	void LevelLoader::DeserializeEntity(const YAML::Node& entry, std::map<uint32_t, Entity*>& entities, Ref<Level> level) const
 	{
 		uint32_t layerId = entry["layerId"].as<uint32_t>();
-		Entity* entity = Entity::Create(true, layerId);
+		Entity* entity = Entity::Create(true, layerId, false);
 
 		std::string name = entry["entity"].as<std::string>();
 		entity->SetName(name);
@@ -640,13 +645,25 @@ namespace Lamp
 			entity->SetGraphKeyGraph(graph);
 		}
 
+
+		//These components needs to be registered manually here
+		if (auto comp = entity->GetComponent<DirectionalLightComponent>())
+		{
+			level->GetEnvironment().RegisterDirectionalLight(comp->m_pDirectionalLight.get());
+		}
+
+		if (auto comp = entity->GetComponent<PointLightComponent>())
+		{
+			level->GetEnvironment().RegisterPointLight(comp->m_pPointLight.get());
+		}
+
 		entities.emplace(entity->GetID(), entity);
 	}
 
-	void LevelLoader::DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes) const
+	void LevelLoader::DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Ref<Level> level) const
 	{
 		AssetHandle meshHandle = node["meshHandle"].as<AssetHandle>();
-		Brush* brush = Brush::Create(g_pEnv->pAssetManager->GetPathFromAssetHandle(meshHandle).string());
+		Brush* brush = Brush::Create(g_pEnv->pAssetManager->GetPathFromAssetHandle(meshHandle).string(), false);
 
 		glm::vec3 pos = node["position"].as<glm::vec3>();
 		brush->SetPosition(pos);
