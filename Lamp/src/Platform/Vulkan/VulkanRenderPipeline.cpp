@@ -212,18 +212,18 @@ namespace Lamp
 
 		const uint32_t framesInFlight = m_specification.isSwapchain ? swapchain->GetImageCount() : 1;
 
-		for (uint32_t i = 0; i < framesInFlight; i++)
-		{
-			VkDescriptorSetAllocateInfo allocInfo{};
-			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-			allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
-			allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
-			allocInfo.pSetLayouts = allDescriptorLayouts.data();
+		//for (uint32_t i = 0; i < framesInFlight; i++)
+		//{
+		//	VkDescriptorSetAllocateInfo allocInfo{};
+		//	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		//	allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
+		//	allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
+		//	allocInfo.pSetLayouts = allDescriptorLayouts.data();
 
-			m_descriptorSets[i].resize(allDescriptorLayouts.size());
+		//	m_descriptorSets[i].resize(allDescriptorLayouts.size());
 
-			LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, m_descriptorSets[i].data()));
-		}
+		//	LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, m_descriptorSets[i].data()));
+		//}
 	}
 
 	void VulkanRenderPipeline::SetupUniformBuffers()
@@ -266,8 +266,8 @@ namespace Lamp
 			framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(m_specification.framebuffer);
 		}
 
-		CreateDescriptorSets();
-		SetupUniformBuffers();
+		//CreateDescriptorSets();
+		//SetupUniformBuffers();
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

@@ -2,6 +2,8 @@
 
 #include "Lamp/ImGui/ImGuiLayer.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Lamp
 {
 	class RenderPipeline;
@@ -21,6 +23,6 @@ namespace Lamp
 		float m_time = 0.f;
 		ImFont* m_font;
 
-		Ref<RenderPipeline> m_imguiPass;
+		VkDescriptorPool m_descriptorPool;
 	};
 }

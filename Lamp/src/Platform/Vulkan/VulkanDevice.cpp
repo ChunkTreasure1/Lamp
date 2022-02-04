@@ -236,7 +236,16 @@ namespace Lamp
 
 	VkCommandBuffer VulkanDevice::CreateSecondaryCommandBuffer()
 	{
-		return VkCommandBuffer();
+		VkCommandBuffer cmdBuffer;
+
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = m_commandPool;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+		allocInfo.commandBufferCount = 1;
+
+		LP_VK_CHECK(vkAllocateCommandBuffers(m_logicalDevice, &allocInfo, &cmdBuffer));
+		return cmdBuffer;
 	}
 
 	Ref<VulkanDevice> VulkanDevice::Create(Ref<VulkanPhysicalDevice> physicalDevice, VkPhysicalDeviceFeatures enabledFeatures)

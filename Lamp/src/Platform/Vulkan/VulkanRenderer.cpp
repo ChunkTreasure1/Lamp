@@ -64,15 +64,26 @@ namespace Lamp
 		poolInfo.poolSizeCount = (uint32_t)ARRAYSIZE(poolSizes);
 		poolInfo.pPoolSizes = poolSizes;
 
+		m_descriptorPools.resize(Renderer::GetCapabilities().framesInFlight);
 		auto device = VulkanContext::GetCurrentDevice();
-		LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &m_descriptorPool));
+
+		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
+		{
+			LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &m_descriptorPools[i]));
+		}
 	}
 
 	VulkanRenderer::~VulkanRenderer()
 	{
 		auto device = VulkanContext::GetCurrentDevice();
 		vkDeviceWaitIdle(device->GetHandle());
-		vkDestroyDescriptorPool(device->GetHandle(), m_descriptorPool, nullptr);
+
+		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
+		{
+			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorPools[i], nullptr);
+		}
+
+		m_descriptorPools.clear();
 	}
 
 	void VulkanRenderer::Initialize()
@@ -90,6 +101,12 @@ namespace Lamp
 	void VulkanRenderer::Begin(const Ref<CameraBase> camera)
 	{
 		m_rendererStorage->camera = camera;
+
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		const uint32_t currentFrame = swapchain->GetCurrentFrame();
+
+		//Reset descriptor pool
+		vkResetDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPools[currentFrame], 0);
 	}
 
 	void VulkanRenderer::End()
@@ -103,11 +120,10 @@ namespace Lamp
 
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(pipeline->GetSpecification().framebuffer);
-
 		auto commandBuffer = pipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
-		commandBuffer->Begin();
-
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
+
+		commandBuffer->Begin();
 
 		VkRenderPassBeginInfo renderPassBegin{};
 		renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -140,8 +156,6 @@ namespace Lamp
 
 		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()));
 		commandBuffer->End();
-
-		FreePipelineDescriptors();
 
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
@@ -308,6 +322,19 @@ namespace Lamp
 		}
 	}
 
+	VkDescriptorSet VulkanRenderer::AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo)
+	{
+		auto device = VulkanContext::GetCurrentDevice();
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+		
+		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
+
+		VkDescriptorSet descriptorSet;
+		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &descriptorSet));
+
+		return descriptorSet;
+	}
+
 	//TODO: Find better way to save execute function
 	std::pair<Ref<RenderComputePipeline>, std::function<void()>> VulkanRenderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage)
 	{
@@ -368,6 +395,7 @@ namespace Lamp
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 
 		auto device = VulkanContext::GetCurrentDevice();
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		m_rendererStorage->currentMeshDescriptorSets.clear();
 		m_rendererStorage->currentMeshDescriptorSets.emplace_back(m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET]);
@@ -384,7 +412,7 @@ namespace Lamp
 		//Allocate descriptors
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = m_descriptorPool;
+		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &descriptorLayout;
 
@@ -452,7 +480,7 @@ namespace Lamp
 		/////Allocate//////
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
+		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
 		allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
 		allocInfo.pSetLayouts = allDescriptorLayouts.data();
 
@@ -543,23 +571,7 @@ namespace Lamp
 		m_rendererStorage->shaderDescriptorSets.emplace_back(descriptorSet);
 	}
 
-	void VulkanRenderer::FreePipelineDescriptors()
-	{
-		auto device = VulkanContext::GetCurrentDevice();
-		if (!m_rendererStorage->pipelineDescriptorSets.empty())
-		{
-			vkFreeDescriptorSets(device->GetHandle(), m_descriptorPool, m_rendererStorage->pipelineDescriptorSets.size(), m_rendererStorage->pipelineDescriptorSets.data());
-			m_rendererStorage->pipelineDescriptorSets.clear();
-		}
-
-		for (const auto& descriptor : m_rendererStorage->shaderDescriptorSets)
-		{
-			vkDestroyDescriptorPool(device->GetHandle(), descriptor.pool, nullptr);
-		}
-		m_rendererStorage->shaderDescriptorSets.clear();
-	}
-
-	void VulkanRenderer::UpdatePerPassDescriptors()
+	void VulkanRenderer::UpdatePerPassDescriptors()		
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
@@ -576,10 +588,11 @@ namespace Lamp
 		//Allocate descriptors
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = static_cast<VkDescriptorPool>(GetDescriptorPool());
+		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &descriptorLayout;
 
+		m_rendererStorage->pipelineDescriptorSets.clear();
 		auto& currentDescriptorSet = m_rendererStorage->pipelineDescriptorSets.emplace_back();
 
 		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &currentDescriptorSet));
@@ -725,6 +738,10 @@ namespace Lamp
 		}
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+	}
+
+	void VulkanRenderer::ResetDescriptors()
+	{
 	}
 
 	void VulkanRenderer::CreateBaseGeometry()

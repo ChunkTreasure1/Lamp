@@ -20,6 +20,8 @@
 
 namespace Lamp
 {
+	static std::vector<VkCommandBuffer> s_imGuiCommandBuffer;
+
 	namespace Utils
 	{
 		inline void VulkanCheckResult(VkResult result)
@@ -54,37 +56,12 @@ namespace Lamp
 
 		ImNodes::DestroyContext();
 		ImGui::DestroyContext();
+
+		vkDestroyDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPool, nullptr);
 	}
 
 	void VulkanImGuiLayer::OnAttach()
 	{
-		//Create render pipeline
-		FramebufferSpecification framebufferSpec{};
-		framebufferSpec.swapchainTarget = true;
-		framebufferSpec.attachments =
-		{
-			ImageFormat::RGBA,
-			ImageFormat::DEPTH32F
-		};
-
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
-		pipelineSpec.isSwapchain = true;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-		pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" },
-		};
-
-		m_imguiPass = RenderPipeline::Create(pipelineSpec);
-
 		//Create imgui layer
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -199,12 +176,38 @@ namespace Lamp
 		style.WindowRounding = 0.0f;
 		style.WindowBorderSize = 10.f;
 
+		/////Vulkan Init/////
+		auto context = VulkanContext::Get();
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		auto device = VulkanContext::GetCurrentDevice();
+
+		VkDescriptorPoolSize poolSizes[] =
+		{
+			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+		};
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		poolInfo.maxSets = 10000;
+		poolInfo.poolSizeCount = (uint32_t)ARRAYSIZE(poolSizes);
+		poolInfo.pPoolSizes = poolSizes;
+
+		LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &m_descriptorPool));
+
 		Application& app = Application::Get();
 		GLFWwindow* pWindow = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 		ImGui_ImplGlfw_InitForVulkan(pWindow, true);
-
-		auto context = VulkanContext::Get();
-		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 
 		ImGui_ImplVulkan_InitInfo initInfo{};
 		initInfo.Instance = static_cast<VkInstance>(context->GetInstance());
@@ -212,15 +215,14 @@ namespace Lamp
 		initInfo.PhysicalDevice = static_cast<VkPhysicalDevice>(context->GetCurrentDevice()->GetPhysicalDevice()->GetHandle());
 		initInfo.Device = static_cast<VkDevice>(context->GetCurrentDevice()->GetHandle());
 		initInfo.Queue = context->GetCurrentDevice()->GetGraphicsQueue();
-		initInfo.DescriptorPool = std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool();
-		initInfo.MinImageCount = 3;
-		initInfo.ImageCount = 3;
+		initInfo.DescriptorPool = m_descriptorPool;
+		initInfo.MinImageCount = 2;
+		initInfo.ImageCount = 2;
 		initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 		initInfo.CheckVkResultFn = Utils::VulkanCheckResult;
 
 		ImGui_ImplVulkan_Init(&initInfo, swapchain->GetRenderPass());
-
-		auto device = VulkanContext::GetCurrentDevice();
+		/////////////////////
 
 		VkCommandBuffer commandBuffer = device->GetCommandBuffer(true);
 		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
@@ -228,11 +230,18 @@ namespace Lamp
 
 		vkDeviceWaitIdle(device->GetHandle());
 		ImGui_ImplVulkan_DestroyFontUploadObjects();
+
+		uint32_t framesInFlight = Renderer::GetCapabilities().framesInFlight;
+		s_imGuiCommandBuffer.resize(framesInFlight);
+
+		for (uint32_t i = 0; i < framesInFlight; i++)
+		{
+			s_imGuiCommandBuffer[i] = VulkanContext::GetCurrentDevice()->CreateSecondaryCommandBuffer();
+		}
 	}
 
 	void VulkanImGuiLayer::Begin()
 	{
-		Renderer::BeginPass(m_imguiPass);
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -240,24 +249,88 @@ namespace Lamp
 
 	void VulkanImGuiLayer::End()
 	{
-		auto& window = Application::Get().GetWindow();
-		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(window.GetSwapchain());
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2((float)window.GetWidth(), (float)window.GetHeight());
-
 		ImGui::Render();
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), swapchain->GetDrawCommandBuffer(swapchain->GetCurrentFrame()));
+
+		Ref<VulkanSwapchain> swapChain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+
+		VkClearValue clearValues[2];
+		clearValues[0].color = { { 0.1f, 0.1f, 0.1f, 1.f} };
+		clearValues[1].depthStencil = { 1.f, 0 };
+
+		uint32_t width = swapChain->GetExtent().width;
+		uint32_t height = swapChain->GetExtent().height;
+
+		uint32_t commandBufferIndex = swapChain->GetCurrentFrame();
+
+		VkCommandBufferBeginInfo cmdBufferInfo{};
+		cmdBufferInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		cmdBufferInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		cmdBufferInfo.pNext = nullptr;
+
+		VkCommandBuffer drawCommandBuffer = swapChain->GetDrawCommandBuffer(commandBufferIndex);
+		LP_VK_CHECK(vkBeginCommandBuffer(drawCommandBuffer, &cmdBufferInfo));
+
+		VkRenderPassBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		beginInfo.pNext = nullptr;
+		beginInfo.renderPass = swapChain->GetRenderPass();
+		beginInfo.renderArea.offset.x = 0;
+		beginInfo.renderArea.offset.y = 0;
+		beginInfo.renderArea.extent.width = width;
+		beginInfo.renderArea.extent.height = height;
+		beginInfo.clearValueCount = 2;
+		beginInfo.pClearValues = clearValues;
+		beginInfo.framebuffer = swapChain->GetCurrentFramebuffer();
+
+		vkCmdBeginRenderPass(drawCommandBuffer, &beginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+		
+		VkCommandBufferInheritanceInfo inheritInfo{};
+		inheritInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		inheritInfo.renderPass = swapChain->GetRenderPass();
+		inheritInfo.framebuffer = swapChain->GetCurrentFramebuffer();
+
+		VkCommandBufferBeginInfo bufBeginInfo{};
+		bufBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		bufBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+		bufBeginInfo.pInheritanceInfo = &inheritInfo;
+
+		LP_VK_CHECK(vkBeginCommandBuffer(s_imGuiCommandBuffer[commandBufferIndex], &cmdBufferInfo));
+
+		VkViewport viewport{};
+		viewport.x = 0.f;
+		viewport.y = (float)height;
+		viewport.height = -(float)height;
+		viewport.width = (float)width;
+		viewport.minDepth = 0.f;
+		viewport.maxDepth = 1.f;
+		vkCmdSetViewport(s_imGuiCommandBuffer[commandBufferIndex], 0, 1, &viewport);
+
+		VkRect2D scissor{};
+		scissor.extent.width = width;
+		scissor.extent.height = height;
+		scissor.offset.x;
+		scissor.offset.y;
+		vkCmdSetScissor(s_imGuiCommandBuffer[commandBufferIndex], 0, 1, &scissor);
+
+		ImDrawData* drawData = ImGui::GetDrawData();
+		ImGui_ImplVulkan_RenderDrawData(drawData, s_imGuiCommandBuffer[commandBufferIndex]);
+
+		LP_VK_CHECK(vkEndCommandBuffer(s_imGuiCommandBuffer[commandBufferIndex]));
+
+		std::vector<VkCommandBuffer> commandBuffers;
+		commandBuffers.push_back(s_imGuiCommandBuffer[commandBufferIndex]);
+
+		vkCmdExecuteCommands(drawCommandBuffer, uint32_t(commandBuffers.size()), commandBuffers.data());
+		vkCmdEndRenderPass(drawCommandBuffer);
+
+		LP_VK_CHECK(vkEndCommandBuffer(drawCommandBuffer));
+
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			GLFWwindow* pBackup_current_context = glfwGetCurrentContext();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-
-			glfwMakeContextCurrent(pBackup_current_context);
 		}
-
-		Renderer::EndPass();
 	}
 }

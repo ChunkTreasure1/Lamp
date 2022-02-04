@@ -64,11 +64,9 @@ namespace Lamp
 		void SubmitQuad();
 
 		void DrawSkybox();
-		void DrawTerrain();
 		void DrawBuffer(RenderBuffer& buffer);
 
-		inline VkDescriptorPool GetDescriptorPool() { return m_descriptorPool; }
-		
+		VkDescriptorSet AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo);
 		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage);
 
 		static Ref<VulkanRenderer> Create();
@@ -77,10 +75,9 @@ namespace Lamp
 		void SetupDescriptorsForMaterialRendering(Ref<Material> material);
 		void SetupDescriptorsForQuadRendering(); // TODO: should be moved into singular function
 		void SetupDescriptorsForSkyboxRendering();
-		void SetupDescriptorsForTerrainRendering();
 
-		void FreePipelineDescriptors();
 		void UpdatePerPassDescriptors();
+		void ResetDescriptors();
 
 		void CreateBaseGeometry();
 		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);
@@ -91,7 +88,7 @@ namespace Lamp
 		Ref<RenderPipeline> m_skyboxPipeline;
 		Ref<RenderPipeline> m_terrainPipeline;
 
-		VkDescriptorPool m_descriptorPool;
+		std::vector<VkDescriptorPool> m_descriptorPools;
 
 		std::atomic_bool m_renderingFinished = true;
 	};

@@ -52,6 +52,8 @@ namespace Lamp
 		inline const uint32_t GetImageCount() const { return m_imageCount; }
 		inline const uint32_t GetCurrentImage() const { return m_currentImageIndex; }
 
+		inline VkFramebuffer GetCurrentFramebuffer() { return m_framebuffers[m_currentImageIndex]; }
+
 	private:
 		void FindCapabilities();
 		void CreateSyncObjects();
@@ -85,13 +87,13 @@ namespace Lamp
 		VkSurfaceKHR m_surface = nullptr;
 		VkRenderPass m_renderPass = nullptr;
 
-		uint32_t m_queueNodeIndex;
-		uint32_t m_currentImageIndex = 0;
-		uint32_t m_imageCount = 0;
-
 		VkFormat m_colorFormat;
 		VkColorSpaceKHR m_colorSpace;
 		VkPresentModeKHR m_presentMode;
+
+		uint32_t m_queueNodeIndex;
+		uint32_t m_currentImageIndex = 0;
+		uint32_t m_imageCount = 0;
 
 		uint32_t m_width;
 		uint32_t m_height;

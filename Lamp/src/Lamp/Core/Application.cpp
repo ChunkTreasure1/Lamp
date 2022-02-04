@@ -53,7 +53,6 @@ namespace Lamp
 		AudioEngine::Initialize();
 		Physics::Initialize();
 
-
 		m_threadPool.AddThread("Update", LP_BIND_THREAD_FN(Application::UpdateApplication));
 
 		//m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_running));
@@ -127,11 +126,6 @@ namespace Lamp
 
 			AudioEngine::Update();
 
-			for (Layer* pLayer : m_LayerStack)
-			{
-				pLayer->OnRender();
-			}
-
 			{
 				LP_PROFILE_SCOPE("Application::UpdateImGui");
 
@@ -143,6 +137,11 @@ namespace Lamp
 				}
 
 				m_pImGuiLayer->End();
+			}
+
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnRender();
 			}
 
 			m_pWindow->Update(m_currentTimeStep);
