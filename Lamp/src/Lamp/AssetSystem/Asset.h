@@ -40,6 +40,7 @@ namespace Lamp
 		{ ".jpg", AssetType::Texture },
 		{ ".jpeg", AssetType::Texture },
 		{ ".tga", AssetType::Texture },
+		{ ".ktx2", AssetType::Texture },
 		{ ".wav", AssetType::Audio },
 		{ ".ogg", AssetType::Audio },
 		{ ".hdr", AssetType::EnvironmentMap },

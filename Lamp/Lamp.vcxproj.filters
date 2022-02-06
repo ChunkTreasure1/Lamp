@@ -474,7 +474,7 @@
     <ClInclude Include="src\Lamp\Rendering\LightBase.h">
       <Filter>src\Lamp\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h">
+    <ClInclude Include="src\Lamp\Rendering\Reflections\EnvironmentProbe.h">
       <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h">
@@ -2119,9 +2119,6 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\LightBase.cpp">
       <Filter>src\Lamp\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp">
-      <Filter>src\Lamp\Rendering\Reflections</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp">
       <Filter>src\Lamp\Rendering</Filter>

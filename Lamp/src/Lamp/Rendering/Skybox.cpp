@@ -229,21 +229,22 @@ namespace Lamp
 		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(m_filteredEnvironment);
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-		std::array<VkWriteDescriptorSet, 2> writeDescriptors;
-
-		if (vulkanEnvironment)
-		{
-			writeDescriptors[0] = *vulkanShader->GetDescriptorSet("u_EnvironmentMap");
-			writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
-			writeDescriptors[0].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
-		}
+		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
 		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
 
-		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
-		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
-		writeDescriptors[1].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("CameraDataBuffer"));
+		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[0].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
+
+		if (vulkanEnvironment)
+		{
+			writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("u_EnvironmentMap"));
+			writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[1].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
+		}
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+		m_descriptorSet = descriptorSet;
 	}
 }

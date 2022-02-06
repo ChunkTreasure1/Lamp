@@ -65,7 +65,7 @@ project "Lamp"
 		
 		"%{prj.name}/vendor/yaml-cpp/src/**.cpp",
 		"%{prj.name}/vendor/yaml-cpp/src/**.h",
-		"%{prj.name}/vendor/yaml-cpp/include/**.h",
+		"%{prj.name}/vendor/yaml-cpp/include/**.h"		
 	}
 
 	includedirs
@@ -85,7 +85,8 @@ project "Lamp"
 		"%{IncludeDir.ImNodes}",
 		"%{IncludeDir.yaml}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.rapidxml}"
+		"%{IncludeDir.rapidxml}",
+		"%{IncludeDir.ktx2}"
 	}
 	
 	libdirs
@@ -107,7 +108,8 @@ project "Lamp"
 		"%{Library.PhysXFoundation}",
 		"%{Library.PhysXPvdSDK}",
 
-		"%{Library.Vulkan}"
+		"%{Library.Vulkan}",
+		"%{Library.ktx2}"
 	}
 
 	defines 
@@ -225,7 +227,8 @@ project "Sandbox"
 		"%{IncludeDir.yaml}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.rapidxml}"
+		"%{IncludeDir.rapidxml}",
+		"%{IncludeDir.ktx2}"
 	}
 	
 	libdirs
@@ -234,7 +237,7 @@ project "Sandbox"
 
 		"%{LibraryDir.Assimp}",
 		"%{LibraryDir.fmod}",
-		"%{LibraryDir.VulkanSDK}"
+		"%{LibraryDir.VulkanSDK}",
 	}
 	
 	links
@@ -246,7 +249,8 @@ project "Sandbox"
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
 		"%{Library.fmodstudio}",
-		"%{Library.Vulkan}"
+		"%{Library.Vulkan}",
+		"%{Library.ktx2}"
 	}
 	
 	linkoptions
@@ -261,7 +265,8 @@ project "Sandbox"
 		defines 
 		{
 			"LP_PLATFORM_WINDOWS",
-			"_CRT_SECURE_NO_WARNINGS"
+			"_CRT_SECURE_NO_WARNINGS",
+			"KHRONOS_STATIC"
 		}
 
 		filter "configurations:Debug"

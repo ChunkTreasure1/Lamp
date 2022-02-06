@@ -142,18 +142,18 @@ namespace Lamp
 		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
 		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::GetSceneData()->terrainDataBuffer);
 
-		writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
+		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("CameraDataBuffer"));
 		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[0].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-		writeDescriptors[1] = *vulkanShader->GetDescriptorSet("LightCullingBuffer");
+		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("LightCullingBuffer"));
 		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[1].pBufferInfo = &vulkanTerrainBuffer->GetDescriptorInfo();
 
 		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(m_heightMap);
 		if (vulkanTexture)
 		{
-			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("u_HeightMap");
+			writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("u_HeightMap"));
 			writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
 			writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
 		}

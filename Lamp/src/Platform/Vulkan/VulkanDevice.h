@@ -24,11 +24,11 @@ namespace Lamp
 		~VulkanPhysicalDevice();
 
 		inline VkPhysicalDevice GetHandle() const { return m_physicalDevice; }
-		const QueueFamilyIndices& GetQueueFamilyIndices() const { return m_queueFamilyIndices; }
+		inline const QueueFamilyIndices& GetQueueFamilyIndices() const { return m_queueFamilyIndices; }
 
-		const VkPhysicalDeviceProperties& GetProperties() const { return m_properties; }
-		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return m_memoryProperties; }
-		const VkPhysicalDeviceLimits& GetLimits() const { return m_properties.limits; }
+		inline const VkPhysicalDeviceProperties& GetProperties() const { return m_properties; }
+		inline const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return m_memoryProperties; }
+		inline const VkPhysicalDeviceLimits& GetLimits() const { return m_properties.limits; }
 
 		const bool IsExtensionSupported(const std::string& extension) const;
 
@@ -62,6 +62,7 @@ namespace Lamp
 
 		inline const Ref<VulkanPhysicalDevice> GetPhysicalDevice() const { return m_physicalDevice; }
 		inline VkDevice GetHandle() const { return m_logicalDevice; }
+		inline VkCommandPool GetCommandPool() const { return m_commandPool; }
 
 		void Destroy();
 

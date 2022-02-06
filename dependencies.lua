@@ -16,6 +16,7 @@ IncludeDir["PhysX"] = "%{wks.location}/Lamp/vendor/PhysX/include"
 IncludeDir["yaml"] = "%{wks.location}/Lamp/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "%{wks.location}/Lamp/vendor/ImGuizmo/include"
 IncludeDir["rapidxml"] = "%{wks.location}/Lamp/vendor/rapidxml"
+IncludeDir["ktx2"] = "%{wks.location}/Lamp/vendor/ktx2/include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
@@ -23,11 +24,14 @@ LibraryDir["VulkanSDK_Debug"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["Assimp"] = "%{wks.location}/Lamp/vendor/assimp"
 LibraryDir["PhysX"] = "%{wks.location}/Lamp/vendor/PhysX/lib/%{cfg.buildcfg}"
 LibraryDir["fmod"] = "%{wks.location}/Lamp/vendor/fmod"
+LibraryDir["ktx2"] = "%{wks.location}/Lamp/vendor/ktx2/lib"
 
 Library = {}
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK_Debug}/VkLayer_utils.lib"
 Library["Assimp"] = "%{LibraryDir.Assimp}/assimp-vc143-mt.lib"
+Library["ktx2"] = "%{LibraryDir.ktx2}/ktx.lib"
+Library["ktx2_read"] = "%{LibraryDir.ktx2}/ktx_read.lib"
 
 Library["ShaderC_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/shaderc_sharedd.lib"
 Library["ShaderC_Utils_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/shaderc_utild.lib"

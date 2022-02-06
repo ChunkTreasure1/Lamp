@@ -12,7 +12,6 @@ namespace Lamp
 	class ThreadPool
 	{
 	public:
-
 		ThreadPool();
 		~ThreadPool();
 
