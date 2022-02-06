@@ -18,10 +18,13 @@ namespace Lamp
 		virtual const uint32_t GetHeight() const = 0;
 		virtual const uint32_t GetID() const = 0;
 
+		virtual void Load(const std::filesystem::path& path, bool generateMips = true) = 0;
+
 		static AssetType GetStaticType() { return AssetType::Texture; }
 		AssetType GetType() override { return GetStaticType(); }
 
 		static Ref<Texture2D> Create(ImageFormat format, uint32_t width, uint32_t height);
 		static Ref<Texture2D> Create(const std::filesystem::path& path, bool generateMips = true);
+		static Ref<Texture2D> Create();
 	};
 }

@@ -84,6 +84,9 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::Level; }
 		AssetType GetType() override { return GetStaticType(); }
 
+		static Ref<Level> Create(const std::string& name);
+		static Ref<Level> Create();
+
 	private:
 		friend class LevelLoader;
 

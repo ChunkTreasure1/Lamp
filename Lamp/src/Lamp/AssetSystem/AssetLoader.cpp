@@ -88,7 +88,6 @@ namespace Lamp
 
 	bool MeshLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
-		asset = CreateRef<Mesh>();
 		Ref<Mesh> mesh = std::dynamic_pointer_cast<Mesh>(asset);
 
 		//Check if file exists
@@ -196,8 +195,7 @@ namespace Lamp
 
 	bool TextureLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
-		asset = Texture2D::Create(path);
-		asset->Path = path;
+		std::reinterpret_pointer_cast<Texture2D>(asset)->Load(path);
 
 		return true;
 	}
@@ -260,7 +258,6 @@ namespace Lamp
 
 	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
-		asset = Material::Create();
 		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
 
 		if (!std::filesystem::exists(path))
@@ -356,7 +353,6 @@ namespace Lamp
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node meshNode = root["meshsource"];
 
-		asset = CreateRef<MeshSource>();
 		Ref<MeshSource> meshSource = std::dynamic_pointer_cast<MeshSource>(asset);
 
 		meshSource->m_importSettings.units = meshNode["units"] ? (Units)meshNode["units"].as<uint32_t>() : Units::Centimeters;

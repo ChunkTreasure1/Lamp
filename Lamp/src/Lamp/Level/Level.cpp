@@ -308,6 +308,16 @@ namespace Lamp
 		}
 	}
 
+	Ref<Level> Level::Create(const std::string& name)
+	{
+		return CreateRef<Level>(name);
+	}
+
+	Ref<Level> Level::Create()
+	{
+		return CreateRef<Level>();
+	}
+
 	void Level::SetupRenderPasses()
 	{
 		//Depth PrePass

@@ -23,14 +23,8 @@ namespace Lamp
 	class Mesh : public Asset
 	{
 	public:
-		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb)
-			: m_Materials(mats), m_Name(name), m_BoundingBox(bb), m_Meshes(meshes)
-		{
-		}
-
-		Mesh()
-		{
-		}
+		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb);
+		Mesh();
 
 		friend class ResourceCache;
 
@@ -38,22 +32,10 @@ namespace Lamp
 
 		//Setting
 		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetMaterial(Ref<Material> mat, uint32_t id)
-		{
-			auto it = m_Materials.find(id);
-			LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
-
-			it->second = mat;
-		}
+		void SetMaterial(Ref<Material> mat, uint32_t id);
 
 		//Getting
-		inline Ref<Material> GetMaterial(uint32_t id)
-		{
-			auto it = m_Materials.find(id);
-			LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
-			
-			return it->second;
-		}
+		Ref<Material> GetMaterial(uint32_t id);
 		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_Materials; }
 		inline const std::string& GetName() { return m_Name; }
 		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_Meshes; }
@@ -61,6 +43,9 @@ namespace Lamp
 
 		static AssetType GetStaticType() { return AssetType::Mesh; }
 		AssetType GetType() override { return GetStaticType(); }
+
+		static Ref<Mesh> Create(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb);
+		static Ref<Mesh> Create();
 
 	private:
 		std::vector<Ref<SubMesh>> m_Meshes;

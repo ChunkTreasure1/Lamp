@@ -23,9 +23,11 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::MeshSource; }
 		AssetType GetType() override { return GetStaticType(); }
 
-		friend class MeshSourceLoader;
+		static Ref<MeshSource> Create() { return CreateRef<MeshSource>(); }
 
 	private:
+		friend class MeshSourceLoader;
+
 		AssetHandle m_mesh;
 		MeshImportSettings m_importSettings;
 	};

@@ -44,6 +44,7 @@ namespace Lamp
 		for (std::string& path : paths)
 		{
 			LoadMaterial(path);
+			g_pEnv->pAssetManager->Update();
 		}
 
 		paths.clear();
@@ -84,12 +85,7 @@ namespace Lamp
 	{
 		Ref<Asset> mat = Material::Create();
 		g_pEnv->pAssetManager->LoadAsset(path, mat);
-		if (!mat->IsValid())
-		{
-			LP_CORE_WARN("Unable to load asset {0}!", path.string());
-			return;
-		}
 
-		AddMaterial(std::dynamic_pointer_cast<Material>(mat));
+		AddMaterial(std::reinterpret_pointer_cast<Material>(mat));
 	}
 }

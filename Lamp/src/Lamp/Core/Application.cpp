@@ -96,6 +96,8 @@ namespace Lamp
 				pLayer->OnEvent(e);
 			}
 
+			g_pEnv->pAssetManager->Update();
+
 			m_updateReady = false;
 
 			while (!m_renderReady && m_running)

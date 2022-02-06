@@ -24,15 +24,13 @@ namespace Lamp
 		const uint32_t GetHeight() const override;
 		const uint32_t GetID() const override;
 
-		void Load(const std::filesystem::path& path, bool generateMips /* = true */);
+		void Load(const std::filesystem::path& path, bool generateMips /* = true */) override;
 
 		const VkDescriptorImageInfo& GetDescriptorInfo() const;
 		inline const Ref<VulkanImage2D> GetImage() const { return m_image; }
 
 	private:
 		void LoadKTX(const std::filesystem::path& path, bool generateMips);
-		void LoadOther(const std::filesystem::path& path, bool generateMips);
-		void Setup(void* data, uint32_t size, uint32_t width, uint32_t height, bool generateMips, bool isHDR);
 
 		Ref<VulkanImage2D> m_image;
 	};

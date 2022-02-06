@@ -14,4 +14,9 @@ namespace Lamp
 	{
 		return CreateRef<VulkanTexture2D>(path, generateMips);
 	}
+
+	Ref<Texture2D> Texture2D::Create()
+	{
+		return CreateRef<VulkanTexture2D>();
+	}
 }

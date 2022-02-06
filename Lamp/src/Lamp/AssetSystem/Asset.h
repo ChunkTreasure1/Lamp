@@ -12,7 +12,8 @@ namespace Lamp
 	{
 		None = 0,
 		Missing = BIT(0),
-		Invalid = BIT(1)
+		Invalid = BIT(1),
+		Unloaded = BIT(2)
 	};
 
 	enum class AssetType : uint16_t
@@ -39,8 +40,8 @@ namespace Lamp
 		{ ".png", AssetType::Texture },
 		{ ".jpg", AssetType::Texture },
 		{ ".jpeg", AssetType::Texture },
-		{ ".tga", AssetType::Texture },
 		{ ".ktx2", AssetType::Texture },
+		{ ".tga", AssetType::Texture },
 		{ ".wav", AssetType::Audio },
 		{ ".ogg", AssetType::Audio },
 		{ ".hdr", AssetType::EnvironmentMap },
@@ -54,7 +55,7 @@ namespace Lamp
 	public:
 		AssetHandle Handle;
 
-		uint16_t Flags = (uint16_t)AssetFlag::None;
+		uint16_t Flags = (uint16_t)AssetFlag::Unloaded;
 		std::filesystem::path Path;
 	
 		virtual ~Asset() {}
@@ -62,7 +63,7 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::None; }
 		virtual AssetType GetType() { return AssetType::None; }
 
-		bool IsValid() const { return ((Flags & (uint16_t)AssetFlag::Missing) | (Flags & (uint16_t)AssetFlag::Invalid)) == 0; }
+		bool IsValid() const { return ((Flags & (uint16_t)AssetFlag::Missing) | (Flags & (uint16_t)AssetFlag::Invalid) | (Flags & (uint16_t)AssetFlag::Unloaded)) == 0; }
 		virtual bool operator==(const Asset& other) const
 		{
 			return Handle == other.Handle;

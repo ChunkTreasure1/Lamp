@@ -162,7 +162,6 @@ namespace Lamp
 		LevelLoadStartedEvent startEvent(path);
 		Application::Get().OnEvent(startEvent);
 
-		asset = CreateRef<Level>();
 		Ref<Level> level = std::dynamic_pointer_cast<Level>(asset);
 
 		if (!std::filesystem::exists(path))

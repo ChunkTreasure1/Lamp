@@ -32,8 +32,9 @@ namespace Sandbox
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+		ResourceCache::GetAsset<Texture2D>("assets/ktxTest.ktx2");
 
-		LevelManager::Get()->Load("assets/levels/testLevel/data.level");
+		//LevelManager::Get()->Load("assets/levels/testLevel/data.level");
 
 		m_sandboxController = CreateRef<SandboxController>();
 

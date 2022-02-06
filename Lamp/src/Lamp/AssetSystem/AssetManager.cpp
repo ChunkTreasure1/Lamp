@@ -7,6 +7,7 @@
 
 #include <glm/gtx/quaternion.hpp>
 
+#include <functional>
 
 namespace Lamp
 {
@@ -36,12 +37,12 @@ namespace Lamp
 
 	void AssetManager::Initialize()
 	{
-		m_AssetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
-		m_AssetLoaders[AssetType::MeshSource] = CreateScope<MeshSourceLoader>();
-		m_AssetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
-		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
-		m_AssetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
-		m_AssetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
+		m_assetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
+		m_assetLoaders[AssetType::MeshSource] = CreateScope<MeshSourceLoader>();
+		m_assetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
+		m_assetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
+		m_assetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
+		m_assetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
 		LoadAssetRegistry();
 	}
 
@@ -54,26 +55,66 @@ namespace Lamp
 
 	void AssetManager::Update()
 	{
-		ResourceCache::Update();
+		//ResourceCache::Update();
+
+		while (!m_loadQueue.Empty() && m_threadPool.size() < m_maxThreads)
+		{
+			auto data = m_loadQueue.TryPop();
+
+			m_loadingAssets.emplace_back(data);
+
+			m_threadPool.emplace_back([this](std::reference_wrapper<Ref<AssetLoadJob>>(data))
+				{
+					Thread_LoadAsset(data);
+
+					data.get()->threadId = std::this_thread::get_id();
+					data.get()->finished = true;
+
+				}, std::ref(m_loadingAssets.back()));
+		}
+
+		for (int32_t i = m_loadingAssets.size() - 1; i >= 0; --i)
+		{
+			if (m_loadingAssets[i]->finished)
+			{
+				bool found = false;
+
+				for (int32_t t = m_threadPool.size() - 1; i >= 0; --i)
+				{
+					if (m_threadPool[t].get_id() == m_loadingAssets[i]->threadId)
+					{
+						m_threadPool[t].join();
+						m_threadPool.erase(m_threadPool.begin() + i);
+
+						auto& asset = *m_loadingAssets[i]->asset;
+
+						asset->SetFlag(AssetFlag::Unloaded, false);
+						m_loadingAssets.erase(m_loadingAssets.begin() + i);
+
+						found = true;
+
+						break;
+					}
+				}
+				
+				if (!found)
+				{
+					LP_CORE_ERROR("[AssetManager]: Asset {0} finished loading, but thread id is invalid!", m_loadingAssets[i]->path.string());
+				}
+			}
+		}
+				
 	}
 
 	void AssetManager::LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset)
 	{
-		AssetLoadJob job;
-		job.path = path;
-		job.type = GetAssetTypeFromPath(path);
-
-		if (m_AssetLoaders.find(job.type) == m_AssetLoaders.end())
-		{
-			LP_CORE_ERROR("No importer for asset exists!");
-			return;
-		}
-		m_AssetLoaders[job.type]->Load(job.path, asset);
+		AssetLoadJob job{path, GetAssetTypeFromPath(path), GetAssetHandleFromPath(path), asset};
+		m_loadQueue.Push(job);
 	}
 
 	void AssetManager::SaveAsset(const Ref<Asset>& asset)
 	{
-		if (m_AssetLoaders.find(asset->GetType()) == m_AssetLoaders.end())
+		if (m_assetLoaders.find(asset->GetType()) == m_assetLoaders.end())
 		{
 			LP_CORE_ERROR("No exporter for asset exists!");
 			return;
@@ -84,18 +125,19 @@ namespace Lamp
 			return;
 		}
 
-		if (m_AssetRegistry.find(asset->Path) == m_AssetRegistry.end())
+		if (m_assetRegistry.find(asset->Path) == m_assetRegistry.end())
 		{
-			m_AssetRegistry.emplace(asset->Path, asset->Handle);
+			m_assetRegistry.emplace(asset->Path, asset->Handle);
 		}
 
-		m_AssetLoaders[asset->GetType()]->Save(asset);
+		m_assetLoaders[asset->GetType()]->Save(asset);
 	}
 
 	AssetType AssetManager::GetAssetTypeFromPath(const std::filesystem::path& path)
 	{
 		return GetAssetTypeFromExtension(path.extension().string());
 	}
+
 	AssetType AssetManager::GetAssetTypeFromExtension(const std::string& ext)
 	{
 		std::string extension = Utils::ToLower(ext);
@@ -109,12 +151,12 @@ namespace Lamp
 
 	AssetHandle AssetManager::GetAssetHandleFromPath(const std::filesystem::path& path)
 	{
-		return m_AssetRegistry.find(path) != m_AssetRegistry.end() ? m_AssetRegistry[path] : 0;
+		return m_assetRegistry.find(path) != m_assetRegistry.end() ? m_assetRegistry[path] : 0;
 	}
 
 	std::filesystem::path AssetManager::GetPathFromAssetHandle(AssetHandle assetHandle)
 	{
-		for (auto& [path, handle] : m_AssetRegistry)
+		for (auto& [path, handle] : m_assetRegistry)
 		{
 			if (handle == assetHandle)
 			{
@@ -131,7 +173,7 @@ namespace Lamp
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "Assets" << YAML::BeginSeq;
-		for (const auto& [path, handle] : m_AssetRegistry)
+		for (const auto& [path, handle] : m_assetRegistry)
 		{
 			out << YAML::BeginMap;
 			out << YAML::Key << "Handle" << YAML::Value << handle;
@@ -165,7 +207,25 @@ namespace Lamp
 			std::string path = entry["Path"].as<std::string>();
 			AssetHandle handle = entry["Handle"].as<AssetHandle>();
 
-			m_AssetRegistry.emplace(std::make_pair(path, handle));
+			m_assetRegistry.emplace(std::make_pair(path, handle));
 		}
+	}
+
+	void AssetManager::Thread_LoadAsset(Ref<AssetLoadJob>& loadJob)
+	{
+		if (m_assetLoaders.find(loadJob->type) == m_assetLoaders.end())
+		{
+			LP_CORE_ERROR("No importer for asset type {0} found!", loadJob->path.extension().string());
+			return;
+		}
+
+		auto& asset = *loadJob->asset;
+
+		m_assetLoaders[loadJob->type]->Load(loadJob->path, asset);
+
+		asset->Path = loadJob->path;
+		asset->Handle = loadJob->handle;
+
+		m_assetRegistry[loadJob->path] = asset->Handle;
 	}
 }

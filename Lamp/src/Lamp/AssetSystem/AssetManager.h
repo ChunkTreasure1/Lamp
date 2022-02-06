@@ -2,6 +2,8 @@
 
 #include "AssetLoader.h"
 
+#include "Lamp/Utility/ThreadSafeQueue.h"
+
 #include <thread>
 #include <vector>
 #include <unordered_map>
@@ -11,9 +13,34 @@ namespace Lamp
 {
 	struct AssetLoadJob
 	{
+		AssetLoadJob(const std::filesystem::path& aPath, AssetType aType, AssetHandle aHandle, Ref<Asset>& aAsset)
+			: path(aPath), type(aType), asset(&aAsset), handle(aHandle)
+		{}
+
+		AssetLoadJob(const AssetLoadJob& job)
+			: path(job.path), asset(job.asset), type(job.type), 
+			finished(job.finished), threadId(job.threadId), handle(job.handle)
+		{ }
+
+		AssetLoadJob& operator=(const AssetLoadJob& job)
+		{
+			path = job.path;
+			asset = job.asset;
+			type = job.type;
+			finished = job.finished;
+			threadId = job.threadId;
+			handle = job.handle;
+
+			return *this;
+		}
+
 		std::filesystem::path path;
-		Ref<Asset> asset;
+		Ref<Asset>* asset;
 		AssetType type;
+		AssetHandle handle;
+
+		bool finished = false;
+		std::thread::id threadId;
 	};
 
 	class AssetManager
@@ -44,9 +71,8 @@ namespace Lamp
 
 			if (std::filesystem::exists(assetPath))
 			{
+				asset = T::Create();
 				LoadAsset(assetPath, asset);
-				asset->Handle = assetHandle;
-				asset->Path = assetPath;
 
 				return std::dynamic_pointer_cast<T>(asset);
 			}
@@ -60,8 +86,8 @@ namespace Lamp
 			Ref<Asset> asset = GetAsset<T>(GetAssetHandleFromPath(path));
 			if (asset == nullptr)
 			{
+				asset = T::Create();
 				LoadAsset(path, asset);
-				m_AssetRegistry.emplace(path, asset->Handle);
 			}
 			return std::dynamic_pointer_cast<T>(asset);
 		}
@@ -70,9 +96,15 @@ namespace Lamp
 		void SaveAssetRegistry();
 		void LoadAssetRegistry();
 
-	private:
+		void Thread_LoadAsset(Ref<AssetLoadJob>& loadJob);
 
-		std::unordered_map<AssetType, Scope<AssetLoader>> m_AssetLoaders;
-		std::map<std::filesystem::path, AssetHandle> m_AssetRegistry;
+		std::unordered_map<AssetType, Scope<AssetLoader>> m_assetLoaders;
+		std::map<std::filesystem::path, AssetHandle> m_assetRegistry;
+
+		const uint32_t m_maxThreads = 8;
+		std::vector<std::thread> m_threadPool;
+
+		ThreadSafeQueue<AssetLoadJob> m_loadQueue;
+		std::vector<Ref<AssetLoadJob>> m_loadingAssets;
 	};
 }
