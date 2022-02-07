@@ -30,8 +30,8 @@ Library = {}
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK_Debug}/VkLayer_utils.lib"
 Library["Assimp"] = "%{LibraryDir.Assimp}/assimp-vc143-mt.lib"
-Library["ktx2"] = "%{LibraryDir.ktx2}/ktx.lib"
-Library["ktx2_read"] = "%{LibraryDir.ktx2}/ktx_read.lib"
+Library["ktx2"] = "%{LibraryDir.ktx2}/ktx_release.lib"
+Library["ktx2_debug"] = "%{LibraryDir.ktx2}/ktx_debug.lib"
 
 Library["ShaderC_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/shaderc_sharedd.lib"
 Library["ShaderC_Utils_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/shaderc_utild.lib"

@@ -269,8 +269,9 @@ namespace Lamp
 		{
 			glm::vec2 size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
 			
-			s_pSceneData->screenGroupX = ((uint32_t)size.x + ((uint32_t)size.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-			s_pSceneData->screenGroupY = ((uint32_t)size.y + ((uint32_t)size.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
+			s_pSceneData->screenGroupX = ((uint32_t)size.x + (16 - ((uint32_t)size.x % 16))) / 16;
+			s_pSceneData->screenGroupY = ((uint32_t)size.y + (16 - ((uint32_t)size.y % 16))) / 16;
+
 			s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
 			
 			s_pSceneData->lightCullingData.screenSize = size;

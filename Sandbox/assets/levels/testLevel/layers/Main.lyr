@@ -106,7 +106,7 @@ layer:
               type: Bool
               value: false
     - entity: Light
-      position: [-2.2896471, 5.74372196, -0.479638368]
+      position: [5.19801378, 2.35263419, -0.479638368]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
