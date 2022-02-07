@@ -44,7 +44,6 @@ namespace Lamp
 		for (std::string& path : paths)
 		{
 			LoadMaterial(path);
-			g_pEnv->pAssetManager->Update();
 		}
 
 		paths.clear();
@@ -83,8 +82,7 @@ namespace Lamp
 
 	void MaterialLibrary::LoadMaterial(const std::filesystem::path& path)
 	{
-		Ref<Asset> mat = Material::Create();
-		g_pEnv->pAssetManager->LoadAsset(path, mat);
+		Ref<Asset> mat = ResourceCache::GetAsset<Material>(path);
 
 		AddMaterial(std::reinterpret_pointer_cast<Material>(mat));
 	}

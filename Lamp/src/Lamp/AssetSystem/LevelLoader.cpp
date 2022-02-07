@@ -157,12 +157,12 @@ namespace Lamp
 		}
 	}
 
-	bool LevelLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	bool LevelLoader::Load(const std::filesystem::path& path, Asset* asset) const
 	{
 		LevelLoadStartedEvent startEvent(path);
 		Application::Get().OnEvent(startEvent);
 
-		Ref<Level> level = std::dynamic_pointer_cast<Level>(asset);
+		Level* level = reinterpret_cast<Level*>(asset);
 
 		if (!std::filesystem::exists(path))
 		{
@@ -449,7 +449,7 @@ namespace Lamp
 		out << YAML::EndMap;
 	}
 
-	void LevelLoader::DeserializeEntity(const YAML::Node& entry, std::map<uint32_t, Entity*>& entities, Ref<Level> level) const
+	void LevelLoader::DeserializeEntity(const YAML::Node& entry, std::map<uint32_t, Entity*>& entities, Level* level) const
 	{
 		uint32_t layerId = entry["layerId"].as<uint32_t>();
 		Entity* entity = Entity::Create(true, layerId, false);
@@ -659,7 +659,7 @@ namespace Lamp
 		entities.emplace(entity->GetID(), entity);
 	}
 
-	void LevelLoader::DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Ref<Level> level) const
+	void LevelLoader::DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Level* level) const
 	{
 		AssetHandle meshHandle = node["meshHandle"].as<AssetHandle>();
 		Brush* brush = Brush::Create(g_pEnv->pAssetManager->GetPathFromAssetHandle(meshHandle).string(), false);

@@ -44,6 +44,8 @@ namespace Lamp
 		m_assetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
 		m_assetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
 		LoadAssetRegistry();
+
+		m_loadingAssets.reserve(100);
 	}
 
 	void AssetManager::Shutdown()
@@ -57,38 +59,41 @@ namespace Lamp
 	{
 		//ResourceCache::Update();
 
-		while (!m_loadQueue.Empty() && m_threadPool.size() < m_maxThreads)
+		while (!m_loadQueue.empty() && m_threadPool.size() < m_maxThreads)
 		{
-			auto data = m_loadQueue.TryPop();
+			std::lock_guard lock{ m_queueMutex };
+
+			auto data = m_loadQueue.front();
+			m_loadQueue.pop();
 
 			m_loadingAssets.emplace_back(data);
 
-			m_threadPool.emplace_back([this](std::reference_wrapper<Ref<AssetLoadJob>>(data))
-				{
-					Thread_LoadAsset(data);
+			auto func = [this](std::reference_wrapper<AssetLoadJob>(data))
+			{
+				Thread_LoadAsset(data);
 
-					data.get()->threadId = std::this_thread::get_id();
-					data.get()->finished = true;
+				data.get().threadId = std::this_thread::get_id();
+				data.get().finished = true;
 
-				}, std::ref(m_loadingAssets.back()));
+			};
+
+			m_threadPool.emplace_back(func, std::ref(m_loadingAssets.back()));
 		}
 
 		for (int32_t i = m_loadingAssets.size() - 1; i >= 0; --i)
 		{
-			if (m_loadingAssets[i]->finished)
+			if (m_loadingAssets[i].finished)
 			{
 				bool found = false;
 
-				for (int32_t t = m_threadPool.size() - 1; i >= 0; --i)
+				for (int32_t t = m_threadPool.size() - 1; t >= 0; --t)
 				{
-					if (m_threadPool[t].get_id() == m_loadingAssets[i]->threadId)
+					if (m_threadPool[t].get_id() == m_loadingAssets[i].threadId)
 					{
 						m_threadPool[t].join();
-						m_threadPool.erase(m_threadPool.begin() + i);
+						m_threadPool.erase(m_threadPool.begin() + t);
 
-						auto& asset = *m_loadingAssets[i]->asset;
-
-						asset->SetFlag(AssetFlag::Unloaded, false);
+						m_loadingAssets[i].asset->SetFlag(AssetFlag::Unloaded, false);
 						m_loadingAssets.erase(m_loadingAssets.begin() + i);
 
 						found = true;
@@ -99,17 +104,19 @@ namespace Lamp
 				
 				if (!found)
 				{
-					LP_CORE_ERROR("[AssetManager]: Asset {0} finished loading, but thread id is invalid!", m_loadingAssets[i]->path.string());
+					LP_CORE_ERROR("[AssetManager]: Asset {0} finished loading, but thread id is invalid!", m_loadingAssets[i].path.string());
 				}
 			}
 		}
 				
 	}
 
-	void AssetManager::LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset)
+	void AssetManager::LoadAsset(const std::filesystem::path& path, Asset* asset)
 	{
+		std::lock_guard lock{ m_queueMutex };
+
 		AssetLoadJob job{path, GetAssetTypeFromPath(path), GetAssetHandleFromPath(path), asset};
-		m_loadQueue.Push(job);
+		m_loadQueue.push(job);
 	}
 
 	void AssetManager::SaveAsset(const Ref<Asset>& asset)
@@ -211,21 +218,21 @@ namespace Lamp
 		}
 	}
 
-	void AssetManager::Thread_LoadAsset(Ref<AssetLoadJob>& loadJob)
+	void AssetManager::Thread_LoadAsset(AssetLoadJob& loadJob)
 	{
-		if (m_assetLoaders.find(loadJob->type) == m_assetLoaders.end())
+		if (m_assetLoaders.find(loadJob.type) == m_assetLoaders.end())
 		{
-			LP_CORE_ERROR("No importer for asset type {0} found!", loadJob->path.extension().string());
+			LP_CORE_ERROR("No importer for asset type {0} found!", loadJob.path.extension().string());
 			return;
 		}
 
-		auto& asset = *loadJob->asset;
+		auto asset = loadJob.asset;
 
-		m_assetLoaders[loadJob->type]->Load(loadJob->path, asset);
+		m_assetLoaders[loadJob.type]->Load(loadJob.path, asset);
 
-		asset->Path = loadJob->path;
-		asset->Handle = loadJob->handle;
+		asset->Path = loadJob.path;
+		asset->Handle = loadJob.handle;
 
-		m_assetRegistry[loadJob->path] = asset->Handle;
+		m_assetRegistry[loadJob.path] = asset->Handle;
 	}
-}
+} 

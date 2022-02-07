@@ -86,9 +86,9 @@ namespace Lamp
 		LP_CORE_INFO("Saved model {0}!", mesh->GetName());
 	}
 
-	bool MeshLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	bool MeshLoader::Load(const std::filesystem::path& path, Asset* asset) const
 	{
-		Ref<Mesh> mesh = std::dynamic_pointer_cast<Mesh>(asset);
+		Mesh* mesh = reinterpret_cast<Mesh*>(asset);
 
 		//Check if file exists
 		if (!std::filesystem::exists(path))
@@ -187,15 +187,14 @@ namespace Lamp
 		boundingBox.Max = boundingBox.StartMax;
 		boundingBox.Min = boundingBox.StartMin;
 
-		asset = CreateRef<Mesh>(meshName, subMeshes, materials, boundingBox);
-		asset->Path = path;
+		mesh->Load(meshName, subMeshes, materials, boundingBox);
 
 		return true;
 	}
 
-	bool TextureLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	bool TextureLoader::Load(const std::filesystem::path& path, Asset* asset) const
 	{
-		std::reinterpret_pointer_cast<Texture2D>(asset)->Load(path);
+		reinterpret_cast<Texture2D*>(asset)->Load(path);
 
 		return true;
 	}
@@ -204,7 +203,7 @@ namespace Lamp
 	{
 	}
 
-	bool EnvironmentLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	bool EnvironmentLoader::Load(const std::filesystem::path& path, Asset* asset) const
 	{
 		return false;
 	}
@@ -256,9 +255,9 @@ namespace Lamp
 		fout.close();
 	}
 
-	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	bool MaterialLoader::Load(const std::filesystem::path& path, Asset* asset) const
 	{
-		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
+		Material* mat = reinterpret_cast<Material*>(asset);
 
 		if (!std::filesystem::exists(path))
 		{
@@ -338,7 +337,7 @@ namespace Lamp
 		fout.close();
 	}
 
-	bool MeshSourceLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
+	bool MeshSourceLoader::Load(const std::filesystem::path& path, Asset* asset) const
 	{
 		std::ifstream stream(path);
 		if (!stream.is_open())
@@ -353,7 +352,7 @@ namespace Lamp
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node meshNode = root["meshsource"];
 
-		Ref<MeshSource> meshSource = std::dynamic_pointer_cast<MeshSource>(asset);
+		MeshSource* meshSource = reinterpret_cast<MeshSource*>(asset);
 
 		meshSource->m_importSettings.units = meshNode["units"] ? (Units)meshNode["units"].as<uint32_t>() : Units::Centimeters;
 		LP_DESERIALIZE_PROPERTY(upDir, meshSource->m_importSettings.upDirection, meshNode, glm::vec3(0.f));

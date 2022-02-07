@@ -9,7 +9,7 @@
 namespace Lamp
 {
 	Mesh::Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb)
-		: m_Materials(mats), m_Name(name), m_BoundingBox(bb), m_Meshes(meshes)
+		: m_materials(mats), m_name(name), m_boundingBox(bb), m_meshes(meshes)
 	{
 	}
 
@@ -19,25 +19,33 @@ namespace Lamp
 
 	void Mesh::Render(size_t id, const glm::mat4& transform)
 	{
-		for (const auto& mesh : m_Meshes)
+		for (const auto& mesh : m_meshes)
 		{
 			//TODO: Render error mesh if mesh is invalid
-			Renderer::SubmitMesh(transform, mesh, m_Materials[mesh->GetMaterialIndex()], id);
+			Renderer::SubmitMesh(transform, mesh, m_materials[mesh->GetMaterialIndex()], id);
 		}
+	}
+
+	void Mesh::Load(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb)
+	{
+		m_name = name;
+		m_meshes = meshes;
+		m_materials = mats;
+		m_boundingBox = bb;
 	}
 
 	void Mesh::SetMaterial(Ref<Material> mat, uint32_t id)
 	{
-		auto it = m_Materials.find(id);
-		LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
+		auto it = m_materials.find(id);
+		LP_CORE_ASSERT(it != m_materials.end(), "Mesh does not contain the specified material id!");
 
 		it->second = mat;
 	}
 
 	Ref<Material> Mesh::GetMaterial(uint32_t id)
 	{
-		auto it = m_Materials.find(id);
-		LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
+		auto it = m_materials.find(id);
+		LP_CORE_ASSERT(it != m_materials.end(), "Mesh does not contain the specified material id!");
 
 		return it->second;
 	}

@@ -22,15 +22,15 @@ namespace Lamp
 	{
 	public:
 		void Save(const Ref<Asset>& asset) const override;
-		bool Load(const std::filesystem::path& path, Ref<Asset>& asset) const override;
+		bool Load(const std::filesystem::path& path, Asset* asset) const override;
 	
 	private:
 		void SerializeEntity(YAML::Emitter& out, const Entity* pEnt) const;
 		void SerializeBrush(YAML::Emitter& out, const Brush* pBrush) const;
 		void SerializeAttribute(const Attribute& attr, const std::string& type, YAML::Emitter& out) const;
 
-		void DeserializeEntity(const YAML::Node& node, std::map<uint32_t, Entity*>& entities, Ref<Level> level) const;
-		void DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Ref<Level> level) const;
+		void DeserializeEntity(const YAML::Node& node, std::map<uint32_t, Entity*>& entities, Level* level) const;
+		void DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Level* level) const;
 		void DeserializeAttribute(const YAML::Node& yamlNode, Ref<Node> node, uint32_t& currentId) const;
 
 		template<typename T> T* GetPropertyData(const std::string& name, const std::vector<ComponentProperty>& properties) const;

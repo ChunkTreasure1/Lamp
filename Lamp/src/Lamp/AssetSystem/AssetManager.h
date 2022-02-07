@@ -13,13 +13,13 @@ namespace Lamp
 {
 	struct AssetLoadJob
 	{
-		AssetLoadJob(const std::filesystem::path& aPath, AssetType aType, AssetHandle aHandle, Ref<Asset>& aAsset)
-			: path(aPath), type(aType), asset(&aAsset), handle(aHandle)
+		AssetLoadJob(const std::filesystem::path& aPath, AssetType aType, AssetHandle aHandle, Asset* aAsset)
+			: path(aPath), type(aType), asset(aAsset), handle(aHandle)
 		{}
 
 		AssetLoadJob(const AssetLoadJob& job)
 			: path(job.path), asset(job.asset), type(job.type), 
-			finished(job.finished), threadId(job.threadId), handle(job.handle)
+			finished(job.finished.load()), threadId(job.threadId), handle(job.handle)
 		{ }
 
 		AssetLoadJob& operator=(const AssetLoadJob& job)
@@ -27,7 +27,7 @@ namespace Lamp
 			path = job.path;
 			asset = job.asset;
 			type = job.type;
-			finished = job.finished;
+			finished = job.finished.load();
 			threadId = job.threadId;
 			handle = job.handle;
 
@@ -35,11 +35,11 @@ namespace Lamp
 		}
 
 		std::filesystem::path path;
-		Ref<Asset>* asset;
+		Asset* asset;
 		AssetType type;
 		AssetHandle handle;
 
-		bool finished = false;
+		std::atomic_bool finished = false;
 		std::thread::id threadId;
 	};
 
@@ -54,7 +54,7 @@ namespace Lamp
 
 		void Update();
 
-		void LoadAsset(const std::filesystem::path& path, Ref<Asset>& asset);
+		void LoadAsset(const std::filesystem::path& path, Asset* asset);
 		void SaveAsset(const Ref<Asset>& asset);
 
 		AssetType GetAssetTypeFromPath(const std::filesystem::path& path);
@@ -72,7 +72,7 @@ namespace Lamp
 			if (std::filesystem::exists(assetPath))
 			{
 				asset = T::Create();
-				LoadAsset(assetPath, asset);
+				LoadAsset(assetPath, asset.get());
 
 				return std::dynamic_pointer_cast<T>(asset);
 			}
@@ -87,7 +87,7 @@ namespace Lamp
 			if (asset == nullptr)
 			{
 				asset = T::Create();
-				LoadAsset(path, asset);
+				LoadAsset(path, asset.get());
 			}
 			return std::dynamic_pointer_cast<T>(asset);
 		}
@@ -96,15 +96,17 @@ namespace Lamp
 		void SaveAssetRegistry();
 		void LoadAssetRegistry();
 
-		void Thread_LoadAsset(Ref<AssetLoadJob>& loadJob);
+		void Thread_LoadAsset(AssetLoadJob& loadJob);
 
 		std::unordered_map<AssetType, Scope<AssetLoader>> m_assetLoaders;
 		std::map<std::filesystem::path, AssetHandle> m_assetRegistry;
 
-		const uint32_t m_maxThreads = 8;
+		const uint32_t m_maxThreads = 4;
 		std::vector<std::thread> m_threadPool;
 
-		ThreadSafeQueue<AssetLoadJob> m_loadQueue;
-		std::vector<Ref<AssetLoadJob>> m_loadingAssets;
+		std::queue<AssetLoadJob> m_loadQueue;
+		std::mutex m_queueMutex;
+
+		std::vector<AssetLoadJob> m_loadingAssets;
 	};
 }

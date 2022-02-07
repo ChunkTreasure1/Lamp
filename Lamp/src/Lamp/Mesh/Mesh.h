@@ -29,17 +29,18 @@ namespace Lamp
 		friend class ResourceCache;
 
 		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f));
+		void Load(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb);
 
 		//Setting
-		inline void SetName(const std::string& name) { m_Name = name; }
+		inline void SetName(const std::string& name) { m_name = name; }
 		void SetMaterial(Ref<Material> mat, uint32_t id);
 
 		//Getting
 		Ref<Material> GetMaterial(uint32_t id);
-		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_Materials; }
-		inline const std::string& GetName() { return m_Name; }
-		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_Meshes; }
-		inline AABB& GetBoundingBox() { return m_BoundingBox; }
+		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_materials; }
+		inline const std::string& GetName() { return m_name; }
+		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_meshes; }
+		inline AABB& GetBoundingBox() { return m_boundingBox; }
 
 		static AssetType GetStaticType() { return AssetType::Mesh; }
 		AssetType GetType() override { return GetStaticType(); }
@@ -48,10 +49,10 @@ namespace Lamp
 		static Ref<Mesh> Create();
 
 	private:
-		std::vector<Ref<SubMesh>> m_Meshes;
-		std::map<uint32_t, Ref<Material>> m_Materials;
-		std::string m_Name;
+		std::vector<Ref<SubMesh>> m_meshes;
+		std::map<uint32_t, Ref<Material>> m_materials;
+		std::string m_name;
 
-		AABB m_BoundingBox;
+		AABB m_boundingBox;
 	};
 }
