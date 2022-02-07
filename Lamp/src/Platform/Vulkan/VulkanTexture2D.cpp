@@ -164,9 +164,33 @@ namespace Lamp
 
 	void VulkanTexture2D::LoadKTX(const std::filesystem::path& path, bool generateMips)
 	{
-		ktxTexture* texture = nullptr;
-		KTX_error_code result = ktxTexture_CreateFromNamedFile(path.string().c_str(), KTX_TEXTURE_CREATE_NO_FLAGS, &texture);
+		ktxTexture2* texture = nullptr;
+		KTX_error_code result = ktxTexture_CreateFromNamedFile(path.string().c_str(), KTX_TEXTURE_CREATE_NO_FLAGS, (ktxTexture**)& texture);
 		LP_CORE_ASSERT(result == KTX_SUCCESS, "Unable to load file!");
+
+		if (ktxTexture2_NeedsTranscoding(texture))
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+			const auto& features = device->GetPhysicalDevice()->GetFeatures();
+
+			ktx_texture_transcode_fmt_e tf;
+
+			if (features.textureCompressionASTC_LDR)
+			{
+				tf = KTX_TTF_ASTC_4x4_RGBA;
+			}
+			else if (features.textureCompressionETC2)
+			{
+				tf = KTX_TTF_ETC2_RGBA;
+			}
+			else if (features.textureCompressionBC)
+			{
+				tf = KTX_TTF_BC7_RGBA;
+			}
+
+			result = ktxTexture2_TranscodeBasis(texture, tf, 0);
+			LP_CORE_ASSERT(result == KTX_SUCCESS, "Unable to transcode texture!");
+		}
 
 		ktxVulkanTexture newTexture;
 		ktxVulkanDeviceInfo deviceInfo;
@@ -175,9 +199,18 @@ namespace Lamp
 
 		ktxVulkanDeviceInfo_Construct(&deviceInfo, device->GetPhysicalDevice()->GetHandle(), device->GetHandle(), device->GetGraphicsQueue(), device->GetCommandPool(), nullptr);
 
-		ktxTexture_VkUploadEx(texture, &deviceInfo, &newTexture, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_SAMPLED_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		//ktxTexture_VkUploadEx(texture, &deviceInfo, &newTexture, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_SAMPLED_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-		ktxTexture_Destroy(texture);
+		ImageSpecification imageSpec{};
+		imageSpec.format = ImageFormat::RGBA;
+		imageSpec.usage = ImageUsage::Texture;
+		imageSpec.width = newTexture.width;
+		imageSpec.height = newTexture.height;
+		imageSpec.mips = generateMips ? static_cast<uint32_t>(std::floor(std::log2(std::max(newTexture.width, newTexture.height)))) + 1 : 1;
+
+		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
+
+		//ktxTexture_Destroy(texture);
 		ktxVulkanDeviceInfo_Destruct(&deviceInfo);
 	}
 }
