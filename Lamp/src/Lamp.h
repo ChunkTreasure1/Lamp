@@ -10,6 +10,5 @@
 #include <Lamp/Input/Input.h>
 #include <Lamp/Input/KeyCodes.h>
 
-#include <Lamp/Objects/Entity/Base/Entity.h>
-#include <Lamp/Objects/Entity/Base/BaseComponent.h>
+#include <Lamp/Objects/Entity/Entity.h>
 #include <Lamp/Objects/Brushes/Brush.h>

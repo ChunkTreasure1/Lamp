@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseComponent.h"
+#include "EntityComponent.h"
 
 #define LP_REGISTER_COMPONENT(x) static bool x ## _entry = Lamp::ComponentRegistry::Register(x::GetFactoryName(), x::Create);
 

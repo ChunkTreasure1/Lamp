@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/Entity.h"
 #include "Lamp/Audio/AudioEngine.h"
 
 namespace Lamp
@@ -10,28 +9,23 @@ namespace Lamp
 	class AudioListenerComponent final : public EntityComponent
 	{
 	public:
-		AudioListenerComponent()
-			: EntityComponent("AudioListenerComponent"), m_Forward(0.f), m_Up(0.f), m_Listener(0)
-		{
-		}
+		AudioListenerComponent();
 
 		/////Base/////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
 		//////////////
+
+		static Ref<EntityComponent> Create() { return CreateRef<AudioListenerComponent>(); }
+		static std::string GetFactoryName() { return "AudioListenerComponent"; }
 
 	private:
 		void CalculateForwardAndUp();
 		bool OnPositionChanged(ObjectPositionChangedEvent& e);
 
-	public:
-		static Ref<EntityComponent> Create() { return CreateRef<AudioListenerComponent>(); }
-		static std::string GetFactoryName() { return "AudioListenerComponent"; }
-
-	private:
-		glm::vec3 m_Forward;
-		glm::vec3 m_Up;
+		glm::vec3 m_forward;
+		glm::vec3 m_up;
 	
-		Listener m_Listener;
+		Listener m_listener;
 	};
 }

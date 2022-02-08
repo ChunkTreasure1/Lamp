@@ -1,19 +1,19 @@
 #pragma once
 
+#include "Lamp/Objects/Object.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
+
+#include "Lamp/Event/Event.h"
+#include "Lamp/Event/ApplicationEvent.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
+
+#include <algorithm>
+#include <string>
 #include <vector>
 #include <memory>
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include <glm/glm.hpp>
-#include "Lamp/Event/Event.h"
-
-#include <algorithm>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "Lamp/Objects/Object.h"
-#include <string>
-
-#include "Lamp/Event/ApplicationEvent.h"
 namespace Lamp
 {
 	class GraphKeyGraph;
@@ -102,6 +102,7 @@ namespace Lamp
 			m_pComponents.push_back(c);
 			m_pComponentMap[T::GetFactoryName()] = c;
 
+			c->SetComponentProperties();
 			c->Initialize();
 
 			return c;

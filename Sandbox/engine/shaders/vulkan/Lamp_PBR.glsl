@@ -45,6 +45,7 @@ layout (location = 0) out Out
     vec3 normal;
     mat3 TBN;    
     vec4 shadowCoords[10];
+    vec3 viewPosition;
 } v_Out;
 
 void main()
@@ -66,6 +67,8 @@ void main()
         v_Out.shadowCoords[i] = u_DirectionalLightData.viewProjections[i] * u_MeshData.model * vec4(a_Position, 1.0);
     }
 
+    v_Out.viewPosition = vec3(u_CameraData.view * u_MeshData.model * vec4(a_Position, 1.0));
+
     gl_Position = u_CameraData.projection * u_CameraData.view * u_MeshData.model * vec4(a_Position, 1.0);
 }
 
@@ -73,6 +76,8 @@ void main()
 #version 450 core
 
 layout (location = 0) out vec4 o_Color;
+layout (location = 1) out vec4 o_ViewNormals;
+layout (location = 2) out vec4 o_ViewPositions;
 
 struct DirectionalLight
 {
@@ -151,7 +156,8 @@ layout (location = 0) in Out
     vec2 texCoord;
     vec3 normal;
     mat3 TBN;
-    vec4 shadowCoords[10];    
+    vec4 shadowCoords[10];
+    vec3 viewPosition;
 } v_In;
 
 //Per pass
@@ -329,6 +335,17 @@ vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 b
     return lightStrength;
 }
 
+vec3 CalculateHBAONormal()
+{
+    mat3 viewMat = mat3(u_CameraData.view);  
+    vec3 hbaoNormal = viewMat * normalize(v_In.normal);
+    hbaoNormal = hbaoNormal * 0.5 + 0.5;
+    hbaoNormal.x = 1.0 - hbaoNormal.x;
+    hbaoNormal.y = 1.0 - hbaoNormal.y;
+
+    return hbaoNormal;
+}
+
 vec3 CalculateNormal(vec3 normalVec)
 {
     vec3 tangentNormal = normalVec * 2.0 - 1.0;
@@ -434,5 +451,9 @@ void main()
     color = ACESTonemap(color);
 
     float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedo.a * u_MeshData.blendingUseBlending.x : 1.0;
+
+    o_ViewNormals = vec4(CalculateHBAONormal(), 1.0);
+    o_ViewPositions = vec4(v_In.viewPosition, 1.0);
+
     o_Color = vec4(color, blendingVal);
 }

@@ -137,11 +137,8 @@ namespace Lamp
 
 		renderPassBegin.renderArea.extent = extent;
 
-		std::array<VkClearValue, 2> clearColors;
-		clearColors[0].color = { 0.1f, 0.1f, 0.1f, 1.f };
-		clearColors[1].color = { 1.f, 0 };
-		renderPassBegin.clearValueCount = 2;
-		renderPassBegin.pClearValues = clearColors.data();
+		renderPassBegin.clearValueCount = framebuffer->GetClearValues().size();
+		renderPassBegin.pClearValues = framebuffer->GetClearValues().data();
 
 		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
 

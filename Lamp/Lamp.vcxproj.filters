@@ -330,16 +330,16 @@
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\EntityComponent.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentProperties.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentRegistry.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h">
+    <ClInclude Include="src\Lamp\Objects\Entity\Entity.h">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h">
@@ -2006,10 +2006,10 @@
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp">
+    <ClCompile Include="src\Lamp\Objects\Entity\ComponentRegistry.cpp">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp">
+    <ClCompile Include="src\Lamp\Objects\Entity\Entity.cpp">
       <Filter>src\Lamp\Objects\Entity\Base</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp">
@@ -2327,5 +2327,6 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\EntityComponent.cpp" />
   </ItemGroup>
 </Project>

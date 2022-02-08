@@ -4,7 +4,7 @@
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Rendering/LightBase.h"
 
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
 
 #include "Lamp/Level/LevelManager.h"
 #include "Lamp/Level/Level.h"
@@ -17,16 +17,6 @@ namespace Lamp
 		: EntityComponent("LightComponent")
 	{
 		m_pPointLight = CreateScope<PointLight>();
-
-		SetComponentProperties
-		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->intensity) },
-			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->radius) },
-			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
-			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
-			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
-		});
 
 		if (LevelManager::IsLevelLoaded())
 		{
@@ -54,6 +44,19 @@ namespace Lamp
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ObjectPositionChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPositionChanged));
 		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPropertyChanged));
+	}
+
+	void PointLightComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->intensity) },
+			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->radius) },
+			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
+			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
+			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
+		};
 	}
 
 	bool PointLightComponent::OnPositionChanged(ObjectPositionChangedEvent& e)

@@ -18,23 +18,18 @@ namespace Lamp
 		virtual ~EntityComponent() {};
 		virtual void Initialize() {}
 		virtual void OnEvent(Event& e) {}
+		virtual void SetComponentProperties() {}
 
-
-		//Setting
-		inline void SetComponentProperties(const ComponentProperties& properties) { m_ComponentProperties = properties; }
-
-		//Getting
 		inline Entity* GetEntity() { return m_pEntity; }
-		inline ComponentProperties& GetComponentProperties() { return m_ComponentProperties; }
-		inline const std::string& GetName() { return m_Name; }
+		inline ComponentProperties& GetComponentProperties() { return m_componentProperties; }
+		inline const std::string& GetName() { return m_name; }
 
 	protected:
-		EntityComponent(std::string name)
-			: m_pEntity(nullptr), m_ComponentProperties({}), m_Name(name)
-		{}
+		EntityComponent(std::string name);
+
 		Entity* m_pEntity;
-		ComponentProperties m_ComponentProperties;
-		std::string m_Name;
+		ComponentProperties m_componentProperties;
+		std::string m_name;
 
 	private:
 		friend class Entity;

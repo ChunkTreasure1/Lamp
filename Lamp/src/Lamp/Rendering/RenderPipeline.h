@@ -77,6 +77,8 @@ namespace Lamp
 
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
 
+		std::string debugName;
+
 		glm::vec2 size;
 		bool isSwapchain;
 	

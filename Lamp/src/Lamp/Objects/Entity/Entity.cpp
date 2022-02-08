@@ -79,6 +79,7 @@ namespace Lamp
 		if (auto it = m_pComponentMap.find(str); it == m_pComponentMap.end())
 		{
 			comp->m_pEntity = this;
+			comp->SetComponentProperties();
 			comp->Initialize();
 
 			m_pComponents.push_back(comp);
