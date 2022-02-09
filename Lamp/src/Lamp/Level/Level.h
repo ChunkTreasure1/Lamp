@@ -106,5 +106,6 @@ namespace Lamp
 		//Move from here
 		bool m_lastShowedGizmos = false;
 		Ref<Framebuffer> m_geometryFramebuffer;
+		Ref<Framebuffer> m_shadingFramebuffer;
 	};
 }

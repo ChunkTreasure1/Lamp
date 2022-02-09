@@ -222,6 +222,8 @@ namespace Lamp
 		for (auto& comp : entity->GetComponents())
 		{
 			Ref<EntityComponent> component = ComponentRegistry::Create(comp->GetName());
+			component->m_pEntity = copy;
+			component->SetComponentProperties();
 
 			for (auto& property : comp->GetComponentProperties().GetProperties())
 			{

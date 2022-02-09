@@ -61,9 +61,6 @@
     <Filter Include="src\Lamp\Objects\Entity">
       <UniqueIdentifier>{0B8F3667-77C6-7EFE-80D0-E221EC86A5F7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Lamp\Objects\Entity\Base">
-      <UniqueIdentifier>{750AC907-61C5-B8B3-0A7D-31FEF6160344}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Lamp\Objects\Entity\BaseComponents">
       <UniqueIdentifier>{DBFEA38A-C750-7B7A-B06F-B88A9C609463}</UniqueIdentifier>
     </Filter>
@@ -330,18 +327,6 @@
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\EntityComponent.h">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\ComponentProperties.h">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\ComponentRegistry.h">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\Entity\Entity.h">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
@@ -376,6 +361,18 @@
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentProperties.h">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentRegistry.h">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\Entity.h">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\Entity\EntityComponent.h">
       <Filter>src\Lamp\Objects\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Object.h">
@@ -2006,12 +2003,6 @@
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\ComponentRegistry.cpp">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\Entity.cpp">
-      <Filter>src\Lamp\Objects\Entity\Base</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
     </ClCompile>
@@ -2044,6 +2035,15 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp">
       <Filter>src\Lamp\Objects\Entity\BaseComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\ComponentRegistry.cpp">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\Entity.cpp">
+      <Filter>src\Lamp\Objects\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\Entity\EntityComponent.cpp">
+      <Filter>src\Lamp\Objects\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Object.cpp">
       <Filter>src\Lamp\Objects</Filter>
@@ -2327,6 +2327,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\Entity\EntityComponent.cpp" />
   </ItemGroup>
 </Project>

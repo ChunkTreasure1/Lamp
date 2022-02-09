@@ -64,7 +64,6 @@ namespace Lamp
 		static Ref<VulkanRenderer> GetRenderer() { return s_renderer; }
 
 		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
-		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateHBAOPipeline(Ref<Image2D> depthImage);
 
 		struct SceneData
 		{
@@ -99,11 +98,9 @@ namespace Lamp
 			DirectionalLightVPBuffer directionalLightVPData;
 			LightCullingBuffer lightCullingData;
 			TerrainDataBuffer terrainData;
-			HBAODataBuffer hbaoData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			Ref<UniformBuffer> lightCullingBuffer;
-			Ref<UniformBuffer> hbaoDataBuffer;
 			Ref<UniformBuffer> terrainDataBuffer;
 			//////////////////////////
 
@@ -139,7 +136,6 @@ namespace Lamp
 		static void GenerateBRDF();
 		static void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
 
-	private:
 		struct RendererDefaults
 		{
 			Ref<Texture2D> defaultTexture;

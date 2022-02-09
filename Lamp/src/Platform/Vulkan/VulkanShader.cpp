@@ -482,6 +482,7 @@ namespace Lamp
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					LP_CORE_ERROR(module.GetErrorMessage());
+
 					LP_CORE_ASSERT(false, "Shader compilation failed!");
 				}
 

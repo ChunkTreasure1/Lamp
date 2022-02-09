@@ -80,21 +80,4 @@ namespace Lamp
 	{
 		alignas(16) float heightMultiplier = 0.f;
 	};
-
-	struct HBAODataBuffer
-	{
-		glm::vec4 perspectiveInfo;
-		glm::vec2 invQuarterResolution;
-
-		float radiusToScreen;
-		float negInvR2;
-		float NdotVBias;
-		float aoMultiplier;
-		float powExponent;
-
-		bool isOrtho;
-
-		glm::vec4 float2Offsets[16];
-		glm::vec4 jitters[16];
-	};
 }

@@ -267,43 +267,6 @@ namespace Lamp
 			s_pSceneData->lightCullingData.screenSize = size;
 			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData.screenSize, sizeof(glm::vec2));
 		}
-
-		//HBAO
-		{
-			auto& hbaoData = s_pSceneData->hbaoData;
-
-			const float meters2ViewSpace = 1.f;
-			const float R = s_pSceneData->hbaoRadius * meters2ViewSpace;
-			const float R2 = R * R;
-
-			hbaoData.negInvR2 = -1.f / R2;
-			
-			glm::vec2 size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
-			hbaoData.invQuarterResolution = 1.f / glm::vec2{ size.x / 4.f, size.y / 4.f };
-
-			if (s_pSceneData->camera)
-			{
-				hbaoData.radiusToScreen = R * 0.5f * size.y / (tanf(glm::radians(std::reinterpret_pointer_cast<PerspectiveCamera>(s_pSceneData->camera)->GetFieldOfView()) * 0.5f) * 2.f);
-	
-				const float* P = glm::value_ptr(s_pSceneData->camera->GetProjectionMatrix());
-				const glm::vec4 projInfoPerspective =
-				{
-					2.f / (P[4 * 0 + 0]),
-					2.f / (P[4 * 1 + 1]),
-					-(1.f - P[4 * 2 + 0]) / P[4 * 0 + 0],
-					-(1.f + P[4 * 2 + 1]) / P[4 * 1 + 1]
-				};
-
-				hbaoData.perspectiveInfo = projInfoPerspective;
-			}
-	
-			hbaoData.isOrtho = false;
-			hbaoData.powExponent = glm::max(s_pSceneData->hbaoIntensity, 0.f);
-			hbaoData.NdotVBias = glm::min(glm::max(0.f, s_pSceneData->hbaoBias), 1.f);
-			hbaoData.aoMultiplier = 1.f / (1.f - hbaoData.NdotVBias);
-			
-			s_pSceneData->hbaoDataBuffer->SetData(&s_pSceneData->hbaoData, sizeof(HBAODataBuffer));
-		}
 	}
 
 	void Renderer::DrawDirectionalShadows()
@@ -400,11 +363,6 @@ namespace Lamp
 		return s_renderer->CreateLightCullingPipeline(s_pSceneData->uniformBufferSet->Get(0), s_pSceneData->lightCullingBuffer, s_pSceneData->shaderStorageBufferSet, depthImage);
 	}
 
-	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateHBAOPipeline(Ref<Image2D> depthImage)
-	{
-		return std::pair<Ref<RenderComputePipeline>, std::function<void()>>();
-	}
-
 	void Renderer::CreateUniformBuffers()
 	{
 		/////Uniform buffer//////
@@ -415,7 +373,6 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
 
 		s_pSceneData->lightCullingBuffer = UniformBuffer::Create(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
-		s_pSceneData->hbaoDataBuffer = UniformBuffer::Create(&s_pSceneData->hbaoData, sizeof(HBAODataBuffer));
 		s_pSceneData->terrainDataBuffer = UniformBuffer::Create(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
 
 		/////Shader storage/////

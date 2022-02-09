@@ -3,7 +3,7 @@
 #include <string>
 #include "AssetLoader.h"
 
-#include "Lamp/Objects/Entity/Base/ComponentProperties.h"
+#include "Lamp/Objects/Entity/ComponentProperties.h"
 
 namespace YAML
 {
