@@ -60,6 +60,7 @@ namespace Lamp
 
 		CreateUniformBuffers();
 		GenerateBRDF();
+		GenerateSSAOData();
 
 		uint32_t blackCubeTextureData[6] = { 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
 		s_pSceneData->blackCubeTexture = TextureCube::Create(ImageFormat::RGBA, 1, 1, &blackCubeTextureData);
@@ -187,6 +188,12 @@ namespace Lamp
 			ub->SetData(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer));
 		}
 
+		//SSAO
+		{
+			auto ub = s_pSceneData->uniformBufferSet->Get(2, 0, currentFrame);
+			ub->SetData(&s_pSceneData->ssaoData, sizeof(SSAOBuffer));
+		}
+
 		//Terrain data
 		{
 			s_pSceneData->terrainDataBuffer->SetData(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
@@ -216,7 +223,7 @@ namespace Lamp
 
 			PointLightData* buffer = (PointLightData*)pointlightStorageBuffer->Map();
 
-			s_pSceneData->lightCullingData.lightCount = 0;
+			s_pSceneData->directionalLightDataBuffer.pointLightCount = 0;
 
 			for (uint32_t i = 0; i < pointLights.size(); i++)
 			{
@@ -228,15 +235,15 @@ namespace Lamp
 				buffer[i].falloff = light->falloff;
 				buffer[i].farPlane = light->farPlane;
 				buffer[i].radius = light->radius;
-				buffer[i].samplerId = i;
 
-				s_pSceneData->lightCullingData.lightCount++;
+				s_pSceneData->directionalLightDataBuffer.pointLightCount++;
 			}
 
 			pointlightStorageBuffer->Unmap();
 
 			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
 		}
+
 	}
 
 	void Renderer::UpdatePassBuffers(const Ref<RenderPipeline> pipeline)
@@ -363,12 +370,49 @@ namespace Lamp
 		return s_renderer->CreateLightCullingPipeline(s_pSceneData->uniformBufferSet->Get(0), s_pSceneData->lightCullingBuffer, s_pSceneData->shaderStorageBufferSet, depthImage);
 	}
 
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateSSAOPipeline(Ref<Image2D> depthImage, Ref<Image2D> normalImage, Ref<Image2D> outputImage)
+	{
+		return s_renderer->CreateSSAOPipeline(depthImage, normalImage, outputImage);
+	}
+
+	void Renderer::GenerateSSAOData()
+	{
+		s_pSceneData->ssaoNoise.clear();
+
+		std::uniform_real_distribution<float> randomFloats(0.f, 1.f);
+		std::default_random_engine generator;
+
+		for (uint32_t i = 0; i < (uint32_t)s_pSceneData->ssaoData.sizeBiasRadiusStrength.x; i++)
+		{
+			glm::vec3 sample{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, randomFloats(generator) };
+			sample = glm::normalize(sample);
+			sample *= randomFloats(generator);
+
+			float scale = float(i) / s_pSceneData->ssaoData.sizeBiasRadiusStrength.x;
+
+			scale = Lerp(0.1f, 1.f, scale * scale);
+			sample *= scale;
+
+			s_pSceneData->ssaoData.kernelSamples[i] = glm::vec4(sample, 0.f);
+		}
+
+		for (uint32_t i = 0; i < 16; i++)
+		{
+			glm::vec3 noise{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, 0.f };
+			s_pSceneData->ssaoNoise.emplace_back(noise, 0.f);
+		}
+
+		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(ImageFormat::RGBA32F, 4, 4);
+		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
+	}
+
 	void Renderer::CreateUniformBuffers()
 	{
 		/////Uniform buffer//////
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraData, sizeof(CameraDataBuffer), 0, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
+		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAOBuffer), 2, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
 

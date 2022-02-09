@@ -146,7 +146,7 @@ namespace Lamp
 		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[0].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("LightCullingBuffer"));
+		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("DirectionalLightBuffer"));
 		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[1].pBufferInfo = &vulkanTerrainBuffer->GetDescriptorInfo();
 

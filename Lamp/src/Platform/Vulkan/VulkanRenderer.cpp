@@ -354,6 +354,75 @@ namespace Lamp
 		return std::make_pair(lightCullingPipeline, func);
 	}
 
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> VulkanRenderer::CreateSSAOPipeline(Ref<Image2D> depthImage, Ref<Image2D> normalImage, Ref<Image2D> outputImage)
+	{
+		Ref<Shader> ssaoShader = ShaderLibrary::GetShader("ssaoCompute");
+		Ref<VulkanRenderComputePipeline> ssaoPipleline = std::reinterpret_pointer_cast<VulkanRenderComputePipeline>(RenderComputePipeline::Create(ssaoShader));
+
+		Ref<VulkanShader> vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(ssaoShader);
+
+		auto func = [=]()
+		{
+			auto device = VulkanContext::GetCurrentDevice();
+			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+			auto uniformBufferSet = Renderer::GetSceneData()->uniformBufferSet;
+
+			auto descriptorLayout = vulkanShader->GetDescriptorSetLayout(0);
+			auto& shaderDescriptorSet = vulkanShader->GetDescriptorSets()[0];
+
+			//Allocate descriptors
+			VkDescriptorSetAllocateInfo allocInfo{};
+			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			allocInfo.descriptorSetCount = 1;
+			allocInfo.pSetLayouts = &descriptorLayout;
+
+			VkDescriptorSet currentDescriptorSet;
+			currentDescriptorSet = AllocateDescriptorSet(allocInfo);
+
+			std::array<VkWriteDescriptorSet, 7> writeDescriptors;
+
+			auto vulkanCameraDataBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(uniformBufferSet->Get(0, 0, currentFrame));
+			writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
+			writeDescriptors[0].dstSet = currentDescriptorSet;
+			writeDescriptors[0].pBufferInfo = &vulkanCameraDataBuffer->GetDescriptorInfo();
+
+			auto vulkanSSAODataBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::GetSceneData()->ssaoDataBuffer);
+			writeDescriptors[1] = *vulkanShader->GetDescriptorSet("SSAODataBuffer");
+			writeDescriptors[1].dstSet = currentDescriptorSet;
+			writeDescriptors[1].pBufferInfo = &vulkanSSAODataBuffer->GetDescriptorInfo();
+
+			auto vulkanScreenBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(uniformBufferSet->Get(3, 0, currentFrame));
+			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("DirectionalLightBuffer");
+			writeDescriptors[2].dstSet = currentDescriptorSet;
+			writeDescriptors[2].pBufferInfo = &vulkanSSAODataBuffer->GetDescriptorInfo();
+
+			auto vulkanNormalImage = std::reinterpret_pointer_cast<VulkanImage2D>(normalImage);
+			writeDescriptors[3] = *vulkanShader->GetDescriptorSet("u_NormalTexture");
+			writeDescriptors[3].dstSet = currentDescriptorSet;
+			writeDescriptors[3].pImageInfo = &vulkanNormalImage->GetDescriptorInfo();
+
+			auto vulkanDepthImage = std::reinterpret_pointer_cast<VulkanImage2D>(depthImage);
+			writeDescriptors[4] = *vulkanShader->GetDescriptorSet("u_DepthTexture");
+			writeDescriptors[4].dstSet = currentDescriptorSet;
+			writeDescriptors[4].pImageInfo = &vulkanDepthImage->GetDescriptorInfo();
+
+			auto vulkanNoiseTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->ssaoNoiseTexture);
+			writeDescriptors[5] = *vulkanShader->GetDescriptorSet("u_NoiseTexture");
+			writeDescriptors[5].dstSet = currentDescriptorSet;
+			writeDescriptors[5].pImageInfo = &vulkanNoiseTexture->GetDescriptorInfo();
+
+			auto vulkanInputTexture = std::reinterpret_pointer_cast<VulkanImage2D>(outputImage);
+			writeDescriptors[6] = *vulkanShader->GetDescriptorSet("o_Color");
+			writeDescriptors[6].dstSet = currentDescriptorSet;
+			writeDescriptors[6].pImageInfo = &vulkanInputTexture->GetDescriptorInfo();
+
+			vkUpdateDescriptorSets(device->GetHandle(), writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+			ssaoPipleline->Execute(&currentDescriptorSet, 1, Renderer::GetSceneData()->screenGroupX, Renderer::GetSceneData()->screenGroupY, 1);
+		};
+
+		return std::make_pair(ssaoPipleline, func);
+	}
+
 	Ref<VulkanRenderer> VulkanRenderer::Create()
 	{
 		return CreateRef<VulkanRenderer>();

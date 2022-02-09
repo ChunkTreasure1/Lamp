@@ -64,6 +64,7 @@ namespace Lamp
 
 		VkDescriptorSet AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo);
 		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage);
+		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateSSAOPipeline(Ref<Image2D> depthImage, Ref<Image2D> normalImage, Ref<Image2D> outputImage);
 
 		static Ref<VulkanRenderer> Create();
 

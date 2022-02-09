@@ -64,6 +64,7 @@ namespace Lamp
 		static Ref<VulkanRenderer> GetRenderer() { return s_renderer; }
 
 		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
+		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateSSAOPipeline(Ref<Image2D> depthImage, Ref<Image2D> normalImage, Ref<Image2D> outputImage);
 
 		struct SceneData
 		{
@@ -85,6 +86,12 @@ namespace Lamp
 			Ref<Texture2D> whiteTexture;
 			Ref<CameraBase> camera;
 
+			/////SSAO/////
+			Ref<Texture2D> ssaoNoiseTexture;
+			uint32_t ssaoMaxKernelSize = 64;
+			std::vector<glm::vec4> ssaoNoise;
+			//////////////
+
 			/////HBAO/////
 			float hbaoRadius = 1.f;
 			float hbaoIntensity = 1.f;
@@ -97,10 +104,12 @@ namespace Lamp
 			ScreenDataBuffer screenData;
 			DirectionalLightVPBuffer directionalLightVPData;
 			LightCullingBuffer lightCullingData;
+			SSAOBuffer ssaoData;
 			TerrainDataBuffer terrainData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			Ref<UniformBuffer> lightCullingBuffer;
+			Ref<UniformBuffer> ssaoDataBuffer;
 			Ref<UniformBuffer> terrainDataBuffer;
 			//////////////////////////
 
@@ -128,10 +137,12 @@ namespace Lamp
 		static const Statistics& GetStatistics() { return s_statistics; }
 
 	private:
-		static void CreateUniformBuffers(); //TODO: remove
+		static void GenerateSSAOData();
 
+		static void CreateUniformBuffers(); //TODO: remove
 		static void UpdateBuffers(const Ref<CameraBase> camera);
 		static void UpdatePassBuffers(const Ref<RenderPipeline> pipeline);
+		
 		static void DrawDirectionalShadows();
 		static void GenerateBRDF();
 		static void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);

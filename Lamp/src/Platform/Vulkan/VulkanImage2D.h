@@ -14,6 +14,7 @@ namespace Lamp
 
 		void Invalidate(const void* data) override;
 		void Release() override;
+		void Resize(uint32_t width, uint32_t height) override;
 
 		uint32_t GetWidth() const override { return m_specification.width; }
 		uint32_t GetHeight() const override { return m_specification.height; }

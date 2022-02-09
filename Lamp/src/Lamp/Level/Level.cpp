@@ -333,6 +333,7 @@ namespace Lamp
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.drawType = DrawType::Buffer;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
 			pipelineSpec.debugName = "GBuffer";
 			pipelineSpec.vertexLayout =
 			{
@@ -371,6 +372,7 @@ namespace Lamp
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.drawType = DrawType::Quad;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
 			pipelineSpec.drawSkybox = false;
 			pipelineSpec.drawTerrain = false;
 			pipelineSpec.debugName = "Shading";
@@ -460,6 +462,8 @@ namespace Lamp
 				pass.graphicsPipeline->GetSpecification().framebuffer->Resize(e.GetWidth(), e.GetHeight());
 			}
 		}
+
+		//m_ssaoOutputImage->Resize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}

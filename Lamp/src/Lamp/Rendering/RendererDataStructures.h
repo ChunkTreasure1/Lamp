@@ -44,6 +44,7 @@ namespace Lamp
 	{
 		alignas(16) DirectionalLightData dirLights[1];
 		alignas(16) uint32_t lightCount = 0;
+		uint32_t pointLightCount;
 	};
 
 	struct DirectionalLightVPBuffer
@@ -58,6 +59,12 @@ namespace Lamp
 		uint32_t lightCount;
 	};
 
+	struct SSAOBuffer
+	{
+		alignas(16) glm::vec4 kernelSamples[256];
+		alignas(16) glm::vec4 sizeBiasRadiusStrength{ 64.f, 0.025f, 0.1f, 1.f };
+	};
+
 	struct PointLightData
 	{
 		alignas(16) glm::vec4 position;
@@ -67,8 +74,6 @@ namespace Lamp
 		float radius;
 		float falloff;
 		float farPlane;
-
-		alignas(16) int samplerId;
 	};
 
 	struct LightIndex

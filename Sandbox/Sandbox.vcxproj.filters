@@ -49,6 +49,9 @@
     <Filter Include="engine\shaders\vulkan">
       <UniqueIdentifier>{140BD81D-8077-9318-496B-2B76B596B580}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\shaders\vulkan\lightCulling">
+      <UniqueIdentifier>{297E666B-15BA-69D5-7ECC-81CC6A2712F0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -226,9 +229,6 @@
     <None Include="engine\shaders\vulkan\Lamp_Composite.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
-    <None Include="engine\shaders\vulkan\Lamp_DepthPrePass.glsl">
-      <Filter>engine\shaders\vulkan</Filter>
-    </None>
     <None Include="engine\shaders\vulkan\Lamp_DirectionalShadow.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
@@ -241,13 +241,10 @@
     <None Include="engine\shaders\vulkan\Lamp_EquirectangularToCubeMap.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
+    <None Include="engine\shaders\vulkan\Lamp_GBuffer.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
     <None Include="engine\shaders\vulkan\Lamp_HBAO.glsl">
-      <Filter>engine\shaders\vulkan</Filter>
-    </None>
-    <None Include="engine\shaders\vulkan\Lamp_LightCulling.glsl">
-      <Filter>engine\shaders\vulkan</Filter>
-    </None>
-    <None Include="engine\shaders\vulkan\Lamp_PBR.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
     <None Include="engine\shaders\vulkan\Lamp_Quad.glsl">
@@ -256,11 +253,26 @@
     <None Include="engine\shaders\vulkan\Lamp_SSAO.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
+    <None Include="engine\shaders\vulkan\Lamp_SSAOCompute.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_Shading.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
     <None Include="engine\shaders\vulkan\Lamp_Skybox.glsl">
       <Filter>engine\shaders\vulkan</Filter>
     </None>
     <None Include="engine\shaders\vulkan\Lamp_Terrain.glsl">
       <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\lightCulling\Lamp_DepthPrePass.glsl">
+      <Filter>engine\shaders\vulkan\lightCulling</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\lightCulling\Lamp_LightCulling.glsl">
+      <Filter>engine\shaders\vulkan\lightCulling</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\lightCulling\Lamp_PBR.glsl">
+      <Filter>engine\shaders\vulkan\lightCulling</Filter>
     </None>
   </ItemGroup>
 </Project>

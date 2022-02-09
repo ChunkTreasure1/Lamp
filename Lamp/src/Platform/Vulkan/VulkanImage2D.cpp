@@ -110,6 +110,11 @@ namespace Lamp
 
 		LP_VK_CHECK(vkCreateSampler(device->GetHandle(), &samplerCreateInfo, nullptr, &m_sampler));
 
+		if (m_specification.transferToLayout)
+		{
+			Utility::TransitionImageLayout(m_image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+		}
+
 		UpdateDescriptor();
 	}
 
@@ -137,6 +142,15 @@ namespace Lamp
 	
 		m_image = nullptr;
 		m_allocation = nullptr;
+	}
+
+	void VulkanImage2D::Resize(uint32_t width, uint32_t height)
+	{
+		Release();
+
+		m_specification.width = width;
+		m_specification.height = height;
+		Invalidate(nullptr);
 	}
 
 	void VulkanImage2D::UpdateDescriptor()

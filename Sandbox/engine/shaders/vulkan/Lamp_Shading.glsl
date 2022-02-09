@@ -61,8 +61,14 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 {
     DirectionalLight lights[1];
     uint count;
+    uint pointLightCount;
 
 } u_DirectionalLights;
+
+layout (std430, binding = 12) readonly buffer LightBuffer
+{
+    PointLight lights[1024];
+} u_LightBuffer;
 
 layout (location = 0) in Out
 {
@@ -74,7 +80,7 @@ layout (set = 0, binding = 5) uniform samplerCube u_IrradianceMap;
 layout (set = 0, binding = 6) uniform samplerCube u_PrefilterMap;
 layout (set = 0, binding = 7) uniform sampler2D u_BRDFLUT;
 
-layout (set = 0, binding = 12) uniform sampler2DShadow u_DirShadowMaps[1];
+layout (set = 0, binding = 13) uniform sampler2DShadow u_DirShadowMaps[1];
 
 layout (set = 1, binding = 8) uniform sampler2D u_PositionMetallic;
 layout (set = 1, binding = 9) uniform sampler2D u_Albedo;
@@ -266,6 +272,11 @@ void main()
     for(int i = 0; i < u_DirectionalLights.count; ++i)
     {
         lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[i], dirToCamera, normal, baseReflectivity, albedo.xyz, metallic, roughness, i);
+    }
+
+    for(int i = 0; i < u_DirectionalLights.pointLightCount; ++i)
+    {
+        lightAccumulation += CalculatePointLight(u_LightBuffer.lights[i], dirToCamera, normal, baseReflectivity, metallic, roughness, albedo.xyz, fragPos);
     }
 
     //Final calculations
