@@ -1,34 +1,27 @@
 #pragma once
 
-#include "Lamp/Physics/PhysicsMaterial.h"
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
+
 #include "Lamp/Mesh/Mesh.h"
+#include "Lamp/Physics/PhysicsMaterial.h"
 
 namespace Lamp
 {
 	class MeshColliderComponent final : public EntityComponent
 	{
 	public:
-		MeshColliderComponent()
-			: EntityComponent("MeshColliderComponent")
-		{
-			SetComponentProperties
-			({
-				{ PropertyType::Bool, "Is Trigger", RegisterData(&m_Specification.IsTrigger) }
-			});
-		}
+		MeshColliderComponent();
 
 		/////Base/////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
+		void SetComponentProperties() override;
 		//////////////
 
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<MeshColliderComponent>(); }
 		static std::string GetFactoryName() { return "MeshColliderComponent"; }
 
-	public:
 		struct MeshColliderSpecification
 		{
 			Ref<Mesh> CollisionMesh;
@@ -40,6 +33,7 @@ namespace Lamp
 		};
 
 		inline MeshColliderSpecification& GetSpecification() { return m_Specification; }
+
 	private:
 		MeshColliderSpecification m_Specification;
 	};

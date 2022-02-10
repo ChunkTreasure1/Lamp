@@ -2,12 +2,12 @@
 
 #include <ImNodes.h>
 
-#include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
+#include <Lamp/Objects/Entity/ComponentRegistry.h>
 #include <Lamp/Utility/PlatformUtility.h>
 
 #include <Lamp/GraphKey/Link.h>
 #include <Lamp/GraphKey/NodeRegistry.h>
-#include <Lamp/Objects/Entity/Base/Entity.h>
+#include <Lamp/Objects/Entity/Entity.h>
 #include <Lamp/Utility/UIUtility.h>
 
 namespace Sandbox

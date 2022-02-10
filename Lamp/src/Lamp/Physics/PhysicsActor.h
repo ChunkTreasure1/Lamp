@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/Entity.h"
-#include "PhysXUtils.h"
+#include "Lamp/Objects/Entity/Entity.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/RigidbodyComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/BoxColliderComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/SphereColliderComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/Physics/CapsuleColliderComponent.h"
 
+#include "PhysXUtils.h"
 #include "PhysicsShapes.h"
 
 namespace Lamp

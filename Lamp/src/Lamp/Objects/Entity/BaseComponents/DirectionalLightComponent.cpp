@@ -1,9 +1,6 @@
 #include "lppch.h"
 #include "DirectionalLightComponent.h"
 
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
-
 #include "Lamp/Level/LevelManager.h"
 #include "Lamp/Level/Level.h"
 
@@ -13,17 +10,10 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(DirectionalLightComponent)
 
-	DirectionalLightComponent::DirectionalLightComponent()
+		DirectionalLightComponent::DirectionalLightComponent()
 		: EntityComponent("DirectionalLightComponent")
 	{
 		m_pDirectionalLight = CreateScope<DirectionalLight>();
-
-		SetComponentProperties
-		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->intensity) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->color) },
-			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
-		});
 
 		if (LevelManager::IsLevelLoaded())
 		{
@@ -52,6 +42,16 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ObjectRotationChangedEvent>(LP_BIND_EVENT_FN(DirectionalLightComponent::OnRotationChanged));
+	}
+
+	void DirectionalLightComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->intensity) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->color) },
+			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
+		};
 	}
 
 	bool DirectionalLightComponent::OnRotationChanged(ObjectRotationChangedEvent& e)

@@ -7,7 +7,8 @@ namespace Lamp
 	struct MeshDataBuffer
 	{
 		glm::vec4 albedoColor;
-		glm::vec4 normalColor;
+		glm::vec3 normalColor;
+		uint32_t useDetailNormal;
 
 		glm::vec2 blendingUseBlending;
 		glm::vec2 mroColor;
@@ -29,7 +30,7 @@ namespace Lamp
 	struct ScreenDataBuffer
 	{
 		alignas(16) glm::vec2 size;
-		alignas(16) float aspectRatio;
+		float aspectRatio;
 		uint32_t xScreenTiles;
 	};
 
@@ -43,19 +44,14 @@ namespace Lamp
 	struct DirectionalLightDataBuffer
 	{
 		alignas(16) DirectionalLightData dirLights[1];
-		alignas(16) uint32_t lightCount = 0;
+		uint32_t lightCount = 0;
+		uint32_t pointLightCount = 0;
 	};
 
 	struct DirectionalLightVPBuffer
 	{
 		alignas(16) glm::mat4 directionalLightVPs[10];
-		alignas(16) uint32_t count;
-	};
-
-	struct SSAODataBuffer
-	{
-		alignas(16) glm::vec4 kernelSamples[256];
-		alignas(16) glm::vec4 sizeBiasRadiusStrength{ 64.f, 0.025f, 0.1f, 1.f };
+		uint32_t count;
 	};
 
 	struct LightCullingBuffer
@@ -73,8 +69,6 @@ namespace Lamp
 		float radius;
 		float falloff;
 		float farPlane;
-
-		alignas(16) int samplerId;
 	};
 
 	struct LightIndex
@@ -85,5 +79,22 @@ namespace Lamp
 	struct TerrainDataBuffer
 	{
 		alignas(16) float heightMultiplier = 0.f;
+	};
+
+	struct HBAODataBuffer
+	{
+		glm::vec4 perspectiveInfo;
+		glm::vec2 invQuarterResolution;
+
+		float radiusToScreen;
+		float negInvR2;
+		float NdotVBias;
+		float aoMultiplier;
+		float powExponent;
+
+		bool isOrtho;
+
+		glm::vec4 float2Offsets[16];
+		glm::vec4 jitters[16];
 	};
 }

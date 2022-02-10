@@ -2,7 +2,7 @@
 #include "Lamp/GraphKey/Node.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
 
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
 #include "Lamp/Level/Level.h"
 
 namespace Lamp

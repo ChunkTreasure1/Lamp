@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/Entity.h"
 
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 #include "Lamp/Rendering/Cameras/OrthographicCamera.h"
@@ -22,22 +21,21 @@ namespace Lamp
 		//////Base//////
 		void Initialize() override;
 		void OnEvent(Lamp::Event& someE) override;
+		void SetComponentProperties() override;
 		////////////////
 
 		inline void SetIsMain(bool state) { m_isMain = state; }
 		inline bool GetIsMain() { return m_isMain; }
 		inline Ref<CameraBase> GetCamera() { return std::reinterpret_pointer_cast<CameraBase>(m_perspectiveCamera); }
 
+		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }
+		static std::string GetFactoryName() { return "CameraComponent"; }
+
 	private:
 		bool OnUpdate(AppUpdateEvent& e);
 		bool OnViewportSizeChanged(EditorViewportSizeChangedEvent& e);
 		bool OnPropertyUpdated(ObjectPropertyChangedEvent& e);
 
-	public:
-		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }
-		static std::string GetFactoryName() { return "CameraComponent"; }
-
-	private:
 		bool m_isPerspective = true;
 		bool m_isMain = false;
 

@@ -1,35 +1,26 @@
 #pragma once
 
 #include "Lamp/Physics/PhysicsMaterial.h"
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
 
 namespace Lamp
 {
 	class BoxColliderComponent final : public EntityComponent
 	{
 	public:
-		BoxColliderComponent()
-			: EntityComponent("BoxColliderComponent")
-		{
-			SetComponentProperties
-			({
-				{ PropertyType::Float3, "Size", RegisterData(&m_Specification.m_Size) },
-				{ PropertyType::Float3, "Offset", RegisterData(&m_Specification.m_Offset) },
-				{ PropertyType::Bool, "Is Trigger", RegisterData(&m_Specification.m_IsTrigger) }
-			});
-		}
+		BoxColliderComponent();
+
 
 		/////Base/////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
+		void SetComponentProperties() override;
 		//////////////
 
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<BoxColliderComponent>(); }
 		static std::string GetFactoryName() { return "BoxColliderComponent"; }
 
-	public:
 		struct BoxColliderSpecification
 		{
 			glm::vec3 m_Size = { 1.f, 1.f, 1.f };

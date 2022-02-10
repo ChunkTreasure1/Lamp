@@ -28,13 +28,11 @@ layout (location = 0) out vec4 o_FinalColor;
 
 layout (location = 0) in vec2 v_TexCoords;
 
-layout (set = 0, binding = 4) uniform sampler2D u_Color;
-layout (set = 0, binding = 5) uniform sampler2D u_SSAOMap;
+layout (set = 0, binding = 5) uniform sampler2D u_Color;
 
 void main()
 {
     vec4 color = texture(u_Color, v_TexCoords);
-    float ssao = 1 - texture(u_SSAOMap, v_TexCoords).r;
 
-    o_FinalColor = vec4(color.rgb - color.rgb * ssao, 1.0);
+    o_FinalColor = vec4(color.rgb, 1.0);
 }

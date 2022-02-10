@@ -4,7 +4,7 @@
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/DirectionalLightComponent.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Entity.h"
 #include "Lamp/Objects/Brushes/Brush.h"
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
@@ -326,7 +326,7 @@ namespace Lamp
 			framebufferSpec.swapchainTarget = false;
 			framebufferSpec.attachments =
 			{
-				ImageFormat::RGBA16F,
+				ImageFormat::R32F,
 				ImageFormat::DEPTH32F
 			};
 
@@ -336,6 +336,7 @@ namespace Lamp
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.debugName = "Pre Depth";
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -357,55 +358,13 @@ namespace Lamp
 			pass.computeExcuteCommand = command;
 		}
 
-		//SSAO main pass
-		{
-			//FramebufferSpecification framebufferSpec{};
-			//framebufferSpec.swapchainTarget = false;
-			//framebufferSpec.attachments =
-			//{
-			//	ImageFormat::R32F
-			//};
-
-			//RenderPipelineSpecification pipelineSpec{};
-			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			//m_ssaoMainFramebuffer = pipelineSpec.framebuffer;
-
-			//pipelineSpec.shader = ShaderLibrary::GetShader("ssaoMain");
-			//pipelineSpec.isSwapchain = false;
-			//pipelineSpec.topology = Topology::TriangleList;
-			//pipelineSpec.drawType = DrawType::Quad;
-			//pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			//pipelineSpec.vertexLayout =
-			//{
-			//	{ ElementType::Float3, "a_Position" },
-			//	{ ElementType::Float3, "a_Normal" },
-			//	{ ElementType::Float3, "a_Tangent" },
-			//	{ ElementType::Float3, "a_Bitangent" },
-			//	{ ElementType::Float2, "a_TexCoords" },
-			//};
-
-			//pipelineSpec.framebufferInputs =
-			//{
-			//	{ m_depthPrePassFramebuffer->GetColorAttachment(0), 0, 4 },
-			//	{ m_depthPrePassFramebuffer->GetDepthAttachment(), 0, 5 }
-			//};
-
-			//pipelineSpec.textureInputs =
-			//{
-			//	{ Renderer::GetSceneData()->ssaoNoiseTexture, 0, 6 }
-			//};
-
-			//auto& pass = renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		//Main pass
+		//Geometry pass
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
 			framebufferSpec.attachments =
 			{
-				ImageFormat::RGBA,
+				ImageFormat::RGBA32F,
 				ImageFormat::DEPTH32F
 			};
 
@@ -420,6 +379,7 @@ namespace Lamp
 			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
 			pipelineSpec.drawSkybox = true;
 			pipelineSpec.drawTerrain = true;
+			pipelineSpec.debugName = "Geometry";
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -438,42 +398,81 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
+		//Translucency pass
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.clearColor = { 0.f, 0.f, 0.f, 0.f };
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA16F,
+				ImageFormat::RGBA16F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrSSS");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Translucency;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
+			pipelineSpec.drawSkybox = false;
+			pipelineSpec.drawTerrain = false;
+			pipelineSpec.debugName = "Translucency";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+			};
+
+			//auto& pass = m_renderPasses.emplace_back();
+			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
 		//Composite
 		{
-			//FramebufferSpecification framebufferSpec{};
-			//framebufferSpec.swapchainTarget = false;
-			//framebufferSpec.attachments =
-			//{
-			//	ImageFormat::RGBA,
-			//	ImageFormat::DEPTH32F
-			//};
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
 
-			//RenderPipelineSpecification pipelineSpec{};
-			//pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			//m_viewportFramebuffer = pipelineSpec.framebuffer;
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("composite");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Quad;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
 
-			//pipelineSpec.shader = ShaderLibrary::GetShader("composite");
-			//pipelineSpec.isSwapchain = false;
-			//pipelineSpec.topology = Topology::TriangleList;
-			//pipelineSpec.drawType = DrawType::Quad;
-			//pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			//pipelineSpec.vertexLayout =
-			//{
-			//	{ ElementType::Float3, "a_Position" },
-			//	{ ElementType::Float3, "a_Normal" },
-			//	{ ElementType::Float3, "a_Tangent" },
-			//	{ ElementType::Float3, "a_Bitangent" },
-			//	{ ElementType::Float2, "a_TexCoords" },
-			//};
+			pipelineSpec.framebufferInputs =
+			{
+				{ m_geometryFramebuffer->GetColorAttachment(0), 0, 5 },
+			};
 
-			//pipelineSpec.framebufferInputs =
-			//{
-			//	{ m_geometryFramebuffer->GetColorAttachment(0), 0, 4 },
-			//	{ m_ssaoMainFramebuffer->GetColorAttachment(0), 0, 5 }
-			//};
-
-			//auto& pass = renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 	}
 

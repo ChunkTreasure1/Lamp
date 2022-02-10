@@ -3,7 +3,7 @@
 #include <string>
 #include "AssetLoader.h"
 
-#include "Lamp/Objects/Entity/Base/ComponentProperties.h"
+#include "Lamp/Objects/Entity/ComponentProperties.h"
 
 namespace YAML
 {
@@ -27,7 +27,7 @@ namespace Lamp
 	private:
 		void SerializeEntity(YAML::Emitter& out, const Entity* pEnt) const;
 		void SerializeBrush(YAML::Emitter& out, const Brush* pBrush) const;
-		void SerializeAttribute(const Attribute& attr, const std::string& type, YAML::Emitter& out) const;
+		void SerializeAttribute(const Attribute& attr, const std::string& type,  YAML::Emitter& out) const;
 
 		void DeserializeEntity(const YAML::Node& node, std::map<uint32_t, Entity*>& entities, Level* level) const;
 		void DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Level* level) const;

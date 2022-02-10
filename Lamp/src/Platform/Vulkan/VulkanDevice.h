@@ -27,6 +27,7 @@ namespace Lamp
 		inline const QueueFamilyIndices& GetQueueFamilyIndices() const { return m_queueFamilyIndices; }
 
 		inline const VkPhysicalDeviceProperties& GetProperties() const { return m_properties; }
+		inline const VkPhysicalDeviceFeatures& GetFeatures() const { return m_features; }
 		inline const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return m_memoryProperties; }
 		inline const VkPhysicalDeviceLimits& GetLimits() const { return m_properties.limits; }
 

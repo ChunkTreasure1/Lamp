@@ -60,6 +60,26 @@ namespace Lamp
 
 			return VK_CULL_MODE_BACK_BIT;
 		}
+
+		static VkColorComponentFlags GetColorComponentsFromFormat(ImageFormat format)
+		{
+			switch (format)
+			{
+				case Lamp::ImageFormat::R32F: return VK_COLOR_COMPONENT_R_BIT;
+				case Lamp::ImageFormat::R32I: return VK_COLOR_COMPONENT_R_BIT;
+				case Lamp::ImageFormat::RGB: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
+				case Lamp::ImageFormat::RGBA: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+				case Lamp::ImageFormat::RGBA16F: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+				case Lamp::ImageFormat::RGBA32F: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+				case Lamp::ImageFormat::RG16F: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT;
+				case Lamp::ImageFormat::RG32F: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT;
+				case Lamp::ImageFormat::SRGB: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
+				default:
+					break;
+			}
+
+			return VK_COLOR_COMPONENT_R_BIT;
+		}
 	}
 
 	VulkanRenderPipeline::VulkanRenderPipeline(const RenderPipelineSpecification& specification)
@@ -307,9 +327,33 @@ namespace Lamp
 		multisampling.sampleShadingEnable = VK_FALSE;
 		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-		VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		colorBlendAttachment.blendEnable = VK_FALSE;
+		VkPipelineColorBlendStateCreateInfo colorBlending{};
+		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		colorBlending.logicOpEnable = VK_FALSE;
+		colorBlending.logicOp = VK_LOGIC_OP_COPY;
+		colorBlending.blendConstants[0] = 0.0f;
+		colorBlending.blendConstants[1] = 0.0f;
+		colorBlending.blendConstants[2] = 0.0f;
+		colorBlending.blendConstants[3] = 0.0f;
+
+		std::vector<VkPipelineColorBlendAttachmentState> blendAttachments;
+
+		for (const auto& attachment : m_specification.framebuffer->GetSpecification().attachments.Attachments)
+		{
+			if (Utils::IsDepthFormat(attachment.textureFormat))
+			{
+				continue;
+			}
+
+			VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+			colorBlendAttachment.colorWriteMask = Utils::GetColorComponentsFromFormat(attachment.textureFormat);
+			colorBlendAttachment.blendEnable = VK_FALSE;
+
+			blendAttachments.emplace_back(colorBlendAttachment);
+		}
+
+		colorBlending.attachmentCount = blendAttachments.size();
+		colorBlending.pAttachments = blendAttachments.data();
 
 		VkPipelineDepthStencilStateCreateInfo depthStencil{};
 		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -318,17 +362,6 @@ namespace Lamp
 		depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 		depthStencil.depthBoundsTestEnable = VK_FALSE;
 		depthStencil.stencilTestEnable = VK_FALSE;
-
-		VkPipelineColorBlendStateCreateInfo colorBlending{};
-		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		colorBlending.logicOpEnable = VK_FALSE;
-		colorBlending.logicOp = VK_LOGIC_OP_COPY;
-		colorBlending.attachmentCount = 1;
-		colorBlending.pAttachments = &colorBlendAttachment;
-		colorBlending.blendConstants[0] = 0.0f;
-		colorBlending.blendConstants[1] = 0.0f;
-		colorBlending.blendConstants[2] = 0.0f;
-		colorBlending.blendConstants[3] = 0.0f;
 
 		VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
 		dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;

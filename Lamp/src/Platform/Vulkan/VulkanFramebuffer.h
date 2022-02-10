@@ -22,6 +22,7 @@ namespace Lamp
 
 		inline VkRenderPass GetRenderPass() const { return m_renderPass; }
 		inline VkFramebuffer GetFramebuffer() const { return m_framebuffer; }
+		inline const std::vector<VkClearValue>& GetClearValues() { return m_clearValues; }
 
 		void ClearAttachment(uint32_t attachmentIndex, int value) override;
 

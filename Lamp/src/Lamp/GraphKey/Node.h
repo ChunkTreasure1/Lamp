@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Entity.h"
 #include "Link.h"
 
 #define LP_BIND_NODE_FUNCTION(x) std::bind(&x, this)

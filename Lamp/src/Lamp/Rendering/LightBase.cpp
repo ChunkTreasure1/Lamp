@@ -33,7 +33,7 @@ namespace Lamp
 		pipelineSpec.isSwapchain = false;
 		pipelineSpec.cullMode = CullMode::Front;
 		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::Buffer;
+		pipelineSpec.drawType = DrawType::Opaque;
 		pipelineSpec.uniformBufferSets = uniformBufferSet;
 		pipelineSpec.vertexLayout =
 		{

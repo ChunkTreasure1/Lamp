@@ -58,11 +58,6 @@ namespace Lamp
 		ShaderLibrary::LoadShaders();
 		MaterialLibrary::LoadMaterials();
 
-		GenerateKernel();
-
-		s_pSceneData->ssaoNoiseTexture = Texture2D::Create(ImageFormat::RGBA32F, 4, 4);
-		s_pSceneData->ssaoNoiseTexture->SetData(s_pSceneData->ssaoNoise.data(), s_pSceneData->ssaoNoise.size() * sizeof(glm::vec4));
-
 		CreateUniformBuffers();
 		GenerateBRDF();
 
@@ -85,6 +80,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
+		s_pSceneData->camera = camera;
 
 		DrawDirectionalShadows();
 
@@ -196,12 +192,6 @@ namespace Lamp
 			s_pSceneData->terrainDataBuffer->SetData(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
 		}
 
-		//SSAO
-		{
-			auto ub = s_pSceneData->uniformBufferSet->Get(2, 0, currentFrame);
-			ub->SetData(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer));
-		}
-
 
 		//Light data
 		if (LevelManager::IsLevelLoaded())
@@ -227,6 +217,7 @@ namespace Lamp
 			PointLightData* buffer = (PointLightData*)pointlightStorageBuffer->Map();
 
 			s_pSceneData->lightCullingData.lightCount = 0;
+			s_pSceneData->directionalLightDataBuffer.lightCount = 0;
 
 			for (uint32_t i = 0; i < pointLights.size(); i++)
 			{
@@ -238,9 +229,9 @@ namespace Lamp
 				buffer[i].falloff = light->falloff;
 				buffer[i].farPlane = light->farPlane;
 				buffer[i].radius = light->radius;
-				buffer[i].samplerId = i;
 
 				s_pSceneData->lightCullingData.lightCount++;
+				s_pSceneData->directionalLightDataBuffer.pointLightCount++;
 			}
 
 			pointlightStorageBuffer->Unmap();
@@ -254,6 +245,19 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
+		//Light culling buffer
+		{
+			glm::vec2 size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
+
+			s_pSceneData->screenGroupX = ((uint32_t)size.x + (16 - ((uint32_t)size.x % 16))) / 16;
+			s_pSceneData->screenGroupY = ((uint32_t)size.y + (16 - ((uint32_t)size.y % 16))) / 16;
+
+			s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
+
+			s_pSceneData->lightCullingData.screenSize = size;
+			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData.screenSize, sizeof(glm::vec2));
+		}
+
 		//Screen
 		{
 			auto ub = s_pSceneData->uniformBufferSet->Get(3, 0, currentFrame);
@@ -265,16 +269,38 @@ namespace Lamp
 			ub->SetData(&s_pSceneData->screenData, sizeof(ScreenDataBuffer));
 		}
 
-		//Light culling buffer
 		{
+			auto& hbaoData = s_pSceneData->hbaoData;
+
+			const float meters2ViewSpace = 1.f;
+			const float R = s_pSceneData->hbaoRadius * meters2ViewSpace;
+			const float R2 = R * R;
+
+			hbaoData.negInvR2 = -1.f / R2;
+
 			glm::vec2 size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
-			
-			s_pSceneData->screenGroupX = ((uint32_t)size.x + ((uint32_t)size.x % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-			s_pSceneData->screenGroupY = ((uint32_t)size.y + ((uint32_t)size.y % s_pSceneData->screenTileSize)) / s_pSceneData->screenTileSize;
-			s_pSceneData->screenTileCount = s_pSceneData->screenGroupX * s_pSceneData->screenGroupY;
-			
-			s_pSceneData->lightCullingData.screenSize = size;
-			s_pSceneData->lightCullingBuffer->SetData(&s_pSceneData->lightCullingData.screenSize, sizeof(glm::vec2));
+			hbaoData.invQuarterResolution = 1.f / glm::vec2{ size.x / 4.f, size.y / 4.f };
+			if (s_pSceneData->camera)
+			{
+				hbaoData.radiusToScreen = R * 0.5f * size.y / (tanf(glm::radians(std::reinterpret_pointer_cast<PerspectiveCamera>(s_pSceneData->camera)->GetFieldOfView()) * 0.5f) * 2.f);
+
+				const float* P = glm::value_ptr(s_pSceneData->camera->GetProjectionMatrix());
+				const glm::vec4 projInfoPerspective =
+				{
+					2.f / (P[4 * 0 + 0]),
+					2.f / (P[4 * 1 + 1]),
+					-(1.f - P[4 * 2 + 0]) / P[4 * 0 + 0],
+					-(1.f + P[4 * 2 + 1]) / P[4 * 1 + 1]
+				};
+				hbaoData.perspectiveInfo = projInfoPerspective;
+			}
+
+			hbaoData.isOrtho = false;
+			hbaoData.powExponent = glm::max(s_pSceneData->hbaoIntensity, 0.f);
+			hbaoData.NdotVBias = glm::min(glm::max(0.f, s_pSceneData->hbaoBias), 1.f);
+			hbaoData.aoMultiplier = 1.f / (1.f - hbaoData.NdotVBias);
+
+			s_pSceneData->hbaoDataBuffer->SetData(&s_pSceneData->hbaoData, sizeof(HBAODataBuffer));
 		}
 	}
 
@@ -367,37 +393,14 @@ namespace Lamp
 		return a + f * (b - a);
 	}
 
-	void Renderer::GenerateKernel()
-	{
-		s_pSceneData->ssaoNoise.clear();
-
-		std::uniform_real_distribution<float> randomFloats(0.f, 1.f);
-		std::default_random_engine generator;
-
-		for (uint32_t i = 0; i < (uint32_t)s_pSceneData->ssaoData.sizeBiasRadiusStrength.x; i++)
-		{
-			glm::vec3 sample{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, randomFloats(generator) };
-			sample = glm::normalize(sample);
-			sample *= randomFloats(generator);
-
-			float scale = float(i) / s_pSceneData->ssaoData.sizeBiasRadiusStrength.x;
-
-			scale = Lerp(0.1f, 1.f, scale * scale);
-			sample *= scale;
-
-			s_pSceneData->ssaoData.kernelSamples[i] = glm::vec4(sample, 0.f);
-		}
-
-		for (uint32_t i = 0; i < 16; i++)
-		{
-			glm::vec3 noise{ randomFloats(generator) * 2.f - 1.f, randomFloats(generator) * 2.f - 1.f, 0.f };
-			s_pSceneData->ssaoNoise.emplace_back(noise, 0.f);
-		}
-	}
-
 	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<Image2D> depthImage)
 	{
 		return s_renderer->CreateLightCullingPipeline(s_pSceneData->uniformBufferSet->Get(0), s_pSceneData->lightCullingBuffer, s_pSceneData->shaderStorageBufferSet, depthImage);
+	}
+
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateHBAOPipeline(Ref<Image2D> depthImage)
+	{
+		return std::pair<Ref<RenderComputePipeline>, std::function<void()>>();
 	}
 
 	void Renderer::CreateUniformBuffers()
@@ -406,11 +409,11 @@ namespace Lamp
 		s_pSceneData->uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->cameraData, sizeof(CameraDataBuffer), 0, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
-		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->ssaoData, sizeof(SSAODataBuffer), 2, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->screenData, sizeof(ScreenDataBuffer), 3, 0);
 		s_pSceneData->uniformBufferSet->Add(&s_pSceneData->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
 
 		s_pSceneData->lightCullingBuffer = UniformBuffer::Create(&s_pSceneData->lightCullingData, sizeof(LightCullingBuffer));
+		s_pSceneData->hbaoDataBuffer = UniformBuffer::Create(&s_pSceneData->hbaoData, sizeof(HBAODataBuffer));
 		s_pSceneData->terrainDataBuffer = UniformBuffer::Create(&s_pSceneData->terrainData, sizeof(TerrainDataBuffer));
 
 		/////Shader storage/////

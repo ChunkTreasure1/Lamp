@@ -62,9 +62,9 @@ namespace Lamp
 
 		static const SceneData* GetSceneData() { return s_pSceneData; }
 		static Ref<VulkanRenderer> GetRenderer() { return s_renderer; }
-		static void GenerateKernel();
 
 		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
+		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateHBAOPipeline(Ref<Image2D> depthImage);
 
 		struct SceneData
 		{
@@ -84,24 +84,26 @@ namespace Lamp
 			Ref<Framebuffer> brdfFramebuffer;
 			Ref<TextureCube> blackCubeTexture;
 			Ref<Texture2D> whiteTexture;
+			Ref<CameraBase> camera;
 
-			/////SSAO/////
-			uint32_t ssaoMaxKernelSize = 64;
-			std::vector<glm::vec4> ssaoNoise;
-			Ref<Texture2D> ssaoNoiseTexture;
+			/////HBAO/////
+			float hbaoRadius = 1.f;
+			float hbaoIntensity = 1.f;
+			float hbaoBias = 0.02f;
 			//////////////
 
 			/////Uniform buffers//////
 			DirectionalLightDataBuffer directionalLightDataBuffer;
-			SSAODataBuffer ssaoData;
 			CameraDataBuffer cameraData;
 			ScreenDataBuffer screenData;
 			DirectionalLightVPBuffer directionalLightVPData;
 			LightCullingBuffer lightCullingData;
 			TerrainDataBuffer terrainData;
+			HBAODataBuffer hbaoData;
 
 			Ref<UniformBufferSet> uniformBufferSet;
 			Ref<UniformBuffer> lightCullingBuffer;
+			Ref<UniformBuffer> hbaoDataBuffer;
 			Ref<UniformBuffer> terrainDataBuffer;
 			//////////////////////////
 

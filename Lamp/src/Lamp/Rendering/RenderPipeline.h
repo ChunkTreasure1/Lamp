@@ -22,7 +22,9 @@ namespace Lamp
 
 	enum class DrawType
 	{
-		Buffer,
+		Opaque,
+		Transparent,
+		Translucency,
 		Quad,
 		Cube,
 		Terrain,
@@ -66,7 +68,7 @@ namespace Lamp
 		Ref<ShaderStorageBufferSet> shaderStorageBufferSets;
 
 		Topology topology;
-		DrawType drawType = DrawType::Buffer;
+		DrawType drawType = DrawType::Opaque;
 		CullMode cullMode = CullMode::Back;
 		bool depthTest = true;
 		bool depthWrite = true;
@@ -76,6 +78,8 @@ namespace Lamp
 		BufferLayout vertexLayout;
 
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
+
+		std::string debugName;
 
 		glm::vec2 size;
 		bool isSwapchain;

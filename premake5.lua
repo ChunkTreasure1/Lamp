@@ -108,8 +108,7 @@ project "Lamp"
 		"%{Library.PhysXFoundation}",
 		"%{Library.PhysXPvdSDK}",
 
-		"%{Library.Vulkan}",
-		"%{Library.ktx2}"
+		"%{Library.Vulkan}"
 	}
 
 	defines 
@@ -145,6 +144,7 @@ project "Lamp"
 				"%{Library.SPIRV_Cross_Debug}",
 				"%{Library.SPIRV_Cross_GLSL_Debug}",
 				"%{Library.SPIRV_Tools_Debug}",
+				"%{Library.ktx2_debug}"
 			}
 
 		filter "configurations:Release"
@@ -163,6 +163,7 @@ project "Lamp"
 				"%{Library.ShaderC_Utils_Release}",
 				"%{Library.SPIRV_Cross_Release}",
 				"%{Library.SPIRV_Cross_GLSL_Release}",
+				"%{Library.ktx2}"
 			}
 
 		filter "configurations:Dist"
@@ -176,6 +177,7 @@ project "Lamp"
 				"%{Library.ShaderC_Utils_Release}",
 				"%{Library.SPIRV_Cross_Release}",
 				"%{Library.SPIRV_Cross_GLSL_Release}",
+				"%{Library.ktx2}"
 			}
 			
 			
@@ -249,8 +251,7 @@ project "Sandbox"
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
 		"%{Library.fmodstudio}",
-		"%{Library.Vulkan}",
-		"%{Library.ktx2}"
+		"%{Library.Vulkan}"
 	}
 	
 	linkoptions
@@ -286,6 +287,7 @@ project "Sandbox"
 				"%{Library.SPIRV_Cross_Debug}",
 				"%{Library.SPIRV_Cross_GLSL_Debug}",
 				"%{Library.SPIRV_Tools_Debug}",
+				"%{Library.ktx2_debug}"
 			}
 
 		filter "configurations:Release"
@@ -299,6 +301,7 @@ project "Sandbox"
 				"%{Library.ShaderC_Utils_Release}",
 				"%{Library.SPIRV_Cross_Release}",
 				"%{Library.SPIRV_Cross_GLSL_Release}",
+				"%{Library.ktx2}"
 			}
 
 		filter "configurations:Dist"
@@ -312,6 +315,7 @@ project "Sandbox"
 				"%{Library.ShaderC_Utils_Release}",
 				"%{Library.SPIRV_Cross_Release}",
 				"%{Library.SPIRV_Cross_GLSL_Release}",
+				"%{Library.ktx2}"
 			}
 			
 project "Game"

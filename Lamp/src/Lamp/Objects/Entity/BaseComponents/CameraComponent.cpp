@@ -17,14 +17,6 @@ namespace Lamp
 
 	void CameraComponent::Initialize()
 	{
-		SetComponentProperties
-		({
-			{ PropertyType::Bool, "Is Perspective", RegisterData(&m_isPerspective) },
-			{ PropertyType::Bool, "Is Main", RegisterData(&m_isMain) },
-			{ PropertyType::Float, "Field Of View", RegisterData(&m_perspectiveCamera->GetFieldOfView()) },
-			{ PropertyType::Float, "Near Plane", RegisterData(&m_nearPlane) },
-			{ PropertyType::Float, "Far Plane", RegisterData(&m_farPlane) }
-		});
 	}
 
 	void CameraComponent::OnEvent(Lamp::Event& e)
@@ -33,6 +25,18 @@ namespace Lamp
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(CameraComponent::OnUpdate));
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(CameraComponent::OnViewportSizeChanged));
 		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(CameraComponent::OnPropertyUpdated));
+	}
+
+	void CameraComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::Bool, "Is Perspective", RegisterData(&m_isPerspective) },
+			{ PropertyType::Bool, "Is Main", RegisterData(&m_isMain) },
+			{ PropertyType::Float, "Field Of View", RegisterData(&m_perspectiveCamera->GetFieldOfView()) },
+			{ PropertyType::Float, "Near Plane", RegisterData(&m_nearPlane) },
+			{ PropertyType::Float, "Far Plane", RegisterData(&m_farPlane) }
+		};
 	}
 
 	bool CameraComponent::OnUpdate(AppUpdateEvent& e)

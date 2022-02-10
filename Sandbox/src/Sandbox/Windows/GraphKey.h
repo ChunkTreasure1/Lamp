@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include <Lamp/Objects/Entity/Base/BaseComponent.h>
+#include <Lamp/Objects/Entity/EntityComponent.h>
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 
 namespace Sandbox

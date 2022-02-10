@@ -5,6 +5,10 @@
 
 LP_REGISTER_COMPONENT(ControllerComponent);
 
+ControllerComponent::ControllerComponent()
+	: EntityComponent("ControllerComponent")
+{}
+
 void ControllerComponent::Initialize()
 {
 	m_pRigidbody = m_pEntity->GetComponent<Lamp::RigidbodyComponent>();
@@ -14,6 +18,14 @@ void ControllerComponent::OnEvent(Lamp::Event& e)
 {
 	Lamp::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Lamp::AppUpdateEvent>(LP_BIND_EVENT_FN(ControllerComponent::OnUpdateEvent));
+}
+
+void ControllerComponent::SetComponentProperties()
+{
+	m_componentProperties =
+	{
+		{ Lamp::PropertyType::Float, "Speed", RegisterData(&m_Speed) }
+	};
 }
 
 bool ControllerComponent::OnUpdateEvent(Lamp::AppUpdateEvent& e)

@@ -3,8 +3,8 @@
 
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
-#include <Lamp/Objects/Entity/Base/Entity.h>
-#include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
+#include <Lamp/Objects/Entity/Entity.h>
+#include <Lamp/Objects/Entity/ComponentRegistry.h>
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <Lamp/Core/CoreLogger.h>
@@ -65,10 +65,10 @@ namespace Sandbox
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 				
-				//if (LevelManager::IsLevelLoaded())
-				//{
-				//	LevelManager::GetActive()->OnEvent(e);
-				//}
+				if (LevelManager::IsLevelLoaded())
+				{
+					LevelManager::GetActive()->OnEvent(e);
+				}
 			}
 			 
 			if (LevelManager::IsLevelLoaded())
@@ -599,25 +599,6 @@ namespace Sandbox
 				{
 
 				}
-
-				UI::EndProperties();
-			}
-
-			UI::TreeNodePop();
-		}
-
-		if (UI::TreeNodeFramed("SSAO", true))
-		{
-			if (UI::BeginProperties("ssaoProps"))
-			{
-				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.sizeBiasRadiusStrength.z), true, 0.f, 1.f);
-				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.sizeBiasRadiusStrength.w), true, 0.f, 1.f);
-				if (UI::Property("Kernel Size", const_cast<float&>(Renderer::GetSceneData()->ssaoData.sizeBiasRadiusStrength.x), true, 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
-				{
-					Renderer::GenerateKernel();
-				}
-
-				UI::Property("Ambiance Multiplier", const_cast<float&>(Renderer::GetSceneData()->ambianceMultiplier));
 
 				UI::EndProperties();
 			}

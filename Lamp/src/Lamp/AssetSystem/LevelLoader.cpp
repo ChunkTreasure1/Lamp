@@ -11,7 +11,7 @@
 #include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include "Lamp/Objects/Brushes/Brush.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Entity.h"
 
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
@@ -478,6 +478,7 @@ namespace Lamp
 
 			pComp->m_pEntity = entity;
 			pComp->Initialize();
+			pComp->SetComponentProperties();
 
 			YAML::Node paramsNode = compEntry["params"];
 			for (auto paramEntry : paramsNode)

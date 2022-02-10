@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
 #include "Lamp/Event/EntityEvent.h"
 
 namespace Lamp
@@ -12,8 +12,9 @@ namespace Lamp
 		~DirectionalLightComponent() override;
 
 		//////Base//////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
+		void SetComponentProperties() override;
 		////////////////
 
 		inline DirectionalLight& GetLight() { return *m_pDirectionalLight; }

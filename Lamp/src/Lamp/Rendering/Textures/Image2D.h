@@ -50,6 +50,13 @@ namespace Lamp
 		Nearest
 	};
 
+	enum class TextureBlend : uint32_t
+	{
+		None,
+		Min,
+		Max
+	};
+
 	struct ImageSpecification
 	{
 		uint32_t width = 1;
