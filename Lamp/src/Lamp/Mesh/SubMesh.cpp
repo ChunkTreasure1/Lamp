@@ -3,8 +3,27 @@
 
 namespace Lamp
 {
+	static BoundingSphere CalculateBoundingSphere(const std::vector<Vertex>& vertices)
+	{
+		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
+		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
+	
+		for (const auto& vert : vertices)
+		{
+			minAABB.x = std::min(minAABB.x, vert.position.x);
+			minAABB.y = std::min(minAABB.y, vert.position.y);
+			minAABB.z = std::min(minAABB.z, vert.position.z);
+
+			maxAABB.x = std::max(maxAABB.x, vert.position.x);
+			maxAABB.y = std::max(maxAABB.y, vert.position.y);
+			maxAABB.z = std::max(maxAABB.z, vert.position.z);
+		}
+
+		return BoundingSphere((maxAABB + minAABB) * 0.5f, glm::length(minAABB - maxAABB));
+	}
+
 	SubMesh::SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex)
-		: m_MaterialIndex(matIndex)
+		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_MaterialIndex(matIndex)
 	{
 		m_Vertices = vertices;
 		m_Indices = indices;

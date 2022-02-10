@@ -11,9 +11,10 @@ namespace Lamp
 		OrthographicCamera(float left, float right, float bottom, float top);
 
 		//Setting
-		virtual void SetProjection(float left, float right, float bottom, float top) override;
+		void SetProjection(float left, float right, float bottom, float top) override;
+		Frustum CreateFrustum() override { return Frustum(); }
 
 	protected:
-		virtual void RecalculateViewMatrix() override;
+		void RecalculateViewMatrix() override;
 	};
 }

@@ -138,6 +138,7 @@ namespace Lamp
 		static void DrawDirectionalShadows();
 		static void GenerateBRDF();
 		static void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer);
+		static void FrustumCull();
 
 	private:
 		struct RendererDefaults
@@ -155,6 +156,8 @@ namespace Lamp
 
 		static RenderBuffer s_firstRenderBuffer;
 		static RenderBuffer s_secondRenderBuffer;
+
+		static RenderBuffer s_finalDrawCommands;
 
 		static RenderBuffer* s_submitBufferPointer;
 		static RenderBuffer* s_renderBufferPointer;

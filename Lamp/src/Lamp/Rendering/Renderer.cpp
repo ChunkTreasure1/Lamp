@@ -35,6 +35,8 @@ namespace Lamp
 	RenderBuffer Renderer::s_firstRenderBuffer;
 	RenderBuffer Renderer::s_secondRenderBuffer;
 
+	RenderBuffer Renderer::s_finalDrawCommands;
+
 	RenderBuffer* Renderer::s_submitBufferPointer = &s_firstRenderBuffer;
 	RenderBuffer* Renderer::s_renderBufferPointer = &s_secondRenderBuffer;
 
@@ -54,6 +56,7 @@ namespace Lamp
 
 		s_firstRenderBuffer.drawCalls.reserve(500);
 		s_secondRenderBuffer.drawCalls.reserve(500);
+		s_finalDrawCommands.drawCalls.reserve(500);
 
 		ShaderLibrary::LoadShaders();
 		MaterialLibrary::LoadMaterials();
@@ -82,6 +85,8 @@ namespace Lamp
 		s_statistics.memoryStatistics = s_renderer->GetMemoryUsage();
 		s_pSceneData->camera = camera;
 
+		FrustumCull();
+
 		DrawDirectionalShadows();
 
 		UpdateBuffers(camera);
@@ -93,6 +98,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 		s_renderer->End();
+		s_finalDrawCommands.drawCalls.clear();
 	}
 
 	void Renderer::BeginPass(const Ref<RenderPipeline> pipeline)
@@ -134,7 +140,7 @@ namespace Lamp
 	void Renderer::DrawBuffer()
 	{
 		LP_PROFILE_FUNCTION();
-		s_renderer->DrawBuffer(*s_renderBufferPointer);
+		s_renderer->DrawBuffer(s_finalDrawCommands);
 	}
 
 	void Renderer::UpdateBuffers(const Ref<CameraBase> camera)
@@ -386,6 +392,19 @@ namespace Lamp
 
 				return distOne < distTwo;
 			});
+	}
+
+	void Renderer::FrustumCull()
+	{
+		auto frustum = s_pSceneData->camera->CreateFrustum();
+
+		for (auto& cmd : s_renderBufferPointer->drawCalls)
+		{
+			if (cmd.data->GetBoundingVolume().IsInFrustum(frustum, cmd.transform))
+			{
+				s_finalDrawCommands.drawCalls.emplace_back(cmd);
+			}
+		}
 	}
 
 	static float Lerp(float a, float b, float f)
