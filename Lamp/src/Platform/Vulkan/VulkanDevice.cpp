@@ -182,14 +182,16 @@ namespace Lamp
 		vkDestroyDevice(m_logicalDevice, nullptr);
 	}
 
-	void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer)
+	void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer, bool free)
 	{
-		FlushCommandBuffer(commandBuffer, m_graphicsQueue);
+		FlushCommandBuffer(commandBuffer, m_graphicsQueue, free);
 	}
 
-	void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue)
+	void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free)
 	{
 		LP_CORE_ASSERT(commandBuffer != VK_NULL_HANDLE, "Command buffer is null!");
+
+		std::lock_guard lock{ m_flushMutex };
 
 		LP_VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
@@ -208,7 +210,11 @@ namespace Lamp
 		LP_VK_CHECK(vkWaitForFences(m_logicalDevice, 1, &fence, VK_TRUE, UINT64_MAX));
 
 		vkDestroyFence(m_logicalDevice, fence, nullptr);
-		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
+
+		if (free)
+		{
+			vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
+		}
 	}
 
 	VkCommandBuffer VulkanDevice::GetCommandBuffer(bool begin, bool compute)
@@ -234,7 +240,7 @@ namespace Lamp
 		return commandBuffer;
 	}
 
-	VkCommandBuffer VulkanDevice::CreateSecondaryCommandBuffer()
+	VkCommandBuffer VulkanDevice::CreateSecondaryCommandBuffer(bool begin)
 	{
 		VkCommandBuffer cmdBuffer;
 
@@ -245,6 +251,20 @@ namespace Lamp
 		allocInfo.commandBufferCount = 1;
 
 		LP_VK_CHECK(vkAllocateCommandBuffers(m_logicalDevice, &allocInfo, &cmdBuffer));
+
+		if (begin)
+		{
+			VkCommandBufferInheritanceInfo inheritInfo{};
+			inheritInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+
+			VkCommandBufferBeginInfo beginInfo{};
+			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			beginInfo.pInheritanceInfo = &inheritInfo;
+
+			LP_VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+		}
+
 		return cmdBuffer;
 	}
 

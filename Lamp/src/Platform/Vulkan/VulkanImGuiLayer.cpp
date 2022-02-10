@@ -236,7 +236,7 @@ namespace Lamp
 
 		for (uint32_t i = 0; i < framesInFlight; i++)
 		{
-			s_imGuiCommandBuffer[i] = VulkanContext::GetCurrentDevice()->CreateSecondaryCommandBuffer();
+			s_imGuiCommandBuffer[i] = VulkanContext::GetCurrentDevice()->CreateSecondaryCommandBuffer(false);
 		}
 	}
 

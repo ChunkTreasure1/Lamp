@@ -212,6 +212,8 @@ namespace Lamp
 
 	void VulkanSwapchain::Present()
 	{
+		std::lock_guard lock{ const_cast<std::mutex&>(m_device->GetFlushMutex()) };
+
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 

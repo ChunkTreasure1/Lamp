@@ -450,6 +450,9 @@
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Rendering\Cameras\Frustum.h">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClInclude>
@@ -1887,7 +1890,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Rendering\Cameras\Frustum.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2099,6 +2101,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp">
       <Filter>src\Lamp\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Rendering\Cameras\Frustum.cpp">
+      <Filter>src\Lamp\Rendering\Cameras</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp">
       <Filter>src\Lamp\Rendering\Cameras</Filter>
@@ -2328,6 +2333,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Rendering\Cameras\Frustum.cpp" />
   </ItemGroup>
 </Project>

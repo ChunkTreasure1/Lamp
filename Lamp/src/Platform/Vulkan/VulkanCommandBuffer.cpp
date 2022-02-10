@@ -100,25 +100,14 @@ namespace Lamp
 		uint32_t frame = m_swapchainTarget ? Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame() : m_currentCommandPool;
 		auto device = VulkanContext::GetCurrentDevice();
 
-		LP_VK_CHECK(vkEndCommandBuffer(m_commandBuffers[frame]));
 
 		if (!m_swapchainTarget)
 		{
-			VkSubmitInfo submitInfo{};
-			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submitInfo.commandBufferCount = 1;
-			submitInfo.pCommandBuffers = &m_commandBuffers[frame];
-
-			VkFenceCreateInfo fenceInfo{};
-			fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-			fenceInfo.flags = 0;
-
-			VkFence fence;
-			LP_VK_CHECK(vkCreateFence(device->GetHandle(), &fenceInfo, nullptr, &fence));
-			LP_VK_CHECK(vkQueueSubmit(device->GetGraphicsQueue(), 1, &submitInfo, fence));
-			LP_VK_CHECK(vkWaitForFences(device->GetHandle(), 1, &fence, VK_TRUE, UINT64_MAX));
-
-			vkDestroyFence(device->GetHandle(), fence, nullptr);
+			VulkanContext::GetCurrentDevice()->FlushCommandBuffer(m_commandBuffers[frame], false);
+		}
+		else
+		{
+			LP_VK_CHECK(vkEndCommandBuffer(m_commandBuffers[frame]));
 		}
 
 		m_currentCommandPool = m_swapchainTarget ? Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame() : ((m_currentCommandPool + 1) % m_count);

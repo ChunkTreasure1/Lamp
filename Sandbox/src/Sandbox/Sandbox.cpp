@@ -35,7 +35,7 @@ namespace Sandbox
 		
 		//ResourceCache::GetAsset<Texture2D>("assets/textures/TeddyTextures/teddy_albedo.ktx2");
 
-		//LevelManager::Get()->Load("assets/levels/testLevel/data.level");
+		LevelManager::Get()->Load("assets/levels/testLevel/data.level");
 
 		m_sandboxController = CreateRef<SandboxController>();
 

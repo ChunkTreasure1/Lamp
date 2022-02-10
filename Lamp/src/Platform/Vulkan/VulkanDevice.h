@@ -64,14 +64,15 @@ namespace Lamp
 		inline const Ref<VulkanPhysicalDevice> GetPhysicalDevice() const { return m_physicalDevice; }
 		inline VkDevice GetHandle() const { return m_logicalDevice; }
 		inline VkCommandPool GetCommandPool() const { return m_commandPool; }
+		inline const std::mutex& GetFlushMutex() const { return m_flushMutex; }
 
 		void Destroy();
 
-		void FlushCommandBuffer(VkCommandBuffer commandBuffer);
-		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
+		void FlushCommandBuffer(VkCommandBuffer commandBuffer, bool free = true);
+		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
 
 		VkCommandBuffer GetCommandBuffer(bool begin, bool compute = false);
-		VkCommandBuffer CreateSecondaryCommandBuffer();
+		VkCommandBuffer CreateSecondaryCommandBuffer(bool begin);
 
 		static Ref<VulkanDevice> Create(Ref<VulkanPhysicalDevice> physicalDevice, VkPhysicalDeviceFeatures enabledFeatures);
 
@@ -87,5 +88,7 @@ namespace Lamp
 
 		VkQueue m_graphicsQueue;
 		VkQueue m_computeQueue;
+
+		std::mutex m_flushMutex;
 	};
 }
