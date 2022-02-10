@@ -388,6 +388,48 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
+		//Translucency pass
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.clearColor = { 0.f, 0.f, 0.f, 0.f };
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA16F,
+				ImageFormat::RGBA16F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrSSS");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Translucency;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
+			pipelineSpec.drawSkybox = false;
+			pipelineSpec.drawTerrain = false;
+			pipelineSpec.debugName = "Translucency";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+			};
+
+			//auto& pass = m_renderPasses.emplace_back();
+			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
 		//Composite
 		{
 			FramebufferSpecification framebufferSpec{};

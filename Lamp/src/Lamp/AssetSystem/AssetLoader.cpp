@@ -242,6 +242,8 @@ namespace Lamp
 			LP_SERIALIZE_PROPERTY(useAlbedo, matData.useAlbedo, out);
 			LP_SERIALIZE_PROPERTY(useNormal, matData.useNormal, out);
 			LP_SERIALIZE_PROPERTY(useMRO, matData.useMRO, out);
+			LP_SERIALIZE_PROPERTY(useDetailNormal, matData.useDetailNormal, out);
+			LP_SERIALIZE_PROPERTY(useTranslucency, matData.useTranslucency, out);
 
 			LP_SERIALIZE_PROPERTY(blendingMultiplier, matData.blendingMultiplier, out);
 			LP_SERIALIZE_PROPERTY(mroColor, matData.mroColor, out);
@@ -303,6 +305,8 @@ namespace Lamp
 		LP_DESERIALIZE_PROPERTY(useAlbedo, matData.useAlbedo, materialNode, true);
 		LP_DESERIALIZE_PROPERTY(useNormal, matData.useNormal, materialNode, true);
 		LP_DESERIALIZE_PROPERTY(useMRO, matData.useMRO, materialNode, true);
+		LP_DESERIALIZE_PROPERTY(useDetailNormal, matData.useDetailNormal, materialNode, false);
+		LP_DESERIALIZE_PROPERTY(useTranslucency, matData.useTranslucency, materialNode, false);
 
 		LP_DESERIALIZE_PROPERTY(blendingMultiplier, matData.blendingMultiplier, materialNode, 1.f);
 

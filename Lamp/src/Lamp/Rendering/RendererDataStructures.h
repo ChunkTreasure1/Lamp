@@ -7,7 +7,8 @@ namespace Lamp
 	struct MeshDataBuffer
 	{
 		glm::vec4 albedoColor;
-		glm::vec4 normalColor;
+		glm::vec3 normalColor;
+		uint32_t useDetailNormal;
 
 		glm::vec2 blendingUseBlending;
 		glm::vec2 mroColor;

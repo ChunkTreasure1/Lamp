@@ -13,15 +13,17 @@ namespace Lamp
 	struct MaterialData
 	{
 		bool useBlending = false;
+		bool useTranslucency = false;
 		bool useAlbedo = true;
 		bool useNormal = true;
 		bool useMRO = true;
+		bool useDetailNormal = false;
 
 		float blendingMultiplier = 0.f;
 
 		glm::vec2 mroColor{ 0.f, 1.f };
+		glm::vec3 normalColor{ 0.f, 1.f, 0.f };
 		glm::vec4 albedoColor{ 1.f, 1.f, 1.f, 1.f };
-		glm::vec4 normalColor{ 0.f, 1.f, 0.f, 0.f };
 	};
 	
 	class Material : public Asset

@@ -80,7 +80,7 @@ namespace Lamp
 
 	void VulkanMaterial::SetShader(Ref<Shader> shader)
 	{
-		m_shader = std::dynamic_pointer_cast<VulkanShader>(shader);
+		m_shader = std::reinterpret_pointer_cast<VulkanShader>(shader);
 
 		m_textureSpecifications.clear();
 		for (const auto& resource : m_shader->GetResources())

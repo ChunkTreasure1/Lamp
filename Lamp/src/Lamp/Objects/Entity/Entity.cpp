@@ -231,7 +231,7 @@ namespace Lamp
 				{
 					case Lamp::PropertyType::String:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -242,7 +242,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Bool:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -253,7 +253,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Int:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -264,7 +264,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -275,7 +275,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float2:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -286,7 +286,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float3:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -297,7 +297,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float4:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -308,7 +308,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Path:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -319,7 +319,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Color3:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;
@@ -330,7 +330,7 @@ namespace Lamp
 
 					case Lamp::PropertyType::Color4:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, comp->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
 						{
 							*p = *static_cast<std::string*>(property.value);
 							changed = true;

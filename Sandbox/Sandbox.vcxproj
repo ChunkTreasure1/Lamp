@@ -183,7 +183,6 @@
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\cache\vulkan\Lamp_Terrain.glsl" />
     <None Include="engine\shaders\opengl\depthPass.glsl" />
     <None Include="engine\shaders\opengl\ibl\brdfIntegrate.glsl" />
     <None Include="engine\shaders\opengl\ibl\convolution.glsl" />
@@ -208,13 +207,16 @@
     <None Include="engine\shaders\vulkan\Lamp_EnvironmentIrradiance.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EnvironmentMipFilter.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EquirectangularToCubeMap.glsl" />
-    <None Include="engine\shaders\vulkan\Lamp_HBAO.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_LightCulling.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_PBR.glsl" />
+    <None Include="engine\shaders\vulkan\Lamp_PBRSSS.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Quad.glsl" />
-    <None Include="engine\shaders\vulkan\Lamp_SSAO.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Skybox.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Terrain.glsl" />
+    <None Include="engine\shaders\vulkan\deferred\Lamp_GBuffer.glsl" />
+    <None Include="engine\shaders\vulkan\deferred\Lamp_SSAO.glsl" />
+    <None Include="engine\shaders\vulkan\deferred\Lamp_SSAOCompute.glsl" />
+    <None Include="engine\shaders\vulkan\deferred\Lamp_Shading.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">

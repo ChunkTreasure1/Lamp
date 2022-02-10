@@ -17,6 +17,8 @@ namespace Lamp
 		DontCare
 	};
 
+
+
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
@@ -26,6 +28,7 @@ namespace Lamp
 			ImageFormat format,
 			TextureFilter filtering = TextureFilter::Linear,
 			TextureWrap wrap = TextureWrap::Repeat,
+			TextureBlend blend = TextureBlend::None,
 			const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f },
 			bool sampled = false)
 			: textureFormat(format), textureFiltering(filtering), textureWrap(wrap), BorderColor(borderColor)
@@ -39,6 +42,7 @@ namespace Lamp
 		ImageFormat textureFormat;
 		TextureFilter textureFiltering;
 		TextureWrap textureWrap;
+		TextureBlend blending;
 		ClearMode clearMode = ClearMode::Clear;
 
 		bool MultiSampled = false;

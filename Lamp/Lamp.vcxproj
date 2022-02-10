@@ -248,6 +248,7 @@
     <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
+    <ClInclude Include="src\Lamp\Rendering\Cameras\Frustum.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h" />
@@ -799,6 +800,7 @@
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBufferSet.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Cameras\Frustum.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />

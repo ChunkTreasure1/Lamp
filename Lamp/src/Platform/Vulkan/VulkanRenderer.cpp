@@ -184,6 +184,7 @@ namespace Lamp
 		meshData.useAlbedo = matData.useAlbedo;
 		meshData.useNormal = matData.useNormal;
 		meshData.useMRO = matData.useMRO;
+		meshData.useDetailNormal = matData.useDetailNormal;
 
 		meshData.mroColor = matData.mroColor;
 		meshData.albedoColor = matData.albedoColor;
@@ -267,13 +268,39 @@ namespace Lamp
 
 		switch (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType)
 		{
-			case DrawType::Buffer:
+			case DrawType::Opaque:
 			{
 				for (const auto& command : buffer.drawCalls)
 				{
-					SubmitMesh(command.transform, command.data, command.material, command.id);
+					if (!command.material->GetMaterialData().useTranslucency && !command.material->GetMaterialData().useBlending)
+					{
+						SubmitMesh(command.transform, command.data, command.material, command.id);
+					}
 				}
+				break;
+			}
 
+			case DrawType::Translucency:
+			{
+				for (const auto& command : buffer.drawCalls)
+				{
+					if (command.material->GetMaterialData().useTranslucency)
+					{
+						SubmitMesh(command.transform, command.data, command.material, command.id);
+					}
+				}
+				break;
+			}
+
+			case DrawType::Transparent:
+			{
+				for (const auto& command : buffer.drawCalls)
+				{
+					if (command.material->GetMaterialData().useBlending)
+					{
+						SubmitMesh(command.transform, command.data, command.material, command.id);
+					}
+				}
 				break;
 			}
 
@@ -318,37 +345,49 @@ namespace Lamp
 		{
 			auto device = VulkanContext::GetCurrentDevice();
 			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+			auto uniformBufferSet = Renderer::GetSceneData()->uniformBufferSet;
+
+			auto descriptorLayout = vulkanShader->GetDescriptorSetLayout(0);
+			auto& shaderDescriptorSet = vulkanShader->GetDescriptorSets()[0];
+
+			//Allocate descriptors
+			VkDescriptorSetAllocateInfo allocInfo{};
+			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			allocInfo.descriptorSetCount = 1;
+			allocInfo.pSetLayouts = &descriptorLayout;
+
+			VkDescriptorSet currentDescriptorSet;
+			currentDescriptorSet = AllocateDescriptorSet(allocInfo);
 
 			std::array<VkWriteDescriptorSet, 5> writeDescriptors;
-			auto descriptorSet = vulkanShader->CreateDescriptorSets();
 
 			auto vulkanCameraDataBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(cameraDataBuffer);
 			writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
-			writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[0].dstSet = currentDescriptorSet;
 			writeDescriptors[0].pBufferInfo = &vulkanCameraDataBuffer->GetDescriptorInfo();
 
 			auto vulkanLightCullingBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(lightCullingBuffer);
 			writeDescriptors[1] = *vulkanShader->GetDescriptorSet("DirectionalLightBuffer");
-			writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[1].dstSet = currentDescriptorSet;
 			writeDescriptors[1].pBufferInfo = &vulkanLightCullingBuffer->GetDescriptorInfo();
 
 			auto vulkanLightStorageBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(shaderStorageSet->Get(12, 0, currentFrame));
 			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("LightBuffer");
-			writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[2].dstSet = currentDescriptorSet;
 			writeDescriptors[2].pBufferInfo = &vulkanLightStorageBuffer->GetDescriptorInfo();
 
 			auto vulkanVisibleLightsBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(shaderStorageSet->Get(13, 0, currentFrame));
 			writeDescriptors[3] = *vulkanShader->GetDescriptorSet("VisibleLightsBuffer");
-			writeDescriptors[3].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[3].dstSet = currentDescriptorSet;
 			writeDescriptors[3].pBufferInfo = &vulkanVisibleLightsBuffer->GetDescriptorInfo();
 
 			auto vulkanDepthImage = std::reinterpret_pointer_cast<VulkanImage2D>(depthImage);
 			writeDescriptors[4] = *vulkanShader->GetDescriptorSet("u_DepthMap");
-			writeDescriptors[4].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[4].dstSet = currentDescriptorSet;
 			writeDescriptors[4].pImageInfo = &vulkanDepthImage->GetDescriptorInfo();
 
 			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
-			lightCullingPipeline->Execute(descriptorSet.descriptorSets.data(), (uint32_t)descriptorSet.descriptorSets.size(), Renderer::GetSceneData()->screenGroupX, Renderer::GetSceneData()->screenGroupY, 1);
+			lightCullingPipeline->Execute(&currentDescriptorSet, (uint32_t)1, Renderer::GetSceneData()->screenGroupX, Renderer::GetSceneData()->screenGroupY, 1);
 		};
 
 		return std::make_pair(lightCullingPipeline, func);

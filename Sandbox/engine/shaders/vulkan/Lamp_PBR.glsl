@@ -7,6 +7,7 @@ TextureNames
 u_Albedo
 u_Normal
 u_MRO
+u_DetailNormal
 }
 
 #type vertex
@@ -76,8 +77,6 @@ void main()
 #version 450 core
 
 layout (location = 0) out vec4 o_Color;
-layout (location = 1) out vec4 o_ViewNormals;
-layout (location = 2) out vec4 o_ViewPositions;
 
 struct DirectionalLight
 {
@@ -115,6 +114,7 @@ layout (std140, binding = 1) uniform DirectionalLightBuffer
 {
     DirectionalLight lights[1];
     uint count;
+    uint pointLightCount;
 
 } u_DirectionalLights;
 
@@ -128,6 +128,7 @@ layout (std140, binding = 3) uniform ScreenDataBuffer
 layout (std430, binding = 12) readonly buffer LightBuffer
 {
     PointLight lights[1024];
+    
 } u_LightBuffer;
 
 layout (std430, binding = 13) readonly buffer VisibleLightsBuffer
@@ -138,7 +139,8 @@ layout (std430, binding = 13) readonly buffer VisibleLightsBuffer
 layout (push_constant) uniform MeshDataBuffer
 {
     layout(offset = 64) vec4 albedoColor;
-    vec4 normalColor;
+    vec3 normalColor;
+    uint useDetailNormal;
 
     vec2 blendingUseBlending;
     vec2 metalRoughness;
@@ -171,7 +173,7 @@ layout (set = 0, binding = 11) uniform sampler2DShadow u_DirShadowMaps[1];
 layout (set = 1, binding = 8) uniform sampler2D u_Albedo;
 layout (set = 1, binding = 9) uniform sampler2D u_Normal;
 layout (set = 1, binding = 10) uniform sampler2D u_MRO;
-
+layout (set = 1, binding = 14) uniform sampler2D u_DetailNormal;
 
 const vec3 globalDielectricBase = vec3(0.04);
 const float PI = 3.14159265359;
@@ -296,21 +298,14 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 dirToCamera, vec3 no
 
 vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, float metallic, float roughness, vec3 albedo, vec3 fragPos)
 {
-    float distance = length(light.position.xyz - fragPos);
-    float shadow = 0.0;
-
-    if (distance > light.radius)
-    {
-        return vec3(0.0);
-    }
 
     //Radiance
     vec3 dirToLight = normalize(light.position.xyz - fragPos);
+    float distance = length(light.position.xyz - fragPos);
     vec3 H = normalize(dirToCamera + dirToLight);
 
-    float attenuation = clamp(1.0 - distance / light.radius, 0.0, 1.0);
-    attenuation *= attenuation;
-    attenuation = mix(attenuation, 1.0, light.falloff);
+    float attenuation = clamp(1.0 - (distance * distance) / (light.radius * light.radius), 0.0, 1.0);
+    attenuation *= mix(attenuation, 1.0, light.falloff);
 
     vec3 radiance = (light.color.xyz * light.intensity) * attenuation;
 
@@ -324,98 +319,59 @@ vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 b
 	float g = geometrySmith(NdotV, NdotL, roughness);
 	vec3 f = fresnelSchlick(HdotV, baseReflectivity);
 
-    vec3 specular = d * g * f;
-    specular /= 4.0 * NdotV * NdotL;
-
     //Energy conservation
-    vec3 kD = vec3(1.0) - f;
-    kD *= 1.0 - metallic;
+    vec3 kD = (vec3(1.0) - f) * (1.0 - metallic);
 
-    vec3 lightStrength = ((1.0 - shadow) * (kD * albedo / PI + specular)) * radiance * NdotL;
-    return lightStrength;
+    vec3 specular = (d * g * f) / max(4.0 * NdotV * NdotL, 1e-6);
+    specular = clamp(specular, vec3(0.0), vec3(10.0));
+
+    vec3 diffuse = kD * albedo;
+
+    return (diffuse + specular) * radiance * NdotL;
 }
 
-vec3 CalculateHBAONormal()
+int GetLightBufferIndex(int i)
 {
-    mat3 viewMat = mat3(u_CameraData.view);  
-    vec3 hbaoNormal = viewMat * normalize(v_In.normal);
-    hbaoNormal = hbaoNormal * 0.5 + 0.5;
-    hbaoNormal.x = 1.0 - hbaoNormal.x;
-    hbaoNormal.y = 1.0 - hbaoNormal.y;
-
-    return hbaoNormal;
-}
-
-vec3 CalculateNormal(vec3 normalVec)
-{
-    vec3 tangentNormal = normalVec * 2.0 - 1.0;
-    return normalize(v_In.TBN * tangentNormal);
-}
-
-void main()
-{
-    //Pre calculations
-    vec4 albedo;
-    vec3 normal;
-
-    float metallic;
-    float roughness;
-    float translucency = 0.0;
-
-    if (bool(u_MeshData.useAlbedo))
-    {
-        albedo = texture(u_Albedo, v_In.texCoord);
-    }
-    else
-    {
-        albedo = u_MeshData.albedoColor;
-    }
-
-    if (bool(u_MeshData.useNormal))
-    {
-        normal = CalculateNormal(texture(u_Normal, v_In.texCoord).rgb);
-    }
-    else
-    {
-        normal = u_MeshData.normalColor.rgb;
-    }
-
-    if (bool(u_MeshData.useMRO))
-    {
-        vec3 mro = texture(u_MRO, v_In.texCoord).rgb;
-        metallic = mro.r;
-        roughness = mro.g;
-        translucency = mro.b;
-    }
-    else
-    {
-        metallic = u_MeshData.metalRoughness.x;
-        roughness = u_MeshData.metalRoughness.y;
-    }
-
-    vec3 dirToCamera = normalize(u_CameraData.position.xyz - v_In.fragPos);
-
-    vec3 baseReflectivity = mix(globalDielectricBase, albedo.xyz, metallic);
-    vec3 lightAccumulation = vec3(0.0);
-
-    //Light calculation
-    for(int i = 0; i < u_DirectionalLights.count; ++i)
-    {
-        lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[i], dirToCamera, normal, baseReflectivity, albedo.xyz, metallic, roughness, i);
-    }
-
     ivec2 location = ivec2(gl_FragCoord.xy);
     ivec2 tileId = location / ivec2(16, 16);
     uint index = tileId.y * u_ScreenData.xScreenTiles + tileId.x;
 
     uint offset = index * 1024;
-    for(int i = 0; i < 1024 && u_VisibleIndices.data[offset + i].index != -1; ++i)
+
+    return u_VisibleIndices.data[offset + i].index;
+}
+
+vec3 CalculatePointLights(vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+{
+    vec3 result = vec3(0.0);
+    for (int i = 0; i < u_DirectionalLights.pointLightCount; ++i)
     {
-        uint index = u_VisibleIndices.data[offset + i].index;
-        lightAccumulation += CalculatePointLight(u_LightBuffer.lights[index], dirToCamera, normal, baseReflectivity, metallic, roughness, albedo.xyz, v_In.fragPos);
+        uint lightIndex = GetLightBufferIndex(i);
+        if (lightIndex == -1)
+        {
+            break;
+        }
+
+        result += CalculatePointLight(u_LightBuffer.lights[lightIndex], dirToCamera, normal, baseReflectivity, metallic, roughness, albedo, v_In.fragPos);
     }
 
-    //Final calculations
+    return result;
+}
+
+vec3 CalculateDirectionalLights(vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+{
+    vec3 lightAccumulation = vec3(0.0);
+
+    for(int i = 0; i < u_DirectionalLights.count; ++i)
+    {
+        lightAccumulation += CalculateDirectionalLight(u_DirectionalLights.lights[i], dirToCamera, normal, baseReflectivity, albedo, metallic, roughness, i);
+    }
+
+    return lightAccumulation;
+}
+
+vec3 CalculateAmbience(vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
+{
     vec3 diffuse = albedo.xyz;
     vec2 envBRDF = vec2(0.5, 0.5);
     vec3 specular;
@@ -445,15 +401,83 @@ void main()
 
     vec3 ambient = (kD * diffuse + specular) * u_CameraData.ambienceExposure.x;
 
-    vec3 color = ambient + lightAccumulation;
-    color *= u_CameraData.ambienceExposure.y;
+    return ambient;
+}
 
+vec3 CalculateNormal(vec3 normalVec)
+{
+    vec3 tangentNormal = normalVec * 2.0 - 1.0;
+    return normalize(v_In.TBN * tangentNormal);
+}
+
+vec3 BlendNormal(vec3 n1, vec3 n2)
+{
+	vec3 t = n1 + vec3(0.0, 0.0, 1.0);
+	vec3 u = n2 * vec3(-1.0, -1.0, 1.0);
+	vec3 r = (t / t.z) * dot(t, u) - u;
+	return r;
+}
+
+void main()
+{
+    //Pre calculations
+    vec4 albedo;
+    vec3 normal;
+
+    float metallic;
+    float roughness;
+    float translucency = 0.0;
+
+    if (bool(u_MeshData.useAlbedo))
+    {
+        albedo = texture(u_Albedo, v_In.texCoord);
+    }
+    else
+    {
+        albedo = u_MeshData.albedoColor;
+    }
+
+    if (bool(u_MeshData.useNormal))
+    {
+        normal = CalculateNormal(texture(u_Normal, v_In.texCoord).rgb);
+    }
+    else
+    {
+        normal = normalize(u_MeshData.normalColor.rgb);
+    }
+
+    if (bool(u_MeshData.useDetailNormal))
+    {
+        // const vec3 tangentSpaceNormal = texture(u_DetailNormal, v_In.texCoord).xyz * 2.0 - 1.0; // add scale
+        // normal = BlendNormal(normal, normalize(tangentSpaceNormal));
+    }
+
+    if (bool(u_MeshData.useMRO))
+    {
+        vec3 mro = texture(u_MRO, v_In.texCoord).rgb;
+        metallic = mro.r;
+        roughness = mro.g;
+        translucency = mro.b;
+    }
+    else
+    {
+        metallic = u_MeshData.metalRoughness.x;
+        roughness = u_MeshData.metalRoughness.y;
+    }
+
+    vec3 dirToCamera = normalize(u_CameraData.position.xyz - v_In.fragPos);
+    vec3 baseReflectivity = mix(globalDielectricBase, albedo.xyz, metallic);
+    vec3 lightAccumulation = vec3(0.0);
+
+    lightAccumulation += CalculateDirectionalLights(dirToCamera, normal, baseReflectivity, albedo.xyz, metallic, roughness);
+    lightAccumulation += CalculatePointLights(dirToCamera, normal, baseReflectivity, albedo.xyz, metallic, roughness);
+    lightAccumulation += CalculateAmbience(dirToCamera, normal, baseReflectivity, albedo.xyz, metallic, roughness);
+    
+    vec3 color = lightAccumulation;
+    color *= u_CameraData.ambienceExposure.y;
     color = ACESTonemap(color);
 
     float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedo.a * u_MeshData.blendingUseBlending.x : 1.0;
-
-    o_ViewNormals = vec4(CalculateHBAONormal(), 1.0);
-    o_ViewPositions = vec4(v_In.viewPosition, 1.0);
 
     o_Color = vec4(color, blendingVal);
 }
