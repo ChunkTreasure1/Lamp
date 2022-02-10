@@ -1,5 +1,5 @@
 #ShaderSpec
-Name: pbrSSS
+Name: pbrForward
 TextureCount: 3
 InternalShader: false
 TextureNames
@@ -335,6 +335,17 @@ vec3 CalculatePointLight(PointLight light, vec3 dirToCamera, vec3 normal, vec3 b
     return lightStrength;
 }
 
+vec3 CalculateHBAONormal()
+{
+    mat3 viewMat = mat3(u_CameraData.view);  
+    vec3 hbaoNormal = viewMat * normalize(v_In.normal);
+    hbaoNormal = hbaoNormal * 0.5 + 0.5;
+    hbaoNormal.x = 1.0 - hbaoNormal.x;
+    hbaoNormal.y = 1.0 - hbaoNormal.y;
+
+    return hbaoNormal;
+}
+
 vec3 CalculateNormal(vec3 normalVec)
 {
     vec3 tangentNormal = normalVec * 2.0 - 1.0;
@@ -429,7 +440,7 @@ void main()
     }
    
     vec3 kS = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
-    vec3 kD = 1.0 - kS;§
+    vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;
 
     vec3 ambient = (kD * diffuse + specular) * u_CameraData.ambienceExposure.x;

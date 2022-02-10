@@ -22,9 +22,7 @@ namespace Lamp
 
 	enum class DrawType
 	{
-		Opaque,
-		Transparent,
-		Translucency,
+		Buffer,
 		Quad,
 		Cube,
 		Terrain,
@@ -68,7 +66,7 @@ namespace Lamp
 		Ref<ShaderStorageBufferSet> shaderStorageBufferSets;
 
 		Topology topology;
-		DrawType drawType = DrawType::Opaque;
+		DrawType drawType = DrawType::Buffer;
 		CullMode cullMode = CullMode::Back;
 		bool depthTest = true;
 		bool depthWrite = true;

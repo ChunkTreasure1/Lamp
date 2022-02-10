@@ -310,16 +310,51 @@ namespace Lamp
 
 	void Level::SetupRenderPasses()
 	{
-		//GBuffer
+		//Depth PrePass
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
 			framebufferSpec.attachments =
 			{
-				ImageFormat::RGBA32F, //Position + Metallic
-				ImageFormat::RGBA32F, //Albedo
-				ImageFormat::RGBA32F, //Normal + Roughness
-				ImageFormat::RGBA32F, //Shadow coords
+				ImageFormat::R32F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("depthPrePass");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.debugName = "Pre Depth";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Light culling
+		{
+			auto& pass = m_renderPasses.emplace_back();
+			auto [pipeline, command] = Renderer::CreateLightCullingPipeline(m_renderPasses[m_renderPasses.size() - 2].graphicsPipeline->GetSpecification().framebuffer->GetDepthAttachment());
+			pass.computePipeline = pipeline;
+			pass.computeExcuteCommand = command;
+		}
+
+		//Geometry pass
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA32F,
 				ImageFormat::DEPTH32F
 			};
 
@@ -327,14 +362,14 @@ namespace Lamp
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
 			m_geometryFramebuffer = pipelineSpec.framebuffer;
 
-			pipelineSpec.shader = ShaderLibrary::GetShader("gbuffer");
-			pipelineSpec.isSwapchain = false;	
-			pipelineSpec.drawSkybox = true;
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Opaque;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
 			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
-			pipelineSpec.debugName = "GBuffer";
+			pipelineSpec.drawSkybox = true;
+			pipelineSpec.drawTerrain = true;
+			pipelineSpec.debugName = "Geometry";
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -353,7 +388,7 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
-		//Shading pass
+		//Composite
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
@@ -365,17 +400,11 @@ namespace Lamp
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_shadingFramebuffer = pipelineSpec.framebuffer;
-
-			pipelineSpec.shader = ShaderLibrary::GetShader("shading");
+			pipelineSpec.shader = ShaderLibrary::GetShader("composite");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.drawType = DrawType::Quad;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
-			pipelineSpec.drawSkybox = false;
-			pipelineSpec.drawTerrain = false;
-			pipelineSpec.debugName = "Shading";
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -387,47 +416,7 @@ namespace Lamp
 
 			pipelineSpec.framebufferInputs =
 			{
-				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 },
-				{ m_geometryFramebuffer->GetColorAttachment(0), 1, 8 },
-				{ m_geometryFramebuffer->GetColorAttachment(1), 1, 9 },
-				{ m_geometryFramebuffer->GetColorAttachment(2), 1, 10 },
-				{ m_geometryFramebuffer->GetColorAttachment(3), 1, 11 }
-			};
-
-			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		//PBR SSS
-		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA16F,
-				ImageFormat::RGBA16F,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			pipelineSpec.shader = ShaderLibrary::GetShader("pbrSSS");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Translucency;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
-			pipelineSpec.drawSkybox = false;
-			pipelineSpec.depthWrite = false;
-			pipelineSpec.drawTerrain = false;
-			pipelineSpec.debugName = "PBRSSS";
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
+				{ m_geometryFramebuffer->GetColorAttachment(0), 0, 5 },
 			};
 
 			auto& pass = m_renderPasses.emplace_back();
@@ -463,8 +452,6 @@ namespace Lamp
 				pass.graphicsPipeline->GetSpecification().framebuffer->Resize(e.GetWidth(), e.GetHeight());
 			}
 		}
-
-		//m_ssaoOutputImage->Resize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}

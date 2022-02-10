@@ -478,6 +478,7 @@ namespace Lamp
 			Ref<EntityComponent> pComp = ComponentRegistry::Create(name);
 
 			pComp->m_pEntity = entity;
+			pComp->Initialize();
 			pComp->SetComponentProperties();
 
 			YAML::Node paramsNode = compEntry["params"];

@@ -29,7 +29,7 @@ namespace Lamp
 	struct ScreenDataBuffer
 	{
 		alignas(16) glm::vec2 size;
-		alignas(16) float aspectRatio;
+		float aspectRatio;
 		uint32_t xScreenTiles;
 	};
 
@@ -43,26 +43,20 @@ namespace Lamp
 	struct DirectionalLightDataBuffer
 	{
 		alignas(16) DirectionalLightData dirLights[1];
-		alignas(16) uint32_t lightCount = 0;
-		uint32_t pointLightCount;
+		uint32_t lightCount = 0;
+		uint32_t pointLightCount = 0;
 	};
 
 	struct DirectionalLightVPBuffer
 	{
 		alignas(16) glm::mat4 directionalLightVPs[10];
-		alignas(16) uint32_t count;
+		uint32_t count;
 	};
 
 	struct LightCullingBuffer
 	{
 		alignas(16) glm::vec2 screenSize;
 		uint32_t lightCount;
-	};
-
-	struct SSAOBuffer
-	{
-		alignas(16) glm::vec4 kernelSamples[256];
-		alignas(16) glm::vec4 sizeBiasRadiusStrength{ 64.f, 0.025f, 0.1f, 1.f };
 	};
 
 	struct PointLightData
@@ -84,5 +78,22 @@ namespace Lamp
 	struct TerrainDataBuffer
 	{
 		alignas(16) float heightMultiplier = 0.f;
+	};
+
+	struct HBAODataBuffer
+	{
+		glm::vec4 perspectiveInfo;
+		glm::vec2 invQuarterResolution;
+
+		float radiusToScreen;
+		float negInvR2;
+		float NdotVBias;
+		float aoMultiplier;
+		float powExponent;
+
+		bool isOrtho;
+
+		glm::vec4 float2Offsets[16];
+		glm::vec4 jitters[16];
 	};
 }

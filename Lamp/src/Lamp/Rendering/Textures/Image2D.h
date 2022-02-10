@@ -68,16 +68,14 @@ namespace Lamp
 		bool useAniostopy = false;
 		bool copyable = false;
 		bool comparable = false;
-		bool transferToLayout = false;
 	};
 
 	class Image2D
 	{
 	public:
 		virtual ~Image2D() = default;
-		virtual void Invalidate(const void* data = nullptr) = 0;
+		virtual void Invalidate(const void* data) = 0;
 		virtual void Release() = 0;
-		virtual void Resize(uint32_t width, uint32_t height) = 0;
 
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;

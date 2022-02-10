@@ -17,6 +17,7 @@ namespace Lamp
 		: EntityComponent("LightComponent")
 	{
 		m_pPointLight = CreateScope<PointLight>();
+
 		if (LevelManager::IsLevelLoaded())
 		{
 			LevelManager::GetActive()->GetEnvironment().RegisterPointLight(m_pPointLight.get());
