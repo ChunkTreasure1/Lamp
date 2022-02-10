@@ -4,7 +4,7 @@
 #include <Lamp/Utility/UIUtility.h>
 #include <Lamp/Debug/Instrumentor.h>
 
-#include <Lamp/Objects/Entity/Entity.h>
+#include <Lamp/Objects/Entity/Base/Entity.h>
 
 #include <imgui.h>
 

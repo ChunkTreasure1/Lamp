@@ -203,21 +203,18 @@
     <None Include="engine\shaders\opengl\shadows\pointShadow.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_BRDFGeneration.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Composite.glsl" />
+    <None Include="engine\shaders\vulkan\Lamp_DepthPrePass.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_DirectionalShadow.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EnvironmentIrradiance.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EnvironmentMipFilter.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_EquirectangularToCubeMap.glsl" />
-    <None Include="engine\shaders\vulkan\Lamp_GBuffer.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_HBAO.glsl" />
+    <None Include="engine\shaders\vulkan\Lamp_LightCulling.glsl" />
+    <None Include="engine\shaders\vulkan\Lamp_PBR.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Quad.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_SSAO.glsl" />
-    <None Include="engine\shaders\vulkan\Lamp_SSAOCompute.glsl" />
-    <None Include="engine\shaders\vulkan\Lamp_Shading.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Skybox.glsl" />
     <None Include="engine\shaders\vulkan\Lamp_Terrain.glsl" />
-    <None Include="engine\shaders\vulkan\lightCulling\Lamp_DepthPrePass.glsl" />
-    <None Include="engine\shaders\vulkan\lightCulling\Lamp_LightCulling.glsl" />
-    <None Include="engine\shaders\vulkan\lightCulling\Lamp_PBR.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lamp\Lamp.vcxproj">
