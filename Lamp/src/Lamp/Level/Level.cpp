@@ -331,7 +331,7 @@ namespace Lamp
 			pipelineSpec.isSwapchain = false;	
 			pipelineSpec.drawSkybox = true;
 			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Buffer;
+			pipelineSpec.drawType = DrawType::Opaque;
 			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
 			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
 			pipelineSpec.debugName = "GBuffer";
@@ -398,40 +398,41 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
-		//Composite
-		//{
-		//	FramebufferSpecification framebufferSpec{};
-		//	framebufferSpec.swapchainTarget = false;
-		//	framebufferSpec.attachments =
-		//	{
-		//		ImageFormat::RGBA,
-		//		ImageFormat::DEPTH32F
-		//	};
+		//PBR SSS
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA16F,
+				ImageFormat::RGBA16F,
+				ImageFormat::DEPTH32F
+			};
 
-		//	RenderPipelineSpecification pipelineSpec{};
-		//	pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		//	pipelineSpec.shader = ShaderLibrary::GetShader("composite");
-		//	pipelineSpec.isSwapchain = false;
-		//	pipelineSpec.topology = Topology::TriangleList;
-		//	pipelineSpec.drawType = DrawType::Quad;
-		//	pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-		//	pipelineSpec.vertexLayout =
-		//	{
-		//		{ ElementType::Float3, "a_Position" },
-		//		{ ElementType::Float3, "a_Normal" },
-		//		{ ElementType::Float3, "a_Tangent" },
-		//		{ ElementType::Float3, "a_Bitangent" },
-		//		{ ElementType::Float2, "a_TexCoords" },
-		//	};
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrSSS");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Translucency;
+			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
+			pipelineSpec.drawSkybox = false;
+			pipelineSpec.depthWrite = false;
+			pipelineSpec.drawTerrain = false;
+			pipelineSpec.debugName = "PBRSSS";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
 
-		//	pipelineSpec.framebufferInputs =
-		//	{
-		//		{ m_shadingFramebuffer->GetColorAttachment(0), 0, 5 },
-		//	};
-
-		//	auto& pass = m_renderPasses.emplace_back();
-		//	pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		//}
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
 	}
 
 	void Level::RenderLevel()

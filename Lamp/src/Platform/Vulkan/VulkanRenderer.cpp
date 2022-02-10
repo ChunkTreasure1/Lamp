@@ -267,7 +267,7 @@ namespace Lamp
 
 		switch (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType)
 		{
-			case DrawType::Buffer:
+			case DrawType::Opaque:
 			{
 				for (const auto& command : buffer.drawCalls)
 				{
