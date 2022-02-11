@@ -426,8 +426,8 @@ namespace Lamp
 				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
-			//auto& pass = m_renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Composite

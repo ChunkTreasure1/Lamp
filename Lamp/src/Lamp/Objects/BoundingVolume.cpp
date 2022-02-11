@@ -22,13 +22,14 @@ namespace Lamp
 
 		BoundingSphere globalSphere(globalCenter, radius * (maxScale * 0.5f));
 
-		return (
-			globalSphere.IsOnOrForwardPlan(frustum.leftFace) &&
-			globalSphere.IsOnOrForwardPlan(frustum.rightFace) &&
-			globalSphere.IsOnOrForwardPlan(frustum.farFace) &&
-			globalSphere.IsOnOrForwardPlan(frustum.nearFace) &&
-			globalSphere.IsOnOrForwardPlan(frustum.topFace) &&
-			globalSphere.IsOnOrForwardPlan(frustum.bottomFace)
-			);
+		
+		bool l = globalSphere.IsOnOrForwardPlan(frustum.leftFace);
+		bool r = globalSphere.IsOnOrForwardPlan(frustum.rightFace);
+		bool f = globalSphere.IsOnOrForwardPlan(frustum.farFace);
+		bool n = globalSphere.IsOnOrForwardPlan(frustum.nearFace);
+		bool t = globalSphere.IsOnOrForwardPlan(frustum.topFace);
+		bool b = globalSphere.IsOnOrForwardPlan(frustum.bottomFace);
+	
+		return (l && r && f && n && t && b);
 	}
 }

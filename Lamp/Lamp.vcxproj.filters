@@ -324,6 +324,9 @@
     <ClInclude Include="src\Lamp\Mesh\SubMesh.h">
       <Filter>src\Lamp\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="src\Lamp\Objects\BoundingVolume.h">
+      <Filter>src\Lamp\Objects</Filter>
+    </ClInclude>
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h">
       <Filter>src\Lamp\Objects\Brushes</Filter>
     </ClInclude>
@@ -1890,7 +1893,6 @@
     <ClInclude Include="vendor\yaml-cpp\src\token.h">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Objects\BoundingVolume.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Lamp\AssetSystem\AssetLoader.cpp">
@@ -2003,6 +2005,9 @@
     </ClCompile>
     <ClCompile Include="src\Lamp\Mesh\SubMesh.cpp">
       <Filter>src\Lamp\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Lamp\Objects\BoundingVolume.cpp">
+      <Filter>src\Lamp\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp">
       <Filter>src\Lamp\Objects\Brushes</Filter>
@@ -2334,6 +2339,5 @@
     <ClCompile Include="vendor\yaml-cpp\src\tag.cpp">
       <Filter>vendor\yaml-cpp\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lamp\Objects\BoundingVolume.cpp" />
   </ItemGroup>
 </Project>

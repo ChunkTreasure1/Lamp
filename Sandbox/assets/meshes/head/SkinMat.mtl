@@ -6,3 +6,4 @@ material:
     u_Normal: 5165272647848418933
     u_MRO: 18237952958890378144
   shader: pbrForward
+  useTranslucency: true

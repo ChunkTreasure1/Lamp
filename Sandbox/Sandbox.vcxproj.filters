@@ -108,6 +108,8 @@
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox\Actions\CommandStack.h" />
+    <ClInclude Include="src\Sandbox\Actions\Commands.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -161,6 +163,8 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox\Actions\CommandStack.cpp" />
+    <ClCompile Include="src\Sandbox\Actions\Commands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\opengl\depthPass.glsl">
