@@ -3,15 +3,14 @@
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
-
-#include "Lamp/Rendering/Renderer.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
 	VulkanUniformBuffer::VulkanUniformBuffer(const void* data, uint32_t size)
 		: m_size(size)
 	{
-		uint32_t framesInFlight = Renderer::GetCapabilities().framesInFlight;
+		uint32_t framesInFlight = Renderer::Get().GetCapabilities().framesInFlight;
 		auto device = VulkanContext::GetCurrentDevice();
 
 		VkDeviceSize deviceSize = size;

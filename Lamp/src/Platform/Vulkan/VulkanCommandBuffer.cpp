@@ -4,6 +4,7 @@
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"
 #include "Platform/Vulkan/VulkanUtility.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include "Lamp/Core/Application.h"
 
@@ -49,7 +50,7 @@ namespace Lamp
 		}
 		else
 		{
-			m_count = Renderer::GetCapabilities().framesInFlight;
+			m_count = Renderer::Get().GetCapabilities().framesInFlight;
 			
 			m_commandPools.resize(m_count);
 			m_commandBuffers.resize(m_count);

@@ -25,7 +25,8 @@
 #include <Lamp/Rendering/Buffers/FrameBuffer.h>
 
 #include <Lamp/Utility/UIUtility.h>
-#include <Lamp/Rendering/Renderer.h>
+
+#include <Platform/Vulkan/VulkanRenderer.h>
 
 namespace Sandbox
 {
@@ -548,7 +549,7 @@ namespace Sandbox
 
 		if (UI::BeginProperties("Terrain"))
 		{
-			UI::Property("Height", const_cast<float&>(Renderer::GetSceneData()->terrainData.heightMultiplier));
+			UI::Property("Height", const_cast<float&>(Renderer::Get().GetStorage().terrainData.heightMultiplier));
 
 			UI::EndProperties(false);
 			UI::PopId();
@@ -568,7 +569,7 @@ namespace Sandbox
 			return;
 		}
 
-		auto sceneData = const_cast<Renderer::SceneData*>(Renderer::GetSceneData());
+		auto sceneData = const_cast<VulkanRendererStorage&>(Renderer::Get().GetStorage());
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
@@ -578,8 +579,8 @@ namespace Sandbox
 			ImGui::Separator();
 			if (UI::BeginProperties("generalProps"))
 			{
-				UI::Property("Exposure", sceneData->hdrExposure); // move to level environment
-				UI::Property("Gamma", sceneData->gamma); 
+				//UI::Property("Exposure", sceneData.hdrExposure); // move to level environment
+				//UI::Property("Gamma", sceneData->gamma); 
 
 				UI::EndProperties();
 			}
@@ -644,7 +645,7 @@ namespace Sandbox
 
 		ImGui::SameLine();
 
-		static Ref<Lamp::Texture2D> physicsId = physicsIcon;
+		static Lamp::Texture2D* physicsId = physicsIcon.get();
 
 		if (ImGui::ImageButtonAnimated(UI::GetTextureID(physicsId), UI::GetTextureID(physicsIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
@@ -694,9 +695,11 @@ namespace Sandbox
 
 		if (UI::TreeNodeFramed("GPU"))
 		{
-			const auto& stats = Renderer::GetStatistics();
+			const auto& stats = Renderer::Get().GetStatistics();
 
 			ImGui::Text("Total draw calls: %d", stats.totalDrawCalls.load());
+			ImGui::Text("Culled draw calls: %d", stats.totalDrawCalls.load());
+
 			ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
 			ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
 			ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));

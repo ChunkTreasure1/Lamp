@@ -1,5 +1,4 @@
 #include "lppch.h"
-#include "Renderer.h"
 
 #include "Buffers/VertexArray.h"
 #include "Renderer2D.h"

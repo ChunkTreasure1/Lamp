@@ -1,9 +1,8 @@
 #include "lppch.h"
 #include "VulkanMaterial.h"
 
-#include "Lamp/Rendering/Renderer.h"
-
 #include "Platform/Vulkan/VulkanRenderPipeline.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
@@ -85,7 +84,7 @@ namespace Lamp
 		m_textureSpecifications.clear();
 		for (const auto& resource : m_shader->GetResources())
 		{
-			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set, resource.second.binding, Renderer::GetDefaultTexture() });
+			m_textureSpecifications.emplace_back(MaterialTextureSpecification{ resource.second.name, resource.second.set, resource.second.binding, Renderer::Get().GetDefaults().whiteTexture});
 		}
 	}
 

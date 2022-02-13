@@ -2,8 +2,6 @@
 #include "VulkanAllocator.h"
 
 #include "Lamp/Core/Log.h"
-#include "Lamp/Rendering/Renderer.h"
-
 #include "Platform/Vulkan/VulkanDevice.h"
 
 namespace Lamp
@@ -27,12 +25,16 @@ namespace Lamp
 	{
 		s_pData = new VulkanAllocatorData();
 
+		VmaRecordSettings recordSettings;
+		recordSettings.flags = VMA_RECORD_FLUSH_AFTER_CALL_BIT;
+		recordSettings.pFilePath = "vmaRecording.csv";
+
 		VmaAllocatorCreateInfo allocatorInfo{};
 		allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_2;
 		allocatorInfo.physicalDevice = device->GetPhysicalDevice()->GetHandle();
 		allocatorInfo.device = device->GetHandle();
 		allocatorInfo.instance = VulkanContext::GetVulkanInstance();
-		allocatorInfo.pRecordSettings;
+		allocatorInfo.pRecordSettings = &recordSettings;
 
 		VkResult result = vmaCreateAllocator(&allocatorInfo, &s_pData->allocator);
 		LP_CORE_ASSERT(result == VK_SUCCESS, "Unable to create allocator!");

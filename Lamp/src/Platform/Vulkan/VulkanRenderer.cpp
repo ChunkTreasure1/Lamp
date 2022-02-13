@@ -5,13 +5,17 @@
 #include "Lamp/Rendering/Shader/Shader.h"
 #include "Lamp/Rendering/CommandBuffer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
-#include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
+#include "Lamp/Rendering/LightBase.h"
+#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 
 #include "Lamp/Mesh/Mesh.h"
+#include "Lamp/Mesh/Materials/MaterialLibrary.h"
+
 #include "Lamp/AssetSystem/MeshImporter.h"
-#include "Lamp/Rendering/Cameras/CameraBase.h"
 #include "Lamp/Level/Level.h"
-#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Core/Time/ScopedTimer.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -36,71 +40,55 @@
 #define PER_MESH_DESCRIPTOR_SET 1
 #define MAX_DIRECTIONAL_LIGHT_SHADOWS 10
 
+
 namespace Lamp
 {
-	VulkanRenderer::VulkanRenderer()
+	Renderer* Renderer::s_instance = nullptr;
+
+	Renderer::Renderer()
 	{
-		m_rendererStorage = CreateScope<VulkanRendererStorage>();
-
-		VkDescriptorPoolSize poolSizes[] =
+		if (s_instance)
 		{
-			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
-		};
-
-		VkDescriptorPoolCreateInfo poolInfo{};
-		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		poolInfo.maxSets = 10000;
-		poolInfo.poolSizeCount = (uint32_t)ARRAYSIZE(poolSizes);
-		poolInfo.pPoolSizes = poolSizes;
-
-		m_descriptorPools.resize(Renderer::GetCapabilities().framesInFlight);
-		auto device = VulkanContext::GetCurrentDevice();
-
-		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
-		{
-			LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &m_descriptorPools[i]));
-		}
-	}
-
-	VulkanRenderer::~VulkanRenderer()
-	{
-		auto device = VulkanContext::GetCurrentDevice();
-		vkDeviceWaitIdle(device->GetHandle());
-
-		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
-		{
-			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorPools[i], nullptr);
+			LP_CORE_ASSERT(!s_instance, "Instance already exists! Singleton should not be created more than once!");
 		}
 
-		m_descriptorPools.clear();
+		s_instance = this;
 	}
 
-	void VulkanRenderer::Initialize()
+	Renderer::~Renderer()
 	{
+	}
+
+	void Renderer::Initialize()
+	{
+		PreAllocateRenderBuffers();
+		AllocateDescriptorPools();
+		CreateRendererStorage();
+
+		ShaderLibrary::LoadShaders();
+		MaterialLibrary::LoadMaterials();
+
 		m_rendererStorage->swapchainCommandBuffer = CommandBuffer::Create(3, true);
 		m_rendererStorage->renderCommandBuffer = CommandBuffer::Create(3, false);
 
 		m_rendererStorage->quadMesh = SubMesh::CreateQuad();
 	}
 
-	void VulkanRenderer::Shutdown()
+	void Renderer::Shutdown()
 	{
+		MaterialLibrary::Shutdown();
+
+		DestroyRendererStorage();
+		DestroyDescriptorPools();
+		ClearRenderBuffers();
 	}
 
-	void VulkanRenderer::Begin(const Ref<CameraBase> camera)
+	void Renderer::Begin(const Ref<CameraBase> camera)
 	{
 		m_rendererStorage->camera = camera;
+		m_statistics.memoryStatistics = GetMemoryUsage();
+
+		PrepareForRender();
 
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
@@ -109,14 +97,22 @@ namespace Lamp
 		vkResetDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPools[currentFrame], 0);
 	}
 
-	void VulkanRenderer::End()
+	void Renderer::End()
 	{
 		m_rendererStorage->camera = nullptr;
+		m_finalRenderBuffer.drawCalls.clear();
 	}
 
-	void VulkanRenderer::BeginPass(Ref<RenderPipeline> pipeline)
+	void Renderer::SwapRenderBuffers()
+	{
+		std::swap(m_submitBufferPointer, m_renderBufferPointer);
+		m_submitBufferPointer->drawCalls.clear();
+	}
+
+	void Renderer::BeginPass(Ref<RenderPipeline> pipeline)
 	{
 		m_rendererStorage->currentRenderPipeline = pipeline;
+		UpdatePerPassUniformBuffers(pipeline);
 
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(pipeline->GetSpecification().framebuffer);
@@ -142,12 +138,12 @@ namespace Lamp
 
 		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
 
-		UpdatePerPassDescriptors();
+		AllocatePerPassDescriptors();
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(pipeline);
 		vulkanPipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
 	}
 
-	void VulkanRenderer::EndPass()
+	void Renderer::EndPass()
 	{
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
@@ -157,12 +153,32 @@ namespace Lamp
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
 
-	const GPUMemoryStatistics& VulkanRenderer::GetMemoryUsage() const
+	const GPUMemoryStatistics& Renderer::GetMemoryUsage() const
 	{
 		return VulkanAllocator::GetStatistics();
 	}
 
-	void VulkanRenderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
+	const RendererStatistics& Renderer::GetStatistics() const
+	{
+		return m_statistics;
+	}
+
+	const RendererCapabilities& Renderer::GetCapabilities() const
+	{
+		return m_capabilities;
+	}
+
+	const VulkanRendererStorage& Renderer::GetStorage() const
+	{
+		return *m_rendererStorage;
+	}
+
+	const RendererDefaults& Renderer::GetDefaults() const
+	{
+		return *m_rendererDefaults;
+	}
+
+	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -172,7 +188,7 @@ namespace Lamp
 
 		vulkanPipeline->Bind(commandBuffer);
 
-		SetupDescriptorsForMaterialRendering(material);
+		AllocateDescriptorsForMaterialRendering(material);
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
 
 		const auto& matData = material->GetMaterialData();
@@ -206,7 +222,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
+	void Renderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -227,7 +243,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::SubmitQuad()
+	void Renderer::SubmitQuad()
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -235,7 +251,7 @@ namespace Lamp
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		vulkanPipeline->Bind(commandBuffer);
-		SetupDescriptorsForQuadRendering();
+		AllocateDescriptorsForQuadRendering();
 
 		vulkanPipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
 
@@ -245,7 +261,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void VulkanRenderer::DrawBuffer(RenderBuffer& buffer)
+	void Renderer::DispatchRenderCommands(RenderBuffer& buffer)
 	{
 		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && LevelManager::GetActive()->HasSkybox())
 		{
@@ -320,7 +336,12 @@ namespace Lamp
 		}
 	}
 
-	VkDescriptorSet VulkanRenderer::AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo)
+	void Renderer::DispatchRenderCommands()
+	{
+		DispatchRenderCommands(m_finalRenderBuffer);
+	}
+
+	VkDescriptorSet Renderer::AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo)
 	{
 		auto device = VulkanContext::GetCurrentDevice();
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
@@ -334,7 +355,7 @@ namespace Lamp
 	}
 
 	//TODO: Find better way to save execute function
-	std::pair<Ref<RenderComputePipeline>, std::function<void()>> VulkanRenderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage)
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage)
 	{
 		Ref<Shader> lightCullingShader = ShaderLibrary::GetShader("lightCulling");
 		Ref<VulkanRenderComputePipeline> lightCullingPipeline = std::reinterpret_pointer_cast<VulkanRenderComputePipeline>(RenderComputePipeline::Create(lightCullingShader));
@@ -345,7 +366,7 @@ namespace Lamp
 		{
 			auto device = VulkanContext::GetCurrentDevice();
 			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-			auto uniformBufferSet = Renderer::GetSceneData()->uniformBufferSet;
+			auto uniformBufferSet = m_rendererStorage->uniformBufferSet;
 
 			auto descriptorLayout = vulkanShader->GetDescriptorSetLayout(0);
 			auto& shaderDescriptorSet = vulkanShader->GetDescriptorSets()[0];
@@ -387,18 +408,180 @@ namespace Lamp
 			writeDescriptors[4].pImageInfo = &vulkanDepthImage->GetDescriptorInfo();
 
 			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
-			lightCullingPipeline->Execute(&currentDescriptorSet, (uint32_t)1, Renderer::GetSceneData()->screenGroupX, Renderer::GetSceneData()->screenGroupY, 1);
+			lightCullingPipeline->Execute(&currentDescriptorSet, (uint32_t)1, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
 		};
 
 		return std::make_pair(lightCullingPipeline, func);
 	}
 
-	Ref<VulkanRenderer> VulkanRenderer::Create()
+	Renderer& Renderer::Get()
 	{
-		return CreateRef<VulkanRenderer>();
+		return *s_instance;
 	}
 
-	void VulkanRenderer::SetupDescriptorsForMaterialRendering(Ref<Material> material)
+	Ref<Renderer> Renderer::Create()
+	{
+		return CreateRef<Renderer>();
+	}
+
+	void Renderer::CreateUniformBuffers()
+	{
+		/////Uniform buffers//////
+		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(m_capabilities.framesInFlight);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraData, sizeof(CameraDataBuffer), 0, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->screenData, sizeof(ScreenDataBuffer), 3, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
+
+		m_rendererStorage->lightCullingBuffer = UniformBuffer::Create(&m_rendererStorage->lightCullingData, sizeof(LightCullingBuffer));
+		m_rendererStorage->terrainDataBuffer = UniformBuffer::Create(&m_rendererStorage->terrainData, sizeof(TerrainDataBuffer));
+
+		/////Shader storages/////
+		auto& lightCullingData = m_rendererStorage->lightCullingRendererData;
+
+		lightCullingData.xTileCount = (lightCullingData.maxScreenTileBufferAllocation + (lightCullingData.maxScreenTileBufferAllocation % lightCullingData.tileSize)) / lightCullingData.tileSize;
+		lightCullingData.yTileCount = (lightCullingData.maxScreenTileBufferAllocation + (lightCullingData.maxScreenTileBufferAllocation % lightCullingData.tileSize)) / lightCullingData.tileSize;
+		lightCullingData.tileCount = lightCullingData.xTileCount * lightCullingData.yTileCount;
+
+		m_rendererStorage->shaderStorageBufferSet = ShaderStorageBufferSet::Create(m_capabilities.framesInFlight);
+		m_rendererStorage->shaderStorageBufferSet->Add(lightCullingData.maxLights * sizeof(PointLightData), 12, 0);
+		m_rendererStorage->shaderStorageBufferSet->Add(lightCullingData.tileCount * sizeof(LightIndex) * lightCullingData.maxLights, 13, 0);
+	}
+
+	void Renderer::UpdateUniformBuffers()
+	{
+		LP_PROFILE_FUNCTION();
+
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		//Camera data
+		{
+			auto ub = m_rendererStorage->uniformBufferSet->Get(0, 0, currentFrame);
+
+			Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(m_rendererStorage->camera);
+			float tanHalfFOV = glm::tan(glm::radians(perspectiveCamera->GetFieldOfView()) / 2.f);
+
+			const bool levelLoaded = LevelManager::Get()->IsLevelLoaded();
+
+			m_rendererStorage->cameraData.ambienceExposure.x = levelLoaded ? LevelManager::GetActive()->GetEnvironment().GetSkybox().ambianceMultiplier : 0.5f;
+			m_rendererStorage->cameraData.ambienceExposure.y = levelLoaded ? LevelManager::GetActive()->GetEnvironment().GetSkybox().hdrExposure : 1.f;
+			m_rendererStorage->cameraData.positionAndTanHalfFOV = glm::vec4(m_rendererStorage->camera->GetPosition(), tanHalfFOV);
+			m_rendererStorage->cameraData.projection = m_rendererStorage->camera->GetProjectionMatrix();
+			m_rendererStorage->cameraData.view = m_rendererStorage->camera->GetViewMatrix();
+
+			ub->SetData(&m_rendererStorage->cameraData, sizeof(CameraDataBuffer));
+		}
+
+		//Directional lights
+		if (LevelManager::IsLevelLoaded())
+		{
+			auto ub = m_rendererStorage->uniformBufferSet->Get(1, 0, currentFrame);
+
+			uint32_t index = 0;
+			m_rendererStorage->directionalLightDataBuffer.lightCount = 0;
+			for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
+			{
+				glm::vec3 direction = glm::normalize(glm::mat3(light->transform) * glm::vec3(1.f));
+
+				m_rendererStorage->directionalLightDataBuffer.dirLights[index].direction = glm::vec4(direction, 1.f);
+				m_rendererStorage->directionalLightDataBuffer.dirLights[index].colorIntensity = glm::vec4(light->color, light->intensity);
+				m_rendererStorage->directionalLightDataBuffer.dirLights[index].castShadows = light->castShadows;
+				m_rendererStorage->directionalLightDataBuffer.lightCount++;
+
+				index++;
+				if (index > 0)
+				{
+					break;
+				}
+			}
+
+			ub->SetData(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer));
+		}
+
+		//Terrain data
+		{
+			m_rendererStorage->terrainDataBuffer->SetData(&m_rendererStorage->terrainData, sizeof(TerrainDataBuffer));
+		}
+
+
+		//Light data
+		if (LevelManager::IsLevelLoaded())
+		{
+			uint32_t index = 0;
+			for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
+			{
+				m_rendererStorage->directionalLightVPData.directionalLightVPs[index] = light->viewProjection;
+				index++;
+			}
+			m_rendererStorage->directionalLightVPData.count = index;
+
+			auto ub = m_rendererStorage->uniformBufferSet->Get(4, 0, currentFrame);
+			ub->SetData(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPBuffer));
+		}
+
+		//Point lights
+		if (LevelManager::IsLevelLoaded())
+		{
+			auto& pointLights = LevelManager::GetActive()->GetEnvironment().GetPointLights();
+			auto pointlightStorageBuffer = m_rendererStorage->shaderStorageBufferSet->Get(12, 0, currentFrame);
+
+			PointLightData* buffer = (PointLightData*)pointlightStorageBuffer->Map();
+
+			m_rendererStorage->lightCullingData.lightCount = 0;
+			m_rendererStorage->directionalLightDataBuffer.lightCount = 0;
+
+			for (uint32_t i = 0; i < pointLights.size(); i++)
+			{
+				const auto& light = pointLights[i];
+
+				buffer[i].position = glm::vec4(light->shadowBuffer->GetPosition(), 1.f);
+				buffer[i].color = glm::vec4(light->color, 0.f);
+				buffer[i].intensity = light->intensity;
+				buffer[i].falloff = light->falloff;
+				buffer[i].farPlane = light->farPlane;
+				buffer[i].radius = light->radius;
+
+				m_rendererStorage->lightCullingData.lightCount++;
+				m_rendererStorage->directionalLightDataBuffer.pointLightCount++;
+			}
+
+			pointlightStorageBuffer->Unmap();
+
+			m_rendererStorage->lightCullingBuffer->SetData(&m_rendererStorage->lightCullingData, sizeof(LightCullingBuffer));
+		}
+	}
+
+	void Renderer::UpdatePerPassUniformBuffers(const Ref<RenderPipeline> pipeline)
+	{
+		LP_PROFILE_FUNCTION();
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		//Light culling buffer
+		{
+			glm::vec2 size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
+
+			m_rendererStorage->lightCullingRendererData.xTileCount = ((uint32_t)size.x + (16 - ((uint32_t)size.x % 16))) / 16;
+			m_rendererStorage->lightCullingRendererData.yTileCount = ((uint32_t)size.y + (16 - ((uint32_t)size.y % 16))) / 16;
+
+			m_rendererStorage->lightCullingRendererData.tileCount = m_rendererStorage->lightCullingRendererData.xTileCount * m_rendererStorage->lightCullingRendererData.yTileCount;
+
+			m_rendererStorage->lightCullingData.screenSize = size;
+			m_rendererStorage->lightCullingBuffer->SetData(&m_rendererStorage->lightCullingData.screenSize, sizeof(glm::vec2));
+		}
+
+		//Screen
+		{
+			auto ub = m_rendererStorage->uniformBufferSet->Get(3, 0, currentFrame);
+
+			m_rendererStorage->screenData.size = { (float)pipeline->GetSpecification().framebuffer->GetSpecification().width, (float)pipeline->GetSpecification().framebuffer->GetSpecification().height };
+			m_rendererStorage->screenData.aspectRatio = m_rendererStorage->screenData.size.x / m_rendererStorage->screenData.size.y;
+			m_rendererStorage->screenData.xScreenTiles = m_rendererStorage->lightCullingRendererData.xTileCount;
+
+			ub->SetData(&m_rendererStorage->screenData, sizeof(ScreenDataBuffer));
+		}
+	}
+
+	void Renderer::AllocateDescriptorsForMaterialRendering(Ref<Material> material)
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
@@ -451,7 +634,7 @@ namespace Lamp
 			}
 			else
 			{
-				vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->whiteTexture);
+				vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(m_rendererDefaults->whiteTexture);
 			}
 
 			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
@@ -477,7 +660,7 @@ namespace Lamp
 		vkUpdateDescriptorSets(device->GetHandle(), static_cast<uint32_t>(writeDescriptors.size()), writeDescriptors.data(), 0, nullptr);
 	}
 
-	void VulkanRenderer::SetupDescriptorsForQuadRendering()
+	void Renderer::AllocateDescriptorsForQuadRendering()
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
@@ -549,7 +732,7 @@ namespace Lamp
  		}
 	}
 
-	void VulkanRenderer::UpdatePerPassDescriptors()		
+	void Renderer::AllocatePerPassDescriptors()		
 	{
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
@@ -656,7 +839,7 @@ namespace Lamp
 			}
 			else
 			{
-				vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->whiteTexture)->GetImage();
+				vulkanImage = std::reinterpret_pointer_cast<VulkanTexture2D>(m_rendererDefaults->whiteTexture)->GetImage();
 			}
 
 			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
@@ -687,7 +870,7 @@ namespace Lamp
 				}
 				else
 				{
-					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(Renderer::GetSceneData()->blackCubeTexture)->GetDescriptorInfo();
+					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(m_rendererDefaults->blackCubeTexture)->GetDescriptorInfo();
 				}
 
 				writeDescriptors.emplace_back(writeDescriptor);
@@ -706,7 +889,7 @@ namespace Lamp
 				}
 				else
 				{
-					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(Renderer::GetSceneData()->blackCubeTexture)->GetDescriptorInfo();
+					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(m_rendererDefaults->blackCubeTexture)->GetDescriptorInfo();
 				}
 
 				writeDescriptors.emplace_back(writeDescriptor);
@@ -714,5 +897,199 @@ namespace Lamp
 		}
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+	}
+
+	void Renderer::PreAllocateRenderBuffers()
+	{
+		m_firstRenderBuffer.drawCalls.reserve(500);
+		m_secondRenderBuffer.drawCalls.reserve(500);
+
+		m_finalRenderBuffer.drawCalls.reserve(500);
+	}
+
+	void Renderer::AllocateDescriptorPools()
+	{
+		VkDescriptorPoolSize poolSizes[] =
+		{
+			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+		};
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		poolInfo.maxSets = 10000;
+		poolInfo.poolSizeCount = (uint32_t)ARRAYSIZE(poolSizes);
+		poolInfo.pPoolSizes = poolSizes;
+
+		m_descriptorPools.resize(m_capabilities.framesInFlight);
+		auto device = VulkanContext::GetCurrentDevice();
+
+		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
+		{
+			LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &poolInfo, nullptr, &m_descriptorPools[i]));
+		}
+	}
+
+	void Renderer::DestroyDescriptorPools()
+	{
+		auto device = VulkanContext::GetCurrentDevice();
+		vkDeviceWaitIdle(device->GetHandle());
+
+		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
+		{
+			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorPools[i], nullptr);
+		}
+
+		m_descriptorPools.clear();
+	}
+
+	void Renderer::CreateRendererStorage()
+	{
+		m_rendererStorage = CreateScope<VulkanRendererStorage>();
+		m_rendererDefaults = CreateScope<RendererDefaults>();
+
+		//Setup default textures
+		uint32_t blackCubeTextureData[6] = { 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
+		m_rendererDefaults->blackCubeTexture = TextureCube::Create(ImageFormat::RGBA, 1, 1, &blackCubeTextureData);
+
+		uint32_t whiteTextureData = 0xffffffff;
+		m_rendererDefaults->whiteTexture = Texture2D::Create(ImageFormat::RGBA, 1, 1);
+		m_rendererDefaults->whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
+		CreateUniformBuffers();
+		GenerateBRDF(m_rendererDefaults->brdfFramebuffer);
+	}
+
+	void Renderer::DestroyRendererStorage()
+	{
+		m_rendererDefaults.reset();
+		m_rendererStorage.reset();
+	}
+
+	void Renderer::GenerateBRDF(Ref<Framebuffer>& outFramebuffer)
+	{
+		ScopedTimer timer{ "Generate BRDFLUT" };
+
+		const uint32_t brdfDim = 512;
+
+		FramebufferSpecification framebufferSpec{};
+		framebufferSpec.swapchainTarget = false;
+		framebufferSpec.width = brdfDim;
+		framebufferSpec.height = brdfDim;
+		framebufferSpec.attachments =
+		{
+			ImageFormat::RG16F
+		};
+
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+		outFramebuffer = pipelineSpec.framebuffer;
+
+		pipelineSpec.shader = ShaderLibrary::GetShader("BRDFIntegrate");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Quad;
+		pipelineSpec.uniformBufferSets = m_rendererStorage->uniformBufferSet;
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		auto renderPass = RenderPipeline::Create(pipelineSpec);
+
+		BeginPass(renderPass);
+		SubmitQuad();
+		EndPass();
+	}
+
+	void Renderer::PrepareForRender()
+	{
+		UpdateUniformBuffers();
+		DrawDirectionalShadow();
+
+		FrustumCull();
+		SortRenderBuffer(m_rendererStorage->camera->GetPosition(), m_finalRenderBuffer);
+	}
+
+	void Renderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
+	{
+		std::sort(buffer.drawCalls.begin(), buffer.drawCalls.end(), [&sortPoint](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				const glm::vec3& dPosOne = dataOne.transform[3];
+				const glm::vec3& dPosTwo = dataTwo.transform[3];
+
+				const float distTwo = glm::pow(sortPoint.x - dPosTwo.x, 2.f) + glm::pow(sortPoint.y - dPosTwo.y, 2.f) + glm::pow(sortPoint.z - dPosTwo.z, 2.f);
+				const float distOne = glm::pow(sortPoint.x - dPosOne.x, 2.f) + glm::pow(sortPoint.y - dPosOne.y, 2.f) + glm::pow(sortPoint.z - dPosOne.z, 2.f);
+
+				return distOne < distTwo;
+			});
+	}
+
+	void Renderer::DrawDirectionalShadow()
+	{
+		LP_PROFILE_FUNCTION();
+
+		if (!LevelManager::IsLevelLoaded())
+		{
+			return;
+		}
+
+		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+
+		for (const auto& light : LevelManager::GetActive()->GetEnvironment().GetDirectionalLights())
+		{
+			if (!light->castShadows)
+			{
+				continue;
+			}
+
+			auto ub = light->shadowPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame);
+			ub->SetData(&light->viewProjection, sizeof(glm::mat4));
+
+			BeginPass(light->shadowPipeline);
+
+			DispatchRenderCommands(*m_renderBufferPointer);
+
+			EndPass();
+		}
+	}
+
+	void Renderer::FrustumCull()
+	{
+		auto frustum = m_rendererStorage->camera->CreateFrustum();
+
+		for (auto& cmd : m_renderBufferPointer->drawCalls)
+		{
+			if (cmd.data->GetBoundingVolume().IsInFrustum(frustum, cmd.transform))
+			{
+				m_finalRenderBuffer.drawCalls.emplace_back(cmd);
+			}
+		}
+
+		m_statistics.totalDrawCalls = m_finalRenderBuffer.drawCalls.size();
+		m_statistics.culledDrawCalls = m_renderBufferPointer->drawCalls.size() - m_finalRenderBuffer.drawCalls.size();
+	}
+
+	void Renderer::ClearRenderBuffers()
+	{
+		m_firstRenderBuffer.drawCalls.clear();
+		m_secondRenderBuffer.drawCalls.clear();
+		
+		m_finalRenderBuffer.drawCalls.clear();
 	}
 }

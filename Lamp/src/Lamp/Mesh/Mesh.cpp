@@ -1,9 +1,7 @@
 #include "lppch.h"
 #include "Mesh.h"
 
-#include "Lamp/Rendering/Renderer.h"
-#include "glm/glm.hpp"
-
+#include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Math/Math.h"
 
 namespace Lamp
@@ -13,7 +11,7 @@ namespace Lamp
 		for (const auto& mesh : m_Meshes)
 		{
 			//TODO: Render error mesh if mesh is invalid
-			Renderer::SubmitMesh(transform, mesh, m_Materials[mesh->GetMaterialIndex()], id);
+			RenderCommand::SubmitMesh(transform, mesh, m_Materials[mesh->GetMaterialIndex()], id);
 		}
 	}
 }

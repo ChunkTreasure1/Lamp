@@ -26,7 +26,7 @@ namespace Lamp
 		m_projectionMatrix = glm::perspective(glm::radians(m_fieldOfView), aspect, nearPlane, farPlane);
 		m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
 	}
-
+	
 	Frustum PerspectiveCamera::CreateFrustum()
 	{
 		Frustum frustum;

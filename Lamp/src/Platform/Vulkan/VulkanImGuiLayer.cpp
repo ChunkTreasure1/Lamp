@@ -231,7 +231,7 @@ namespace Lamp
 		vkDeviceWaitIdle(device->GetHandle());
 		ImGui_ImplVulkan_DestroyFontUploadObjects();
 
-		uint32_t framesInFlight = Renderer::GetCapabilities().framesInFlight;
+		uint32_t framesInFlight = Renderer::Get().GetCapabilities().framesInFlight;
 		s_imGuiCommandBuffer.resize(framesInFlight);
 
 		for (uint32_t i = 0; i < framesInFlight; i++)

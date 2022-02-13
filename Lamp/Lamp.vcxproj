@@ -258,9 +258,9 @@
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Reflections\EnvironmentProbe.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
-    <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
     <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
@@ -810,8 +810,8 @@
     <ClCompile Include="src\Lamp\Rendering\CommandBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />

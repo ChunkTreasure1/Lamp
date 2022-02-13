@@ -20,6 +20,7 @@ namespace Lamp
 
 	void Physics::Shutdown()
 	{
+		s_Scene.reset();
 		PhysXInternal::Shutdown();
 	}
 

@@ -2,6 +2,7 @@
 #include "lppch.h"
 #include "VulkanTexture2D.h"
 
+#include "Platform/Vulkan/VulkanRenderer.h"
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanUtility.h"
 
@@ -55,6 +56,8 @@ namespace Lamp
 		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 		Utility::CopyBufferToImage(stagingBuffer, m_image->GetHandle(), m_image->GetWidth(), m_image->GetHeight());
 		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
 	}
 
 	const uint32_t VulkanTexture2D::GetWidth() const
@@ -98,7 +101,7 @@ namespace Lamp
 			return m_image->GetDescriptorInfo();
 		}
 
-		return std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::GetSceneData()->whiteTexture)->GetDescriptorInfo();
+		return std::reinterpret_pointer_cast<VulkanTexture2D>(Renderer::Get().GetDefaults().whiteTexture)->GetDescriptorInfo();
 	}
 
 	void VulkanTexture2D::Setup(void* data, uint32_t size, uint32_t width, uint32_t height, bool generateMips, bool isHDR)

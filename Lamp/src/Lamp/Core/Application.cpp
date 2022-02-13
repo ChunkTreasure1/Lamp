@@ -9,7 +9,11 @@
 #include "Lamp/Objects/Entity/ComponentInclude.h"
 #include "Lamp/ImGui/ImGuiLayer.h"
 #include "Lamp/Core/CoreLogger.h"
+
 #include "Lamp/Rendering/Swapchain.h"
+#include "Lamp/Rendering/RenderCommand.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <thread>
 
@@ -48,8 +52,11 @@ namespace Lamp
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		m_levelManager = CreateScope<LevelManager>();
+		m_renderer = CreateScope<Renderer>();
 
-		Renderer::Initialize();
+		m_renderer->Initialize();
+		RenderCommand::Initialize(m_renderer.get());
+
 		AudioEngine::Initialize();
 		Physics::Initialize();
 
@@ -67,7 +74,11 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		Physics::Shutdown();
 		AudioEngine::Shutdown();
-		Renderer::Shutdown();
+
+		RenderCommand::Shutdown();
+		m_renderer->Shutdown();
+
+		ResourceCache::Shutdown();
 
 		//m_AssetManagerThread.join();
 		m_threadPool.JoinAll();
@@ -88,20 +99,20 @@ namespace Lamp
 
 			m_updateFrameTime.Begin();
 
-			LP_PROFILE_SCOPE("Application::UpdateLayers");
-			AppUpdateEvent e(m_currentTimeStep);
+			//LP_PROFILE_SCOPE("Application::UpdateLayers");
+			//AppUpdateEvent e(m_currentTimeStep);
 
-			for (Layer* pLayer : m_LayerStack)
-			{
-				pLayer->OnEvent(e);
-			}
+			//for (Layer* pLayer : m_LayerStack)
+			//{
+			//	pLayer->OnEvent(e);
+			//}
 
 			m_updateReady = false;
 
 			while (!m_renderReady && m_running)
 			{}
 
-			Renderer::SwapBuffers();
+			//Renderer::SwapBuffers();
 
 			m_updateFrameTime.End();
 		}

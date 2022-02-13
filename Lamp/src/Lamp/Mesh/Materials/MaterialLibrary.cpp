@@ -9,7 +9,7 @@
 
 namespace Lamp
 {
-	std::vector<Ref<Material>> MaterialLibrary::m_Materials;
+	std::vector<Ref<Material>> MaterialLibrary::m_materials;
 
 	static std::string ToString(const float& var)
 	{
@@ -26,9 +26,14 @@ namespace Lamp
 		return false;
 	}
 
+	void MaterialLibrary::Shutdown()
+	{
+		m_materials.clear();
+	}
+
 	void MaterialLibrary::AddMaterial(Ref<Material> mat)
 	{
-		m_Materials.push_back(mat);
+		m_materials.push_back(mat);
 	}
 
 	void MaterialLibrary::AddMaterial(const std::filesystem::path& path)
@@ -56,7 +61,7 @@ namespace Lamp
 
 	Ref<Material> MaterialLibrary::GetMaterial(const std::string& name)
 	{
-		for (auto& mat : m_Materials)
+		for (auto& mat : m_materials)
 		{
 			if (mat->GetName() == name)
 			{
@@ -69,7 +74,7 @@ namespace Lamp
 
 	bool MaterialLibrary::IsMaterialLoaded(const std::string& name)
 	{
-		for (auto& mat : m_Materials)
+		for (auto& mat : m_materials)
 		{
 			if (mat->GetName() == name)
 			{

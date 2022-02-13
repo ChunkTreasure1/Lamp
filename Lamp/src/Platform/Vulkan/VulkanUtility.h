@@ -96,7 +96,6 @@ namespace Utility
 
 	static VmaAllocation CreateBuffer(VkDeviceSize size, int usage, VmaMemoryUsage memProps, VkBuffer& buffer)
 	{
-
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;

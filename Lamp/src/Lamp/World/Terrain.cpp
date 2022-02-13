@@ -1,13 +1,15 @@
 #include "lppch.h"
 #include "Terrain.h"
 
+#include "Lamp/Core/Application.h"
+
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
 #include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
-#include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
 #include "Lamp/Rendering/Swapchain.h"
+#include "Lamp/Rendering/RenderCommand.h"
 
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Mesh/Mesh.h"
@@ -16,6 +18,7 @@
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
 #include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
@@ -87,7 +90,7 @@ namespace Lamp
 
 	void Terrain::Draw()
 	{
-		Renderer::SubmitMesh(m_mesh, nullptr, m_descriptorSet.descriptorSets, (void*)glm::value_ptr(m_transform));
+		RenderCommand::SubmitMesh(m_mesh, nullptr, m_descriptorSet.descriptorSets, (void*)glm::value_ptr(m_transform));
 	}
 
 	Ref<Terrain> Terrain::Create(const std::filesystem::path& heightMap)
@@ -103,7 +106,7 @@ namespace Lamp
 		pipelineSpec.topology = Topology::PatchList;
 		pipelineSpec.drawType = DrawType::Terrain;
 		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
 		pipelineSpec.useTessellation = true;
 
@@ -140,7 +143,7 @@ namespace Lamp
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
 		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
-		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::GetSceneData()->terrainDataBuffer);
+		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::Get().GetStorage().terrainDataBuffer);
 
 		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("CameraDataBuffer"));
 		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];

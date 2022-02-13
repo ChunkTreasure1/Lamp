@@ -7,10 +7,8 @@
 #include "Windows/LayerViewPanel.h"
 #include "Windows/EnvironmentEditorPanel.h"
 
-#include <Lamp/Rendering/Shadows/PointShadowBuffer.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
-#include <Lamp/Rendering/Renderer2D.h>
-#include <Lamp/Rendering/RenderPipeline.h>
+#include <Lamp/Rendering/RenderCommand.h>
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -31,10 +29,11 @@ namespace Sandbox
 		g_pEnv->isEditor = true;
 		m_IconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
+		m_IconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/iceland_heightmap.png");
 		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 		//ResourceCache::GetAsset<Texture2D>("assets/textures/TeddyTextures/teddy_albedo.ktx2");
 
-		////LevelManager::Get()->Load("assets/levels/testLevel/data.level");
+		//LevelManager::Get()->Load("assets/levels/testLevel/data.level");
 
 		m_sandboxController = CreateRef<SandboxController>();
 
@@ -176,7 +175,7 @@ namespace Sandbox
 
 	void Sandbox::OnRender()
 	{
-		Renderer::Begin(m_sandboxController->GetCameraController()->GetCamera());
+		RenderCommand::Begin(m_sandboxController->GetCameraController()->GetCamera());
 
 		if (LevelManager::GetActive())
 		{
@@ -204,7 +203,7 @@ namespace Sandbox
 			}
 		}
 
-		Renderer::End();
+		RenderCommand::End();
 	}
 
 	bool Sandbox::OnKeyPressed(KeyPressedEvent& e)

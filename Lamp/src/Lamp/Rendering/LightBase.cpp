@@ -5,7 +5,8 @@
 
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-#include "Lamp/Rendering/Renderer.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
@@ -24,7 +25,7 @@ namespace Lamp
 
 		shadowBuffer = Framebuffer::Create(bufferSpec);
 
-		Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(Renderer::GetCapabilities().framesInFlight);
+		Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(Renderer::Get().GetCapabilities().framesInFlight);
 		uniformBufferSet->Add(&viewProjection, sizeof(glm::mat4), 0, 0);
 
 		RenderPipelineSpecification pipelineSpec{};

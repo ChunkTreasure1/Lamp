@@ -2,8 +2,10 @@
 
 #include <imgui/imgui.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
+
+#include <Lamp/Rendering/RenderCommand.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -157,7 +159,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_modelToImport->GetSubMeshes())
 			{
-				Renderer::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				RenderCommand::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
 	}

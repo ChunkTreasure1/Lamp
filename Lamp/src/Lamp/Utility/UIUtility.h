@@ -77,6 +77,7 @@ namespace UI
 
 	ImTextureID GetTextureID(Ref<Lamp::Texture2D> texture);
 	ImTextureID GetTextureID(Ref<Lamp::Image2D> texture);
+	ImTextureID GetTextureID(Lamp::Texture2D* texture);
 
 	static uint64_t BytesToMBs(uint64_t input)
 	{

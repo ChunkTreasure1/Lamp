@@ -60,6 +60,17 @@ namespace Lamp
 		uint32_t lightCount;
 	};
 
+	struct LightCullingRendererData
+	{
+		const uint32_t maxLights = 1024;
+		const uint32_t maxScreenTileBufferAllocation = 2048;
+		const uint32_t tileSize = 16;
+
+		uint32_t tileCount = 1;
+		uint32_t xTileCount = 1;
+		uint32_t yTileCount = 1;
+	};
+
 	struct PointLightData
 	{
 		alignas(16) glm::vec4 position;

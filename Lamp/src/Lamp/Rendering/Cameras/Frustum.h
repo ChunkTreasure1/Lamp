@@ -7,21 +7,17 @@ namespace Lamp
 	struct Plane
 	{
 		Plane() = default;
-		Plane(const glm::vec3& aNormal, float aDistance)
-			: normal(glm::normalize(aNormal)), distance(aDistance)
+		Plane(const glm::vec3& aPoint, const glm::vec3& aNormal)
+			: normal(glm::normalize(aNormal)), point(aPoint)
 		{ }
 
-		Plane(const glm::vec3& point, const glm::vec3& aNormal)
-			: normal(glm::normalize(aNormal)), distance(glm::dot(aNormal, point))
-		{ }
-
-		float GetSignedDistanceToPlane(const glm::vec3& point) const
+		float GetSignedDistanceToPlane(const glm::vec3& position) const
 		{
-			return glm::dot(normal, point) - distance;
+			return glm::dot(position - point, normal);
 		}
 
 		glm::vec3 normal = { 0.f, 1.f, 0.f };
-		float distance = 0.f;
+		glm::vec3 point = { 0.f, 0.f, 0.f };
 	};
 
 	struct Frustum

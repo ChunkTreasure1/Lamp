@@ -83,7 +83,7 @@ namespace Lamp
 
 		void* mappedData = allocator.MapMemory<void>(stagingBufferMemory);
 		memcpy(mappedData, data, size);
-		allocator.UnmapMemory(m_bufferAllocation);
+		allocator.UnmapMemory(stagingBufferMemory);
 
 		m_bufferAllocation = Utility::CreateBuffer(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY, m_buffer);
 		Utility::CopyBuffer(stagingBuffer, m_buffer, size);

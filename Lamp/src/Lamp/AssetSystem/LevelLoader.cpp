@@ -62,6 +62,8 @@ namespace Lamp
 					{
 						LP_SERIALIZE_PROPERTY(environmentLod, level->GetEnvironment().GetSkybox().environmentLod, out);
 						LP_SERIALIZE_PROPERTY(environmentMultiplier, level->GetEnvironment().GetSkybox().environmentMultiplier, out);
+						LP_SERIALIZE_PROPERTY(hdrExposure, level->GetEnvironment().GetSkybox().hdrExposure, out);
+						LP_SERIALIZE_PROPERTY(ambianceMultiplier, level->GetEnvironment().GetSkybox().ambianceMultiplier, out);
 						LP_SERIALIZE_PROPERTY(skybox, level->GetEnvironment().GetSkybox().skybox->Path.string(), out);
 					}
 				}
@@ -215,7 +217,9 @@ namespace Lamp
 				auto& skybox = const_cast<SkyboxData&>(level->m_environment.GetSkybox());
 				LP_DESERIALIZE_PROPERTY(environmentLod, skybox.environmentLod, skyboxNode, 1.f);
 				LP_DESERIALIZE_PROPERTY(environmentMultiplier, skybox.environmentMultiplier, skyboxNode, 1.f);
-			
+				LP_DESERIALIZE_PROPERTY(hdrExposure, skybox.hdrExposure, skyboxNode, 1.f);
+				LP_DESERIALIZE_PROPERTY(ambianceMultiplier, skybox.ambianceMultiplier, skyboxNode, 0.5f);
+
 				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode["skybox"].as<std::string>() : "";
 				skybox.skybox = Skybox::Create(skyboxPath);
 				skybox.skybox->SetupRenderPipeline(level->GetGeometryFramebuffer());

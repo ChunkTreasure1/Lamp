@@ -1,13 +1,14 @@
 #include "lppch.h"
 #include "WindowsWindow.h"
 
-#include "Platform/Vulkan/VulkanAllocator.h"
 
 #include "Lamp/Rendering/Swapchain.h"
 
-#include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Event/KeyEvent.h"
 #include "Lamp/Event/MouseEvent.h"
+#include "Lamp/Core/Application.h"
+
+#include "Platform/Vulkan/VulkanAllocator.h"
 
 #include <stb/stb_image.h>
 

@@ -5,8 +5,10 @@
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
-#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
+
+#include <Lamp/Rendering/RenderCommand.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 
 #include <Lamp/Core/Time/ScopedTimer.h>
 #include <Lamp/Utility/UIUtility.h>
@@ -286,7 +288,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_materialModel->GetSubMeshes())
 			{
-				Renderer::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
+				RenderCommand::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
 			}
 		}
 	}

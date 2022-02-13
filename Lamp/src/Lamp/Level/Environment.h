@@ -18,6 +18,9 @@ namespace Lamp
 	{
 		float environmentLod = 1.f;
 		float environmentMultiplier = 1.f;
+		float hdrExposure = 1.f;
+		float ambianceMultiplier = 0.5f;
+	
 		Ref<Skybox> skybox;
 	};
 

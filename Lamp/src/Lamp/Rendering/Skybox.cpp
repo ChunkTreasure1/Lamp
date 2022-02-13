@@ -9,10 +9,10 @@
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
-#include "Lamp/Rendering/Renderer.h"
 
 #include "Lamp/Rendering/RendererDataStructures.h"
 #include "Lamp/Rendering/Swapchain.h"
+#include "Lamp/Rendering/RenderCommand.h"
 
 #include "Platform/Vulkan/VulkanRenderComputePipeline.h"
 #include "Platform/Vulkan/VulkanContext.h"
@@ -22,6 +22,7 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanUtility.h"
 #include "Platform/Vulkan/VulkanUniformBuffer.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
@@ -178,7 +179,7 @@ namespace Lamp
 		pipelineSpec.cullMode = CullMode::Back;
 		pipelineSpec.topology = Topology::TriangleList;
 		pipelineSpec.drawType = DrawType::Cube;
-		pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 		pipelineSpec.framebuffer = framebuffer;
 		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
 
@@ -210,7 +211,7 @@ namespace Lamp
 		skyData.environmentLod = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentLod;
 		skyData.environmentMultiplier = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentMultiplier;
 
-		Renderer::SubmitMesh(m_cubeMesh, nullptr, m_descriptorSet.descriptorSets, static_cast<void*>(&skyData));
+		RenderCommand::SubmitMesh(m_cubeMesh, nullptr, m_descriptorSet.descriptorSets, static_cast<void*>(&skyData));
 	}
 
 	void Skybox::SetupDescriptors()

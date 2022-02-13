@@ -24,7 +24,7 @@ namespace Lamp
 
 		const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
 
-		BoundingSphere globalSphere(globalCenter, radius * maxScale);
+		BoundingSphere globalSphere(globalCenter, radius * maxScale * 0.5f);
 
 		bool l = globalSphere.IsOnOrForwardPlan(frustum.leftFace);
 		bool r = globalSphere.IsOnOrForwardPlan(frustum.rightFace);

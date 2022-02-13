@@ -3,8 +3,8 @@
 #include "VulkanAllocator.h"
 #include "VulkanUtility.h"
 
-#include "Lamp/Rendering/Renderer.h"
 #include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <glfw/glfw3.h>
 
@@ -246,7 +246,7 @@ namespace Lamp
 
 		LP_VK_CHECK(vkQueuePresentKHR(m_device->GetGraphicsQueue(), &presentInfo));
 
-		m_currentFrame = (m_currentFrame + 1) % Renderer::GetCapabilities().framesInFlight;
+		m_currentFrame = (m_currentFrame + 1) % Renderer::Get().GetCapabilities().framesInFlight;
 	}
 
 	void VulkanSwapchain::Invalidate(uint32_t& width, uint32_t& height)
@@ -414,7 +414,7 @@ namespace Lamp
 
 	void VulkanSwapchain::CreateSyncObjects()
 	{
-		uint32_t framesInFlight = Renderer::GetCapabilities().framesInFlight;
+		uint32_t framesInFlight = Renderer::Get().GetCapabilities().framesInFlight;
 
 		m_presentCompleteSemaphores.resize(framesInFlight);
 		m_renderCompleteSemaphores.resize(framesInFlight);

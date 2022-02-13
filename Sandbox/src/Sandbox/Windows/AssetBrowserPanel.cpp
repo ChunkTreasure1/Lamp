@@ -300,7 +300,7 @@ namespace Sandbox
 			{
 				//Get asset
 				Ref<MeshSource> meshSource = ResourceCache::GetAsset<MeshSource>(data.path);
-				Ref<Asset>& asset = ResourceCache::s_AssetCache[g_pEnv->pAssetManager->GetPathFromAssetHandle(meshSource->GetMeshAsset())];
+				Ref<Asset>& asset = ResourceCache::s_assetCache[g_pEnv->pAssetManager->GetPathFromAssetHandle(meshSource->GetMeshAsset())];
 				AssetHandle oldHandle = data.handle;
 
 				asset = MeshImporter::ImportMesh(meshSource->GetImportSettings());

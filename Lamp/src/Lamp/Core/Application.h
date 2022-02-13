@@ -1,6 +1,4 @@
 #pragma once
-#include "Lamp/Rendering/Renderer.h"
-
 #include "Lamp/Event/Event.h"
 #include "Lamp/Event/ApplicationEvent.h"
 
@@ -19,6 +17,7 @@ namespace Lamp
 {
 	class PhysicsEngine;
 	class ImGuiLayer;
+	class Renderer;
 
 	class Application
 	{
@@ -51,6 +50,7 @@ namespace Lamp
 	private:
 		Scope<Window> m_pWindow;
 		Scope<LevelManager> m_levelManager;
+		Scope<Renderer> m_renderer;
 
 		ImGuiLayer* m_pImGuiLayer;
 		LayerStack m_LayerStack;

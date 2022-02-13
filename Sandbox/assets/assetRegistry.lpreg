@@ -247,6 +247,8 @@ Assets:
     Path: engine/textures/gizmos/gizmoEntity.png
   - Handle: 14854305732802269758
     Path: engine/textures/gizmos/gizmoLight.png
+  - Handle: 4060130579385547437
+    Path: engine/textures/iceland_heightmap.png
   - Handle: 18118714278600547282
     Path: engine/textures/ui/AssetIcons/iconMesh.png
   - Handle: 7667220179670436888

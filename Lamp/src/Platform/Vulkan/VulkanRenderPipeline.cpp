@@ -251,7 +251,7 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_specification.shader);
 
-		const uint32_t count = m_specification.isSwapchain ? Renderer::GetCapabilities().framesInFlight : 1;
+		const uint32_t count = m_specification.isSwapchain ? Renderer::Get().GetCapabilities().framesInFlight : 1;
 		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
 
 		for (uint32_t frame = 0; frame < count; frame++)

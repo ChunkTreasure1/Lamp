@@ -153,7 +153,7 @@ namespace Lamp
 			m_mesh->Render(m_id, GetTransform());
 		}
 
-		if (true)
+		if (g_pEnv->shouldRenderBB)
 		{
 			auto transform = GetTransform();
 
@@ -166,7 +166,7 @@ namespace Lamp
 
 				const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
 				const float radius = bv.GetRadius();
-				const float scale = radius * maxScale * 0.7f;
+				const float scale = radius * maxScale * 0.5f;
 
 				glm::mat4 newTransform = glm::translate(glm::mat4(1.f), globalCenter) * glm::scale(glm::mat4(1.f), { scale, scale, scale });
 

@@ -8,6 +8,9 @@
 #include "Lamp/Objects/Brushes/Brush.h"
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/RenderCommand.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
+
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
 #include "Lamp/World/Terrain.h"
@@ -325,7 +328,7 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("depthPrePass");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.debugName = "Pre Depth";
 			pipelineSpec.vertexLayout =
 			{
@@ -343,7 +346,7 @@ namespace Lamp
 		//Light culling
 		{
 			auto& pass = m_renderPasses.emplace_back();
-			auto [pipeline, command] = Renderer::CreateLightCullingPipeline(m_renderPasses[m_renderPasses.size() - 2].graphicsPipeline->GetSpecification().framebuffer->GetDepthAttachment());
+			auto [pipeline, command] = Renderer::Get().CreateLightCullingPipeline(m_renderPasses[m_renderPasses.size() - 2].graphicsPipeline->GetSpecification().framebuffer->GetDepthAttachment());
 			pass.computePipeline = pipeline;
 			pass.computeExcuteCommand = command;
 		}
@@ -365,8 +368,8 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
 			pipelineSpec.drawSkybox = true;
 			pipelineSpec.drawTerrain = true;
 			pipelineSpec.debugName = "Geometry";
@@ -381,7 +384,7 @@ namespace Lamp
 
 			pipelineSpec.framebufferInputs =
 			{
-				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
 			auto& pass = m_renderPasses.emplace_back();
@@ -407,8 +410,8 @@ namespace Lamp
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.drawType = DrawType::Translucency;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
-			pipelineSpec.shaderStorageBufferSets = Renderer::GetSceneData()->shaderStorageBufferSet;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
 			pipelineSpec.drawSkybox = false;
 			pipelineSpec.drawTerrain = false;
 			pipelineSpec.debugName = "Translucency";
@@ -423,7 +426,7 @@ namespace Lamp
 
 			pipelineSpec.framebufferInputs =
 			{
-				{ Renderer::GetSceneData()->brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
 			auto& pass = m_renderPasses.emplace_back();
@@ -446,7 +449,7 @@ namespace Lamp
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.drawType = DrawType::Quad;
-			pipelineSpec.uniformBufferSets = Renderer::GetSceneData()->uniformBufferSet;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -472,11 +475,9 @@ namespace Lamp
 		{
 			if (pass.graphicsPipeline)
 			{
-				Renderer::BeginPass(pass.graphicsPipeline);
-
-				Renderer::DrawBuffer();
-
-				Renderer::EndPass();
+				RenderCommand::BeginPass(pass.graphicsPipeline);
+				RenderCommand::DispatchRenderCommands();
+				RenderCommand::EndPass();
 			}
 			else
 			{
