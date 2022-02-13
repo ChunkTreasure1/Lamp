@@ -9,9 +9,11 @@
 namespace Lamp
 {
 	Brush::Brush(Ref<Mesh> model)
-		: m_Mesh(model)
+		: m_mesh(model)
 	{
 		m_name = "Brush";
+
+		m_boundingMesh = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
 	}
 
 	void Brush::OnEvent(Event& e)
@@ -148,7 +150,28 @@ namespace Lamp
 	{	
 		if (m_isActive)
 		{
-			m_Mesh->Render(m_id, GetTransform());
+			m_mesh->Render(m_id, GetTransform());
+		}
+
+		if (true)
+		{
+			auto transform = GetTransform();
+
+			glm::vec3 globalScale = { glm::length(transform[0]), glm::length(transform[1]), glm::length(transform[2]) };
+
+			for (const auto& subMesh : m_mesh->GetSubMeshes())
+			{
+				auto& bv = subMesh->GetBoundingVolume();
+				const glm::vec3 globalCenter = transform * glm::vec4(bv.GetCenter(), 1.f);
+
+				const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
+				const float radius = bv.GetRadius();
+				const float scale = radius * maxScale * 0.7f;
+
+				glm::mat4 newTransform = glm::translate(glm::mat4(1.f), globalCenter) * glm::scale(glm::mat4(1.f), { scale, scale, scale });
+
+				m_boundingMesh->Render(m_id, newTransform);
+			}
 		}
 
 		return false;
@@ -161,8 +184,8 @@ namespace Lamp
 
 	bool Brush::OnScaleChanged(ObjectScaleChangedEvent& e)
 	{
-		m_Mesh->GetBoundingBox().Max = m_scale * m_Mesh->GetBoundingBox().StartMax;
-		m_Mesh->GetBoundingBox().Min = m_scale * m_Mesh->GetBoundingBox().StartMin;
+		m_mesh->GetBoundingBox().Max = m_scale * m_mesh->GetBoundingBox().StartMax;
+		m_mesh->GetBoundingBox().Min = m_scale * m_mesh->GetBoundingBox().StartMin;
 
 		return false;
 	}

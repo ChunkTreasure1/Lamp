@@ -157,7 +157,7 @@ namespace Lamp
 		m_irradianceMap = irradianceMap;
 		m_filteredEnvironment = envFiltered;
 
-		m_cubeMesh = SubMesh::CreateBox();
+		m_cubeMesh = SubMesh::CreateCube();
 	}
 
 	Skybox::~Skybox()

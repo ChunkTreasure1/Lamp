@@ -33,16 +33,16 @@ namespace Lamp
 		const float halfVSide = m_farPlane * tanf(glm::radians(m_fieldOfView) * 0.5f);
 		const float halfHSide = halfVSide * m_aspectRatio;
 
-		const glm::vec3 forwardDir = GetForwardDirection();
-		const glm::vec3 upDir = GetUpDirection();
-		const glm::vec3 rightDir = GetRightDirection();
+		const glm::vec3 forwardDir = glm::normalize(GetForwardDirection());
+		const glm::vec3 upDir = glm::normalize(GetUpDirection());
+		const glm::vec3 rightDir = glm::normalize(GetRightDirection());
 
 		const glm::vec3 frontMultFar = m_farPlane * forwardDir;
 
 		frustum.nearFace = { m_position + m_nearPlane * forwardDir, forwardDir };
-		frustum.farFace = { m_position + frontMultFar * -forwardDir, -forwardDir };
+		frustum.farFace = { m_position + frontMultFar, -forwardDir };
 
-		frustum.rightFace = { m_position, glm::cross(upDir, frontMultFar + rightDir * halfHSide).x };
+		frustum.rightFace = { m_position, glm::cross(upDir, frontMultFar + rightDir * halfHSide) };
 		frustum.leftFace = { m_position, glm::cross(frontMultFar - rightDir * halfHSide, upDir) };
 
 		frustum.topFace = { m_position, glm::cross(rightDir, frontMultFar - upDir * halfVSide) };

@@ -23,8 +23,9 @@ namespace Lamp
 
 		inline const BoundingVolume& GetBoundingVolume() { return m_boundingSphere; }
 
-		static Ref<SubMesh> CreateBox();
+		static Ref<SubMesh> CreateCube();
 		static Ref<SubMesh> CreateQuad();
+		static Ref<SubMesh> CreateSphere();
 
 	private:
 		void SetupMesh();

@@ -90,7 +90,7 @@ namespace Lamp
 		DrawDirectionalShadows();
 
 		UpdateBuffers(camera);
-		SortRenderBuffer(camera->GetPosition(), *s_renderBufferPointer);
+		SortRenderBuffer(camera->GetPosition(), s_finalDrawCommands);
 		s_renderer->Begin(camera);
 	}
 
@@ -415,11 +415,6 @@ namespace Lamp
 	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<Image2D> depthImage)
 	{
 		return s_renderer->CreateLightCullingPipeline(s_pSceneData->uniformBufferSet->Get(0), s_pSceneData->lightCullingBuffer, s_pSceneData->shaderStorageBufferSet, depthImage);
-	}
-
-	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateHBAOPipeline(Ref<Image2D> depthImage)
-	{
-		return std::pair<Ref<RenderComputePipeline>, std::function<void()>>();
 	}
 
 	void Renderer::CreateUniformBuffers()

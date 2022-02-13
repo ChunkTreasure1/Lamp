@@ -8,7 +8,7 @@ namespace Lamp
 	{
 		Plane() = default;
 		Plane(const glm::vec3& aNormal, float aDistance)
-			: normal(aNormal), distance(aDistance)
+			: normal(glm::normalize(aNormal)), distance(aDistance)
 		{ }
 
 		Plane(const glm::vec3& point, const glm::vec3& aNormal)

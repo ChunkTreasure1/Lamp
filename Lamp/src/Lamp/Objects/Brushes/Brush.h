@@ -18,7 +18,7 @@ namespace Lamp
 		void Destroy() override;
 
 		//Getting
-		inline const Ref<Mesh>& GetModel() const { return m_Mesh; }
+		inline const Ref<Mesh>& GetModel() const { return m_mesh; }
 
 	public:
 		static Brush* Create(const std::filesystem::path& path, bool addToLevel = true);
@@ -32,6 +32,7 @@ namespace Lamp
 		bool OnScaleChanged(ObjectScaleChangedEvent& e);
 
 	private:
-		Ref<Mesh> m_Mesh;
+		Ref<Mesh> m_mesh;
+		Ref<Mesh> m_boundingMesh;
 	};
 }

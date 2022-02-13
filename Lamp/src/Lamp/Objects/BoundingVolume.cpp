@@ -1,6 +1,9 @@
 #include "lppch.h"
 #include "BoundingVolume.h"
 
+#include "Lamp/AssetSystem/ResourceCache.h"
+#include "Lamp/Mesh/Mesh.h"
+
 namespace Lamp
 {
 	BoundingSphere::BoundingSphere(const glm::vec3& aCenter, float aRadius)
@@ -10,7 +13,8 @@ namespace Lamp
 
 	bool BoundingSphere::IsOnOrForwardPlan(const Plane& plane) const
 	{
-		return plane.GetSignedDistanceToPlane(center) > -radius;
+		float distance = plane.GetSignedDistanceToPlane(center);
+		return distance > -radius;
 	}
 
 	bool BoundingSphere::IsInFrustum(const Frustum& frustum, const glm::mat4& transform) const
@@ -20,9 +24,8 @@ namespace Lamp
 
 		const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
 
-		BoundingSphere globalSphere(globalCenter, radius * (maxScale * 0.5f));
+		BoundingSphere globalSphere(globalCenter, radius * maxScale);
 
-		
 		bool l = globalSphere.IsOnOrForwardPlan(frustum.leftFace);
 		bool r = globalSphere.IsOnOrForwardPlan(frustum.rightFace);
 		bool f = globalSphere.IsOnOrForwardPlan(frustum.farFace);

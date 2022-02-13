@@ -75,6 +75,12 @@
     <ClInclude Include="src\Sandbox\Actions\ActionHandler.h">
       <Filter>src\Sandbox\Actions</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sandbox\Actions\CommandStack.h">
+      <Filter>src\Sandbox\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox\Actions\Commands.h">
+      <Filter>src\Sandbox\Actions</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sandbox\Sandbox.h">
       <Filter>src\Sandbox</Filter>
     </ClInclude>
@@ -108,8 +114,6 @@
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Actions\CommandStack.h" />
-    <ClInclude Include="src\Sandbox\Actions\Commands.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -119,6 +123,12 @@
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Actions\ActionHandler.cpp">
+      <Filter>src\Sandbox\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox\Actions\CommandStack.cpp">
+      <Filter>src\Sandbox\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox\Actions\Commands.cpp">
       <Filter>src\Sandbox\Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ConfigHandler.cpp">
@@ -163,8 +173,6 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Actions\CommandStack.cpp" />
-    <ClCompile Include="src\Sandbox\Actions\Commands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\opengl\depthPass.glsl">

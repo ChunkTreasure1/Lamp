@@ -3,6 +3,15 @@
 
 namespace Lamp
 {
+	enum class BaseMesh
+	{
+		Cube,
+		Quad,
+		Sphere
+	};
+
+	static std::unordered_map<BaseMesh, Ref<SubMesh>> s_baseMeshes;
+
 	static BoundingSphere CalculateBoundingSphere(const std::vector<Vertex>& vertices)
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
@@ -31,56 +40,87 @@ namespace Lamp
 		SetupMesh();
 	}
 
-	Ref<SubMesh> SubMesh::CreateBox()
+	Ref<SubMesh> SubMesh::CreateCube()
 	{
-		std::vector<Vertex> positions =
-		{
-			Vertex({-1, -1, -1}),
-			Vertex({ 1, -1, -1}),
-			Vertex({ 1,  1, -1}),
-			Vertex({-1,  1, -1}),
-			Vertex({-1, -1,  1}),
-			Vertex({ 1, -1,  1}),
-			Vertex({ 1,  1,  1}),
-			Vertex({-1,  1,  1}),
-		};
+		Ref<SubMesh> mesh;
 
-		std::vector<uint32_t> indices =
+		auto it = s_baseMeshes.find(BaseMesh::Cube);
+		if (it == s_baseMeshes.end())
 		{
-			0, 1, 3,
-			3, 1, 2,
-			1, 5, 2,
-			2, 5, 6,
-			5, 4, 6,
-			6, 4, 7,
-			4, 0, 7,
-			7, 0, 3,
-			3, 2, 7,
-			7, 2, 5,
-			4, 5, 0,
-			0, 5, 1
-		};
+			std::vector<Vertex> positions =
+			{
+				Vertex({-1, -1, -1}),
+				Vertex({ 1, -1, -1}),
+				Vertex({ 1,  1, -1}),
+				Vertex({-1,  1, -1}),
+				Vertex({-1, -1,  1}),
+				Vertex({ 1, -1,  1}),
+				Vertex({ 1,  1,  1}),
+				Vertex({-1,  1,  1}),
+			};
 
-		return CreateRef<SubMesh>(positions, indices, 0);
+			std::vector<uint32_t> indices =
+			{
+				0, 1, 3,
+				3, 1, 2,
+				1, 5, 2,
+				2, 5, 6,
+				5, 4, 6,
+				6, 4, 7,
+				4, 0, 7,
+				7, 0, 3,
+				3, 2, 7,
+				7, 2, 5,
+				4, 5, 0,
+				0, 5, 1
+			};
+
+			mesh = CreateRef<SubMesh>(positions, indices, 0);
+			s_baseMeshes[BaseMesh::Cube] = mesh;
+		}
+		else
+		{
+			mesh = it->second;
+		}
+
+		return mesh;
 	}
 
 	Ref<SubMesh> SubMesh::CreateQuad()
 	{
-		std::vector<Vertex> quadVertices =
-		{
-			Vertex({ -1.f, -1.f, 0.f }, { 0.f, 1.f }),
-			Vertex({  1.f, -1.f, 0.f }, { 1.f, 1.f }),
-			Vertex({  1.f,  1.f, 0.f }, { 1.f, 0.f }),
-			Vertex({ -1.f,  1.f, 0.f }, { 0.f, 0.f }),
-		};
+		Ref<SubMesh> mesh;
 
-		std::vector<uint32_t> quadIndices =
+		auto it = s_baseMeshes.find(BaseMesh::Quad);
+		if (it == s_baseMeshes.end())
 		{
-			0, 1, 2,
-			2, 3, 0
-		};
+			std::vector<Vertex> quadVertices =
+			{
+				Vertex({ -1.f, -1.f, 0.f }, { 0.f, 1.f }),
+				Vertex({  1.f, -1.f, 0.f }, { 1.f, 1.f }),
+				Vertex({  1.f,  1.f, 0.f }, { 1.f, 0.f }),
+				Vertex({ -1.f,  1.f, 0.f }, { 0.f, 0.f }),
+			};
 
-		return CreateRef<SubMesh>(quadVertices, quadIndices, 0);
+			std::vector<uint32_t> quadIndices =
+			{
+				0, 1, 2,
+				2, 3, 0
+			};
+
+			mesh = CreateRef<SubMesh>(quadVertices, quadIndices, 0);
+			s_baseMeshes[BaseMesh::Quad] = mesh;
+		}
+		else
+		{
+			mesh = it->second;
+		}
+
+		return mesh;
+	}
+
+	Ref<SubMesh> SubMesh::CreateSphere()
+	{
+		return nullptr;
 	}
 
 	void SubMesh::SetupMesh()

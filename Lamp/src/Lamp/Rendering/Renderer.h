@@ -64,7 +64,6 @@ namespace Lamp
 		static Ref<VulkanRenderer> GetRenderer() { return s_renderer; }
 
 		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
-		static std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateHBAOPipeline(Ref<Image2D> depthImage);
 
 		struct SceneData
 		{
