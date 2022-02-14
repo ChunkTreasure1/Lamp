@@ -199,6 +199,8 @@ namespace Lamp
 
 	void VulkanSwapchain::BeginFrame()
 	{
+		LP_PROFILE_FUNCTION();
+
 		vkWaitForFences(m_device->GetHandle(), 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
 		LP_VK_CHECK(vkResetCommandPool(m_device->GetHandle(), m_commandPools[m_currentFrame], 0));
 		LP_VK_CHECK(vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, m_presentCompleteSemaphores[m_currentFrame], VK_NULL_HANDLE, &m_currentImageIndex));
@@ -212,6 +214,8 @@ namespace Lamp
 
 	void VulkanSwapchain::Present()
 	{
+		LP_PROFILE_FUNCTION();
+
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 

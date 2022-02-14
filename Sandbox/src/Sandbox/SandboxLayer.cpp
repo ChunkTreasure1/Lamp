@@ -149,6 +149,8 @@ namespace Sandbox
 
 	void SandboxLayer::OnRender()
 	{
+		LP_PROFILE_FUNCTION();
+
 		RenderCommand::Begin(m_sandboxController->GetCameraController()->GetCamera());
 
 		if (LevelManager::GetActive())

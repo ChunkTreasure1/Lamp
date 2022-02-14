@@ -17,6 +17,7 @@ IncludeDir["yaml"] = "%{wks.location}/Lamp/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "%{wks.location}/Lamp/vendor/ImGuizmo/include"
 IncludeDir["rapidxml"] = "%{wks.location}/Lamp/vendor/rapidxml"
 IncludeDir["ktx2"] = "%{wks.location}/Lamp/vendor/ktx2/include"
+IncludeDir["Optick"] = "%{wks.location}/Lamp/vendor/Optick/src"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"

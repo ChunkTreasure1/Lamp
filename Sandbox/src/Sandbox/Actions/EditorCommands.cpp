@@ -19,7 +19,7 @@ namespace Sandbox
 	{
 		if (m_object)
 		{
-			m_object->SetTransform(m_startTransform);
+			m_object->SetTransform(m_endTransform);
 		}
 	}
 
@@ -59,6 +59,7 @@ namespace Sandbox
 
 				m_newObject->Destroy();
 				*m_selectedObject = m_lastSelected;
+				m_lastSelected->SetIsSelected(true);
 			}
 		}
 	}

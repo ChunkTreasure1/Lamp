@@ -16,7 +16,7 @@ namespace Lamp
 		uint32_t useAlbedo;
 		uint32_t useNormal;
 		uint32_t useMRO;
-		uint32_t useSkybox;
+		uint32_t id;
 	};
 
 	struct CameraDataBuffer

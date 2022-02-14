@@ -358,6 +358,7 @@ namespace Lamp
 			framebufferSpec.attachments =
 			{
 				ImageFormat::RGBA32F,
+				ImageFormat::R32UI,
 				ImageFormat::DEPTH32F
 			};
 
@@ -471,6 +472,8 @@ namespace Lamp
 
 	void Level::RenderLevel()
 	{
+		LP_PROFILE_FUNCTION();
+
 		for (const auto& pass : m_renderPasses)
 		{
 			if (pass.graphicsPipeline)

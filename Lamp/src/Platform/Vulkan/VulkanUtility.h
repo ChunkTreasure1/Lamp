@@ -532,7 +532,8 @@ namespace Utility
 		{
 			case Lamp::ImageFormat::None: LP_CORE_ASSERT(false, "Image must have a format!");
 			case Lamp::ImageFormat::R32F: return VK_FORMAT_R32_SFLOAT;
-			case Lamp::ImageFormat::R32I: return VK_FORMAT_R32_SINT;
+			case Lamp::ImageFormat::R32SI: return VK_FORMAT_R32_SINT;
+			case Lamp::ImageFormat::R32UI: return VK_FORMAT_R32_UINT;
 			case Lamp::ImageFormat::RGB: return VK_FORMAT_R8G8B8_UNORM;
 			case Lamp::ImageFormat::RGBA: return VK_FORMAT_R8G8B8A8_UNORM;
 			case Lamp::ImageFormat::RGBA16F: return VK_FORMAT_R16G16B16A16_SFLOAT;

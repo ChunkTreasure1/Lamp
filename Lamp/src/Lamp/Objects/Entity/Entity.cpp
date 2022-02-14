@@ -8,7 +8,7 @@
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
-#include "Lamp/Rendering/Renderer2D.h"
+#include "Lamp/Rendering/RenderCommand.h"
 
 #include "Lamp/AssetSystem/ResourceCache.h"
 
@@ -23,6 +23,7 @@ namespace Lamp
 	{
 		m_name = "Entity";
 		m_gizmoMaterial = MaterialLibrary::GetMaterial("gizmoEntity");
+		m_quadMesh = SubMesh::CreateQuad();
 	}
 
 	void Entity::OnEvent(Event& e)
@@ -210,8 +211,7 @@ namespace Lamp
 				* rotation
 				* glm::scale(glm::mat4(1.f), glm::vec3(scale));
 
-
-			//Renderer2D::SubmitQuad(transform, m_gizmoMaterial, m_Id);
+			//RenderCommand::SubmitMesh(transform, m_quadMesh, m_gizmoMaterial, m_id);
 		}
 
 		return false;
@@ -222,6 +222,7 @@ namespace Lamp
 		for (auto& comp : entity->GetComponents())
 		{
 			Ref<EntityComponent> component = ComponentRegistry::Create(comp->GetName());
+			component->SetComponentProperties();
 
 			for (auto& property : comp->GetComponentProperties().GetProperties())
 			{
@@ -242,9 +243,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Bool:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<bool>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<bool*>(property.value);
 							changed = true;
 						}
 
@@ -253,9 +254,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Int:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<int>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<int*>(property.value);
 							changed = true;
 						}
 
@@ -264,9 +265,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<float>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<float*>(property.value);
 							changed = true;
 						}
 
@@ -275,9 +276,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float2:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<glm::vec2>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<glm::vec2*>(property.value);
 							changed = true;
 						}
 
@@ -286,9 +287,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float3:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<glm::vec3>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<glm::vec3*>(property.value);
 							changed = true;
 						}
 
@@ -297,9 +298,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Float4:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<glm::vec4>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<glm::vec4*>(property.value);
 							changed = true;
 						}
 
@@ -319,9 +320,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Color3:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<glm::vec3>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<glm::vec3*>(property.value);
 							changed = true;
 						}
 
@@ -330,9 +331,9 @@ namespace Lamp
 
 					case Lamp::PropertyType::Color4:
 					{
-						if (auto p = GetPropertyData<std::string>(property.name, component->GetComponentProperties().GetProperties()))
+						if (auto p = GetPropertyData<glm::vec4>(property.name, component->GetComponentProperties().GetProperties()))
 						{
-							*p = *static_cast<std::string*>(property.value);
+							*p = *static_cast<glm::vec4*>(property.value);
 							changed = true;
 						}
 

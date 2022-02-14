@@ -77,6 +77,7 @@ void main()
 #version 450 core
 
 layout (location = 0) out vec4 o_Color;
+layout (location = 1) out uint o_Id;
 
 struct DirectionalLight
 {
@@ -148,7 +149,7 @@ layout (push_constant) uniform MeshDataBuffer
     uint useAlbedo;
     uint useNormal;
     uint useMRO;
-    uint useSkybox;
+    uint id;
 
 } u_MeshData;
 
@@ -373,27 +374,19 @@ vec3 CalculateDirectionalLights(vec3 dirToCamera, vec3 normal, vec3 baseReflecti
 vec3 CalculateAmbience(vec3 dirToCamera, vec3 normal, vec3 baseReflectivity, vec3 albedo, float metallic, float roughness)
 {
     vec3 diffuse = albedo.xyz;
-    vec2 envBRDF = vec2(0.5, 0.5);
     vec3 specular;
 
     vec3 F = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
 
-    if (bool(u_MeshData.useSkybox))
-    {
-        vec3 reflectVec = reflect(-dirToCamera, normal);
-        int maxReflectionLOD = textureQueryLevels(u_PrefilterMap);
-        vec3 prefilterColor = textureLod(u_PrefilterMap, reflectVec, roughness * float(maxReflectionLOD)).rgb;
+    vec3 reflectVec = reflect(-dirToCamera, normal);
+    int maxReflectionLOD = textureQueryLevels(u_PrefilterMap);
+    vec3 prefilterColor = textureLod(u_PrefilterMap, reflectVec, roughness * float(maxReflectionLOD)).rgb;
 
-        vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(normal, dirToCamera), 0.0), roughness)).rg;
-        vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
+    vec2 envBRDF = texture(u_BRDFLUT, vec2(max(dot(normal, dirToCamera), 0.0), roughness)).rg;
+    vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
 
-        specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
-        diffuse *= irradiance;
-    }
-    else
-    {
-        specular = (F * envBRDF.x + envBRDF.y);
-    }
+    specular = prefilterColor * (F * envBRDF.x + envBRDF.y);
+    diffuse *= irradiance;
    
     vec3 kS = fresnelSchlickRoughness(max(dot(normal, dirToCamera), 0.0), baseReflectivity, roughness);
     vec3 kD = 1.0 - kS;
@@ -480,4 +473,5 @@ void main()
     float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedo.a * u_MeshData.blendingUseBlending.x : 1.0;
 
     o_Color = vec4(color, blendingVal);
+    o_Id = u_MeshData.id;
 }

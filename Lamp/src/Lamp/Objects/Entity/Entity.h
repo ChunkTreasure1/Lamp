@@ -19,6 +19,7 @@ namespace Lamp
 	class GraphKeyGraph;
 	class EntityManager;
 	class Material;
+	class SubMesh;
 
 	class Entity : public Object
 	{
@@ -74,6 +75,8 @@ namespace Lamp
 		bool m_shouldBeSaved = false;
 
 		Ref<GraphKeyGraph> m_graphKeyGraph = nullptr;
+
+		Ref<SubMesh> m_quadMesh;
 		Ref<Material> m_gizmoMaterial;
 
 		std::vector<Ref<EntityComponent>> m_pComponents;

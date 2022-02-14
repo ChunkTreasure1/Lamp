@@ -21,6 +21,7 @@ include "Dependencies.lua"
 include "Lamp/vendor/GLFW"
 include "Lamp/vendor/imgui"
 include "Lamp/vendor/glad"
+include "Lamp/vendor/Optick"
 
 project "Lamp"
 	location "Lamp"
@@ -86,7 +87,8 @@ project "Lamp"
 		"%{IncludeDir.yaml}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.rapidxml}",
-		"%{IncludeDir.ktx2}"
+		"%{IncludeDir.ktx2}",
+		"%{IncludeDir.Optick}"
 	}
 	
 	libdirs
@@ -98,7 +100,8 @@ project "Lamp"
 	{
 		"GLFW",
 		"ImGui",
-		"Glad",	
+		"Glad",
+		"Optick",
 
 		"%{Library.PhysX}",
 		"%{Library.PhysXCharacterKinematic}",
@@ -230,7 +233,8 @@ project "Sandbox"
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.rapidxml}",
-		"%{IncludeDir.ktx2}"
+		"%{IncludeDir.ktx2}",
+		"%{IncludeDir.Optick}"
 	}
 	
 	libdirs
@@ -247,6 +251,7 @@ project "Sandbox"
 		"Lamp",
 		"Game",
 		"ImGui",
+		"Optick",
 		
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
@@ -358,7 +363,8 @@ project "Game"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.fmod}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.Optick}"
 	}
 	
 	filter "system:windows"
@@ -427,7 +433,8 @@ project "GameLauncher"
 		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.PhysX}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.Optick}"
 	}
 
 	libdirs

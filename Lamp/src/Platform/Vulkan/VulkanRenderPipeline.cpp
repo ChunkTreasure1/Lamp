@@ -66,7 +66,8 @@ namespace Lamp
 			switch (format)
 			{
 				case Lamp::ImageFormat::R32F: return VK_COLOR_COMPONENT_R_BIT;
-				case Lamp::ImageFormat::R32I: return VK_COLOR_COMPONENT_R_BIT;
+				case Lamp::ImageFormat::R32SI: return VK_COLOR_COMPONENT_R_BIT;
+				case Lamp::ImageFormat::R32UI: return VK_COLOR_COMPONENT_R_BIT;
 				case Lamp::ImageFormat::RGB: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
 				case Lamp::ImageFormat::RGBA: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 				case Lamp::ImageFormat::RGBA16F: return VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;

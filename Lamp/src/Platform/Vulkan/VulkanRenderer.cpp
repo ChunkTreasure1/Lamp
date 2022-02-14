@@ -89,41 +89,53 @@ namespace Lamp
 
 	void Renderer::Begin(const Ref<CameraBase> camera)
 	{
+		LP_PROFILE_FUNCTION();
+
+		//Reset descriptor pool
+		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
+		const uint32_t currentFrame = swapchain->GetCurrentFrame();
+		vkResetDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPools[currentFrame], 0);
+
+		auto commandBuffer = m_rendererStorage->renderCommandBuffer;
+		commandBuffer->Begin();
+
 		m_rendererStorage->camera = camera;
 		m_statistics.memoryStatistics = GetMemoryUsage();
 
 		PrepareForRender();
-
-		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
-		const uint32_t currentFrame = swapchain->GetCurrentFrame();
-
-		//Reset descriptor pool
-		vkResetDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPools[currentFrame], 0);
 	}
 
 	void Renderer::End()
 	{
+		LP_PROFILE_FUNCTION();
+
+		{
+			LP_PROFILE_SCOPE("Command buffer submit")
+			auto commandBuffer = m_rendererStorage->renderCommandBuffer;
+			commandBuffer->End();
+		}
+
 		m_rendererStorage->camera = nullptr;
 		m_finalRenderBuffer.drawCalls.clear();
 	}
 
 	void Renderer::SwapRenderBuffers()
 	{
+		LP_PROFILE_FUNCTION();
 		std::swap(m_submitBufferPointer, m_renderBufferPointer);
 		m_submitBufferPointer->drawCalls.clear();
 	}
 
 	void Renderer::BeginPass(Ref<RenderPipeline> pipeline)
 	{
+		LP_PROFILE_FUNCTION();
 		m_rendererStorage->currentRenderPipeline = pipeline;
 		UpdatePerPassUniformBuffers(pipeline);
 
 		auto swapchain = std::reinterpret_pointer_cast<VulkanSwapchain>(Application::Get().GetWindow().GetSwapchain());
 		auto framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(pipeline->GetSpecification().framebuffer);
-		auto commandBuffer = pipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
+		auto commandBuffer = m_rendererStorage->renderCommandBuffer;
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
-
-		commandBuffer->Begin();
 
 		VkRenderPassBeginInfo renderPassBegin{};
 		renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -149,10 +161,10 @@ namespace Lamp
 
 	void Renderer::EndPass()
 	{
+		LP_PROFILE_FUNCTION();
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
 		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()));
-		commandBuffer->End();
 
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
@@ -184,16 +196,19 @@ namespace Lamp
 
 	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */)
 	{
+		LP_PROFILE_FUNCTION();
 		m_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
 	}
 
 	void Renderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant /* = nullptr */)
 	{
+		LP_PROFILE_FUNCTION();
 		DrawMesh(mesh, material, descriptorSets, pushConstant);
 	}
 
 	void Renderer::DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
 	{
+		LP_PROFILE_FUNCTION();
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
@@ -220,12 +235,7 @@ namespace Lamp
 		meshData.albedoColor = matData.albedoColor;
 		meshData.normalColor = matData.normalColor;
 
-		meshData.useSkybox = false;
-
-		if (LevelManager::IsLevelLoaded() && LevelManager::GetActive()->HasSkybox())
-		{
-			meshData.useSkybox = true;
-		}
+		meshData.id = id;
 
 		vulkanPipeline->SetPushConstantData(commandBuffer, 0, &transform);
 		vulkanPipeline->SetPushConstantData(commandBuffer, 1, &meshData);
@@ -238,6 +248,7 @@ namespace Lamp
 
 	void Renderer::DrawMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
 	{
+		LP_PROFILE_FUNCTION();
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
@@ -259,6 +270,7 @@ namespace Lamp
 
 	void Renderer::DrawQuad()
 	{
+		LP_PROFILE_FUNCTION();
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
@@ -277,6 +289,7 @@ namespace Lamp
 
 	void Renderer::DispatchRenderCommands(RenderBuffer& buffer)
 	{
+		LP_PROFILE_FUNCTION();
 		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && LevelManager::GetActive()->HasSkybox())
 		{
 			auto pipeline = m_rendererStorage->currentRenderPipeline;
@@ -357,6 +370,7 @@ namespace Lamp
 
 	VkDescriptorSet Renderer::AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo)
 	{
+		LP_PROFILE_FUNCTION();
 		auto device = VulkanContext::GetCurrentDevice();
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 		
@@ -378,6 +392,8 @@ namespace Lamp
 
 		auto func = [=]()
 		{
+			LP_PROFILE_FUNCTION();
+
 			auto device = VulkanContext::GetCurrentDevice();
 			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 			auto uniformBufferSet = m_rendererStorage->uniformBufferSet;
@@ -597,6 +613,8 @@ namespace Lamp
 
 	void Renderer::AllocateDescriptorsForMaterialRendering(Ref<Material> material)
 	{
+		LP_PROFILE_FUNCTION();
+
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanMaterial = std::reinterpret_pointer_cast<VulkanMaterial>(material);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
@@ -676,6 +694,8 @@ namespace Lamp
 
 	void Renderer::AllocateDescriptorsForQuadRendering()
 	{
+		LP_PROFILE_FUNCTION();
+
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 
@@ -748,6 +768,8 @@ namespace Lamp
 
 	void Renderer::AllocatePerPassDescriptors()		
 	{
+		LP_PROFILE_FUNCTION();
+
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 
@@ -1025,13 +1047,17 @@ namespace Lamp
 
 		auto renderPass = RenderPipeline::Create(pipelineSpec);
 
+		m_rendererStorage->renderCommandBuffer->Begin();
 		BeginPass(renderPass);
 		DrawQuad();
 		EndPass();
+		m_rendererStorage->renderCommandBuffer->End();
 	}
 
 	void Renderer::PrepareForRender()
 	{
+		LP_PROFILE_FUNCTION();
+
 		UpdateUniformBuffers();
 		DrawDirectionalShadow();
 

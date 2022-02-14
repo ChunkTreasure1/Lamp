@@ -2,7 +2,6 @@
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/UIUtility.h>
-#include <Lamp/Debug/Instrumentor.h>
 
 #include <Lamp/Objects/Entity/Entity.h>
 

@@ -90,8 +90,12 @@ namespace Lamp
 
 	void Application::UpdateApplication()
 	{
+		LP_PROFILE_THREAD("Update");
+
 		while (m_running)
 		{
+			LP_PROFILE_FRAME("UpdateThread");
+
 			m_updateReady = true;
 
 			float time = (float)glfwGetTime();
@@ -100,7 +104,6 @@ namespace Lamp
 
 			m_updateFrameTime.Begin();
 
-			LP_PROFILE_SCOPE("Application::UpdateLayers");
 			AppUpdateEvent e(m_currentTimeStep);
 
 			for (Layer* pLayer : m_LayerStack)
@@ -110,8 +113,14 @@ namespace Lamp
 
 			m_updateReady = false;
 
-			while (!m_renderReady && m_running)
-			{}
+			{
+				LP_PROFILE_SCOPE("Wait for render");
+
+				while (!m_renderReady && m_running)
+				{
+				}
+			}
+
 
 			RenderCommand::SwapRenderBuffers();
 
@@ -121,18 +130,24 @@ namespace Lamp
 
 	void Application::Run()
 	{
+		LP_PROFILE_THREAD("Render");
+
 		while (m_running)
 		{
+			LP_PROFILE_FRAME("RenderThread");
+
 			m_mainFrameTime.Begin();
 
 			m_renderReady = true;
 			 
-			while (!m_updateReady)
-			{}
+			{
+				LP_PROFILE_SCOPE("Wait for update");
+				while (!m_updateReady)
+				{
+				}
+			}
 
 			m_renderReady = false;
-
-			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
 
 			m_pWindow->GetSwapchain()->BeginFrame();
 

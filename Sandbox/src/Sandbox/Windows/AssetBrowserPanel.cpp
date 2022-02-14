@@ -9,7 +9,6 @@
 #include <Lamp/Mesh/Mesh.h>
 #include <Lamp/Rendering/Textures/Texture2D.h>
 
-#include <Lamp/Debug/Instrumentor.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Input/Input.h>
 #include <Lamp/Input/KeyCodes.h>

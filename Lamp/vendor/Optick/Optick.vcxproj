@@ -15,10 +15,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7FA9857C-6BE0-860D-14CD-6C1000E3020F}</ProjectGuid>
+    <ProjectGuid>{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Game</RootNamespace>
+    <RootNamespace>Optick</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -54,30 +54,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\bin\Debug-windows-x86_64\Game\</OutDir>
-    <IntDir>..\bin-int\Debug-windows-x86_64\Game\</IntDir>
-    <TargetName>Game</TargetName>
+    <OutDir>bin\Debug-windows-x86_64\Optick\</OutDir>
+    <IntDir>bin-int\Debug-windows-x86_64\Optick\</IntDir>
+    <TargetName>Optick</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\bin\Release-windows-x86_64\Game\</OutDir>
-    <IntDir>..\bin-int\Release-windows-x86_64\Game\</IntDir>
-    <TargetName>Game</TargetName>
+    <OutDir>bin\Release-windows-x86_64\Optick\</OutDir>
+    <IntDir>bin-int\Release-windows-x86_64\Optick\</IntDir>
+    <TargetName>Optick</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <OutDir>..\bin\Dist-windows-x86_64\Game\</OutDir>
-    <IntDir>..\bin-int\Dist-windows-x86_64\Game\</IntDir>
-    <TargetName>Game</TargetName>
+    <OutDir>bin\Dist-windows-x86_64\Optick\</OutDir>
+    <IntDir>bin-int\Dist-windows-x86_64\Optick\</IntDir>
+    <TargetName>Optick</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Lamp\src;..\Lamp\vendor;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor\glad\include;..\Lamp\vendor\glfw\include;..\Lamp\vendor\imgui;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;C:\VulkanSDK\1.2.189.2\Include;..\Lamp\vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.2.189.2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -89,17 +87,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Lamp\src;..\Lamp\vendor;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor\glad\include;..\Lamp\vendor\glfw\include;..\Lamp\vendor\imgui;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;C:\VulkanSDK\1.2.189.2\Include;..\Lamp\vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.2.189.2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -114,42 +107,50 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Lib>
-      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>LP_PLATFORM_WINDOWS;LP_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Lamp\src;..\Lamp\vendor;..\Lamp\vendor\glm;..\Lamp\vendor\spdlog\include;..\Lamp\vendor\glad\include;..\Lamp\vendor\glfw\include;..\Lamp\vendor\imgui;..\Lamp\vendor\assimp\include;..\Lamp\vendor\fmod\include;C:\VulkanSDK\1.2.189.2\Include;..\Lamp\vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.2.189.2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
-      <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Lib>
-      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\ControllerComponent.h" />
-    <ClInclude Include="src\Game\Game.h" />
+    <ClInclude Include="src\optick.config.h" />
+    <ClInclude Include="src\optick.h" />
+    <ClInclude Include="src\optick_capi.h" />
+    <ClInclude Include="src\optick_common.h" />
+    <ClInclude Include="src\optick_core.freebsd.h" />
+    <ClInclude Include="src\optick_core.h" />
+    <ClInclude Include="src\optick_core.linux.h" />
+    <ClInclude Include="src\optick_core.macos.h" />
+    <ClInclude Include="src\optick_core.platform.h" />
+    <ClInclude Include="src\optick_core.win.h" />
+    <ClInclude Include="src\optick_gpu.h" />
+    <ClInclude Include="src\optick_memory.h" />
+    <ClInclude Include="src\optick_message.h" />
+    <ClInclude Include="src\optick_miniz.h" />
+    <ClInclude Include="src\optick_serialization.h" />
+    <ClInclude Include="src\optick_server.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Game\ControllerComponent.cpp" />
-    <ClCompile Include="src\Game\Game.cpp" />
+    <ClCompile Include="src\optick_capi.cpp" />
+    <ClCompile Include="src\optick_core.cpp" />
+    <ClCompile Include="src\optick_gpu.cpp" />
+    <ClCompile Include="src\optick_gpu.d3d12.cpp" />
+    <ClCompile Include="src\optick_gpu.vulkan.cpp" />
+    <ClCompile Include="src\optick_message.cpp" />
+    <ClCompile Include="src\optick_miniz.cpp" />
+    <ClCompile Include="src\optick_serialization.cpp" />
+    <ClCompile Include="src\optick_server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

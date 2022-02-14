@@ -90,10 +90,10 @@
     <ClInclude Include="src\Sandbox\Windows\AssetBrowserPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\EditorWindow.h">
+    <ClInclude Include="src\Sandbox\Windows\CreatePanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\CreatePanel.h">
+    <ClInclude Include="src\Sandbox\Windows\EditorWindow.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\EnvironmentEditorPanel.h">
@@ -149,6 +149,9 @@
     <ClCompile Include="src\Sandbox\Windows\CreatePanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox\Windows\EditorWindow.cpp">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\EnvironmentEditorPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
@@ -167,7 +170,6 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\EditorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\opengl\depthPass.glsl">

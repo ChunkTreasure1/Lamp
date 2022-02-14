@@ -6,7 +6,8 @@ namespace Lamp
 	{
 		None = 0,
 		R32F,
-		R32I,
+		R32SI,
+		R32UI,
 		RGB,
 		RGBA,
 		RGBA16F,

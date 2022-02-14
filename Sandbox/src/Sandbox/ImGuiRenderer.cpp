@@ -97,6 +97,7 @@ namespace Sandbox
 
 		//Guizmo
 		static glm::mat4 transform = glm::mat4(1.f);
+		static glm::mat4 startTransform = glm::mat4(1.f);
 
 		if (m_pSelectedObject && m_SceneState != SceneState::Play)
 		{
@@ -125,6 +126,23 @@ namespace Sandbox
 				nullptr, snap ? snapValues : nullptr);
 
 			static bool hasDuplicated = false;
+			
+			static bool isUsing = false;
+			static bool lastUsed = false;
+
+			lastUsed = isUsing;
+			isUsing = ImGuizmo::IsUsing();
+
+			if (isUsing && !lastUsed && transform != m_pSelectedObject->GetTransform())
+			{
+				startTransform = m_pSelectedObject->GetTransform();
+			}
+
+			if (!isUsing && lastUsed && transform != m_pSelectedObject->GetTransform())
+			{
+				Ref<TransformCommand> transformCmd = CreateRef<TransformCommand>(m_pSelectedObject, startTransform);
+				m_perspectiveCommands.Push(transformCmd);
+			}
 
 			if (ImGuizmo::IsUsing())
 			{
@@ -138,6 +156,9 @@ namespace Sandbox
 						m_pSelectedObject = Lamp::Brush::Duplicate(brush, true);
 
 						m_pSelectedObject->SetIsSelected(true);
+
+						Ref<DuplicateCommand> cmd = CreateRef<DuplicateCommand>(brush, m_pSelectedObject, &m_pSelectedObject);
+						m_perspectiveCommands.Push(cmd);
 					}
 					else if (typeid(*m_pSelectedObject) == typeid(Lamp::Entity))
 					{
@@ -147,6 +168,9 @@ namespace Sandbox
 						m_pSelectedObject = Lamp::Entity::Duplicate(entity, true);
 
 						m_pSelectedObject->SetIsSelected(true);
+
+						Ref<DuplicateCommand> cmd = CreateRef<DuplicateCommand>(entity, m_pSelectedObject, &m_pSelectedObject);
+						m_perspectiveCommands.Push(cmd);
 					}
 
 					hasDuplicated = true;
@@ -160,9 +184,6 @@ namespace Sandbox
 					m_pSelectedObject->SetPosition(p);
 					m_pSelectedObject->AddRotation(deltaRot);
 					m_pSelectedObject->SetScale(s);
-
-					Ref<TransformCommand> transformCmd = CreateRef<TransformCommand>(m_pSelectedObject, transform);
-					m_perspectiveCommands.Push(transformCmd);
 				}
 			}
 			else

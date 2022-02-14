@@ -237,7 +237,7 @@
     <ClInclude Include="src\Lamp\Core\Window.h">
       <Filter>src\Lamp\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lamp\Debug\Instrumentor.h">
+    <ClInclude Include="src\Lamp\Debug\Profiler.h">
       <Filter>src\Lamp\Debug</Filter>
     </ClInclude>
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h">
