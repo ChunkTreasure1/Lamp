@@ -8,6 +8,7 @@ namespace Lamp
 	{
 	protected:
 		Input() = default;
+
 	public:
 		Input(const Input&) = delete;
 		Input& operator=(const Input&) = delete;

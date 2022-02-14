@@ -19,7 +19,7 @@ namespace Sandbox
 	using namespace Lamp;
 
 	MeshImporterPanel::MeshImporterPanel(std::string_view name)
-		: BaseWindow(name)
+		: EditorWindow(name)
 	{
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
 		m_camera->SetPosition({ -3.f, 2.f, 3.f });
@@ -33,7 +33,7 @@ namespace Sandbox
 	{
 		ScopedTimer timer{};
 
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return false;
 		}
@@ -41,7 +41,7 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_isOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -99,7 +99,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::UpdateCamera(Lamp::Timestep ts)
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -150,7 +150,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::Render()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -210,14 +210,14 @@ namespace Sandbox
 
 			for (auto& mat : m_modelToImport->GetMaterials())
 			{
-				if (!MaterialLibrary::IsMaterialLoaded(mat.second->GetName()))
+				if (!MaterialLibrary::Get().IsMaterialLoaded(mat.second->GetName()))
 				{
 					std::string sMatPath = m_savePath.parent_path().string() + "/" + mat.second->GetName() + ".mtl";
 
 					mat.second->Path = std::filesystem::path(sMatPath);
 					g_pEnv->pAssetManager->SaveAsset(mat.second);
 
-					MaterialLibrary::AddMaterial(mat.second);
+					MaterialLibrary::Get().AddMaterial(mat.second);
 				}
 			}
 
@@ -245,7 +245,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::OnEvent(Lamp::Event& e)
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -289,7 +289,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::UpdateProperties()
 	{
-		ImGui::Begin("Import Settings", &m_IsOpen);
+		ImGui::Begin("Import Settings", &m_isOpen);
 
 		ImGui::Text(("Source path: " + m_importSettings.path.string()).c_str());
 		ImGui::Text(("Destination path: " + m_savePath.string()).c_str());

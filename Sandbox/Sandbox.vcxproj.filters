@@ -72,19 +72,16 @@
     <ClInclude Include="..\Lamp\vendor\imnodes\imnodes_internal.h">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Actions\ActionHandler.h">
-      <Filter>src\Sandbox\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="src\Sandbox\Actions\CommandStack.h">
       <Filter>src\Sandbox\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Actions\Commands.h">
+    <ClInclude Include="src\Sandbox\Actions\EditorCommands.h">
       <Filter>src\Sandbox\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Sandbox.h">
+    <ClInclude Include="src\Sandbox\SandboxController.h">
       <Filter>src\Sandbox</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\SandboxController.h">
+    <ClInclude Include="src\Sandbox\SandboxLayer.h">
       <Filter>src\Sandbox</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\UI\AnimatedIcon.h">
@@ -93,7 +90,7 @@
     <ClInclude Include="src\Sandbox\Windows\AssetBrowserPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\BaseWindow.h">
+    <ClInclude Include="src\Sandbox\Windows\EditorWindow.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\CreatePanel.h">
@@ -122,13 +119,10 @@
     <ClCompile Include="..\Lamp\vendor\imnodes\imnodes.cpp">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Actions\ActionHandler.cpp">
-      <Filter>src\Sandbox\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sandbox\Actions\CommandStack.cpp">
       <Filter>src\Sandbox\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Actions\Commands.cpp">
+    <ClCompile Include="src\Sandbox\Actions\EditorCommands.cpp">
       <Filter>src\Sandbox\Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ConfigHandler.cpp">
@@ -137,10 +131,10 @@
     <ClCompile Include="src\Sandbox\ImGuiRenderer.cpp">
       <Filter>src\Sandbox</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Sandbox.cpp">
+    <ClCompile Include="src\Sandbox\SandboxController.cpp">
       <Filter>src\Sandbox</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\SandboxController.cpp">
+    <ClCompile Include="src\Sandbox\SandboxLayer.cpp">
       <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ShortcutFunctions.cpp">
@@ -173,6 +167,7 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox\Windows\EditorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\shaders\opengl\depthPass.glsl">

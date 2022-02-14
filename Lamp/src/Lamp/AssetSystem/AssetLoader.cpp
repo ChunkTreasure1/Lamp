@@ -169,7 +169,7 @@ namespace Lamp
 			matName = entry["material"].as<std::string>();
 			LP_DESERIALIZE_PROPERTY(id, idInt, entry, 0);
 
-			if (MaterialLibrary::IsMaterialLoaded(matName))
+			if (MaterialLibrary::Get().IsMaterialLoaded(matName))
 			{
 				materials[idInt] = MaterialLibrary::GetMaterial(matName);
 			}

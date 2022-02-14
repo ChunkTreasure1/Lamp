@@ -1,7 +1,5 @@
 #include "MaterialEditor.h"
 
-#include <imgui/imgui_stdlib.h>
-#include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
@@ -9,9 +7,18 @@
 
 #include <Lamp/Rendering/RenderCommand.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
+#include <Lamp/Mesh/Mesh.h>
 
 #include <Lamp/Core/Time/ScopedTimer.h>
+
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/Utility/PlatformUtility.h>
+
+#include <Lamp/Input/KeyCodes.h>
+#include <Lamp/Input/Input.h>
+
+#include <imgui/imgui_stdlib.h>
 
 namespace Sandbox
 {
@@ -20,7 +27,7 @@ namespace Sandbox
 	static const std::filesystem::path s_assetsPath = "assets";
 
 	MaterialEditor::MaterialEditor(std::string_view name)
-		: BaseWindow(name)
+		: EditorWindow(name)
 	{
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
@@ -70,7 +77,7 @@ namespace Sandbox
 	{
 		ScopedTimer timer{};
 
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return false;
 		}
@@ -78,7 +85,7 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_isOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -242,7 +249,7 @@ namespace Sandbox
 	{
 		ImGui::Begin("Materials##matEd");
 
-		auto& materials = MaterialLibrary::GetMaterials();
+		auto& materials = MaterialLibrary::Get().GetMaterials();
 		int i = 0;
 		for (auto& mat : materials)
 		{
@@ -279,7 +286,7 @@ namespace Sandbox
 
 	void MaterialEditor::Render()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -302,6 +309,6 @@ namespace Sandbox
 		mat->SetShader(ShaderLibrary::GetShader("pbrForward"));
 
 		g_pEnv->pAssetManager->SaveAsset(mat);
-		MaterialLibrary::AddMaterial(mat);
+		MaterialLibrary::Get().AddMaterial(mat);
 	}
 }

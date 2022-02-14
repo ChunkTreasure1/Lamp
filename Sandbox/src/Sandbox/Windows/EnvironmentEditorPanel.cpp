@@ -2,13 +2,15 @@
 
 #include <Lamp/Utility/UIUtility.h>
 #include <Lamp/Core/Time/ScopedTimer.h>
+#include <Lamp/Level/LevelManager.h>
+#include <Lamp/Rendering/Textures/Texture2D.h>
 
 namespace Sandbox
 {
 	using namespace Lamp;
 
 	EnvironmentEditorPanel::EnvironmentEditorPanel(std::string_view name)
-		: BaseWindow(name)
+		: EditorWindow(name)
 	{
 	}
 
@@ -25,12 +27,14 @@ namespace Sandbox
 
 		ScopedTimer timer{};
 
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return false;
 		}
 
-		ImGui::Begin("Environment Editor", &m_IsOpen);
+		ImGui::Begin("Environment Editor", &m_isOpen);
+
+		m_isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 		if (!LevelManager::GetActive())
 		{

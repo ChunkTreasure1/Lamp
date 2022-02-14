@@ -26,16 +26,7 @@ namespace Lamp
 	class SubMesh;
 	class CameraBase;
 	class Material;
-	
-	struct GPUMemoryStatistics
-	{
-		uint64_t allocatedMemory = 0;
-		uint64_t freeMemory = 0;
-		uint64_t totalGPUMemory = 0;
-
-		uint64_t totalAllocatedMemory = 0;
-		uint64_t totalFreedMemory = 0;
-	};
+	class MaterialLibrary;
 
 	struct RendererStatistics
 	{
@@ -113,15 +104,18 @@ namespace Lamp
 		const VulkanRendererStorage& GetStorage() const;
 		const RendererDefaults& GetDefaults() const;
 
-		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
+		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
 		void SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
-		void SubmitQuad();
+
+		void DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
+		void DrawMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
+		void DrawQuad();
 
 		void DispatchRenderCommands(RenderBuffer& buffer);
 		void DispatchRenderCommands();
 
 		VkDescriptorSet AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo);
-		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage);
+		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
 
 		static Renderer& Get();
 		static Ref<Renderer> Create();
@@ -152,10 +146,12 @@ namespace Lamp
 		friend class VulkanPhysicalDevice;
 
 		static Renderer* s_instance;
+		static RendererCapabilities s_capabilities;
 
 		/////Storage/////
 		Scope<VulkanRendererStorage> m_rendererStorage;
 		Scope<RendererDefaults> m_rendererDefaults;
+		Scope<MaterialLibrary> m_materialLibrary;
 		/////////////////
 		
 		/////Render buffer/////
@@ -168,7 +164,6 @@ namespace Lamp
 		///////////////////////
 
 		RendererStatistics m_statistics;
-		RendererCapabilities m_capabilities;
 
 		std::vector<VkDescriptorPool> m_descriptorPools;
 		std::atomic_bool m_renderingFinished = true;

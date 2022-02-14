@@ -416,6 +416,7 @@ project "GameLauncher"
 		"%{prj.name}/src",
 
 		"Lamp/src",
+		"Lamp/vendor",
 		"Game/src",
 
 		"%{IncludeDir.GLM}",

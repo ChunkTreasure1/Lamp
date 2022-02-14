@@ -14,6 +14,16 @@ namespace Lamp
 	class VulkanDevice;
 	struct GPUMemoryStatistics;
 
+	struct GPUMemoryStatistics
+	{
+		uint64_t allocatedMemory = 0;
+		uint64_t freeMemory = 0;
+		uint64_t totalGPUMemory = 0;
+
+		uint64_t totalAllocatedMemory = 0;
+		uint64_t totalFreedMemory = 0;
+	};
+
 	class VulkanAllocator
 	{
 	public:

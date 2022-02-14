@@ -1,15 +1,22 @@
 #pragma once
 
-#include "BaseWindow.h"
+#include "EditorWindow.h"
+
+#include <Lamp/Event/ApplicationEvent.h>
+#include <Lamp/Event/KeyEvent.h>
 
 namespace Lamp
 {
 	class Material;
+	class Mesh;
+	class Framebuffer;
+	class PerspectiveCameraController;
+	class Texture2D;
 }
 
 namespace Sandbox
 {
-	class MaterialEditor : public BaseWindow
+	class MaterialEditor : public EditorWindow
 	{
 	public:
 		MaterialEditor(std::string_view name);

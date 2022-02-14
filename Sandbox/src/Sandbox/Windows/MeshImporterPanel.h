@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Sandbox/Sandbox.h"
+#include "Sandbox/SandboxLayer.h"
 
-#include "BaseWindow.h"
+#include "EditorWindow.h"
 
 #include <Lamp/AssetSystem/MeshImporter.h>
 
 namespace Sandbox
 {
-	class MeshImporterPanel : public BaseWindow
+	class MeshImporterPanel : public EditorWindow
 	{
 	public:
 		MeshImporterPanel(std::string_view name);

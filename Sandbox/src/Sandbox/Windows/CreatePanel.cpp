@@ -14,7 +14,7 @@ namespace Sandbox
 	static const std::filesystem::path s_assetsPath = "assets";
 
 	CreatePanel::CreatePanel(Lamp::Object* selectedObject)
-		: m_pSelectedObject(selectedObject)
+		: EditorWindow("Create"), m_pSelectedObject(selectedObject)
 	{
 		m_backTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/backIcon.png");
 		m_searchTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/searchIcon.png");
@@ -25,7 +25,13 @@ namespace Sandbox
 		m_directories[s_assetsPath.string()] = ProcessDirectory(s_assetsPath, nullptr);
 	}
 
-	void CreatePanel::OnImGuiRender()
+	void CreatePanel::OnEvent(Lamp::Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(CreatePanel::OnImGuiRender));
+	}
+
+	bool CreatePanel::OnImGuiRender(Lamp::ImGuiUpdateEvent& e)
 	{
 		LP_PROFILE_FUNCTION();
 		UI::ScopedColor buttonColor(ImGuiCol_Button, { 0.313f, 0.313f, 0.313f, 1.f });
@@ -33,13 +39,15 @@ namespace Sandbox
 
 		if (!m_isOpen)
 		{
-			return;
+			return false;
 		}
 
 		static bool brushListOpen = false;
 		const float buttonHeight = 24.f;
 
-		ImGui::Begin("Create", &m_isOpen);
+		ImGui::Begin(m_name.c_str(), &m_isOpen);
+
+		m_isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 		if (!brushListOpen)
 		{
@@ -148,6 +156,8 @@ namespace Sandbox
 		}
 
 		ImGui::End();
+
+		return false;
 	}
 
 	Ref<DirectoryData> CreatePanel::ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent)

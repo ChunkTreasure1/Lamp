@@ -6,6 +6,11 @@
 
 #include <Lamp/AssetSystem/ResourceCache.h>
 
+#include <Lamp/Objects/Brushes/Brush.h>
+
+#include <Lamp/Input/KeyCodes.h>
+#include <Lamp/Input/Input.h>
+
 #include <imgui/imgui_stdlib.h>
 
 namespace Sandbox
@@ -13,7 +18,7 @@ namespace Sandbox
 	using namespace Lamp;
 
 	LayerViewPanel::LayerViewPanel(std::string_view name, Lamp::Object** selectedObject)
-		: BaseWindow(name), m_pSelectedObject(selectedObject)
+		: EditorWindow(name), m_pSelectedObject(selectedObject)
 	{
 		m_entityIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/gizmos/gizmoEntity.png");
 		m_brushIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/AssetIcons/iconMesh.png");
@@ -38,17 +43,17 @@ namespace Sandbox
 
 		ScopedTimer timer{};
 
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return false;
 		}
 
-		ImGui::Begin("Layers", &m_IsOpen);
-
-		m_isFocused = ImGui::IsWindowFocused();
+		ImGui::Begin("Layers", &m_isOpen);
 
 		const float imageSize = 20.f;
 		const float imagePadding = 5.f;
+
+		m_isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 		int startId = 0;
 		bool isItemHovered = false;

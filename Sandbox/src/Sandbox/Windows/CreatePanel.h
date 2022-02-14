@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Sandbox/Windows/EditorWindow.h"
 #include "Sandbox/Windows/AssetBrowserPanel.h"
 
+#include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/Core/Core.h>
 
 namespace Lamp
@@ -12,15 +14,17 @@ namespace Lamp
 
 namespace Sandbox
 {
-	class CreatePanel
+	class CreatePanel : public EditorWindow
 	{
 	public:
 		CreatePanel(Lamp::Object* selectedObject);
+		~CreatePanel() override = default;
 
-		void OnImGuiRender();
-		bool& GetIsOpen() { return m_isOpen; }
+		void OnEvent(Lamp::Event& e) override;
 
 	private:
+		bool OnImGuiRender(Lamp::ImGuiUpdateEvent& e);
+
 		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
 		void RenderDirectory(const Ref<DirectoryData> dirData);
 		void Reload();

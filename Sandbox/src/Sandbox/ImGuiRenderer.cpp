@@ -1,38 +1,38 @@
 #include "lppch.h"
-#include "Sandbox.h"
+#include "SandboxLayer.h"
 
-#include <imgui/misc/cpp/imgui_stdlib.h>
+#include "Sandbox/Windows/GraphKey.h"
+#include "Sandbox/Windows/MeshImporterPanel.h"
+#include "Sandbox/Actions/EditorCommands.h"
 
 #include <Lamp/Objects/Entity/Entity.h>
 #include <Lamp/Objects/Entity/ComponentRegistry.h>
-#include <ImGuizmo/ImGuizmo.h>
 
 #include <Lamp/Core/CoreLogger.h>
-#include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/Shader/ShaderLibrary.h>
-
-#include <Lamp/Math/Math.h>
-#include "Windows/MeshImporterPanel.h"
-#include <imgui/misc/cpp/imgui_stdlib.h>
-#include <Lamp/Mesh/Materials/MaterialLibrary.h>
-
 #include <Lamp/Core/Application.h>
-#include <Lamp/GraphKey/GraphKeyGraph.h>
-#include "Sandbox/Windows/GraphKey.h"
 
-#include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/Buffers/FrameBuffer.h>
-
 #include <Lamp/Utility/UIUtility.h>
 
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/Rendering/Buffers/FrameBuffer.h>
+
+#include <Lamp/Math/Math.h>
+#include <Lamp/Mesh/Materials/MaterialLibrary.h>
+
+#include <Lamp/GraphKey/GraphKeyGraph.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
+
 #include <Platform/Vulkan/VulkanRenderer.h>
+
+#include <ImGuizmo/ImGuizmo.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 namespace Sandbox
 {
 	using namespace Lamp;
 
-	void Sandbox::UpdatePerspective()
+	void SandboxLayer::UpdatePerspective()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -62,16 +62,16 @@ namespace Sandbox
 			if (m_perspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
 				m_perspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
-				
+
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
-				
+
 				if (LevelManager::IsLevelLoaded())
 				{
 					LevelManager::GetActive()->OnEvent(e);
 				}
 			}
-			 
+
 			if (LevelManager::IsLevelLoaded())
 			{
 				ImGui::Image(UI::GetTextureID(LevelManager::GetActive()->GetFinalRenderedImage()), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
@@ -111,7 +111,7 @@ namespace Sandbox
 			bool duplicate = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_SHIFT);
 
 			float snapValue = 0.5f;
-			if (m_ImGuizmoOperation == ImGuizmo::ROTATE)
+			if (m_imGuizmoOperation == ImGuizmo::ROTATE)
 			{
 				snapValue = 45.f;
 			}
@@ -121,7 +121,7 @@ namespace Sandbox
 			ImGuizmo::Manipulate(
 				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
+				m_imGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
 			static bool hasDuplicated = false;
@@ -160,6 +160,9 @@ namespace Sandbox
 					m_pSelectedObject->SetPosition(p);
 					m_pSelectedObject->AddRotation(deltaRot);
 					m_pSelectedObject->SetScale(s);
+
+					Ref<TransformCommand> transformCmd = CreateRef<TransformCommand>(m_pSelectedObject, transform);
+					m_perspectiveCommands.Push(transformCmd);
 				}
 			}
 			else
@@ -172,7 +175,7 @@ namespace Sandbox
 		ImGui::PopStyleVar(1);
 	}
 
-	void Sandbox::UpdateProperties()
+	void SandboxLayer::UpdateProperties()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -213,7 +216,7 @@ namespace Sandbox
 
 			//	if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
 			//	{
- 		//			int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
+		//			int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
 			//		Object* newSelected = Lamp::Entity::Get(pixelData);
 			//		if (!newSelected)
@@ -366,7 +369,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void Sandbox::UpdateAddComponent()
+	void SandboxLayer::UpdateAddComponent()
 	{
 		if (ImGui::BeginPopup("AddComponent"))
 		{
@@ -378,7 +381,6 @@ namespace Sandbox
 					{
 						if (pEnt->HasComponent(key.first.c_str()))
 						{
-							m_AddComponentOpen = false;
 							LP_CORE_WARN("Entity already has component!");
 						}
 
@@ -400,7 +402,7 @@ namespace Sandbox
 		}
 	}
 
-	void Sandbox::UpdateLogTool()
+	void SandboxLayer::UpdateLogTool()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -467,7 +469,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	bool Sandbox::DrawComponent(Lamp::EntityComponent* ptr)
+	bool SandboxLayer::DrawComponent(Lamp::EntityComponent* ptr)
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -501,10 +503,10 @@ namespace Sandbox
 		{
 			UI::BeginProperties("compProp" + ptr->GetName());
 
+			bool propertyChanged = false;
+
 			for (auto& prop : ptr->GetComponentProperties().GetProperties())
 			{
-				bool propertyChanged = false;
-
 				switch (prop.propertyType)
 				{
 					case Lamp::PropertyType::Int: propertyChanged = UI::Property(prop.name, *static_cast<int*>(prop.value)); break;
@@ -518,12 +520,12 @@ namespace Sandbox
 					case Lamp::PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
 					case Lamp::PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 				}
+			}
 
-				if (propertyChanged)
-				{
-					Lamp::ObjectPropertyChangedEvent e;
-					ptr->GetEntity()->OnEvent(e);
-				}
+			if (propertyChanged)
+			{
+				Lamp::ObjectPropertyChangedEvent e;
+				ptr->GetEntity()->OnEvent(e);
 			}
 
 			UI::EndProperties();
@@ -533,16 +535,16 @@ namespace Sandbox
 		return removeComp;
 	}
 
-	void Sandbox::UpdateLevelSettings()
+	void SandboxLayer::UpdateLevelSettings()
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (!m_LevelSettingsOpen)
+		if (!m_levelSettingsOpen)
 		{
 			return;
 		}
 
-		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
+		ImGui::Begin("Level Settings", &m_levelSettingsOpen);
 
 		ImGui::TextUnformatted("Terrain");
 		ImGui::Separator();
@@ -560,7 +562,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void Sandbox::UpdateRenderingSettings()
+	void SandboxLayer::UpdateRenderingSettings()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -609,8 +611,8 @@ namespace Sandbox
 
 		ImGui::End();
 	}
-	
-	void Sandbox::UpdateToolbar()
+
+	void SandboxLayer::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
@@ -621,15 +623,15 @@ namespace Sandbox
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		float size = ImGui::GetWindowHeight() - 4.f;
-		Ref<Lamp::Texture2D> playIcon = m_IconPlay;
+		Ref<Lamp::Texture2D> playIcon = m_iconPlay;
 		if (m_SceneState == SceneState::Play)
 		{
-			playIcon = m_IconStop;
+			playIcon = m_iconStop;
 		}
 
 		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
-		if (ImGui::ImageButton(UI::GetTextureID(playIcon), {size, size}, {0.f, 0.f}, {1.f, 1.f}, 0))
+		if (ImGui::ImageButton(UI::GetTextureID(playIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 			{
@@ -641,7 +643,7 @@ namespace Sandbox
 			}
 		}
 
-		Ref<Lamp::Texture2D> physicsIcon = m_PhysicsIcon.GetCurrentFrame();
+		Ref<Lamp::Texture2D> physicsIcon = m_physicsIcon.GetCurrentFrame();
 
 		ImGui::SameLine();
 
@@ -652,19 +654,19 @@ namespace Sandbox
 			if (m_SceneState == SceneState::Edit)
 			{
 				OnSimulationStart();
-				m_PhysicsIcon.Play();
+				m_physicsIcon.Play();
 			}
 			else if (m_SceneState == SceneState::Simulating)
 			{
 				OnSimulationStop();
-				m_PhysicsIcon.Stop();
+				m_physicsIcon.Stop();
 			}
 		}
 		ImGui::PopStyleVar(2);
 		ImGui::End();
 	}
 
-	void Sandbox::UpdateStatistics()
+	void SandboxLayer::UpdateStatistics()
 	{
 		ImGui::Begin("Statistics");
 
@@ -672,7 +674,7 @@ namespace Sandbox
 		{
 			ImGui::Text("Render time: %f ms", Application::Get().GetMainFrameTime().GetFrameTime() * 1000);
 			ImGui::Text("Update time: %f ms", Application::Get().GetUpdateFrameTime().GetFrameTime() * 1000);
-			
+
 			ImGui::Text("Frames per second: %f FPS", Application::Get().GetMainFrameTime().GetFramesPerSecond());
 
 			UI::TreeNodePop();
@@ -713,7 +715,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void Sandbox::CreateDockspace()
+	void SandboxLayer::CreateDockspace()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -832,10 +834,8 @@ namespace Sandbox
 			if (ImGui::BeginMenu("Tools"))
 			{
 				ImGui::MenuItem("Properties", nullptr, &m_inspectorOpen);
-				ImGui::MenuItem("Create", nullptr, &m_createPanel.GetIsOpen());
 				ImGui::MenuItem("Log", nullptr, &m_logToolOpen);
-				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
-				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
+				ImGui::MenuItem("Level Settings", nullptr, &m_levelSettingsOpen);
 
 				for (auto pWindow : m_pWindows)
 				{
@@ -872,7 +872,7 @@ namespace Sandbox
 
 				if (ImGui::MenuItem("Play physics", nullptr))
 				{
-					
+
 				}
 
 				ImGui::EndMenu();
@@ -884,10 +884,8 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	bool Sandbox::OnMouseMoved(Lamp::MouseMovedEvent& e)
+	bool SandboxLayer::OnMouseMoved(Lamp::MouseMovedEvent& e)
 	{
-		m_MouseHoverPos = glm::vec2(e.GetX(), e.GetY());
-
 		return true;
 	}
 }

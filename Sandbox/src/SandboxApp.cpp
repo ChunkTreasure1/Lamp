@@ -1,19 +1,19 @@
 #include <Lamp.h>
 
 #include "Lamp/Core/EntryPoint.h"
-#include "Sandbox/Sandbox.h"
+#include "Sandbox/SandboxLayer.h"
 
-class SandboxLayer : public Lamp::Application
+class SandboxApp : public Lamp::Application
 {
 public:
-	SandboxLayer()
+	SandboxApp()
 	{
-		PushLayer(new Sandbox::Sandbox());
+		PushLayer(new Sandbox::SandboxLayer());
 	};
-	~SandboxLayer() {};
+	~SandboxApp() {};
 };
 
 Lamp::Application* Lamp::CreateApplication()
 {
-	return new SandboxLayer();
+	return new SandboxApp();
 }

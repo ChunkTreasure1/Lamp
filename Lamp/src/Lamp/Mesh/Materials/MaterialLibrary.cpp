@@ -9,21 +9,17 @@
 
 namespace Lamp
 {
-	std::vector<Ref<Material>> MaterialLibrary::m_materials;
+	MaterialLibrary* MaterialLibrary::s_instance = nullptr;
 
-	static std::string ToString(const float& var)
+	MaterialLibrary::MaterialLibrary()
 	{
-		return std::to_string(var);
+		LP_CORE_ASSERT(!s_instance, "Instance already created! The should not be more than one instance!");
+		s_instance = this;
 	}
 
-	static bool GetValue(char* val, float& var)
+	void MaterialLibrary::Initialize()
 	{
-		if (val)
-		{
-			var = (float)atof(val);
-			return true;
-		}
-		return false;
+
 	}
 
 	void MaterialLibrary::Shutdown()
@@ -61,7 +57,7 @@ namespace Lamp
 
 	Ref<Material> MaterialLibrary::GetMaterial(const std::string& name)
 	{
-		for (auto& mat : m_materials)
+		for (auto& mat : s_instance->m_materials)
 		{
 			if (mat->GetName() == name)
 			{
@@ -70,6 +66,11 @@ namespace Lamp
 		}
 
 		return nullptr;
+	}
+
+	MaterialLibrary& MaterialLibrary::Get()
+	{
+		return *s_instance;
 	}
 
 	bool MaterialLibrary::IsMaterialLoaded(const std::string& name)

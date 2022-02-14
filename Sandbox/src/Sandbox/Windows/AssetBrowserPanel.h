@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Lamp/AssetSystem/Asset.h"
+#include "EditorWindow.h"
+
+#include <Lamp/Event/ApplicationEvent.h>
+#include <Lamp/AssetSystem/Asset.h>
 
 #include <filesystem>
 
@@ -29,20 +32,23 @@ namespace Sandbox
 		std::vector<Ref<DirectoryData>> subDirectories;
 	};
 
-	class AssetBrowserPanel
+	class AssetBrowserPanel : public EditorWindow
 	{
 	public:
 		AssetBrowserPanel();
+		~AssetBrowserPanel() override = default;
 
-		void OnImGuiRender();
-		bool& GetIsOpen() { return m_isOpen; }
+		void OnEvent(Lamp::Event & e) override;
 
 	private:
+		bool OnImGuiRender(Lamp::ImGuiUpdateEvent& e);
+
 		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
 		
 		void RenderControlsBar(float height);
 		void RenderDirectory(const Ref<DirectoryData> dirData);
 		void Reload();
+		
 		void Search(const std::string& query);
 		void RenderFilePopup(const AssetData& asset);
 		void ReimportAsset(const AssetData& asset);

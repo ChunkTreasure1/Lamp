@@ -1,4 +1,4 @@
-#include "Sandbox.h"
+#include "SandboxLayer.h"
 #include "Windows/MeshImporterPanel.h"
 
 #include <Lamp/Utility/SerializeMacros.h>
@@ -11,7 +11,7 @@ namespace Sandbox
 {
 	static std::filesystem::path s_editorIni = "editor.ini";
 
-	bool Sandbox::OnWindowClose(Lamp::WindowCloseEvent& e)
+	bool SandboxLayer::OnWindowClose(Lamp::WindowCloseEvent& e)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -23,8 +23,6 @@ namespace Sandbox
 				out << YAML::BeginMap;
 
 				LP_SERIALIZE_PROPERTY(perspective, m_perspectiveOpen, out);
-				LP_SERIALIZE_PROPERTY(inspector, m_inspectorOpen, out);
-				LP_SERIALIZE_PROPERTY(create, m_createPanel.GetIsOpen(), out);
 				LP_SERIALIZE_PROPERTY(log, m_logToolOpen, out);
 
 				for (const auto window : m_pWindows)
@@ -46,7 +44,7 @@ namespace Sandbox
 		return true;
 	}
 
-	void Sandbox::SetupFromConfig()
+	void SandboxLayer::SetupFromConfig()
 	{
 		if (!std::filesystem::exists(s_editorIni))
 		{
@@ -73,8 +71,6 @@ namespace Sandbox
 		{
 			YAML::Node openNode = configNode["windowsOpen"];
 			LP_DESERIALIZE_PROPERTY(perspective, m_perspectiveOpen, openNode, true);
-			LP_DESERIALIZE_PROPERTY(inspector, m_inspectorOpen, openNode, true);
-			LP_DESERIALIZE_PROPERTY(create, m_createPanel.GetIsOpen(), openNode, true);
 			LP_DESERIALIZE_PROPERTY(log, m_logToolOpen, openNode, false);
 
 			for (auto window : m_pWindows)

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "BaseWindow.h"
+#include "EditorWindow.h"
+
+#include <Lamp/Event/ApplicationEvent.h>
 
 namespace Sandbox
 {
-	class EnvironmentEditorPanel : public BaseWindow
+	class EnvironmentEditorPanel : public EditorWindow
 	{
 	public:
 		EnvironmentEditorPanel(std::string_view name);

@@ -20,7 +20,7 @@ namespace Sandbox
 	static const std::filesystem::path s_assetsPath = "assets";
 
 	AssetBrowserPanel::AssetBrowserPanel()
-		: m_currentDirectory(s_assetsPath)
+		: EditorWindow("Asset Browser"), m_currentDirectory(s_assetsPath)
 	{
 		m_directoryTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/directoryIcon.png");
 		m_fileTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/files.png");
@@ -37,6 +37,127 @@ namespace Sandbox
 
 		m_pCurrentDirectory = m_directories[s_assetsPath.string()].get();
 		m_directoryButtons.emplace_back(m_pCurrentDirectory);
+	}
+
+	void AssetBrowserPanel::OnEvent(Lamp::Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(AssetBrowserPanel::OnImGuiRender));
+	}
+
+	bool AssetBrowserPanel::OnImGuiRender(Lamp::ImGuiUpdateEvent& e)
+	{
+		if (!m_isOpen)
+		{
+			return false;
+		}
+
+		LP_PROFILE_FUNCTION();
+		ImGui::Begin("Asset Browser", &m_isOpen, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		m_isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+
+		static float padding = 16.f;
+		static float thumbnailSize = 100.f;
+		float cellSize = thumbnailSize + padding;
+
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+
+		const ImGuiTableFlags mainFlags = ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable;
+
+		if (m_pNextDirectory)
+		{
+			m_pCurrentDirectory->selected = false;
+			m_pCurrentDirectory = m_pNextDirectory;
+			m_pNextDirectory = nullptr;
+
+			m_directoryButtons.clear();
+			m_directoryButtons = FindParentDirectoriesOfDirectory(m_pCurrentDirectory);
+		}
+
+		UI::PushId();
+
+		const float controlsBarHeight = 30.f;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.f);
+		RenderControlsBar(controlsBarHeight);
+		ImGui::PopStyleVar();
+
+		if (ImGui::BeginTable("assetBrowserMain", 2, mainFlags))
+		{
+			ImGui::TableSetupColumn("Outline", 0, 250.f);
+			ImGui::TableSetupColumn("View", ImGuiTableColumnFlags_WidthStretch);
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+
+			//Draw outline
+			{
+				ImGuiStyle& style = ImGui::GetStyle();
+				auto color = style.Colors[ImGuiCol_FrameBg];
+
+				UI::ScopedColor newColor(ImGuiCol_ChildBg, { color.x, color.y, color.z, color.w });
+				ImGui::BeginChild("##outline");
+			}
+
+			{
+				UI::ShiftCursor(5.f, 5.f);
+				if (UI::TreeNodeImage(m_directoryTexture, "Assets", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					UI::ScopedStyleFloat2 spacing(ImGuiStyleVar_ItemSpacing, { 0.f, 0.f });
+
+					for (const auto& subDir : m_directories[s_assetsPath.string()]->subDirectories)
+					{
+						RenderDirectory(subDir);
+					}
+					UI::TreeNodePop();
+				}
+			}
+			ImGui::EndChild();
+
+			ImGui::TableNextColumn();
+
+			ImGui::BeginChild("##view", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetWindowHeight() - controlsBarHeight));
+			{
+
+				ImGui::BeginChild("Scrolling");
+				{
+					static float padding = 16.f;
+
+					float cellSize = m_thumbnailSize + padding;
+					float panelWidth = ImGui::GetContentRegionAvail().x;
+					int columnCount = (int)(panelWidth / cellSize);
+
+					if (columnCount < 1)
+					{
+						columnCount = 1;
+					}
+
+					ImGui::Columns(columnCount, nullptr, false);
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 0.f, 0.f, 0.f });
+
+					if (!m_hasSearchQuery)
+					{
+						RenderView(m_pCurrentDirectory->subDirectories, m_pCurrentDirectory->assets);
+					}
+					else
+					{
+						RenderView(m_searchDirectories, m_searchAssets);
+					}
+
+					ImGui::PopStyleColor();
+				}
+				ImGui::EndChild();
+			}
+			ImGui::EndChild();
+
+			ImGui::EndTable();
+		}
+		UI::PopId();
+
+		ImGui::End();
+
+		return false;
 	}
 
 	Ref<DirectoryData> AssetBrowserPanel::ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent)
@@ -438,116 +559,5 @@ namespace Sandbox
 		}
 
 		return nullptr;
-	}
-
-	void AssetBrowserPanel::OnImGuiRender()
-	{
-		if (!m_isOpen)
-		{
-			return;
-		}
-
-		LP_PROFILE_FUNCTION();
-		ImGui::Begin("Asset Browser", &m_isOpen, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-		static float padding = 16.f;
-		static float thumbnailSize = 100.f;
-		float cellSize = thumbnailSize + padding;
-
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-
-		const ImGuiTableFlags mainFlags = ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable;
-
-		if (m_pNextDirectory)
-		{
-			m_pCurrentDirectory->selected = false;
-			m_pCurrentDirectory = m_pNextDirectory;
-			m_pNextDirectory = nullptr;
-
-			m_directoryButtons.clear();
-			m_directoryButtons = FindParentDirectoriesOfDirectory(m_pCurrentDirectory);
-		}
-
-		UI::PushId();
-
-		const float controlsBarHeight = 30.f;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.f);
-		RenderControlsBar(controlsBarHeight);
-		ImGui::PopStyleVar();
-
-		if (ImGui::BeginTable("assetBrowserMain", 2, mainFlags))
-		{
-			ImGui::TableSetupColumn("Outline", 0, 250.f);
-			ImGui::TableSetupColumn("View", ImGuiTableColumnFlags_WidthStretch);
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-
-			//Draw outline
-			{
-				ImGuiStyle& style = ImGui::GetStyle();
-				auto color = style.Colors[ImGuiCol_FrameBg];
-
-				UI::ScopedColor newColor(ImGuiCol_ChildBg, { color.x, color.y, color.z, color.w });
-				ImGui::BeginChild("##outline");
-			}
-
-			{
-				UI::ShiftCursor(5.f, 5.f);
-				if (UI::TreeNodeImage(m_directoryTexture, "Assets", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					UI::ScopedStyleFloat2 spacing(ImGuiStyleVar_ItemSpacing, { 0.f, 0.f });
-
-					for (const auto& subDir : m_directories[s_assetsPath.string()]->subDirectories)
-					{
-						RenderDirectory(subDir);
-					}
-					UI::TreeNodePop();
-				}
-			}
-			ImGui::EndChild();
-
-			ImGui::TableNextColumn();
-
-			ImGui::BeginChild("##view", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetWindowHeight() - controlsBarHeight));
-			{
-
-				ImGui::BeginChild("Scrolling");
-				{
-					static float padding = 16.f;
-
-					float cellSize = m_thumbnailSize + padding;
-					float panelWidth = ImGui::GetContentRegionAvail().x;
-					int columnCount = (int)(panelWidth / cellSize);
-
-					if (columnCount < 1)
-					{
-						columnCount = 1;
-					}
-
-					ImGui::Columns(columnCount, nullptr, false);
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.f, 0.f, 0.f, 0.f });
-
-					if (!m_hasSearchQuery)
-					{
-						RenderView(m_pCurrentDirectory->subDirectories, m_pCurrentDirectory->assets);
-					}
-					else
-					{
-						RenderView(m_searchDirectories, m_searchAssets);
-					}
-
-					ImGui::PopStyleColor();
-				}
-				ImGui::EndChild();
-			}
-			ImGui::EndChild();
-
-			ImGui::EndTable();
-		}
-		UI::PopId();
-
-		ImGui::End();
 	}
 }

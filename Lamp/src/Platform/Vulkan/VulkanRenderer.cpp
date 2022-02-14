@@ -44,6 +44,7 @@
 namespace Lamp
 {
 	Renderer* Renderer::s_instance = nullptr;
+	RendererCapabilities Renderer::s_capabilities;
 
 	Renderer::Renderer()
 	{
@@ -65,18 +66,21 @@ namespace Lamp
 		AllocateDescriptorPools();
 		CreateRendererStorage();
 
-		ShaderLibrary::LoadShaders();
-		MaterialLibrary::LoadMaterials();
-
 		m_rendererStorage->swapchainCommandBuffer = CommandBuffer::Create(3, true);
 		m_rendererStorage->renderCommandBuffer = CommandBuffer::Create(3, false);
-
 		m_rendererStorage->quadMesh = SubMesh::CreateQuad();
+
+		ShaderLibrary::LoadShaders();
+
+		m_materialLibrary = CreateScope<MaterialLibrary>();
+		MaterialLibrary::Get().LoadMaterials();
+
+		GenerateBRDF(m_rendererDefaults->brdfFramebuffer);
 	}
 
 	void Renderer::Shutdown()
 	{
-		MaterialLibrary::Shutdown();
+		MaterialLibrary::Get().Shutdown();
 
 		DestroyRendererStorage();
 		DestroyDescriptorPools();
@@ -165,7 +169,7 @@ namespace Lamp
 
 	const RendererCapabilities& Renderer::GetCapabilities() const
 	{
-		return m_capabilities;
+		return s_capabilities;
 	}
 
 	const VulkanRendererStorage& Renderer::GetStorage() const
@@ -178,7 +182,17 @@ namespace Lamp
 		return *m_rendererDefaults;
 	}
 
-	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
+	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */)
+	{
+		m_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
+	}
+
+	void Renderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant /* = nullptr */)
+	{
+		DrawMesh(mesh, material, descriptorSets, pushConstant);
+	}
+
+	void Renderer::DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -222,7 +236,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void Renderer::SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
+	void Renderer::DrawMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -243,7 +257,7 @@ namespace Lamp
 		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
-	void Renderer::SubmitQuad()
+	void Renderer::DrawQuad()
 	{
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
@@ -290,7 +304,7 @@ namespace Lamp
 				{
 					if (!command.material->GetMaterialData().useTranslucency && !command.material->GetMaterialData().useBlending)
 					{
-						SubmitMesh(command.transform, command.data, command.material, command.id);
+						DrawMesh(command.transform, command.data, command.material, command.id);
 					}
 				}
 				break;
@@ -302,7 +316,7 @@ namespace Lamp
 				{
 					if (command.material->GetMaterialData().useTranslucency)
 					{
-						SubmitMesh(command.transform, command.data, command.material, command.id);
+						DrawMesh(command.transform, command.data, command.material, command.id);
 					}
 				}
 				break;
@@ -314,7 +328,7 @@ namespace Lamp
 				{
 					if (command.material->GetMaterialData().useBlending)
 					{
-						SubmitMesh(command.transform, command.data, command.material, command.id);
+						DrawMesh(command.transform, command.data, command.material, command.id);	
 					}
 				}
 				break;
@@ -329,7 +343,7 @@ namespace Lamp
 
 			case DrawType::Quad:
 			{
-				SubmitQuad();
+				DrawQuad();
 
 				break;
 			}
@@ -355,7 +369,7 @@ namespace Lamp
 	}
 
 	//TODO: Find better way to save execute function
-	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<UniformBuffer> cameraDataBuffer, Ref<UniformBuffer> lightCullingBuffer, Ref<ShaderStorageBufferSet> shaderStorageSet, Ref<Image2D> depthImage)
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<Image2D> depthImage)
 	{
 		Ref<Shader> lightCullingShader = ShaderLibrary::GetShader("lightCulling");
 		Ref<VulkanRenderComputePipeline> lightCullingPipeline = std::reinterpret_pointer_cast<VulkanRenderComputePipeline>(RenderComputePipeline::Create(lightCullingShader));
@@ -382,22 +396,22 @@ namespace Lamp
 
 			std::array<VkWriteDescriptorSet, 5> writeDescriptors;
 
-			auto vulkanCameraDataBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(cameraDataBuffer);
+			auto vulkanCameraDataBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_rendererStorage->uniformBufferSet->Get(0, 0, currentFrame));
 			writeDescriptors[0] = *vulkanShader->GetDescriptorSet("CameraDataBuffer");
 			writeDescriptors[0].dstSet = currentDescriptorSet;
 			writeDescriptors[0].pBufferInfo = &vulkanCameraDataBuffer->GetDescriptorInfo();
 
-			auto vulkanLightCullingBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(lightCullingBuffer);
+			auto vulkanLightCullingBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_rendererStorage->lightCullingBuffer);
 			writeDescriptors[1] = *vulkanShader->GetDescriptorSet("DirectionalLightBuffer");
 			writeDescriptors[1].dstSet = currentDescriptorSet;
 			writeDescriptors[1].pBufferInfo = &vulkanLightCullingBuffer->GetDescriptorInfo();
 
-			auto vulkanLightStorageBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(shaderStorageSet->Get(12, 0, currentFrame));
+			auto vulkanLightStorageBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(m_rendererStorage->shaderStorageBufferSet->Get(12, 0, currentFrame));
 			writeDescriptors[2] = *vulkanShader->GetDescriptorSet("LightBuffer");
 			writeDescriptors[2].dstSet = currentDescriptorSet;
 			writeDescriptors[2].pBufferInfo = &vulkanLightStorageBuffer->GetDescriptorInfo();
 
-			auto vulkanVisibleLightsBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(shaderStorageSet->Get(13, 0, currentFrame));
+			auto vulkanVisibleLightsBuffer = std::reinterpret_pointer_cast<VulkanShaderStorageBuffer>(m_rendererStorage->shaderStorageBufferSet->Get(13, 0, currentFrame));
 			writeDescriptors[3] = *vulkanShader->GetDescriptorSet("VisibleLightsBuffer");
 			writeDescriptors[3].dstSet = currentDescriptorSet;
 			writeDescriptors[3].pBufferInfo = &vulkanVisibleLightsBuffer->GetDescriptorInfo();
@@ -427,7 +441,7 @@ namespace Lamp
 	void Renderer::CreateUniformBuffers()
 	{
 		/////Uniform buffers//////
-		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(m_capabilities.framesInFlight);
+		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(s_capabilities.framesInFlight);
 		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraData, sizeof(CameraDataBuffer), 0, 0);
 		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
 		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->screenData, sizeof(ScreenDataBuffer), 3, 0);
@@ -443,7 +457,7 @@ namespace Lamp
 		lightCullingData.yTileCount = (lightCullingData.maxScreenTileBufferAllocation + (lightCullingData.maxScreenTileBufferAllocation % lightCullingData.tileSize)) / lightCullingData.tileSize;
 		lightCullingData.tileCount = lightCullingData.xTileCount * lightCullingData.yTileCount;
 
-		m_rendererStorage->shaderStorageBufferSet = ShaderStorageBufferSet::Create(m_capabilities.framesInFlight);
+		m_rendererStorage->shaderStorageBufferSet = ShaderStorageBufferSet::Create(s_capabilities.framesInFlight);
 		m_rendererStorage->shaderStorageBufferSet->Add(lightCullingData.maxLights * sizeof(PointLightData), 12, 0);
 		m_rendererStorage->shaderStorageBufferSet->Add(lightCullingData.tileCount * sizeof(LightIndex) * lightCullingData.maxLights, 13, 0);
 	}
@@ -931,7 +945,7 @@ namespace Lamp
 		poolInfo.poolSizeCount = (uint32_t)ARRAYSIZE(poolSizes);
 		poolInfo.pPoolSizes = poolSizes;
 
-		m_descriptorPools.resize(m_capabilities.framesInFlight);
+		m_descriptorPools.resize(s_capabilities.framesInFlight);
 		auto device = VulkanContext::GetCurrentDevice();
 
 		for (uint32_t i = 0; i < m_descriptorPools.size(); ++i)
@@ -967,7 +981,6 @@ namespace Lamp
 		m_rendererDefaults->whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		CreateUniformBuffers();
-		GenerateBRDF(m_rendererDefaults->brdfFramebuffer);
 	}
 
 	void Renderer::DestroyRendererStorage()
@@ -1013,7 +1026,7 @@ namespace Lamp
 		auto renderPass = RenderPipeline::Create(pipelineSpec);
 
 		BeginPass(renderPass);
-		SubmitQuad();
+		DrawQuad();
 		EndPass();
 	}
 

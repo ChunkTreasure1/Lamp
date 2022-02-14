@@ -77,6 +77,7 @@ namespace Lamp
 
 		RenderCommand::Shutdown();
 		m_renderer->Shutdown();
+		m_renderer.reset();
 
 		ResourceCache::Shutdown();
 
@@ -99,20 +100,20 @@ namespace Lamp
 
 			m_updateFrameTime.Begin();
 
-			//LP_PROFILE_SCOPE("Application::UpdateLayers");
-			//AppUpdateEvent e(m_currentTimeStep);
+			LP_PROFILE_SCOPE("Application::UpdateLayers");
+			AppUpdateEvent e(m_currentTimeStep);
 
-			//for (Layer* pLayer : m_LayerStack)
-			//{
-			//	pLayer->OnEvent(e);
-			//}
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnEvent(e);
+			}
 
 			m_updateReady = false;
 
 			while (!m_renderReady && m_running)
 			{}
 
-			//Renderer::SwapBuffers();
+			RenderCommand::SwapRenderBuffers();
 
 			m_updateFrameTime.End();
 		}

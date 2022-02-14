@@ -23,7 +23,9 @@
 #ifndef AMD_VULKAN_MEMORY_ALLOCATOR_H
 #define AMD_VULKAN_MEMORY_ALLOCATOR_H
 
+#ifdef LP_DEBUG
 #define VMA_RECORDING_ENABLED 1
+#endif
 
 /** \mainpage Vulkan Memory Allocator
 
