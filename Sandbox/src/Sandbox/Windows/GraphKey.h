@@ -1,12 +1,12 @@
 #pragma once
 
-#include "BaseWindow.h"
-#include <Lamp/Objects/Entity/Base/BaseComponent.h>
+#include "EditorWindow.h"
+#include <Lamp/Objects/Entity/EntityComponent.h>
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 
 namespace Sandbox
 {
-	class GraphKey : public BaseWindow
+	class GraphKey : public EditorWindow
 	{
 	public:
 		GraphKey(std::string_view name);

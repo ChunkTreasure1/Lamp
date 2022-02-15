@@ -3,25 +3,110 @@ layer:
   id: 0
   active: true
   entities:
-    - entity: DirectionalLight
-      position: [0, -0.602181554, -1.51776719]
-      rotation: [-3.2718841e-08, 0.818734586, 0.280960411]
-      scale: [0.999998391, 0.999999702, 0.999998927]
+    - entity: Skylight
+      position: [0, 9.62425041, 0]
+      rotation: [-0.777768135, -7.82311105e-08, 0.128070876]
+      scale: [0.999995649, 0.999996424, 0.999997139]
       layerId: 0
       components:
         - name: DirectionalLightComponent
           params:
             - param: Intensity
               type: Float
-              value: 0.0700000003
+              value: 2
             - param: Color
               type: Color3
               value: [1, 0.999989986, 0.999989986]
             - param: Cast Shadows
               type: Bool
               value: true
-    - entity: Pointlight
-      position: [1.41626692, 3.75414181, 0.810348392]
+    - entity: Player
+      position: [0, 6.02083206, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: ControllerComponent
+          params:
+            - param: Speed
+              type: Float
+              value: 10
+        - name: CapsuleColliderComponent
+          params:
+            - param: Radius
+              type: Float
+              value: 0.5
+            - param: Height
+              type: Float
+              value: 1
+            - param: Offset
+              type: Float3
+              value: [0, 0, 0]
+            - param: Is Trigger
+              type: Bool
+              value: false
+        - name: RigidbodyComponent
+          params:
+            - param: Body type
+              type: Int
+              value: 1
+            - param: Collision type
+              type: Int
+              value: 0
+            - param: Mass
+              type: Float
+              value: 1
+            - param: Linear Drag
+              type: Float
+              value: 1
+            - param: Angular Drag
+              type: Float
+              value: 1
+            - param: Disable gravity
+              type: Bool
+              value: false
+            - param: Is Kinematic
+              type: Bool
+              value: false
+            - param: Layer
+              type: Int
+              value: 0
+        - name: CameraComponent
+          params:
+            - param: Is Perspective
+              type: Bool
+              value: true
+            - param: Is Main
+              type: Bool
+              value: true
+            - param: Field Of View
+              type: Float
+              value: 60
+            - param: Near Plane
+              type: Float
+              value: 0.00999999978
+            - param: Far Plane
+              type: Float
+              value: 1000
+    - entity: Floor
+      position: [0, 3.4852283, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+      layerId: 0
+      components:
+        - name: BoxColliderComponent
+          params:
+            - param: Size
+              type: Float3
+              value: [20, 1, 20]
+            - param: Offset
+              type: Float3
+              value: [0, 0, 0]
+            - param: Is Trigger
+              type: Bool
+              value: false
+    - entity: Light
+      position: [-0.531598806, 1.57865143, -0.320309728]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
@@ -30,10 +115,10 @@ layer:
           params:
             - param: Intensity
               type: Float
-              value: 1
+              value: 0.569999993
             - param: Radius
               type: Float
-              value: 15
+              value: 3.92000008
             - param: Falloff
               type: Float
               value: 0
@@ -45,22 +130,10 @@ layer:
               value: 100
             - param: Color
               type: Color3
-              value: [0.965250969, 0.731486261, 0.301873893]
+              value: [1, 1, 1]
   brushes:
-    - brush: Brush
-      meshHandle: 3247278211742412997
-      position: [-6.60226154, 0.784256339, -0.277845651]
-      rotation: [0, 1.57079637, 0]
-      scale: [0.00999974459, 0.00999999978, 0.00999974459]
-      layerId: 0
-    - brush: Brush
-      meshHandle: 18292569150900447914
-      position: [-6.59614801, -0.076349929, 0.499265403]
-      rotation: [-3.14159226, 1.57030797, -3.14159226]
-      scale: [0.00999999885, 0.00999999978, 0.00999999885]
-      layerId: 0
-    - brush: Brush
-      meshHandle: 10163665107251789962
+    - brush: Sponza
+      meshHandle: 15873515662996244200
       position: [0, 0, 0]
       rotation: [0, 0, 0]
       scale: [0.00999999978, 0.00999999978, 0.00999999978]

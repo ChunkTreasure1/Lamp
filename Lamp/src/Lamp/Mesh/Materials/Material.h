@@ -8,48 +8,49 @@ namespace Lamp
 {
 	class Texture2D;
 	class Shader;
+	class RenderPipeline;
+	
+	struct MaterialData
+	{
+		bool useBlending = false;
+		bool useTranslucency = false;
+		bool useAlbedo = true;
+		bool useNormal = true;
+		bool useMRO = true;
+		bool useDetailNormal = false;
+
+		float blendingMultiplier = 0.f;
+
+		glm::vec2 mroColor{ 0.f, 1.f };
+		glm::vec3 normalColor{ 0.f, 1.f, 0.f };
+		glm::vec4 albedoColor{ 1.f, 1.f, 1.f, 1.f };
+	};
+	
 	class Material : public Asset
 	{
 	public:
-		Material(Ref<Shader> shader, uint32_t id)
-			: m_Index(id)
-		{
-			SetShader(shader);
-		}
+		virtual ~Material() {}
+		virtual void Bind(Ref<RenderPipeline> renderPipeline, uint32_t currentIndex = 0) = 0;
 
-		Material()
-			: m_Index(0)
-		{}
-
-		Material(uint32_t index, const std::string& name)
-			: m_Index(index), m_Name(name)
-		{}
 		//Setting
-		inline void SetTextures(std::unordered_map<std::string, Ref<Texture2D>>& map) { m_pTextures = map; }
-		void SetTexture(const std::string& name, Ref<Texture2D> texture);
-		void SetShader(Ref<Shader> shader);
-		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetBlendingMutliplier(float value) { m_blendingMultiplier = value; }
-		inline void SetUseBlending(bool state) { m_useBlending = state; }
+		virtual void SetTextures(const std::unordered_map<std::string, Ref<Texture2D>>& map) = 0;
+		virtual void SetTexture(const std::string& name, Ref<Texture2D> texture) = 0;
+		virtual void SetShader(Ref<Shader> shader) = 0;
+		virtual void SetName(const std::string& name) = 0;
 
 		//Getting
-		inline std::unordered_map<std::string, Ref<Texture2D>>& GetTextures() { return m_pTextures; }
-		inline const uint32_t GetIndex() { return m_Index; }
-		inline const Ref<Shader>& GetShader() { return m_pShader; }
-		inline const std::string& GetName() { return m_Name; }
-		inline const float& GetBlendingMultiplier() { return m_blendingMultiplier; }
-		inline const bool& GetUseBlending() { return m_useBlending; }
+		virtual const std::vector<Ref<Texture2D>> GetTextures() = 0;
+		virtual const uint32_t GetIndex() = 0;
+		virtual Ref<Shader> GetShader() = 0;
+		virtual const std::string& GetName() = 0;
+		virtual const MaterialData& GetMaterialData() const = 0;
 
 		static AssetType GetStaticType() { return AssetType::Material; }
 		AssetType GetType() override { return GetStaticType(); }
 
-	private:
-		std::unordered_map<std::string, Ref<Texture2D>> m_pTextures;
-
-		Ref<Shader> m_pShader;
-		uint32_t m_Index;
-		std::string m_Name;
-		float m_blendingMultiplier = 1.f;
-		bool m_useBlending = false;
+		static Ref<Material> Create(Ref<Shader> shader, uint32_t id);
+		static Ref<Material> Create();
+		static Ref<Material> Create(const Ref<Material> material);
+		static Ref<Material> Create(const std::string& name, uint32_t index);
 	};
 }

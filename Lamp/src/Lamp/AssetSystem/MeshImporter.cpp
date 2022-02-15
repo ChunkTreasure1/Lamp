@@ -17,7 +17,7 @@ namespace Lamp
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_ValidateDataStructure;
 
-	Ref<Mesh> MeshImporter::ImportMesh(const ImportSettings& settings)
+	Ref<Mesh> MeshImporter::ImportMesh(const MeshImportSettings& settings)
 	{
 		std::map<uint32_t, Ref<Material>> materials;
 		std::vector<Ref<SubMesh>> meshes = LoadMesh(settings, materials);
@@ -79,7 +79,7 @@ namespace Lamp
 		return mesh;
 	}
 
-	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const ImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials)
+	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const MeshImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials)
 	{
 		Assimp::Importer importer;
 		std::vector<Ref<SubMesh>> meshes;
@@ -107,7 +107,7 @@ namespace Lamp
 
 		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace(i, CreateRef<Material>(i, pScene->mMaterials[i]->GetName().C_Str()));
+			materials.emplace(i, Material::Create(pScene->mMaterials[i]->GetName().C_Str(), i));
 		}
 
 		return meshes;

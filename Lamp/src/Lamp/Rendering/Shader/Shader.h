@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include "Lamp/AssetSystem/Asset.h"
 
 #include <string>
 
@@ -16,79 +16,84 @@
 
 namespace Lamp
 {
-	enum class UniformType : uint32_t
+	enum class ShaderUniformType
 	{
-		Int = 0,
-		Float = 1,
-		Float2 = 2,
-		Float3 = 3,
-		Float4 = 4,
-		Mat3 = 5,
-		Mat4 = 6,
-		Sampler2D = 7,
-		SamplerCube = 8,
-		RenderData = 9
+		None = 0,
+		Bool,
+		Int,
+		UInt,
+		Float,
+		Float2,
+		Float3,
+		Float4,
+		Mat3,
+		Mat4,
+		Int2,
+		Int3,
+		Int4
 	};
 
-	enum ShaderType
+	struct ShaderResourceDeclaration
 	{
-		VertexShader = BIT(1),
-		FragmentShader = BIT(2),
-		GeometryShader = BIT(3),
-		ComputeShader = BIT(4)
-	};
-
-	struct UniformSpecification
-	{
-		UniformSpecification(const std::string& name, UniformType type, std::any data, uint32_t id)
-			: name(name), type(type), data(data), id(id)
-		{ }
+		ShaderResourceDeclaration() = default;
+		ShaderResourceDeclaration(const std::string& name, uint32_t binding, uint32_t set)
+			: name(name), binding(binding), set(set)
+		{
+		}
 
 		std::string name;
-		UniformType type;
-		std::any data;
-		uint32_t id;
+		uint32_t binding;
+		uint32_t set;
 	};
 
 	struct ShaderSpecification
 	{
-		int textureCount;
 		std::string name;
-		std::vector<std::string> textureNames;
-		std::vector<UniformSpecification> uniforms;
-		int type = 0;
-		bool isInternal;
+		std::vector<std::string> inputTextureNames;
+		uint32_t textureCount = 0;
+		bool internalShader = true;
 	};
 
-	class Shader
+	class Shader : public Asset
 	{
 	public:
+		struct ShaderUniform
+		{
+		public:
+			ShaderUniform() = default;
+			ShaderUniform(std::string name, ShaderUniformType type, uint32_t size, uint32_t offset);
+
+			const std::string& GetName() const { return m_name; }
+			const uint32_t GetSize() const { return m_size; }
+			const uint32_t GetOffset() const { return m_offset; }
+			ShaderUniformType GetType() { return m_type; }
+
+			static std::string UniformTypeToString(ShaderUniformType type);
+		private:
+			std::string m_name;
+			ShaderUniformType m_type = ShaderUniformType::None;
+			uint32_t m_size = 0;
+			uint32_t m_offset = 0;
+		};
+
+		struct ShaderBuffer
+		{
+			std::string name;
+			uint32_t size = 0;
+			std::unordered_map<std::string, ShaderUniform> uniforms;
+		};
+
 		virtual ~Shader() = default;
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-		virtual void Recompile() = 0;
-
-		virtual void UploadBool(const std::string& name, bool value) const = 0;
-		virtual void UploadInt(const std::string& name, int value) const = 0;
-		virtual void UploadFloat(const std::string& name, float value) const = 0;
-		virtual void UploadFloat2(const std::string& name, const glm::vec2& value) const = 0;
-		virtual void UploadFloat3(const std::string& name, const glm::vec3& value) const = 0;
-		virtual void UploadFloat4(const std::string& name, const glm::vec4& value) const = 0;
-		
-		virtual void UploadMat4(const std::string& name, const glm::mat4& mat) = 0;
-		virtual void UploadMat3(const std::string& name, const glm::mat3& mat) = 0;
-		virtual void UploadIntArray(const std::string& name, int* values, uint32_t count) const = 0;
-
+		virtual void Reload(bool forceCompile) = 0;
+		virtual void Bind() = 0;
 		virtual const std::string& GetName() = 0;
-		virtual std::string& GetPath() = 0;
-
-		inline const ShaderSpecification& GetSpecification() { return m_specification; }
+		virtual const ShaderSpecification& GetSpecification() const = 0;
+		
+		static AssetType GetStaticType() { return AssetType::Shader; }
+		AssetType GetType() override { return GetStaticType(); }
 
 	public:
-		static Ref<Shader> Create(const std::string& path);
-
-	protected:
-		ShaderSpecification m_specification;
+		static Ref<Shader> Create(const std::filesystem::path& path, bool forceCompile = false);
 	};
 }

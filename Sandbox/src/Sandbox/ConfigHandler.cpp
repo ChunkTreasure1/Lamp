@@ -1,130 +1,81 @@
-#include "Sandbox.h"
-#include <rapidxml/rapidxml_print.hpp>
-
+#include "SandboxLayer.h"
 #include "Windows/MeshImporterPanel.h"
+
+#include <Lamp/Utility/SerializeMacros.h>
+#include <Lamp/Utility/YAMLSerializationHelpers.h>
+
+#include <yaml-cpp/yaml.h>
+#include <rapidxml/rapidxml_print.hpp>
 
 namespace Sandbox
 {
-	static std::string ToString(const bool& var)
-	{
-		std::string str;
-		if (var)
-		{
-			str = "1";
-		}
-		else
-		{
-			str = "0";
-		}
+	static std::filesystem::path s_editorIni = "editor.ini";
 
-		return str;
-	}
-	static std::string ToString(const glm::vec2& var)
+	bool SandboxLayer::OnWindowClose(Lamp::WindowCloseEvent& e)
 	{
-		std::string str(std::to_string(var.x) + "," + std::to_string(var.y));
-		return str;
-	}
-
-	static bool GetValue(char* val, glm::vec2& var)
-	{
-		if (val)
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "editorConfig" << YAML::Value;
 		{
-			float x, y;
-			if (sscanf_s(val, "%f,%f", &x, &y) == 2)
+			out << YAML::BeginMap;
+			out << YAML::Key << "windowsOpen" << YAML::Value;
 			{
-				var = glm::vec2(x, y);
-				return true;
+				out << YAML::BeginMap;
+
+				LP_SERIALIZE_PROPERTY(perspective, m_perspectiveOpen, out);
+				LP_SERIALIZE_PROPERTY(log, m_logToolOpen, out);
+
+				for (const auto window : m_pWindows)
+				{
+					LP_SERIALIZE_PROPERTY_STRING(window->GetName(), window->GetIsOpen(), out);
+				}
+
+				out << YAML::EndMap;
 			}
+			out << YAML::EndMap;
 		}
-		return false;
-	}
-	static bool GetValue(char* val, bool& var)
-	{
-		if (val)
-		{
-			var = atoi(val) != 0;
-			return true;
-		}
-
-		return false;
-	}
-
-	bool Sandbox::OnWindowClose(Lamp::WindowCloseEvent& e)
-	{
-		using namespace rapidxml;
+		out << YAML::EndMap;
 
 		std::ofstream file;
-		xml_document<> doc;
-		file.open("config.cfg");
-
-		xml_node<>* pRoot = doc.allocate_node(rapidxml::node_element, "Sandbox");
-
-		xml_node<>* pWindowSize = doc.allocate_node(node_element, "WindowSize");
-		char* pSize = doc.allocate_string(ToString(glm::vec2(Lamp::Application::Get().GetWindow().GetWidth(), Lamp::Application::Get().GetWindow().GetHeight())).c_str());
-		pWindowSize->append_attribute(doc.allocate_attribute("size", pSize));
-
-		xml_node<>* pWindowsOpen = doc.allocate_node(node_element, "WindowsOpen");
-		char* pPers = doc.allocate_string(ToString(m_PerspectiveOpen).c_str());
-		pWindowsOpen->append_attribute(doc.allocate_attribute("Perspective", pPers));
-
-		char* pProps = doc.allocate_string(ToString(m_InspectiorOpen).c_str());
-		pWindowsOpen->append_attribute(doc.allocate_attribute("Inspector", pProps));
-
-		char* pCreate = doc.allocate_string(ToString(m_CreateToolOpen).c_str());
-		pWindowsOpen->append_attribute(doc.allocate_attribute("CreateTool", pCreate));
-
-		char* pLog = doc.allocate_string(ToString(m_LogToolOpen).c_str());
-		pWindowsOpen->append_attribute(doc.allocate_attribute("LogTool", pLog));
-
-		for (auto pWindow : m_pWindows)
-		{
-			char* pImp = doc.allocate_string(ToString(pWindow->GetIsOpen()).c_str());
-			char* pName = doc.allocate_string(pWindow->GetName().c_str());
-			pWindowsOpen->append_attribute(doc.allocate_attribute(pName, pImp));
-		}
-
-		pRoot->append_node(pWindowSize);
-		pRoot->append_node(pWindowsOpen);
-
-		doc.append_node(pRoot);
-		file << doc;
+		file.open(s_editorIni);
+		file << out.c_str();
 		file.close();
 
 		return true;
 	}
 
-	void Sandbox::SetupFromConfig()
+	void SandboxLayer::SetupFromConfig()
 	{
-		using namespace rapidxml;
-
-		xml_document<> file;
-		xml_node<>* pRootNode;
-
-		std::ifstream levelFile("config.cfg");
-		std::vector<char> buffer((std::istreambuf_iterator<char>(levelFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
-
-		file.parse<0>(&buffer[0]);
-		pRootNode = file.first_node("Sandbox");
-
-		if (xml_node<>* pWindowSize = pRootNode->first_node("WindowSize"))
+		if (!std::filesystem::exists(s_editorIni))
 		{
-			glm::vec2 wS;
-			GetValue(pWindowSize->first_attribute("size")->value(), wS);
-			Lamp::Application::Get().GetWindow().SetSize(wS);
+			LP_WARN("[Sandbox]: File {0} not found!", s_editorIni.string());
+			return;
 		}
 
-		if (xml_node<>* pWindowsOpen = pRootNode->first_node("WindowsOpen"))
+		std::ifstream stream(s_editorIni);
+		if (!stream.is_open())
 		{
-			GetValue(pWindowsOpen->first_attribute("Perspective")->value(), m_PerspectiveOpen);
-			GetValue(pWindowsOpen->first_attribute("Inspector")->value(), m_InspectiorOpen);
-			GetValue(pWindowsOpen->first_attribute("CreateTool")->value(), m_CreateToolOpen);
-			GetValue(pWindowsOpen->first_attribute("LogTool")->value(), m_LogToolOpen);
+			LP_WARN("[Sandbox]: File {0} could not be opened! File could be corrupt, try removing it and restarting.", s_editorIni.string());
+			return;
+		}
 
-			for (auto pWindow : m_pWindows)
+		std::stringstream strStream;
+		strStream << stream.rdbuf();
+
+		stream.close();
+
+		YAML::Node root = YAML::Load(strStream.str());
+		YAML::Node configNode = root["editorConfig"];
+
+		if (configNode["windowsOpen"])
+		{
+			YAML::Node openNode = configNode["windowsOpen"];
+			LP_DESERIALIZE_PROPERTY(perspective, m_perspectiveOpen, openNode, true);
+			LP_DESERIALIZE_PROPERTY(log, m_logToolOpen, openNode, false);
+
+			for (auto window : m_pWindows)
 			{
-				std::string name = pWindow->GetName();
-				GetValue(pWindowsOpen->first_attribute(name.c_str())->value(), pWindow->GetIsOpen());
+				LP_DESERIALIZE_PROPERTY_STRING(window->GetName(), window->GetIsOpen(), openNode, false);
 			}
 		}
 	}

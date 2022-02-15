@@ -6,6 +6,8 @@
 #include "Lamp/Core/Core.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 
+#include "Lamp/Rendering/Buffers/RenderBuffer.h"
+
 namespace Lamp
 {
 	class Renderer2D

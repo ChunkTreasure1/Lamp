@@ -1,62 +1,37 @@
 #pragma once
 
+#include "Lamp/Rendering/Textures/Image2D.h"
+
 namespace Lamp
 {
-	enum class FramebufferTextureFormat : uint32_t
-	{
-		None = 0,
-
-		//Color
-		RGBA8 = 1,
-		RGBA16F = 2,
-		RGBA32F = 3,
-		RG32F = 4,
-		RED_INTEGER = 5,
-		RED = 6,
-
-		//Depth
-		DEPTH32F = 7,
-		DEPTH24STENCIL8 = 8,
-		Depth = DEPTH24STENCIL8
-	};
-
 	enum class FramebufferRenderbufferType : uint32_t
 	{
 		Color = 0,
 		Depth
 	};
 
-	enum class FramebufferTextureFiltering : uint32_t
+	enum class ClearMode : uint32_t
 	{
-		Nearest = 0,
-		Linear = 1,
-		NearestMipMapNearest = 2,
-		LinearMipMapNearest = 3,
-		NearestMipMapLinear = 4,
-		LinearMipMapLinear = 5
+		Clear,
+		Load,
+		DontCare
 	};
 
-	enum class FramebufferTextureWrap : uint32_t
-	{
-		Repeat = 0,
-		MirroredRepeat = 1,
-		ClampToEdge = 2,
-		ClampToBorder = 3,
-		MirrorClampToEdge = 4
-	};
+
 
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
-			: TextureFiltering(FramebufferTextureFiltering::Linear), TextureWrap(FramebufferTextureWrap::Repeat)
+			: textureFiltering(TextureFilter::Linear), textureWrap(TextureWrap::Repeat), textureFormat(ImageFormat::RGBA)
 		{}
 		FramebufferTextureSpecification(
-			FramebufferTextureFormat format,
-			FramebufferTextureFiltering filtering = FramebufferTextureFiltering::Linear,
-			FramebufferTextureWrap wrap = FramebufferTextureWrap::Repeat,
+			ImageFormat format,
+			TextureFilter filtering = TextureFilter::Linear,
+			TextureWrap wrap = TextureWrap::Repeat,
+			TextureBlend blend = TextureBlend::None,
 			const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f },
 			bool sampled = false)
-			: TextureFormat(format), TextureFiltering(filtering), TextureWrap(wrap), BorderColor(borderColor)
+			: textureFormat(format), textureFiltering(filtering), textureWrap(wrap), BorderColor(borderColor)
 		{}
 
 		bool operator==(const FramebufferTextureSpecification& second)
@@ -64,11 +39,14 @@ namespace Lamp
 			return this == &second;
 		}
 
-		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
-		FramebufferTextureFiltering TextureFiltering;
-		FramebufferTextureWrap TextureWrap;
+		ImageFormat textureFormat;
+		TextureFilter textureFiltering;
+		TextureWrap textureWrap;
+		TextureBlend blending;
+		ClearMode clearMode = ClearMode::Clear;
 
 		bool MultiSampled = false;
+		
 		glm::vec4 BorderColor = { 1.f, 1.f, 1.f, 1.f };
 		std::string name = "Attachment";
 	};
@@ -96,12 +74,16 @@ namespace Lamp
 
 	struct FramebufferSpecification
 	{
-		uint32_t Width = 1280;
-		uint32_t Height = 720;
+		uint32_t width = 1280;
+		uint32_t height = 720;
 
-		glm::vec4 ClearColor = { 1.f, 1.f, 1.f, 1.f };
-		uint32_t Samples = 1;
-		FramebufferAttachmentSpecification Attachments;
+		glm::vec4 clearColor = { 1.f, 1.f, 1.f, 1.f };
+		uint32_t samples = 1;
+		FramebufferAttachmentSpecification attachments;
+
+		bool swapchainTarget = false;
+		bool copyable = false;
+		bool shadow = false;
 	};
 
 	class Framebuffer
@@ -118,6 +100,10 @@ namespace Lamp
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
+		virtual Ref<Image2D> GetColorAttachment(uint32_t index) const = 0;
+		virtual Ref<Image2D> GetDepthAttachment() const = 0;
+
+		//TODO: deprecate
 		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
 		virtual inline const uint32_t GetDepthAttachmentID() = 0;
 		virtual inline const uint32_t GetRendererID() = 0;

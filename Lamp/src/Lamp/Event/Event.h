@@ -19,7 +19,8 @@ namespace Lamp
 		MouseButtonPressed = 14, MouseButtonReleased = 15, MouseMoved = 16, MouseScrolled = 17,
 		EntityCollision = 18, EntityStoppedCollision = 19, ObjectPositionChanged = 20, ImGuiBegin = 21, ObjectPropertyChanged = 22,
 		EntityComponentAdded = 23, ImGuiUpdate = 24, EditorViewportSizeChanged = 25, EntityPhysicsUpdate = 26, EntityCollisionStart = 27,
-		EntityCollisionEnd = 28, EntityTriggerBegin = 29, EntityTriggerEnd = 30, ObjectRotationChanged = 31, ObjectScaleChanged = 32, EditorObjectSelected = 33
+		EntityCollisionEnd = 28, EntityTriggerBegin = 29, EntityTriggerEnd = 30, ObjectRotationChanged = 31, ObjectScaleChanged = 32, EditorObjectSelected = 33,
+		LevelLoadStarted = 34, LevelLoadFinished = 35,
 	};
 
 

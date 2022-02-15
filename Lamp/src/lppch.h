@@ -18,7 +18,7 @@
 #include <execution>
 
 #include "Lamp/Core/Log.h"
-#include "Lamp/Debug/Instrumentor.h"
+#include "Lamp/Debug/Profiler.h"
 
 #ifdef LP_PLATFORM_WINDOWS
 #include <Windows.h>

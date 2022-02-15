@@ -2,9 +2,9 @@ material:
   name: sponzaBricks
   handle: 4538701240662764772
   textures:
-    albedo: 141453845407387915
-    normal: 14593601778584350980
-    mro: 3241649680059515980
+    u_Albedo: 141453845407387915
+    u_Normal: 14593601778584350980
+    u_MRO: 3241649680059515980
   shader: pbrForward
   useBlending: false
   blendingMultiplier: 1

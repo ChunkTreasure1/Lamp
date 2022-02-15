@@ -14,11 +14,17 @@
 #include <string>
 #include <vector>
 
+namespace Lamp
+{
+	class Texture2D;
+	class Image2D;
+}
+
 namespace UI
 {
 	static uint32_t s_contextId = 0;
 	static uint32_t s_stackId = 0;
-
+	
 	class ScopedColor
 	{
 	public:
@@ -69,37 +75,59 @@ namespace UI
 		}
 	};
 
-	static void ImageText(uint32_t texId, const std::string& text)
+	ImTextureID GetTextureID(Ref<Lamp::Texture2D> texture);
+	ImTextureID GetTextureID(Ref<Lamp::Image2D> texture);
+	ImTextureID GetTextureID(Lamp::Texture2D* texture);
+
+	static uint64_t BytesToMBs(uint64_t input)
+	{
+		return (input / (1024 * 1024));
+	}
+
+	static void ImageText(Ref<Lamp::Texture2D> texture, const std::string& text)
 	{
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
-		ImGui::Image((ImTextureID)texId, { size.y, size.y });
+		ImGui::Image(GetTextureID(texture), { size.y, size.y });
 		ImGui::SameLine();
 		ImGui::Text(text.c_str());
 	}
 
-	static bool ImageTreeNode(uint32_t texId, const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
-	{
-		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
-		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
-
-		ImVec2 size = ImGui::CalcTextSize(fmt);
-		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
-		ImGui::SameLine();
-		return ImGui::TreeNodeEx(ptr_id, flags, fmt);
-	}
-
-	static bool ImageSelectable(uint32_t texId, const std::string& text, bool selected)
+	static bool ImageSelectable(Ref<Lamp::Texture2D> texture, const std::string& text, bool selected)
 	{
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
-		ImGui::Image((ImTextureID)texId, { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
 		return ImGui::Selectable(text.c_str(), selected, ImGuiSelectableFlags_SpanAvailWidth);
 	}
 
-	static bool TreeNodeFramed(const std::string& text, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
+	static bool TreeNode(const std::string& text, ImGuiTreeNodeFlags flags = 0)
 	{
-		const ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
+		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
+		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
+
+		return ImGui::TreeNodeEx(text.c_str(), flags);
+	}
+
+	static bool TreeNodeImage(Ref<Lamp::Texture2D> texture, const std::string& text, ImGuiTreeNodeFlags flags)
+	{
+		ScopedStyleFloat2 frame{ ImGuiStyleVar_FramePadding, { 0.f, 0.f } };
+		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
+
+		ImVec2 size = ImGui::CalcTextSize(text.c_str());
+		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
+		ImGui::SameLine();
+		return ImGui::TreeNodeEx(text.c_str(), flags);
+	}
+
+	static bool TreeNodeFramed(const std::string& text, bool alwaysOpen = false, bool useOther = false, float rounding = 0.f, const glm::vec2& padding = { 0.f, 0.f })
+	{
+		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Framed |
 			ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+		if (alwaysOpen)
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+		}
 
 		if (!useOther)
 		{
@@ -131,9 +159,9 @@ namespace UI
 		ImGui::TreePop();
 	}
 
-	static bool InputText(const std::string& id, std::string& text)
+	static bool InputText(const std::string& id, std::string& text, ImGuiInputTextFlags_ flags = ImGuiInputTextFlags_None)
 	{
-		return ImGui::InputTextString(id.c_str(), &text);
+		return ImGui::InputTextString(id.c_str(), &text, flags);
 	}
 
 	static bool InputTextOnSameline(std::string& string, const std::string& id)
@@ -310,7 +338,7 @@ namespace UI
 
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 		std::string id = "##" + std::to_string(s_stackId++);
-		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), items.size()))
+		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), (int)items.size()))
 		{
 			changed = true;
 		}
@@ -588,6 +616,8 @@ namespace UI
 		{
 			return true;
 		}
+
+		return false;
 	}
 
 	static bool Property(const std::string& text, std::filesystem::path& path)

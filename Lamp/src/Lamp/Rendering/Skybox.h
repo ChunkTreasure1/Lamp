@@ -1,43 +1,50 @@
 #pragma once
 
 #include "Lamp/Rendering/Buffers/VertexArray.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
+
+#include "Lamp/AssetSystem/Asset.h"
+
+#include "Platform/Vulkan/VulkanShader.h"
 
 #include <filesystem>
 
 namespace Lamp
 {
-	class Shader;
 	class TextureCube;
-	class TextureHDR;
-	class Mesh;
-	class Skybox
+	class SubMesh;
+	class Image2D;
+	class RenderPipeline;
+
+	class Skybox : public Asset
 	{
 	public:
 		Skybox(const std::filesystem::path& path);
 		~Skybox();
 
+		inline Ref<TextureCube> GetIrradiance() const { return m_irradianceMap; }
+		inline Ref<TextureCube> GetFilteredEnvironment() const { return m_filteredEnvironment; }
+		inline Ref<Image2D> GetBRDF() const { return m_brdfFramebuffer->GetColorAttachment(0); }
+		inline Ref<RenderPipeline> GetPipeline() const { return m_pipeline; }
+
+		static AssetType GetStaticType() { return AssetType::EnvironmentMap; }
+		AssetType GetType() override { return GetStaticType(); }
+
+		Ref<RenderPipeline> SetupRenderPipeline(Ref<Framebuffer> framebuffer);
 		void Draw();
 
-	public:
 		static Ref<Skybox> Create(const std::filesystem::path& path) { return CreateRef<Skybox>(path); }
 
 	private:
-		//Shaders
-		Ref<Shader> m_eqCubeShader;
-		Ref<Shader> m_convolutionShader;
-		Ref<Shader> m_prefilterShader;
-		Ref<Shader> m_skyboxShader;
+		void SetupDescriptors();
 
-		//Textures
-		Ref<TextureCube> m_cubeMap;
 		Ref<TextureCube> m_irradianceMap;
-		Ref<TextureCube> m_prefilterMap;
-		Ref<TextureHDR> m_hdrTexture;
+		Ref<TextureCube> m_filteredEnvironment;
+		Ref<SubMesh> m_cubeMesh;
 
-		//Data
-		glm::mat4 m_captureProjection;
-		std::array<glm::mat4, 6> m_captureViews;
-		Ref<Mesh> m_cubeMesh;
-		Ref<Framebuffer> m_framebuffer;
+		Ref<Framebuffer> m_brdfFramebuffer;
+		Ref<RenderPipeline> m_pipeline;
+
+		VulkanShader::ShaderMaterialDescriptorSet m_descriptorSet;
 	};
 }

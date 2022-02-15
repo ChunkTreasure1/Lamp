@@ -25,7 +25,7 @@ namespace Lamp
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 
 	private:
-		float m_AspectRatio;
+		float m_aspectRatio;
 		float m_ZoomLevel = 1.5f;
 
 		bool m_CanRotate;

@@ -18,7 +18,7 @@ namespace Lamp
 		static bool WriteBytes(const std::filesystem::path& path, const Buffer& buffer);
 		static Buffer ReadBytes(const std::filesystem::path& path);
 
-		static void GetAllFilesOfType(std::vector<std::string>& files, const std::string& type, const std::string& path);
+		static void GetAllFilesOfType(const std::string& type, const std::string& path, std::vector<std::string>& outFiles);
 		static bool ContainsMaterialFiles(const std::string& path);
 		static void PrintBrushes(std::vector<std::string>& files, int startID = -1);
 	};

@@ -12,14 +12,15 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(MeshComponent);
 
+	MeshComponent::MeshComponent()
+		: EntityComponent("MeshComponent")
+	{}
+
 	MeshComponent::~MeshComponent()
-	{
-		g_pEnv->pLevel->GetRenderUtils().UnegisterMeshComponent(m_pEntity->GetID());
-	}
+	{}
 
 	void MeshComponent::Initialize()
 	{
-		g_pEnv->pLevel->GetRenderUtils().RegisterMeshComponent(m_pEntity->GetID(), this);
 	}
 
 	void MeshComponent::OnEvent(Event& e)
@@ -29,21 +30,29 @@ namespace Lamp
 		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(MeshComponent::OnPropertyChanged));
 	}
 
+	void MeshComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::Path, "Path", RegisterData(&m_path) }
+		};
+	}
+
 	bool MeshComponent::OnRender(AppRenderEvent& e)
 	{
-		if (m_Model == nullptr)
+		if (m_mesh == nullptr)
 		{
 			return false;
 		}
 
-		m_Model->Render(m_pEntity->GetID(), m_pEntity->GetTransform());
+		m_mesh->Render(m_pEntity->GetID(), m_pEntity->GetTransform());
 
 		return true;
 	}
 
 	bool MeshComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
-		m_Model = ResourceCache::GetAsset<Mesh>(m_Path);
+		m_mesh = ResourceCache::GetAsset<Mesh>(m_path);
 
 		return false;
 	}

@@ -1,88 +1,81 @@
 #include "lppch.h"
-#include "Sandbox.h"
+#include "SandboxLayer.h"
 
-#include <imgui/misc/cpp/imgui_stdlib.h>
+#include "Sandbox/Windows/GraphKey.h"
+#include "Sandbox/Windows/MeshImporterPanel.h"
+#include "Sandbox/Actions/EditorCommands.h"
 
-#include <Lamp/Objects/Entity/Base/Entity.h>
-#include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
-#include <ImGuizmo/ImGuizmo.h>
+#include <Lamp/Objects/Entity/Entity.h>
+#include <Lamp/Objects/Entity/ComponentRegistry.h>
 
 #include <Lamp/Core/CoreLogger.h>
-#include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/Shader/ShaderLibrary.h>
-
-#include <Lamp/Math/Math.h>
-#include "Windows/MeshImporterPanel.h"
-#include <imgui/misc/cpp/imgui_stdlib.h>
-#include <Lamp/Mesh/Materials/MaterialLibrary.h>
-
 #include <Lamp/Core/Application.h>
-#include <Lamp/GraphKey/GraphKeyGraph.h>
-#include "Sandbox/Windows/GraphKey.h"
 
-#include <Lamp/AssetSystem/ResourceCache.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
+#include <Lamp/Utility/UIUtility.h>
+
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/Buffers/FrameBuffer.h>
 
-#include <Lamp/Utility/UIUtility.h>
-#include <Lamp/Rendering/Renderer.h>
+#include <Lamp/Math/Math.h>
+#include <Lamp/Mesh/Materials/MaterialLibrary.h>
+
+#include <Lamp/GraphKey/GraphKeyGraph.h>
+#include <Lamp/AssetSystem/ResourceCache.h>
+
+#include <Platform/Vulkan/VulkanRenderer.h>
+
+#include <ImGuizmo/ImGuizmo.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 namespace Sandbox
 {
 	using namespace Lamp;
 
-	void Sandbox::UpdatePerspective()
+	void SandboxLayer::UpdatePerspective()
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (!m_PerspectiveOpen)
+		if (!m_perspectiveOpen)
 		{
 			return;
 		}
 
-		glm::vec2 perspectivePos;
-
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0.f, 0.f });
 		ImGui::Begin("Perspective");
 		{
-			perspectivePos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-			m_PerspectiveHover = ImGui::IsWindowHovered();
-			m_SandboxController->GetCameraController()->SetControlsEnabled(m_PerspectiveHover);
-			m_PerspectiveFocused = ImGui::IsWindowFocused();
+			m_perspectiveHover = ImGui::IsWindowHovered();
+			m_sandboxController->GetCameraController()->SetControlsEnabled(m_perspectiveHover);
+			m_perspectiveFocused = ImGui::IsWindowFocused();
+
+			m_sandboxController->GetCameraController()->SetActive(m_perspectiveHover);
 
 			//Viewport bounds
 			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
 			auto viewportOffset = ImGui::GetWindowPos();
 
-			m_PerspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-			m_PerspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+			m_perspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+			m_perspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
-			if (m_PerspectiveSize != *((glm::vec2*)&perspectivePanelSize))
+			if (m_perspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
-				m_PerspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
+				m_perspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
 
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
-				g_pEnv->pLevel->OnEvent(e);
-			}
 
-			uint32_t textureID = 0;
-			if (Renderer::GetRenderGraph())
-			{
-				auto& renderGraph = Renderer::GetRenderGraph();
-
-				if (renderGraph->GetSpecification().endNode->framebuffer)
+				if (LevelManager::IsLevelLoaded())
 				{
-					textureID = renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
-					m_SelectionBuffer = renderGraph->GetSpecification().endNode->framebuffer;
+					LevelManager::GetActive()->OnEvent(e);
 				}
 			}
-			ImGui::Image((void*)(uint64_t)textureID, ImVec2{ m_PerspectiveSize.x, m_PerspectiveSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+			if (LevelManager::IsLevelLoaded())
+			{
+				ImGui::Image(UI::GetTextureID(LevelManager::GetActive()->GetFinalRenderedImage()), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
+			}
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
@@ -104,6 +97,7 @@ namespace Sandbox
 
 		//Guizmo
 		static glm::mat4 transform = glm::mat4(1.f);
+		static glm::mat4 startTransform = glm::mat4(1.f);
 
 		if (m_pSelectedObject && m_SceneState != SceneState::Play)
 		{
@@ -112,13 +106,13 @@ namespace Sandbox
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
 
-			ImGuizmo::SetRect(m_PerspectiveBounds[0].x, m_PerspectiveBounds[0].y, m_PerspectiveBounds[1].x - m_PerspectiveBounds[0].x, m_PerspectiveBounds[1].y - m_PerspectiveBounds[0].y);
+			ImGuizmo::SetRect(m_perspectiveBounds[0].x, m_perspectiveBounds[0].y, m_perspectiveBounds[1].x - m_perspectiveBounds[0].x, m_perspectiveBounds[1].y - m_perspectiveBounds[0].y);
 
 			bool snap = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_CONTROL);
 			bool duplicate = Lamp::Input::IsKeyPressed(LP_KEY_LEFT_SHIFT);
 
 			float snapValue = 0.5f;
-			if (m_ImGuizmoOperation == ImGuizmo::ROTATE)
+			if (m_imGuizmoOperation == ImGuizmo::ROTATE)
 			{
 				snapValue = 45.f;
 			}
@@ -126,12 +120,29 @@ namespace Sandbox
 			float snapValues[3] = { snapValue, snapValue, snapValue };
 
 			ImGuizmo::Manipulate(
-				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
-				glm::value_ptr(m_SandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_ImGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
+				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
+				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
+				m_imGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
 			static bool hasDuplicated = false;
+			
+			static bool isUsing = false;
+			static bool lastUsed = false;
+
+			lastUsed = isUsing;
+			isUsing = ImGuizmo::IsUsing();
+
+			if (isUsing && !lastUsed && transform != m_pSelectedObject->GetTransform())
+			{
+				startTransform = m_pSelectedObject->GetTransform();
+			}
+
+			if (!isUsing && lastUsed && transform != m_pSelectedObject->GetTransform())
+			{
+				Ref<TransformCommand> transformCmd = CreateRef<TransformCommand>(m_pSelectedObject, startTransform);
+				m_perspectiveCommands.Push(transformCmd);
+			}
 
 			if (ImGuizmo::IsUsing())
 			{
@@ -145,6 +156,9 @@ namespace Sandbox
 						m_pSelectedObject = Lamp::Brush::Duplicate(brush, true);
 
 						m_pSelectedObject->SetIsSelected(true);
+
+						Ref<DuplicateCommand> cmd = CreateRef<DuplicateCommand>(brush, m_pSelectedObject, &m_pSelectedObject);
+						m_perspectiveCommands.Push(cmd);
 					}
 					else if (typeid(*m_pSelectedObject) == typeid(Lamp::Entity))
 					{
@@ -154,6 +168,9 @@ namespace Sandbox
 						m_pSelectedObject = Lamp::Entity::Duplicate(entity, true);
 
 						m_pSelectedObject->SetIsSelected(true);
+
+						Ref<DuplicateCommand> cmd = CreateRef<DuplicateCommand>(entity, m_pSelectedObject, &m_pSelectedObject);
+						m_perspectiveCommands.Push(cmd);
 					}
 
 					hasDuplicated = true;
@@ -176,83 +193,81 @@ namespace Sandbox
 		}
 
 		ImGui::End();
-		ImGui::PopStyleVar(2);
+		ImGui::PopStyleVar(1);
 	}
 
-	void Sandbox::UpdateProperties()
+	void SandboxLayer::UpdateProperties()
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (!m_InspectiorOpen)
+		if (!m_inspectorOpen)
 		{
 			return;
 		}
-		ImGui::Begin("Properties", &m_InspectiorOpen);
+		ImGui::Begin("Properties", &m_inspectorOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration);
 		{
 
 			ImGuiIO& io = ImGui::GetIO();
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 			glm::vec2 windowPos;
-			glm::vec2 windowSize;
 			bool perspHover = false;
 
 			ImGui::Begin("Perspective");
 			{
 				windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-				windowSize = glm::vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 				perspHover = ImGui::IsWindowHovered();
 			}
 			ImGui::End();
 
-			if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)
-			{
-				mousePos -= windowPos;
+			//if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)
+			//{
+			//	mousePos -= windowPos;
 
-				/////Mouse picking/////
+			//	/////Mouse picking/////
 
-				auto [mx, my] = ImGui::GetMousePos();
-				mx -= m_PerspectiveBounds[0].x;
-				my -= m_PerspectiveBounds[0].y;
+			//	auto [mx, my] = ImGui::GetMousePos();
+			//	mx -= m_PerspectiveBounds[0].x;
+			//	my -= m_PerspectiveBounds[0].y;
 
-				glm::vec2 perspectiveSize = m_PerspectiveBounds[1] - m_PerspectiveBounds[0];
-				my = perspectiveSize.y - my;
+			//	glm::vec2 perspectiveSize = m_PerspectiveBounds[1] - m_PerspectiveBounds[0];
+			//	my = perspectiveSize.y - my;
 
-				int mouseX = (int)mx;
-				int mouseY = (int)my;
+			//	int mouseX = (int)mx;
+			//	int mouseY = (int)my;
 
-				if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
-				{
-					int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
+			//	if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)perspectiveSize.x && mouseY < (int)perspectiveSize.y)
+			//	{
+		//			int pixelData = m_SelectionBuffer->ReadPixel(1, mouseX, mouseY);
 
-					Object* newSelected = Lamp::Entity::Get(pixelData);
-					if (!newSelected)
-					{
-						newSelected = Lamp::Brush::Get(pixelData);
-					}
+			//		Object* newSelected = Lamp::Entity::Get(pixelData);
+			//		if (!newSelected)
+			//		{
+			//			newSelected = Lamp::Brush::Get(pixelData);
+			//		}
 
-					if (newSelected && !newSelected->GetIsFrozen())
-					{
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(false);
-						}
+			//		if (newSelected && !newSelected->GetIsFrozen())
+			//		{
+			//			if (m_pSelectedObject)
+			//			{
+			//				m_pSelectedObject->SetIsSelected(false);
+			//			}
 
-						newSelected->SetIsSelected(true);
-						m_pSelectedObject = newSelected;
-					}
-					else
-					{
-						if (m_pSelectedObject)
-						{
-							m_pSelectedObject->SetIsSelected(false);
-						}
-						m_pSelectedObject = nullptr;
-					}
-				}
+			//			newSelected->SetIsSelected(true);
+			//			m_pSelectedObject = newSelected;
+			//		}
+			//		else
+			//		{
+			//			if (m_pSelectedObject)
+			//			{
+			//				m_pSelectedObject->SetIsSelected(false);
+			//			}
+			//			m_pSelectedObject = nullptr;
+			//		}
+			//	}
 
-				m_SelectionBuffer->Unbind();
-				////////////////////////
-			}
+			//	m_SelectionBuffer->Unbind();
+			//	////////////////////////
+			//}
 
 			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 			{
@@ -262,7 +277,7 @@ namespace Sandbox
 				UI::InputText("Name", name);
 				pEnt->SetName(name);
 
-				if (UI::TreeNodeFramed("Transform"))
+				if (UI::TreeNodeFramed("Transform", true))
 				{
 					UI::BeginProperties("transProps");
 
@@ -324,7 +339,7 @@ namespace Sandbox
 				UI::InputText("Name", name);
 				pBrush->SetName(name);
 
-				if (UI::TreeNodeFramed("Transform"))
+				if (UI::TreeNodeFramed("Transform", true))
 				{
 					UI::BeginProperties("transProp");
 
@@ -362,7 +377,7 @@ namespace Sandbox
 				}
 			}
 
-			if (auto Ent = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
+			if (auto pEnt = dynamic_cast<Lamp::Entity*>(m_pSelectedObject))
 			{
 				if (ImGui::Button("Add Component"))
 				{
@@ -375,7 +390,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void Sandbox::UpdateAddComponent()
+	void SandboxLayer::UpdateAddComponent()
 	{
 		if (ImGui::BeginPopup("AddComponent"))
 		{
@@ -387,7 +402,6 @@ namespace Sandbox
 					{
 						if (pEnt->HasComponent(key.first.c_str()))
 						{
-							m_AddComponentOpen = false;
 							LP_CORE_WARN("Entity already has component!");
 						}
 
@@ -409,77 +423,18 @@ namespace Sandbox
 		}
 	}
 
-	void Sandbox::UpdateCreateTool()
-	{
-		LP_PROFILE_FUNCTION();
-
-		if (!m_CreateToolOpen)
-		{
-			return;
-		}
-
-		ImGui::Begin("Create", &m_CreateToolOpen);
-
-		static bool brushListOpen = false;
-
-		if (!brushListOpen)
-		{
-			if (ImGui::Button("Entity"))
-			{
-				m_pSelectedObject = Lamp::Entity::Create();
-				m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-				static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Brush"))
-			{
-				brushListOpen = !brushListOpen;
-			}
-		}
-
-		if (brushListOpen)
-		{
-			if (ImGui::Button("Back##0"))
-			{
-				brushListOpen = false;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Create"))
-			{
-
-			}	/*if (m_SelectedFile.GetFileType() == Lamp::FileType::Brush)
-				{
-					m_pSelectedObject = Lamp::Brush::Create(m_SelectedFile.GetPath());
-				}*/
-
-			if (ImGui::BeginChild("Brushes"))
-			{
-				std::vector<std::string> folders = Lamp::FileSystem::GetAssetFolders();
-				Lamp::FileSystem::PrintBrushes(folders);
-
-			}
-			ImGui::EndChild();
-		}
-
-		ImGui::End();
-	}
-
-	void Sandbox::UpdateLogTool()
+	void SandboxLayer::UpdateLogTool()
 	{
 		LP_PROFILE_FUNCTION();
 
 		static bool autoScroll = true;
 
-		if (!m_LogToolOpen)
+		if (!m_logToolOpen)
 		{
 			return;
 		}
 
-		ImGui::Begin("Log", &m_LogToolOpen);
+		ImGui::Begin("Log", &m_logToolOpen);
 
 		if (ImGui::BeginPopup("Options"))
 		{
@@ -489,7 +444,7 @@ namespace Sandbox
 
 		if (ImGui::Button("Clear"))
 		{
-			Lamp::Log::GetCoreLogger()->GetMessages().clear();
+			//Lamp::Log::GetCoreLogger()->GetMessages().clear();
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Options"))
@@ -502,29 +457,29 @@ namespace Sandbox
 		ImGui::BeginChild("text");
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-		for (const auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
-		{
-			if (msg.Level == Lamp::LogLevel::Trace)
-			{
-				ImGui::TextColored(ImVec4(212.f / 255.f, 212.f / 255.f, 212.f / 255.f, 1.f), msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Info)
-			{
-				ImGui::Text(msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Warn)
-			{
-				ImGui::TextColored(ImVec4(255.f / 255.f, 235.f / 255.f, 54.f / 255.f, 1.f), msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Error)
-			{
-				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
-			}
-			else if (msg.Level == Lamp::LogLevel::Critical)
-			{
-				ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
-			}
-		}
+		//for (const auto& msg : Lamp::Log::GetCoreLogger()->GetMessages())
+		//{
+		//	if (msg.Level == Lamp::LogLevel::Trace)
+		//	{
+		//		ImGui::TextColored(ImVec4(212.f / 255.f, 212.f / 255.f, 212.f / 255.f, 1.f), msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Info)
+		//	{
+		//		ImGui::Text(msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Warn)
+		//	{
+		//		ImGui::TextColored(ImVec4(255.f / 255.f, 235.f / 255.f, 54.f / 255.f, 1.f), msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Error)
+		//	{
+		//		ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
+		//	}
+		//	else if (msg.Level == Lamp::LogLevel::Critical)
+		//	{
+		//		ImGui::TextColored(ImVec4(255.f / 255.f, 0, 0, 1.f), msg.Msg.c_str());
+		//	}
+		//}
 		ImGui::PopStyleVar();
 
 		if (autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
@@ -535,14 +490,14 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	bool Sandbox::DrawComponent(Lamp::EntityComponent* ptr)
+	bool SandboxLayer::DrawComponent(Lamp::EntityComponent* ptr)
 	{
 		LP_PROFILE_FUNCTION();
 
 		bool removeComp = false;
-		bool open = UI::TreeNodeFramed(ptr->GetName(), true, 0.f, { 0.f, 2.f });
+		bool open = UI::TreeNodeFramed(ptr->GetName(), false, true, 0.f, { 0.f, 2.f });
 
-		float buttonSize = 20.f + GImGui->Style.FramePadding.y * 0.5f;
+		float buttonSize = 21.f + GImGui->Style.FramePadding.y;
 		float availRegion = ImGui::GetContentRegionAvail().x;
 
 		if (!open)
@@ -569,10 +524,10 @@ namespace Sandbox
 		{
 			UI::BeginProperties("compProp" + ptr->GetName());
 
+			bool propertyChanged = false;
+
 			for (auto& prop : ptr->GetComponentProperties().GetProperties())
 			{
-				bool propertyChanged = false;
-
 				switch (prop.propertyType)
 				{
 					case Lamp::PropertyType::Int: propertyChanged = UI::Property(prop.name, *static_cast<int*>(prop.value)); break;
@@ -586,12 +541,12 @@ namespace Sandbox
 					case Lamp::PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
 					case Lamp::PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 				}
+			}
 
-				if (propertyChanged)
-				{
-					Lamp::ObjectPropertyChangedEvent e;
-					ptr->GetEntity()->OnEvent(e);
-				}
+			if (propertyChanged)
+			{
+				Lamp::ObjectPropertyChangedEvent e;
+				ptr->GetEntity()->OnEvent(e);
 			}
 
 			UI::EndProperties();
@@ -601,21 +556,34 @@ namespace Sandbox
 		return removeComp;
 	}
 
-	void Sandbox::UpdateLevelSettings()
+	void SandboxLayer::UpdateLevelSettings()
 	{
 		LP_PROFILE_FUNCTION();
 
-		if (!m_LevelSettingsOpen)
+		if (!m_levelSettingsOpen)
 		{
 			return;
 		}
 
-		ImGui::Begin("Level Settings", &m_LevelSettingsOpen);
+		ImGui::Begin("Level Settings", &m_levelSettingsOpen);
+
+		ImGui::TextUnformatted("Terrain");
+		ImGui::Separator();
+
+		if (UI::BeginProperties("Terrain"))
+		{
+			UI::Property("Height", const_cast<float&>(Renderer::Get().GetStorage().terrainData.heightMultiplier));
+
+			UI::EndProperties(false);
+			UI::PopId();
+		}
+
+		ImGui::Separator();
 
 		ImGui::End();
 	}
 
-	void Sandbox::UpdateRenderingSettings()
+	void SandboxLayer::UpdateRenderingSettings()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -624,7 +592,7 @@ namespace Sandbox
 			return;
 		}
 
-		auto sceneData = const_cast<Renderer::SceneData*>(Renderer::GetSceneData());
+		auto sceneData = const_cast<VulkanRendererStorage&>(Renderer::Get().GetStorage());
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 
@@ -634,8 +602,8 @@ namespace Sandbox
 			ImGui::Separator();
 			if (UI::BeginProperties("generalProps"))
 			{
-				UI::Property("Exposure", sceneData->hdrExposure);
-				UI::Property("Gamma", sceneData->gamma); 
+				//UI::Property("Exposure", sceneData.hdrExposure); // move to level environment
+				//UI::Property("Gamma", sceneData->gamma); 
 
 				UI::EndProperties();
 			}
@@ -647,44 +615,14 @@ namespace Sandbox
 		{
 			static std::filesystem::path path = "";
 			static std::filesystem::path lastPath = "";
-			path = Renderer::GetRenderGraph() ? Renderer::GetRenderGraph()->Path : "";
 			lastPath = path;
 
 			if (UI::BeginProperties("renderProps"))
 			{
 				if (UI::Property("Graph", path))
 				{
-					auto graph = ResourceCache::GetAsset<RenderGraph>(path);
-					if (!graph)
-					{
-						path = lastPath;
-					}
 
-					Renderer::SetRenderGraph(graph);
-					Renderer::GetRenderGraph()->Start();
 				}
-
-				auto& renderGraph = std::dynamic_pointer_cast<Asset>(Renderer::GetRenderGraph());
-				UI::Property("TestGraph", renderGraph);
-
-				UI::EndProperties();
-			}
-
-			UI::TreeNodePop();
-		}
-
-		if (UI::TreeNodeFramed("SSAO", true))
-		{
-			if (UI::BeginProperties("ssaoProps"))
-			{
-				UI::Property("SSAO Radius", const_cast<float&>(Renderer::GetSceneData()->ssaoData.radius), true, 0.f, 1.f);
-				UI::Property("SSAO Strength", const_cast<float&>(Renderer::GetSceneData()->ssaoData.strength), true, 0.f, 1.f);
-				if (UI::Property("Kernel Size", const_cast<int&>(Renderer::GetSceneData()->ssaoData.kernelSize), true, 0, Renderer::GetSceneData()->ssaoMaxKernelSize))
-				{
-					Renderer::GenerateKernel();
-				}
-
-				UI::Property("Ambiance Multiplier", const_cast<float&>(Renderer::GetSceneData()->ambianceMultiplier));
 
 				UI::EndProperties();
 			}
@@ -694,8 +632,8 @@ namespace Sandbox
 
 		ImGui::End();
 	}
-	
-	void Sandbox::UpdateToolbar()
+
+	void SandboxLayer::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
@@ -706,15 +644,15 @@ namespace Sandbox
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		float size = ImGui::GetWindowHeight() - 4.f;
-		Ref<Lamp::Texture2D> playIcon = m_IconPlay;
+		Ref<Lamp::Texture2D> playIcon = m_iconPlay;
 		if (m_SceneState == SceneState::Play)
 		{
-			playIcon = m_IconStop;
+			playIcon = m_iconStop;
 		}
 
 		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
-		if (ImGui::ImageButton((ImTextureID)playIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (ImGui::ImageButton(UI::GetTextureID(playIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 			{
@@ -726,46 +664,79 @@ namespace Sandbox
 			}
 		}
 
-		Ref<Lamp::Texture2D> physicsIcon = m_PhysicsIcon.GetCurrentFrame();
+		Ref<Lamp::Texture2D> physicsIcon = m_physicsIcon.GetCurrentFrame();
 
 		ImGui::SameLine();
 
-		static uint32_t physicsId = physicsIcon->GetID();
+		static Lamp::Texture2D* physicsId = physicsIcon.get();
 
-		if (ImGui::ImageButtonAnimated((ImTextureID)physicsId, (ImTextureID)physicsIcon->GetID(), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (ImGui::ImageButtonAnimated(UI::GetTextureID(physicsId), UI::GetTextureID(physicsIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 			{
 				OnSimulationStart();
-				m_PhysicsIcon.Play();
+				m_physicsIcon.Play();
 			}
 			else if (m_SceneState == SceneState::Simulating)
 			{
 				OnSimulationStop();
-				m_PhysicsIcon.Stop();
+				m_physicsIcon.Stop();
 			}
 		}
 		ImGui::PopStyleVar(2);
 		ImGui::End();
 	}
 
-	void Sandbox::UpdateStatistics()
+	void SandboxLayer::UpdateStatistics()
 	{
 		ImGui::Begin("Statistics");
 
-		ImGui::Text("Frame time: %f", Application::Get().GetFrameTime().GetFrameTime() * 1000);
-		ImGui::Text("Frames per second: %f", Application::Get().GetFrameTime().GetFramesPerSecond());
+		if (UI::TreeNodeFramed("Application"))
+		{
+			ImGui::Text("Render time: %f ms", Application::Get().GetMainFrameTime().GetFrameTime() * 1000);
+			ImGui::Text("Update time: %f ms", Application::Get().GetUpdateFrameTime().GetFrameTime() * 1000);
 
-		ImGui::Separator();
+			ImGui::Text("Frames per second: %f FPS", Application::Get().GetMainFrameTime().GetFramesPerSecond());
 
-		ImGui::Text("Total draw calls: %d", Renderer3D::GetStatistics().totalDrawCalls);
-		ImGui::Text("Scene draw calls: %d", Renderer3D::GetStatistics().sceneDrawCalls);
-		ImGui::Text("Other draw calls: %d", Renderer3D::GetStatistics().otherDrawCalls);
+			UI::TreeNodePop();
+		}
+
+		if (UI::TreeNodeFramed("UI"))
+		{
+			ImGui::Text("Total time: %f ms", m_uiTotalTime * 1000.f);
+			ImGui::Text("Asset Manager: %f ms", m_assetManagerTime * 1000.f);
+			ImGui::Text("Create panel: %f ms", m_createPanelTime * 1000.f);
+
+			for (const auto window : m_pWindows)
+			{
+				std::string text = window->GetName() + ": %f ms";
+				ImGui::Text(text.c_str(), window->GetDeltaTime() * 1000.f);
+			}
+
+			UI::TreeNodePop();
+		}
+
+		if (UI::TreeNodeFramed("GPU"))
+		{
+			const auto& stats = Renderer::Get().GetStatistics();
+
+			ImGui::Text("Total draw calls: %d", stats.totalDrawCalls.load());
+			ImGui::Text("Culled draw calls: %d", stats.totalDrawCalls.load());
+
+			ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
+			ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));
+			ImGui::Text("Free memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.freeMemory));
+
+			ImGui::Text("Total allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalAllocatedMemory));
+			ImGui::Text("Total freed memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalFreedMemory));
+
+			UI::TreeNodePop();
+		}
 
 		ImGui::End();
 	}
 
-	void Sandbox::CreateDockspace()
+	void SandboxLayer::CreateDockspace()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -838,13 +809,20 @@ namespace Sandbox
 
 				if (ImGui::MenuItem("Save", "Ctrl + S"))
 				{
-					if (g_pEnv->pLevel->Path.empty())
+					if (!LevelManager::IsLevelLoaded())
 					{
-						SaveLevelAs();
+						LP_WARN("Trying to save when no level was loaded!");
 					}
 					else
 					{
-						g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+						if (!std::filesystem::exists(LevelManager::GetActive()->Path))
+						{
+							SaveLevelAs();
+						}
+						else
+						{
+							g_pEnv->pAssetManager->SaveAsset(LevelManager::GetActive());
+						}
 					}
 				}
 
@@ -868,19 +846,17 @@ namespace Sandbox
 
 			if (ImGui::BeginMenu("Editor"))
 			{
-				ImGui::MenuItem("Render Bounding Box", nullptr, &g_pEnv->ShouldRenderBB);
-				ImGui::MenuItem("Render Gizmos", nullptr, &g_pEnv->ShouldRenderGizmos);
+				ImGui::MenuItem("Render Bounding Box", nullptr, &g_pEnv->shouldRenderBB);
+				ImGui::MenuItem("Render Gizmos", nullptr, &g_pEnv->shouldRenderGizmos);
 
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::BeginMenu("Tools"))
 			{
-				ImGui::MenuItem("Properties", nullptr, &m_InspectiorOpen);
-				ImGui::MenuItem("Create", nullptr, &m_CreateToolOpen);
-				ImGui::MenuItem("Log", nullptr, &m_LogToolOpen);
-				ImGui::MenuItem("Level Settings", nullptr, &m_LevelSettingsOpen);
-				ImGui::MenuItem("Asset Manager", nullptr, &m_assetManager.GetIsOpen());
+				ImGui::MenuItem("Properties", nullptr, &m_inspectorOpen);
+				ImGui::MenuItem("Log", nullptr, &m_logToolOpen);
+				ImGui::MenuItem("Level Settings", nullptr, &m_levelSettingsOpen);
 
 				for (auto pWindow : m_pWindows)
 				{
@@ -917,7 +893,7 @@ namespace Sandbox
 
 				if (ImGui::MenuItem("Play physics", nullptr))
 				{
-					
+
 				}
 
 				ImGui::EndMenu();
@@ -929,10 +905,8 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	bool Sandbox::OnMouseMoved(Lamp::MouseMovedEvent& e)
+	bool SandboxLayer::OnMouseMoved(Lamp::MouseMovedEvent& e)
 	{
-		m_MouseHoverPos = glm::vec2(e.GetX(), e.GetY());
-
 		return true;
 	}
 }

@@ -1,12 +1,9 @@
 #include "lppch.h"
-#include "Renderer.h"
 
 #include "Buffers/VertexArray.h"
 #include "Renderer2D.h"
 #include "Shader/ShaderLibrary.h"
 #include "Textures/Texture2D.h"
-
-#include "RenderCommand.h"
 
 namespace Lamp
 {
@@ -42,7 +39,7 @@ namespace Lamp
 
 		Ref<Shader> pTextureShader;
 		Ref<Texture2D> pWhiteTexture;
-		Ref<Texture2D>* TextureSlots{ new Ref<Texture2D>[RenderCommand::GetCapabilities().MaxTextureSlots] };
+		//Ref<Texture2D>* TextureSlots{ new Ref<Texture2D>[RenderCommand::GetCapabilities().MaxTextureSlots] };
 
 		uint32_t TextureSlotIndex = 0; // 0 = white texture
 		Renderer2D::Statistics Stats;
@@ -100,23 +97,22 @@ namespace Lamp
 		////////////////////
 
 		////////Textures////////
-		s_pStorage->pWhiteTexture = Texture2D::Create(1, 1);
+		s_pStorage->pWhiteTexture = Texture2D::Create(ImageFormat::RGBA, 1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_pStorage->pWhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		int* samplers{ new int[RenderCommand::GetCapabilities().MaxTextureSlots] };
-		for (uint32_t i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
-		{
-			samplers[i] = i;
-		}
+		//int* samplers{ new int[RenderCommand::GetCapabilities().MaxTextureSlots] };
+		//for (uint32_t i = 0; i < RenderCommand::GetCapabilities().MaxTextureSlots; i++)
+		//{
+		//	samplers[i] = i;
+		//}
 
 		s_pStorage->pTextureShader = ShaderLibrary::GetShader("quad");
 		s_pStorage->pTextureShader->Bind();
-		s_pStorage->pTextureShader->UploadIntArray("u_Textures", samplers, RenderCommand::GetCapabilities().MaxTextureSlots);
 
 		//s_pStorage->TextureSlots[0] = s_pStorage->pWhiteTexture;
 
-		delete[] samplers;
+		//delete[] samplers;
 		////////////////////////
 
 		s_RenderBuffer.drawCalls.reserve(1000);
@@ -124,20 +120,20 @@ namespace Lamp
 
 	void Renderer2D::Shutdown()
 	{
-		delete[] s_pStorage->TextureSlots;
+		//delete[] s_pStorage->TextureSlots;
 		delete s_pStorage;
 	}
 
 	void Renderer2D::Flush()
 	{
 		//Bind textures
-		for (uint32_t i = 0; i < s_pStorage->TextureSlotIndex; i++)
-		{
-			s_pStorage->TextureSlots[i]->Bind(i);
-		}
+		//for (uint32_t i = 0; i < s_pStorage->TextureSlotIndex; i++)
+		//{
+		//	s_pStorage->TextureSlots[i]->Bind(i);
+		//}
 
 		//Draw
-		RenderCommand::DrawIndexed(s_pStorage->pQuadVertexArray, s_pStorage->QuadIndexCount);
+		//RenderCommand::DrawIndexed(s_pStorage->pQuadVertexArray, s_pStorage->QuadIndexCount);
 		s_pStorage->Stats.drawCalls++;
 	}
 
@@ -204,23 +200,23 @@ namespace Lamp
 		float textureIndex = 0.f;
 		bool textureExists = false;
 
-		auto& texture = mat->GetTextures().at("gizmo");
+		//auto& texture = mat->GetTextures().at("gizmo");
 
 		for (uint32_t i = 0; i < s_pStorage->TextureSlotIndex; i++)
 		{
 			//TODO: change
-			if (s_pStorage->TextureSlots[i].get() == texture.get())
-			{
-				textureIndex = (float)i;
-				textureExists = true;
-				break;
-			}
+		//	if (s_pStorage->TextureSlots[i].get() == texture.get())
+		//	{
+		//		textureIndex = (float)i;
+		//		textureExists = true;
+		//		break;
+		//	}
 		}
 
 		if (textureIndex == 0.f && !textureExists)
 		{
 			textureIndex = (float)s_pStorage->TextureSlotIndex;
-			s_pStorage->TextureSlots[s_pStorage->TextureSlotIndex] = texture;
+		//	s_pStorage->TextureSlots[s_pStorage->TextureSlotIndex] = texture;
 			s_pStorage->TextureSlotIndex++;
 		}
 

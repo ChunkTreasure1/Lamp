@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
 #include "Lamp/Event/EntityEvent.h"
 
 namespace Lamp
@@ -9,24 +9,25 @@ namespace Lamp
 	{
 	public:
 		DirectionalLightComponent();
-		~DirectionalLightComponent();
+		~DirectionalLightComponent() override;
 
 		//////Base//////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
+		void SetComponentProperties() override;
 		////////////////
 
 		inline DirectionalLight& GetLight() { return *m_pDirectionalLight; }
 
-	private:
-		bool OnRotationChanged(ObjectRotationChangedEvent& e);
-		void UpdateLight();
-
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<DirectionalLightComponent>(); }
 		static std::string GetFactoryName() { return "DirectionalLightComponent"; }
 
 	private:
+		friend class LevelLoader;
+
+		bool OnRotationChanged(ObjectRotationChangedEvent& e);
+		void UpdateLight();
+
 		Scope<DirectionalLight> m_pDirectionalLight;
 		const float m_size = 20.f;
 	};

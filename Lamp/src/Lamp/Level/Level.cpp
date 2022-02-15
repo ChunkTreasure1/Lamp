@@ -4,101 +4,59 @@
 #include "Lamp/Objects/Entity/BaseComponents/CameraComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/DirectionalLightComponent.h"
+#include "Lamp/Objects/Entity/Entity.h"
+#include "Lamp/Objects/Brushes/Brush.h"
+
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
+#include "Lamp/Rendering/RenderCommand.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
+
 #include "Lamp/Physics/Physics.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
-#include "Lamp/Objects/Brushes/Brush.h"
-
 #include "Lamp/GraphKey/NodeRegistry.h"
-#include "Lamp/Rendering/RenderGraph/RenderGraph.h"
-
-#include "Lamp/Objects/Entity/Base/Entity.h"
-#include "Lamp/Objects/Brushes/Brush.h"
+#include "Lamp/World/Terrain.h"
 
 namespace Lamp
 {
-	RenderUtils::~RenderUtils()
+	Level::Level(const std::string& name)
+		: m_name(name)
 	{
-		m_PointLights.clear();
+		m_layers.reserve(100);
+		m_layers.emplace_back("Main", 0, true);
+		SetupRenderPasses();
 	}
 
-	void RenderUtils::RegisterPointLight(Lamp::PointLight* light)
+	Level::Level()
 	{
-		m_PointLights.push_back(light);
-	}
-
-	bool RenderUtils::UnregisterPointLight(Lamp::PointLight* light)
-	{
-		for (int i = 0; i < m_PointLights.size(); i++)
-		{
-			if (m_PointLights[i]->id == light->id)
-			{
-				m_PointLights.erase(m_PointLights.begin() + i);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void RenderUtils::RegisterDirectionalLight(DirectionalLight* light)
-	{
-		m_DirectionalLights.push_back(light);
-	}
-
-	bool RenderUtils::UnregisterDirectionalLight(DirectionalLight* light)
-	{
-		for (int i = 0; i < m_DirectionalLights.size(); i++)
-		{
-			if (m_DirectionalLights[i]->Id == light->Id)
-			{
-				m_DirectionalLights.erase(m_DirectionalLights.begin() + i);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void RenderUtils::RegisterMeshComponent(uint32_t id, Lamp::MeshComponent* mesh)
-	{
-		m_MeshComponents.insert(std::make_pair(id, mesh));
-	}
-
-	bool RenderUtils::UnegisterMeshComponent(uint32_t id)
-	{
-		if (m_MeshComponents.find(id) != m_MeshComponents.end())
-		{
-			m_MeshComponents.erase(id);
-			return true;
-		}
-		return false;
+		//Reserve 100 layer slots
+		m_layers.reserve(100);
+		SetupRenderPasses();
 	}
 
 	Level::Level(const Level& level)
 	{
-		for (auto& brush : level.m_Brushes)
+		for (auto& brush : level.m_brushes)
 		{
-			m_Brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
+			m_brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
 		}
 
-		for (auto& entity : level.m_Entities)
+		for (auto& entity : level.m_entities)
 		{
 			std::pair pair = std::make_pair(entity.first, Entity::Duplicate(entity.second, false));
-			m_Entities.emplace(pair);
+			m_entities.emplace(pair);
 			if (auto lightComp = pair.second->GetComponent<PointLightComponent>())
 			{
-				m_RenderUtils.RegisterPointLight(&lightComp->GetLight());
+				m_environment.RegisterPointLight(&lightComp->GetLight());
 			}
 
 			if (auto dirLightComp = pair.second->GetComponent<DirectionalLightComponent>())
 			{
-				m_RenderUtils.RegisterDirectionalLight(&dirLightComp->GetLight());
+				m_environment.RegisterDirectionalLight(&dirLightComp->GetLight());
 			}
 		}
 
-		for (auto& brush : m_Brushes)
+		for (auto& brush : m_brushes)
 		{
-			for (auto& layer : m_Layers)
+			for (auto& layer : m_layers)
 			{
 				if (brush.second->GetLayerID() == layer.ID)
 				{
@@ -107,15 +65,15 @@ namespace Lamp
 			}
 		}
 
-		for (const auto& layer : level.m_Layers)
+		for (const auto& layer : level.m_layers)
 		{
 			ObjectLayer l(layer.Name, layer.ID, layer.Active);
-			m_Layers.push_back(l);
+			m_layers.push_back(l);
 		}
 
-		for (auto& entity : m_Entities)
+		for (auto& entity : m_entities)
 		{
-			for (auto& layer : m_Layers)
+			for (auto& layer : m_layers)
 			{
 				if (entity.second->GetLayerID() == layer.ID)
 				{
@@ -124,9 +82,9 @@ namespace Lamp
 			}
 		}
 
-		for (auto& brush : m_Brushes)
+		for (auto& brush : m_brushes)
 		{
-			for (auto& layer : m_Layers)
+			for (auto& layer : m_layers)
 			{
 				if (brush.second->GetLayerID() == layer.ID)
 				{
@@ -135,9 +93,10 @@ namespace Lamp
 			}
 		}
 
-		m_skybox = level.m_skybox;
-		m_Environment = level.m_Environment;
-		m_Name = level.m_Name;
+		m_environment = level.m_environment;
+		m_name = level.m_name;
+
+		SetupRenderPasses();
 	}
 
 	Level::~Level()
@@ -147,12 +106,12 @@ namespace Lamp
 
 	void Level::OnEvent(Event& e)
 	{
-		for (auto& it : m_Entities)
+		for (auto& it : m_entities)
 		{
 			it.second->OnEvent(e);
 		}
 
-		for (auto& it : m_Brushes)
+		for (auto& it : m_brushes)
 		{
 			it.second->OnEvent(e);
 		}
@@ -161,58 +120,71 @@ namespace Lamp
 		dispatcher.Dispatch<EditorViewportSizeChangedEvent>(LP_BIND_EVENT_FN(Level::OnViewportResize));
 	}
 
-	void Level::UpdateEditor(Timestep ts, Ref<CameraBase>& camera)
+	void Level::UpdateEditor(Timestep ts, const Ref<CameraBase> renderCamera)
 	{
-		AppRenderEvent e(camera);
+		AppRenderEvent e(renderCamera);
 		OnEvent(e);
-
-		RenderLevel(camera);
 	}
-	void Level::UpdateSimulation(Timestep ts, Ref<CameraBase>& camera)
+
+	void Level::UpdateSimulation(Timestep ts)
 	{
 		Physics::GetScene()->Simulate(ts);
-
-		AppRenderEvent e(camera);
+		
+		AppRenderEvent e(nullptr);
 		OnEvent(e);
-
-		RenderLevel(camera);
 	}
 
-	void Level::UpdateRuntime(Timestep ts)
+	void Level::UpdateRuntime(Timestep ts, const Ref<CameraBase> renderCamera)
 	{
 		AppUpdateEvent e(ts);
 		OnEvent(e);
 
-		Physics::GetScene()->Simulate(ts);
+		AppRenderEvent renderE(renderCamera);
+		OnEvent(renderE);
 
-		Ref<CameraBase> camera;
-		for (auto& it : m_Entities)
+		Physics::GetScene()->Simulate(ts);
+	}
+
+	void Level::RenderEditor()
+	{
+		RenderLevel();
+	}
+
+	void Level::RenderSimulation()
+	{
+		RenderLevel();
+	}
+
+	void Level::RenderRuntime()
+	{
+		Ref<CameraBase> camera = nullptr;
+		for (const auto& it : m_entities)
 		{
-			if (auto& comp = it.second->GetComponent<CameraComponent>())
+			if (const auto comp = it.second->GetComponent<CameraComponent>())
 			{
 				camera = comp->GetCamera();
 				break;
 			}
 		}
 
-		if (camera)
+		if (camera.get())
 		{
 			AppRenderEvent e(camera);
 			OnEvent(e);
 
-			RenderLevel(camera);
+			RenderLevel();
 		}
 	}
 
 	void Level::Shutdown()
 	{
-		for (auto& ent : m_Entities)
+		for (auto& ent : m_entities)
 		{
 			delete ent.second;
 			ent.second = nullptr;
 		}
 
-		for (auto& brush : m_Brushes)
+		for (auto& brush : m_brushes)
 		{
 			delete brush.second;
 			brush.second = nullptr;
@@ -229,14 +201,14 @@ namespace Lamp
 			node->ActivateOutput(0);
 		}
 
-		m_LastShowedGizmos = g_pEnv->ShouldRenderGizmos;
-		g_pEnv->ShouldRenderGizmos = false;
+		m_lastShowedGizmos = g_pEnv->shouldRenderGizmos;
+		g_pEnv->shouldRenderGizmos = false;
 	}
 
 	void Level::OnRuntimeEnd()
 	{
 		Physics::DestroyScene();
-		g_pEnv->ShouldRenderGizmos = m_LastShowedGizmos;
+		g_pEnv->shouldRenderGizmos = m_lastShowedGizmos;
 	}
 
 	void Level::OnSimulationStart()
@@ -252,12 +224,12 @@ namespace Lamp
 
 	void Level::AddLayer(const ObjectLayer& layer)
 	{
-		m_Layers.push_back(layer);
+		m_layers.push_back(layer);
 	}
 
 	void Level::RemoveLayer(uint32_t id)
 	{
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (layer.ID == id)
 			{
@@ -268,9 +240,9 @@ namespace Lamp
 			}
 		}
 
-		if (auto it = std::find_if(m_Layers.begin(), m_Layers.end(), [id](ObjectLayer& layer) { return id == layer.ID; }); it != m_Layers.end())
+		if (auto it = std::find_if(m_layers.begin(), m_layers.end(), [id](ObjectLayer& layer) { return id == layer.ID; }); it != m_layers.end())
 		{
-			m_Layers.erase(it);
+			m_layers.erase(it);
 		}
 	}
 
@@ -279,7 +251,7 @@ namespace Lamp
 		ObjectLayer* currObjLayer;
 		ObjectLayer* newObjLayer;
 
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (layer.ID == currLayer)
 			{
@@ -317,7 +289,7 @@ namespace Lamp
 
 	void Level::AddToLayer(Object* obj)
 	{
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (layer.ID == obj->GetLayerID())
 			{
@@ -329,7 +301,7 @@ namespace Lamp
 
 	void Level::RemoveFromLayer(Object* obj)
 	{
-		for (auto& layer : m_Layers)
+		for (auto& layer : m_layers)
 		{
 			if (auto it = std::find(layer.Objects.begin(), layer.Objects.end(), obj); it != layer.Objects.end())
 			{
@@ -339,26 +311,193 @@ namespace Lamp
 		}
 	}
 
-	void Level::RenderLevel(Ref<CameraBase> camera)
+	void Level::SetupRenderPasses()
 	{
-		if (const auto& graph = Renderer::s_pSceneData->renderGraph)
+		//Depth PrePass
 		{
-			graph->Run(camera);
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::R32F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("depthPrePass");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.debugName = "Pre Depth";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
-		else
+
+		//Light culling
 		{
-			RenderPassManager::Get()->RenderPasses(camera);
+			auto& pass = m_renderPasses.emplace_back();
+			auto [pipeline, command] = Renderer::Get().CreateLightCullingPipeline(m_renderPasses[m_renderPasses.size() - 2].graphicsPipeline->GetSpecification().framebuffer->GetDepthAttachment());
+			pass.computePipeline = pipeline;
+			pass.computeExcuteCommand = command;
+		}
+
+		//Geometry pass
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA32F,
+				ImageFormat::R32UI,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			m_geometryFramebuffer = pipelineSpec.framebuffer;
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
+			pipelineSpec.drawSkybox = true;
+			pipelineSpec.drawTerrain = true;
+			pipelineSpec.debugName = "Geometry";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Translucency pass
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.clearColor = { 0.f, 0.f, 0.f, 0.f };
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA16F,
+				ImageFormat::RGBA16F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrSSS");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Translucency;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
+			pipelineSpec.drawSkybox = false;
+			pipelineSpec.drawTerrain = false;
+			pipelineSpec.debugName = "Translucency";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Composite
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("composite");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Quad;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ m_geometryFramebuffer->GetColorAttachment(0), 0, 5 },
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+	}
+
+	void Level::RenderLevel()
+	{
+		LP_PROFILE_FUNCTION();
+
+		for (const auto& pass : m_renderPasses)
+		{
+			if (pass.graphicsPipeline)
+			{
+				RenderCommand::BeginPass(pass.graphicsPipeline);
+				RenderCommand::DispatchRenderCommands();
+				RenderCommand::EndPass();
+			}
+			else
+			{
+				pass.computeExcuteCommand();
+			}
 		}
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)
 	{
-		for (const auto& buffer : Renderer::s_pSceneData->useViewportSize)
+		for (const auto& pass : m_renderPasses)
 		{
-			buffer->Resize(e.GetWidth(), e.GetHeight());
+			if (pass.graphicsPipeline)
+			{
+				pass.graphicsPipeline->GetSpecification().framebuffer->Resize(e.GetWidth(), e.GetHeight());
+			}
 		}
-		
-		Renderer::s_pSceneData->bufferSize = { e.GetWidth(), e.GetHeight() };
 
 		return false;
 	}

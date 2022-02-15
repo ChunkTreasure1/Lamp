@@ -91,14 +91,14 @@ namespace Lamp
 		return files;
 	}
 
-	void FileSystem::GetAllFilesOfType(std::vector<std::string>& files, const std::string& type, const std::string& path)
+	void FileSystem::GetAllFilesOfType(const std::string& type, const std::string& path, std::vector<std::string>& outFiles)
 	{
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(path))
 		{
 			std::string s = entry.path().string();
 			if (s.find(type) != std::string::npos)
 			{
-				files.push_back(s);
+				outFiles.push_back(s);
 			}
 		}
 	}

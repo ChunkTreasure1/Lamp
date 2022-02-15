@@ -9,26 +9,27 @@
 
 namespace Lamp
 {
-	std::vector<Ref<Material>> MaterialLibrary::m_Materials;
+	MaterialLibrary* MaterialLibrary::s_instance = nullptr;
 
-	static std::string ToString(const float& var)
+	MaterialLibrary::MaterialLibrary()
 	{
-		return std::to_string(var);
+		LP_CORE_ASSERT(!s_instance, "Instance already created! The should not be more than one instance!");
+		s_instance = this;
 	}
 
-	static bool GetValue(char* val, float& var)
+	void MaterialLibrary::Initialize()
 	{
-		if (val)
-		{
-			var = (float)atof(val);
-			return true;
-		}
-		return false;
+
+	}
+
+	void MaterialLibrary::Shutdown()
+	{
+		m_materials.clear();
 	}
 
 	void MaterialLibrary::AddMaterial(Ref<Material> mat)
 	{
-		m_Materials.push_back(mat);
+		m_materials.push_back(mat);
 	}
 
 	void MaterialLibrary::AddMaterial(const std::filesystem::path& path)
@@ -39,7 +40,7 @@ namespace Lamp
 	void MaterialLibrary::LoadMaterials()
 	{
 		std::vector<std::string> paths;
-		FileSystem::GetAllFilesOfType(paths, ".mtl", "assets");
+		FileSystem::GetAllFilesOfType(".mtl", "assets", paths);
 
 		for (std::string& path : paths)
 		{
@@ -47,7 +48,7 @@ namespace Lamp
 		}
 
 		paths.clear();
-		FileSystem::GetAllFilesOfType(paths, ".mtl", "engine");
+		FileSystem::GetAllFilesOfType(".mtl", "engine", paths);
 		for (std::string& path : paths)
 		{
 			LoadMaterial(path);
@@ -56,20 +57,25 @@ namespace Lamp
 
 	Ref<Material> MaterialLibrary::GetMaterial(const std::string& name)
 	{
-		for (auto& mat : m_Materials)
+		for (auto& mat : s_instance->m_materials)
 		{
 			if (mat->GetName() == name)
 			{
-				return mat;
+				return Material::Create(mat);
 			}
 		}
 
 		return nullptr;
 	}
 
+	MaterialLibrary& MaterialLibrary::Get()
+	{
+		return *s_instance;
+	}
+
 	bool MaterialLibrary::IsMaterialLoaded(const std::string& name)
 	{
-		for (auto& mat : m_Materials)
+		for (auto& mat : m_materials)
 		{
 			if (mat->GetName() == name)
 			{
@@ -82,7 +88,7 @@ namespace Lamp
 
 	void MaterialLibrary::LoadMaterial(const std::filesystem::path& path)
 	{
-		Ref<Asset> mat = CreateRef<Material>();
+		Ref<Asset> mat = Material::Create();
 		g_pEnv->pAssetManager->LoadAsset(path, mat);
 		if (!mat->IsValid())
 		{

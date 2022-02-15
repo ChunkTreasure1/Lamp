@@ -1,47 +1,39 @@
 #include "MeshImporterPanel.h"
 
-#include <Lamp/Rendering/RenderCommand.h>
 #include <imgui/imgui.h>
 #include <Lamp/Utility/PlatformUtility.h>
-#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
-#include <Platform/OpenGL/OpenGLFramebuffer.h>
+#include <Lamp/Rendering/RenderCommand.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
+
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
-#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
 #include <Lamp/AssetSystem/BaseAssets.h>
 
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodePass.h>
-
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/Core/Time/ScopedTimer.h>
 
 namespace Sandbox
 {
 	using namespace Lamp;
 
 	MeshImporterPanel::MeshImporterPanel(std::string_view name)
-		: BaseWindow(name)
+		: EditorWindow(name)
 	{
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
 		m_camera->SetPosition({ -3.f, 2.f, 3.f });
 
-		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MeshImporterPanel::Render));
-
 		//Setup icons
 		m_loadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
-
-		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
-		m_renderGraph->Start();
-
-		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
 	}
 
 	bool MeshImporterPanel::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
-		if (!m_IsOpen)
+		ScopedTimer timer{};
+
+		if (!m_isOpen)
 		{
 			return false;
 		}
@@ -49,7 +41,7 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_isOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -67,6 +59,8 @@ namespace Sandbox
 		UpdateMaterial();
 		UpdateToolbar();
 		UpdateMeshConstruction();
+
+		m_deltaTime = timer.GetTime();
 
 		return false;
 	}
@@ -105,7 +99,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::UpdateCamera(Lamp::Timestep ts)
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -156,7 +150,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::Render()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -165,11 +159,9 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_modelToImport->GetSubMeshes())
 			{
-				Renderer3D::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				RenderCommand::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
-
-		m_renderGraph->Run(m_camera->GetCamera());
 	}
 
 	void MeshImporterPanel::LoadMesh()
@@ -187,10 +179,11 @@ namespace Sandbox
 		{
 			mat.second->SetShader(m_defaultShader);
 
-			for (auto& tex : mat.second->GetTextures())
-			{
-				tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
-			}
+			//TODO: fix
+			//for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
+			//{
+			//	tex.second = ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
+			//}
 		}
 
 		m_shaderSelectionIds.clear();
@@ -217,14 +210,14 @@ namespace Sandbox
 
 			for (auto& mat : m_modelToImport->GetMaterials())
 			{
-				if (!MaterialLibrary::IsMaterialLoaded(mat.second->GetName()))
+				if (!MaterialLibrary::Get().IsMaterialLoaded(mat.second->GetName()))
 				{
 					std::string sMatPath = m_savePath.parent_path().string() + "/" + mat.second->GetName() + ".mtl";
 
 					mat.second->Path = std::filesystem::path(sMatPath);
 					g_pEnv->pAssetManager->SaveAsset(mat.second);
 
-					MaterialLibrary::AddMaterial(mat.second);
+					MaterialLibrary::Get().AddMaterial(mat.second);
 				}
 			}
 
@@ -252,7 +245,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::OnEvent(Lamp::Event& e)
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -287,24 +280,8 @@ namespace Sandbox
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Import Perspective");
 		{
-			glm::vec2 windowPos = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
 			m_hoveringPerspective = ImGui::IsWindowHovered();
 			m_camera->SetControlsEnabled(m_hoveringPerspective);
-
-			if (m_renderGraph->GetSpecification().endNode->framebuffer)
-			{
-				ImVec2 panelSize = ImGui::GetContentRegionAvail();
-				if (m_perspectiveSize != *((glm::vec2*)&panelSize))
-				{
-					m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-					m_perspectiveSize = { panelSize.x, panelSize.y };
-
-					m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-				}
-
-				uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID();
-				ImGui::Image((void*)(uint64_t)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-			}
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -312,7 +289,7 @@ namespace Sandbox
 
 	void MeshImporterPanel::UpdateProperties()
 	{
-		ImGui::Begin("Import Settings", &m_IsOpen);
+		ImGui::Begin("Import Settings", &m_isOpen);
 
 		ImGui::Text(("Source path: " + m_importSettings.path.string()).c_str());
 		ImGui::Text(("Destination path: " + m_savePath.string()).c_str());
@@ -322,13 +299,6 @@ namespace Sandbox
 		{
 			if (UI::Property("Show Skybox", m_renderSkybox))
 			{
-				for (const auto& node : m_renderGraph->GetSpecification().nodes)
-				{
-					if (auto pass = std::dynamic_pointer_cast<Lamp::RenderNodePass>(node))
-					{
-						const_cast<RenderPassSpecification&>(pass->renderPass->GetSpecification()).drawSkybox = m_renderSkybox;
-					}
-				}
 			}
 
 			UI::Property("Show Grid", m_renderGrid);
@@ -428,35 +398,36 @@ namespace Sandbox
 
 					ImGui::Separator();
 
-					for (auto& tex : mat.second->GetTextures())
-					{
-						ImGui::Text(tex.first.c_str());
+					//TODO: fix
+					//for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
+					//{
+					//	ImGui::Text(tex.first.c_str());
 
-						std::filesystem::path path;
-						if (UI::ImageButton(tex.second->GetID(), path))
-						{
-							if (!path.empty())
-							{
-								Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
-								if (newTex->IsValid())
-								{
-									tex.second = newTex;
-								}
-							}
-						}
+					//	std::filesystem::path path;
+					//	if (UI::ImageButton(tex.second->GetID(), path))
+					//	{
+					//		if (!path.empty())
+					//		{
+					//			Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
+					//			if (newTex->IsValid())
+					//			{
+					//				tex.second = newTex;
+					//			}
+					//		}
+					//	}
 
-						if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
-						{
-							const wchar_t* wPath = (const wchar_t*)ptr;
-							std::filesystem::path path(wPath);
-							AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-							if (type == AssetType::Texture)
-							{
-								tex.second = ResourceCache::GetAsset<Texture2D>(path);
-							}
-						}
-						ImGui::Separator();
-					}
+					//	if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
+					//	{
+					//		const wchar_t* wPath = (const wchar_t*)ptr;
+					//		std::filesystem::path path(wPath);
+					//		AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+					//		if (type == AssetType::Texture)
+					//		{
+					//			tex.second = ResourceCache::GetAsset<Texture2D>(path);
+					//		}
+					//	}
+					//	ImGui::Separator();
+					//}
 				}
 
 				i++;

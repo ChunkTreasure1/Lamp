@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
+#include "Lamp/Objects/Entity/Entity.h"
 
 namespace Lamp
 {
@@ -14,8 +14,9 @@ namespace Lamp
 		~PointLightComponent();
 
 		//////Base//////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
+		void SetComponentProperties();
 		////////////////
 
 		//Getting
@@ -31,15 +32,15 @@ namespace Lamp
 		inline void SetIntensity(float val) { m_pPointLight->intensity = val; }
 		inline void SetColor(const glm::vec3& val) { m_pPointLight->color = val; }
 
-	private:
-		bool OnPositionChanged(ObjectPositionChangedEvent& e);
-		bool OnPropertyChanged(ObjectPropertyChangedEvent& e);
-
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<PointLightComponent>(); }
 		static std::string GetFactoryName() { return "LightComponent"; }
 
 	private:
+		friend class LevelLoader;
+
+		bool OnPositionChanged(ObjectPositionChangedEvent& e);
+		bool OnPropertyChanged(ObjectPropertyChangedEvent& e);
+
 		Scope<PointLight> m_pPointLight;
 	};
 }

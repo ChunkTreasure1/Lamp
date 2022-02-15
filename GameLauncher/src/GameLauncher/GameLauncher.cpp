@@ -1,7 +1,6 @@
 #include "GameLauncher.h"
 
 #include <Lamp/Objects/Entity/BaseComponents/CameraComponent.h>
-#include <Lamp/Rendering/RenderPass.h>
 
 namespace GameLauncher
 {
@@ -13,7 +12,6 @@ namespace GameLauncher
 
 	bool GameLauncher::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
-		//Lamp::RenderPassManager::Get()->RenderPasses();
 
 		return false;
 	}

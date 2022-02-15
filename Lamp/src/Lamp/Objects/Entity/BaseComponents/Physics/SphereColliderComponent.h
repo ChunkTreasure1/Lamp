@@ -1,35 +1,25 @@
 #pragma once
 
 #include "Lamp/Physics/PhysicsMaterial.h"
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/EntityComponent.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
 
 namespace Lamp
 {
 	class SphereColliderComponent final : public EntityComponent
 	{
 	public:
-		SphereColliderComponent()
-			: EntityComponent("SphereColliderComponent")
-		{
-			SetComponentProperties
-			({
-				{ PropertyType::Float, "Radius", RegisterData(&m_Specification.m_Radius) },
-				{ PropertyType::Float3, "Offset", RegisterData(&m_Specification.m_Offset) },
-				{ PropertyType::Bool, "Is Trigger", RegisterData(&m_Specification.m_IsTrigger) }
-			});
-		}
+		SphereColliderComponent();
 
 		/////Base/////
-		virtual void Initialize() override;
-		virtual void OnEvent(Event& e) override;
+		void Initialize() override;
+		void OnEvent(Event& e) override;
+		void SetComponentProperties() override;
 		//////////////
 
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<SphereColliderComponent>(); }
 		static std::string GetFactoryName() { return "SphereColliderComponent"; }
 
-	public:
 		struct SphereColliderSpecification
 		{
 			float m_Radius = 0.5f;

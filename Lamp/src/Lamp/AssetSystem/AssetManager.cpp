@@ -2,7 +2,6 @@
 #include "AssetManager.h"
 
 #include "Lamp/AssetSystem/LevelLoader.h"
-#include "Lamp/AssetSystem/RenderGraphLoader.h"
 #include "ResourceCache.h"
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 
@@ -37,13 +36,12 @@ namespace Lamp
 
 	void AssetManager::Initialize()
 	{
-		m_AssetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
-		m_AssetLoaders[AssetType::MeshSource] = CreateScope<MeshSourceLoader>();
-		m_AssetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
-		m_AssetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
-		m_AssetLoaders[AssetType::RenderGraph] = CreateScope<RenderGraphLoader>();
-		m_AssetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
-		m_AssetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
+		m_assetLoaders[AssetType::Mesh] = CreateScope<MeshLoader>();
+		m_assetLoaders[AssetType::MeshSource] = CreateScope<MeshSourceLoader>();
+		m_assetLoaders[AssetType::Texture] = CreateScope<TextureLoader>();
+		m_assetLoaders[AssetType::EnvironmentMap] = CreateScope<EnvironmentLoader>();
+		m_assetLoaders[AssetType::Material] = CreateScope<MaterialLoader>();
+		m_assetLoaders[AssetType::Level] = CreateScope<LevelLoader>();
 		LoadAssetRegistry();
 	}
 
@@ -65,17 +63,17 @@ namespace Lamp
 		job.path = path;
 		job.type = GetAssetTypeFromPath(path);
 
-		if (m_AssetLoaders.find(job.type) == m_AssetLoaders.end())
+		if (m_assetLoaders.find(job.type) == m_assetLoaders.end())
 		{
 			LP_CORE_ERROR("No importer for asset exists!");
 			return;
 		}
-		m_AssetLoaders[job.type]->Load(job.path, asset);
+		m_assetLoaders[job.type]->Load(job.path, asset);
 	}
 
 	void AssetManager::SaveAsset(const Ref<Asset>& asset)
 	{
-		if (m_AssetLoaders.find(asset->GetType()) == m_AssetLoaders.end())
+		if (m_assetLoaders.find(asset->GetType()) == m_assetLoaders.end())
 		{
 			LP_CORE_ERROR("No exporter for asset exists!");
 			return;
@@ -86,12 +84,12 @@ namespace Lamp
 			return;
 		}
 
-		if (m_AssetRegistry.find(asset->Path) == m_AssetRegistry.end())
+		if (m_assetRegistry.find(asset->Path) == m_assetRegistry.end())
 		{
-			m_AssetRegistry.emplace(asset->Path, asset->Handle);
+			m_assetRegistry.emplace(asset->Path, asset->Handle);
 		}
 
-		m_AssetLoaders[asset->GetType()]->Save(asset);
+		m_assetLoaders[asset->GetType()]->Save(asset);
 	}
 
 	AssetType AssetManager::GetAssetTypeFromPath(const std::filesystem::path& path)
@@ -111,12 +109,12 @@ namespace Lamp
 
 	AssetHandle AssetManager::GetAssetHandleFromPath(const std::filesystem::path& path)
 	{
-		return m_AssetRegistry.find(path) != m_AssetRegistry.end() ? m_AssetRegistry[path] : 0;
+		return m_assetRegistry.find(path) != m_assetRegistry.end() ? m_assetRegistry[path] : 0;
 	}
 
 	std::filesystem::path AssetManager::GetPathFromAssetHandle(AssetHandle assetHandle)
 	{
-		for (auto& [path, handle] : m_AssetRegistry)
+		for (auto& [path, handle] : m_assetRegistry)
 		{
 			if (handle == assetHandle)
 			{
@@ -133,7 +131,7 @@ namespace Lamp
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "Assets" << YAML::BeginSeq;
-		for (const auto& [path, handle] : m_AssetRegistry)
+		for (const auto& [path, handle] : m_assetRegistry)
 		{
 			out << YAML::BeginMap;
 			out << YAML::Key << "Handle" << YAML::Value << handle;
@@ -167,7 +165,7 @@ namespace Lamp
 			std::string path = entry["Path"].as<std::string>();
 			AssetHandle handle = entry["Handle"].as<AssetHandle>();
 
-			m_AssetRegistry.emplace(std::make_pair(path, handle));
+			m_assetRegistry.emplace(std::make_pair(path, handle));
 		}
 	}
 }

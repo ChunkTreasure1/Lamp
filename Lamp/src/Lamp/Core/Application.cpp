@@ -3,13 +3,17 @@
 
 #include "imgui.h"
 
-#include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Audio/AudioEngine.h"
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/AssetSystem/AssetManager.h"
 #include "Lamp/Objects/Entity/ComponentInclude.h"
 #include "Lamp/ImGui/ImGuiLayer.h"
-#include "CoreLogger.h"
+#include "Lamp/Core/CoreLogger.h"
+
+#include "Lamp/Rendering/Swapchain.h"
+#include "Lamp/Rendering/RenderCommand.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <thread>
 
@@ -21,10 +25,10 @@ namespace Lamp
 
 	void UpdateAssetManager(bool& running)
 	{
-		while (running)
-		{
-			g_pEnv->pAssetManager->Update();
-		}
+		//while (running)
+		//{
+		//	g_pEnv->pAssetManager->Update();
+		//}
 	}
 
 	Application* Application::s_pInstance = nullptr;
@@ -47,52 +51,111 @@ namespace Lamp
 		m_pWindow = Window::Create(props);
 		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		Renderer::Initialize();
+		m_levelManager = CreateScope<LevelManager>();
+		m_renderer = CreateScope<Renderer>();
+
+		m_renderer->Initialize();
+		RenderCommand::Initialize(m_renderer.get());
+
 		AudioEngine::Initialize();
 		Physics::Initialize();
 
-		m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_Running));
+		m_threadPool.AddThread("Update", LP_BIND_THREAD_FN(Application::UpdateApplication));
+
+		//m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_running));
 
 		//Setup the GUI system
-		m_pImGuiLayer = new ImGuiLayer();
+		m_pImGuiLayer = ImGuiLayer::Create();
 		PushOverlay(m_pImGuiLayer);
 	}
 
 	Application::~Application()
 	{
 		LP_PROFILE_FUNCTION();
+		Physics::Shutdown();
 		AudioEngine::Shutdown();
-		Renderer::Shutdown();
 
-		m_AssetManagerThread.join();
+		RenderCommand::Shutdown();
+		m_renderer->Shutdown();
+		m_renderer.reset();
 
-		g_pEnv->pLevel->Shutdown(); // TODO: this needs to be fixed
+		ResourceCache::Shutdown();
+
+		//m_AssetManagerThread.join();
+		m_threadPool.JoinAll();
 
 		delete g_pEnv->pAssetManager;
 		delete g_pEnv;
 	}
 
-	void Application::Run()
+	void Application::UpdateApplication()
 	{
-		while (m_Running)
+		LP_PROFILE_THREAD("Update");
+
+		while (m_running)
 		{
-			LP_PROFILE_SCOPE("Application::Run::TotalLoop");
+			LP_PROFILE_FRAME("UpdateThread");
+
+			m_updateReady = true;
+
 			float time = (float)glfwGetTime();
-			Timestep timestep = time - m_LastFrameTime;
+			m_currentTimeStep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			m_FrameTime.Begin();
+			m_updateFrameTime.Begin();
+
+			AppUpdateEvent e(m_currentTimeStep);
+
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnEvent(e);
+			}
+
+			m_updateReady = false;
+
+			{
+				LP_PROFILE_SCOPE("Wait for render");
+
+				while (!m_renderReady && m_running)
+				{
+				}
+			}
+
+
+			RenderCommand::SwapRenderBuffers();
+
+			m_updateFrameTime.End();
+		}
+	}
+
+	void Application::Run()
+	{
+		LP_PROFILE_THREAD("Render");
+
+		while (m_running)
+		{
+			LP_PROFILE_FRAME("RenderThread");
+
+			m_mainFrameTime.Begin();
+
+			m_renderReady = true;
+			 
+			{
+				LP_PROFILE_SCOPE("Wait for update");
+				while (!m_updateReady)
+				{
+				}
+			}
+
+			m_renderReady = false;
+
+			m_pWindow->GetSwapchain()->BeginFrame();
 
 			AudioEngine::Update();
-			//Load 
-			{
-				LP_PROFILE_SCOPE("Application::UpdateLayers");
-				AppUpdateEvent e(timestep);
 
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnEvent(e);
-				}
+			for (Layer* pLayer : m_LayerStack)
+			{
+				pLayer->OnRender();
 			}
 
 			{
@@ -102,15 +165,15 @@ namespace Lamp
 
 				for (Layer* pLayer : m_LayerStack)
 				{
-					pLayer->OnImGuiRender(timestep);
+					pLayer->OnImGuiRender(m_currentTimeStep);
 				}
 
 				m_pImGuiLayer->End();
 			}
 
-			m_pWindow->Update(timestep);
+			m_pWindow->Update(m_currentTimeStep);
 
-			m_FrameTime.End();
+			m_mainFrameTime.End();
 		}
 	}
 
@@ -121,7 +184,7 @@ namespace Lamp
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-		////Handle rest of events
+		//Handle rest of events
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);
@@ -144,7 +207,7 @@ namespace Lamp
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
-		m_Running = false;
+		m_running = false;
 		return false;
 	}
 
@@ -152,15 +215,14 @@ namespace Lamp
 	{
 		if (e.GetWidth() == 0 && e.GetHeight() == 0)
 		{
-			m_Minimized = true;
+			m_minimized = true;
 			return false;
 		}
 		else
 		{
-			m_Minimized = false;
+			m_minimized = false;
 		}
-
-		RenderCommand::SetViewport(0, 0, e.GetWidth(), e.GetHeight());
+		m_pWindow->OnResize(e.GetWidth(), e.GetHeight());
 		return false;
 	}
 }

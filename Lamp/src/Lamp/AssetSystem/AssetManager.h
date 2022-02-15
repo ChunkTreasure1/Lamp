@@ -61,7 +61,7 @@ namespace Lamp
 			if (asset == nullptr)
 			{
 				LoadAsset(path, asset);
-				m_AssetRegistry.emplace(path, asset->Handle);
+				m_assetRegistry.emplace(path, asset->Handle);
 			}
 			return std::dynamic_pointer_cast<T>(asset);
 		}
@@ -72,7 +72,7 @@ namespace Lamp
 
 	private:
 
-		std::unordered_map<AssetType, Scope<AssetLoader>> m_AssetLoaders;
-		std::map<std::filesystem::path, AssetHandle> m_AssetRegistry;
+		std::unordered_map<AssetType, Scope<AssetLoader>> m_assetLoaders;
+		std::map<std::filesystem::path, AssetHandle> m_assetRegistry;
 	};
 }

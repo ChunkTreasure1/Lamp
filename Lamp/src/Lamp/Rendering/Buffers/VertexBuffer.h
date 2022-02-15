@@ -1,10 +1,9 @@
 #pragma once
 
-#include <functional>
 #include "BufferLayout.h"
-#include <glm/glm.hpp>
 
-#include "Lamp/Core/Core.h"
+#include <glm/glm.hpp>
+#include <functional>
 
 namespace Lamp
 {
@@ -13,6 +12,11 @@ namespace Lamp
 		Vertex(const glm::vec3& position, const glm::vec2& texCoords)
 			: position(position), textureCoords(texCoords)
 		{}
+
+		Vertex(const glm::vec3& position)
+			: position(position)
+		{ }
+
 		Vertex() = default;
 
 		glm::vec3 position = glm::vec3(0.f);
@@ -22,12 +26,14 @@ namespace Lamp
 		glm::vec2 textureCoords = glm::vec2(0.f);
 	};
 
+	class CommandBuffer;
 	class VertexBuffer
 	{
 	public:
 		virtual ~VertexBuffer() = default;
 
 		virtual void Bind() const = 0;
+		virtual void Bind(Ref<CommandBuffer> commandBuffer) const = 0;
 		virtual void Unbind() const = 0;
 
 		virtual void SetBufferLayout(const BufferLayout& buff) = 0;
@@ -48,6 +54,8 @@ namespace Lamp
 		virtual ~IndexBuffer() = default;
 
 		virtual void Bind() const = 0;
+		virtual void Bind(Ref<CommandBuffer> commandBuffer) const = 0;
+
 		virtual void Unbind() const = 0;
 
 		virtual uint32_t GetCount() = 0;

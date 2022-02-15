@@ -2,9 +2,9 @@ material:
   name: sponzaFlagpole
   handle: 18166263926279376863
   textures:
-    albedo: 3342292035970959781
-    normal: 10814833458240189366
-    mro: 3679236261313336098
+    u_Albedo: 3342292035970959781
+    u_Normal: 10814833458240189366
+    u_MRO: 3679236261313336098
   shader: pbrForward
   useBlending: false
   blendingMultiplier: 1

@@ -161,7 +161,7 @@ namespace Lamp
 		YAML::Node materialsNode = geoNode["materials"];
 		std::map<uint32_t, Ref<Material>> materials;
 
-		for(auto entry : materialsNode)
+		for (auto entry : materialsNode)
 		{
 			uint32_t idInt;
 			std::string matName;
@@ -169,7 +169,7 @@ namespace Lamp
 			matName = entry["material"].as<std::string>();
 			LP_DESERIALIZE_PROPERTY(id, idInt, entry, 0);
 
-			if (MaterialLibrary::IsMaterialLoaded(matName))
+			if (MaterialLibrary::Get().IsMaterialLoaded(matName))
 			{
 				materials[idInt] = MaterialLibrary::GetMaterial(matName);
 			}
@@ -227,16 +227,28 @@ namespace Lamp
 			out << YAML::Key << "textures" << YAML::Value;
 			out << YAML::BeginMap;
 			{
-				for (auto& tex : mat->GetTextures())
-				{
-					LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Handle, out);
-				}
+				//TODO: fix
+				//for (auto& tex : mat->GetTextures())
+				//{
+				//	LP_SERIALIZE_PROPERTY_STRING(tex.first, tex.second->Handle, out);
+				//}
 			}
 			out << YAML::EndMap;
 
 			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
-			LP_SERIALIZE_PROPERTY(useBlending, mat->GetUseBlending(), out);
-			LP_SERIALIZE_PROPERTY(blendingMultiplier, mat->GetBlendingMultiplier(), out);
+
+			const auto& matData = mat->GetMaterialData();
+			LP_SERIALIZE_PROPERTY(useBlending, matData.useBlending, out);
+			LP_SERIALIZE_PROPERTY(useAlbedo, matData.useAlbedo, out);
+			LP_SERIALIZE_PROPERTY(useNormal, matData.useNormal, out);
+			LP_SERIALIZE_PROPERTY(useMRO, matData.useMRO, out);
+			LP_SERIALIZE_PROPERTY(useDetailNormal, matData.useDetailNormal, out);
+			LP_SERIALIZE_PROPERTY(useTranslucency, matData.useTranslucency, out);
+
+			LP_SERIALIZE_PROPERTY(blendingMultiplier, matData.blendingMultiplier, out);
+			LP_SERIALIZE_PROPERTY(mroColor, matData.mroColor, out);
+			LP_SERIALIZE_PROPERTY(albedoColor, matData.albedoColor, out);
+			LP_SERIALIZE_PROPERTY(normalColor, matData.normalColor, out);
 
 			out << YAML::EndMap;
 		}
@@ -250,7 +262,7 @@ namespace Lamp
 
 	bool MaterialLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
-		asset = CreateRef<Material>();
+		asset = Material::Create();
 		Ref<Material> mat = std::dynamic_pointer_cast<Material>(asset);
 
 		if (!std::filesystem::exists(path))
@@ -279,19 +291,28 @@ namespace Lamp
 
 		YAML::Node textureNode = materialNode["textures"];
 
-		for (auto& texName : mat->GetShader()->GetSpecification().textureNames)
+		for (auto& texName : mat->GetShader()->GetSpecification().inputTextureNames)
 		{
 			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
-			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle)));
+			auto path = g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle);
+
+			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(path));
 		}
 
-		bool useBlending;
-		float blendingMultiplier;
-		LP_DESERIALIZE_PROPERTY(useBlending, useBlending, materialNode, false);
-		LP_DESERIALIZE_PROPERTY(blendingMultiplier, blendingMultiplier, materialNode, 1.f);
+		auto& matData = const_cast<MaterialData&>(mat->GetMaterialData());
 
-		mat->SetUseBlending(useBlending);
-		mat->SetBlendingMutliplier(blendingMultiplier);
+		LP_DESERIALIZE_PROPERTY(useBlending, matData.useBlending, materialNode, false);
+		LP_DESERIALIZE_PROPERTY(useAlbedo, matData.useAlbedo, materialNode, true);
+		LP_DESERIALIZE_PROPERTY(useNormal, matData.useNormal, materialNode, true);
+		LP_DESERIALIZE_PROPERTY(useMRO, matData.useMRO, materialNode, true);
+		LP_DESERIALIZE_PROPERTY(useDetailNormal, matData.useDetailNormal, materialNode, false);
+		LP_DESERIALIZE_PROPERTY(useTranslucency, matData.useTranslucency, materialNode, false);
+
+		LP_DESERIALIZE_PROPERTY(blendingMultiplier, matData.blendingMultiplier, materialNode, 1.f);
+
+		LP_DESERIALIZE_PROPERTY(mroColor, matData.mroColor, materialNode, glm::vec2(0.f, 1.f));
+		LP_DESERIALIZE_PROPERTY(albedoColor, matData.albedoColor, materialNode, glm::vec4(1.f, 1.f, 1.f, 1.f));
+		LP_DESERIALIZE_PROPERTY(normalColor, matData.normalColor, materialNode, glm::vec4(0.f, 1.f, 0.f, 0.f));
 
 		asset->Path = path;
 

@@ -25,17 +25,26 @@
     <Filter Include="engine\shaders">
       <UniqueIdentifier>{F463528C-E031-4692-C9C5-B6B8B53222F7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\shaders\ibl">
-      <UniqueIdentifier>{7ACF2676-66B3-E7CB-CF13-E21EBB16D24D}</UniqueIdentifier>
+    <Filter Include="engine\shaders\opengl">
+      <UniqueIdentifier>{08AB250D-7417-E107-3D0B-7965A9360370}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\shaders\main">
-      <UniqueIdentifier>{08EC023B-744D-E048-FDBA-26FB691B1708}</UniqueIdentifier>
+    <Filter Include="engine\shaders\opengl\ibl">
+      <UniqueIdentifier>{8E80AF2E-FA42-E3B8-43F3-7145AFF4BB96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\shaders\postprocess">
-      <UniqueIdentifier>{68DC9835-54EC-4406-BDA5-A924A9D4339F}</UniqueIdentifier>
+    <Filter Include="engine\shaders\opengl\main">
+      <UniqueIdentifier>{9CBFA104-88CF-4DD5-F188-B2F3DDB73C6E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\shaders\shadows">
-      <UniqueIdentifier>{1C00CDD2-08FA-F524-F166-8C35DDFF5B91}</UniqueIdentifier>
+    <Filter Include="engine\shaders\opengl\postprocess">
+      <UniqueIdentifier>{7C61FB19-E8CF-5099-31B9-0B999D664635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\shaders\opengl\shadows">
+      <UniqueIdentifier>{301BB013-9C33-973D-65E0-26D7D1B72BD7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\shaders\vulkan">
+      <UniqueIdentifier>{140BD81D-8077-9318-496B-2B76B596B580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\shaders\vulkan\deferred">
+      <UniqueIdentifier>{64F183F6-5017-4E5D-395D-D32825227329}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
@@ -63,13 +72,16 @@
     <ClInclude Include="..\Lamp\vendor\imnodes\imnodes_internal.h">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Actions\ActionHandler.h">
+    <ClInclude Include="src\Sandbox\Actions\CommandStack.h">
       <Filter>src\Sandbox\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Sandbox.h">
-      <Filter>src\Sandbox</Filter>
+    <ClInclude Include="src\Sandbox\Actions\EditorCommands.h">
+      <Filter>src\Sandbox\Actions</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\SandboxController.h">
+      <Filter>src\Sandbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox\SandboxLayer.h">
       <Filter>src\Sandbox</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\UI\AnimatedIcon.h">
@@ -78,10 +90,13 @@
     <ClInclude Include="src\Sandbox\Windows\AssetBrowserPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\BaseWindow.h">
+    <ClInclude Include="src\Sandbox\Windows\CreatePanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\BufferWindow.h">
+    <ClInclude Include="src\Sandbox\Windows\EditorWindow.h">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sandbox\Windows\EnvironmentEditorPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Sandbox\Windows\GraphKey.h">
@@ -96,9 +111,6 @@
     <ClInclude Include="src\Sandbox\Windows\MeshImporterPanel.h">
       <Filter>src\Sandbox\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sandbox\Windows\RenderGraphPanel.h">
-      <Filter>src\Sandbox\Windows</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Lamp\vendor\ImGuizmo\include\ImGuizmo\ImGuizmo.cpp">
@@ -107,7 +119,10 @@
     <ClCompile Include="..\Lamp\vendor\imnodes\imnodes.cpp">
       <Filter>Lamp\vendor\imnodes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Actions\ActionHandler.cpp">
+    <ClCompile Include="src\Sandbox\Actions\CommandStack.cpp">
+      <Filter>src\Sandbox\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox\Actions\EditorCommands.cpp">
       <Filter>src\Sandbox\Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ConfigHandler.cpp">
@@ -116,10 +131,10 @@
     <ClCompile Include="src\Sandbox\ImGuiRenderer.cpp">
       <Filter>src\Sandbox</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Sandbox.cpp">
+    <ClCompile Include="src\Sandbox\SandboxController.cpp">
       <Filter>src\Sandbox</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\SandboxController.cpp">
+    <ClCompile Include="src\Sandbox\SandboxLayer.cpp">
       <Filter>src\Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\ShortcutFunctions.cpp">
@@ -129,6 +144,15 @@
       <Filter>src\Sandbox\UI</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\AssetBrowserPanel.cpp">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox\Windows\CreatePanel.cpp">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox\Windows\EditorWindow.cpp">
+      <Filter>src\Sandbox\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sandbox\Windows\EnvironmentEditorPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sandbox\Windows\GraphKey.cpp">
@@ -143,64 +167,112 @@
     <ClCompile Include="src\Sandbox\Windows\MeshImporterPanel.cpp">
       <Filter>src\Sandbox\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sandbox\Windows\RenderGraphPanel.cpp">
-      <Filter>src\Sandbox\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="engine\shaders\depthPass.glsl">
-      <Filter>engine\shaders</Filter>
+    <None Include="engine\shaders\opengl\depthPass.glsl">
+      <Filter>engine\shaders\opengl</Filter>
     </None>
-    <None Include="engine\shaders\ibl\brdfIntegrate.glsl">
-      <Filter>engine\shaders\ibl</Filter>
+    <None Include="engine\shaders\opengl\ibl\brdfIntegrate.glsl">
+      <Filter>engine\shaders\opengl\ibl</Filter>
     </None>
-    <None Include="engine\shaders\ibl\convolution.glsl">
-      <Filter>engine\shaders\ibl</Filter>
+    <None Include="engine\shaders\opengl\ibl\convolution.glsl">
+      <Filter>engine\shaders\opengl\ibl</Filter>
     </None>
-    <None Include="engine\shaders\ibl\eqCube.glsl">
-      <Filter>engine\shaders\ibl</Filter>
+    <None Include="engine\shaders\opengl\ibl\eqCube.glsl">
+      <Filter>engine\shaders\opengl\ibl</Filter>
     </None>
-    <None Include="engine\shaders\ibl\prefilter.glsl">
-      <Filter>engine\shaders\ibl</Filter>
+    <None Include="engine\shaders\opengl\ibl\prefilter.glsl">
+      <Filter>engine\shaders\opengl\ibl</Filter>
     </None>
-    <None Include="engine\shaders\ibl\skybox.glsl">
-      <Filter>engine\shaders\ibl</Filter>
+    <None Include="engine\shaders\opengl\ibl\skybox.glsl">
+      <Filter>engine\shaders\opengl\ibl</Filter>
     </None>
-    <None Include="engine\shaders\main\composite.glsl">
-      <Filter>engine\shaders\main</Filter>
+    <None Include="engine\shaders\opengl\main\composite.glsl">
+      <Filter>engine\shaders\opengl\main</Filter>
     </None>
-    <None Include="engine\shaders\main\lightCulling.glsl">
-      <Filter>engine\shaders\main</Filter>
+    <None Include="engine\shaders\opengl\main\lightCulling.glsl">
+      <Filter>engine\shaders\opengl\main</Filter>
     </None>
-    <None Include="engine\shaders\main\pbrEditor.glsl">
-      <Filter>engine\shaders\main</Filter>
+    <None Include="engine\shaders\opengl\main\pbrEditor.glsl">
+      <Filter>engine\shaders\opengl\main</Filter>
     </None>
-    <None Include="engine\shaders\main\pbrForward.glsl">
-      <Filter>engine\shaders\main</Filter>
+    <None Include="engine\shaders\opengl\main\pbrForward.glsl">
+      <Filter>engine\shaders\opengl\main</Filter>
     </None>
-    <None Include="engine\shaders\main\screenSpaceSSS.glsl">
-      <Filter>engine\shaders\main</Filter>
+    <None Include="engine\shaders\opengl\main\screenSpaceSSS.glsl">
+      <Filter>engine\shaders\opengl\main</Filter>
     </None>
-    <None Include="engine\shaders\postprocess\ssao.glsl">
-      <Filter>engine\shaders\postprocess</Filter>
+    <None Include="engine\shaders\opengl\postprocess\ssao.glsl">
+      <Filter>engine\shaders\opengl\postprocess</Filter>
     </None>
-    <None Include="engine\shaders\postprocess\ssaoBlur.glsl">
-      <Filter>engine\shaders\postprocess</Filter>
+    <None Include="engine\shaders\opengl\postprocess\ssaoBlur.glsl">
+      <Filter>engine\shaders\opengl\postprocess</Filter>
     </None>
-    <None Include="engine\shaders\postprocess\ssaoCompute.glsl">
-      <Filter>engine\shaders\postprocess</Filter>
+    <None Include="engine\shaders\opengl\postprocess\ssaoCompute.glsl">
+      <Filter>engine\shaders\opengl\postprocess</Filter>
     </None>
-    <None Include="engine\shaders\quad.glsl">
-      <Filter>engine\shaders</Filter>
+    <None Include="engine\shaders\opengl\quad.glsl">
+      <Filter>engine\shaders\opengl</Filter>
     </None>
-    <None Include="engine\shaders\shadows\dirShadow.glsl">
-      <Filter>engine\shaders\shadows</Filter>
+    <None Include="engine\shaders\opengl\shadows\dirShadow.glsl">
+      <Filter>engine\shaders\opengl\shadows</Filter>
     </None>
-    <None Include="engine\shaders\shadows\pointShadow.glsl">
-      <Filter>engine\shaders\shadows</Filter>
+    <None Include="engine\shaders\opengl\shadows\pointShadow.glsl">
+      <Filter>engine\shaders\opengl\shadows</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_BRDFGeneration.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_Composite.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_DepthPrePass.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_DirectionalShadow.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_EnvironmentIrradiance.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_EnvironmentMipFilter.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_EquirectangularToCubeMap.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_LightCulling.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_PBR.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_PBRSSS.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_Quad.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_Skybox.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\Lamp_Terrain.glsl">
+      <Filter>engine\shaders\vulkan</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\deferred\Lamp_GBuffer.glsl">
+      <Filter>engine\shaders\vulkan\deferred</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\deferred\Lamp_SSAO.glsl">
+      <Filter>engine\shaders\vulkan\deferred</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\deferred\Lamp_SSAOCompute.glsl">
+      <Filter>engine\shaders\vulkan\deferred</Filter>
+    </None>
+    <None Include="engine\shaders\vulkan\deferred\Lamp_Shading.glsl">
+      <Filter>engine\shaders\vulkan\deferred</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -2,20 +2,25 @@
 
 #include <ImNodes.h>
 
-#include <Lamp/Objects/Entity/Base/ComponentRegistry.h>
+#include <Lamp/Objects/Entity/ComponentRegistry.h>
 #include <Lamp/Utility/PlatformUtility.h>
 
 #include <Lamp/GraphKey/Link.h>
 #include <Lamp/GraphKey/NodeRegistry.h>
-#include <Lamp/Objects/Entity/Base/Entity.h>
+#include <Lamp/Objects/Entity/Entity.h>
 #include <Lamp/Utility/UIUtility.h>
+
+#include <Lamp/Input/Input.h>
+#include <Lamp/Input/KeyCodes.h>
+
+#include <Lamp/Level/LevelManager.h>
 
 namespace Sandbox
 {
 	using namespace Lamp;
 
 	GraphKey::GraphKey(std::string_view name)
-		: BaseWindow(name)
+		: EditorWindow(name)
 	{
 		//CreateComponentNodes();
 	}
@@ -40,7 +45,7 @@ namespace Sandbox
 
 	bool GraphKey::UpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return false;
 		}
@@ -48,7 +53,7 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_isOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -104,13 +109,12 @@ namespace Sandbox
 
 	void GraphKey::UpdateNodeWindow()
 	{
-		ImGui::Begin("Main", &m_IsOpen);
+		ImGui::Begin("Main", &m_isOpen);
 		if (m_CurrentlyOpenGraph)
 		{
 			ImGui::Text(m_CurrentlyOpenGraph->GetSpecification().name.c_str());
 		}
 
-		bool mainHovered = IsHovered({ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, { ImGui::GetWindowSize().x, ImGui::GetWindowSize().y });
 		ImNodes::BeginNodeEditor();
 		if (m_CurrentlyOpenGraph)
 		{
@@ -266,7 +270,7 @@ namespace Sandbox
 
 	void GraphKey::UpdateNodeList()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -346,7 +350,7 @@ namespace Sandbox
 
 	void GraphKey::UpdatePropertiesWindow()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -370,14 +374,14 @@ namespace Sandbox
 
 	void GraphKey::UpdateGraphList()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
 
 		ImGui::Begin("Graphs");
 
-		for (auto& pEnt : g_pEnv->pLevel->GetEntities())
+		for (auto& pEnt : LevelManager::GetActive()->GetEntities())
 		{
 			if (pEnt.second)
 			{

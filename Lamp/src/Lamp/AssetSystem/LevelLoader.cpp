@@ -1,14 +1,24 @@
 #include "lppch.h"
 #include "LevelLoader.h"
 
+#include "Lamp/AssetSystem/AssetManager.h"
+#include "Lamp/Core/Application.h"
+
 #include "Lamp/Utility/YAMLSerializationHelpers.h"
 #include "Lamp/Utility/SerializeMacros.h"
+
 #include "Lamp/Level/Level.h"
-#include "AssetManager.h"
+#include "Lamp/Rendering/Textures/Texture2D.h"
+
 #include "Lamp/Objects/Brushes/Brush.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/Entity.h"
+
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
+
+//These components needs to be exclusively registered
+#include "Lamp/Objects/Entity/BaseComponents/DirectionalLightComponent.h"
+#include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -38,13 +48,38 @@ namespace Lamp
 			}
 			out << YAML::EndSeq;
 
-			out << YAML::Key << "LevelEnvironment" << YAML::Value;
+			out << YAML::Key << "Environment" << YAML::Value;
 			out << YAML::BeginMap;
 			{
+				LP_SERIALIZE_PROPERTY(cameraPosition, level->GetEnvironment().GetCameraPosition(), out);
+				LP_SERIALIZE_PROPERTY(cameraRotation, level->GetEnvironment().GetCameraRotation(), out);
+				LP_SERIALIZE_PROPERTY(cameraFOV, level->GetEnvironment().GetCameraFOV(), out);
 
-				LP_SERIALIZE_PROPERTY(cameraPosition, level->GetEnvironment().CameraPosition, out);
-				LP_SERIALIZE_PROPERTY(cameraRotation, level->GetEnvironment().CameraRotation, out);
-				LP_SERIALIZE_PROPERTY(cameraFOV, level->GetEnvironment().CameraFOV, out);
+				out << YAML::Key << "Skybox" << YAML::Value;
+				out << YAML::BeginMap;
+				{
+					if (level->HasSkybox())
+					{
+						LP_SERIALIZE_PROPERTY(environmentLod, level->GetEnvironment().GetSkybox().environmentLod, out);
+						LP_SERIALIZE_PROPERTY(environmentMultiplier, level->GetEnvironment().GetSkybox().environmentMultiplier, out);
+						LP_SERIALIZE_PROPERTY(hdrExposure, level->GetEnvironment().GetSkybox().hdrExposure, out);
+						LP_SERIALIZE_PROPERTY(ambianceMultiplier, level->GetEnvironment().GetSkybox().ambianceMultiplier, out);
+						LP_SERIALIZE_PROPERTY(skybox, level->GetEnvironment().GetSkybox().skybox->Path.string(), out);
+					}
+				}
+				out << YAML::EndMap;
+			
+				out << YAML::Key << "Terrain" << YAML::Value;
+				out << YAML::BeginMap;
+				{
+					if (level->HasTerrain())
+					{
+						LP_SERIALIZE_PROPERTY(terrainScale, level->GetEnvironment().GetTerrain().terrainScale, out);
+						LP_SERIALIZE_PROPERTY(terrainShift, level->GetEnvironment().GetTerrain().terrainShift, out);
+						LP_SERIALIZE_PROPERTY(terrain, level->GetEnvironment().GetTerrain().terrain->GetHeightMap()->Path.string(), out);
+					}
+				}
+				out << YAML::EndMap;
 			}
 			out << YAML::EndMap;
 
@@ -126,9 +161,11 @@ namespace Lamp
 
 	bool LevelLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
+		LevelLoadStartedEvent startEvent(path);
+		Application::Get().OnEvent(startEvent);
+
 		asset = CreateRef<Level>();
 		Ref<Level> level = std::dynamic_pointer_cast<Level>(asset);
-		g_pEnv->pLevel = level;
 
 		if (!std::filesystem::exists(path))
 		{
@@ -149,13 +186,45 @@ namespace Lamp
 		YAML::Node root = YAML::Load(strStream.str());
 		YAML::Node levelNode = root["level"];
 
-		level->m_Name = levelNode["name"].as<std::string>();
+		level->m_name = levelNode["name"].as<std::string>();
 		LP_DESERIALIZE_PROPERTY(handle, level->Handle, levelNode, (AssetHandle)0);
 
-		YAML::Node envNode = levelNode["LevelEnvironment"];
-		LP_DESERIALIZE_PROPERTY(cameraPosition, level->m_Environment.CameraPosition, envNode, glm::vec3(0.f));
-		LP_DESERIALIZE_PROPERTY(cameraRotation, level->m_Environment.CameraRotation, envNode, glm::quat());
-		LP_DESERIALIZE_PROPERTY(cameraFOV, level->m_Environment.CameraFOV, envNode, 60.f);
+		//Environment
+		{
+			YAML::Node envNode = levelNode["Environment"];
+
+			LP_DESERIALIZE_PROPERTY(cameraPosition, const_cast<glm::vec3&>(level->m_environment.GetCameraPosition()), envNode, glm::vec3(0.f));
+			LP_DESERIALIZE_PROPERTY(cameraRotation, const_cast<glm::quat&>(level->m_environment.GetCameraRotation()), envNode, glm::quat());
+			LP_DESERIALIZE_PROPERTY(cameraFOV, const_cast<float&>(level->m_environment.GetCameraFOV()), envNode, 60.f);
+		
+			//Terrain
+			{
+				YAML::Node terrainNode = envNode["Terrain"];
+
+				auto& terrain = const_cast<TerrainData&>(level->m_environment.GetTerrain());
+				LP_DESERIALIZE_PROPERTY(terrainScale, terrain.terrainScale, terrainNode, 64.f);
+				LP_DESERIALIZE_PROPERTY(terrainShift, terrain.terrainShift, terrainNode, 16.f);
+				
+				std::string terrPath = terrainNode["terrain"] ? terrainNode["terrain"].as<std::string>() : "";
+				terrain.terrain = Terrain::Create(terrPath);
+				terrain.terrain->SetupRenderPipeline(level->GetGeometryFramebuffer());
+			}
+
+			//Skybox
+			{
+				YAML::Node skyboxNode = envNode["Skybox"];
+
+				auto& skybox = const_cast<SkyboxData&>(level->m_environment.GetSkybox());
+				LP_DESERIALIZE_PROPERTY(environmentLod, skybox.environmentLod, skyboxNode, 1.f);
+				LP_DESERIALIZE_PROPERTY(environmentMultiplier, skybox.environmentMultiplier, skyboxNode, 1.f);
+				LP_DESERIALIZE_PROPERTY(hdrExposure, skybox.hdrExposure, skyboxNode, 1.f);
+				LP_DESERIALIZE_PROPERTY(ambianceMultiplier, skybox.ambianceMultiplier, skyboxNode, 0.5f);
+
+				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode["skybox"].as<std::string>() : "";
+				skybox.skybox = Skybox::Create(skyboxPath);
+				skybox.skybox->SetupRenderPipeline(level->GetGeometryFramebuffer());
+			}
+		}
 
 		//Layers
 		YAML::Node layersNode = levelNode["layers"];
@@ -193,22 +262,22 @@ namespace Lamp
 			YAML::Node brushesNode = layerNode["brushes"];
 			for (const auto entry : brushesNode)
 			{
-				DeserializeBrush(entry, brushes);
+				DeserializeBrush(entry, brushes, level);
 			}
 
 			//Entities
 			YAML::Node entitiesNode = layerNode["entities"];
 			for (auto entry : entitiesNode)
 			{
-				DeserializeEntity(entry, entities);
+				DeserializeEntity(entry, entities, level);
 			}
 		}
 
-		level->m_Brushes = brushes;
-		level->m_Entities = entities;
-		level->m_Layers = layers;
+		level->m_brushes = brushes;
+		level->m_entities = entities;
+		level->m_layers = layers;
 
-		if (level->m_Layers.empty())
+		if (level->m_layers.empty())
 		{
 			level->AddLayer(ObjectLayer("Main", 0, true));
 		}
@@ -224,6 +293,9 @@ namespace Lamp
 		}
 
 		level->Path = path;
+
+		LevelLoadFinishedEvent endEvent(path);
+		Application::Get().OnEvent(endEvent);
 
 		return true;
 	}
@@ -382,10 +454,13 @@ namespace Lamp
 		out << YAML::EndMap;
 	}
 
-	void LevelLoader::DeserializeEntity(const YAML::Node& entry, std::map<uint32_t, Entity*>& entities) const
+	void LevelLoader::DeserializeEntity(const YAML::Node& entry, std::map<uint32_t, Entity*>& entities, Ref<Level> level) const
 	{
 		uint32_t layerId = entry["layerId"].as<uint32_t>();
-		Entity* entity = Entity::Create(true, layerId);
+		Entity* entity = Entity::Create(true, layerId, false);
+
+		std::string name = entry["entity"].as<std::string>();
+		entity->SetName(name);
 
 		glm::vec3 pos;
 		LP_DESERIALIZE_PROPERTY(position, pos, entry, glm::vec3(0.f));
@@ -408,6 +483,7 @@ namespace Lamp
 
 			pComp->m_pEntity = entity;
 			pComp->Initialize();
+			pComp->SetComponentProperties();
 
 			YAML::Node paramsNode = compEntry["params"];
 			for (auto paramEntry : paramsNode)
@@ -574,13 +650,25 @@ namespace Lamp
 			entity->SetGraphKeyGraph(graph);
 		}
 
+
+		//These components needs to be registered manually here
+		if (auto comp = entity->GetComponent<DirectionalLightComponent>())
+		{
+			level->GetEnvironment().RegisterDirectionalLight(comp->m_pDirectionalLight.get());
+		}
+
+		if (auto comp = entity->GetComponent<PointLightComponent>())
+		{
+			level->GetEnvironment().RegisterPointLight(comp->m_pPointLight.get());
+		}
+
 		entities.emplace(entity->GetID(), entity);
 	}
 
-	void LevelLoader::DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes) const
+	void LevelLoader::DeserializeBrush(const YAML::Node& node, std::map<uint32_t, Brush*>& brushes, Ref<Level> level) const
 	{
 		AssetHandle meshHandle = node["meshHandle"].as<AssetHandle>();
-		Brush* brush = Brush::Create(g_pEnv->pAssetManager->GetPathFromAssetHandle(meshHandle).string());
+		Brush* brush = Brush::Create(g_pEnv->pAssetManager->GetPathFromAssetHandle(meshHandle).string(), false);
 
 		glm::vec3 pos = node["position"].as<glm::vec3>();
 		brush->SetPosition(pos);

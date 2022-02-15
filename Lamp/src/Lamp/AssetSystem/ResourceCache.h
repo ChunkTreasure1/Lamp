@@ -28,6 +28,7 @@ namespace Lamp
 	class ResourceCache
 	{
 	public:
+		static void Shutdown();
 		static bool AddAsset(const std::filesystem::path& path, Ref<Asset>& asset);
 
 		static void Update();
@@ -35,9 +36,9 @@ namespace Lamp
 		template<typename T>
 		static Ref<T> GetAsset(const std::filesystem::path& path)
 		{
-			if (s_AssetCache.find(path) != s_AssetCache.end())
+			if (s_assetCache.find(path) != s_assetCache.end())
 			{
-				return std::dynamic_pointer_cast<T>(s_AssetCache.at(path));
+				return std::dynamic_pointer_cast<T>(s_assetCache.at(path));
 			}
 
 			Ref<Asset> asset = g_pEnv->pAssetManager->GetAsset<T>(path);
@@ -53,7 +54,7 @@ namespace Lamp
 			Ref<Asset> newAsset;
 			g_pEnv->pAssetManager->LoadAsset(asset->Path, newAsset);
 
-			s_AssetCache[asset->Path] = newAsset;
+			s_assetCache[asset->Path] = newAsset;
 
 			return std::dynamic_pointer_cast<T>(newAsset);
 		}
@@ -64,7 +65,7 @@ namespace Lamp
 	private:
 		friend class Sandbox::AssetBrowserPanel;
 
-		static std::unordered_map<std::filesystem::path, Ref<Asset>> s_AssetCache;
-		static std::mutex s_CacheMutex;
+		static std::unordered_map<std::filesystem::path, Ref<Asset>> s_assetCache;
+		static std::mutex s_cacheMutex;
 	};
 }

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Lamp/Objects/Entity/Base/BaseComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
+#include "Lamp/Objects/Entity/Entity.h"
 
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 #include "Lamp/Rendering/Cameras/OrthographicCamera.h"
@@ -16,35 +15,36 @@ namespace Lamp
 	{
 	public:
 
-		CameraComponent()
-			: EntityComponent("CameraComponent")
-		{
-			m_PerspectiveCamera = CreateRef<PerspectiveCamera>(60.f, 0.1f, 100.f);
-		}
-		~CameraComponent() {}
+		CameraComponent();
+		~CameraComponent() override;
 
 		//////Base//////
-		virtual void Initialize() override;
-		virtual void OnEvent(Lamp::Event& someE) override;
+		void Initialize() override;
+		void OnEvent(Lamp::Event& someE) override;
+		void SetComponentProperties() override;
 		////////////////
 
-		inline void SetIsMain(bool state) { m_IsMain = state; }
-		inline bool GetIsMain() { return m_IsMain; }
-		inline Ref<CameraBase> GetCamera() { return std::dynamic_pointer_cast<CameraBase>(m_PerspectiveCamera); }
+		inline void SetIsMain(bool state) { m_isMain = state; }
+		inline bool GetIsMain() { return m_isMain; }
+		inline Ref<CameraBase> GetCamera() { return std::reinterpret_pointer_cast<CameraBase>(m_perspectiveCamera); }
 
-	private:
-		bool OnUpdate(AppUpdateEvent& e);
-		bool OnViewportSizeChanged(EditorViewportSizeChangedEvent& e);
-
-	public:
 		static Ref<EntityComponent> Create() { return CreateRef<CameraComponent>(); }
 		static std::string GetFactoryName() { return "CameraComponent"; }
 
 	private:
-		bool m_IsPerspective = true;
-		bool m_IsMain = false;
+		bool OnUpdate(AppUpdateEvent& e);
+		bool OnViewportSizeChanged(EditorViewportSizeChangedEvent& e);
+		bool OnPropertyUpdated(ObjectPropertyChangedEvent& e);
 
-		Ref<PerspectiveCamera> m_PerspectiveCamera;
+		bool m_isPerspective = true;
+		bool m_isMain = false;
+
+		float m_nearPlane = 0.01f;
+		float m_farPlane = 1000.f;
+
+		float m_currentAspectRatio = 1.7f;
+
+		Ref<PerspectiveCamera> m_perspectiveCamera;
 		Ref<OrthographicCamera> m_OrthographicCamera;
 	};
 }

@@ -23,6 +23,9 @@ namespace Lamp
 		bool IsVSync;
 	};
 
+	class GraphicsContext;
+	class Swapchain;
+
 	class Window
 	{
 	public:
@@ -31,12 +34,15 @@ namespace Lamp
 		virtual ~Window() = default;
 		virtual void Update(Timestep ts) = 0;
 		virtual void Maximize() = 0;
+		virtual void OnResize(uint32_t width, uint32_t height) = 0;
 
 		//Getting
 		virtual const uint32_t GetWidth() const = 0;
 		virtual const uint32_t GetHeight() const = 0;
 		virtual const bool GetIsVSync() const = 0;
 		virtual void* GetNativeWindow() const = 0;
+		virtual const Ref<GraphicsContext> GetGraphicsContext() const = 0;
+		virtual const Ref<Swapchain> GetSwapchain() const = 0;
 
 		//Setting
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

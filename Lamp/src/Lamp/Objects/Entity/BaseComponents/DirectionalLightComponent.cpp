@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "DirectionalLightComponent.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
-#include "Lamp/Objects/Entity/Base/Entity.h"
+
+#include "Lamp/Level/LevelManager.h"
 #include "Lamp/Level/Level.h"
 
 #include <glm/gtx/quaternion.hpp>
@@ -10,27 +10,27 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(DirectionalLightComponent)
 
-	DirectionalLightComponent::DirectionalLightComponent()
+		DirectionalLightComponent::DirectionalLightComponent()
 		: EntityComponent("DirectionalLightComponent")
 	{
 		m_pDirectionalLight = CreateScope<DirectionalLight>();
 
-		SetComponentProperties
-		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->intensity) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->color) },
-			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
-		});
-
-		if (g_pEnv->pLevel)
+		if (LevelManager::IsLevelLoaded())
 		{
-			g_pEnv->pLevel->GetRenderUtils().RegisterDirectionalLight(m_pDirectionalLight.get());
+			auto& env = LevelManager::GetActive()->GetEnvironment();
+			env.RegisterDirectionalLight(m_pDirectionalLight.get());
 		}
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnregisterDirectionalLight(m_pDirectionalLight.get());
+		if (!LevelManager::IsLevelLoaded())
+		{
+			LP_CORE_ERROR("Trying to unregister when no level is loaded!");
+			return;
+		}
+
+		LevelManager::GetActive()->GetEnvironment().UnregisterDirectionalLight(m_pDirectionalLight.get());
 	}
 
 	void DirectionalLightComponent::Initialize()
@@ -42,6 +42,16 @@ namespace Lamp
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ObjectRotationChangedEvent>(LP_BIND_EVENT_FN(DirectionalLightComponent::OnRotationChanged));
+	}
+
+	void DirectionalLightComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pDirectionalLight->intensity) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pDirectionalLight->color) },
+			{ PropertyType::Bool, "Cast Shadows", RegisterData(&m_pDirectionalLight->castShadows) }
+		};
 	}
 
 	bool DirectionalLightComponent::OnRotationChanged(ObjectRotationChangedEvent& e)

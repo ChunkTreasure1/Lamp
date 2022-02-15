@@ -1,30 +1,17 @@
 #include "lppch.h"
 #include "TextureCube.h"
 
-#include "Lamp/Rendering/Renderer.h"
-#include "Platform/OpenGL/OpenGLTextureCube.h"
+#include "Platform/Vulkan/VulkanTextureCube.h"
 
 namespace Lamp
 {
-	Ref<TextureCube> TextureCube::Create(uint32_t width, uint32_t height)
+	Ref<TextureCube> TextureCube::Create(ImageFormat format, uint32_t width, uint32_t height, const void* data)
 	{
-		switch (Renderer::GetAPI())
-		{
-			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTextureCube>(width, height);
-		}
-
-		return nullptr;
+		return CreateRef<VulkanTextureCube>(format, width, height, data);
 	}
 
 	Ref<TextureCube> TextureCube::Create(const std::filesystem::path& path)
 	{
-		switch (Renderer::GetAPI())
-		{
-			case RendererAPI::API::None: LP_CORE_ASSERT(false, "No API supported!"); return nullptr;
-			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTextureCube>(path);
-		}
-
-		return nullptr;
+		return CreateRef<VulkanTextureCube>(path);
 	}
 }

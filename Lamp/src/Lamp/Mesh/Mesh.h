@@ -20,13 +20,6 @@ namespace Lamp
 		glm::vec3 StartMin = glm::vec3(0.f);
 	};
 
-	struct SubMeshData
-	{
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
-		uint32_t matId;
-	};
-
 	class Mesh : public Asset
 	{
 	public:
@@ -36,33 +29,30 @@ namespace Lamp
 		}
 
 		Mesh()
-		{}
+		{
+		}
 
 		friend class ResourceCache;
 
 		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f));
-		void RenderBoundingBox(const glm::mat4& transform);
 
 		//Setting
 		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetMaterial(Ref<Material> mat, uint32_t id) 
+		inline void SetMaterial(Ref<Material> mat, uint32_t id)
 		{
-			if (m_Materials.find(id) == m_Materials.end())
-			{
-				LP_CORE_ASSERT(false, "Mesh does not contain the specified material id!");
-				return;
-			}
-			m_Materials[id] = mat; 
+			auto it = m_Materials.find(id);
+			LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
+
+			it->second = mat;
 		}
 
 		//Getting
-		inline Ref<Material> GetMaterial(uint32_t id) 
+		inline Ref<Material> GetMaterial(uint32_t id)
 		{
-			if (m_Materials.find(id) == m_Materials.end())
-			{
-				LP_CORE_ASSERT(false, "Mesh does not contain the specified material id!");
-			}
-			return m_Materials[id]; 
+			auto it = m_Materials.find(id);
+			LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
+			
+			return it->second;
 		}
 		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_Materials; }
 		inline const std::string& GetName() { return m_Name; }
@@ -71,7 +61,7 @@ namespace Lamp
 
 		static AssetType GetStaticType() { return AssetType::Mesh; }
 		AssetType GetType() override { return GetStaticType(); }
-		
+
 	private:
 		std::vector<Ref<SubMesh>> m_Meshes;
 		std::map<uint32_t, Ref<Material>> m_Materials;

@@ -2,16 +2,20 @@
 #include "PerspectiveCamera.h"
 #include "Lamp/Core/Application.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+
+
 namespace Lamp
 {
 	PerspectiveCamera::PerspectiveCamera(float fov, float nearPlane, float farPlane)
-		: m_TransformMatrix(1.f), m_fieldOfView(fov)
+		: m_TransformMatrix(1.f), m_fieldOfView(fov), m_nearPlane(nearPlane), m_farPlane(farPlane)
 	{
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_fieldOfView), (float)Application::Get().GetWindow().GetWidth() / Application::Get().GetWindow().GetHeight(), nearPlane, farPlane);
-		m_ViewMatrix = glm::mat4(1.f);
+		m_projectionMatrix = glm::perspective(glm::radians(m_fieldOfView), (float)Application::Get().GetWindow().GetWidth() / Application::Get().GetWindow().GetHeight(), nearPlane, farPlane);
+		m_viewMatrix = glm::mat4(1.f);
 		m_aspectRatio = (float)Application::Get().GetWindow().GetWidth() / (float)Application::Get().GetWindow().GetHeight();
 
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
 	}
 
 	void PerspectiveCamera::SetProjection(float fov, float aspect, float nearPlane, float farPlane)
@@ -19,31 +23,69 @@ namespace Lamp
 		m_fieldOfView = fov;
 		m_aspectRatio = aspect;
 
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_fieldOfView), aspect, nearPlane, farPlane);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		m_projectionMatrix = glm::perspective(glm::radians(m_fieldOfView), aspect, nearPlane, farPlane);
+		m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
+	}
+	
+	Frustum PerspectiveCamera::CreateFrustum()
+	{
+		Frustum frustum;
+		const float halfVSide = m_farPlane * tanf(glm::radians(m_fieldOfView) * 0.5f);
+		const float halfHSide = halfVSide * m_aspectRatio;
+
+		const glm::vec3 forwardDir = glm::normalize(GetForwardDirection());
+		const glm::vec3 upDir = glm::normalize(GetUpDirection());
+		const glm::vec3 rightDir = glm::normalize(GetRightDirection());
+
+		const glm::vec3 frontMultFar = m_farPlane * forwardDir;
+
+		frustum.nearFace = { m_position + m_nearPlane * forwardDir, forwardDir };
+		frustum.farFace = { m_position + frontMultFar, -forwardDir };
+
+		frustum.rightFace = { m_position, glm::cross(upDir, frontMultFar + rightDir * halfHSide) };
+		frustum.leftFace = { m_position, glm::cross(frontMultFar - rightDir * halfHSide, upDir) };
+
+		frustum.topFace = { m_position, glm::cross(rightDir, frontMultFar - upDir * halfVSide) };
+		frustum.bottomFace = { m_position, glm::cross(frontMultFar + upDir * halfVSide, rightDir) };
+
+		return frustum;
 	}
 
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.f), m_Position)
-			* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.x), glm::vec3(1.f, 0.f, 0.f))
-			* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.y), glm::vec3(0.f, 1.f, 0.f))
-			* glm::rotate(glm::mat4(1.f), glm::radians(m_Rotation.z), glm::vec3(0.f, 0.f, 1.f));
+		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
-		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Front, m_Up);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		const glm::vec3 lookAt = m_position + GetForwardDirection();
+		m_worldRotation = glm::normalize((m_position - GetForwardDirection()) - m_position);
+		m_viewMatrix = glm::lookAt(m_position, lookAt, glm::vec3(0.f, yawSign, 0.f));
+
+		m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
 	}
+
+	glm::vec3 PerspectiveCamera::GetUpDirection() const
+	{
+		return glm::rotate(GetOrientation(), glm::vec3(0.f, 1.f, 0.f));
+	}
+
+	glm::vec3 PerspectiveCamera::GetRightDirection() const
+	{
+		return glm::rotate(GetOrientation(), glm::vec3(1.f, 0.f, 0.f));
+	}
+
+	glm::vec3 PerspectiveCamera::GetForwardDirection() const
+	{
+		return glm::rotate(GetOrientation(), glm::vec3(0.f, 0.f, -1.f));
+	}
+
+	glm::quat PerspectiveCamera::GetOrientation() const
+	{
+		return glm::quat(glm::vec3(glm::radians(-m_rotation.y), glm::radians(-m_rotation.x), 0.f));
+	}
+
 	void PerspectiveCamera::UpdateVectors()
 	{
-		// Calculate the new Front vector
-		glm::vec3 front;
-		front.x = cos(glm::radians(m_Rotation.x)) * cos(glm::radians(m_Rotation.y));
-		front.y = sin(glm::radians(m_Rotation.y));
-		front.z = sin(glm::radians(m_Rotation.x)) * cos(glm::radians(m_Rotation.y));
-		m_Front = glm::normalize(front);
-		// Also re-calculate the Right and Up vector
-		m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-		m_Up = glm::normalize(glm::cross(m_Right, m_Front));
+		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
+		m_Right = glm::cross(m_worldRotation, glm::vec3(0.f, yawSign, 0.f));
 
 		RecalculateViewMatrix();
 	}

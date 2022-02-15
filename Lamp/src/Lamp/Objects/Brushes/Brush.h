@@ -12,15 +12,16 @@ namespace Lamp
 	{
 	public:
 		Brush(Ref<Mesh> model);
+		~Brush() override = default;
 
-		virtual void OnEvent(Event& e) override;
-		virtual void Destroy() override;
+		void OnEvent(Event& e) override;
+		void Destroy() override;
 
 		//Getting
-		inline const Ref<Mesh>& GetModel() const { return m_Mesh; }
+		inline const Ref<Mesh>& GetModel() const { return m_mesh; }
 
 	public:
-		static Brush* Create(const std::filesystem::path& path);
+		static Brush* Create(const std::filesystem::path& path, bool addToLevel = true);
 		static Brush* Create(const std::filesystem::path& path, const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale, uint32_t layerId, const std::string& name);
 		static Brush* Duplicate(Brush* main, bool addToLevel);
 		static Brush* Get(uint32_t id);
@@ -31,6 +32,7 @@ namespace Lamp
 		bool OnScaleChanged(ObjectScaleChangedEvent& e);
 
 	private:
-		Ref<Mesh> m_Mesh;
+		Ref<Mesh> m_mesh;
+		Ref<Mesh> m_boundingMesh;
 	};
 }

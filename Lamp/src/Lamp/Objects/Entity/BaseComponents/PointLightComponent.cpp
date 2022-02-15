@@ -2,8 +2,11 @@
 #include "PointLightComponent.h"
 
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
-#include "Lamp/Objects/Entity/Base/ComponentRegistry.h"
 #include "Lamp/Rendering/LightBase.h"
+
+#include "Lamp/Objects/Entity/ComponentRegistry.h"
+
+#include "Lamp/Level/LevelManager.h"
 #include "Lamp/Level/Level.h"
 
 namespace Lamp
@@ -15,25 +18,20 @@ namespace Lamp
 	{
 		m_pPointLight = CreateScope<PointLight>();
 
-		SetComponentProperties
-		({
-			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->intensity) },
-			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->radius) },
-			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
-			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
-			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
-			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
-		});
-
-		if (g_pEnv->pLevel)
+		if (LevelManager::IsLevelLoaded())
 		{
-			g_pEnv->pLevel->GetRenderUtils().RegisterPointLight(m_pPointLight.get());
+			LevelManager::GetActive()->GetEnvironment().RegisterPointLight(m_pPointLight.get());
 		}
 	}
 
 	PointLightComponent::~PointLightComponent()
 	{
-		g_pEnv->pLevel->GetRenderUtils().UnregisterPointLight(m_pPointLight.get());
+		if (!LevelManager::IsLevelLoaded())
+		{
+			LP_CORE_ERROR("Trying to unregister when no level was loaded!");
+		}
+
+		LevelManager::GetActive()->GetEnvironment().UnregisterPointLight(m_pPointLight.get());
 	}
 
 	void PointLightComponent::Initialize()
@@ -46,6 +44,19 @@ namespace Lamp
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ObjectPositionChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPositionChanged));
 		dispatcher.Dispatch<ObjectPropertyChangedEvent>(LP_BIND_EVENT_FN(PointLightComponent::OnPropertyChanged));
+	}
+
+	void PointLightComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->intensity) },
+			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->radius) },
+			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
+			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
+			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
+			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
+		};
 	}
 
 	bool PointLightComponent::OnPositionChanged(ObjectPositionChangedEvent& e)

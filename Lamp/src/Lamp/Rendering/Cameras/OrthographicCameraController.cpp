@@ -10,12 +10,12 @@
 namespace Lamp
 {
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_CanRotate(rotation)
+		: m_aspectRatio(aspectRatio), m_CanRotate(rotation)
 	{
-		m_Camera = CreateRef<OrthographicCamera>(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera = CreateRef<OrthographicCamera>(-m_aspectRatio * m_ZoomLevel, m_aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		m_ControlsEnabled = true;
 
-		m_Camera->SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera->SetProjection(-m_aspectRatio * m_ZoomLevel, m_aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 	OrthographicCameraController::~OrthographicCameraController()
 	{
@@ -26,14 +26,14 @@ namespace Lamp
 		if (m_ControlsEnabled)
 		{
 			if (Input::IsKeyPressed(LP_KEY_A))
-				m_Position.x -= m_CameraTranslationSpeed * ts;
+				m_position.x -= m_CameraTranslationSpeed * ts;
 			else if (Input::IsKeyPressed(LP_KEY_D))
-				m_Position.x += m_CameraTranslationSpeed * ts;
+				m_position.x += m_CameraTranslationSpeed * ts;
 
 			if (Input::IsKeyPressed(LP_KEY_W))
-				m_Position.y += m_CameraTranslationSpeed * ts;
+				m_position.y += m_CameraTranslationSpeed * ts;
 			else if (Input::IsKeyPressed(LP_KEY_S))
-				m_Position.y -= m_CameraTranslationSpeed * ts;
+				m_position.y -= m_CameraTranslationSpeed * ts;
 
 			if (m_CanRotate)
 			{
@@ -45,7 +45,7 @@ namespace Lamp
 				m_Camera->SetRotation(m_Rotation);
 			}
 			m_CameraTranslationSpeed = m_ZoomLevel;
-			m_Camera->SetPosition(m_Position);
+			m_Camera->SetPosition(m_position);
 		}
 	}
 
@@ -78,13 +78,13 @@ namespace Lamp
 	{
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.4f);
-		m_Camera->SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera->SetProjection(-m_aspectRatio * m_ZoomLevel, m_aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return true;
 	}
 
 	void OrthographicCameraController::UpdateProjection(uint32_t width, uint32_t height)
 	{
-		m_AspectRatio = (float)width / (float)height;
-		m_Camera->SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_aspectRatio = (float)width / (float)height;
+		m_Camera->SetProjection(-m_aspectRatio * m_ZoomLevel, m_aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 }

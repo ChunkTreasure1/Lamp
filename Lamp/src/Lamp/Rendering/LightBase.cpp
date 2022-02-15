@@ -1,70 +1,59 @@
 #include "lppch.h"
 #include "LightBase.h"
 
-#include "RenderPass.h"
 #include "Shader/ShaderLibrary.h"
+
+#include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
 	DirectionalLight::DirectionalLight()
 	{
 		FramebufferSpecification bufferSpec;
-		bufferSpec.Height = 4096;
-		bufferSpec.Width = 4096;
-		bufferSpec.Attachments =
+		bufferSpec.swapchainTarget = false;
+		bufferSpec.height = 4096;
+		bufferSpec.width = 4096;
+		bufferSpec.shadow = true;
+		bufferSpec.attachments =
 		{
-			{ FramebufferTextureFormat::DEPTH32F, FramebufferTextureFiltering::Linear, FramebufferTextureWrap::ClampToEdge }
+			ImageFormat::RGBA,
+			{ ImageFormat::DEPTH32F, TextureFilter::Linear, TextureWrap::Clamp }
 		};
 
 		shadowBuffer = Framebuffer::Create(bufferSpec);
 
-		RenderPassSpecification spec;
-		spec.clearType = ClearType::ColorDepth;
-		spec.cullFace = CullFace::Front;
-		spec.targetFramebuffer = shadowBuffer;
-		spec.drawType = DrawType::Forward;
+		Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(Renderer::Get().GetCapabilities().framesInFlight);
+		uniformBufferSet->Add(&viewProjection, sizeof(glm::mat4), 0, 0);
 
-		spec.uniforms =
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.framebuffer = shadowBuffer;
+		pipelineSpec.shader = ShaderLibrary::GetShader("directionalShadow");
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Opaque;
+		pipelineSpec.uniformBufferSets = uniformBufferSet;
+		pipelineSpec.vertexLayout =
 		{
-			{ "u_Model", UniformType::RenderData, RenderData::Transform, 0, 0, 1},
-			{ RegisterData(&viewProjection), "u_ViewProjection", UniformType::Mat4 }
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
 		};
 
-		spec.renderShader = ShaderLibrary::GetShader("dirShadow");
-
-		shadowPass = CreateScope<RenderPass>(spec);
+		shadowPipeline = RenderPipeline::Create(pipelineSpec);
 	}
 
 	PointLight::PointLight()
 	{
 		FramebufferSpecification bufferSpec;
-		bufferSpec.Height = 512;
-		bufferSpec.Width = 512;
+		bufferSpec.height = 512;
+		bufferSpec.width = 512;
 
 		shadowBuffer = std::make_shared<PointShadowBuffer>(bufferSpec);
-
-		RenderPassSpecification spec;
-		spec.clearType = ClearType::Depth;
-		spec.cullFace = CullFace::Back;
-		spec.targetFramebuffer = std::dynamic_pointer_cast<Framebuffer>(shadowBuffer);
-		spec.drawType = DrawType::Forward;
-
-		spec.uniforms =
-		{
-			{ RegisterData(&farPlane), "u_FarPlane", UniformType::Float },
-			{ RegisterData(&const_cast<glm::vec3&>(shadowBuffer->GetPosition())), "u_LightPosition", UniformType::Float3 },
-			{ "u_Model", UniformType::RenderData, RenderData::Transform },
-			{ RegisterData(&const_cast<glm::mat4&>(shadowBuffer->GetTransforms()[0])), "u_Transforms[0]", UniformType::Mat4},
-			{ RegisterData(&const_cast<glm::mat4&>(shadowBuffer->GetTransforms()[1])), "u_Transforms[1]", UniformType::Mat4},
-			{ RegisterData(&const_cast<glm::mat4&>(shadowBuffer->GetTransforms()[2])), "u_Transforms[2]", UniformType::Mat4},
-			{ RegisterData(&const_cast<glm::mat4&>(shadowBuffer->GetTransforms()[3])), "u_Transforms[3]", UniformType::Mat4},
-			{ RegisterData(&const_cast<glm::mat4&>(shadowBuffer->GetTransforms()[4])), "u_Transforms[4]", UniformType::Mat4},
-			{ RegisterData(&const_cast<glm::mat4&>(shadowBuffer->GetTransforms()[5])), "u_Transforms[5]", UniformType::Mat4}
-		};
-
-		spec.renderShader = ShaderLibrary::GetShader("pointShadow");
-
-		shadowPass = CreateScope<RenderPass>(spec);
 	}
 }

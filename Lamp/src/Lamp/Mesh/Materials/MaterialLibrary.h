@@ -8,20 +8,25 @@ namespace Lamp
 	class MaterialLibrary
 	{
 	public:
-		static void AddMaterial(Ref<Material> mat);
-		static void AddMaterial(const std::filesystem::path& path);
-		static void LoadMaterials();
+		MaterialLibrary();
+
+		void Initialize();
+		void Shutdown();
+
+		void AddMaterial(Ref<Material> mat);
+		void AddMaterial(const std::filesystem::path& path);
+		void LoadMaterials();
+
+		std::vector<Ref<Material>>& GetMaterials() { return m_materials; }
+		bool IsMaterialLoaded(const std::string& name);
 
 		static Ref<Material> GetMaterial(const std::string& name);
-		static std::vector<Ref<Material>>& GetMaterials() { return m_Materials; }
-		static bool IsMaterialLoaded(const std::string& name);
+		static MaterialLibrary& Get();
 
 	private:
-		static void LoadMaterial(const std::filesystem::path& path);
+		void LoadMaterial(const std::filesystem::path& path);
 
-	private:
-		MaterialLibrary() = delete;
-
-		static std::vector<Ref<Material>> m_Materials;
+		static MaterialLibrary* s_instance;
+		std::vector<Ref<Material>> m_materials;
 	};
 }

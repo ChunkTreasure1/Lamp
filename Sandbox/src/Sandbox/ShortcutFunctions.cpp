@@ -1,22 +1,24 @@
 #include "lppch.h"
-#include "Sandbox.h"
+#include "SandboxLayer.h"
 
 #include "Lamp/Utility/PlatformUtility.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
+#include "Lamp/Level/LevelManager.h"
+
 namespace Sandbox
 {
-	void Sandbox::SaveLevelAs()
+	void SandboxLayer::SaveLevelAs()
 	{
 		std::filesystem::path filepath = Lamp::FileDialogs::SaveFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
 		{
-			g_pEnv->pLevel->Path = filepath;
-			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+			Lamp::LevelManager::GetActive()->Path = filepath;
+			g_pEnv->pAssetManager->SaveAsset(Lamp::LevelManager::GetActive());
 		}
 	}
 
-	void Sandbox::OpenLevel()
+	void SandboxLayer::OpenLevel()
 	{
 		std::filesystem::path filepath = Lamp::FileDialogs::OpenFile("Lamp Level (*.level)\0*.level\0");
 		if (!filepath.empty())
@@ -25,31 +27,48 @@ namespace Sandbox
 		}
 	}
 
-	void Sandbox::OpenLevel(const std::filesystem::path& path)
+	void SandboxLayer::OpenLevel(const std::filesystem::path& path)
 	{
-		m_pLevel = Lamp::ResourceCache::GetAsset<Lamp::Level>(path);
+		Lamp::LevelManager::Get()->Load(path);
 		m_pSelectedObject = nullptr;
 	}
 
-	void Sandbox::NewLevel()
+	void SandboxLayer::NewLevel()
 	{
-		if (!g_pEnv->pLevel->Path.empty())
+		if (Lamp::LevelManager::IsLevelLoaded() && !Lamp::LevelManager::GetActive()->Path.empty())
 		{
-			g_pEnv->pAssetManager->SaveAsset(g_pEnv->pLevel);
+			g_pEnv->pAssetManager->SaveAsset(Lamp::LevelManager::GetActive());
 		}
 
-		m_pLevel = CreateRef<Lamp::Level>("New Level");
-		g_pEnv->pLevel = m_pLevel;
+		Lamp::LevelManager::Get()->SetActive(CreateRef<Lamp::Level>("New Level"));
 		m_pSelectedObject = nullptr;
 	}
 
-	void Sandbox::Undo()
+	void SandboxLayer::Undo()
 	{
-		m_ActionHandler.Undo();
+		//Get active window
+		CommandStack* cmdStack = nullptr;
+		
+		if (m_perspectiveOpen)
+		{
+			cmdStack = &m_perspectiveCommands;
+		}
+		else
+		{
+			for (auto window : m_pWindows)
+			{
+				if (window->IsFocused())
+				{
+					cmdStack = &window->GetCommandStack();
+					break;
+				}
+			}
+		}
+
+		cmdStack->Undo();
 	}
 
-	void Sandbox::Redo()
+	void SandboxLayer::Redo()
 	{
-		m_ActionHandler.Redo();
 	}
 }

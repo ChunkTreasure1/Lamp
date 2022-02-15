@@ -7,6 +7,12 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(AudioComponent);
 
+	AudioComponent::AudioComponent()
+		: EntityComponent("AudioComponent"), m_EventName(""), m_PlayOnStart(false)
+	{
+
+	}
+
 	void AudioComponent::Initialize()
 	{
 		if (m_PlayOnStart)
@@ -17,6 +23,15 @@ namespace Lamp
 
 	void AudioComponent::OnEvent(Event& e)
 	{
+	}
+
+	void AudioComponent::SetComponentProperties()
+	{
+		m_componentProperties =
+		{
+			{ PropertyType::String, "Event name", RegisterData(&m_EventName) },
+			{ PropertyType::Bool, "Play on start", RegisterData(&m_PlayOnStart) }
+		};
 	}
 
 	void AudioComponent::Play()

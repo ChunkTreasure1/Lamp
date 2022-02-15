@@ -201,4 +201,47 @@ namespace Lamp
 	private:
 		Entity* m_pOther;
 	};
+
+	class LevelLoadStartedEvent : public Event
+	{
+	public:
+		LevelLoadStartedEvent(const std::filesystem::path& path)
+			: m_path(path)
+		{}
+
+		std::string ToString() const override
+		{
+			return m_path.string();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(LevelLoadStarted);
+
+		inline const std::filesystem::path& GetLevel() const { return m_path; }
+
+	private:
+		std::filesystem::path m_path;
+	};
+
+	class LevelLoadFinishedEvent : public Event
+	{
+	public:
+		LevelLoadFinishedEvent(const std::filesystem::path& path)
+			: m_path(path)
+		{
+		}
+
+		std::string ToString() const override
+		{
+			return m_path.string();
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryEntity);
+		EVENT_CLASS_TYPE(LevelLoadFinished);
+
+		inline const std::filesystem::path& GetLevel() const { return m_path; }
+
+	private:
+		std::filesystem::path m_path;
+	};
 }

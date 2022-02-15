@@ -1,73 +1,40 @@
 #pragma once
 
-#include "RendererAPI.h"
+#include "Lamp/Core/Core.h"
+
+#include "Lamp/Rendering/Buffers/RenderBuffer.h"
+
+#include <vulkan/vulkan.h>
 
 namespace Lamp
 {
+	class Renderer;
+	class CameraBase;
+	class RenderPipeline;
+	class Material;
+	class SubMesh;
+
 	class RenderCommand
 	{
 	public:
-		static void Initialize()
-		{
-			s_RendererAPI->Initialize();
-		}
+		static void Initialize(Renderer* renderer);
+		static void Shutdown();
 
-		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
-		{
-			s_RendererAPI->SetViewport(x, y, width, height);
-		}
+		static void Begin(const Ref<CameraBase> camera);
+		static void End();
+		static void SwapRenderBuffers();
 
-		static void SetClearColor(const glm::vec4& color)
-		{
-			s_RendererAPI->SetClearColor(color);
-		}
+		static void BeginPass(const Ref<RenderPipeline> pipeline);
+		static void EndPass();
 
-		static void Clear()
-		{
-			s_RendererAPI->Clear();
-		}
-		
-		static void ClearColor()
-		{
-			s_RendererAPI->ClearColor();
-		}
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
+		static void SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
 
-		static void ClearDepth()
-		{
-			s_RendererAPI->ClearDepth();
-		}
-
-		static void OffsetPolygon(float factor = 0, float unit = 0)
-		{
-			s_RendererAPI->OffsetPolygon(factor, unit);
-		}
-
-		static void DrawIndexed(const Ref<VertexArray>& VertexArray, uint32_t count = 0)
-		{
-			s_RendererAPI->DrawIndexed(VertexArray, count);
-		}
-
-		static void DrawIndexedLines(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
-		{
-			s_RendererAPI->DrawIndexedLines(vertexArray, count);
-		}
-
-		static void SetCullFace(CullFace face)
-		{
-			s_RendererAPI->SetCullFace(face);
-		}
-		
-		static void EnableBlending(bool state) 
-		{
-			s_RendererAPI->EnableBlending(state);
-		}
-
-		static const RendererCapabilities& GetCapabilities()
-		{
-			return s_RendererAPI->GetRendererCapabilities();
-		}
+		static void DispatchRenderCommands();
 
 	private:
-		static Scope<RendererAPI> s_RendererAPI;
+		RenderCommand() = delete;
+
+		static Renderer* s_renderer;
 	};
 }

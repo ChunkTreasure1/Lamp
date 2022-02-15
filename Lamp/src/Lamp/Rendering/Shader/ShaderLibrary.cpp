@@ -5,19 +5,19 @@
 
 namespace Lamp
 {
-	std::vector<Ref<Shader>> ShaderLibrary::m_Shaders;
+	std::vector<Ref<Shader>> ShaderLibrary::m_shaders;
 
 	void ShaderLibrary::AddShader(const std::string& path)
 	{
-		Ref<Shader> shader = Shader::Create(path);
+		Ref<Shader> shader = Shader::Create(path, false); //TODO: fix force compile
 
-		m_Shaders.push_back(shader);
+		m_shaders.push_back(shader);
 	}
 
 	void ShaderLibrary::LoadShaders()
 	{
 		std::vector<std::string> paths;
-		FileSystem::GetAllFilesOfType(paths, ".glsl", "engine");
+		FileSystem::GetAllFilesOfType(".glsl", "engine/shaders/vulkan", paths);
 
 		for (auto& path : paths)
 		{
@@ -27,15 +27,15 @@ namespace Lamp
 
 	void ShaderLibrary::RecompileShaders()
 	{
-		for (auto& shader : m_Shaders)
+		for (auto& shader : m_shaders)
 		{
-			shader->Recompile();
+			shader->Reload(true);
 		}
 	}
 
-	Ref<Shader>& ShaderLibrary::GetShader(const std::string& name)
+	Ref<Shader> ShaderLibrary::GetShader(const std::string& name)
 	{
-		for (auto& shader : m_Shaders)
+		for (auto& shader : m_shaders)
 		{
 			if (shader->GetName() == name)
 			{
@@ -43,6 +43,6 @@ namespace Lamp
 			}
 		}
 
-		return Ref<Shader>(nullptr);
+		return nullptr;
 	}
 }

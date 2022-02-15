@@ -1,17 +1,24 @@
 #include "MaterialEditor.h"
 
-#include <imgui/imgui_stdlib.h>
-#include <Lamp/Utility/PlatformUtility.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
-#include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
 
-#include <Lamp/Rendering/RenderGraph/RenderGraph.h>
-#include <Lamp/Rendering/RenderGraph/Nodes/RenderNodeEnd.h>
+#include <Lamp/Rendering/RenderCommand.h>
+#include <Lamp/Rendering/Shader/ShaderLibrary.h>
+#include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
+#include <Lamp/Mesh/Mesh.h>
+
+#include <Lamp/Core/Time/ScopedTimer.h>
 
 #include <Lamp/Utility/UIUtility.h>
+#include <Lamp/Utility/PlatformUtility.h>
+
+#include <Lamp/Input/KeyCodes.h>
+#include <Lamp/Input/Input.h>
+
+#include <imgui/imgui_stdlib.h>
 
 namespace Sandbox
 {
@@ -20,18 +27,13 @@ namespace Sandbox
 	static const std::filesystem::path s_assetsPath = "assets";
 
 	MaterialEditor::MaterialEditor(std::string_view name)
-		: BaseWindow(name)
+		: EditorWindow(name)
 	{
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
-		m_renderFuncs.emplace_back(LP_EXTRA_RENDER(MaterialEditor::Render));
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 
-		m_renderGraph = ResourceCache::GetAsset<RenderGraph>("engine/renderGraphs/editor.rendergraph");
-		m_renderGraph->Start();
-
-		m_framebuffer = m_renderGraph->GetSpecification().endNode->framebuffer;
 		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
 		m_pSelectedMaterial = MaterialLibrary::GetMaterial("base");
 	}
@@ -73,7 +75,9 @@ namespace Sandbox
 
 	bool MaterialEditor::OnUpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
-		if (!m_IsOpen)
+		ScopedTimer timer{};
+
+		if (!m_isOpen)
 		{
 			return false;
 		}
@@ -81,7 +85,7 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_name.c_str(), &m_IsOpen);
+		ImGui::Begin(m_name.c_str(), &m_isOpen);
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -96,6 +100,8 @@ namespace Sandbox
 		UpdateMaterialView();
 		UpdateMaterialList();
 		UpdateToolbar();
+
+		m_deltaTime = timer.GetTime();
 		return false;
 	}
 
@@ -121,20 +127,15 @@ namespace Sandbox
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Material View");
-
-		if (m_renderGraph->GetSpecification().endNode->framebuffer)
 		{
 			ImVec2 panelSize = ImGui::GetContentRegionAvail();
 			if (m_perspectiveSize != *((glm::vec2*)&panelSize))
 			{
-				m_renderGraph->GetSpecification().endNode->framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 				m_perspectiveSize = { panelSize.x, panelSize.y };
 
 				m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
 
-			uint32_t textureID = m_renderGraph->GetSpecification().endNode->framebuffer->GetColorAttachmentID(0);
-			ImGui::Image((ImTextureID)textureID, ImVec2{ panelSize.x, panelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -175,10 +176,31 @@ namespace Sandbox
 		if (UI::BeginProperties("matProps", false))
 		{
 			UI::Property("Name", m_pSelectedMaterial->GetName());
-			UI::Property("Use blending", const_cast<bool&>(m_pSelectedMaterial->GetUseBlending()));
-			if (m_pSelectedMaterial->GetUseBlending())
+		
+			auto& matData = const_cast<MaterialData&>(m_pSelectedMaterial->GetMaterialData());
+			
+			UI::Property("Use blending", matData.useBlending);
+			if (matData.useBlending)
 			{
-				UI::Property("Blending multiplier", const_cast<float&>(m_pSelectedMaterial->GetBlendingMultiplier()), true, 0.f, 1.f);
+				UI::Property("Blending multiplier", matData.blendingMultiplier, true, 0.f, 1.f);
+			}
+
+			UI::Property("Use albedo map", matData.useAlbedo);
+			if (!matData.useAlbedo)
+			{
+				UI::Property("Albedo color", matData.albedoColor);
+			}
+
+			UI::Property("Use normal map", matData.useNormal);
+			if (!matData.useNormal)
+			{
+				UI::Property("Normal color", matData.normalColor);
+			}
+
+			UI::Property("Use MRO map", matData.useMRO);
+			if (!matData.useMRO)
+			{
+				UI::Property("Metal roughness", matData.mroColor, 0.f, 1.f);
 			}
 
 			UI::EndProperties(false);
@@ -189,7 +211,8 @@ namespace Sandbox
 
 		ImGui::TextUnformatted("Textures");
 
-		for (auto& tex : m_pSelectedMaterial->GetTextures())
+		//TODO: fix
+		/*for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(m_pSelectedMaterial->GetTextures()))
 		{
 			ImGui::TextUnformatted(tex.first.c_str());
 
@@ -217,7 +240,7 @@ namespace Sandbox
 					tex.second = ResourceCache::GetAsset<Texture2D>(path);
 				}
 			}
-		}
+		}*/
 
 		ImGui::End();
 	}
@@ -226,7 +249,7 @@ namespace Sandbox
 	{
 		ImGui::Begin("Materials##matEd");
 
-		auto& materials = MaterialLibrary::GetMaterials();
+		auto& materials = MaterialLibrary::Get().GetMaterials();
 		int i = 0;
 		for (auto& mat : materials)
 		{
@@ -263,7 +286,7 @@ namespace Sandbox
 
 	void MaterialEditor::Render()
 	{
-		if (!m_IsOpen)
+		if (!m_isOpen)
 		{
 			return;
 		}
@@ -272,22 +295,20 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_materialModel->GetSubMeshes())
 			{
-				Renderer3D::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
+				RenderCommand::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
 			}
 		}
-
-		m_renderGraph->Run(m_camera->GetCamera());
 	}
 
 	void MaterialEditor::CreateNewMaterial()
 	{
 		std::filesystem::path matPath = s_assetsPath / "material.mtl";
 
-		Ref<Material> mat = CreateRef<Material>(0, "New Material");
+		Ref<Material> mat = Material::Create("New Material", 0);
 		mat->Path = matPath;
 		mat->SetShader(ShaderLibrary::GetShader("pbrForward"));
 
 		g_pEnv->pAssetManager->SaveAsset(mat);
-		MaterialLibrary::AddMaterial(mat);
+		MaterialLibrary::Get().AddMaterial(mat);
 	}
 }

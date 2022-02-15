@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lamp/AssetSystem/Asset.h"
-#include "Lamp/Objects/Entity/Base/ComponentProperties.h"
+#include "Lamp/Objects/Entity/ComponentProperties.h"
 
 #include <filesystem>
 #include <yaml-cpp/yaml.h>

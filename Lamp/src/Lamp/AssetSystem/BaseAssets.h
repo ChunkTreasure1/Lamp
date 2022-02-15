@@ -9,7 +9,7 @@ namespace Lamp
 	class MeshSource : public Asset
 	{
 	public:
-		MeshSource(const ImportSettings& settings, AssetHandle mesh)
+		MeshSource(const MeshImportSettings& settings, AssetHandle mesh)
 			: m_importSettings(settings), m_mesh(mesh)
 		{}
 
@@ -18,7 +18,7 @@ namespace Lamp
 
 		const std::filesystem::path& GetSource() const { return m_importSettings.path; }
 		const AssetHandle& GetMeshAsset() const { return m_mesh; }
-		const ImportSettings& GetImportSettings() const { return m_importSettings; }
+		const MeshImportSettings& GetImportSettings() const { return m_importSettings; }
 
 		static AssetType GetStaticType() { return AssetType::MeshSource; }
 		AssetType GetType() override { return GetStaticType(); }
@@ -27,6 +27,6 @@ namespace Lamp
 
 	private:
 		AssetHandle m_mesh;
-		ImportSettings m_importSettings;
+		MeshImportSettings m_importSettings;
 	};
 }

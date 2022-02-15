@@ -1,15 +1,22 @@
 #pragma once
 
-#include "BaseWindow.h"
+#include "EditorWindow.h"
+
+#include <Lamp/Event/ApplicationEvent.h>
+#include <Lamp/Event/KeyEvent.h>
 
 namespace Lamp
 {
 	class Material;
+	class Mesh;
+	class Framebuffer;
+	class PerspectiveCameraController;
+	class Texture2D;
 }
 
 namespace Sandbox
 {
-	class MaterialEditor : public BaseWindow
+	class MaterialEditor : public EditorWindow
 	{
 	public:
 		MaterialEditor(std::string_view name);
@@ -34,7 +41,6 @@ namespace Sandbox
 		Ref<Lamp::Framebuffer> m_framebuffer;
 		Ref<Lamp::Mesh> m_materialModel;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
-		Ref<Lamp::RenderGraph> m_renderGraph;
 		std::filesystem::path m_pathOnRightClick;
 
 		glm::vec2 m_perspectiveSize = { 0.f, 0.f };

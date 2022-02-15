@@ -5,6 +5,11 @@ namespace Lamp
 {
 	LP_REGISTER_COMPONENT(AudioListenerComponent);
 
+	AudioListenerComponent::AudioListenerComponent()
+		: EntityComponent("AudioListenerComponent"), m_forward(0.f), m_up(0.f), m_listener(0)
+	{
+	}
+
 	void AudioListenerComponent::Initialize()
 	{
 	}
@@ -17,19 +22,19 @@ namespace Lamp
 
 	void AudioListenerComponent::CalculateForwardAndUp()
 	{
-		m_Forward.x = glm::sin(m_pEntity->GetRotation().y) * glm::cos(m_pEntity->GetRotation().x);
-		m_Forward.y = glm::sin(-m_pEntity->GetRotation().x);
-		m_Forward.z = glm::cos(m_pEntity->GetRotation().x) * glm::cos(m_pEntity->GetRotation().y);
+		m_forward.x = glm::sin(m_pEntity->GetRotation().y) * glm::cos(m_pEntity->GetRotation().x);
+		m_forward.y = glm::sin(-m_pEntity->GetRotation().x);
+		m_forward.z = glm::cos(m_pEntity->GetRotation().x) * glm::cos(m_pEntity->GetRotation().y);
 	
-		m_Up = glm::cross(glm::cross(m_Forward, glm::vec3(0.f, 1.f, 0.f)), m_Forward);
+		m_up = glm::cross(glm::cross(m_forward, glm::vec3(0.f, 1.f, 0.f)), m_forward);
 	}
 
 	bool AudioListenerComponent::OnPositionChanged(ObjectPositionChangedEvent& e)
 	{
 		CalculateForwardAndUp();
-		ListenerAttributes attr(m_pEntity->GetPosition(), glm::vec3(0.f), m_Forward, m_Up);
+		ListenerAttributes attr(m_pEntity->GetPosition(), glm::vec3(0.f), m_forward, m_up);
 
-		AudioEngine::Get()->SetListenerAttributes(m_Listener, attr);
+		AudioEngine::Get()->SetListenerAttributes(m_listener, attr);
 
 		return true;
 	}

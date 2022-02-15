@@ -77,8 +77,8 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;LP_DEBUG;LP_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.198.1\Include;vendor\rapidxml;vendor\ktx2\include;vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -91,7 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vendor\PhysX\lib\Debug\PhysX_static_64.lib;vendor\PhysX\lib\Debug\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Debug\PhysXCommon_static_64.lib;vendor\PhysX\lib\Debug\PhysXCooking_static_64.lib;vendor\PhysX\lib\Debug\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Debug\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Debug\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.198.1\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_sharedd.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_utild.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-cored.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-glsld.lib;C:\VulkanSDK\1.2.198.1\Lib\SPIRV-Toolsd.lib;vendor\ktx2\lib\ktx_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.198.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -101,8 +102,8 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;NDEBUG;LP_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.198.1\Include;vendor\rapidxml;vendor\ktx2\include;vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +119,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vendor\PhysX\lib\Release\PhysX_static_64.lib;vendor\PhysX\lib\Release\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Release\PhysXCommon_static_64.lib;vendor\PhysX\lib\Release\PhysXCooking_static_64.lib;vendor\PhysX\lib\Release\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Release\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Release\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.198.1\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-glsl.lib;vendor\ktx2\lib\ktx_release.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.198.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -128,8 +130,8 @@
       <PrecompiledHeaderFile>lppch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;LP_DIST;LP_ENABLE_ASSERTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\include;vendor\GLFW\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\rapidxml;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;LP_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;GLM_FORCE_DEPTH_ZERO_TO_ONE;LP_DIST;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor;vendor\glfw\include;vendor\spdlog\include;vendor\imgui;vendor\glad\include;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\fmod\include;vendor\PhysX\include;vendor\imnodes;vendor\yaml-cpp\include;C:\VulkanSDK\1.2.198.1\Include;vendor\rapidxml;vendor\ktx2\include;vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -145,7 +147,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vendor\PhysX\lib\Dist\PhysX_static_64.lib;vendor\PhysX\lib\Dist\PhysXCharacterKinematic_static_64.lib;vendor\PhysX\lib\Dist\PhysXCommon_static_64.lib;vendor\PhysX\lib\Dist\PhysXCooking_static_64.lib;vendor\PhysX\lib\Dist\PhysXExtensions_static_64.lib;vendor\PhysX\lib\Dist\PhysXFoundation_static_64.lib;vendor\PhysX\lib\Dist\PhysXPvdSDK_static_64.lib;C:\VulkanSDK\1.2.198.1\Lib\vulkan-1.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_shared.lib;C:\VulkanSDK\1.2.198.1\Lib\shaderc_util.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-core.lib;C:\VulkanSDK\1.2.198.1\Lib\spirv-cross-glsl.lib;vendor\ktx2\lib\ktx_release.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.2.198.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -157,7 +160,6 @@
     <ClInclude Include="src\Lamp\AssetSystem\BaseAssets.h" />
     <ClInclude Include="src\Lamp\AssetSystem\LevelLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\MeshImporter.h" />
-    <ClInclude Include="src\Lamp\AssetSystem\RenderGraphLoader.h" />
     <ClInclude Include="src\Lamp\AssetSystem\ResourceCache.h" />
     <ClInclude Include="src\Lamp\Audio\AudioEngine.h" />
     <ClInclude Include="src\Lamp\Core\Application.h" />
@@ -168,11 +170,14 @@
     <ClInclude Include="src\Lamp\Core\Game.h" />
     <ClInclude Include="src\Lamp\Core\GlobalEnvironment.h" />
     <ClInclude Include="src\Lamp\Core\Log.h" />
+    <ClInclude Include="src\Lamp\Core\Thread.h" />
+    <ClInclude Include="src\Lamp\Core\ThreadPool.h" />
     <ClInclude Include="src\Lamp\Core\Time\FrameTime.h" />
+    <ClInclude Include="src\Lamp\Core\Time\ScopedTimer.h" />
     <ClInclude Include="src\Lamp\Core\Time\Timestep.h" />
     <ClInclude Include="src\Lamp\Core\UUID.h" />
     <ClInclude Include="src\Lamp\Core\Window.h" />
-    <ClInclude Include="src\Lamp\Debug\Instrumentor.h" />
+    <ClInclude Include="src\Lamp\Debug\Profiler.h" />
     <ClInclude Include="src\Lamp\Event\ApplicationEvent.h" />
     <ClInclude Include="src\Lamp\Event\EditorEvent.h" />
     <ClInclude Include="src\Lamp\Event\EntityEvent.h" />
@@ -192,18 +197,17 @@
     <ClInclude Include="src\Lamp\Input\WindowsInput.h" />
     <ClInclude Include="src\Lamp\Layer\Layer.h" />
     <ClInclude Include="src\Lamp\Layer\LayerStack.h" />
+    <ClInclude Include="src\Lamp\Level\Environment.h" />
     <ClInclude Include="src\Lamp\Level\Level.h" />
+    <ClInclude Include="src\Lamp\Level\LevelManager.h" />
     <ClInclude Include="src\Lamp\Level\ObjectLayer.h" />
     <ClInclude Include="src\Lamp\Math\Math.h" />
     <ClInclude Include="src\Lamp\Mesh\Materials\Material.h" />
     <ClInclude Include="src\Lamp\Mesh\Materials\MaterialLibrary.h" />
     <ClInclude Include="src\Lamp\Mesh\Mesh.h" />
     <ClInclude Include="src\Lamp\Mesh\SubMesh.h" />
+    <ClInclude Include="src\Lamp\Objects\BoundingVolume.h" />
     <ClInclude Include="src\Lamp\Objects\Brushes\Brush.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\BaseComponent.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentProperties.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.h" />
-    <ClInclude Include="src\Lamp\Objects\Entity\Base\Entity.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.h" />
@@ -216,6 +220,10 @@
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Entity\ComponentInclude.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentProperties.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\ComponentRegistry.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\Entity.h" />
+    <ClInclude Include="src\Lamp\Objects\Entity\EntityComponent.h" />
     <ClInclude Include="src\Lamp\Objects\Object.h" />
     <ClInclude Include="src\Lamp\Physics\ContactListener.h" />
     <ClInclude Include="src\Lamp\Physics\CookingFactory.h" />
@@ -230,49 +238,39 @@
     <ClInclude Include="src\Lamp\Physics\PhysicsSettings.h" />
     <ClInclude Include="src\Lamp\Physics\PhysicsShapes.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\Buffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\RenderBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.h" />
     <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\UniformBufferSet.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h" />
+    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraBase.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\CameraControllerBase.h" />
+    <ClInclude Include="src\Lamp\Rendering\Cameras\Frustum.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.h" />
     <ClInclude Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.h" />
+    <ClInclude Include="src\Lamp\Rendering\CommandBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Lamp\Rendering\LightBase.h" />
-    <ClInclude Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Reflections\EnvironmentProbe.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderCommand.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraph.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderGraphUtils.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderNode.h" />
-    <ClInclude Include="src\Lamp\Rendering\RenderGraph\RenderPassSpecifications.h" />
     <ClInclude Include="src\Lamp\Rendering\RenderPass.h" />
-    <ClInclude Include="src\Lamp\Rendering\Renderer.h" />
+    <ClInclude Include="src\Lamp\Rendering\RenderPipeline.h" />
     <ClInclude Include="src\Lamp\Rendering\Renderer2D.h" />
-    <ClInclude Include="src\Lamp\Rendering\Renderer3D.h" />
-    <ClInclude Include="src\Lamp\Rendering\RendererAPI.h" />
+    <ClInclude Include="src\Lamp\Rendering\RendererDataStructures.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\Shader.h" />
     <ClInclude Include="src\Lamp\Rendering\Shader\ShaderLibrary.h" />
     <ClInclude Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.h" />
     <ClInclude Include="src\Lamp\Rendering\Skybox.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\IBLBuffer.h" />
+    <ClInclude Include="src\Lamp\Rendering\Swapchain.h" />
+    <ClInclude Include="src\Lamp\Rendering\Textures\Image2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\Texture2D.h" />
     <ClInclude Include="src\Lamp\Rendering\Textures\TextureCube.h" />
-    <ClInclude Include="src\Lamp\Rendering\Textures\TextureHDR.h" />
-    <ClInclude Include="src\Lamp\Rendering\UniformBuffers.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\BufferLayout.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\Framebuffer.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexArray.h" />
-    <ClInclude Include="src\Lamp\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Lamp\Utility\ImGuiExtension.h" />
     <ClInclude Include="src\Lamp\Utility\PlatformUtility.h" />
     <ClInclude Include="src\Lamp\Utility\Random.h" />
@@ -281,19 +279,30 @@
     <ClInclude Include="src\Lamp\Utility\ThreadSafeQueue.h" />
     <ClInclude Include="src\Lamp\Utility\UIUtility.h" />
     <ClInclude Include="src\Lamp\Utility\YAMLSerializationHelpers.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureCube.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTextureHDR.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
+    <ClInclude Include="src\Lamp\World\Terrain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanAllocator.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanBuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanCommandBuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanContext.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanFramebuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanImGuiLayer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanImage2D.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanMaterial.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderComputePipeline.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderPipeline.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanRenderer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanShader.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanShaderStorageBuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapchain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTexture2D.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTextureCube.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanUniformBuffer.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanUtility.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lppch.h" />
+    <ClInclude Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -726,12 +735,13 @@
     <ClCompile Include="src\Lamp\AssetSystem\AssetManager.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\LevelLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\MeshImporter.cpp" />
-    <ClCompile Include="src\Lamp\AssetSystem\RenderGraphLoader.cpp" />
     <ClCompile Include="src\Lamp\AssetSystem\ResourceCache.cpp" />
     <ClCompile Include="src\Lamp\Audio\AudioEngine.cpp" />
     <ClCompile Include="src\Lamp\Core\Application.cpp" />
     <ClCompile Include="src\Lamp\Core\GlobalEnvironment.cpp" />
     <ClCompile Include="src\Lamp\Core\Log.cpp" />
+    <ClCompile Include="src\Lamp\Core\Thread.cpp" />
+    <ClCompile Include="src\Lamp\Core\ThreadPool.cpp" />
     <ClCompile Include="src\Lamp\Core\Time\FrameTime.cpp" />
     <ClCompile Include="src\Lamp\Core\UUID.cpp" />
     <ClCompile Include="src\Lamp\Core\Window.cpp" />
@@ -749,16 +759,17 @@
     <ClCompile Include="src\Lamp\Input\WindowsInput.cpp" />
     <ClCompile Include="src\Lamp\Layer\Layer.cpp" />
     <ClCompile Include="src\Lamp\Layer\LayerStack.cpp" />
+    <ClCompile Include="src\Lamp\Level\Environment.cpp" />
     <ClCompile Include="src\Lamp\Level\Level.cpp" />
+    <ClCompile Include="src\Lamp\Level\LevelManager.cpp" />
     <ClCompile Include="src\Lamp\Level\ObjectLayer.cpp" />
     <ClCompile Include="src\Lamp\Math\Math.cpp" />
     <ClCompile Include="src\Lamp\Mesh\Materials\Material.cpp" />
     <ClCompile Include="src\Lamp\Mesh\Materials\MaterialLibrary.cpp" />
     <ClCompile Include="src\Lamp\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Lamp\Mesh\SubMesh.cpp" />
+    <ClCompile Include="src\Lamp\Objects\BoundingVolume.cpp" />
     <ClCompile Include="src\Lamp\Objects\Brushes\Brush.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\ComponentRegistry.cpp" />
-    <ClCompile Include="src\Lamp\Objects\Entity\Base\Entity.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\AudioListenerComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\CameraComponent.cpp" />
@@ -770,6 +781,9 @@
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\RigidbodyComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\Physics\SphereColliderComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Entity\BaseComponents\PointLightComponent.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\ComponentRegistry.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\Entity.cpp" />
+    <ClCompile Include="src\Lamp\Objects\Entity\EntityComponent.cpp" />
     <ClCompile Include="src\Lamp\Objects\Object.cpp" />
     <ClCompile Include="src\Lamp\Physics\ContactListener.cpp" />
     <ClCompile Include="src\Lamp\Physics\CookingFactory.cpp" />
@@ -781,59 +795,59 @@
     <ClCompile Include="src\Lamp\Physics\PhysicsLayer.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsScene.cpp" />
     <ClCompile Include="src\Lamp\Physics\PhysicsShapes.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\ShaderStorageBufferSet.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\UniformBufferSet.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Cameras\Frustum.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Cameras\PerspectiveCameraController.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\CommandBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Lamp\Rendering\LightBase.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Reflections\ReflectionBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\RenderCommand.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\DynamicUniformRegistry.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeCompute.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeDynamicUniform.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeEnd.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeFramebuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodePass.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeStart.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\Nodes\RenderNodeTexture.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderGraph.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderGraph\RenderNode.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RenderPass.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Renderer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Renderer2D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Renderer3D.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\RendererAPI.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\Shader.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shader\ShaderLibrary.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Shadows\PointShadowBuffer.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Skybox.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\IBLBuffer.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Swapchain.cpp" />
+    <ClCompile Include="src\Lamp\Rendering\Textures\Image2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\Texture2D.cpp" />
     <ClCompile Include="src\Lamp\Rendering\Textures\TextureCube.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Textures\TextureHDR.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\Framebuffer.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexArray.cpp" />
-    <ClCompile Include="src\Lamp\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Lamp\Utility\UIUtility.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLShaderStorageBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureCube.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTextureHDR.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\Lamp\World\Terrain.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanAllocator.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanBuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanCommandBuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanFramebuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanImGuiLayer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanImage2D.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanMaterial.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderComputePipeline.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderPipeline.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanRenderer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanShader.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanShaderStorageBuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapchain.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTexture2D.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTextureCube.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanUniformBuffer.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\lppch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\VulkanMemoryAllocator\VulkanMemoryAllocator.cpp" />
     <ClCompile Include="vendor\imnodes\imnodes.cpp" />
     <ClCompile Include="vendor\stb_image\stb\stb_image.cpp" />
     <ClCompile Include="vendor\yaml-cpp\src\binary.cpp" />
@@ -879,6 +893,9 @@
     </ProjectReference>
     <ProjectReference Include="vendor\glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\Optick\Optick.vcxproj">
+      <Project>{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

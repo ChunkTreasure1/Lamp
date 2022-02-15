@@ -1,16 +1,22 @@
 #pragma once
 
 #include "ObjectLayer.h"
+
 #include "Lamp/AssetSystem/Asset.h"
-#include "Lamp/Event/Event.h"
 #include "Lamp/Core/Time/Timestep.h"
 
 #include "Lamp/Objects/Entity/BaseComponents/MeshComponent.h"
+
 #include "Lamp/Event/EditorEvent.h"
+#include "Lamp/Event/Event.h"
+
+#include "Lamp/World/Terrain.h"
+#include "Lamp/Level/Environment.h"
+
+#include "Lamp/Rendering/RenderPass.h"
 #include "Lamp/Rendering/Skybox.h"
 
 #include <string>
-#include <glm/gtc/quaternion.hpp>
 #include <unordered_map>
 
 namespace Lamp
@@ -20,78 +26,26 @@ namespace Lamp
 	class Brush;
 	class Entity;
 	class CameraBase;
-
-	class RenderUtils
-	{
-	public:
-		RenderUtils() {}
-		~RenderUtils();
-
-		void RegisterPointLight(PointLight* light);
-		bool UnregisterPointLight(PointLight* light);
-
-		void RegisterDirectionalLight(DirectionalLight* light);
-		bool UnregisterDirectionalLight(DirectionalLight* light);
-
-		void RegisterMeshComponent(uint32_t id, MeshComponent* mesh);
-		bool UnegisterMeshComponent(uint32_t id);
-
-		inline const std::vector<PointLight*>& GetPointLights() { return m_PointLights; }
-		inline const std::vector<DirectionalLight*>& GetDirectionalLights() { return m_DirectionalLights; }
-		inline const std::unordered_map<uint32_t, MeshComponent*>& GetMeshComponents() { return m_MeshComponents; }
-
-	private:
-		std::vector<Lamp::PointLight*> m_PointLights;
-		std::vector<Lamp::DirectionalLight*> m_DirectionalLights;
-		
-		std::unordered_map<uint32_t, MeshComponent*> m_MeshComponents;
-	};
-
-	struct LevelEnvironment
-	{
-		glm::vec3 CameraPosition{ 0.f, 0.f, 0.f };
-		glm::quat CameraRotation;
-
-		float CameraFOV = 60.f;
-	};
+	class Terrain;
 
 	class Level : public Asset
 	{
 	public:
-		Level(const std::string& name)
-			: m_Name(name)
-		{
-		}
-
-		Level()
-		{
-			//Reserve 100 layer slots
-			m_Layers.reserve(100);
-		}
+		Level(const std::string& name);
+		Level();
 
 		Level(const Level& level);
-
 		~Level();
 
-		inline LevelEnvironment& GetEnvironment() { return m_Environment; }
-		inline const std::string& GetName() { return m_Name; }
-		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_Brushes; }
-		inline std::map<uint32_t, Entity*>& GetEntities() { return m_Entities; }
-		inline std::vector<ObjectLayer>& GetLayers() { return m_Layers; }
-		inline bool GetIsPlaying() { return m_IsPlaying; }
-		inline RenderUtils& GetRenderUtils() { return m_RenderUtils; }
-		inline Ref<Skybox> GetSkybox() { return m_skybox; }
-
-		inline void SetIsPlaying(bool playing) { m_IsPlaying = playing; }
-		inline void SetSkybox(const std::filesystem::path& path) { m_skybox = Skybox::Create(path); }
-
-		static AssetType GetStaticType() { return AssetType::Level; }
-		AssetType GetType() override { return GetStaticType(); }
-
 		void OnEvent(Event& e);
-		void UpdateEditor(Timestep ts, Ref<CameraBase>& camera);
-		void UpdateSimulation(Timestep ts, Ref<CameraBase>& camera);
-		void UpdateRuntime(Timestep ts);
+
+		void UpdateEditor(Timestep ts, const Ref<CameraBase> renderCamera);
+		void UpdateSimulation(Timestep ts);
+		void UpdateRuntime(Timestep ts, const Ref<CameraBase> renderCamera);
+
+		void RenderEditor();
+		void RenderSimulation();
+		void RenderRuntime();
 
 		void Shutdown();
 
@@ -103,27 +57,54 @@ namespace Lamp
 
 		//Layers
 		void AddLayer(const ObjectLayer& layer);
-		void RemoveLayer(uint32_t id);
-		void MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId);
 		void AddToLayer(Object* obj);
+
+		void MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId);
+		
+		void RemoveLayer(uint32_t id);
 		void RemoveFromLayer(Object* obj);
 
+		inline Environment& GetEnvironment() { return m_environment; }
+		inline const std::string& GetName() { return m_name; }
+		inline std::map<uint32_t, Brush*>& GetBrushes() { return m_brushes; }
+		
+		inline std::map<uint32_t, Entity*>& GetEntities() { return m_entities; }
+		inline std::vector<ObjectLayer>& GetLayers() { return m_layers; }
+		inline bool IsPlaying() const { return m_isPlaying; }
+
+		inline const Ref<Image2D> GetFinalRenderedImage() const { return m_renderPasses.back().graphicsPipeline->GetSpecification().framebuffer->GetColorAttachment(0); }
+		inline const Ref<Framebuffer> GetGeometryFramebuffer() const { return m_geometryFramebuffer; }
+
+		inline const bool HasTerrain() const { return m_environment.GetTerrain().terrain != nullptr && m_environment.GetTerrain().terrain->IsValid(); }
+		inline const bool HasSkybox() const { return m_environment.GetSkybox().skybox != nullptr && !m_environment.GetSkybox().skybox->IsFlagSet(AssetFlag::Missing) && !m_environment.GetSkybox().skybox->IsFlagSet(AssetFlag::Invalid); }
+
+		inline void SetIsPlaying(bool state) { m_isPlaying = state; }
+		inline void SetRenderPasses(const std::vector<RenderPass>& passes) { m_renderPasses = passes; }
+
+		static AssetType GetStaticType() { return AssetType::Level; }
+		AssetType GetType() override { return GetStaticType(); }
+
+	private:
 		friend class LevelLoader;
 
-	private:
-		void RenderLevel(Ref<CameraBase> camera);
+		void SetupRenderPasses();
+		void RenderLevel();
+
 		bool OnViewportResize(EditorViewportSizeChangedEvent& e);
 
-	private:
-		std::string m_Name;
-		LevelEnvironment m_Environment;
-		bool m_IsPlaying = false;
-		bool m_LastShowedGizmos = false;
+		std::string m_name;
+		bool m_isPlaying = false;
 
-		Ref<Skybox> m_skybox;
-		std::map<uint32_t, Brush*> m_Brushes;
-		std::map<uint32_t, Entity*> m_Entities;
-		std::vector<ObjectLayer> m_Layers;
-		RenderUtils m_RenderUtils;
+		Environment m_environment;
+
+		std::map<uint32_t, Brush*> m_brushes;
+		std::map<uint32_t, Entity*> m_entities;
+
+		std::vector<ObjectLayer> m_layers;
+		std::vector<RenderPass> m_renderPasses;
+
+		//Move from here
+		bool m_lastShowedGizmos = false;
+		Ref<Framebuffer> m_geometryFramebuffer;
 	};
 }

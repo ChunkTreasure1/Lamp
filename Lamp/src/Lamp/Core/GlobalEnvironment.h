@@ -14,11 +14,9 @@ namespace Lamp
 
 struct GlobalEnvironment
 {
-	bool ShouldRenderBB = false;
-	bool ShouldRenderGizmos = true;
-	bool IsEditor = false;
-	float HDRExposure = 3.f;
+	bool shouldRenderBB = false;
+	bool shouldRenderGizmos = true;
+	bool isEditor = false;
 
-	std::shared_ptr<Lamp::Level> pLevel = nullptr;
 	Lamp::AssetManager* pAssetManager = nullptr;
 };

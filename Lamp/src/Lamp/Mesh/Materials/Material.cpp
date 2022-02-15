@@ -1,27 +1,27 @@
 #include "lppch.h"
 #include "Material.h"
 
-#include "Lamp/AssetSystem/ResourceCache.h"
-#include "Lamp/Rendering/Shader/Shader.h"
+#include "Platform/Vulkan/VulkanMaterial.h"
 
 namespace Lamp
 {
-	void Material::SetTexture(const std::string& name, Ref<Texture2D> texture)
+	Ref<Material> Material::Create(Ref<Shader> shader, uint32_t id)
 	{
-		if (m_pTextures.find(name) != m_pTextures.end())
-		{
-			m_pTextures[name] = texture;
-		}
+		return CreateRef<VulkanMaterial>(shader, id);
 	}
 
-	void Material::SetShader(Ref<Shader> shader)
+	Ref<Material> Material::Create()
 	{
-		m_pTextures.clear();
-		for (auto& name : shader->GetSpecification().textureNames)
-		{
-			m_pTextures.emplace(name, ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png"));
-		}
+		return CreateRef<VulkanMaterial>();
+	}
 
-		m_pShader = shader;
+	Ref<Material> Material::Create(const Ref<Material> material)
+	{
+		return CreateRef<VulkanMaterial>(material);
+	}
+
+	Ref<Material> Material::Create(const std::string& name, uint32_t index)
+	{
+		return CreateRef<VulkanMaterial>(name, index);
 	}
 }

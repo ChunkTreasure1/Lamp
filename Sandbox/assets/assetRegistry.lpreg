@@ -1,6 +1,8 @@
 Assets:
   - Handle: 14311675356115887053
     Path: assets/levels/testLevel/data.level
+  - Handle: 14311675356115887053
+    Path: assets/levels/testLevel2/data.level
   - Handle: 10994454763501493260
     Path: assets\meshes\base\cube.lgf
   - Handle: 3462220506084564617
@@ -29,6 +31,8 @@ Assets:
     Path: assets\meshes\head\textures\kyle_low_mro.tga
   - Handle: 5165272647848418933
     Path: assets\meshes\head\textures\kyle_low_normal.tga
+  - Handle: 15873515662996244200
+    Path: assets\meshes\sponza\Sponza.lgf
   - Handle: 5148223941914373274
     Path: assets\meshes\sponza\SponzaForLamp.lgs
   - Handle: 10163665107251789962
@@ -243,6 +247,8 @@ Assets:
     Path: engine/textures/gizmos/gizmoEntity.png
   - Handle: 14854305732802269758
     Path: engine/textures/gizmos/gizmoLight.png
+  - Handle: 4060130579385547437
+    Path: engine/textures/iceland_heightmap.png
   - Handle: 18118714278600547282
     Path: engine/textures/ui/AssetIcons/iconMesh.png
   - Handle: 7667220179670436888
@@ -257,6 +263,10 @@ Assets:
     Path: engine/textures/ui/assetIcons/iconMaterial.png
   - Handle: 6375851401896882490
     Path: engine/textures/ui/assetIcons/iconMesh.png
+  - Handle: 7720410172949842415
+    Path: engine/textures/ui/assetIcons/iconMeshSource.png
+  - Handle: 4532696391263157257
+    Path: engine/textures/ui/backIcon.png
   - Handle: 626665572364075707
     Path: engine/textures/ui/directoryIcon.png
   - Handle: 11535979565681188853
@@ -331,27 +341,9 @@ Assets:
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim8.png
   - Handle: 10556133037468570950
     Path: engine/textures/ui/physicsIcon\LampPhysicsAnim9.png
-  - Handle: 8367631737299797705
-    Path: C:\Programming\Lamp\Sandbox\assets\meshes\head\textures\ELISLEDSEN.png
-  - Handle: 4227104880835043339
-    Path: C:\Programming\Lamp\Sandbox\assets\meshes\sponza\textures\Background\Background_albedo.tga
-  - Handle: 14426076198348094346
-    Path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_albedo.tga
-  - Handle: 8832679391837945518
-    Path: C:\Programming\Lamp\Sandbox\assets\textures\TeddyTextures\DJTeddy_final_normal.tga
-  - Handle: 16897032606846204281
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\editor.rendergraph
-  - Handle: 14877024273708001692
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\main.rendergraph
-  - Handle: 14855586085221556443
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph
-  - Handle: 18032960552923057834
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testGraph.rendergraph
-  - Handle: 6347921305999140877
-    Path: C:\Programming\Lamp\Sandbox\engine\renderGraphs\testing.rendergraph
-  - Handle: 13580374614981302348
-    Path: C:\Programming\Lamp\Sandbox\engine\textures\testBRDF.png
-  - Handle: 5926687454795801540
-    Path: C:\Users\xXRag\OneDrive\Desktop\Lamp\Sandbox\engine\renderGraphs\test2.rendergraph
-  - Handle: 16793677850541648330
-    Path: C:\Users\xXRag\OneDrive\Desktop\Lamp\Sandbox\engine\renderGraphs\testGraph.rendergraph
+  - Handle: 1732338694660711956
+    Path: engine/textures/ui/reloadIcon.png
+  - Handle: 17147819191367926607
+    Path: engine/textures/ui/searchIcon.png
+  - Handle: 2418690689678969492
+    Path: engine/textures/ui/settingsIcon.png

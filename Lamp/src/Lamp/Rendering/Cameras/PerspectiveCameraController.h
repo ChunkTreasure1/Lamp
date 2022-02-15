@@ -20,26 +20,31 @@ namespace Lamp
 		virtual void UpdateProjection(uint32_t width, uint32_t height) override;
 		virtual glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
 
-		bool OnMouseMoved(MouseMovedEvent& e);
-		inline float GetFOV() { return m_FOV; }
+		inline float GetFOV() { return m_fov; }
 
-		inline void SetHasControl(bool state) { m_HasControl = state; }
+		inline void SetActive(bool state) { m_isActive = state; }
+		inline void SetHasControl(bool state) { m_hasControl = state; }
 
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnRender(AppRenderEvent& e);
 
 	private:
-		float m_TranslationSpeed = 5.f;
-		float m_NearPlane = 0.1f;
-		float m_FarPlane = 100.f;
-		float m_FOV = 45.f;
-		float m_MaxTranslationSpeed = 40.f;
+		glm::vec2 m_lastMousePosition{0.f};
 
-		float m_LastX = 1280 / 2;
-		float m_LastY = 720 / 2;
+		float m_translationSpeed = 5.f;
+		float m_scrollTranslationSpeed = 30.f;
 
-		bool m_HasControl = false;
+		float m_fov = 45.f;
+		float m_nearPlane = 0.1f;
+		float m_farPlane = 100.f;
+
+		float m_currentDeltaTime = 0.f;
+
+		float m_maxtranslationSpeed = 40.f;
+
+		bool m_hasControl = false;
+		bool m_lastRightUp = true;
+		bool m_isActive = false;
 	};
 }
