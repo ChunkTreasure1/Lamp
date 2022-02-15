@@ -46,7 +46,15 @@ namespace Lamp
 				LP_VK_CHECK(vkAllocateCommandBuffers(device->GetHandle(), &allocInfo, &m_commandBuffers[i]));
 			}
 
-			//TODO: create fences for command buffers
+			m_fences.resize(count);
+			VkFenceCreateInfo fenceInfo{};
+			fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+			for (uint32_t i = 0; i < count; i++)
+			{
+				LP_VK_CHECK(vkCreateFence(device->GetHandle(), &fenceInfo, nullptr, &m_fences[i]));
+			}
 		}
 		else
 		{
@@ -69,6 +77,11 @@ namespace Lamp
 			auto device = VulkanContext::GetCurrentDevice();
 			vkDeviceWaitIdle(device->GetHandle());
 
+			for (auto& fence : m_fences)
+			{
+				vkDestroyFence(device->GetHandle(), fence, nullptr);
+			}
+
 			for (uint32_t i = 0; i < m_commandPools.size(); i++)
 			{
 				vkDestroyCommandPool(device->GetHandle(), m_commandPools[i], nullptr);
@@ -86,6 +99,7 @@ namespace Lamp
 
 		if (!m_swapchainTarget)
 		{
+			vkWaitForFences(device->GetHandle(), 1, &m_fences[frame], VK_TRUE, UINT64_MAX);
 			LP_VK_CHECK(vkResetCommandPool(device->GetHandle(), m_commandPools[frame], 0));
 		}
 
@@ -96,7 +110,7 @@ namespace Lamp
 		LP_VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 	}
 
-	void VulkanCommandBuffer::End()
+	void VulkanCommandBuffer::End(bool compute)
 	{
 		uint32_t frame = m_swapchainTarget ? Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame() : m_currentCommandPool;
 		auto device = VulkanContext::GetCurrentDevice();
@@ -114,12 +128,8 @@ namespace Lamp
 			fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			fenceInfo.flags = 0;
 
-			VkFence fence;
-			LP_VK_CHECK(vkCreateFence(device->GetHandle(), &fenceInfo, nullptr, &fence));
-			LP_VK_CHECK(vkQueueSubmit(device->GetGraphicsQueue(), 1, &submitInfo, fence));
-			LP_VK_CHECK(vkWaitForFences(device->GetHandle(), 1, &fence, VK_TRUE, UINT64_MAX));
-
-			vkDestroyFence(device->GetHandle(), fence, nullptr);
+			vkResetFences(device->GetHandle(), 1, &m_fences[frame]);
+			LP_VK_CHECK(vkQueueSubmit(compute ? device->GetComputeQueue() : device->GetGraphicsQueue(), 1, &submitInfo, m_fences[frame]));
 		}
 
 		m_currentCommandPool = m_swapchainTarget ? Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame() : ((m_currentCommandPool + 1) % m_count);

@@ -6,18 +6,22 @@
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanCommandBuffer.h"
 #include "Platform/Vulkan/VulkanUtility.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include "Lamp/Core/Application.h"
 #include "Lamp/Rendering/Swapchain.h"
 
 namespace Lamp
 {
-	static VkFence s_computeFence = nullptr;
-
 	VulkanRenderComputePipeline::VulkanRenderComputePipeline(Ref<Shader> computeShader)
 		: m_shader(computeShader)
 	{
 		CreatePipeline();
+	}
+
+	VulkanRenderComputePipeline::~VulkanRenderComputePipeline()
+	{
+		auto device = VulkanContext::GetCurrentDevice();
 	}
 
 	void VulkanRenderComputePipeline::Begin(Ref<CommandBuffer> commandBuffer)
@@ -32,8 +36,12 @@ namespace Lamp
 		}
 		else
 		{
-			m_activeComputeCommandBuffer = VulkanContext::GetCurrentDevice()->GetCommandBuffer(true, true);
+			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+			auto device = VulkanContext::GetCurrentDevice();
+
+			m_commandBuffer->Begin();
 			m_usingGraphicsQueue = false;
+			m_activeComputeCommandBuffer = static_cast<VkCommandBuffer>(m_commandBuffer->GetCurrentCommandBuffer());
 		}
 
 		vkCmdBindPipeline(m_activeComputeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_computePipeline);
@@ -46,28 +54,7 @@ namespace Lamp
 		VkDevice device = VulkanContext::GetCurrentDevice()->GetHandle();
 		if (!m_usingGraphicsQueue)
 		{
-			VkQueue computeQueue = VulkanContext::GetCurrentDevice()->GetComputeQueue();
-
-			LP_VK_CHECK(vkEndCommandBuffer(m_activeComputeCommandBuffer));
-
-			if (!s_computeFence)
-			{
-				VkFenceCreateInfo fenceCreateInfo{};
-				fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-				fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-				LP_VK_CHECK(vkCreateFence(device, &fenceCreateInfo, nullptr, &s_computeFence));
-			}
-
-			LP_VK_CHECK(vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX));
-			LP_VK_CHECK(vkResetFences(device, 1, &s_computeFence));
-
-			VkSubmitInfo computeSubmitInfo{};
-			computeSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			computeSubmitInfo.commandBufferCount = 1;
-			computeSubmitInfo.pCommandBuffers = &m_activeComputeCommandBuffer;
-			
-			LP_VK_CHECK(vkQueueSubmit(computeQueue, 1, &computeSubmitInfo, s_computeFence));
-			LP_VK_CHECK(vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX));
+			m_commandBuffer->End();
 		}
 
 		m_activeComputeCommandBuffer = nullptr;
@@ -75,10 +62,13 @@ namespace Lamp
 
 	void VulkanRenderComputePipeline::Execute(VkDescriptorSet* descriptorSets, uint32_t descriptorSetCount, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 	{
+		LP_PROFILE_FUNCTION();
+
 		VkDevice device = VulkanContext::GetCurrentDevice()->GetHandle();
 		VkQueue computeQueue = VulkanContext::GetCurrentDevice()->GetComputeQueue();
 
-		VkCommandBuffer computeCommandBuffer = VulkanContext::GetCurrentDevice()->GetCommandBuffer(true, true);
+		m_commandBuffer->Begin();
+		VkCommandBuffer computeCommandBuffer = static_cast<VkCommandBuffer>(m_commandBuffer->GetCurrentCommandBuffer());
 
 		vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_computePipeline);
 		for (uint32_t i = 0; i < descriptorSetCount; i++)
@@ -87,25 +77,7 @@ namespace Lamp
 			vkCmdDispatch(computeCommandBuffer, groupCountX, groupCountY, groupCountZ);
 		}
 
-		vkEndCommandBuffer(computeCommandBuffer);
-		if (!s_computeFence)
-		{
-			VkFenceCreateInfo fenceInfo{};
-			fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-			fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-			VkResult result = vkCreateFence(device, &fenceInfo, nullptr, &s_computeFence);
-		}
-
-		vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX);
-		vkResetFences(device, 1, &s_computeFence);
-
-		VkSubmitInfo computeSubmitInfo{};
-		computeSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		computeSubmitInfo.commandBufferCount = 1;
-		computeSubmitInfo.pCommandBuffers = &computeCommandBuffer;
-		VkResult result = vkQueueSubmit(computeQueue, 1, &computeSubmitInfo, s_computeFence);
-
-		vkWaitForFences(device, 1, &s_computeFence, VK_TRUE, UINT64_MAX);
+		m_commandBuffer->End(true);
 	}
 
 	void VulkanRenderComputePipeline::Dispatch(VkDescriptorSet descriptorSet, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
@@ -155,5 +127,8 @@ namespace Lamp
 
 		LP_VK_CHECK(vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &m_computePipelineCache));
 		LP_VK_CHECK(vkCreateComputePipelines(device, m_computePipelineCache, 1, &pipelineCreateInfo, nullptr, &m_computePipeline));
+	
+		uint32_t framesInFlight = Renderer::Get().GetCapabilities().framesInFlight;
+		m_commandBuffer = CommandBuffer::Create(framesInFlight, false);
 	}
 }

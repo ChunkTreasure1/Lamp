@@ -392,7 +392,7 @@ namespace Lamp
 
 		auto func = [=]()
 		{
-			LP_PROFILE_FUNCTION();
+			LP_PROFILE_SCOPE("LightCulling");
 
 			auto device = VulkanContext::GetCurrentDevice();
 			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();

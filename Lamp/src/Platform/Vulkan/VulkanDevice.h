@@ -69,6 +69,7 @@ namespace Lamp
 
 		void FlushCommandBuffer(VkCommandBuffer commandBuffer);
 		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
+		void FreeCommandBuffer(VkCommandBuffer commandBuffer);
 
 		VkCommandBuffer GetCommandBuffer(bool begin, bool compute = false);
 		VkCommandBuffer CreateSecondaryCommandBuffer();

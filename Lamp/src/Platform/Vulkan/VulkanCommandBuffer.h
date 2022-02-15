@@ -13,7 +13,7 @@ namespace Lamp
 		~VulkanCommandBuffer() override;
 
 		void Begin() override;
-		void End() override;
+		void End(bool compute) override;
 
 		void* GetCurrentCommandBuffer() override;
 		uint32_t GetCurrentCommandBufferIndex() override;
@@ -23,6 +23,7 @@ namespace Lamp
 	private:
 		std::vector<VkCommandPool> m_commandPools;
 		std::vector<VkCommandBuffer> m_commandBuffers;
+		std::vector<VkFence> m_fences;
 
 		bool m_swapchainTarget;
 		uint32_t m_currentCommandPool;

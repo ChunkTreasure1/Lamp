@@ -12,7 +12,7 @@ namespace Lamp
 		virtual ~CommandBuffer() = default;
 
 		virtual void Begin() = 0;
-		virtual void End() = 0;
+		virtual void End(bool compute = false) = 0;
  
 		virtual void* GetCurrentCommandBuffer() = 0;
 		virtual uint32_t GetCurrentCommandBufferIndex() = 0;

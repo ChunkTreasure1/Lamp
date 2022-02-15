@@ -40,7 +40,6 @@ namespace Lamp
 
 		//Get properties
 		vkGetPhysicalDeviceFeatures(m_physicalDevice, &m_features);
-
 		vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &m_memoryProperties);
 
 		Renderer::s_capabilities.maxAniostropy = m_properties.limits.maxSamplerAnisotropy;
@@ -207,6 +206,11 @@ namespace Lamp
 		LP_VK_CHECK(vkWaitForFences(m_logicalDevice, 1, &fence, VK_TRUE, UINT64_MAX));
 
 		vkDestroyFence(m_logicalDevice, fence, nullptr);
+		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
+	}
+
+	void VulkanDevice::FreeCommandBuffer(VkCommandBuffer commandBuffer)
+	{
 		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
 	}
 

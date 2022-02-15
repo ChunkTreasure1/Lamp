@@ -11,7 +11,7 @@ namespace Lamp
 	{
 	public:
 		VulkanRenderComputePipeline(Ref<Shader> computeShader);
-		~VulkanRenderComputePipeline() override = default;
+		~VulkanRenderComputePipeline() override;
 
 		void Begin(Ref<CommandBuffer> commandBuffer = nullptr) override;
 		void End();
@@ -31,6 +31,8 @@ namespace Lamp
 		VkPipelineLayout m_computePipelineLayout = nullptr;
 		VkPipelineCache m_computePipelineCache = nullptr;
 		VkPipeline m_computePipeline = nullptr;
+
+		Ref<CommandBuffer> m_commandBuffer;
 
 		VkCommandBuffer m_activeComputeCommandBuffer = nullptr;
 	
