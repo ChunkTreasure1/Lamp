@@ -209,9 +209,9 @@ namespace Lamp
 		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
 	}
 
-	void VulkanDevice::FreeCommandBuffer(VkCommandBuffer commandBuffer)
+	void VulkanDevice::FreeCommandBuffer(VkCommandBuffer commandBuffer, bool compute)
 	{
-		vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
+		vkFreeCommandBuffers(m_logicalDevice, compute ? m_computeCommandPool : m_commandPool, 1, &commandBuffer);
 	}
 
 	VkCommandBuffer VulkanDevice::GetCommandBuffer(bool begin, bool compute)

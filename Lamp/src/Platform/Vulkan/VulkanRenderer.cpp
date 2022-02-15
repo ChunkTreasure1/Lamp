@@ -390,7 +390,7 @@ namespace Lamp
 
 		Ref<VulkanShader> vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(lightCullingShader);
 
-		auto func = [=]()
+		auto func = [=]() mutable
 		{
 			LP_PROFILE_SCOPE("LightCulling");
 
@@ -438,7 +438,20 @@ namespace Lamp
 			writeDescriptors[4].pImageInfo = &vulkanDepthImage->GetDescriptorInfo();
 
 			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
-			lightCullingPipeline->Execute(&currentDescriptorSet, (uint32_t)1, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
+
+			lightCullingPipeline->Execute(&currentDescriptorSet, 1, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
+
+			//lightCullingPipeline->Begin(m_rendererStorage->renderCommandBuffer);
+			//lightCullingPipeline->Dispatch(currentDescriptorSet, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
+
+			//VkMemoryBarrier barrier{};
+			//barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			//barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+			//barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			//vkCmdPipelineBarrier(static_cast<VkCommandBuffer>(m_rendererStorage->renderCommandBuffer->GetCurrentCommandBuffer()), VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 1, &barrier, 0, nullptr, 0, nullptr);
+
+			//lightCullingPipeline->End();
 		};
 
 		return std::make_pair(lightCullingPipeline, func);

@@ -14,6 +14,7 @@ namespace Lamp
 	{
 	public:
 		Terrain(const std::filesystem::path& aHeightMap);
+		Terrain(Ref<Texture2D> heightMap);
 		~Terrain();
 
 		inline const glm::mat4& GetTransform() const { return m_transform; }
@@ -25,9 +26,11 @@ namespace Lamp
 		void Draw();
 
 		static Ref<Terrain> Create(const std::filesystem::path& aHeightMap);
+		static Ref<Terrain> Create(Ref<Texture2D> heightMap);
 
 	private:
 		void SetupDescriptors();
+		void GenerateMeshFromHeightMap();
 
 		Ref<SubMesh> m_mesh;
 		bool m_isValid = true;

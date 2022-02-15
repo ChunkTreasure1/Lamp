@@ -327,7 +327,7 @@ namespace UI
 		return true;
 	}
 
-	static bool Combo(const std::string& text, int& currentItem, const std::vector<const char*>& items)
+	static bool Combo(const std::string& text, int& currentItem, const std::vector<const char*>& items, float width = 0.f)
 	{
 		bool changed = false;
 
@@ -336,7 +336,14 @@ namespace UI
 
 		ImGui::TableNextColumn();
 
-		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+		if (width == 0.f)
+		{
+			ImGui::PushItemWidth(ImGui::GetColumnWidth());
+		}
+		else
+		{
+			ImGui::PushItemWidth(width);
+		}
 		std::string id = "##" + std::to_string(s_stackId++);
 		if (ImGui::Combo(id.c_str(), &currentItem, items.data(), (int)items.size()))
 		{

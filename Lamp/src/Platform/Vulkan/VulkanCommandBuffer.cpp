@@ -124,10 +124,6 @@ namespace Lamp
 			submitInfo.commandBufferCount = 1;
 			submitInfo.pCommandBuffers = &m_commandBuffers[frame];
 
-			VkFenceCreateInfo fenceInfo{};
-			fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-			fenceInfo.flags = 0;
-
 			vkResetFences(device->GetHandle(), 1, &m_fences[frame]);
 			LP_VK_CHECK(vkQueueSubmit(compute ? device->GetComputeQueue() : device->GetGraphicsQueue(), 1, &submitInfo, m_fences[frame]));
 		}

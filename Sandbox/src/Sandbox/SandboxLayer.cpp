@@ -6,6 +6,7 @@
 #include "Windows/MaterialEditor.h"
 #include "Windows/LayerViewPanel.h"
 #include "Windows/EnvironmentEditorPanel.h"
+#include "Windows/TerrainEditorPanel.h"
 
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/RenderCommand.h>
@@ -43,6 +44,7 @@ namespace Sandbox
 		m_pWindows.push_back(new EnvironmentEditorPanel("Environment Panel"));
 		m_pWindows.push_back(new AssetBrowserPanel());
 		m_pWindows.push_back(new CreatePanel(m_pSelectedObject));
+		m_pWindows.push_back(new TerrainEditorPanel("Terrain Editor"));
 
 		Application::Get().GetWindow().Maximize();
 
