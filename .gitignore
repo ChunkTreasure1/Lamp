@@ -3,4 +3,17 @@
 bin/
 bin-int/
 Sandbox/Profiling/
+
+Lamp/vendor/glad/bin/
+Lamp/vendor/glad/bin-int/
+
+Lamp/vendor/glfw/bin/
+Lamp/vendor/glfw/bin-int/
+
+Lamp/vendor/Optick/bin/
+Lamp/vendor/Optick/bin-int/
+
 *.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
