@@ -181,12 +181,4 @@ namespace Lamp
 	{
 		return false;
 	}
-
-	bool Brush::OnScaleChanged(ObjectScaleChangedEvent& e)
-	{
-		m_mesh->GetBoundingBox().Max = m_scale * m_mesh->GetBoundingBox().StartMax;
-		m_mesh->GetBoundingBox().Min = m_scale * m_mesh->GetBoundingBox().StartMin;
-
-		return false;
-	}
 }

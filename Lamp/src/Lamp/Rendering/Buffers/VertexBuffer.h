@@ -2,6 +2,8 @@
 
 #include "BufferLayout.h"
 
+#include "Lamp/Rendering/Vertex.h"
+
 #include <glm/glm.hpp>
 #include <functional>
 

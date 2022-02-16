@@ -1,7 +1,13 @@
 #pragma once
 
+#include "Lamp/Rendering/Buffers/RenderBuffer.h"
+#include "Lamp/Rendering/Vertex.h"
+
 namespace Lamp
 {
+	class CameraBase;
+	class Texture2D;
+
 	struct Renderer2DStorage
 	{
 		/////Rendering//////
@@ -11,9 +17,34 @@ namespace Lamp
 		Ref<RenderPipeline> quadPipeline;
 		Ref<RenderPipeline> linePipeline;
 		////////////////////
-	};
 
-	class CameraBase;
+		/////Values/////
+		static const uint32_t maxQuads = 20000;
+		static const uint32_t maxVertices = maxQuads * 4;
+		static const uint32_t maxIndices = maxQuads * 6;
+
+		static const uint32_t maxLines = 10000;
+		static const uint32_t maxLineVerts = maxLines * 2;
+		static const uint32_t maxLineIndices = maxLines * 2;
+		////////////////
+
+		/////Quad Storage/////
+		Ref<VertexBuffer> quadVertexBuffer;
+		
+		QuadVertex* quadVertexBufferBase = nullptr;
+		QuadVertex* quadVertexBufferPtr = nullptr;
+		glm::vec4 quadVertexPositions[4];
+
+		Ref<Texture2D> whiteTexture;
+		Ref<Texture2D>* textureSlots;
+
+		uint32_t textureSlotIndex = 1;
+		//////////////////////
+
+		/////Line Storage/////
+		
+		//////////////////////
+	};
 
 	class Renderer2D
 	{
@@ -32,6 +63,14 @@ namespace Lamp
 
 	private:
 		void SetupRenderPipelines();
+
+		/////Render buffer/////
+		RenderBuffer m_firstRenderBuffer;
+		RenderBuffer m_secondRenderBuffer;
+
+		RenderBuffer* m_submitBufferPointer = &m_firstRenderBuffer;
+		RenderBuffer* m_renderBufferPointer = &m_secondRenderBuffer;
+		///////////////////////
 
 		std::unique_ptr<Renderer2DStorage> m_storage;
 	};

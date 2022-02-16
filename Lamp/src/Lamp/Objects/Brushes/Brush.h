@@ -29,7 +29,6 @@ namespace Lamp
 	private:
 		bool OnRender(AppRenderEvent& e);
 		bool OnUpdate(AppUpdateEvent& e);
-		bool OnScaleChanged(ObjectScaleChangedEvent& e);
 
 	private:
 		Ref<Mesh> m_mesh;

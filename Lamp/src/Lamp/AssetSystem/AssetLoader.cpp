@@ -6,9 +6,11 @@
 
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
-#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 #include "Lamp/AssetSystem/BaseAssets.h"
+
+#include "Lamp/Rendering/Vertex.h"
+#include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include <yaml-cpp/yaml.h>
@@ -65,14 +67,6 @@ namespace Lamp
 				out << YAML::EndMap;
 			}
 			out << YAML::EndSeq; //Materials
-
-			out << YAML::Key << "boundingBox" << YAML::Value;
-			out << YAML::BeginMap;
-			{
-				LP_SERIALIZE_PROPERTY(maxPos, mesh->GetBoundingBox().Max, out);
-				LP_SERIALIZE_PROPERTY(minPos, mesh->GetBoundingBox().Min, out);
-			}
-			out << YAML::EndMap;
 
 			out << YAML::EndMap; //Geometry 
 		}
@@ -179,16 +173,7 @@ namespace Lamp
 			}
 		}
 
-		//Bounding box
-		YAML::Node bbNode = geoNode["boundingBox"];
-		AABB boundingBox;
-
-		LP_DESERIALIZE_PROPERTY(maxPos, boundingBox.StartMax, bbNode, glm::vec3(0.f));
-		LP_DESERIALIZE_PROPERTY(minPos, boundingBox.StartMin, bbNode, glm::vec3(0.f));
-		boundingBox.Max = boundingBox.StartMax;
-		boundingBox.Min = boundingBox.StartMin;
-
-		asset = CreateRef<Mesh>(meshName, subMeshes, materials, boundingBox);
+		asset = CreateRef<Mesh>(meshName, subMeshes, materials);
 		asset->Path = path;
 
 		return true;

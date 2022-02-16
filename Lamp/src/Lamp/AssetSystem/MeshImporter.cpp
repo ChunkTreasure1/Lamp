@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "MeshImporter.h"
 
+#include "Lamp/Rendering/Vertex.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -29,7 +31,7 @@ namespace Lamp
 			return asset;
 		}
 
-		Ref<Mesh> mesh = CreateRef<Mesh>(settings.path.stem().string(), meshes, materials, boundingBox);
+		Ref<Mesh> mesh = CreateRef<Mesh>(settings.path.stem().string(), meshes, materials);
 
 		return mesh;
 	}
@@ -157,8 +159,8 @@ namespace Lamp
 			{
 				if (mesh->GetMaterialIndex() == material.first)
 				{
-					vertices.insert(vertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
-					indices.insert(indices.end(), mesh->GetIndices().begin(), mesh->GetIndices().end());
+					//vertices.insert(vertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
+					//indices.insert(indices.end(), mesh->GetIndices().begin(), mesh->GetIndices().end());
 				}
 			}
 
@@ -168,7 +170,7 @@ namespace Lamp
 		std::vector<Ref<SubMesh>> returnMeshes;
 		for (auto& mesh : newMeshes)
 		{
-			returnMeshes.push_back(mesh.second);
+			returnMeshes.push_back(mesh.second); 
 		}
 
 		return returnMeshes;

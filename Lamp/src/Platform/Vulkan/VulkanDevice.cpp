@@ -44,6 +44,7 @@ namespace Lamp
 
 		Renderer::s_capabilities.maxAniostropy = m_properties.limits.maxSamplerAnisotropy;
 		Renderer::s_capabilities.supportAniostopy = m_features.samplerAnisotropy == VK_TRUE ? true : false;
+		Renderer::s_capabilities.maxShaderTexturesArray = m_properties.limits.maxDescriptorSetSamplers;
 
 		//Get extensions
 		uint32_t queueFamilyCount = 0;

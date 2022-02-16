@@ -6,6 +6,11 @@
 #include <Lamp/Event/MouseEvent.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
+namespace Lamp
+{
+	class SubMesh;
+}
+
 namespace Sandbox
 {
 	class TerrainEditorPanel : public EditorWindow
@@ -57,6 +62,6 @@ namespace Sandbox
 	
 		EditParameters m_editParameters;
 
-		Ref<SubMesh> m_circleMesh;
+		Ref<Lamp::SubMesh> m_circleMesh;
 	};
 }

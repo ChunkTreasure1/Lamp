@@ -1,6 +1,8 @@
 #include "lppch.h"
 #include "SubMesh.h"
 
+#include "Lamp/Rendering/Vertex.h"
+
 namespace Lamp
 {
 	enum class BaseMesh
@@ -16,7 +18,7 @@ namespace Lamp
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-	
+
 		for (const auto& vert : vertices)
 		{
 			minAABB.x = std::min(minAABB.x, vert.position.x);
@@ -32,9 +34,12 @@ namespace Lamp
 	}
 
 	SubMesh::SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex)
-		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_materialIndex(matIndex)
+		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_MaterialIndex(matIndex)
 	{
-		SetupMesh(vertices, indices);
+		m_Vertices = vertices;
+		m_Indices = indices;
+
+		SetupMesh();
 	}
 
 	Ref<SubMesh> SubMesh::CreateCube()
@@ -120,15 +125,15 @@ namespace Lamp
 		return nullptr;
 	}
 
-	void SubMesh::SetupMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+	void SubMesh::SetupMesh()
 	{
 		m_pVertexArray = VertexArray::Create();
 
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(vertices, sizeof(Vertex) * (uint32_t)vertices.size());
-		
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
+
 		m_pVertexArray->AddVertexBuffer(pBuffer);
 
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(indices, (uint32_t)indices.size());
+		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, (uint32_t)m_Indices.size());
 		m_pVertexArray->SetIndexBuffer(pIndexBuffer);
 
 		m_pVertexArray->Unbind();

@@ -40,6 +40,7 @@ namespace Lamp
 		bool supportAniostopy = false;
 		uint32_t maxAniostropy = 1;
 		uint32_t framesInFlight = 3;
+		uint32_t maxShaderTexturesArray = 1;
 	};
 
 	struct RendererDefaults
