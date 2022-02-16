@@ -2,6 +2,9 @@
 
 #include <Lamp/Rendering/Textures/Texture2D.h>
 
+#include <Lamp/Input/Input.h>
+#include <Lamp/Input/KeyCodes.h>
+
 #include <Lamp/Level/LevelManager.h>
 #include <Lamp/Utility/UIUtility.h>
 
@@ -21,10 +24,16 @@ namespace Sandbox
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(TerrainEditorPanel::OnUpdateImGui));
 		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(TerrainEditorPanel::OnUpdate));
+		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(TerrainEditorPanel::OnKeyPressedEvent));
+		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(TerrainEditorPanel::OnMouseScrolledEvent));
 	}
 
 	bool TerrainEditorPanel::OnUpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
+		LP_PROFILE_FUNCTION();
+		UI::ScopedColor buttonColor(ImGuiCol_Button, { 0.313f, 0.313f, 0.313f, 1.f });
+		UI::ScopedStyleFloat buttonRounding(ImGuiStyleVar_FrameRounding, 2.f);
+
 		ImGui::Begin("Terrain Editor", &m_isOpen);
 		m_isFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
@@ -32,6 +41,74 @@ namespace Sandbox
 		{
 			ImGui::End();
 			return false;
+		}
+
+		const ImGuiTableFlags flags = ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit;
+		const float buttonHeight = 24.f;
+
+		if (ImGui::BeginTable("paintButtons", 2, flags))
+		{
+			ImGui::TableSetupColumn("Column1", 0, ImGui::GetContentRegionAvail().x / 2.f);
+			ImGui::TableSetupColumn("Column2", 0, ImGui::GetContentRegionAvail().x / 2.f);
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+
+			if (ImGui::Button("Flatten", { ImGui::GetContentRegionAvail().x, buttonHeight }))
+			{
+				if (m_editParameters.currentEditMode == EditMode::Flatten)
+				{
+					m_editParameters.isEditing = !m_editParameters.isEditing;
+				}
+
+				m_editParameters.currentEditMode = EditMode::Flatten;
+			}
+
+			ImGui::TableNextColumn();
+
+			if (ImGui::Button("Raise/Lower", { ImGui::GetContentRegionAvail().x, buttonHeight }))
+			{
+				if (m_editParameters.currentEditMode == EditMode::RaiseLower)
+				{
+					m_editParameters.isEditing = !m_editParameters.isEditing;
+				}
+
+				m_editParameters.currentEditMode = EditMode::RaiseLower;
+			}
+
+			ImGui::TableNextRow();
+
+			if (ImGui::Button("Smooth", { ImGui::GetContentRegionAvail().x, buttonHeight }))
+			{
+				if (m_editParameters.currentEditMode == EditMode::Smooth)
+				{
+					m_editParameters.isEditing = !m_editParameters.isEditing;
+				}
+
+				m_editParameters.currentEditMode = EditMode::Smooth;
+			}
+
+			ImGui::TableNextColumn();
+
+			if (ImGui::Button("Spline", { ImGui::GetContentRegionAvail().x, buttonHeight }))
+			{
+				//Create new terrain spline
+			}
+
+			ImGui::EndTable();
+		}
+
+		if (m_editParameters.isEditing)
+		{
+			ImGui::PushID("brushProperties");
+			UI::BeginProperties("brushProperties", false);
+
+			UI::Property("Inner Radius", m_editParameters.innerRadius);
+			UI::Property("Outer Radius", m_editParameters.outerRadius);
+			UI::Property("Hardness", m_editParameters.hardness, 0.f, 1.f);
+
+			UI::EndProperties(false);
+			ImGui::PopID();
 		}
 
 		if (!LevelManager::GetActive()->HasTerrain())
@@ -61,7 +138,7 @@ namespace Sandbox
 				{
 					const uint32_t heightMapRes = GetHeightMapResolution();
 					Ref<Texture2D> terrainTex = Texture2D::Create(ImageFormat::RGBA, heightMapRes, heightMapRes);
-					
+
 					auto data = GenerateEmptyTextureData(heightMapRes);
 					terrainTex->SetData(data.data(), data.size() * sizeof(uint32_t));
 
@@ -89,7 +166,37 @@ namespace Sandbox
 
 	bool TerrainEditorPanel::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
+		return false;
+	}
 
+	bool TerrainEditorPanel::OnKeyPressedEvent(Lamp::KeyPressedEvent& e)
+	{
+		if (m_editParameters.isEditing)
+		{
+			return false;
+		}
+
+		return false;
+	}
+
+	bool TerrainEditorPanel::OnRenderEvent(Lamp::AppRenderEvent& e)
+	{
+
+
+		return false;
+	}
+
+	bool TerrainEditorPanel::OnMouseScrolledEvent(Lamp::MouseScrolledEvent& e)
+	{
+		if (!m_editParameters.isEditing)
+		{
+			if (Input::IsKeyPressed(LP_KEY_LEFT_ALT))
+			{
+				m_editParameters.outerRadius += e.GetYOffset() * m_scrollSpeedMultiplier;
+			}
+
+			return false;
+		}
 
 		return false;
 	}

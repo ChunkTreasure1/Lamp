@@ -457,6 +457,54 @@ namespace Lamp
 		return std::make_pair(lightCullingPipeline, func);
 	}
 
+	void Renderer::CreateTerrainPipeline(Ref<Framebuffer> framebuffer)
+	{
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.cullMode = CullMode::Front;
+		pipelineSpec.topology = Topology::PatchList;
+		pipelineSpec.drawType = DrawType::Terrain;
+		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
+		pipelineSpec.useTessellation = true;
+
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		m_rendererStorage->terrainPipeline = RenderPipeline::Create(pipelineSpec);
+	}
+
+	void Renderer::CreateSkyboxPipeline(Ref<Framebuffer> framebuffer)
+	{
+		RenderPipelineSpecification pipelineSpec{};
+		pipelineSpec.isSwapchain = false;
+		pipelineSpec.depthWrite = false;
+		pipelineSpec.cullMode = CullMode::Back;
+		pipelineSpec.topology = Topology::TriangleList;
+		pipelineSpec.drawType = DrawType::Cube;
+		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+		pipelineSpec.framebuffer = framebuffer;
+		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+
+		pipelineSpec.vertexLayout =
+		{
+			{ ElementType::Float3, "a_Position" },
+			{ ElementType::Float3, "a_Normal" },
+			{ ElementType::Float3, "a_Tangent" },
+			{ ElementType::Float3, "a_Bitangent" },
+			{ ElementType::Float2, "a_TexCoords" }
+		};
+
+		m_rendererStorage->skyboxPipeline = RenderPipeline::Create(pipelineSpec);
+	}
+
 	Renderer& Renderer::Get()
 	{
 		return *s_instance;

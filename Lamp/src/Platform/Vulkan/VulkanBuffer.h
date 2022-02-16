@@ -10,9 +10,9 @@ namespace Lamp
 	class VulkanVertexBuffer : public VertexBuffer
 	{
 	public:
-		VulkanVertexBuffer(std::vector<Vertex>& vertices, uint32_t size);
+		VulkanVertexBuffer(const std::vector<Vertex>& vertices, uint32_t size);
+		VulkanVertexBuffer(const std::vector<float>& vertices, uint32_t size);
 		VulkanVertexBuffer(uint32_t size);
-		VulkanVertexBuffer(std::vector<float>& vertices, uint32_t size);
 		~VulkanVertexBuffer() override;
 
 		void Bind() const override;
@@ -36,7 +36,7 @@ namespace Lamp
 	class VulkanIndexBuffer : public IndexBuffer
 	{
 	public:
-		VulkanIndexBuffer(std::vector<uint32_t>& indices, uint32_t count);
+		VulkanIndexBuffer(const std::vector<uint32_t>& indices, uint32_t count);
 		VulkanIndexBuffer(uint32_t* indices, uint32_t count);
 		~VulkanIndexBuffer() override;
 

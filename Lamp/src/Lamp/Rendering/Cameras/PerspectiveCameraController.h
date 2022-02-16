@@ -13,12 +13,12 @@ namespace Lamp
 	{
 	public:
 		PerspectiveCameraController(float fov, float nearPlane, float farPlane);
-		virtual ~PerspectiveCameraController() override;
+		~PerspectiveCameraController() override;
 
-		virtual void Update(Timestep ts) override;
-		virtual void OnEvent(Event& e) override;
-		virtual void UpdateProjection(uint32_t width, uint32_t height) override;
-		virtual glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
+		void Update(Timestep ts) override;
+		void OnEvent(Event& e) override;
+		void UpdateProjection(uint32_t width, uint32_t height) override;
+		glm::vec3 ScreenToWorldCoords(const glm::vec2& coords, const glm::vec2& size) override;
 
 		inline float GetFOV() { return m_fov; }
 

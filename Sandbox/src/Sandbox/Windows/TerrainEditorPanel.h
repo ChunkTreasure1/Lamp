@@ -2,6 +2,8 @@
 
 #include "EditorWindow.h"
 
+#include <Lamp/Event/KeyEvent.h>
+#include <Lamp/Event/MouseEvent.h>
 #include <Lamp/Event/ApplicationEvent.h>
 
 namespace Sandbox
@@ -16,20 +18,27 @@ namespace Sandbox
 	private:
 		enum class EditMode
 		{
-			Raise,
-			Lower,
-			Smooth
+			Flatten,
+			RaiseLower,
+			Smooth,
 		};
 		
 		struct EditParameters
 		{
+			bool isEditing = false;
+
 			float innerRadius = 0.f;
 			float outerRadius = 1.f;
-			EditMode currentEditMode = EditMode::Raise;
+			float hardness = 0.f;
+
+			EditMode currentEditMode = EditMode::Flatten;
 		};
 
 		bool OnUpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
+		bool OnKeyPressedEvent(Lamp::KeyPressedEvent& e);
+		bool OnRenderEvent(Lamp::AppRenderEvent& e);
+		bool OnMouseScrolledEvent(Lamp::MouseScrolledEvent& e);
 
 		std::vector<uint32_t> GenerateEmptyTextureData(uint32_t resolution);
 		uint32_t CalculateTerrainSize();
@@ -41,10 +50,13 @@ namespace Sandbox
 	
 		int m_selectedSize = 0;
 		int m_selectedResolution = 0;
-	
+		float m_scrollSpeedMultiplier = 0.5f;
+
 		const uint32_t m_minResolution = 1024;
 		const float m_minSize = 0.5f;
 	
 		EditParameters m_editParameters;
+
+		Ref<SubMesh> m_circleMesh;
 	};
 }

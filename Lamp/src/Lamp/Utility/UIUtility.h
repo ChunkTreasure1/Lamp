@@ -441,6 +441,38 @@ namespace UI
 		return changed;
 	}
 
+	static bool Property(const std::string& text, uint32_t& value, bool useMinMax = false, int min = 0, int max = 0)
+	{
+		bool changed = false;
+
+		ScopedStyleFloat2 cellPad{ ImGuiStyleVar_CellPadding, { 4.f, 0.f } };
+
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+
+		ImGui::TableNextColumn();
+		std::string id = "##" + std::to_string(s_stackId++);
+		ImGui::PushItemWidth(ImGui::GetColumnWidth());
+		if (ImGui::DragScalar(id.c_str(), ImGuiDataType_U32, &value, 1.f, &min, &max))
+		{
+			if (value > max && useMinMax)
+			{
+				value = max;
+			}
+
+			if (value < min && useMinMax)
+			{
+				value = min;
+			}
+
+			changed = true;
+		}
+
+		ImGui::PopItemWidth();
+
+		return changed;
+	}
+
 	static bool Property(const std::string& text, bool& value)
 	{
 		bool changed = false;

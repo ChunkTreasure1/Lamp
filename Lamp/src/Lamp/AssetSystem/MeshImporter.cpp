@@ -29,51 +29,6 @@ namespace Lamp
 			return asset;
 		}
 
-		//Create materials
-
-		float xMax = FLT_MIN, yMax = FLT_MIN, zMax = FLT_MIN;
-		float xMin = FLT_MAX, yMin = FLT_MAX, zMin = FLT_MAX;
-
-		for (auto& mesh : meshes)
-		{
-			for (auto& vert : mesh->GetVertices())
-			{
-				//X-axis
-				if (vert.position.x < xMin)
-				{
-					xMin = vert.position.x;
-				}
-				if (vert.position.x > xMax)
-				{
-					xMax = vert.position.x;
-				}
-
-				//Y-axis
-				if (vert.position.y < yMin)
-				{
-					yMin = vert.position.y;
-				}
-				if (vert.position.y > yMax)
-				{
-					yMax = vert.position.y;
-				}
-
-				//Z-axis
-				if (vert.position.z < zMin)
-				{
-					zMin = vert.position.z;
-				}
-				if (vert.position.z > zMax)
-				{
-					zMax = vert.position.z;
-				}
-			}
-		}
-
-		AABB boundingBox;
-		boundingBox.Max = glm::vec3(xMax, yMax, zMax);
-		boundingBox.Min = glm::vec3(xMin, yMin, zMin);
-
 		Ref<Mesh> mesh = CreateRef<Mesh>(settings.path.stem().string(), meshes, materials, boundingBox);
 
 		return mesh;

@@ -159,6 +159,9 @@ namespace Lamp
 		m_filteredEnvironment = envFiltered;
 
 		m_cubeMesh = SubMesh::CreateCube();
+		
+		m_pipeline = Renderer::Get().GetStorage().skyboxPipeline;
+		SetupDescriptors();
 	}
 
 	Skybox::~Skybox()
@@ -169,34 +172,6 @@ namespace Lamp
 			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
 			m_descriptorSet.pool = nullptr;
 		}
-	}
-
-	Ref<RenderPipeline> Skybox::SetupRenderPipeline(Ref<Framebuffer> framebuffer)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.depthWrite = false;
-		pipelineSpec.cullMode = CullMode::Back;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::Cube;
-		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_pipeline = RenderPipeline::Create(pipelineSpec);
-
-		SetupDescriptors();
-
-		return m_pipeline;
 	}
 
 	void Skybox::Draw()

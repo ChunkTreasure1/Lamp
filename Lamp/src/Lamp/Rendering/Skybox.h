@@ -30,7 +30,6 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::EnvironmentMap; }
 		AssetType GetType() override { return GetStaticType(); }
 
-		Ref<RenderPipeline> SetupRenderPipeline(Ref<Framebuffer> framebuffer);
 		void Draw();
 
 		static Ref<Skybox> Create(const std::filesystem::path& path) { return CreateRef<Skybox>(path); }

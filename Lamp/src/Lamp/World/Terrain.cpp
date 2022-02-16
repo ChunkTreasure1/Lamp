@@ -67,34 +67,6 @@ namespace Lamp
 		return CreateRef<Terrain>(heightMap);
 	}
 
-	Ref<RenderPipeline> Terrain::SetupRenderPipeline(Ref<Framebuffer> framebuffer)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Front;
-		pipelineSpec.topology = Topology::PatchList;
-		pipelineSpec.drawType = DrawType::Terrain;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
-		pipelineSpec.useTessellation = true;
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_pipeline = RenderPipeline::Create(pipelineSpec);
-	
-		SetupDescriptors();
-
-		return m_pipeline;
-	}
-
 	void Terrain::SetupDescriptors()
 	{
 		if (m_descriptorSet.pool)
@@ -178,5 +150,8 @@ namespace Lamp
 
 		m_mesh = CreateRef<SubMesh>(vertices, indices, 0);
 		m_transform = glm::scale(glm::mat4(1.f), glm::vec3{ 2.f, 1.f, 2.f });
+
+		m_pipeline = Renderer::Get().GetStorage().terrainPipeline;
+		SetupDescriptors();
 	}
 }

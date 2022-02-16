@@ -92,7 +92,6 @@ namespace Sandbox
 						if (std::filesystem::exists(heightMapPath))
 						{
 							terrainData.terrain = Terrain::Create(heightMapPath);
-							terrainData.terrain->SetupRenderPipeline(LevelManager::GetActive()->GetGeometryFramebuffer());
 						}
 					}
 

@@ -1,49 +1,38 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include "Cameras/OrthographicCamera.h"
-
-#include "Lamp/Core/Core.h"
-#include "Lamp/Rendering/Buffers/Framebuffer.h"
-
-#include "Lamp/Rendering/Buffers/RenderBuffer.h"
-
 namespace Lamp
 {
+	struct Renderer2DStorage
+	{
+		/////Rendering//////
+		Ref<CommandBuffer> renderCommandBuffer;
+		Ref<CommandBuffer> swapchainCommandBuffer;
+
+		Ref<RenderPipeline> quadPipeline;
+		Ref<RenderPipeline> linePipeline;
+		////////////////////
+	};
+
+	class CameraBase;
+
 	class Renderer2D
 	{
 	public:
+		Renderer2D();
+		~Renderer2D();
 
-		static void Initialize();
-		static void Shutdown();
+		void Initialize();
+		void Shutdown();
 
-		static void BeginPass();
-		static void EndPass();
+		void Begin(const Ref<CameraBase> camera);
+		void End();
 
-		static void Flush();
-
-		static void DrawQuad(const glm::mat4& tm, const glm::vec4& color);
-		static void DrawQuad(const glm::mat4& tm, const Ref<Material> mat, uint32_t id, const glm::vec4& color = { 1.f, 1.f, 1.f, 1.f });
-
-		static void SubmitQuad(const glm::mat4& transform, Ref<Material> mat, size_t id = -1);
-		static void DrawRenderBuffer();
-
-		struct Statistics
-		{
-			uint32_t drawCalls = 0;
-			uint32_t quadCount = 0;
-
-			uint32_t GetTotalVertexCount() { return quadCount * 4; }
-			uint32_t GetTotalIndexCount() { return quadCount * 6; }
-		};
-
-		static Statistics GetStats();
-		static void ResetStats();
+		void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
+		void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
 	private:
-		static void StartNewBatch();
-		static void ResetBatchData();
+		void SetupRenderPipelines();
 
-		static RenderBuffer s_RenderBuffer;
+		std::unique_ptr<Renderer2DStorage> m_storage;
 	};
 }

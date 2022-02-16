@@ -109,7 +109,6 @@ namespace Lamp
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowResizeEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 		dispatcher.Dispatch<MouseScrolledEvent>(LP_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
-
 	}
 
 	void PerspectiveCameraController::UpdateProjection(uint32_t width, uint32_t height)

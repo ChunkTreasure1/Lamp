@@ -11,62 +11,32 @@
 
 namespace Lamp
 {
-	struct AABB
-	{
-		glm::vec3 Max = glm::vec3(0.f);
-		glm::vec3 Min = glm::vec3(0.f);
-
-		glm::vec3 StartMax = glm::vec3(0.f);
-		glm::vec3 StartMin = glm::vec3(0.f);
-	};
-
 	class Mesh : public Asset
 	{
 	public:
-		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats, AABB bb)
-			: m_Materials(mats), m_Name(name), m_BoundingBox(bb), m_Meshes(meshes)
-		{
-		}
-
-		Mesh()
-		{
-		}
-
-		friend class ResourceCache;
+		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats);
+		Mesh() = default;
 
 		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f));
 
 		//Setting
-		inline void SetName(const std::string& name) { m_Name = name; }
-		inline void SetMaterial(Ref<Material> mat, uint32_t id)
-		{
-			auto it = m_Materials.find(id);
-			LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
-
-			it->second = mat;
-		}
+		inline void SetName(const std::string& name) { m_name = name; }
+		void SetMaterial(Ref<Material> mat, uint32_t id);
 
 		//Getting
-		inline Ref<Material> GetMaterial(uint32_t id)
-		{
-			auto it = m_Materials.find(id);
-			LP_CORE_ASSERT(it != m_Materials.end(), "Mesh does not contain the specified material id!");
-			
-			return it->second;
-		}
-		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_Materials; }
-		inline const std::string& GetName() { return m_Name; }
-		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_Meshes; }
-		inline AABB& GetBoundingBox() { return m_BoundingBox; }
+		Ref<Material> GetMaterial(uint32_t id);
+		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_materials; }
+		inline const std::string& GetName() { return m_name; }
+		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_subMeshes; }
 
 		static AssetType GetStaticType() { return AssetType::Mesh; }
 		AssetType GetType() override { return GetStaticType(); }
 
 	private:
-		std::vector<Ref<SubMesh>> m_Meshes;
-		std::map<uint32_t, Ref<Material>> m_Materials;
-		std::string m_Name;
+		friend class ResourceCache;
 
-		AABB m_BoundingBox;
+		std::vector<Ref<SubMesh>> m_subMeshes;
+		std::map<uint32_t, Ref<Material>> m_materials;
+		std::string m_name;
 	};
 }

@@ -392,6 +392,16 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
+		//Terrain
+		{
+			Renderer::Get().CreateTerrainPipeline(m_geometryFramebuffer);
+		}
+
+		//Skybox
+		{
+			Renderer::Get().CreateSkyboxPipeline(m_geometryFramebuffer);
+		}
+
 		//Translucency pass
 		{
 			FramebufferSpecification framebufferSpec{};

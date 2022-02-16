@@ -22,7 +22,6 @@ namespace Lamp
 		inline Ref<RenderPipeline> GetPipeline() { return m_pipeline; }
 		inline bool IsValid() const { return m_isValid; }
 
-		Ref<RenderPipeline> SetupRenderPipeline(Ref<Framebuffer> framebuffer);
 		void Draw();
 
 		static Ref<Terrain> Create(const std::filesystem::path& aHeightMap);

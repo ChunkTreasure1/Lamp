@@ -7,25 +7,6 @@
 
 namespace Lamp
 {
-	struct Vertex
-	{
-		Vertex(const glm::vec3& position, const glm::vec2& texCoords)
-			: position(position), textureCoords(texCoords)
-		{}
-
-		Vertex(const glm::vec3& position)
-			: position(position)
-		{ }
-
-		Vertex() = default;
-
-		glm::vec3 position = glm::vec3(0.f);
-		glm::vec3 normal = glm::vec3(0.f);
-		glm::vec3 tangent = glm::vec3(0.f);
-		glm::vec3 bitangent = glm::vec3(0.f);
-		glm::vec2 textureCoords = glm::vec2(0.f);
-	};
-
 	class CommandBuffer;
 	class VertexBuffer
 	{
@@ -43,9 +24,9 @@ namespace Lamp
 		virtual void SetData(const void* data, uint32_t size) = 0;
 
 	public:
-		static Ref<VertexBuffer> Create(std::vector<Vertex>& pVertices, uint32_t size);
+		static Ref<VertexBuffer> Create(const std::vector<Vertex>& pVertices, uint32_t size);
+		static Ref<VertexBuffer> Create(const std::vector<float>& vertices, uint32_t size);
 		static Ref<VertexBuffer> Create(uint32_t size);
-		static Ref<VertexBuffer> Create(std::vector<float>& vertices, uint32_t size);
 	};
 
 	class IndexBuffer
@@ -61,7 +42,7 @@ namespace Lamp
 		virtual uint32_t GetCount() = 0;
 
 	public:
-		static Ref<IndexBuffer> Create(std::vector<uint32_t>& pIndices, uint32_t count);
+		static Ref<IndexBuffer> Create(const std::vector<uint32_t>& pIndices, uint32_t count);
 		static Ref<IndexBuffer> Create(uint32_t* pIndices, uint32_t count);
 
 	};

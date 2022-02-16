@@ -12,10 +12,10 @@ namespace Lamp
 	{
 	}
 
-	VulkanVertexBuffer::VulkanVertexBuffer(std::vector<float>& vertices, uint32_t size)
+	VulkanVertexBuffer::VulkanVertexBuffer(const std::vector<float>& vertices, uint32_t size)
 	{ }
 
-	VulkanVertexBuffer::VulkanVertexBuffer(std::vector<Vertex>& vertices, uint32_t newSize)
+	VulkanVertexBuffer::VulkanVertexBuffer(const std::vector<Vertex>& vertices, uint32_t newSize)
 	{
 		auto device = VulkanContext::GetCurrentDevice();
 
@@ -93,7 +93,7 @@ namespace Lamp
 
 	/////Index buffer/////
 
-	VulkanIndexBuffer::VulkanIndexBuffer(std::vector<uint32_t>& indices, uint32_t count)
+	VulkanIndexBuffer::VulkanIndexBuffer(const std::vector<uint32_t>& indices, uint32_t count)
 		: m_count(count)
 	{
 		auto device = VulkanContext::GetCurrentDevice();

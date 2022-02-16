@@ -207,7 +207,6 @@ namespace Lamp
 				
 				std::string terrPath = terrainNode["terrain"] ? terrainNode["terrain"].as<std::string>() : "";
 				terrain.terrain = Terrain::Create(terrPath);
-				terrain.terrain->SetupRenderPipeline(level->GetGeometryFramebuffer());
 			}
 
 			//Skybox
@@ -222,7 +221,6 @@ namespace Lamp
 
 				std::string skyboxPath = skyboxNode["skybox"] ? skyboxNode["skybox"].as<std::string>() : "";
 				skybox.skybox = Skybox::Create(skyboxPath);
-				skybox.skybox->SetupRenderPipeline(level->GetGeometryFramebuffer());
 			}
 		}
 

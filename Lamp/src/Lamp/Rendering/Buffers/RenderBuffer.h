@@ -21,8 +21,15 @@ namespace Lamp
 		size_t id;
 	};
 
+	struct LineCommandData
+	{
+		glm::vec3 pointOne;
+		glm::vec3 pointTwo;
+	};
+
 	struct RenderBuffer
 	{
 		std::vector<RenderCommandData> drawCalls;
+		std::vector<LineCommandData> lineCalls;
 	};
 }
