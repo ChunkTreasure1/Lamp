@@ -15,9 +15,13 @@ namespace Lamp
 			: transform(transform), data(mesh), material(material), id(id)
 		{}
 
-		glm::mat4 transform;
 		Ref<SubMesh> data;
 		Ref<Material> material;
+
+		glm::vec4 color; //2D only
+		Ref<Texture2D> texture; //2D only
+
+		glm::mat4 transform;
 		size_t id;
 	};
 

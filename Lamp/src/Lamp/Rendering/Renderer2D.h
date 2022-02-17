@@ -3,6 +3,8 @@
 #include "Lamp/Rendering/Buffers/RenderBuffer.h"
 #include "Lamp/Rendering/Vertex.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Lamp
 {
 	class CameraBase;
@@ -16,6 +18,9 @@ namespace Lamp
 
 		Ref<RenderPipeline> quadPipeline;
 		Ref<RenderPipeline> linePipeline;
+
+		VkDescriptorSet currentQuadDescriptorSet;
+		VkDescriptorSet currentLineDescriptorSet;
 		////////////////////
 
 		/////Values/////
@@ -30,7 +35,8 @@ namespace Lamp
 
 		/////Quad Storage/////
 		Ref<VertexBuffer> quadVertexBuffer;
-		
+		Ref<IndexBuffer> quadIndexBuffer;
+
 		QuadVertex* quadVertexBufferBase = nullptr;
 		QuadVertex* quadVertexBufferPtr = nullptr;
 		glm::vec4 quadVertexPositions[4];
@@ -39,6 +45,7 @@ namespace Lamp
 		Ref<Texture2D>* textureSlots;
 
 		uint32_t textureSlotIndex = 1;
+		uint32_t quadIndexCount = 0;
 		//////////////////////
 
 		/////Line Storage/////
@@ -61,8 +68,17 @@ namespace Lamp
 		void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
 		void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
+		void DrawQuad(const RenderCommandData& cmd);
+
 	private:
 		void SetupRenderPipelines();
+		void CreateStorage();
+		void AllocateAndUpdateDescriptors();
+
+		void ResetBatchData();
+		void StartNewBatch();
+		void Flush();
+
 
 		/////Render buffer/////
 		RenderBuffer m_firstRenderBuffer;

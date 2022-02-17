@@ -6,6 +6,7 @@ TextureNames
 {
 }
 
+//Base on https://github.com/SaschaWillems/Vulkan/blob/master/data/shaders/glsl/terraintessellation
 #type vertex
 #version 450
 
@@ -35,6 +36,38 @@ layout (location = 1) in vec3 a_Normal[];
 
 layout (location = 0) out vec2 o_TexCoords[4];
 layout (location = 1) out vec3 o_Normal[4];
+
+layout (std140, binding = 0) uniform CameraDataBuffer
+{
+    mat4 view;
+    mat4 projection;
+    vec4 position;
+    vec2 ambienceExposure;
+
+} u_CameraData;
+
+layout (std140, binding = 3) uniform ScreenDataBuffer
+{
+    vec2 screenSize;
+    float aspectRatio;
+    uint xScreenTiles;
+} u_ScreenData;
+
+float ScreenSpaceTessellationFactor(vec4 p0, vec4 p1)
+{
+    vec4 midPoint = 0.5 * (p0 + p1);
+    float radius = distance(p0, p1) / 2.0;
+
+    vec4 v0 = u_CameraData.view * midPoint;
+
+    vec4 clip0 = (u_CameraData.projection * (v0 - vec4(radius, vec3(0.0))));
+    vec4 clip1 = (u_CameraData.projection * (v0 + vec4(radius, vec3(0.0))));
+
+    clip0 /= clip0.w;
+    clip1 /= clip1.w;
+
+
+}
 
 void main()
 {
