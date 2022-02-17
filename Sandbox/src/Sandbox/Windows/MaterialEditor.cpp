@@ -63,7 +63,7 @@ namespace Sandbox
 
 		float size = ImGui::GetWindowHeight() - 4.f;
 
-		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		if (ImGui::ImageButton(UI::GetTextureID(m_saveIcon), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
 			g_pEnv->pAssetManager->SaveAsset(m_pSelectedMaterial);
 		}

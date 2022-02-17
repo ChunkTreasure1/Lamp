@@ -4,7 +4,7 @@
 #include "Shader/ShaderLibrary.h"
 
 #include "Lamp/Rendering/RenderPipeline.h"
-#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Rendering/Buffers/Framebuffer.h"
 
 #include "Platform/Vulkan/VulkanRenderer.h"
 
@@ -53,7 +53,5 @@ namespace Lamp
 		FramebufferSpecification bufferSpec;
 		bufferSpec.height = 512;
 		bufferSpec.width = 512;
-
-		shadowBuffer = std::make_shared<PointShadowBuffer>(bufferSpec);
 	}
 }

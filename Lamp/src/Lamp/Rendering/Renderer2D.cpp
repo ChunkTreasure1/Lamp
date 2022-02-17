@@ -13,10 +13,7 @@
 #include "Lamp/Rendering/Textures/Texture2D.h"
 
 #include "Platform/Vulkan/VulkanRenderer.h"
-#include "Platform/Vulkan/VulkanShader.h"
-#include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanDevice.h"
-#include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 namespace Lamp
 {
@@ -184,15 +181,6 @@ namespace Lamp
 
 		/////Quad/////
 		m_storage->quadVertexBuffer = VertexBuffer::Create(m_storage->maxVertices * sizeof(QuadVertex));
-		m_storage->quadVertexBuffer->SetBufferLayout
-		({
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float4, "a_Color" },
-			{ ElementType::Float2, "a_TexCoords" },
-			{ ElementType::Int, "a_TexId" },
-			{ ElementType::Int, "a_Id" },
-			});
-
 		m_storage->quadVertexBufferBase = new QuadVertex[m_storage->maxVertices];
 		m_storage->textureSlots = new Ref<Texture2D>[Renderer::Get().GetCapabilities().maxShaderTexturesArray];
 
@@ -232,9 +220,9 @@ namespace Lamp
 
 		//Quad
 		{
-			auto vulkanQuadShader = std::reinterpret_pointer_cast<VulkanShader>(m_storage->quadPipeline->GetSpecification().shader);
-			auto quadDescriptorLayout = vulkanQuadShader->GetDescriptorSetLayout(0);
-			auto& shaderDescriptorSet = vulkanQuadShader->GetDescriptorSets()[0];
+			auto shader = m_storage->quadPipeline->GetSpecification().shader;
+			auto quadDescriptorLayout = shader->GetDescriptorSetLayout(0);
+			auto& shaderDescriptorSet = shader->GetDescriptorSets()[0];
 
 			VkDescriptorSetAllocateInfo allocInfo{};
 			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -257,7 +245,7 @@ namespace Lamp
 					for (uint32_t i = 0; i < m_storage->textureSlotIndex; i++)
 					{
 						auto tex = m_storage->textureSlots[i];
-						textureInfos.emplace_back(std::reinterpret_pointer_cast<VulkanTexture2D>(tex)->GetDescriptorInfo());
+						textureInfos.emplace_back(tex->GetDescriptorInfo());
 					}
 
 					writeDescriptor.descriptorCount = textureInfos.size();
@@ -299,11 +287,10 @@ namespace Lamp
 			DrawQuad(cmd);
 		}
 
-		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_storage->quadPipeline);
-		auto commandBuffer = vulkanPipeline->GetSpecification().isSwapchain ? m_storage->swapchainCommandBuffer : m_storage->renderCommandBuffer;
+		auto commandBuffer = m_storage->quadPipeline->GetSpecification().isSwapchain ? m_storage->swapchainCommandBuffer : m_storage->renderCommandBuffer;
 	
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-		vulkanPipeline->BindDescriptorSet(commandBuffer, m_storage->currentQuadDescriptorSet, 0);
+		m_storage->quadPipeline->BindDescriptorSet(commandBuffer, m_storage->currentQuadDescriptorSet, 0);
 
 		m_storage->quadVertexBuffer->Bind(commandBuffer);
 		m_storage->quadIndexBuffer->Bind(commandBuffer);

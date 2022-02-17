@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
+#include "Lamp/Rendering/Shader/Shader.h"
 
 #include "Lamp/AssetSystem/Asset.h"
-
-#include "Platform/Vulkan/VulkanShader.h"
 
 #include <filesystem>
 
@@ -44,6 +42,6 @@ namespace Lamp
 		Ref<Framebuffer> m_brdfFramebuffer;
 		Ref<RenderPipeline> m_pipeline;
 
-		VulkanShader::ShaderMaterialDescriptorSet m_descriptorSet;
+		Shader::ShaderMaterialDescriptorSet m_descriptorSet;
 	};
 }

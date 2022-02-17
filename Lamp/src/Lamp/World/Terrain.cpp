@@ -4,7 +4,6 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
-#include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
@@ -14,9 +13,6 @@
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Mesh/Mesh.h"
 
-#include "Platform/Vulkan/VulkanRenderPipeline.h"
-#include "Platform/Vulkan/VulkanUniformBuffer.h"
-#include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanRenderer.h"
 
@@ -76,30 +72,29 @@ namespace Lamp
 			m_descriptorSet.pool = nullptr;
 		}
 
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_pipeline->GetSpecification().shader);
+		auto shader = m_pipeline->GetSpecification().shader;
 		auto device = VulkanContext::GetCurrentDevice();
 		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-		auto descriptorSet = vulkanShader->CreateDescriptorSets();
+		auto descriptorSet = shader->CreateDescriptorSets();
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
-		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
-		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::Get().GetStorage().terrainDataBuffer);
+		auto vulkanUniformBuffer = m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame);
+		auto vulkanTerrainBuffer = Renderer::Get().GetStorage().terrainDataBuffer;
 
-		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("CameraDataBuffer"));
+		writeDescriptors.emplace_back(*shader->GetDescriptorSet("CameraDataBuffer"));
 		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[0].pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("DirectionalLightBuffer"));
+		writeDescriptors.emplace_back(*shader->GetDescriptorSet("DirectionalLightBuffer"));
 		writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
 		writeDescriptors[1].pBufferInfo = &vulkanTerrainBuffer->GetDescriptorInfo();
 
-		auto vulkanTexture = std::reinterpret_pointer_cast<VulkanTexture2D>(m_heightMap);
-		if (vulkanTexture)
+		if (m_heightMap)
 		{
-			writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("u_HeightMap"));
+			writeDescriptors.emplace_back(*shader->GetDescriptorSet("u_HeightMap"));
 			writeDescriptors[2].dstSet = descriptorSet.descriptorSets[0];
-			writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
+			writeDescriptors[2].pImageInfo = &m_heightMap->GetDescriptorInfo();
 		}
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);

@@ -9,6 +9,7 @@ namespace Lamp
 {
 	class CameraBase;
 	class Texture2D;
+	class CommandBuffer;
 
 	struct Renderer2DStorage
 	{

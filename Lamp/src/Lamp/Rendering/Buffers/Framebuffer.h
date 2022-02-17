@@ -17,8 +17,6 @@ namespace Lamp
 		DontCare
 	};
 
-
-
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
@@ -89,31 +87,42 @@ namespace Lamp
 	class Framebuffer
 	{
 	public:
-		virtual ~Framebuffer() = default;
+		Framebuffer(const FramebufferSpecification& spec);
+		~Framebuffer();
 
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
-		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
-		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
-		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth = false) = 0;
-		virtual void Invalidate() = 0;
+		void Bind();
+		void Unbind();
 
-		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
+		void Resize(const uint32_t width, const uint32_t height);
+		int ReadPixel(uint32_t attachmentIndex, int x, int y);
+		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth /* = false */);
+		void Invalidate();
 
-		virtual Ref<Image2D> GetColorAttachment(uint32_t index) const = 0;
-		virtual Ref<Image2D> GetDepthAttachment() const = 0;
+		inline VkRenderPass GetRenderPass() const { return m_renderPass; }
+		inline VkFramebuffer GetFramebuffer() const { return m_framebuffer; }
+		inline const std::vector<VkClearValue>& GetClearValues() { return m_clearValues; }
 
-		//TODO: deprecate
-		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
-		virtual inline const uint32_t GetDepthAttachmentID() = 0;
-		virtual inline const uint32_t GetRendererID() = 0;
+		void ClearAttachment(uint32_t attachmentIndex, int value);
 
-		virtual void BindColorAttachment(uint32_t id = 0, uint32_t i = 0) = 0;
-		virtual void BindDepthAttachment(uint32_t id = 0) = 0;
+		Ref<Image2D> GetColorAttachment(uint32_t index) const;
+		Ref<Image2D> GetDepthAttachment() const;
 
-		virtual FramebufferSpecification& GetSpecification() = 0;
+		FramebufferSpecification& GetSpecification();
 
-	public:
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
+
+	private:
+		FramebufferSpecification m_specification;
+
+		uint32_t m_width;
+		uint32_t m_height;
+
+		VkRenderPass m_renderPass;
+		VkFramebuffer m_framebuffer = nullptr;
+
+		Ref<Image2D> m_depthAttachmentImage;
+		std::vector<Ref<Image2D>> m_attachmentImages;
+
+		std::vector<VkClearValue> m_clearValues;
 	};
 }

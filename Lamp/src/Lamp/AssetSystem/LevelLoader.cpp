@@ -68,7 +68,7 @@ namespace Lamp
 					}
 				}
 				out << YAML::EndMap;
-			
+
 				out << YAML::Key << "Terrain" << YAML::Value;
 				out << YAML::BeginMap;
 				{
@@ -196,7 +196,7 @@ namespace Lamp
 			LP_DESERIALIZE_PROPERTY(cameraPosition, const_cast<glm::vec3&>(level->m_environment.GetCameraPosition()), envNode, glm::vec3(0.f));
 			LP_DESERIALIZE_PROPERTY(cameraRotation, const_cast<glm::quat&>(level->m_environment.GetCameraRotation()), envNode, glm::quat());
 			LP_DESERIALIZE_PROPERTY(cameraFOV, const_cast<float&>(level->m_environment.GetCameraFOV()), envNode, 60.f);
-		
+
 			//Terrain
 			{
 				YAML::Node terrainNode = envNode["Terrain"];
@@ -204,7 +204,7 @@ namespace Lamp
 				auto& terrain = const_cast<TerrainData&>(level->m_environment.GetTerrain());
 				LP_DESERIALIZE_PROPERTY(terrainScale, terrain.terrainScale, terrainNode, 64.f);
 				LP_DESERIALIZE_PROPERTY(terrainShift, terrain.terrainShift, terrainNode, 16.f);
-				
+
 				std::string terrPath = terrainNode["terrain"] ? terrainNode["terrain"].as<std::string>() : "";
 				terrain.terrain = Terrain::Create(terrPath);
 			}
@@ -298,7 +298,7 @@ namespace Lamp
 		return true;
 	}
 
-	void LevelLoader::SerializeEntity(YAML::Emitter& out, const Entity* entity) const	
+	void LevelLoader::SerializeEntity(YAML::Emitter& out, const Entity* entity) const
 	{
 		if (entity == nullptr)
 		{
@@ -410,7 +410,7 @@ namespace Lamp
 				{
 					SerializeAttribute(attr, "input", out);
 				}
-				
+
 				for (const auto& attr : node->outputAttributes)
 				{
 					SerializeAttribute(attr, "output", out);
@@ -421,7 +421,7 @@ namespace Lamp
 			out << YAML::EndSeq;
 
 			//links
-				out << YAML::Key << "links" << YAML::BeginSeq;
+			out << YAML::Key << "links" << YAML::BeginSeq;
 			for (const auto& link : graph->GetSpecification().links)
 			{
 				out << YAML::BeginMap;
@@ -493,71 +493,91 @@ namespace Lamp
 				{
 					case Lamp::PropertyType::String:
 					{
-						std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<std::string>();
+						if (std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<std::string>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Path:
 					{
-						std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<std::string>();
+						if (std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<std::string>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Bool:
 					{
-						bool* data = GetPropertyData<bool>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<bool>();
+						if (bool* data = GetPropertyData<bool>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<bool>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Int:
 					{
-						int* data = GetPropertyData<int>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<int>();
+						if (int* data = GetPropertyData<int>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<int>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float:
 					{
-						float* data = GetPropertyData<float>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<float>();
+						if (float* data = GetPropertyData<float>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<float>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float2:
 					{
-						glm::vec2* data = GetPropertyData<glm::vec2>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec2>();
+						if (glm::vec2* data = GetPropertyData<glm::vec2>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec2>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float3:
 					{
-						glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec3>();
+						if (glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec3>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Float4:
 					{
-						glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec4>();
+						if (glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec4>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Color3:
 					{
-						glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec3>();
+						if (glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec3>();
+						}
 						break;
 					}
 
 					case Lamp::PropertyType::Color4:
 					{
-						glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec4>();
+						if (glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec4>();
+						}
 						break;
 					}
 					default:
@@ -716,7 +736,7 @@ namespace Lamp
 						case PropertyType::Color3: LP_DESERIALIZE_PROPERTY_ANY(data, attr.data, yamlNode, glm::vec3(0.f)); break;
 						case PropertyType::Color4: LP_DESERIALIZE_PROPERTY_ANY(data, attr.data, yamlNode, glm::vec4(0.f)); break;
 						case PropertyType::EntityId: LP_DESERIALIZE_PROPERTY_ANY(data, attr.data, yamlNode, uint32_t(0)); break;
-					
+
 						default: break;
 					}
 				}

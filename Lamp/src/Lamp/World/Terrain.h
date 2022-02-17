@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Platform/Vulkan/VulkanShader.h"
+#include "Lamp/Rendering/Shader/Shader.h"
 
 namespace Lamp
 {
@@ -38,6 +38,6 @@ namespace Lamp
 		Ref<Texture2D> m_heightMap;
 
 		glm::mat4 m_transform;
-		VulkanShader::ShaderMaterialDescriptorSet m_descriptorSet;
+		Shader::ShaderMaterialDescriptorSet m_descriptorSet;
 	};
 }

@@ -10,14 +10,28 @@
 
 #include "imgui.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Lamp
 {
 	class ImGuiLayer : public Layer
 	{
 	public:
-		virtual void Begin() = 0;
-		virtual void End() = 0;
+		ImGuiLayer();
+		~ImGuiLayer();
+
+		void OnDetach();
+		void OnAttach();
+
+		void Begin();
+		void End();
 
 		static ImGuiLayer* Create();
+
+	private:
+		float m_time = 0.f;
+		ImFont* m_font;
+
+		VkDescriptorPool m_descriptorPool;
 	};
 }
