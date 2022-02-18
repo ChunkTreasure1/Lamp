@@ -401,20 +401,17 @@ namespace Lamp
 			writeDescriptors[0].dstSet = currentDescriptorSet;
 			writeDescriptors[0].pBufferInfo = &vulkanCameraDataBuffer->GetDescriptorInfo();
 
-			auto vulkanLightCullingBuffer = m_rendererStorage->lightCullingBuffer;
 			writeDescriptors[1] = *lightCullingShader->GetDescriptorSet("DirectionalLightBuffer");
 			writeDescriptors[1].dstSet = currentDescriptorSet;
-			writeDescriptors[1].pBufferInfo = &vulkanLightCullingBuffer->GetDescriptorInfo();
+			writeDescriptors[1].pBufferInfo = &m_rendererStorage->lightCullingBuffer->GetDescriptorInfo();
 
-			auto vulkanLightStorageBuffer = m_rendererStorage->shaderStorageBufferSet->Get(12, 0, currentFrame);
 			writeDescriptors[2] = *lightCullingShader->GetDescriptorSet("LightBuffer");
 			writeDescriptors[2].dstSet = currentDescriptorSet;
-			writeDescriptors[2].pBufferInfo = &vulkanLightStorageBuffer->GetDescriptorInfo();
+			writeDescriptors[2].pBufferInfo = &m_rendererStorage->shaderStorageBufferSet->Get(12, 0, currentFrame)->GetDescriptorInfo();
 
-			auto vulkanVisibleLightsBuffer = m_rendererStorage->shaderStorageBufferSet->Get(13, 0, currentFrame);
 			writeDescriptors[3] = *lightCullingShader->GetDescriptorSet("VisibleLightsBuffer");
 			writeDescriptors[3].dstSet = currentDescriptorSet;
-			writeDescriptors[3].pBufferInfo = &vulkanVisibleLightsBuffer->GetDescriptorInfo();
+			writeDescriptors[3].pBufferInfo = &m_rendererStorage->shaderStorageBufferSet->Get(13, 0, currentFrame)->GetDescriptorInfo();
 
 			writeDescriptors[4] = *lightCullingShader->GetDescriptorSet("u_DepthMap");
 			writeDescriptors[4].dstSet = currentDescriptorSet;

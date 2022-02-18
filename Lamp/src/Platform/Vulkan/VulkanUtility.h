@@ -65,6 +65,7 @@ inline const char* VKResultToString(VkResult result)
 #ifdef LP_DEBUG
 	#define LP_VK_CHECK(x) if (x != VK_SUCCESS) { LP_CORE_ERROR("VulkanError: {0}", VKResultToString(x)); LP_DEBUGBREAK(); }
 #else
+	#define LP_VK_CHECK(x)
 #endif
 
 namespace Utility

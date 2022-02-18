@@ -81,7 +81,6 @@ namespace Lamp
 
 		bool swapchainTarget = false;
 		bool copyable = false;
-		bool shadow = false;
 	};
 
 	class Framebuffer
@@ -98,11 +97,12 @@ namespace Lamp
 		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth /* = false */);
 		void Invalidate();
 
-		inline VkRenderPass GetRenderPass() const { return m_renderPass; }
-		inline VkFramebuffer GetFramebuffer() const { return m_framebuffer; }
-		inline const std::vector<VkClearValue>& GetClearValues() { return m_clearValues; }
-
 		void ClearAttachment(uint32_t attachmentIndex, int value);
+
+		const VkRenderingAttachmentInfo& GetColorAttachmentInfo(uint32_t index) const;
+		const VkRenderingAttachmentInfo& GetDepthAttachmentInfo() const;
+
+		const std::vector<VkRenderingAttachmentInfo>& GetColorAttachmentInfos() const;
 
 		Ref<Image2D> GetColorAttachment(uint32_t index) const;
 		Ref<Image2D> GetDepthAttachment() const;
@@ -117,12 +117,10 @@ namespace Lamp
 		uint32_t m_width;
 		uint32_t m_height;
 
-		VkRenderPass m_renderPass;
-		VkFramebuffer m_framebuffer = nullptr;
+		std::vector<VkRenderingAttachmentInfo> m_colorAttachmentInfos;
+		VkRenderingAttachmentInfo m_depthAttachmentInfo;
 
 		Ref<Image2D> m_depthAttachmentImage;
 		std::vector<Ref<Image2D>> m_attachmentImages;
-
-		std::vector<VkClearValue> m_clearValues;
 	};
 }

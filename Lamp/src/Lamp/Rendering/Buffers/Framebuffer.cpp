@@ -103,12 +103,6 @@ namespace Lamp
 		swapchain->UnregisterResizeCallback(this);
 		vkDeviceWaitIdle(device->GetHandle());
 
-		if (!m_specification.swapchainTarget)
-		{
-			vkDestroyFramebuffer(device->GetHandle(), m_framebuffer, nullptr);
-			vkDestroyRenderPass(device->GetHandle(), m_renderPass, nullptr);
-		}
-
 		LP_CORE_INFO("VulkanFramebuffer: Destroyed");
 	}
 
@@ -133,11 +127,6 @@ namespace Lamp
 		}
 		else
 		{
-			auto& swapchain = Application::Get().GetWindow().GetSwapchain();
-			m_renderPass = swapchain->GetRenderPass();
-
-			m_clearValues.clear();
-			m_clearValues.emplace_back().color = { 0.f, 0.f, 0.f, 1.f };
 		}
 	}
 
@@ -154,37 +143,24 @@ namespace Lamp
 	{
 		auto device = VulkanContext::GetCurrentDevice()->GetHandle();
 
-		if (m_framebuffer)
+		uint32_t attachmentIndex = 0;
+		for (Ref<Image2D> image : m_attachmentImages)
 		{
-			VkFramebuffer framebuffer = m_framebuffer;
-			vkDeviceWaitIdle(device);
-			vkDestroyFramebuffer(device, framebuffer, nullptr);
+			auto vulkanImage = image;
+			image->Release();
+			attachmentIndex++;
+		}
 
-			uint32_t attachmentIndex = 0;
-			for (Ref<Image2D> image : m_attachmentImages)
-			{
-				auto vulkanImage = image;
-				image->Release();
-				attachmentIndex++;
-			}
-
-			if (m_depthAttachmentImage)
-			{
-				m_depthAttachmentImage->Release();
-			}
+		if (m_depthAttachmentImage)
+		{
+			m_depthAttachmentImage->Release();
 		}
 
 		VulkanAllocator allocator;
 
-		std::vector<VkAttachmentDescription> attachmentDescriptons;
-		std::vector<VkAttachmentReference> colorAttachmentReferences;
-		VkAttachmentReference depthAttachmentReference;
-
-		m_clearValues.resize(m_specification.attachments.Attachments.size());
-
 		bool createImages = m_attachmentImages.empty();
 
-		uint32_t attachmentIndex = 0;
+		attachmentIndex = 0;
 		for (auto attachmentSpec : m_specification.attachments.Attachments)
 		{
 			if (Utils::IsDepthFormat(attachmentSpec.textureFormat))
@@ -196,20 +172,12 @@ namespace Lamp
 				spec.height = m_height;
 				m_depthAttachmentImage->Invalidate(nullptr);
 
-				VkAttachmentDescription& attachmentDesc = attachmentDescriptons.emplace_back();
-				attachmentDesc.flags = 0;
-				attachmentDesc.format = Utils::LampFormatToVulkanFormat(attachmentSpec.textureFormat);
-				attachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT;
-				attachmentDesc.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
-				attachmentDesc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-				attachmentDesc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-				attachmentDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				attachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-				attachmentDesc.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-				depthAttachmentReference = { attachmentIndex, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };
-
-				m_clearValues[attachmentIndex].depthStencil = { 1.f, 0 };
+				m_depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+				m_depthAttachmentInfo.imageView = m_depthAttachmentImage->GetImageView();
+				m_depthAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+				m_depthAttachmentInfo.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
+				m_depthAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				m_depthAttachmentInfo.clearValue.depthStencil = { 1.f, 0 };
 			}
 			else
 			{
@@ -224,6 +192,14 @@ namespace Lamp
 					spec.height = m_height;
 
 					colorAttachment = m_attachmentImages.emplace_back(Image2D::Create(spec));
+
+					auto& colInfo = m_colorAttachmentInfos.emplace_back();
+					colInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+					colInfo.imageView = colorAttachment->GetImageView();
+					colInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
+					colInfo.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
+					colInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+					colInfo.clearValue.color = { m_specification.clearColor.x, m_specification.clearColor.y, m_specification.clearColor.z, m_specification.clearColor.w };
 				}
 				else
 				{
@@ -235,100 +211,19 @@ namespace Lamp
 
 					colorAttachment = image;
 					colorAttachment->Invalidate(nullptr);
+
+					auto& colInfo = m_colorAttachmentInfos[attachmentIndex];
+					colInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+					colInfo.imageView = colorAttachment->GetImageView();
+					colInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
+					colInfo.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
+					colInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+					colInfo.clearValue.color = { m_specification.clearColor.x, m_specification.clearColor.y, m_specification.clearColor.z, m_specification.clearColor.w };
 				}
-
-				VkAttachmentDescription& attachmentDescripton = attachmentDescriptons.emplace_back();
-				attachmentDescripton.flags = 0;
-				attachmentDescripton.format = Utils::LampFormatToVulkanFormat(attachmentSpec.textureFormat);
-				attachmentDescripton.samples = VK_SAMPLE_COUNT_1_BIT;
-				attachmentDescripton.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode); // TODO: add other ops
-				attachmentDescripton.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-				attachmentDescripton.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-				attachmentDescripton.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				attachmentDescripton.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				attachmentDescripton.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-				const auto& clearColor = m_specification.clearColor;
-				m_clearValues[attachmentIndex].color = { {clearColor.r, clearColor.g, clearColor.b, clearColor.a} };
-				colorAttachmentReferences.emplace_back(VkAttachmentReference{ attachmentIndex, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL });
 			}
 
 			attachmentIndex++;
 		}
-
-		VkSubpassDescription subpassDescription{};
-		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.colorAttachmentCount = (uint32_t)colorAttachmentReferences.size();
-		subpassDescription.pColorAttachments = colorAttachmentReferences.data();
-
-		if (m_depthAttachmentImage)
-		{
-			subpassDescription.pDepthStencilAttachment = &depthAttachmentReference;
-		}
-
-		std::vector<VkSubpassDependency> dependencies;
-
-		if (m_attachmentImages.size())
-		{
-			{
-				VkSubpassDependency& dependency = dependencies.emplace_back();
-				dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-				dependency.dstSubpass = 0;
-				dependency.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-				dependency.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-				dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-				dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-				dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-			}
-
-			{
-				VkSubpassDependency& dependency = dependencies.emplace_back();
-				dependency.srcSubpass = 0;
-				dependency.dstSubpass = VK_SUBPASS_EXTERNAL;
-				dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-				dependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-				dependency.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-				dependency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-				dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-			}
-		}
-
-		if (m_depthAttachmentImage)
-		{
-			{
-				VkSubpassDependency& depedency = dependencies.emplace_back();
-				depedency.srcSubpass = VK_SUBPASS_EXTERNAL;
-				depedency.dstSubpass = 0;
-				depedency.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-				depedency.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-				depedency.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-				depedency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-				depedency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-			}
-
-			{
-				VkSubpassDependency& depedency = dependencies.emplace_back();
-				depedency.srcSubpass = 0;
-				depedency.dstSubpass = VK_SUBPASS_EXTERNAL;
-				depedency.srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-				depedency.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-				depedency.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-				depedency.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-				depedency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-			}
-		}
-
-		//Create the render pass
-		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptons.size());
-		renderPassInfo.pAttachments = attachmentDescriptons.data();
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpassDescription;
-		renderPassInfo.dependencyCount = (uint32_t)dependencies.size();
-		renderPassInfo.pDependencies = dependencies.data();
-
-		LP_VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &m_renderPass));
 
 		std::vector<VkImageView> attachments(m_attachmentImages.size());
 		for (uint32_t i = 0; i < m_attachmentImages.size(); i++)
@@ -344,22 +239,25 @@ namespace Lamp
 			attachments.emplace_back(image->GetImageView());
 			LP_CORE_ASSERT(attachments.back(), "Image view is null!");
 		}
-
-		//Create framebuffer
-		VkFramebufferCreateInfo framebufferInfo{};
-		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = m_renderPass;
-		framebufferInfo.attachmentCount = (uint32_t)attachments.size();
-		framebufferInfo.pAttachments = attachments.data();
-		framebufferInfo.width = m_width;
-		framebufferInfo.height = m_height;
-		framebufferInfo.layers = 1;
-
-		LP_VK_CHECK(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &m_framebuffer));
 	}
 
 	void Framebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
+	}
+
+	const VkRenderingAttachmentInfo& Framebuffer::GetColorAttachmentInfo(uint32_t index) const
+	{
+		return m_colorAttachmentInfos[index];
+	}
+
+	const VkRenderingAttachmentInfo& Framebuffer::GetDepthAttachmentInfo() const
+	{
+		return m_depthAttachmentInfo;
+	}
+
+	const std::vector<VkRenderingAttachmentInfo>& Framebuffer::GetColorAttachmentInfos() const
+	{
+		return m_colorAttachmentInfos;
 	}
 
 	Ref<Image2D> Framebuffer::GetColorAttachment(uint32_t index) const

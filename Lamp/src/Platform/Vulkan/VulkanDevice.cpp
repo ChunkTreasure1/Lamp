@@ -135,11 +135,18 @@ namespace Lamp
 		LP_CORE_ASSERT(m_physicalDevice->IsExtensionSupported(VK_KHR_SWAPCHAIN_EXTENSION_NAME), "Device does not support swapchain extension!");
 		deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
+
 		VkDeviceCreateInfo deviceCreateInfo{};
 		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(m_physicalDevice->m_queueCreateInfos.size());
 		deviceCreateInfo.pQueueCreateInfos = m_physicalDevice->m_queueCreateInfos.data();
 		deviceCreateInfo.pEnabledFeatures = &m_enabledFeatures;
+
+		VkPhysicalDeviceDynamicRenderingFeatures dynamicRendering{};
+		dynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+		dynamicRendering.dynamicRendering = VK_TRUE;
+
+		deviceCreateInfo.pNext = &dynamicRendering;
 
 		if (!deviceExtensions.empty())
 		{
