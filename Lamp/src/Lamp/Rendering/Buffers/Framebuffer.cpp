@@ -38,8 +38,11 @@ namespace Lamp
 	}
 
 	Framebuffer::Framebuffer(const FramebufferSpecification& spec)
-		: m_specification(spec)
+		: m_specification(spec), m_depthAttachmentImage(nullptr)
 	{
+		//Reset values
+		memset(&m_depthAttachmentInfo, 0, sizeof(VkRenderingAttachmentInfo));
+
 		if (!m_specification.swapchainTarget)
 		{
 			if (m_specification.width == 0)
@@ -106,12 +109,32 @@ namespace Lamp
 		LP_CORE_INFO("VulkanFramebuffer: Destroyed");
 	}
 
-	void Framebuffer::Bind()
+	void Framebuffer::Bind(Ref<CommandBuffer> commandBuffer)
 	{
+		//Transition images to color attachment optimal
+		for (auto& attachment : m_attachmentImages)
+		{
+			attachment->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		}
+
+		if (m_depthAttachmentImage)
+		{
+			m_depthAttachmentImage->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL);
+		}
 	}
 
-	void Framebuffer::Unbind()
+	void Framebuffer::Unbind(Ref<CommandBuffer> commandBuffer)
 	{
+		//Transition images to shader optimal
+		for (auto& attachment : m_attachmentImages)
+		{
+			attachment->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		}
+
+		if (m_depthAttachmentImage)
+		{
+			m_depthAttachmentImage->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		}
 	}
 
 	void Framebuffer::Resize(const uint32_t width, const uint32_t height)
@@ -160,6 +183,14 @@ namespace Lamp
 
 		bool createImages = m_attachmentImages.empty();
 
+		m_colorFormats.clear();
+		m_colorAttachmentInfos.clear();
+		if (!createImages)
+		{
+			m_colorFormats.resize(m_attachmentImages.size());
+			m_colorAttachmentInfos.resize(m_attachmentImages.size());
+		}
+
 		attachmentIndex = 0;
 		for (auto attachmentSpec : m_specification.attachments.Attachments)
 		{
@@ -172,6 +203,7 @@ namespace Lamp
 				spec.height = m_height;
 				m_depthAttachmentImage->Invalidate(nullptr);
 
+				m_depthFormat = m_depthAttachmentImage->GetFormat();
 				m_depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
 				m_depthAttachmentInfo.imageView = m_depthAttachmentImage->GetImageView();
 				m_depthAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
@@ -192,6 +224,7 @@ namespace Lamp
 					spec.height = m_height;
 
 					colorAttachment = m_attachmentImages.emplace_back(Image2D::Create(spec));
+					m_colorFormats.emplace_back(colorAttachment->GetFormat());
 
 					auto& colInfo = m_colorAttachmentInfos.emplace_back();
 					colInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
@@ -212,6 +245,7 @@ namespace Lamp
 					colorAttachment = image;
 					colorAttachment->Invalidate(nullptr);
 
+					m_colorFormats[attachmentIndex] = colorAttachment->GetFormat();
 					auto& colInfo = m_colorAttachmentInfos[attachmentIndex];
 					colInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
 					colInfo.imageView = colorAttachment->GetImageView();
@@ -253,6 +287,16 @@ namespace Lamp
 	const VkRenderingAttachmentInfo& Framebuffer::GetDepthAttachmentInfo() const
 	{
 		return m_depthAttachmentInfo;
+	}
+
+	const std::vector<VkFormat>& Framebuffer::GetColorFormats() const
+	{
+		return m_colorFormats;
+	}
+
+	const VkFormat& Framebuffer::GetDepthFormat() const
+	{
+		return m_depthFormat;
 	}
 
 	const std::vector<VkRenderingAttachmentInfo>& Framebuffer::GetColorAttachmentInfos() const

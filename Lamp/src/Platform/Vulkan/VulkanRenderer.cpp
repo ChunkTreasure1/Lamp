@@ -32,7 +32,6 @@
 #define PER_MESH_DESCRIPTOR_SET 1
 #define MAX_DIRECTIONAL_LIGHT_SHADOWS 10
 
-
 namespace Lamp
 {
 	Renderer* Renderer::s_instance = nullptr;
@@ -46,6 +45,8 @@ namespace Lamp
 		}
 
 		s_instance = this;
+	
+		auto device = VulkanContext::GetCurrentDevice();
 	}
 
 	Renderer::~Renderer()
@@ -103,7 +104,7 @@ namespace Lamp
 
 		{
 			LP_PROFILE_SCOPE("Command buffer submit")
-				auto commandBuffer = m_rendererStorage->renderCommandBuffer;
+			auto commandBuffer = m_rendererStorage->renderCommandBuffer;
 			commandBuffer->End();
 		}
 
@@ -127,24 +128,27 @@ namespace Lamp
 		auto swapchain = Application::Get().GetWindow().GetSwapchain();
 		auto framebuffer = pipeline->GetSpecification().framebuffer;
 		auto commandBuffer = m_rendererStorage->renderCommandBuffer;
-		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
-		VkRenderPassBeginInfo renderPassBegin{};
-		renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBegin.renderPass = framebuffer->GetRenderPass();
-		renderPassBegin.framebuffer = pipeline->GetSpecification().isSwapchain ? swapchain->GetFramebuffer(currentFrame) : framebuffer->GetFramebuffer();
-		renderPassBegin.renderArea.offset = { 0, 0 };
+		framebuffer->Bind(commandBuffer);
 
-		VkExtent2D extent;
-		extent.width = framebuffer->GetSpecification().width;
-		extent.height = framebuffer->GetSpecification().height;
+		VkRenderingInfo renderingInfo{};
+		renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+		renderingInfo.renderArea = { 0, 0, framebuffer->GetSpecification().width, framebuffer->GetSpecification().height };
+		renderingInfo.layerCount = 1;
+		renderingInfo.colorAttachmentCount = framebuffer->GetColorAttachmentInfos().size();
+		renderingInfo.pColorAttachments = framebuffer->GetColorAttachmentInfos().data();
 
-		renderPassBegin.renderArea.extent = extent;
+		if (framebuffer->GetDepthAttachment())
+		{
+			renderingInfo.pDepthAttachment = &framebuffer->GetDepthAttachmentInfo();
+		}
+		else
+		{
+			renderingInfo.pDepthAttachment = nullptr;
+			renderingInfo.pStencilAttachment = nullptr;
+		}
 
-		renderPassBegin.clearValueCount = framebuffer->GetClearValues().size();
-		renderPassBegin.pClearValues = framebuffer->GetClearValues().data();
-
-		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRendering(commandBuffer->GetCurrentCommandBuffer(), &renderingInfo);
 
 		AllocatePerPassDescriptors();
 		pipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
@@ -155,8 +159,8 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()));
-
+		vkCmdEndRendering(commandBuffer->GetCurrentCommandBuffer());
+		m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer->Unbind(commandBuffer);
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
 

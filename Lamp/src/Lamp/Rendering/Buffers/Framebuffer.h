@@ -81,6 +81,7 @@ namespace Lamp
 
 		bool swapchainTarget = false;
 		bool copyable = false;
+		bool shadow = false;
 	};
 
 	class Framebuffer
@@ -89,8 +90,8 @@ namespace Lamp
 		Framebuffer(const FramebufferSpecification& spec);
 		~Framebuffer();
 
-		void Bind();
-		void Unbind();
+		void Bind(Ref<CommandBuffer> commandBuffer);
+		void Unbind(Ref<CommandBuffer> commandBuffer);
 
 		void Resize(const uint32_t width, const uint32_t height);
 		int ReadPixel(uint32_t attachmentIndex, int x, int y);
@@ -101,6 +102,9 @@ namespace Lamp
 
 		const VkRenderingAttachmentInfo& GetColorAttachmentInfo(uint32_t index) const;
 		const VkRenderingAttachmentInfo& GetDepthAttachmentInfo() const;
+
+		const std::vector<VkFormat>& GetColorFormats() const;
+		const VkFormat& GetDepthFormat() const;
 
 		const std::vector<VkRenderingAttachmentInfo>& GetColorAttachmentInfos() const;
 
@@ -114,13 +118,16 @@ namespace Lamp
 	private:
 		FramebufferSpecification m_specification;
 
+		Ref<Image2D> m_depthAttachmentImage;
+		std::vector<Ref<Image2D>> m_attachmentImages;
+
 		uint32_t m_width;
 		uint32_t m_height;
 
+		std::vector<VkFormat> m_colorFormats;
+		VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
+
 		std::vector<VkRenderingAttachmentInfo> m_colorAttachmentInfos;
 		VkRenderingAttachmentInfo m_depthAttachmentInfo;
-
-		Ref<Image2D> m_depthAttachmentImage;
-		std::vector<Ref<Image2D>> m_attachmentImages;
 	};
 }

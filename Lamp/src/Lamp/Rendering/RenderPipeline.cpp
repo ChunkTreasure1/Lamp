@@ -173,7 +173,7 @@ namespace Lamp
 			}
 
 			VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-			colorBlendAttachment.colorWriteMask = Utils::GetColorComponentsFromFormat(attachment.textureFormat);
+			colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 			colorBlendAttachment.blendEnable = VK_FALSE;
 
 			blendAttachments.emplace_back(colorBlendAttachment);
@@ -220,12 +220,30 @@ namespace Lamp
 		pipelineInfo.pMultisampleState = &multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.layout = m_layout;
-		pipelineInfo.renderPass = m_specification.isSwapchain ? swapchain->GetRenderPass() : framebuffer->GetRenderPass();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.pDepthStencilState = &depthStencil;
 		pipelineInfo.pDynamicState = &dynamicStateInfo;
 		pipelineInfo.pTessellationState = m_specification.useTessellation ? &tessellation : nullptr;
+
+		VkPipelineRenderingCreateInfo pipelineRenderingInfo{};
+		pipelineRenderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+		pipelineRenderingInfo.colorAttachmentCount = m_specification.framebuffer->GetColorAttachmentInfos().size();
+		pipelineRenderingInfo.pColorAttachmentFormats = m_specification.framebuffer->GetColorFormats().data();
+
+		if (m_specification.framebuffer->GetDepthAttachment())
+		{
+			pipelineRenderingInfo.depthAttachmentFormat = m_specification.framebuffer->GetDepthFormat();
+			pipelineRenderingInfo.stencilAttachmentFormat = m_specification.framebuffer->GetDepthFormat();
+		}
+		else
+		{
+			pipelineRenderingInfo.depthAttachmentFormat = VK_FORMAT_UNDEFINED;
+			pipelineRenderingInfo.stencilAttachmentFormat = VK_FORMAT_UNDEFINED;
+		}
+
+		pipelineInfo.pNext = &pipelineRenderingInfo;
+
 
 		LP_VK_CHECK(vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline));
 	}

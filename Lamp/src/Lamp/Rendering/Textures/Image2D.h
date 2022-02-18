@@ -81,6 +81,8 @@ namespace Lamp
 		bool comparable = false;
 	};
 
+	class CommandBuffer;
+
 	class Image2D
 	{
 	public:
@@ -90,6 +92,8 @@ namespace Lamp
 		void Invalidate(const void* data);
 		void Release();
 
+		void TransitionToLayout(Ref<CommandBuffer> commandBuffer, VkImageLayout layout);
+
 		uint32_t GetWidth() const { return m_specification.width; }
 		uint32_t GetHeight() const { return m_specification.height; }
 		float GetAspectRatio() const { return (float)m_specification.width / (float)m_specification.height; }
@@ -97,6 +101,7 @@ namespace Lamp
 		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_descriptorInfo; }
 		inline VkImage GetHandle() const { return m_image; }
 		inline VkImageView GetImageView() const { return m_imageViews.at(0); }
+		inline VkFormat GetFormat() const { return m_format; }
 
 		const ImageSpecification& GetSpecification() { return m_specification; }
 		
@@ -112,6 +117,8 @@ namespace Lamp
 		VkDescriptorImageInfo m_descriptorInfo;
 		VkImage m_image = nullptr;
 		VkSampler m_sampler = nullptr;
+		VkFormat m_format;
+		VkImageLayout m_imageLayout;
 
 		std::map<uint32_t, VkImageView> m_imageViews;
 
