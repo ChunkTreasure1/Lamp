@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "Swapchain.h"
 
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include "Platform/Vulkan/VulkanUtility.h"
 

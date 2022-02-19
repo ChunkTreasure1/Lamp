@@ -3,10 +3,10 @@
 #include "UIUtility.h"
 
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
-#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <imgui/backends/imgui_impl_vulkan.h>
 

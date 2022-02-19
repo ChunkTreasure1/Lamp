@@ -9,7 +9,7 @@
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderCommand.h"
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/GraphKey/NodeRegistry.h"

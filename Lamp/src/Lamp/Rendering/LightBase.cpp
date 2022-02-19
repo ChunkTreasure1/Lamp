@@ -5,8 +5,7 @@
 
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
-
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
 {

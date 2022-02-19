@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "RenderCommand.h"
 
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
 {

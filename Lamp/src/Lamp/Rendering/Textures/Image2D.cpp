@@ -3,10 +3,10 @@
 #include "Image2D.h"
 
 #include "Lamp/Rendering/CommandBuffer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include "Platform/Vulkan/VulkanAllocator.h"
 #include "Platform/Vulkan/VulkanUtility.h"
-#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {
@@ -137,13 +137,6 @@ namespace Lamp
 
 		m_image = nullptr;
 		m_allocation = nullptr;
-	}
-
-	void Image2D::TransitionToLayout(Ref<CommandBuffer> commandBuffer, VkImageLayout layout)
-	{
-		VkImageSubresourceRange subRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-		Utility::TransitionImageLayout(commandBuffer->GetCurrentCommandBuffer(), m_image, m_imageLayout, layout, subRange);
-		m_imageLayout = layout;
 	}
 
 	Ref<Image2D> Image2D::Create(const ImageSpecification& specification, const void* data)

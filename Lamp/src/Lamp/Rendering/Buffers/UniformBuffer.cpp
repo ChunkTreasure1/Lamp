@@ -1,7 +1,8 @@
 #include "lppch.h"
 #include "UniformBuffer.h"
 
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
 

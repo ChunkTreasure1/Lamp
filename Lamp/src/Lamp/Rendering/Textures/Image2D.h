@@ -92,8 +92,6 @@ namespace Lamp
 		void Invalidate(const void* data);
 		void Release();
 
-		void TransitionToLayout(Ref<CommandBuffer> commandBuffer, VkImageLayout layout);
-
 		uint32_t GetWidth() const { return m_specification.width; }
 		uint32_t GetHeight() const { return m_specification.height; }
 		float GetAspectRatio() const { return (float)m_specification.width / (float)m_specification.height; }

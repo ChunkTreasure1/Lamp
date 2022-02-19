@@ -47,6 +47,8 @@ namespace Lamp
 		VkPhysicalDeviceFeatures m_features;
 		VkPhysicalDeviceMemoryProperties m_memoryProperties;
 
+		uint32_t m_deviceCount = 0;
+
 		std::vector<VkQueueFamilyProperties> m_queueFamilyProperties;
 		std::unordered_set<std::string> m_supportedExtensions;
 		std::vector<VkDeviceQueueCreateInfo> m_queueCreateInfos;

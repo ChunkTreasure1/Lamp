@@ -50,6 +50,7 @@ namespace Lamp
 		Ref<VulkanDevice> m_device;
 
 		VmaAllocator m_vulkanAllocator;
+		VkInstance m_instance;
 
 		static VkInstance s_instance;
 	};

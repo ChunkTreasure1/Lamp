@@ -1,9 +1,10 @@
 #include "lppch.h"
 #include "VulkanDevice.h"
 
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanUtility.h"
-#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <set>
 
@@ -14,16 +15,15 @@ namespace Lamp
 	{
 		auto instance = VulkanContext::GetVulkanInstance();
 
-		uint32_t deviceCount = 0;
-		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+		LP_VK_CHECK(vkEnumeratePhysicalDevices(instance, &m_deviceCount, nullptr));
 
-		if (deviceCount == 0)
+		if (m_deviceCount == 0)
 		{
 			throw std::runtime_error("Failed to find GPU with Vulkan support!");
 		}
 
-		std::vector<VkPhysicalDevice> devices{ deviceCount };
-		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+		std::vector<VkPhysicalDevice> devices{ m_deviceCount };
+		LP_VK_CHECK(vkEnumeratePhysicalDevices(instance, &m_deviceCount, devices.data()));
 
 		//Find device
 		for (const auto& device : devices)

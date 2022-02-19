@@ -2,6 +2,7 @@
 #include "Framebuffer.h"
 
 #include "Lamp/Rendering/Swapchain.h"
+#include "Lamp/Rendering/CommandBuffer.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
@@ -114,26 +115,52 @@ namespace Lamp
 		//Transition images to color attachment optimal
 		for (auto& attachment : m_attachmentImages)
 		{
-			attachment->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+			Utility::InsertImageMemoryBarrier(commandBuffer->GetCurrentCommandBuffer(), attachment->GetHandle(), 0,
+				VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+				VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 		}
 
 		if (m_depthAttachmentImage)
 		{
-			m_depthAttachmentImage->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL);
+			Utility::InsertImageMemoryBarrier(commandBuffer->GetCurrentCommandBuffer(), m_depthAttachmentImage->GetHandle(), 0,
+				VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+				VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+				VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 });
 		}
 	}
 
 	void Framebuffer::Unbind(Ref<CommandBuffer> commandBuffer)
 	{
-		//Transition images to shader optimal
+		//Transition images to color attachment optimal
 		for (auto& attachment : m_attachmentImages)
 		{
-			attachment->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			Utility::InsertImageMemoryBarrier(commandBuffer->GetCurrentCommandBuffer(), attachment->GetHandle(), 
+				VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+				0,
+				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+				VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+				VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 		}
 
 		if (m_depthAttachmentImage)
 		{
-			m_depthAttachmentImage->TransitionToLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			Utility::InsertImageMemoryBarrier(commandBuffer->GetCurrentCommandBuffer(), m_depthAttachmentImage->GetHandle(),
+				VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+				0,
+				VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+				VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 });
 		}
 	}
 

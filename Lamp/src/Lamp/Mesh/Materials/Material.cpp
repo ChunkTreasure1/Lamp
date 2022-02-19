@@ -3,8 +3,7 @@
 
 #include "Lamp/Rendering/Shader/Shader.h"
 #include "Lamp/Rendering/RenderPipeline.h"
-
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
 {

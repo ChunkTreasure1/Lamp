@@ -2,8 +2,8 @@
 #include "CommandBuffer.h"
 
 #include "Lamp/Rendering/Swapchain.h"
+#include "Lamp/Rendering/Renderer.h"
 
-#include "Platform/Vulkan/VulkanRenderer.h"
 #include "Platform/Vulkan/VulkanUtility.h"
 
 namespace Lamp

@@ -9,12 +9,12 @@
 #include "Lamp/Rendering/Textures/Texture2D.h"
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/RenderCommand.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Mesh/Mesh.h"
 
 #include "Platform/Vulkan/VulkanDevice.h"
-#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace Lamp
 {

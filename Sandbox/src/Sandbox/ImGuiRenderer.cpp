@@ -16,14 +16,13 @@
 
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/Buffers/FrameBuffer.h>
+#include <Lamp/Rendering/Renderer.h>
 
 #include <Lamp/Math/Math.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
 
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
-
-#include <Platform/Vulkan/VulkanRenderer.h>
 
 #include <ImGuizmo/ImGuizmo.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>

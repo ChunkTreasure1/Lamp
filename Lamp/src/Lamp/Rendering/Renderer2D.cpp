@@ -3,16 +3,15 @@
 #include "Renderer2D.h"
 
 #include "Lamp/Core/Application.h"
-#include "Lamp/Rendering/Swapchain.h"
 
+#include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/CommandBuffer.h"
-
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/Renderer.h"
 
-#include "Platform/Vulkan/VulkanRenderer.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 
 namespace Lamp

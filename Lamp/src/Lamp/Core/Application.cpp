@@ -12,8 +12,7 @@
 
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/RenderCommand.h"
-
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include <thread>
 
