@@ -1,8 +1,5 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-#include <VulkanMemoryAllocator/VulkanMemoryAllocator.h>
-
 namespace Lamp
 {
 	enum class ImageFormat
@@ -81,45 +78,20 @@ namespace Lamp
 		bool comparable = false;
 	};
 
-	class CommandBuffer;
-
 	class Image2D
 	{
 	public:
-		Image2D(const ImageSpecification& specification, const void* data);
-		~Image2D();
+		virtual ~Image2D() = default;
+		virtual void Invalidate(const void* data) = 0;
+		virtual void Release() = 0;
 
-		void Invalidate(const void* data);
-		void Release();
+		virtual uint32_t GetWidth() const = 0;
+		virtual uint32_t GetHeight() const = 0;
+		virtual float GetAspectRatio() const = 0;
 
-		uint32_t GetWidth() const { return m_specification.width; }
-		uint32_t GetHeight() const { return m_specification.height; }
-		float GetAspectRatio() const { return (float)m_specification.width / (float)m_specification.height; }
+		virtual const ImageSpecification& GetSpecification() = 0;
 
-		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_descriptorInfo; }
-		inline VkImage GetHandle() const { return m_image; }
-		inline VkImageView GetImageView() const { return m_imageViews.at(0); }
-		inline VkFormat GetFormat() const { return m_format; }
-
-		const ImageSpecification& GetSpecification() { return m_specification; }
-		
 		static Ref<Image2D> Create(const ImageSpecification& specification, const void* data = nullptr);
-
-	private:
-		void UpdateDescriptor();
-
-		ImageSpecification m_specification;
-
-		VmaAllocation m_allocation = nullptr;
-
-		VkDescriptorImageInfo m_descriptorInfo;
-		VkImage m_image = nullptr;
-		VkSampler m_sampler = nullptr;
-		VkFormat m_format;
-		VkImageLayout m_imageLayout;
-
-		std::map<uint32_t, VkImageView> m_imageViews;
-
 	};
 
 	namespace Utils

@@ -122,7 +122,7 @@ namespace Sandbox
 
 		float size = ImGui::GetWindowHeight() - 4.f;
 
-		if (ImGui::ImageButton(UI::GetTextureID(m_loadIcon), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		if (ImGui::ImageButton((ImTextureID)m_loadIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
 			m_importSettings.path = FileDialogs::OpenFile("FBX File (*.fbx)\0*.fbx\0");
 			if (!m_importSettings.path.empty() && std::filesystem::exists(m_importSettings.path))
@@ -133,7 +133,7 @@ namespace Sandbox
 
 		ImGui::SameLine();
 
-		if (ImGui::ImageButton(UI::GetTextureID(m_saveIcon), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
 			m_savePath = Lamp::FileDialogs::SaveFile("Lamp Geometry (*.lgf)\0*.lgf\0");
 			SaveMesh();

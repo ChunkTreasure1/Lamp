@@ -9,15 +9,17 @@
 namespace Lamp
 {
 	class Renderer;
+	class Renderer2D;
 	class CameraBase;
 	class RenderPipeline;
 	class Material;
 	class SubMesh;
+	class Texture2D;
 
 	class RenderCommand
 	{
 	public:
-		static void Initialize(Renderer* renderer);
+		static void Initialize(Renderer* renderer, Renderer2D* renderer2D);
 		static void Shutdown();
 
 		static void Begin(const Ref<CameraBase> camera);
@@ -29,6 +31,8 @@ namespace Lamp
 
 		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
 		static void SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
+		static void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
+		static void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
 		static void DispatchRenderCommands();
 
@@ -36,5 +40,6 @@ namespace Lamp
 		RenderCommand() = delete;
 
 		static Renderer* s_renderer;
+		static Renderer2D* s_renderer2D;
 	};
 }

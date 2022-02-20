@@ -18,6 +18,7 @@ namespace Lamp
 	class PhysicsEngine;
 	class ImGuiLayer;
 	class Renderer;
+	class Renderer2D;
 
 	class Application
 	{
@@ -51,6 +52,7 @@ namespace Lamp
 		Scope<Window> m_pWindow;
 		Scope<LevelManager> m_levelManager;
 		Scope<Renderer> m_renderer;
+		Scope<Renderer2D> m_renderer2D;
 
 		ImGuiLayer* m_pImGuiLayer;
 		LayerStack m_LayerStack;

@@ -3,23 +3,34 @@
 #include "Renderer2D.h"
 
 #include "Lamp/Core/Application.h"
-
 #include "Lamp/Rendering/Swapchain.h"
+
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/CommandBuffer.h"
-#include "Lamp/Rendering/Textures/Texture2D.h"
-#include "Lamp/Rendering/Renderer.h"
 
+#include "Lamp/Rendering/Textures/Texture2D.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Platform/Vulkan/VulkanShader.h"
+#include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 namespace Lamp
 {
+	Renderer2D* Renderer2D::s_instance = nullptr;
+
+	Renderer2D::Renderer2D()
+	{
+		LP_CORE_ASSERT(s_instance, "There can only be one instance!");
+		s_instance = this;
+	}
+
 	void Renderer2D::Initialize()
 	{
 		CreateStorage();
-		SetupRenderPipelines();
 	}
 
 	void Renderer2D::Shutdown()
@@ -43,6 +54,19 @@ namespace Lamp
 		Flush();
 	}
 
+	void Renderer2D::SwapRenderBuffers()
+	{
+		LP_PROFILE_FUNCTION();
+		std::swap(m_renderBufferPointer, m_submitBufferPointer);
+		m_submitBufferPointer->drawCalls.clear();
+		m_submitBufferPointer->lineCalls.clear();
+	}
+
+	void Renderer2D::DispatchRenderCommands()
+	{
+		LP_PROFILE_FUNCTION();
+	}
+
 	void Renderer2D::SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
@@ -63,6 +87,7 @@ namespace Lamp
 
 	void Renderer2D::DrawQuad(const RenderCommandData& cmd)
 	{
+		LP_PROFILE_FUNCTION();
 		if (m_storage->quadIndexCount >= m_storage->maxIndices)
 		{
 			StartNewBatch();
@@ -113,12 +138,19 @@ namespace Lamp
 		m_storage->quadIndexCount += 6;
 	}
 
-	void Renderer2D::SetupRenderPipelines()
+	Ref<RenderPipeline> Renderer2D::SetupQuadPipeline(Ref<Framebuffer> framebuffer)
 	{
 		//Quad pass
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages = 
+			{ 
+				{0, framebuffer->GetColorAttachment(0) }, 
+				{1, framebuffer->GetColorAttachment(1) }, 
+				{2, framebuffer->GetDepthAttachment() } 
+			};
+
 			framebufferSpec.attachments =
 			{
 				ImageFormat::RGBA32F,
@@ -145,11 +177,21 @@ namespace Lamp
 
 			m_storage->quadPipeline = RenderPipeline::Create(pipelineSpec);
 		}
+	}
 
+	Ref<RenderPipeline> Renderer2D::SetupLinePipeline(Ref<Framebuffer> framebuffer)
+	{
 		//Line pass
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages =
+			{
+				{0, framebuffer->GetColorAttachment(0) },
+				{1, framebuffer->GetColorAttachment(1) },
+				{2, framebuffer->GetDepthAttachment() }
+			};
+
 			framebufferSpec.attachments =
 			{
 				ImageFormat::RGBA32F,
@@ -219,9 +261,9 @@ namespace Lamp
 
 		//Quad
 		{
-			auto shader = m_storage->quadPipeline->GetSpecification().shader;
-			auto quadDescriptorLayout = shader->GetDescriptorSetLayout(0);
-			auto& shaderDescriptorSet = shader->GetDescriptorSets()[0];
+			auto vulkanQuadShader = std::reinterpret_pointer_cast<VulkanShader>(m_storage->quadPipeline->GetSpecification().shader);
+			auto quadDescriptorLayout = vulkanQuadShader->GetDescriptorSetLayout(0);
+			auto& shaderDescriptorSet = vulkanQuadShader->GetDescriptorSets()[0];
 
 			VkDescriptorSetAllocateInfo allocInfo{};
 			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -244,7 +286,7 @@ namespace Lamp
 					for (uint32_t i = 0; i < m_storage->textureSlotIndex; i++)
 					{
 						auto tex = m_storage->textureSlots[i];
-						textureInfos.emplace_back(tex->GetDescriptorInfo());
+						textureInfos.emplace_back(std::reinterpret_pointer_cast<VulkanTexture2D>(tex)->GetDescriptorInfo());
 					}
 
 					writeDescriptor.descriptorCount = textureInfos.size();
@@ -286,10 +328,11 @@ namespace Lamp
 			DrawQuad(cmd);
 		}
 
-		auto commandBuffer = m_storage->quadPipeline->GetSpecification().isSwapchain ? m_storage->swapchainCommandBuffer : m_storage->renderCommandBuffer;
+		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_storage->quadPipeline);
+		auto commandBuffer = vulkanPipeline->GetSpecification().isSwapchain ? m_storage->swapchainCommandBuffer : m_storage->renderCommandBuffer;
 	
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-		m_storage->quadPipeline->BindDescriptorSet(commandBuffer, m_storage->currentQuadDescriptorSet, 0);
+		vulkanPipeline->BindDescriptorSet(commandBuffer, m_storage->currentQuadDescriptorSet, 0);
 
 		m_storage->quadVertexBuffer->Bind(commandBuffer);
 		m_storage->quadIndexBuffer->Bind(commandBuffer);

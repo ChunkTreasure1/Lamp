@@ -76,7 +76,7 @@ namespace Lamp
 			: m_Camera(camera)
 		{}
 
-		inline const Ref<CameraBase> GetCamera() { return m_Camera; }
+		inline const Ref<CameraBase>& GetCamera() { return m_Camera; }
 
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);

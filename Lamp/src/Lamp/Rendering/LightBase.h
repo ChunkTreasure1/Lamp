@@ -34,7 +34,6 @@ namespace Lamp
 	{
 		PointLight();
 
-		glm::vec3 position{ 0.f,0.f, 0.f };
 		glm::vec3 color{ 1.f, 1.f, 1.f };
 
 		float intensity = 1.f;
@@ -44,5 +43,6 @@ namespace Lamp
 		float nearPlane = 0.01f;
 
 		uint32_t id = s_lightId++;
+		std::shared_ptr<PointShadowBuffer> shadowBuffer;
 	};
 }

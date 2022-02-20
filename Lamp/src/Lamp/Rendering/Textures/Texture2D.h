@@ -9,34 +9,19 @@ namespace Lamp
 	class Texture2D : public Asset
 	{
 	public:
-		Texture2D(ImageFormat format, uint32_t width, uint32_t height);
-		Texture2D(const std::filesystem::path& path, bool generateMips);
-		Texture2D() = default;
+		virtual ~Texture2D() = default;
 
-		~Texture2D();
+		virtual void Bind(uint32_t slot = 0) const = 0;
+		virtual void SetData(const void* data, uint32_t size) = 0;
 
-		void Bind(uint32_t slot /* = 0 */) const;
-		void SetData(const void* data, uint32_t size);
-
-		const uint32_t GetWidth() const;
-		const uint32_t GetHeight() const;
-
-		void Load(const std::filesystem::path & path, bool generateMips /* = true */);
-
-		const VkDescriptorImageInfo& GetDescriptorInfo() const;
-		inline const Ref<Image2D> GetImage() const { return m_image; }
+		virtual const uint32_t GetWidth() const = 0;
+		virtual const uint32_t GetHeight() const = 0;
+		virtual const uint32_t GetID() const = 0;
 
 		static AssetType GetStaticType() { return AssetType::Texture; }
 		AssetType GetType() override { return GetStaticType(); }
 
 		static Ref<Texture2D> Create(ImageFormat format, uint32_t width, uint32_t height);
 		static Ref<Texture2D> Create(const std::filesystem::path& path, bool generateMips = true);
-
-	private:
-		void LoadKTX(const std::filesystem::path& path, bool generateMips);
-		void LoadOther(const std::filesystem::path& path, bool generateMips);
-		void Setup(void* data, uint32_t size, uint32_t width, uint32_t height, bool generateMips, bool isHDR);
-
-		Ref<Image2D> m_image;
 	};
 }

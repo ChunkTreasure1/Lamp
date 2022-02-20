@@ -17,6 +17,8 @@ namespace Lamp
 		DontCare
 	};
 
+
+
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() 
@@ -79,6 +81,8 @@ namespace Lamp
 		uint32_t samples = 1;
 		FramebufferAttachmentSpecification attachments;
 
+		std::map<uint32_t, Ref<Image2D>> existingImages;
+
 		bool swapchainTarget = false;
 		bool copyable = false;
 		bool shadow = false;
@@ -87,47 +91,31 @@ namespace Lamp
 	class Framebuffer
 	{
 	public:
-		Framebuffer(const FramebufferSpecification& spec);
-		~Framebuffer();
+		virtual ~Framebuffer() = default;
 
-		void Bind(Ref<CommandBuffer> commandBuffer);
-		void Unbind(Ref<CommandBuffer> commandBuffer);
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
+		virtual void Resize(const uint32_t width, const uint32_t height) = 0;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
+		virtual void Copy(uint32_t rendererId, const glm::vec2& size, bool depth = false) = 0;
+		virtual void Invalidate() = 0;
 
-		void Resize(const uint32_t width, const uint32_t height);
-		int ReadPixel(uint32_t attachmentIndex, int x, int y);
-		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth /* = false */);
-		void Invalidate();
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
-		void ClearAttachment(uint32_t attachmentIndex, int value);
+		virtual Ref<Image2D> GetColorAttachment(uint32_t index) const = 0;
+		virtual Ref<Image2D> GetDepthAttachment() const = 0;
 
-		const VkRenderingAttachmentInfo& GetColorAttachmentInfo(uint32_t index) const;
-		const VkRenderingAttachmentInfo& GetDepthAttachmentInfo() const;
+		//TODO: deprecate
+		virtual inline const uint32_t GetColorAttachmentID(uint32_t i = 0) = 0;
+		virtual inline const uint32_t GetDepthAttachmentID() = 0;
+		virtual inline const uint32_t GetRendererID() = 0;
 
-		const std::vector<VkFormat>& GetColorFormats() const;
-		const VkFormat& GetDepthFormat() const;
+		virtual void BindColorAttachment(uint32_t id = 0, uint32_t i = 0) = 0;
+		virtual void BindDepthAttachment(uint32_t id = 0) = 0;
 
-		const std::vector<VkRenderingAttachmentInfo>& GetColorAttachmentInfos() const;
+		virtual FramebufferSpecification& GetSpecification() = 0;
 
-		Ref<Image2D> GetColorAttachment(uint32_t index) const;
-		Ref<Image2D> GetDepthAttachment() const;
-
-		FramebufferSpecification& GetSpecification();
-
+	public:
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
-
-	private:
-		FramebufferSpecification m_specification;
-
-		Ref<Image2D> m_depthAttachmentImage;
-		std::vector<Ref<Image2D>> m_attachmentImages;
-
-		uint32_t m_width;
-		uint32_t m_height;
-
-		std::vector<VkFormat> m_colorFormats;
-		VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
-
-		std::vector<VkRenderingAttachmentInfo> m_colorAttachmentInfos;
-		VkRenderingAttachmentInfo m_depthAttachmentInfo;
 	};
 }

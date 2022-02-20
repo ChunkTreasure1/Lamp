@@ -13,6 +13,8 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
 
+#include "Platform/Vulkan/VulkanRenderer.h"
+
 #include <yaml-cpp/yaml.h>
 
 namespace Lamp
@@ -278,10 +280,17 @@ namespace Lamp
 
 		for (auto& texName : mat->GetShader()->GetSpecification().inputTextureNames)
 		{
-			AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
-			auto path = g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle);
+			if (textureNode[texName])
+			{
+				AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
+				auto path = g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle);
 
-			mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(path));
+				mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(path));
+			}
+			else
+			{
+				mat->SetTexture(texName, Renderer::Get().GetDefaults().whiteTexture);
+			}
 		}
 
 		auto& matData = const_cast<MaterialData&>(mat->GetMaterialData());

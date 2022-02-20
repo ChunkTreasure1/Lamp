@@ -53,21 +53,21 @@ layout (std140, binding = 3) uniform ScreenDataBuffer
     uint xScreenTiles;
 } u_ScreenData;
 
-float ScreenSpaceTessellationFactor(vec4 p0, vec4 p1)
-{
-    vec4 midPoint = 0.5 * (p0 + p1);
-    float radius = distance(p0, p1) / 2.0;
+// float ScreenSpaceTessellationFactor(vec4 p0, vec4 p1)
+// {
+//     vec4 midPoint = 0.5 * (p0 + p1);
+//     float radius = distance(p0, p1) / 2.0;
 
-    vec4 v0 = u_CameraData.view * midPoint;
+//     vec4 v0 = u_CameraData.view * midPoint;
 
-    vec4 clip0 = (u_CameraData.projection * (v0 - vec4(radius, vec3(0.0))));
-    vec4 clip1 = (u_CameraData.projection * (v0 + vec4(radius, vec3(0.0))));
+//     vec4 clip0 = (u_CameraData.projection * (v0 - vec4(radius, vec3(0.0))));
+//     vec4 clip1 = (u_CameraData.projection * (v0 + vec4(radius, vec3(0.0))));
 
-    clip0 /= clip0.w;
-    clip1 /= clip1.w;
+//     clip0 /= clip0.w;
+//     clip1 /= clip1.w;
 
 
-}
+// }
 
 void main()
 {

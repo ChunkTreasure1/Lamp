@@ -2,7 +2,6 @@
 #include "SubMesh.h"
 
 #include "Lamp/Rendering/Vertex.h"
-#include "Lamp/Rendering/Buffers/VertexBuffer.h"
 
 namespace Lamp
 {
@@ -128,7 +127,15 @@ namespace Lamp
 
 	void SubMesh::SetupMesh()
 	{
-		m_vertexBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
-		m_indexBuffer = IndexBuffer::Create(m_Indices, (uint32_t)m_Indices.size());
+		m_pVertexArray = VertexArray::Create();
+
+		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
+
+		m_pVertexArray->AddVertexBuffer(pBuffer);
+
+		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, (uint32_t)m_Indices.size());
+		m_pVertexArray->SetIndexBuffer(pIndexBuffer);
+
+		m_pVertexArray->Unbind();
 	}
 }

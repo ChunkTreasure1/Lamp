@@ -9,7 +9,6 @@ namespace Lamp
 {
 	class CameraBase;
 	class Texture2D;
-	class CommandBuffer;
 
 	struct Renderer2DStorage
 	{
@@ -58,7 +57,7 @@ namespace Lamp
 	{
 	public:
 		Renderer2D();
-		~Renderer2D();
+		~Renderer2D() = default;
 
 		void Initialize();
 		void Shutdown();
@@ -66,20 +65,26 @@ namespace Lamp
 		void Begin(const Ref<CameraBase> camera);
 		void End();
 
+		void SwapRenderBuffers();
+		void DispatchRenderCommands();
+
 		void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
 		void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
 		void DrawQuad(const RenderCommandData& cmd);
 
+		Ref<RenderPipeline> SetupQuadPipeline(Ref<Framebuffer> framebuffer);
+		Ref<RenderPipeline> SetupLinePipeline(Ref<Framebuffer> framebuffer);
+
+		static Renderer2D& Get() { return *s_instance; }
+		
 	private:
-		void SetupRenderPipelines();
 		void CreateStorage();
 		void AllocateAndUpdateDescriptors();
 
 		void ResetBatchData();
 		void StartNewBatch();
 		void Flush();
-
 
 		/////Render buffer/////
 		RenderBuffer m_firstRenderBuffer;
@@ -88,6 +93,8 @@ namespace Lamp
 		RenderBuffer* m_submitBufferPointer = &m_firstRenderBuffer;
 		RenderBuffer* m_renderBufferPointer = &m_secondRenderBuffer;
 		///////////////////////
+
+		static Renderer2D* s_instance;
 
 		std::unique_ptr<Renderer2DStorage> m_storage;
 	};

@@ -2,7 +2,6 @@
 
 #include "Lamp/Core/Core.h"
 
-#include <VulkanMemoryAllocator/VulkanMemoryAllocator.h>
 
 namespace Lamp
 {
@@ -15,19 +14,11 @@ namespace Lamp
 	class ShaderStorageBuffer
 	{
 	public:
-		ShaderStorageBuffer(uint32_t size);
-		~ShaderStorageBuffer();
-		void SetData(const void* data, uint32_t size);
-		void* Map();
-		void Unmap();
-
-		inline VkDescriptorBufferInfo GetDescriptorInfo() { return m_descriptorInfo; }
+		virtual ~ShaderStorageBuffer() = default;
+		virtual void SetData(const void* data, uint32_t size) = 0;
+		virtual void* Map() = 0;
+		virtual void Unmap() = 0;
 
 		static Ref<ShaderStorageBuffer> Create(uint32_t size);
-
-	private:
-		VkDescriptorBufferInfo m_descriptorInfo;
-		VkBuffer m_buffer;
-		VmaAllocation m_allocation;
 	};
 }

@@ -7,9 +7,11 @@
 #include "Windows/LayerViewPanel.h"
 #include "Windows/EnvironmentEditorPanel.h"
 #include "Windows/TerrainEditorPanel.h"
+#include "Windows/RenderGraphPanel.h"
 
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/RenderCommand.h>
+#include <Lamp/Rendering/Renderer2D.h>
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -37,14 +39,15 @@ namespace Sandbox
 
 		m_sandboxController = CreateRef<SandboxController>();
 
-		m_pWindows.push_back(new MeshImporterPanel("Mesh Importer"));
-		m_pWindows.push_back(new GraphKey("Visual Scripting"));
-		m_pWindows.push_back(new MaterialEditor("Material Editor"));
-		m_pWindows.push_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
-		m_pWindows.push_back(new EnvironmentEditorPanel("Environment Panel"));
-		m_pWindows.push_back(new AssetBrowserPanel());
-		m_pWindows.push_back(new CreatePanel(m_pSelectedObject));
-		m_pWindows.push_back(new TerrainEditorPanel("Terrain Editor"));
+		m_pWindows.emplace_back(new MeshImporterPanel("Mesh Importer"));
+		m_pWindows.emplace_back(new GraphKey("Visual Scripting"));
+		m_pWindows.emplace_back(new MaterialEditor("Material Editor"));
+		m_pWindows.emplace_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
+		m_pWindows.emplace_back(new EnvironmentEditorPanel("Environment Panel"));
+		m_pWindows.emplace_back(new AssetBrowserPanel());
+		m_pWindows.emplace_back(new CreatePanel(m_pSelectedObject));
+		m_pWindows.emplace_back(new TerrainEditorPanel("Terrain Editor"));
+		m_pWindows.emplace_back(new RenderGraphPanel("Render Graph"));
 
 		Application::Get().GetWindow().Maximize();
 

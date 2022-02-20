@@ -9,7 +9,8 @@
 
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderCommand.h"
-#include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Rendering/Renderer2D.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
@@ -169,9 +170,6 @@ namespace Lamp
 
 		if (camera.get())
 		{
-			AppRenderEvent e(camera);
-			OnEvent(e);
-
 			RenderLevel();
 		}
 	}
@@ -373,6 +371,7 @@ namespace Lamp
 			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
 			pipelineSpec.drawSkybox = true;
 			pipelineSpec.drawTerrain = true;
+			pipelineSpec.draw2D = true;
 			pipelineSpec.debugName = "Geometry";
 			pipelineSpec.vertexLayout =
 			{
@@ -390,6 +389,18 @@ namespace Lamp
 
 			auto& pass = m_renderPasses.emplace_back();
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		{
+			auto pipeline = Renderer2D::Get().SetupQuadPipeline(m_geometryFramebuffer);
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = pipeline;
+		}
+		
+		{
+			auto pipeline = Renderer2D::Get().SetupLinePipeline(m_geometryFramebuffer);
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = pipeline;
 		}
 
 		//Terrain
@@ -459,7 +470,7 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("composite");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Quad;
+			pipelineSpec.drawType = DrawType::ScreenQuad;
 			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.vertexLayout =
 			{
@@ -484,6 +495,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
+		//3D passes
 		for (const auto& pass : m_renderPasses)
 		{
 			if (pass.graphicsPipeline)

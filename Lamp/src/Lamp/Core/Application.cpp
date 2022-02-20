@@ -12,7 +12,9 @@
 
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/RenderCommand.h"
-#include "Lamp/Rendering/Renderer.h"
+#include "Lamp/Rendering/Renderer2D.h"
+
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <thread>
 
@@ -54,7 +56,8 @@ namespace Lamp
 		m_renderer = CreateScope<Renderer>();
 
 		m_renderer->Initialize();
-		RenderCommand::Initialize(m_renderer.get());
+		m_renderer2D->Initialize();
+		RenderCommand::Initialize(m_renderer.get(), m_renderer2D.get());
 
 		AudioEngine::Initialize();
 		Physics::Initialize();
@@ -119,7 +122,6 @@ namespace Lamp
 				{
 				}
 			}
-
 
 			RenderCommand::SwapRenderBuffers();
 
