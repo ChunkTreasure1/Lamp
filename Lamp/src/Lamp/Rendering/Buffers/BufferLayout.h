@@ -5,9 +5,9 @@
 
 namespace Lamp
 {
-	enum class ElementType
+	enum class ElementType : uint32_t
 	{
-		Int,
+		Int = 0,
 		Bool,
 		Float,
 		Float2,
@@ -37,7 +37,7 @@ namespace Lamp
 	struct BufferElement
 	{
 		BufferElement(ElementType elementType, const std::string& name, bool normalized = false)
-			: Name(name), ElementType(elementType), Size(GetSizeFromType(elementType)), Offset(0), Normalized(normalized)
+			: name(name), elementType(elementType), size(GetSizeFromType(elementType)), offset(0), normalized(normalized)
 		{}
 
 		uint32_t GetComponentCount(ElementType elementType)
@@ -57,12 +57,13 @@ namespace Lamp
 			return 0;
 		}
 
-		bool Normalized = false;
 
-		std::string Name;
-		size_t Offset;
-		uint32_t Size;
-		ElementType ElementType;
+		std::string name;
+		size_t offset;
+		uint32_t size;
+		ElementType type;
+
+		bool normalized = false;
 	};
 
 	class BufferLayout
@@ -71,29 +72,30 @@ namespace Lamp
 		BufferLayout() {}
 
 		BufferLayout(std::initializer_list<BufferElement> elements)
-			: m_Elements(elements)
+			: m_elements(elements)
 		{
 			CalculateOffsetAndStride();
 		}
 
-		inline uint32_t GetStride() const { return m_Stride; }
-		inline std::vector<BufferElement>& GetElements() { return m_Elements; }
+		inline uint32_t GetStride() const { return m_stride; }
+		inline std::vector<BufferElement>& GetElements() { return m_elements; }
 
 	private:
 		void CalculateOffsetAndStride()
 		{
 			size_t offset = 0;
-			m_Stride = 0;
-			for (auto& element : m_Elements)
+			m_stride = 0;
+			for (auto& element : m_elements)
 			{
-				element.Offset = offset;
-				offset += element.Size;
-				m_Stride += element.Size;
+				element.offset = offset;
+				offset += element.size;
+				m_stride += element.size;
 			}
 		}
 
-	private:
-		std::vector<BufferElement> m_Elements;
-		uint32_t m_Stride = 0;
+		friend class RenderNodePass;
+
+		std::vector<BufferElement> m_elements;
+		uint32_t m_stride = 0;
 	};
 }

@@ -29,7 +29,7 @@ namespace Lamp
 			TextureBlend blend = TextureBlend::None,
 			const glm::vec4& borderColor = { 1.f, 1.f, 1.f, 1.f },
 			bool sampled = false)
-			: textureFormat(format), textureFiltering(filtering), textureWrap(wrap), BorderColor(borderColor)
+			: textureFormat(format), textureFiltering(filtering), textureWrap(wrap), borderColor(borderColor)
 		{}
 
 		bool operator==(const FramebufferTextureSpecification& second)
@@ -43,31 +43,20 @@ namespace Lamp
 		TextureBlend blending;
 		ClearMode clearMode = ClearMode::Clear;
 
-		bool MultiSampled = false;
+		bool multisampled = false;
 		
-		glm::vec4 BorderColor = { 1.f, 1.f, 1.f, 1.f };
+		glm::vec4 borderColor = { 1.f, 1.f, 1.f, 1.f };
 		std::string name = "Attachment";
-	};
-
-	struct FramebufferRenderbufferSpecification
-	{
-		FramebufferRenderbufferSpecification() = default;
-		FramebufferRenderbufferSpecification(FramebufferRenderbufferType format)
-			: Format(format)
-		{}
-
-		FramebufferRenderbufferType Format;
 	};
 
 	struct FramebufferAttachmentSpecification
 	{
 		FramebufferAttachmentSpecification() = default;
 		FramebufferAttachmentSpecification(const std::initializer_list<FramebufferTextureSpecification>& attachments)
-			: Attachments(attachments)
+			: attachments(attachments)
 		{}
 
-		std::vector<FramebufferTextureSpecification> Attachments;
-		std::vector<FramebufferRenderbufferSpecification> Renderbuffers;
+		std::vector<FramebufferTextureSpecification> attachments;
 	};
 
 	struct FramebufferSpecification

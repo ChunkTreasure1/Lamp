@@ -12,17 +12,17 @@ namespace Lamp
 	class Texture2D;
 	class TextureCube;
 
-	enum class Topology
+	enum class Topology : uint32_t
 	{
-		TriangleList,
+		TriangleList = 0,
 		LineList,
 		TriangleStrip,
 		PatchList
 	};
 
-	enum class DrawType
+	enum class DrawType : uint32_t
 	{
-		Opaque,
+		Opaque = 0,
 		Transparent,
 		Translucency,
 		Quad,
@@ -31,9 +31,9 @@ namespace Lamp
 		Skybox
 	};
 
-	enum class CullMode
+	enum class CullMode : uint32_t
 	{
-		Front,
+		Front = 0,
 		Back,
 		FrontAndBack,
 		None
@@ -44,20 +44,7 @@ namespace Lamp
 		Ref<Image2D> attachment;
 		uint32_t set;
 		uint32_t binding;
-	};
-
-	struct TextureInputSpecification
-	{
-		Ref<Texture2D> texture;
-		uint32_t set;
-		uint32_t binding;
-	};
-
-	struct TextureCubeInputSpecification
-	{
-		Ref<TextureCube> texture;
-		uint32_t set;
-		uint32_t binding;
+		GraphUUID graphId = GraphUUID();
 	};
 
 	struct RenderPipelineSpecification
@@ -76,14 +63,11 @@ namespace Lamp
 		bool drawTerrain = false;
 
 		BufferLayout vertexLayout;
-
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
 
 		std::string debugName;
 
-		glm::vec2 size;
 		bool isSwapchain;
-	
 		bool useTessellation = false;
 		uint32_t tessellationControlPoints = 4;
 	};
@@ -94,6 +78,7 @@ namespace Lamp
 		RenderPipeline(const RenderPipelineSpecification& specification);
 		~RenderPipeline();
 
+		void Invalidate();
 		void Bind(Ref<CommandBuffer> commandBuffer) const;
 		void SetLayout(BufferLayout layout);
 
@@ -111,7 +96,7 @@ namespace Lamp
 		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
 
 	private:
-		void Invalidate();
+		void Release();
 
 		std::vector<VkVertexInputAttributeDescription> m_attributeDescriptions;
 		VkVertexInputBindingDescription m_bindingDescription;

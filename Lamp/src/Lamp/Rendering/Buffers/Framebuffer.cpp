@@ -57,7 +57,7 @@ namespace Lamp
 				m_height = spec.height;
 			}
 
-			for (auto& attachmentSpec : m_specification.attachments.Attachments)
+			for (auto& attachmentSpec : m_specification.attachments.attachments)
 			{
 				if (Utils::IsDepthFormat(attachmentSpec.textureFormat))
 				{
@@ -94,7 +94,7 @@ namespace Lamp
 				});
 		}
 
-		LP_CORE_ASSERT(m_specification.attachments.Attachments.size(), "Attachment count must be greater than zero!");
+		LP_CORE_ASSERT(m_specification.attachments.attachments.size(), "Attachment count must be greater than zero!");
 		LP_CORE_INFO("VulkanFramebuffer: Creating!");
 		Resize(m_width, m_height);
 	}
@@ -219,7 +219,7 @@ namespace Lamp
 		}
 
 		attachmentIndex = 0;
-		for (auto attachmentSpec : m_specification.attachments.Attachments)
+		for (auto attachmentSpec : m_specification.attachments.attachments)
 		{
 			if (Utils::IsDepthFormat(attachmentSpec.textureFormat))
 			{

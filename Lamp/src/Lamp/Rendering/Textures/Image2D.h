@@ -32,7 +32,7 @@ namespace Lamp
 		X16 = 16
 	};
 
-	enum class ImageUsage
+	enum class ImageUsage : uint32_t
 	{
 		None = 0,
 		Texture,
@@ -40,14 +40,14 @@ namespace Lamp
 		Storage
 	};
 
-	enum class TextureWrap
+	enum class TextureWrap : uint32_t
 	{
 		None = 0,
 		Clamp,
 		Repeat
 	};
 
-	enum class TextureFilter
+	enum class TextureFilter : uint32_t
 	{
 		None = 0,
 		Linear,
@@ -56,7 +56,7 @@ namespace Lamp
 
 	enum class TextureBlend : uint32_t
 	{
-		None,
+		None = 0,
 		Min,
 		Max
 	};

@@ -43,16 +43,16 @@ namespace Lamp
 
 	struct BufferElement
 	{
-		std::string Name;
+		std::string name;
 		ShaderDataType Type;
-		uint32_t Size;
-		size_t Offset;
-		bool Normalized;
+		uint32_t size;
+		size_t offset;
+		bool normalized;
 
 		BufferElement() = default;
 
 		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
-			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+			: name(name), Type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized)
 		{}
 
 		uint32_t GetComponentCount() const
@@ -82,33 +82,33 @@ namespace Lamp
 		BufferLayout() {}
 
 		BufferLayout(const std::initializer_list<BufferElement>& elements)
-			: m_Elements(elements)
+			: m_elements(elements)
 		{
 			CalculateOffsetAndStride();
 		}
 
-		uint32_t GetStride() { return m_Stride; }
-		const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+		uint32_t GetStride() { return m_stride; }
+		const std::vector<BufferElement>& GetElements() const { return m_elements; }
 
-		std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
-		std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
-		std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
-		std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
+		std::vector<BufferElement>::iterator begin() { return m_elements.begin(); }
+		std::vector<BufferElement>::iterator end() { return m_elements.end(); }
+		std::vector<BufferElement>::const_iterator begin() const { return m_elements.begin(); }
+		std::vector<BufferElement>::const_iterator end() const { return m_elements.end(); }
 
 	private:
 		void CalculateOffsetAndStride()
 		{
 			size_t offset = 0;
-			m_Stride = 0;
-			for (auto& element : m_Elements)
+			m_stride = 0;
+			for (auto& element : m_elements)
 			{
-				element.Offset = offset;
-				offset += element.Size;
-				m_Stride += element.Size;
+				element.offset = offset;
+				offset += element.size;
+				m_stride += element.size;
 			}
 		}
 
-		std::vector<BufferElement> m_Elements;
-		uint32_t m_Stride = 0;
+		std::vector<BufferElement> m_elements;
+		uint32_t m_stride = 0;
 	};
 }

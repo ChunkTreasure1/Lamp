@@ -96,12 +96,7 @@ namespace Lamp
 
 	RenderPipeline::~RenderPipeline()
 	{
-		auto device = VulkanContext::GetCurrentDevice();
-
-		vkDeviceWaitIdle(device->GetHandle());
-
-		vkDestroyPipelineLayout(device->GetHandle(), m_layout, nullptr);
-		vkDestroyPipeline(device->GetHandle(), m_pipeline, nullptr);
+		Release();
 	}
 
 	void RenderPipeline::Invalidate()
@@ -109,8 +104,13 @@ namespace Lamp
 		auto device = VulkanContext::GetCurrentDevice();
 		auto swapchain = Application::Get().GetWindow().GetSwapchain();
 		auto shader = m_specification.shader;
-		Ref<Framebuffer> framebuffer = nullptr;
 
+		if (!m_pipeline)
+		{
+			Release();
+		}
+
+		Ref<Framebuffer> framebuffer = nullptr;
 		if (m_specification.framebuffer)
 		{
 			framebuffer = m_specification.framebuffer;
@@ -165,7 +165,7 @@ namespace Lamp
 
 		std::vector<VkPipelineColorBlendAttachmentState> blendAttachments;
 
-		for (const auto& attachment : m_specification.framebuffer->GetSpecification().attachments.Attachments)
+		for (const auto& attachment : m_specification.framebuffer->GetSpecification().attachments.attachments)
 		{
 			if (Utils::IsDepthFormat(attachment.textureFormat))
 			{
@@ -248,6 +248,18 @@ namespace Lamp
 		LP_VK_CHECK(vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline));
 	}
 
+	void RenderPipeline::Release()
+	{
+		auto device = VulkanContext::GetCurrentDevice();
+		vkDeviceWaitIdle(device->GetHandle());
+
+		vkDestroyPipelineLayout(device->GetHandle(), m_layout, nullptr);
+		vkDestroyPipeline(device->GetHandle(), m_pipeline, nullptr);
+	
+		m_layout = nullptr;
+		m_pipeline = nullptr;
+	}
+
 	void RenderPipeline::Bind(Ref<CommandBuffer> commandBuffer) const
 	{
 		auto vulkanCommandBuffer = commandBuffer->GetCurrentCommandBuffer();
@@ -297,8 +309,8 @@ namespace Lamp
 			VkVertexInputAttributeDescription desc{};
 			desc.binding = 0;
 			desc.location = m_numAttributes;
-			desc.format = Utils::FormatFromShaderIputType(attr.ElementType);
-			desc.offset = attr.Offset;
+			desc.format = Utils::FormatFromShaderIputType(attr.type);
+			desc.offset = attr.offset;
 
 			m_attributeDescriptions.push_back(desc);
 

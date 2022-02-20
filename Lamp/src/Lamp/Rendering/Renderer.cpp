@@ -373,7 +373,8 @@ namespace Lamp
 	}
 
 	//TODO: Find better way to save execute function
-	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateLightCullingPipeline(Ref<Image2D> depthImage)
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::
+		(Ref<Image2D> depthImage)
 	{
 		Ref<Shader> lightCullingShader = ShaderLibrary::GetShader("lightCulling");
 		Ref<RenderComputePipeline> lightCullingPipeline = RenderComputePipeline::Create(lightCullingShader);
