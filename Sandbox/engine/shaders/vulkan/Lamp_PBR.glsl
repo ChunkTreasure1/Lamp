@@ -46,7 +46,6 @@ layout (location = 0) out Out
     vec3 normal;
     mat3 TBN;    
     vec4 shadowCoords[10];
-    vec3 viewPosition;
 } v_Out;
 
 void main()
@@ -67,8 +66,6 @@ void main()
     {
         v_Out.shadowCoords[i] = u_DirectionalLightData.viewProjections[i] * u_MeshData.model * vec4(a_Position, 1.0);
     }
-
-    v_Out.viewPosition = vec3(u_CameraData.view * u_MeshData.model * vec4(a_Position, 1.0));
 
     gl_Position = u_CameraData.projection * u_CameraData.view * u_MeshData.model * vec4(a_Position, 1.0);
 }
@@ -160,7 +157,6 @@ layout (location = 0) in Out
     vec3 normal;
     mat3 TBN;
     vec4 shadowCoords[10];
-    vec3 viewPosition;
 } v_In;
 
 //Per pass

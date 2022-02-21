@@ -29,6 +29,8 @@ namespace Lamp
 		Cube,
 		Terrain,
 		Skybox,
+		Quad2D,
+		Line2D
 	};
 
 	enum class CullMode

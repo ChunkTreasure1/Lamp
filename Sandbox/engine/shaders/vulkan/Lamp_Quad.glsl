@@ -4,7 +4,7 @@ TextureCount: 1
 InternalShader: false
 TextureNames
 {
-gizmo
+u_Texture
 }
 
 #type vertex
@@ -12,8 +12,8 @@ gizmo
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_TexCoords;
-layout(location = 3) in float a_TexIndex;
-layout(location = 4) in float a_Id;
+layout(location = 3) in int a_TexIndex;
+layout(location = 4) in int a_Id;
 
 layout(std140, binding = 0) uniform CameraDataBuffer
 {
@@ -24,12 +24,12 @@ layout(std140, binding = 0) uniform CameraDataBuffer
 	
 } u_CameraData;
 
-layout (location = 1) out Out
+layout (location = 0) out Out
 {
 	vec2 texCoord;
 	vec4 color;
-	float texIndex;
-	float id;
+	flat int texIndex;
+	flat int id;
 
 } v_Out;
 
@@ -48,19 +48,19 @@ void main()
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out int ObjectId;
 
-layout (set = 0, binding = 2) uniform sampler2D gizmo;
+layout (set = 0, binding = 1) uniform sampler2D u_Texture;
 
-layout (location = 1) in Out
+layout (location = 0) in Out
 {
 	vec2 texCoord;
 	vec4 color;
-	float texIndex;
-	float id;
+	flat int texIndex;
+	flat int id;
 
 } v_In;
 
 void main()
 {
 	FragColor = vec4(1.0, 1.0, 1.0, 1.0); //texture(u_Textures[int(v_In.texIndex)], v_In.texCoord) * v_In.color;
-	ObjectId = int(v_In.id);
+	ObjectId = v_In.id;
 }

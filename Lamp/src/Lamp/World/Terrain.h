@@ -29,13 +29,15 @@ namespace Lamp
 	private:
 		void SetupDescriptors(Ref<RenderPipeline> pipeline);
 		void GenerateMeshFromHeightMap();
+		float GetHeight(uint32_t x, uint32_t y);
 
 		Ref<SubMesh> m_mesh;
-		bool m_isValid = true;
-
 		Ref<Texture2D> m_heightMap;
 
+		bool m_isValid = true;
+		uint32_t m_scale = 1;
 		glm::mat4 m_transform;
+		
 		VulkanShader::ShaderMaterialDescriptorSet m_descriptorSet;
 	};
 }

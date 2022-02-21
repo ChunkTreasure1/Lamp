@@ -13,6 +13,7 @@ namespace Lamp
 
 		void SetProjection(float fov, float aspect, float nearPlane, float farPlane) override;
 		Frustum CreateFrustum() override;
+		std::array<glm::vec4, 6> CreateImplicitFrustum();
 
 		//Getting
 		inline const float GetYaw() const { return m_rotation.x; }

@@ -349,7 +349,7 @@ namespace Lamp
 			pass.computeExcuteCommand = command;
 		}
 
-		//Geometry pass
+		//Skybox
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
@@ -361,27 +361,23 @@ namespace Lamp
 			};
 
 			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.depthWrite = false;
+			pipelineSpec.cullMode = CullMode::Back;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Skybox;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
 			m_geometryFramebuffer = pipelineSpec.framebuffer;
 
-			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
-			pipelineSpec.debugName = "Geometry";
+			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float3, "a_Normal" },
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
-			pipelineSpec.framebufferInputs =
-			{
-				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+				{ ElementType::Float2, "a_TexCoords" }
 			};
 
 			auto& pass = m_renderPasses.emplace_back();
@@ -424,11 +420,11 @@ namespace Lamp
 				{ ElementType::Float2, "a_TexCoords" }
 			};
 
-			//auto& pass = m_renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
-		//Skybox
+		//Geometry pass
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
@@ -446,26 +442,41 @@ namespace Lamp
 			};
 
 			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.depthWrite = false;
-			pipelineSpec.cullMode = CullMode::Back;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Skybox;
-			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
-
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
+			pipelineSpec.debugName = "Geometry";
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
 				{ ElementType::Float3, "a_Normal" },
 				{ ElementType::Float3, "a_Tangent" },
 				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" }
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
 			auto& pass = m_renderPasses.emplace_back();
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Quad
+		{
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = Renderer2D::Get().CreateQuadPipeline(m_geometryFramebuffer);
+		}
+
+		//Line
+		{
+			//auto& pass = m_renderPasses.emplace_back();
+			//pass.graphicsPipeline = Renderer2D::Get().CreateLinePipeline(m_geometryFramebuffer);
 		}
 
 		//Translucency pass
@@ -504,8 +515,8 @@ namespace Lamp
 				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
-			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			//auto& pass = m_renderPasses.emplace_back();
+			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Composite

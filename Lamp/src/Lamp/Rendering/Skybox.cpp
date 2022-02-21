@@ -163,12 +163,6 @@ namespace Lamp
 
 	Skybox::~Skybox()
 	{
-		if (m_descriptorSet.pool)
-		{
-			auto device = VulkanContext::GetCurrentDevice();
-			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
-			m_descriptorSet.pool = nullptr;
-		}
 	}
 
 	void Skybox::Draw(Ref<RenderPipeline> pipeline)
@@ -184,7 +178,6 @@ namespace Lamp
 		skyData.environmentMultiplier = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentMultiplier;
 
 		SetupDescriptors(pipeline);
-
 		RenderCommand::SubmitMesh(m_cubeMesh, nullptr, m_descriptorSet.descriptorSets, static_cast<void*>(&skyData));
 	}
 

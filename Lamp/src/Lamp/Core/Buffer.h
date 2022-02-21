@@ -42,9 +42,12 @@ namespace Lamp
 
 		void Release()
 		{
-			delete[] pData;
-			pData = nullptr;
-			Size = 0;
+			if (pData)
+			{
+				delete[] pData;
+				pData = nullptr;
+				Size = 0;
+			}
 		}
 
 		void ZeroInitialize()
@@ -69,7 +72,7 @@ namespace Lamp
 			return buffer;
 		}
 
-		void Write(void* data, uint32_t size, uint32_t offset = 0)
+		void Write(const void* data, uint32_t size, uint32_t offset = 0)
 		{
 			LP_CORE_ASSERT(offset + size <= Size, "Buffer overflow!");
 			memcpy((uint8_t*)pData + offset, data, size);

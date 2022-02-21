@@ -137,7 +137,7 @@ namespace Sandbox
 				if (ImGui::Button("Create"))
 				{
 					const uint32_t heightMapRes = GetHeightMapResolution();
-					Ref<Texture2D> terrainTex = Texture2D::Create(ImageFormat::RGBA, heightMapRes, heightMapRes);
+					Ref<Texture2D> terrainTex = Texture2D::Create(ImageFormat::RGBA, heightMapRes, heightMapRes, true);
 
 					auto data = GenerateEmptyTextureData(heightMapRes);
 					terrainTex->SetData(data.data(), data.size() * sizeof(uint32_t));

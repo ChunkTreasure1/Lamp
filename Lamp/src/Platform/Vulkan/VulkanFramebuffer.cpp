@@ -199,9 +199,12 @@ namespace Lamp
 		{
 			if (Utils::IsDepthFormat(attachmentSpec.textureFormat))
 			{
+				bool existingImage = false;
+
 				if (m_specification.existingImages.find(attachmentIndex) != m_specification.existingImages.end())
 				{
 					m_depthAttachmentImage = std::reinterpret_pointer_cast<VulkanImage2D>(m_specification.existingImages[attachmentIndex]);
+					existingImage = true;
 				}
 				else
 				{
@@ -216,11 +219,11 @@ namespace Lamp
 				attachmentDesc.flags = 0;
 				attachmentDesc.format = Utils::LampFormatToVulkanFormat(attachmentSpec.textureFormat);
 				attachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT;
-				attachmentDesc.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
+				attachmentDesc.loadOp = existingImage ? VK_ATTACHMENT_LOAD_OP_LOAD : Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
 				attachmentDesc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				attachmentDesc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 				attachmentDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				attachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				attachmentDesc.initialLayout = existingImage ? m_depthAttachmentImage->GetDescriptorInfo().imageLayout : VK_IMAGE_LAYOUT_UNDEFINED;
 
 				attachmentDesc.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 				depthAttachmentReference = { attachmentIndex, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };

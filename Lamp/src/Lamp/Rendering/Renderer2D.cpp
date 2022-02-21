@@ -62,9 +62,35 @@ namespace Lamp
 		m_submitBufferPointer->lineCalls.clear();
 	}
 
-	void Renderer2D::DispatchRenderCommands()
+	void Renderer2D::DispatchRenderCommands(DrawType type)
 	{
 		LP_PROFILE_FUNCTION();
+
+		Begin(nullptr);
+
+		switch (type)
+		{
+			case DrawType::Quad2D:
+			{
+
+				for (const auto& quad :m_renderBufferPointer->drawCalls)
+				{
+					DrawQuad(quad);
+				}
+
+				break;
+			}
+
+			case DrawType::Line2D:
+			{
+				for (auto line : m_renderBufferPointer->lineCalls)
+				{
+				}
+				break;
+			}
+		}
+
+		End();
 	}
 
 	void Renderer2D::SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id)
@@ -138,7 +164,7 @@ namespace Lamp
 		m_storage->quadIndexCount += 6;
 	}
 
-	Ref<RenderPipeline> Renderer2D::SetupQuadPipeline(Ref<Framebuffer> framebuffer)
+	Ref<RenderPipeline> Renderer2D::CreateQuadPipeline(Ref<Framebuffer> framebuffer)
 	{
 		//Quad pass
 		{
@@ -163,6 +189,7 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("quad");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Quad2D;
 			pipelineSpec.debugName = "Quad";
 			pipelineSpec.vertexLayout =
 			{
@@ -179,7 +206,7 @@ namespace Lamp
 		return m_storage->quadPipeline;
 	}
 
-	Ref<RenderPipeline> Renderer2D::SetupLinePipeline(Ref<Framebuffer> framebuffer)
+	Ref<RenderPipeline> Renderer2D::CreateLinePipeline(Ref<Framebuffer> framebuffer)
 	{
 		//Line pass
 		{
@@ -204,6 +231,7 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("line");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::LineList;
+			pipelineSpec.drawType = DrawType::Line2D;
 			pipelineSpec.debugName = "Line";
 			pipelineSpec.vertexLayout =
 			{

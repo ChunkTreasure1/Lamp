@@ -89,7 +89,10 @@ namespace Lamp
 
 	struct TerrainDataBuffer
 	{
-		alignas(16) float heightMultiplier = 0.f;
+		glm::vec4 frustumPlanes[6];
+		float tessellatedEdgeSize = 20.f;
+		float tessellationFactor = 0.75f;
+		float displacementFactor = 32.f;
 	};
 
 	struct HBAODataBuffer

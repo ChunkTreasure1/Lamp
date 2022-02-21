@@ -9,6 +9,7 @@
 #include "Lamp/Rendering/Cameras/PerspectiveCamera.h"
 #include "Lamp/Rendering/LightBase.h"
 #include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
+#include "Lamp/Rendering/Renderer2D.h"
 
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
@@ -344,12 +345,25 @@ namespace Lamp
 				{
 					LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->Draw(m_rendererStorage->currentRenderPipeline);
 				}
+				break;
 			}
 
 			case DrawType::ScreenQuad:
 			{
 				DrawQuad();
 
+				break;
+			}
+
+			case DrawType::Quad2D:
+			{
+				Renderer2D::Get().DispatchRenderCommands(DrawType::Quad2D);
+				break;
+			}
+
+			case DrawType::Line2D:
+			{
+				Renderer2D::Get().DispatchRenderCommands(DrawType::Line2D);
 				break;
 			}
 		}
@@ -493,7 +507,7 @@ namespace Lamp
 		{
 			auto ub = m_rendererStorage->uniformBufferSet->Get(0, 0, currentFrame);
 
-			Ref<PerspectiveCamera> perspectiveCamera = std::dynamic_pointer_cast<PerspectiveCamera>(m_rendererStorage->camera);
+			Ref<PerspectiveCamera> perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_rendererStorage->camera);
 			float tanHalfFOV = glm::tan(glm::radians(perspectiveCamera->GetFieldOfView()) / 2.f);
 
 			const bool levelLoaded = LevelManager::Get()->IsLevelLoaded();
@@ -535,6 +549,10 @@ namespace Lamp
 
 		//Terrain data
 		{
+			Ref<PerspectiveCamera> perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_rendererStorage->camera);
+			auto planes = perspectiveCamera->CreateImplicitFrustum();
+
+			memcpy(m_rendererStorage->terrainData.frustumPlanes, planes.data(), sizeof(glm::vec4) * planes.size());
 			m_rendererStorage->terrainDataBuffer->SetData(&m_rendererStorage->terrainData, sizeof(TerrainDataBuffer));
 		}
 
@@ -774,6 +792,11 @@ namespace Lamp
 	void Renderer::AllocatePerPassDescriptors()		
 	{
 		LP_PROFILE_FUNCTION();
+
+		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType == DrawType::Quad2D)
+		{
+			return;
+		}
 
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_rendererStorage->currentRenderPipeline->GetSpecification().shader);
 		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_rendererStorage->currentRenderPipeline);

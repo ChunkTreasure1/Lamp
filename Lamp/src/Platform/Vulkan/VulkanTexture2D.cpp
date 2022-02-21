@@ -13,7 +13,8 @@
 
 namespace Lamp
 {
-	VulkanTexture2D::VulkanTexture2D(ImageFormat format, uint32_t width, uint32_t height)
+	VulkanTexture2D::VulkanTexture2D(ImageFormat format, uint32_t width, uint32_t height, bool saveBuffer)
+		: m_saveBuffer(saveBuffer)
 	{
 		ImageSpecification imageSpec{};
 		imageSpec.format = format;
@@ -22,6 +23,11 @@ namespace Lamp
 		imageSpec.height = (uint32_t)height;
 
 		m_image = std::reinterpret_pointer_cast<VulkanImage2D>(Image2D::Create(imageSpec));
+
+		if (m_saveBuffer)
+		{
+			m_buffer.Allocate(width * height * 4);
+		}
 	}
 
 	VulkanTexture2D::VulkanTexture2D(const std::filesystem::path& path, bool generateMips)
@@ -31,6 +37,7 @@ namespace Lamp
 
 	VulkanTexture2D::~VulkanTexture2D()
 	{
+		m_buffer.Release();
 	}
 
 	void VulkanTexture2D::Bind(uint32_t slot) const
@@ -58,6 +65,13 @@ namespace Lamp
 		Utility::TransitionImageLayout(m_image->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
+	
+		if (m_saveBuffer)
+		{
+			m_buffer.Release();
+			m_buffer.Allocate(size);
+			m_buffer.Write(data, size);
+		}
 	}
 
 	const uint32_t VulkanTexture2D::GetWidth() const
@@ -136,6 +150,13 @@ namespace Lamp
 		}
 
 		allocator.DestroyBuffer(stagingBuffer, stagingBufferMemory);
+
+		if (m_saveBuffer)
+		{
+			m_buffer.Release();
+			m_buffer.Allocate(size);
+			m_buffer.Write(data, size);
+		}
 	}
 
 	void VulkanTexture2D::LoadOther(const std::filesystem::path& path, bool generateMips)

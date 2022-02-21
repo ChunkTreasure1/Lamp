@@ -572,7 +572,9 @@ namespace Sandbox
 
 		if (UI::BeginProperties("Terrain"))
 		{
-			UI::Property("Height", const_cast<float&>(Renderer::Get().GetStorage().terrainData.heightMultiplier));
+			UI::Property("Displacement factor", const_cast<float&>(Renderer::Get().GetStorage().terrainData.displacementFactor));
+			UI::Property("Tessellation factor", const_cast<float&>(Renderer::Get().GetStorage().terrainData.tessellationFactor));
+			UI::Property("Tessellated edge size", const_cast<float&>(Renderer::Get().GetStorage().terrainData.tessellatedEdgeSize));
 
 			UI::EndProperties(false);
 			UI::PopId();

@@ -44,16 +44,11 @@ namespace Lamp
 
 	Terrain::~Terrain()
 	{
-		if (m_descriptorSet.pool)
-		{
-			auto device = VulkanContext::GetCurrentDevice();
-			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
-			m_descriptorSet.pool = nullptr;
-		}
 	}
 
 	void Terrain::Draw(Ref<RenderPipeline> pipeline)
 	{
+		SetupDescriptors(pipeline);
 		RenderCommand::SubmitMesh(m_mesh, nullptr, m_descriptorSet.descriptorSets, (void*)glm::value_ptr(m_transform));
 	}
 
@@ -69,13 +64,6 @@ namespace Lamp
 
 	void Terrain::SetupDescriptors(Ref<RenderPipeline> pipeline)
 	{
-		if (m_descriptorSet.pool)
-		{
-			auto device = VulkanContext::GetCurrentDevice();
-			vkDestroyDescriptorPool(device->GetHandle(), m_descriptorSet.pool, nullptr);
-			m_descriptorSet.pool = nullptr;
-		}
-
 		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(pipeline->GetSpecification().shader);
 		auto device = VulkanContext::GetCurrentDevice();
 		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
@@ -102,6 +90,11 @@ namespace Lamp
 			writeDescriptors[2].pImageInfo = &vulkanTexture->GetDescriptorInfo();
 		}
 
+		auto vulkanScreenUB = std::reinterpret_pointer_cast<VulkanUniformBuffer>(pipeline->GetSpecification().uniformBufferSets->Get(3, 0, currentFrame));
+		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("ScreenDataBuffer"));
+		writeDescriptors[3].dstSet = descriptorSet.descriptorSets[0];
+		writeDescriptors[3].pBufferInfo = &vulkanScreenUB->GetDescriptorInfo();
+
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 		m_descriptorSet = descriptorSet;
 	}
@@ -113,6 +106,8 @@ namespace Lamp
 
 		const uint32_t patchSize = 64;
 		const float uvScale = 1.f;
+
+		m_scale = m_heightMap->GetHeight() / patchSize;
 
 		const uint32_t vertexCount = patchSize * patchSize;
 		vertices.resize(vertexCount);
@@ -148,7 +143,41 @@ namespace Lamp
 			}
 		}
 
+		for (uint32_t x = 0; x < patchSize; x++)
+		{
+			for (uint32_t y = 0; y < patchSize; y++)
+			{
+				float heights[3][3];
+				for (int32_t hx = -1; hx <= 1; hx++)
+				{
+					for (int32_t hy = -1; hy <= 1; hy++)
+					{
+						heights[hx + 1][hy + 1] = GetHeight(x + hx, y + hy);
+					}
+				}
+
+				glm::vec3 normal;
+				normal.x = heights[0][0] - heights[2][0] + 2.f * heights[0][1] - 2.f * heights[2][1] + heights[0][2] - heights[2][2];
+				normal.y = heights[0][0] + 2.f * heights[1][0] + heights[2][0] - heights[0][2] - 2.f * heights[1][2] - heights[2][2];
+			
+				normal.y = 0.25f * sqrtf(1.f - normal.x * normal.x - normal.y * normal.y);
+				vertices[x + y * patchSize].normal = glm::normalize(normal * glm::vec3(2.f, 1.f, 2.f));
+			}
+		}
+
 		m_mesh = CreateRef<SubMesh>(vertices, indices, 0);
 		m_transform = glm::scale(glm::mat4(1.f), glm::vec3{ 2.f, 1.f, 2.f });
+	}
+
+	float Terrain::GetHeight(uint32_t x, uint32_t y)
+	{
+		glm::ivec2 pos = glm::ivec2{ x, y } * glm::ivec2{ m_scale, m_scale };
+		pos.x = std::max(0, std::min(pos.x, (int)m_heightMap->GetWidth() - 1));
+		pos.y = std::max(0, std::min(pos.y, (int)m_heightMap->GetWidth() - 1));
+		pos /= glm::ivec2(m_scale);
+		
+		auto buffer = std::reinterpret_pointer_cast<VulkanTexture2D>(m_heightMap)->GetData();
+
+		return buffer.Read<uint16_t>((pos.x + pos.y * m_heightMap->GetHeight()) * m_scale) / 65535.f;
 	}
 }

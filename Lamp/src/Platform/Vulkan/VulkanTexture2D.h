@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Lamp/Core/Buffer.h"
+
 #include "Lamp/Rendering/Textures/Texture2D.h"
 #include "Platform/Vulkan/VulkanImage2D.h"
 
@@ -11,7 +13,7 @@ namespace Lamp
 	class VulkanTexture2D : public Texture2D
 	{
 	public:
-		VulkanTexture2D(ImageFormat format, uint32_t width, uint32_t height);
+		VulkanTexture2D(ImageFormat format, uint32_t width, uint32_t height, bool saveBuffer);
 		VulkanTexture2D(const std::filesystem::path& path, bool generateMips);
 		VulkanTexture2D() = default;
 
@@ -28,6 +30,7 @@ namespace Lamp
 
 		const VkDescriptorImageInfo& GetDescriptorInfo() const;
 		inline const Ref<VulkanImage2D> GetImage() const { return m_image; }
+		inline Buffer GetData() const { return m_buffer; }
 
 	private:
 		void LoadKTX(const std::filesystem::path& path, bool generateMips);
@@ -35,5 +38,7 @@ namespace Lamp
 		void Setup(void* data, uint32_t size, uint32_t width, uint32_t height, bool generateMips, bool isHDR);
 
 		Ref<VulkanImage2D> m_image;
+		Buffer m_buffer;
+		bool m_saveBuffer = false;
 	};
 }

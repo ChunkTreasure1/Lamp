@@ -21,7 +21,7 @@ namespace Lamp
 		static AssetType GetStaticType() { return AssetType::Texture; }
 		AssetType GetType() override { return GetStaticType(); }
 
-		static Ref<Texture2D> Create(ImageFormat format, uint32_t width, uint32_t height);
+		static Ref<Texture2D> Create(ImageFormat format, uint32_t width, uint32_t height, bool saveBuffer = false);
 		static Ref<Texture2D> Create(const std::filesystem::path& path, bool generateMips = true);
 	};
 }

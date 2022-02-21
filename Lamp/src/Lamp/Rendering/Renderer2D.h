@@ -3,6 +3,8 @@
 #include "Lamp/Rendering/Buffers/RenderBuffer.h"
 #include "Lamp/Rendering/Vertex.h"
 
+#include "Lamp/Rendering/RenderPipeline.h"
+
 #include <vulkan/vulkan.h>
 
 namespace Lamp
@@ -66,15 +68,15 @@ namespace Lamp
 		void End();
 
 		void SwapRenderBuffers();
-		void DispatchRenderCommands();
+		void DispatchRenderCommands(DrawType type);
 
 		void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
 		void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
 		void DrawQuad(const RenderCommandData& cmd);
 
-		Ref<RenderPipeline> SetupQuadPipeline(Ref<Framebuffer> framebuffer);
-		Ref<RenderPipeline> SetupLinePipeline(Ref<Framebuffer> framebuffer);
+		Ref<RenderPipeline> CreateQuadPipeline(Ref<Framebuffer> framebuffer);
+		Ref<RenderPipeline> CreateLinePipeline(Ref<Framebuffer> framebuffer);
 
 		static Renderer2D& Get() { return *s_instance; }
 		

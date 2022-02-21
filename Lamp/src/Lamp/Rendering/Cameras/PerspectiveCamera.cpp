@@ -51,6 +51,49 @@ namespace Lamp
 		return frustum;
 	}
 
+	std::array<glm::vec4, 6> PerspectiveCamera::CreateImplicitFrustum()
+	{
+		std::array<glm::vec4, 6> planes;
+
+		planes[0].x = m_viewProjectionMatrix[0].w + m_viewProjectionMatrix[0].x;
+		planes[0].y = m_viewProjectionMatrix[1].w + m_viewProjectionMatrix[1].x;
+		planes[0].z = m_viewProjectionMatrix[2].w + m_viewProjectionMatrix[2].x;
+		planes[0].w = m_viewProjectionMatrix[3].w + m_viewProjectionMatrix[3].x;
+
+		planes[1].x = m_viewProjectionMatrix[0].w - m_viewProjectionMatrix[0].x;
+		planes[1].y = m_viewProjectionMatrix[1].w - m_viewProjectionMatrix[1].x;
+		planes[1].z = m_viewProjectionMatrix[2].w - m_viewProjectionMatrix[2].x;
+		planes[1].w = m_viewProjectionMatrix[3].w - m_viewProjectionMatrix[3].x;
+
+		planes[2].x = m_viewProjectionMatrix[0].w - m_viewProjectionMatrix[0].y;
+		planes[2].y = m_viewProjectionMatrix[1].w - m_viewProjectionMatrix[1].y;
+		planes[2].z = m_viewProjectionMatrix[2].w - m_viewProjectionMatrix[2].y;
+		planes[2].w = m_viewProjectionMatrix[3].w - m_viewProjectionMatrix[3].y;
+
+		planes[3].x = m_viewProjectionMatrix[0].w + m_viewProjectionMatrix[0].y;
+		planes[3].y = m_viewProjectionMatrix[1].w + m_viewProjectionMatrix[1].y;
+		planes[3].z = m_viewProjectionMatrix[2].w + m_viewProjectionMatrix[2].y;
+		planes[3].w = m_viewProjectionMatrix[3].w + m_viewProjectionMatrix[3].y;
+
+		planes[4].x = m_viewProjectionMatrix[0].w + m_viewProjectionMatrix[0].z;
+		planes[4].y = m_viewProjectionMatrix[1].w + m_viewProjectionMatrix[1].z;
+		planes[4].z = m_viewProjectionMatrix[2].w + m_viewProjectionMatrix[2].z;
+		planes[4].w = m_viewProjectionMatrix[3].w + m_viewProjectionMatrix[3].z;
+
+		planes[0].x = m_viewProjectionMatrix[0].w - m_viewProjectionMatrix[0].z;
+		planes[0].y = m_viewProjectionMatrix[1].w - m_viewProjectionMatrix[1].z;
+		planes[0].z = m_viewProjectionMatrix[2].w - m_viewProjectionMatrix[2].z;
+		planes[0].w = m_viewProjectionMatrix[3].w - m_viewProjectionMatrix[3].z;
+
+		for (uint32_t i = 0; i < planes.size(); i++)
+		{
+			float length = sqrtf(planes[i].x * planes[i].x + planes[i].y * planes[i].y + planes[i].z * planes[i].z);
+			planes[i] /= length;
+		}
+
+		return planes;
+	}
+
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
 		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
