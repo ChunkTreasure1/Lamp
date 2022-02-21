@@ -24,7 +24,7 @@ namespace Lamp
 
 	Renderer2D::Renderer2D()
 	{
-		LP_CORE_ASSERT(s_instance, "There can only be one instance!");
+		LP_CORE_ASSERT(!s_instance, "There can only be one instance!");
 		s_instance = this;
 	}
 
@@ -163,8 +163,6 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("quad");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawSkybox = false;
-			pipelineSpec.drawTerrain = false;
 			pipelineSpec.debugName = "Quad";
 			pipelineSpec.vertexLayout =
 			{
@@ -177,6 +175,8 @@ namespace Lamp
 
 			m_storage->quadPipeline = RenderPipeline::Create(pipelineSpec);
 		}
+
+		return m_storage->quadPipeline;
 	}
 
 	Ref<RenderPipeline> Renderer2D::SetupLinePipeline(Ref<Framebuffer> framebuffer)
@@ -204,8 +204,6 @@ namespace Lamp
 			pipelineSpec.shader = ShaderLibrary::GetShader("line");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::LineList;
-			pipelineSpec.drawSkybox = false;
-			pipelineSpec.drawTerrain = false;
 			pipelineSpec.debugName = "Line";
 			pipelineSpec.vertexLayout =
 			{
@@ -214,6 +212,8 @@ namespace Lamp
 
 			m_storage->linePipeline = RenderPipeline::Create(pipelineSpec);
 		}
+
+		return m_storage->linePipeline;
 	}
 
 	void Renderer2D::CreateStorage()

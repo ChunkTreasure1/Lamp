@@ -65,9 +65,6 @@ namespace Lamp
 		std::vector<VkDescriptorSet> currentMeshDescriptorSets;
 
 		LightCullingRendererData lightCullingRendererData;
-		
-		Ref<RenderPipeline> terrainPipeline;
-		Ref<RenderPipeline> skyboxPipeline;
 		///////////////////
 
 		/////Shader storage//////
@@ -120,9 +117,6 @@ namespace Lamp
 
 		VkDescriptorSet AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo);
 		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
-
-		void CreateTerrainPipeline(Ref<Framebuffer> framebuffer);
-		void CreateSkyboxPipeline(Ref<Framebuffer> framebuffer);
 
 		static Renderer& Get();
 		static Ref<Renderer> Create();

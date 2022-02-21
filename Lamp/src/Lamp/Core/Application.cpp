@@ -54,6 +54,7 @@ namespace Lamp
 
 		m_levelManager = CreateScope<LevelManager>();
 		m_renderer = CreateScope<Renderer>();
+		m_renderer2D = CreateScope<Renderer2D>();
 
 		m_renderer->Initialize();
 		m_renderer2D->Initialize();

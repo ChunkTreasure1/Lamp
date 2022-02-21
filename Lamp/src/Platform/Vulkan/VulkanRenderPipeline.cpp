@@ -287,9 +287,6 @@ namespace Lamp
 			framebuffer = std::reinterpret_pointer_cast<VulkanFramebuffer>(m_specification.framebuffer);
 		}
 
-		//CreateDescriptorSets();
-		//SetupUniformBuffers();
-
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexBindingDescriptionCount = m_attributeDescriptions.empty() ? 0 : 1;
@@ -347,7 +344,7 @@ namespace Lamp
 			}
 
 			VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-			colorBlendAttachment.colorWriteMask = Utils::GetColorComponentsFromFormat(attachment.textureFormat);
+			colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 			colorBlendAttachment.blendEnable = VK_FALSE;
 
 			blendAttachments.emplace_back(colorBlendAttachment);

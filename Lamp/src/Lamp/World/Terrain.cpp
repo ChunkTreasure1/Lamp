@@ -52,7 +52,7 @@ namespace Lamp
 		}
 	}
 
-	void Terrain::Draw()
+	void Terrain::Draw(Ref<RenderPipeline> pipeline)
 	{
 		RenderCommand::SubmitMesh(m_mesh, nullptr, m_descriptorSet.descriptorSets, (void*)glm::value_ptr(m_transform));
 	}
@@ -67,7 +67,7 @@ namespace Lamp
 		return CreateRef<Terrain>(heightMap);
 	}
 
-	void Terrain::SetupDescriptors()
+	void Terrain::SetupDescriptors(Ref<RenderPipeline> pipeline)
 	{
 		if (m_descriptorSet.pool)
 		{
@@ -76,14 +76,14 @@ namespace Lamp
 			m_descriptorSet.pool = nullptr;
 		}
 
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_pipeline->GetSpecification().shader);
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(pipeline->GetSpecification().shader);
 		auto device = VulkanContext::GetCurrentDevice();
 		const uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		auto descriptorSet = vulkanShader->CreateDescriptorSets();
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
-		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
+		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
 		auto vulkanTerrainBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(Renderer::Get().GetStorage().terrainDataBuffer);
 
 		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("CameraDataBuffer"));
@@ -150,8 +150,5 @@ namespace Lamp
 
 		m_mesh = CreateRef<SubMesh>(vertices, indices, 0);
 		m_transform = glm::scale(glm::mat4(1.f), glm::vec3{ 2.f, 1.f, 2.f });
-
-		m_pipeline = Renderer::Get().GetStorage().terrainPipeline;
-		SetupDescriptors();
 	}
 }

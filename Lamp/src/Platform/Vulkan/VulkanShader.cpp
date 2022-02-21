@@ -4,6 +4,7 @@
 #include "VulkanDevice.h"
 
 #include "Platform/Vulkan/VulkanUtility.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
@@ -190,23 +191,13 @@ namespace Lamp
 
 		LP_CORE_ASSERT(m_descriptorTypes.find(set) != m_descriptorTypes.end(), "Descriptor set not found!");
 
-		VkDescriptorPoolCreateInfo descriptorPoolInfo{};
-		descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		descriptorPoolInfo.pNext = nullptr;
-		descriptorPoolInfo.poolSizeCount = (uint32_t)m_descriptorTypes.at(set).size();
-		descriptorPoolInfo.pPoolSizes = m_descriptorTypes.at(set).data();
-		descriptorPoolInfo.maxSets = 1;
-
-		LP_VK_CHECK(vkCreateDescriptorPool(device->GetHandle(), &descriptorPoolInfo, nullptr, &result.pool));
-
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = result.pool;
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &m_descriptorSetLayouts[set];
 
-		result.descriptorSets.emplace_back();
-		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, result.descriptorSets.data()));
+		auto& it = result.descriptorSets.emplace_back();
+		it = Renderer::Get().AllocateDescriptorSet(allocInfo);
 
 		return result;
 	}
@@ -389,7 +380,7 @@ namespace Lamp
 			for (int i = 0; i < m_specification.textureCount; i++)
 			{
 				size_t pos = source.find_first_of("\r\n", eol + 2);
-				std::string name = source.substr(eol + 1, pos - eol - 1);
+				std::string name = source.substr(eol + 2, pos - eol - 2);
 				m_specification.inputTextureNames.push_back(name);
 
 				eol = pos;

@@ -159,9 +159,6 @@ namespace Lamp
 		m_filteredEnvironment = envFiltered;
 
 		m_cubeMesh = SubMesh::CreateCube();
-		
-		m_pipeline = Renderer::Get().GetStorage().skyboxPipeline;
-		SetupDescriptors();
 	}
 
 	Skybox::~Skybox()
@@ -174,7 +171,7 @@ namespace Lamp
 		}
 	}
 
-	void Skybox::Draw()
+	void Skybox::Draw(Ref<RenderPipeline> pipeline)
 	{
 		struct SkyboxData
 		{
@@ -186,10 +183,12 @@ namespace Lamp
 		skyData.environmentLod = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentLod;
 		skyData.environmentMultiplier = LevelManager::GetActive()->GetEnvironment().GetSkybox().environmentMultiplier;
 
+		SetupDescriptors(pipeline);
+
 		RenderCommand::SubmitMesh(m_cubeMesh, nullptr, m_descriptorSet.descriptorSets, static_cast<void*>(&skyData));
 	}
 
-	void Skybox::SetupDescriptors()
+	void Skybox::SetupDescriptors(Ref<RenderPipeline> pipeline)
 	{
 		if (m_descriptorSet.pool)
 		{
@@ -198,16 +197,17 @@ namespace Lamp
 			m_descriptorSet.pool = nullptr;
 		}
 
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_pipeline->GetSpecification().shader);
+		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(pipeline->GetSpecification().shader);
 		auto device = VulkanContext::GetCurrentDevice();
 
 		auto descriptorSet = vulkanShader->CreateDescriptorSets();
+
 		auto vulkanEnvironment = std::reinterpret_pointer_cast<VulkanTextureCube>(m_filteredEnvironment);
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
 		std::vector<VkWriteDescriptorSet> writeDescriptors;
 
-		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(m_pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
+		auto vulkanUniformBuffer = std::reinterpret_pointer_cast<VulkanUniformBuffer>(pipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame));
 
 		writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("CameraDataBuffer"));
 		writeDescriptors[0].dstSet = descriptorSet.descriptorSets[0];
@@ -219,6 +219,12 @@ namespace Lamp
 			writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
 			writeDescriptors[1].pImageInfo = &vulkanEnvironment->GetDescriptorInfo();
 		}
+		else
+		{
+			writeDescriptors.emplace_back(*vulkanShader->GetDescriptorSet("u_EnvironmentMap"));
+			writeDescriptors[1].dstSet = descriptorSet.descriptorSets[0];
+			writeDescriptors[1].pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(Renderer::Get().GetDefaults().blackCubeTexture)->GetDescriptorInfo();
+		} 
 
 		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 		m_descriptorSet = descriptorSet;

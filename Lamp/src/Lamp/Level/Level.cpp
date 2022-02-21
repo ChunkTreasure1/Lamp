@@ -369,9 +369,6 @@ namespace Lamp
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
-			pipelineSpec.drawSkybox = true;
-			pipelineSpec.drawTerrain = true;
-			pipelineSpec.draw2D = true;
 			pipelineSpec.debugName = "Geometry";
 			pipelineSpec.vertexLayout =
 			{
@@ -391,26 +388,84 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
-		{
-			auto pipeline = Renderer2D::Get().SetupQuadPipeline(m_geometryFramebuffer);
-			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = pipeline;
-		}
-		
-		{
-			auto pipeline = Renderer2D::Get().SetupLinePipeline(m_geometryFramebuffer);
-			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = pipeline;
-		}
-
 		//Terrain
 		{
-			Renderer::Get().CreateTerrainPipeline(m_geometryFramebuffer);
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages =
+			{
+				{ 0, m_geometryFramebuffer->GetColorAttachment(0) },
+				{ 1, m_geometryFramebuffer->GetColorAttachment(1) },
+				{ 2, m_geometryFramebuffer->GetDepthAttachment() }
+			};
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA32F,
+				ImageFormat::R32UI,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.cullMode = CullMode::Front;
+			pipelineSpec.topology = Topology::PatchList;
+			pipelineSpec.drawType = DrawType::Terrain;
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
+			pipelineSpec.useTessellation = true;
+
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" }
+			};
+
+			//auto& pass = m_renderPasses.emplace_back();
+			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Skybox
 		{
-			Renderer::Get().CreateSkyboxPipeline(m_geometryFramebuffer);
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages =
+			{
+				{ 0, m_geometryFramebuffer->GetColorAttachment(0) },
+				{ 1, m_geometryFramebuffer->GetColorAttachment(1) },
+				{ 2, m_geometryFramebuffer->GetDepthAttachment() }
+			};
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA32F,
+				ImageFormat::R32UI,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.depthWrite = false;
+			pipelineSpec.cullMode = CullMode::Back;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Skybox;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Translucency pass
@@ -434,8 +489,6 @@ namespace Lamp
 			pipelineSpec.drawType = DrawType::Translucency;
 			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
-			pipelineSpec.drawSkybox = false;
-			pipelineSpec.drawTerrain = false;
 			pipelineSpec.debugName = "Translucency";
 			pipelineSpec.vertexLayout =
 			{

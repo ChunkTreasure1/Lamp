@@ -72,9 +72,6 @@ namespace Lamp
 		CullMode cullMode = CullMode::Back;
 		bool depthTest = true;
 		bool depthWrite = true;
-		bool drawSkybox = false;
-		bool drawTerrain = false;
-		bool draw2D = false;
 
 		BufferLayout vertexLayout;
 

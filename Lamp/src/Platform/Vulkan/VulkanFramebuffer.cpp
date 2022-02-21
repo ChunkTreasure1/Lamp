@@ -235,6 +235,7 @@ namespace Lamp
 				if (m_specification.existingImages.find(attachmentIndex) != m_specification.existingImages.end())
 				{
 					colorAttachment = std::reinterpret_pointer_cast<VulkanImage2D>(m_specification.existingImages[attachmentIndex]);
+					m_attachmentImages[attachmentIndex] = colorAttachment;	
 					existingImage = true;
 				}
 				else
@@ -270,7 +271,7 @@ namespace Lamp
 				attachmentDescripton.storeOp = VK_ATTACHMENT_STORE_OP_STORE; 
 				attachmentDescripton.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 				attachmentDescripton.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				attachmentDescripton.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				attachmentDescripton.initialLayout = existingImage ? colorAttachment->GetDescriptorInfo().imageLayout : VK_IMAGE_LAYOUT_UNDEFINED;
 				attachmentDescripton.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 				const auto& clearColor = m_specification.clearColor;

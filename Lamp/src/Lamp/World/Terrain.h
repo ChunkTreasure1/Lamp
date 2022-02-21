@@ -19,22 +19,20 @@ namespace Lamp
 
 		inline const glm::mat4& GetTransform() const { return m_transform; }
 		inline Ref<Texture2D> GetHeightMap() { return m_heightMap; }
-		inline Ref<RenderPipeline> GetPipeline() { return m_pipeline; }
 		inline bool IsValid() const { return m_isValid; }
 
-		void Draw();
+		void Draw(Ref<RenderPipeline> pipeline);
 
 		static Ref<Terrain> Create(const std::filesystem::path& aHeightMap);
 		static Ref<Terrain> Create(Ref<Texture2D> heightMap);
 
 	private:
-		void SetupDescriptors();
+		void SetupDescriptors(Ref<RenderPipeline> pipeline);
 		void GenerateMeshFromHeightMap();
 
 		Ref<SubMesh> m_mesh;
 		bool m_isValid = true;
 
-		Ref<RenderPipeline> m_pipeline;
 		Ref<Texture2D> m_heightMap;
 
 		glm::mat4 m_transform;

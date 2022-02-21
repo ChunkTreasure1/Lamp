@@ -290,25 +290,6 @@ namespace Lamp
 	void Renderer::DispatchRenderCommands(RenderBuffer& buffer)
 	{
 		LP_PROFILE_FUNCTION();
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawSkybox && LevelManager::GetActive()->HasSkybox())
-		{
-			auto pipeline = m_rendererStorage->currentRenderPipeline;
-			m_rendererStorage->currentRenderPipeline = LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetPipeline();
-			LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->Draw();
-
-			m_rendererStorage->currentRenderPipeline = pipeline;
-		}
-
-		if (m_rendererStorage->currentRenderPipeline->GetSpecification().drawTerrain && LevelManager::GetActive()->HasTerrain())
-		{
-			auto pipeline = m_rendererStorage->currentRenderPipeline;
-
-			m_rendererStorage->currentRenderPipeline = LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->GetPipeline();
-			LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->Draw();
-
-			m_rendererStorage->currentRenderPipeline = pipeline;
-		}
-
 		switch (m_rendererStorage->currentRenderPipeline->GetSpecification().drawType)
 		{
 			case DrawType::Opaque:
@@ -349,9 +330,20 @@ namespace Lamp
 
 			case DrawType::Terrain:
 			{
-				LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->Draw();
+				if (LevelManager::GetActive()->HasTerrain())
+				{
+					LevelManager::GetActive()->GetEnvironment().GetTerrain().terrain->Draw(m_rendererStorage->currentRenderPipeline);
+				}
 
 				break;
+			}
+
+			case DrawType::Skybox:
+			{
+				if (LevelManager::GetActive()->HasSkybox())
+				{
+					LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->Draw(m_rendererStorage->currentRenderPipeline);
+				}
 			}
 
 			case DrawType::ScreenQuad:
@@ -455,54 +447,6 @@ namespace Lamp
 		};
 
 		return std::make_pair(lightCullingPipeline, func);
-	}
-
-	void Renderer::CreateTerrainPipeline(Ref<Framebuffer> framebuffer)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.cullMode = CullMode::Front;
-		pipelineSpec.topology = Topology::PatchList;
-		pipelineSpec.drawType = DrawType::Terrain;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		pipelineSpec.shader = ShaderLibrary::GetShader("terrain");
-		pipelineSpec.useTessellation = true;
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_rendererStorage->terrainPipeline = RenderPipeline::Create(pipelineSpec);
-	}
-
-	void Renderer::CreateSkyboxPipeline(Ref<Framebuffer> framebuffer)
-	{
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.depthWrite = false;
-		pipelineSpec.cullMode = CullMode::Back;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::Cube;
-		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		pipelineSpec.framebuffer = framebuffer;
-		pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
-
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" }
-		};
-
-		m_rendererStorage->skyboxPipeline = RenderPipeline::Create(pipelineSpec);
 	}
 
 	Renderer& Renderer::Get()
