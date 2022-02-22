@@ -14,11 +14,14 @@ namespace Lamp
 		~Thread();
 
 		void Join();
+		const bool HasFinished() const;
 
 		inline const std::string& GetName() { return m_name; }
 
 	private:
 		bool m_joined = false;
+		std::atomic_bool m_hasFinished = false;
+
 		std::thread m_thread;
 		std::string m_name;
 	};

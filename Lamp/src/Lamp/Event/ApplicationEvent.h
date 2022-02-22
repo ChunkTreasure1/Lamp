@@ -5,6 +5,7 @@
 #include "Lamp/Input/FileSystem.h"
 
 #include "Lamp/Rendering/Cameras/CameraBase.h"
+#include "Lamp/Rendering/RenderCommand.h"
 
 #include <sstream>
 
@@ -72,17 +73,25 @@ namespace Lamp
 	class AppRenderEvent : public Event
 	{
 	public:
+		AppRenderEvent() = default;
 		AppRenderEvent(const Ref<CameraBase> camera) 
-			: m_Camera(camera)
+			: m_camera(camera)
 		{}
 
-		inline const Ref<CameraBase>& GetCamera() { return m_Camera; }
+		AppRenderEvent(const AppRenderEvent& e)
+			: m_camera(e.m_camera), m_renderBuffer(e.m_renderBuffer)
+		{ }
+
+		inline void AddRenderCommand(const RenderCommandData& cmd) { m_renderBuffer.drawCalls.emplace_back(cmd); }
+		inline const Ref<CameraBase>& GetCamera() { return m_camera; }
+		inline const RenderBuffer& GetRenderBuffer() { return m_renderBuffer; }
 
 		EVENT_CLASS_TYPE(AppRender);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 
 	private:
-		Ref<CameraBase> m_Camera;
+		RenderBuffer m_renderBuffer;
+		Ref<CameraBase> m_camera;
 	};
 
 	class AppLogEvent : public Event

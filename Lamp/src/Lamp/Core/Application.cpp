@@ -63,10 +63,6 @@ namespace Lamp
 		AudioEngine::Initialize();
 		Physics::Initialize();
 
-		m_threadPool.AddThread("Update", LP_BIND_THREAD_FN(Application::UpdateApplication));
-
-		//m_AssetManagerThread = std::thread(UpdateAssetManager, std::ref(m_running));
-
 		//Setup the GUI system
 		m_pImGuiLayer = ImGuiLayer::Create();
 		PushOverlay(m_pImGuiLayer);
@@ -84,28 +80,23 @@ namespace Lamp
 
 		ResourceCache::Shutdown();
 
-		//m_AssetManagerThread.join();
-		m_threadPool.JoinAll();
-
 		delete g_pEnv->pAssetManager;
 		delete g_pEnv;
 	}
 
-	void Application::UpdateApplication()
+	void Application::Run()
 	{
-		LP_PROFILE_THREAD("Update");
+		LP_PROFILE_THREAD("Main");
 
 		while (m_running)
 		{
-			LP_PROFILE_FRAME("UpdateThread");
+			LP_PROFILE_FRAME("Main");
 
-			m_updateReady = true;
+			m_mainFrameTime.Begin();
 
 			float time = (float)glfwGetTime();
 			m_currentTimeStep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
-
-			m_updateFrameTime.Begin();
 
 			AppUpdateEvent e(m_currentTimeStep);
 
@@ -114,46 +105,11 @@ namespace Lamp
 				pLayer->OnEvent(e);
 			}
 
-			m_updateReady = false;
-
-			{
-				LP_PROFILE_SCOPE("Wait for render");
-
-				while (!m_renderReady && m_running)
-				{
-				}
-			}
-
 			RenderCommand::SwapRenderBuffers();
 
-			m_updateFrameTime.End();
-		}
-	}
-
-	void Application::Run()
-	{
-		LP_PROFILE_THREAD("Render");
-
-		while (m_running)
-		{
-			LP_PROFILE_FRAME("RenderThread");
-
-			m_mainFrameTime.Begin();
-
-			m_renderReady = true;
-			 
-			{
-				LP_PROFILE_SCOPE("Wait for update");
-				while (!m_updateReady)
-				{
-				}
-			}
-
-			m_renderReady = false;
+			AudioEngine::Update();
 
 			m_window->GetSwapchain()->BeginFrame();
-
-			AudioEngine::Update();
 
 			for (Layer* pLayer : m_LayerStack)
 			{

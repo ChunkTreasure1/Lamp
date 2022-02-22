@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lamp/Core/Thread.h"
+#include "Lamp/Core/Threading/Thread.h"
 
 #include <vector>
 #include <thread>

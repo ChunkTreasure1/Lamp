@@ -103,7 +103,10 @@ namespace Lamp
 		m_rendererStorage->camera = camera;
 		m_statistics.memoryStatistics = GetMemoryUsage();
 
-		PrepareForRender();
+		if (camera)
+		{
+			PrepareForRender();
+		}
 	}
 
 	void Renderer::End()
@@ -111,7 +114,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 
 		{
-			LP_PROFILE_SCOPE("Command buffer submit")
+			LP_PROFILE_SCOPE("Command buffer submit");
 			auto commandBuffer = m_rendererStorage->renderCommandBuffer;
 			commandBuffer->End();
 		}
@@ -323,7 +326,7 @@ namespace Lamp
 				{
 					if (command.material->GetMaterialData().useBlending)
 					{
-						DrawMesh(command.transform, command.data, command.material, command.id);	
+						DrawMesh(command.transform, command.data, command.material, command.id);
 					}
 				}
 				break;
@@ -379,7 +382,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		auto device = VulkanContext::GetCurrentDevice();
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-		
+
 		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
 
 		VkDescriptorSet descriptorSet;
@@ -445,19 +448,19 @@ namespace Lamp
 
 			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 
-			lightCullingPipeline->Execute(&currentDescriptorSet, 1, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
+			//lightCullingPipeline->Execute(&currentDescriptorSet, 1, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
 
-			//lightCullingPipeline->Begin(m_rendererStorage->renderCommandBuffer);
-			//lightCullingPipeline->Dispatch(currentDescriptorSet, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
+			lightCullingPipeline->Begin(m_rendererStorage->renderCommandBuffer);
+			lightCullingPipeline->Dispatch(currentDescriptorSet, m_rendererStorage->lightCullingRendererData.xTileCount, m_rendererStorage->lightCullingRendererData.yTileCount, 1);
 
-			//VkMemoryBarrier barrier{};
-			//barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-			//barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-			//barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			VkMemoryBarrier barrier{};
+			barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-			//vkCmdPipelineBarrier(static_cast<VkCommandBuffer>(m_rendererStorage->renderCommandBuffer->GetCurrentCommandBuffer()), VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 1, &barrier, 0, nullptr, 0, nullptr);
+			vkCmdPipelineBarrier(static_cast<VkCommandBuffer>(m_rendererStorage->renderCommandBuffer->GetCurrentCommandBuffer()), VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 1, &barrier, 0, nullptr, 0, nullptr);
 
-			//lightCullingPipeline->End();
+			lightCullingPipeline->End();
 		};
 
 		return std::make_pair(lightCullingPipeline, func);
@@ -787,14 +790,14 @@ namespace Lamp
 					}
 				}
 				else
-				{ 
+				{
 					LP_CORE_ERROR("VulkanRenderer: No attachment bound to binding {0} in pipeline {1}!", framebufferInput.binding, "");
 				}
 			}
- 		}
+		}
 	}
 
-	void Renderer::AllocatePerPassDescriptors()		
+	void Renderer::AllocatePerPassDescriptors()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -1161,7 +1164,7 @@ namespace Lamp
 	{
 		m_firstRenderBuffer.drawCalls.clear();
 		m_secondRenderBuffer.drawCalls.clear();
-		
+
 		m_finalRenderBuffer.drawCalls.clear();
 	}
 }

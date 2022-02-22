@@ -695,8 +695,7 @@ namespace Sandbox
 
 		if (UI::TreeNodeFramed("Application"))
 		{
-			ImGui::Text("Render time: %f ms", Application::Get().GetMainFrameTime().GetFrameTime() * 1000);
-			ImGui::Text("Update time: %f ms", Application::Get().GetUpdateFrameTime().GetFrameTime() * 1000);
+			ImGui::Text("Application time: %f ms", Application::Get().GetMainFrameTime().GetFrameTime() * 1000);
 
 			ImGui::Text("Frames per second: %f FPS", Application::Get().GetMainFrameTime().GetFramesPerSecond());
 
