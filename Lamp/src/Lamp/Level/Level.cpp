@@ -469,8 +469,8 @@ namespace Lamp
 
 		//Quad
 		{
-			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = Renderer2D::Get().CreateQuadPipeline(m_geometryFramebuffer);
+			//auto& pass = m_renderPasses.emplace_back();
+			//pass.graphicsPipeline = Renderer2D::Get().CreateQuadPipeline(m_geometryFramebuffer);
 		}
 
 		//Line
@@ -515,8 +515,8 @@ namespace Lamp
 				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
-			//auto& pass = m_renderPasses.emplace_back();
-			//pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Composite
@@ -535,7 +535,7 @@ namespace Lamp
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.drawType = DrawType::ScreenQuad;
-			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet; 
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },

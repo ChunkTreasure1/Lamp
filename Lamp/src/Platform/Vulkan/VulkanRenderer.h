@@ -116,7 +116,9 @@ namespace Lamp
 		void DispatchRenderCommands();
 
 		VkDescriptorSet AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo);
+
 		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateLightCullingPipeline(Ref<Image2D> depthImage);
+		std::pair<Ref<RenderComputePipeline>, std::function<void()>> CreateSSSBlurPass(Ref<Image2D> depthImage, Ref<Image2D> diffuseImage, Ref<Image2D> output);
 
 		static Renderer& Get();
 		static Ref<Renderer> Create();

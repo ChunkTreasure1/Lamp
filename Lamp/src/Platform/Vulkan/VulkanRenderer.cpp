@@ -463,6 +463,11 @@ namespace Lamp
 		return std::make_pair(lightCullingPipeline, func);
 	}
 
+	std::pair<Ref<RenderComputePipeline>, std::function<void()>> Renderer::CreateSSSBlurPass(Ref<Image2D> depthImage, Ref<Image2D> diffuseImage, Ref<Image2D> output)
+	{
+		return std::pair<Ref<RenderComputePipeline>, std::function<void()>>();
+	}
+
 	Renderer& Renderer::Get()
 	{
 		return *s_instance;

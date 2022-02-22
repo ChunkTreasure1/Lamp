@@ -49,8 +49,8 @@ namespace Lamp
 		props.IsVSync = false;
 		props.Title = "Lamp";
 
-		m_pWindow = Window::Create(props);
-		m_pWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_window = Window::Create(props);
+		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		m_levelManager = CreateScope<LevelManager>();
 		m_renderer = CreateScope<Renderer>();
@@ -151,7 +151,7 @@ namespace Lamp
 
 			m_renderReady = false;
 
-			m_pWindow->GetSwapchain()->BeginFrame();
+			m_window->GetSwapchain()->BeginFrame();
 
 			AudioEngine::Update();
 
@@ -173,7 +173,7 @@ namespace Lamp
 				m_pImGuiLayer->End();
 			}
 
-			m_pWindow->Update(m_currentTimeStep);
+			m_window->Update(m_currentTimeStep);
 
 			m_mainFrameTime.End();
 		}
@@ -224,7 +224,7 @@ namespace Lamp
 		{
 			m_minimized = false;
 		}
-		m_pWindow->OnResize(e.GetWidth(), e.GetHeight());
+		m_window->OnResize(e.GetWidth(), e.GetHeight());
 		return false;
 	}
 }

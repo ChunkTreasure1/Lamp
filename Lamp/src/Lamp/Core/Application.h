@@ -35,7 +35,7 @@ namespace Lamp
 		inline static Application& Get() { return *s_pInstance; }
 
 		inline const ThreadPool& GetThreadPool() { return m_threadPool; }
-		inline Window& GetWindow() { return *m_pWindow; }
+		inline Window& GetWindow() { return *m_window; }
 
 		inline const FrameTime& GetMainFrameTime() { return m_mainFrameTime; }
 		inline const FrameTime& GetUpdateFrameTime() { return m_updateFrameTime; }
@@ -49,7 +49,7 @@ namespace Lamp
 		static Application* s_pInstance;
 
 	private:
-		Scope<Window> m_pWindow;
+		Scope<Window> m_window;
 		Scope<LevelManager> m_levelManager;
 		Scope<Renderer> m_renderer;
 		Scope<Renderer2D> m_renderer2D;
