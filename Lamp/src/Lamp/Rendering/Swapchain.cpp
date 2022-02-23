@@ -402,9 +402,9 @@ namespace Lamp
 		VkSurfaceCapabilitiesKHR capabilities;
 		std::vector<VkSurfaceFormatKHR> formats;
 
-		m_availibleUsageFlags = capabilities.supportedUsageFlags;
 
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->GetPhysicalDevice()->GetHandle(), m_surface, &capabilities);
+		m_availibleUsageFlags = capabilities.supportedUsageFlags;
 
 		uint32_t formatCount;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetPhysicalDevice()->GetHandle(), m_surface, &formatCount, nullptr);

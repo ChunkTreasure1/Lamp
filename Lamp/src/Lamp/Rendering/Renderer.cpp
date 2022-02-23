@@ -11,6 +11,7 @@
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/Buffers/ShaderStorageBuffer.h"
+#include "Lamp/Rendering/Textures/TextureCube.h"
 
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
@@ -22,7 +23,6 @@
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
 #include "Platform/Vulkan/VulkanAllocator.h"
-#include "Platform/Vulkan/VulkanTextureCube.h"
 #include "Platform/Vulkan/VulkanUtility.h"
 
 #include "Lamp/World/Terrain.h"
@@ -947,11 +947,11 @@ namespace Lamp
 
 				if (LevelManager::GetActive()->HasSkybox())
 				{
-					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetIrradiance())->GetDescriptorInfo();
+					writeDescriptor.pImageInfo = &LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetIrradiance()->GetDescriptorInfo();
 				}
 				else
 				{
-					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(m_rendererDefaults->blackCubeTexture)->GetDescriptorInfo();
+					writeDescriptor.pImageInfo = &m_rendererDefaults->blackCubeTexture->GetDescriptorInfo();
 				}
 
 				writeDescriptors.emplace_back(writeDescriptor);
@@ -966,11 +966,11 @@ namespace Lamp
 
 				if (LevelManager::GetActive()->HasSkybox())
 				{
-					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetFilteredEnvironment())->GetDescriptorInfo();
+					writeDescriptor.pImageInfo = &LevelManager::GetActive()->GetEnvironment().GetSkybox().skybox->GetFilteredEnvironment()->GetDescriptorInfo();
 				}
 				else
 				{
-					writeDescriptor.pImageInfo = &std::reinterpret_pointer_cast<VulkanTextureCube>(m_rendererDefaults->blackCubeTexture)->GetDescriptorInfo();
+					writeDescriptor.pImageInfo = &m_rendererDefaults->blackCubeTexture->GetDescriptorInfo();
 				}
 
 				writeDescriptors.emplace_back(writeDescriptor);

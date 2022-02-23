@@ -5,6 +5,7 @@
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/VulkanUtility.h"
 
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
@@ -410,7 +411,7 @@ namespace Lamp
 			for (int i = 0; i < m_specification.textureCount; i++)
 			{
 				size_t pos = source.find_first_of("\r\n", eol + 2);
-				std::string name = source.substr(eol + 2, pos - eol - 2);
+				std::string name = source.substr(eol + 1, pos - eol - 1);
 				m_specification.inputTextureNames.push_back(name);
 
 				eol = pos;
