@@ -29,6 +29,8 @@ namespace Lamp
 		void Run();
 		void OnEvent(Event& e);
 
+		void RenderThread();
+
 		void PushLayer(Layer* pLayer);
 		void PushOverlay(Layer* pLayer);
 
@@ -64,8 +66,18 @@ namespace Lamp
 
 		FrameTime m_mainFrameTime;
 
-		ThreadPool m_threadPool;
 		std::thread m_AssetManagerThread;
+
+		/////Threading/////
+		bool m_updateReady = false;
+		bool m_renderReady = true;
+		std::mutex m_renderThreadMutex;
+		std::condition_variable m_renderCondition;
+		
+		std::thread m_dispatchThread;
+		std::thread m_renderThread;
+		std::atomic_bool m_dispatchReady;
+		///////////////////
 	};
 	
 	static Application* CreateApplication();

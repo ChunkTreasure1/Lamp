@@ -66,6 +66,8 @@ namespace Lamp
 		//Setup the GUI system
 		m_pImGuiLayer = ImGuiLayer::Create();
 		PushOverlay(m_pImGuiLayer);
+	
+		m_renderThread = std::thread(std::bind(&Application::RenderThread, this));
 	}
 
 	Application::~Application()
@@ -105,31 +107,25 @@ namespace Lamp
 				pLayer->OnEvent(e);
 			}
 
-			RenderCommand::SwapRenderBuffers();
-
 			AudioEngine::Update();
-
-			m_window->GetSwapchain()->BeginFrame();
-
-			for (Layer* pLayer : m_LayerStack)
+			
 			{
-				pLayer->OnRender();
+				std::unique_lock<std::mutex> lock(m_renderThreadMutex);
+				m_renderCondition.wait(lock, [=] 
+					{
+						LP_PROFILE_SCOPE("Wait for render");
+						return m_renderReady; 
+					});
 			}
 
 			{
-				LP_PROFILE_SCOPE("Application::UpdateImGui");
-
-				m_pImGuiLayer->Begin();
-
-				for (Layer* pLayer : m_LayerStack)
-				{
-					pLayer->OnImGuiRender(m_currentTimeStep);
-				}
-
-				m_pImGuiLayer->End();
+				std::lock_guard<std::mutex> lock(m_renderThreadMutex);
+				m_updateReady = true;
 			}
+			m_renderCondition.notify_all();
 
-			m_window->Update(m_currentTimeStep);
+			RenderCommand::SwapRenderBuffers();
+			m_renderReady = false;
 
 			m_mainFrameTime.End();
 		}
@@ -152,6 +148,58 @@ namespace Lamp
 			}
 		}
 	}
+
+	void Application::RenderThread()
+	{
+		LP_PROFILE_THREAD("Render");
+
+		while (m_running)
+		{
+			LP_PROFILE_FRAME("Render");
+
+			std::unique_lock<std::mutex> lock(m_renderThreadMutex);
+			m_renderCondition.wait(lock, [=]() 
+				{
+					LP_PROFILE_SCOPE("Wait for update");
+					return m_updateReady; 
+				});
+
+			m_window->GetSwapchain()->BeginFrame();
+
+			//Processing
+			//Dispatch
+
+			{
+				LP_PROFILE_SCOPE("OnRender");
+				for (Layer* pLayer : m_LayerStack)
+				{
+					pLayer->OnRender();
+				}
+			}
+
+			{
+				LP_PROFILE_SCOPE("Application::UpdateImGui");
+
+				m_pImGuiLayer->Begin();
+
+				for (Layer* pLayer : m_LayerStack)
+				{
+					pLayer->OnImGuiRender(m_currentTimeStep);
+				}
+
+				m_pImGuiLayer->End();
+			}
+
+			m_renderReady = true;
+			m_updateReady = false;
+
+			m_window->Update(m_currentTimeStep);
+		
+			lock.unlock();
+			m_renderCondition.notify_all();
+		}
+	}
+
 
 	void Application::PushLayer(Layer* pLayer)
 	{
