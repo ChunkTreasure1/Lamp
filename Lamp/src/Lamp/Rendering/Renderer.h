@@ -3,7 +3,7 @@
 #include "Lamp/Rendering/RendererDataStructures.h"
 #include "Lamp/Rendering/Buffers/RenderBuffer.h"
 
-#include "Platform/Vulkan/VulkanShader.h"
+#include "Platform/Vulkan/VulkanAllocator.h"
 
 #include <vulkan/vulkan_core.h>
 #include <atomic>
@@ -156,7 +156,7 @@ namespace Lamp
 		Scope<RendererDefaults> m_rendererDefaults;
 		Scope<MaterialLibrary> m_materialLibrary;
 		/////////////////
-		
+
 		/////Render buffer/////
 		RenderBuffer m_firstRenderBuffer;
 		RenderBuffer m_secondRenderBuffer;

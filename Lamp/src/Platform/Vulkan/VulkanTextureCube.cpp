@@ -6,7 +6,6 @@
 #include "Platform/Vulkan/VulkanAllocator.h"
 
 #include "Platform/Vulkan/VulkanUtility.h"
-#include "Platform/Vulkan/VulkanImage2D.h"
 
 namespace Lamp
 {
@@ -45,7 +44,7 @@ namespace Lamp
 	void VulkanTextureCube::SetData(Ref<Image2D> image, uint32_t face, uint32_t mip)
 	{
 		auto device = VulkanContext::GetCurrentDevice();
-		auto vulkanImage = std::reinterpret_pointer_cast<VulkanImage2D>(image);
+		auto vulkanImage = std::reinterpret_pointer_cast<Image2D>(image);
 		auto commandBuffer = device->GetCommandBuffer(true);
 		
 		Utility::TransitionImageLayout(vulkanImage->GetHandle(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);

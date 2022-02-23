@@ -2,8 +2,7 @@
 #include "RenderCommand.h"
 
 #include "Lamp/Rendering/Renderer2D.h"
-
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 namespace Lamp
 {

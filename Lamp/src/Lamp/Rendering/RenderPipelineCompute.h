@@ -1,29 +1,33 @@
 #pragma once
 
-#include "Lamp/Rendering/RenderPipeline.h"
+#include "Lamp/Core/Core.h"
 
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 namespace Lamp
 {
-	class VulkanShader;
-	class VulkanRenderComputePipeline : public RenderComputePipeline
+	class CommandBuffer;
+	class Shader;
+	class RenderComputePipeline
 	{
 	public:
-		VulkanRenderComputePipeline(Ref<Shader> computeShader);
-		~VulkanRenderComputePipeline() override = default;
+		RenderComputePipeline(Ref<Shader> computeShader);
+		~RenderComputePipeline() = default;
 
-		void Begin(Ref<CommandBuffer> commandBuffer = nullptr) override;
+		void Begin(Ref<CommandBuffer> commandBuffer = nullptr);
 		void End();
-		Ref<Shader> GetShader() override { return m_shader; }
 
-		void Execute(VkDescriptorSet* descriptorSets, uint32_t descriptorSetCount, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+		Ref<Shader> GetShader() { return m_shader; }
+
+		void Execute(VkDescriptorSet * descriptorSets, uint32_t descriptorSetCount, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
 		void Dispatch(VkDescriptorSet descriptorSet, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
 
 		VkCommandBuffer GetActiveCommandBuffer() { return m_activeComputeCommandBuffer; }
 
 		void SetPushConstants(const void* data, uint32_t size);
 		void CreatePipeline();
+
+		static Ref<RenderComputePipeline> Create(Ref<Shader> computeShader);
 
 	private:
 		Ref<Shader> m_shader;

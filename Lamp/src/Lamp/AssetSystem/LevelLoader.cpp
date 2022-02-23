@@ -493,72 +493,92 @@ namespace Lamp
 				{
 					case Lamp::PropertyType::String:
 					{
-						std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<std::string>();
-						break;
+						if (std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<std::string>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Path:
 					{
-						std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<std::string>();
-						break;
+						if (std::string* data = GetPropertyData<std::string>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<std::string>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Bool:
 					{
-						bool* data = GetPropertyData<bool>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<bool>();
-						break;
+						if (bool* data = GetPropertyData<bool>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<bool>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Int:
 					{
-						int* data = GetPropertyData<int>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<int>();
-						break;
+						if (int* data = GetPropertyData<int>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<int>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Float:
 					{
-						float* data = GetPropertyData<float>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<float>();
-						break;
+						if (float* data = GetPropertyData<float>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<float>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Float2:
 					{
-						glm::vec2* data = GetPropertyData<glm::vec2>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec2>();
-						break;
+						if (glm::vec2* data = GetPropertyData<glm::vec2>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec2>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Float3:
 					{
-						glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec3>();
-						break;
+						if (glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec3>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Float4:
 					{
-						glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec4>();
-						break;
+						if (glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec4>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Color3:
 					{
-						glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec3>();
-						break;
+						if (glm::vec3* data = GetPropertyData<glm::vec3>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec3>();
+							break;
+						}
 					}
 
 					case Lamp::PropertyType::Color4:
 					{
-						glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties());
-						*data = paramEntry["value"].as<glm::vec4>();
-						break;
+						if (glm::vec4* data = GetPropertyData<glm::vec4>(paramName, pComp->GetComponentProperties().GetProperties()))
+						{
+							*data = paramEntry["value"].as<glm::vec4>();
+							break;
+						}
 					}
 					default:
 						break;

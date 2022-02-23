@@ -1,9 +1,10 @@
 #include "lppch.h"
 #include "VulkanDevice.h"
 
+#include "Lamp/Rendering/Renderer.h"
+
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanUtility.h"
-#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include <set>
 

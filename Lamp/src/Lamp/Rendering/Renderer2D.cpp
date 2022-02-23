@@ -9,14 +9,10 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/CommandBuffer.h"
-
+#include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
 
-#include "Platform/Vulkan/VulkanRenderer.h"
-#include "Platform/Vulkan/VulkanShader.h"
-#include "Platform/Vulkan/VulkanTexture2D.h"
 #include "Platform/Vulkan/VulkanDevice.h"
-#include "Platform/Vulkan/VulkanRenderPipeline.h"
 
 namespace Lamp
 {
@@ -289,7 +285,7 @@ namespace Lamp
 
 		//Quad
 		{
-			auto vulkanQuadShader = std::reinterpret_pointer_cast<VulkanShader>(m_storage->quadPipeline->GetSpecification().shader);
+			auto vulkanQuadShader = m_storage->quadPipeline->GetSpecification().shader;
 			auto quadDescriptorLayout = vulkanQuadShader->GetDescriptorSetLayout(0);
 			auto& shaderDescriptorSet = vulkanQuadShader->GetDescriptorSets()[0];
 
@@ -314,7 +310,7 @@ namespace Lamp
 					for (uint32_t i = 0; i < m_storage->textureSlotIndex; i++)
 					{
 						auto tex = m_storage->textureSlots[i];
-						textureInfos.emplace_back(std::reinterpret_pointer_cast<VulkanTexture2D>(tex)->GetDescriptorInfo());
+						textureInfos.emplace_back(tex->GetDescriptorInfo());
 					}
 
 					writeDescriptor.descriptorCount = textureInfos.size();
@@ -356,11 +352,11 @@ namespace Lamp
 			DrawQuad(cmd);
 		}
 
-		auto vulkanPipeline = std::reinterpret_pointer_cast<VulkanRenderPipeline>(m_storage->quadPipeline);
-		auto commandBuffer = vulkanPipeline->GetSpecification().isSwapchain ? m_storage->swapchainCommandBuffer : m_storage->renderCommandBuffer;
+		auto pipeline = m_storage->quadPipeline;
+		auto commandBuffer = pipeline->GetSpecification().isSwapchain ? m_storage->swapchainCommandBuffer : m_storage->renderCommandBuffer;
 	
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-		vulkanPipeline->BindDescriptorSet(commandBuffer, m_storage->currentQuadDescriptorSet, 0);
+		pipeline->BindDescriptorSet(commandBuffer, m_storage->currentQuadDescriptorSet, 0);
 
 		m_storage->quadVertexBuffer->Bind(commandBuffer);
 		m_storage->quadIndexBuffer->Bind(commandBuffer);

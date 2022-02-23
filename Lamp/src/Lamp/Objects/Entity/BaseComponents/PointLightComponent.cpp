@@ -1,7 +1,6 @@
 #include "lppch.h"
 #include "PointLightComponent.h"
 
-#include "Lamp/Rendering/Shadows/PointShadowBuffer.h"
 #include "Lamp/Rendering/LightBase.h"
 
 #include "Lamp/Objects/Entity/ComponentRegistry.h"
@@ -36,7 +35,7 @@ namespace Lamp
 
 	void PointLightComponent::Initialize()
 	{
-		m_pPointLight->shadowBuffer->SetPosition(m_pEntity->GetPosition());
+		m_pPointLight->position = m_pEntity->GetPosition();
 	}
 
 	void PointLightComponent::OnEvent(Event& e)
@@ -53,7 +52,6 @@ namespace Lamp
 			{ PropertyType::Float, "Intensity", RegisterData(&m_pPointLight->intensity) },
 			{ PropertyType::Float, "Radius", RegisterData(&m_pPointLight->radius) },
 			{ PropertyType::Float, "Falloff", RegisterData(&m_pPointLight->falloff) },
-			{ PropertyType::Float, "Near plane", RegisterData(&m_pPointLight->shadowBuffer->GetNearPlane()) },
 			{ PropertyType::Float, "Far plane", RegisterData(&m_pPointLight->farPlane) },
 			{ PropertyType::Color3, "Color", RegisterData(&m_pPointLight->color) }
 		};
@@ -61,15 +59,12 @@ namespace Lamp
 
 	bool PointLightComponent::OnPositionChanged(ObjectPositionChangedEvent& e)
 	{
-		m_pPointLight->shadowBuffer->SetPosition(m_pEntity->GetPosition());
-
+		m_pPointLight->position = m_pEntity->GetPosition();
 		return false;
 	}
 
 	bool PointLightComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
-		m_pPointLight->shadowBuffer->UpdateProjection();
-
 		return false;
 	}
 }

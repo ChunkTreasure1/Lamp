@@ -1,24 +1,31 @@
 #pragma once
 
-#include "Lamp/Core/Core.h"
+#include <vulkan/vulkan_core.h>
 
 namespace Lamp
 {
-	class RenderPipeline;
-
 	class CommandBuffer
 	{
 	public:
-		virtual ~CommandBuffer() = default;
+		CommandBuffer(uint32_t count, bool swapchainTarget);
+		~CommandBuffer();
 
-		virtual void Begin() = 0;
-		virtual void End(bool compute = false) = 0;
- 
-		virtual void* GetCurrentCommandBuffer() = 0;
-		virtual uint32_t GetCurrentCommandBufferIndex() = 0;
+		void Begin();
+		void End(bool compute = false);
+
+		VkCommandBuffer GetCurrentCommandBuffer();
+		VkCommandBuffer GetCommandBuffer(uint32_t index);
+		uint32_t GetCurrentCommandBufferIndex();
 
 		static Ref<CommandBuffer> Create(uint32_t count, bool swapchainTarget = false);
 
 	private:
+		std::vector<VkCommandPool> m_commandPools;
+		std::vector<VkCommandBuffer> m_commandBuffers;
+		std::vector<VkFence> m_fences;
+
+		bool m_swapchainTarget;
+		uint32_t m_currentCommandPool;
+		uint32_t m_count;
 	};
 }

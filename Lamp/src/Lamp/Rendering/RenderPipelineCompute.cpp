@@ -1,33 +1,36 @@
 #include "lppch.h"
-#include "VulkanRenderComputePipeline.h"
+#include "RenderPipelineCompute.h"
+
+#include "Lamp/Core/Application.h"
+
+#include "Lamp/Rendering/Swapchain.h"
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "Platform/Vulkan/VulkanDevice.h"
-#include "Platform/Vulkan/VulkanShader.h"
-#include "Platform/Vulkan/VulkanCommandBuffer.h"
-#include "Platform/Vulkan/VulkanUtility.h"
-
-#include "Lamp/Core/Application.h"
-#include "Lamp/Rendering/Swapchain.h"
 
 namespace Lamp
 {
 	static VkFence s_computeFence = nullptr;
 
-	VulkanRenderComputePipeline::VulkanRenderComputePipeline(Ref<Shader> computeShader)
+	Ref<RenderComputePipeline> RenderComputePipeline::Create(Ref<Shader> computeShader)
+	{
+		return CreateRef<RenderComputePipeline>(computeShader);
+	}
+
+	RenderComputePipeline::RenderComputePipeline(Ref<Shader> computeShader)
 		: m_shader(computeShader)
 	{
 		CreatePipeline();
 	}
 
-	void VulkanRenderComputePipeline::Begin(Ref<CommandBuffer> commandBuffer)
+	void RenderComputePipeline::Begin(Ref<CommandBuffer> commandBuffer)
 	{
 		LP_CORE_ASSERT(!m_activeComputeCommandBuffer, "Active compute command buffer has to be null!");
 
 		if (commandBuffer)
 		{
 			uint32_t frameIndex = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
-			m_activeComputeCommandBuffer = static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
+			m_activeComputeCommandBuffer = commandBuffer->GetCurrentCommandBuffer();
 			m_usingGraphicsQueue = true;
 		}
 		else
@@ -39,7 +42,7 @@ namespace Lamp
 		vkCmdBindPipeline(m_activeComputeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, m_computePipeline);
 	}
 
-	void VulkanRenderComputePipeline::End()
+	void RenderComputePipeline::End()
 	{
 		LP_CORE_ASSERT(m_activeComputeCommandBuffer, "Active compute command buffer cannot be null!");
 
@@ -73,7 +76,7 @@ namespace Lamp
 		m_activeComputeCommandBuffer = nullptr;
 	}
 
-	void VulkanRenderComputePipeline::Execute(VkDescriptorSet* descriptorSets, uint32_t descriptorSetCount, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
+	void RenderComputePipeline::Execute(VkDescriptorSet* descriptorSets, uint32_t descriptorSetCount, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 	{
 		VkDevice device = VulkanContext::GetCurrentDevice()->GetHandle();
 		VkQueue computeQueue = VulkanContext::GetCurrentDevice()->GetComputeQueue();
@@ -109,7 +112,7 @@ namespace Lamp
 		//VulkanContext::GetCurrentDevice()->FreeCommandBuffer(computeCommandBuffer);
 	}
 
-	void VulkanRenderComputePipeline::Dispatch(VkDescriptorSet descriptorSet, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
+	void RenderComputePipeline::Dispatch(VkDescriptorSet descriptorSet, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 	{
 		LP_CORE_ASSERT(m_activeComputeCommandBuffer, "Active command buffer cannot be null!");
 
@@ -117,24 +120,23 @@ namespace Lamp
 		vkCmdDispatch(m_activeComputeCommandBuffer, groupCountX, groupCountY, groupCountZ);
 	}
 
-	void VulkanRenderComputePipeline::SetPushConstants(const void* data, uint32_t size)
+	void RenderComputePipeline::SetPushConstants(const void* data, uint32_t size)
 	{
 		vkCmdPushConstants(m_activeComputeCommandBuffer, m_computePipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, size, data);
 	}
 
-	void VulkanRenderComputePipeline::CreatePipeline()
+	void RenderComputePipeline::CreatePipeline()
 	{
 		VkDevice device = VulkanContext::GetCurrentDevice()->GetHandle();
 
-		auto vulkanShader = std::reinterpret_pointer_cast<VulkanShader>(m_shader);
-		auto descriptorSetLayouts = vulkanShader->GetAllDescriptorSetLayouts();
+		auto descriptorSetLayouts = m_shader->GetAllDescriptorSetLayouts();
 
 		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
 		pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutCreateInfo.setLayoutCount = (uint32_t)descriptorSetLayouts.size();
 		pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
 
-		const auto& pushConstantRanges = vulkanShader->GetAllPushConstantRanges();
+		const auto& pushConstantRanges = m_shader->GetAllPushConstantRanges();
 		if (!pushConstantRanges.empty())
 		{
 			pipelineLayoutCreateInfo.pushConstantRangeCount = (uint32_t)pushConstantRanges.size();
@@ -148,7 +150,7 @@ namespace Lamp
 		pipelineCreateInfo.layout = m_computePipelineLayout;
 		pipelineCreateInfo.flags = 0;
 
-		const auto& shaderStages = vulkanShader->GetShaderStageInfos();
+		const auto& shaderStages = m_shader->GetShaderStageInfos();
 		pipelineCreateInfo.stage = shaderStages[0];
 
 		VkPipelineCacheCreateInfo pipelineCacheCreateInfo{};

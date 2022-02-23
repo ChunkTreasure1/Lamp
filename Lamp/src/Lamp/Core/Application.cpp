@@ -13,8 +13,7 @@
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/RenderCommand.h"
 #include "Lamp/Rendering/Renderer2D.h"
-
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"
 
 #include <thread>
 
@@ -46,7 +45,7 @@ namespace Lamp
 		WindowProps props;
 		props.Height = 720;
 		props.Width = 1280;
-		props.IsVSync = false;
+		props.IsVSync = true;
 		props.Title = "Lamp";
 
 		m_window = Window::Create(props);

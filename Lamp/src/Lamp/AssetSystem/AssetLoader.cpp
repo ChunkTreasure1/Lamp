@@ -12,8 +12,7 @@
 #include "Lamp/Rendering/Vertex.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
-
-#include "Platform/Vulkan/VulkanRenderer.h"
+#include "Lamp/Rendering/Renderer.h"	
 
 #include <yaml-cpp/yaml.h>
 

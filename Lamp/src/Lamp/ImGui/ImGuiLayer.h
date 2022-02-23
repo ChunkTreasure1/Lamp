@@ -12,12 +12,25 @@
 
 namespace Lamp
 {
+	class RenderPipeline;
 	class ImGuiLayer : public Layer
 	{
 	public:
-		virtual void Begin() = 0;
-		virtual void End() = 0;
+		ImGuiLayer();
+		~ImGuiLayer();
+
+		void OnDetach() override;
+		void OnAttach() override;
+
+		void Begin();
+		void End();
 
 		static ImGuiLayer* Create();
+
+	private:
+		float m_time = 0.f;
+		ImFont* m_font;
+
+		VkDescriptorPool m_descriptorPool;
 	};
 }

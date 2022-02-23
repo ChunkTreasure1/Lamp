@@ -58,7 +58,7 @@ namespace Lamp
 
 		m_swapchain = Swapchain::Create(m_pContext->GetInstance(), m_pContext->GetDevice());
 		m_swapchain->InitializeSurface(m_pWindow);
-		m_swapchain->Invalidate(m_Data.Width, m_Data.Height);
+		m_swapchain->Invalidate(m_Data.Width, m_Data.Height, m_Data.VSync);
 
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetIsVSync(m_Data.VSync);

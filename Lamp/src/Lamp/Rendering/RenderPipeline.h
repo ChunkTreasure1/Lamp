@@ -3,6 +3,7 @@
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
 #include "Lamp/Rendering/Buffers/UniformBufferSet.h"
 #include "Lamp/Rendering/Buffers/ShaderStorageBufferSet.h"
+#include "Lamp/Rendering/Buffers/BufferLayout.h"
 
 namespace Lamp
 {
@@ -74,41 +75,56 @@ namespace Lamp
 		CullMode cullMode = CullMode::Back;
 		bool depthTest = true;
 		bool depthWrite = true;
+		bool isSwapchain;
+		bool useTessellation = false;
+		uint32_t tessellationControlPoints = 4;
 
+		std::string debugName;
 		BufferLayout vertexLayout;
 
 		std::vector<FramebufferAttachmentInputSpecification> framebufferInputs;
-
-		std::string debugName;
-
-		glm::vec2 size;
-		bool isSwapchain;
-	
-		bool useTessellation = false;
-		uint32_t tessellationControlPoints = 4;
 	};
 
 	class RenderPipeline
 	{
 	public:
-		virtual ~RenderPipeline() = default;
-
-		virtual void Bind(Ref<CommandBuffer> commandBuffer) const = 0;
-		virtual void SetLayout(BufferLayout layout) = 0;
-		virtual const RenderPipelineSpecification& GetSpecification() const = 0;
-		
-		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
-	};
-
-	class RenderComputePipeline
-	{
 	public:
-		virtual ~RenderComputePipeline() = default;
+		RenderPipeline(const RenderPipelineSpecification& specification);
+		~RenderPipeline();
 
-		virtual void Begin(Ref<CommandBuffer> commandBuffer = nullptr) = 0;
-		virtual void End() = 0;
+		void Bind(Ref<CommandBuffer> commandBuffer) const;
+		void SetLayout(BufferLayout layout);
 
-		virtual Ref<Shader> GetShader() = 0;
-		static Ref<RenderComputePipeline> Create(Ref<Shader> computeShader);
+		void BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::vector<VkDescriptorSet>& descriptorSets, uint32_t startSet = 0) const;
+		void BindDescriptorSet(Ref<CommandBuffer> commandBuffer, VkDescriptorSet descriptorSet, uint32_t set) const;
+
+		void SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index);
+		void SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index);
+
+		void SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data);
+		const RenderPipelineSpecification& GetSpecification() const { return m_specification; }
+
+		inline const uint32_t GetDescriptorSetCount() const { return (uint32_t)m_descriptorSets.at(0).size(); }
+
+		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
+
+	private:
+		void CreateDescriptorSets();
+		void SetupUniformBuffers();
+
+		void Invalidate();
+
+		std::vector<VkVertexInputAttributeDescription> m_attributeDescriptions;
+		VkVertexInputBindingDescription m_bindingDescription;
+
+		uint32_t m_numAttributes;
+
+		VkPipelineLayout m_layout = nullptr;
+		VkPipeline m_pipeline = nullptr;
+
+		std::unordered_map<uint32_t, std::vector<VkDescriptorSet>> m_descriptorSets; //frame->descriptor sets
+
+		RenderPipelineSpecification m_specification;
+		
 	};
 }
