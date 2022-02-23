@@ -5,8 +5,8 @@
 To clone use: `git clone --recursive https://github.com/ChunkTreasure1/Lamp`.
 
 #### Generating
-To generate the project use `scripts/Win-GenProjects.bat`. 
-To change the VS version simply edit the last number on the second line in the .bat file.
+To generate the project use `Win-GenProjects-vs2022.bat` or `Win-GenProjects-vs2019.bat` depending on your visual studio version
 
 #### Running
-To run you need to copy the assets folder into the .exe build folder
+To run from Visual Studio simply build and start debugging. 
+To run using exe, copy Sandbox.exe from your wanted configuration to `Lamp/Sandbox` and run.
