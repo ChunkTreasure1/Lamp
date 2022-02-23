@@ -4,7 +4,8 @@
 #### Cloning
 To clone use: `git clone --recursive https://github.com/ChunkTreasure1/Lamp`.
 
-#### Generating
+#### Building
+To build you need to download and install the Vulkan 1.3.204 SDK or newer.
 To generate the project use `Win-GenProjects-vs2022.bat` or `Win-GenProjects-vs2019.bat` depending on your visual studio version
 
 #### Running
