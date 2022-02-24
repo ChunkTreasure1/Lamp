@@ -96,16 +96,18 @@ namespace Lamp
 
 		bool m_vsync = false;
 
-		VkSemaphore m_presentCompleteSemaphore;
-		VkSemaphore m_renderCompleteSemaphore;
-
 		uint32_t m_currentFrame = 0;
 		uint32_t m_currentImageIndex = 0;
 
 		std::vector<VkImage> m_images;
 		std::vector<VkImageView> m_imageViews;
 		std::vector<VkFramebuffer> m_framebuffers;
+
+		std::vector<VkSemaphore> m_presentCompleteSemaphores;
+		std::vector<VkSemaphore> m_renderCompleteSemaphores;
+
 		std::vector<VkFence> m_waitFences;
+		std::vector<VkFence> m_imagesWaitFences;
 
 		std::vector<VkCommandPool> m_commandPools;
 		std::vector<VkCommandBuffer> m_commandBuffers;

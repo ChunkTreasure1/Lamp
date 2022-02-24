@@ -1,5 +1,5 @@
 #ShaderSpec
-Name: ssdoBlurH
+Name: ssdoBlurV
 TextureCount: 0
 InternalShader: true
 TextureNames
@@ -76,7 +76,7 @@ float m_indices[9] =
 
 void main()
 {
-    vec2 step = vec2(0.0, 1.0) / u_ScreenData.screenSize.xy;
+    vec2 step = vec2(1.0, 0.0) / u_ScreenData.screenSize.xy;
     vec3 normal[9];
 
     normal[0] = texture(u_NormalRoughness, v_In.texCoords + m_indices[0] * step).xyz;

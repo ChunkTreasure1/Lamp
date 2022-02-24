@@ -171,8 +171,16 @@ namespace Lamp
 	void Swapchain::Shutdown()
 	{
 		vkDeviceWaitIdle(m_device->GetHandle());
-		vkDestroySemaphore(m_device->GetHandle(), m_renderCompleteSemaphore, nullptr);
-		vkDestroySemaphore(m_device->GetHandle(), m_presentCompleteSemaphore, nullptr);
+
+		for (auto& semaphore : m_presentCompleteSemaphores)
+		{
+			vkDestroySemaphore(m_device->GetHandle(), semaphore, nullptr);
+		}
+
+		for (auto& semaphore : m_renderCompleteSemaphores)
+		{
+			vkDestroySemaphore(m_device->GetHandle(), semaphore, nullptr);
+		}
 
 		for (auto& fence : m_waitFences)
 		{
@@ -202,10 +210,20 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 
 		{
-			LP_PROFILE_SCOPE("Wait for fence");
-			vkWaitForFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame], VK_TRUE, UINT64_MAX);
+			LP_PROFILE_SCOPE("Swapchain::BeginFrame - Wait for pre fence");
+			LP_VK_CHECK(vkWaitForFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame], VK_TRUE, UINT64_MAX));
+			LP_VK_CHECK(vkResetCommandPool(m_device->GetHandle(), m_commandPools[m_currentFrame], 0));
 		}
-		LP_VK_CHECK(vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, m_presentCompleteSemaphore, VK_NULL_HANDLE, &m_currentImageIndex));
+
+		LP_VK_CHECK(vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, m_presentCompleteSemaphores[m_currentFrame], VK_NULL_HANDLE, &m_currentImageIndex));
+	
+		if (m_imagesWaitFences[m_currentImageIndex] != VK_NULL_HANDLE)
+		{
+			LP_PROFILE_SCOPE("Swapchain::BeginFrame - Wait for post fence");
+			LP_VK_CHECK(vkWaitForFences(m_device->GetHandle(), 1, &m_imagesWaitFences[m_currentImageIndex], VK_TRUE, UINT64_MAX));
+		}
+
+		m_imagesWaitFences[m_currentImageIndex] = m_waitFences[m_currentFrame];
 	}
 
 	void Swapchain::Present()
@@ -217,11 +235,11 @@ namespace Lamp
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.pWaitDstStageMask = &waitStageMask;
-		submitInfo.pWaitSemaphores = &m_presentCompleteSemaphore;
+		submitInfo.pWaitSemaphores = &m_presentCompleteSemaphores[m_currentFrame];
 		submitInfo.waitSemaphoreCount = 1;
 		submitInfo.commandBufferCount = 1;
 		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = &m_renderCompleteSemaphore;
+		submitInfo.pSignalSemaphores = &m_renderCompleteSemaphores[m_currentFrame];
 		submitInfo.pCommandBuffers = &m_commandBuffers[m_currentFrame];
 
 		vkResetFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame]);
@@ -230,14 +248,10 @@ namespace Lamp
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = &m_renderCompleteSemaphores[m_currentFrame];
+		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = &m_swapchain;
 		presentInfo.pImageIndices = &m_currentImageIndex;
-
-		if (m_renderCompleteSemaphore != VK_NULL_HANDLE)
-		{
-			presentInfo.pWaitSemaphores = &m_renderCompleteSemaphore;
-			presentInfo.swapchainCount = 1;
-		}
 
 		VkResult result;
 		{
@@ -438,6 +452,10 @@ namespace Lamp
 		uint32_t framesInFlight = Renderer::Get().GetCapabilities().framesInFlight;
 
 		m_waitFences.resize(framesInFlight);
+		m_imagesWaitFences.resize(framesInFlight, VK_NULL_HANDLE);
+
+		m_presentCompleteSemaphores.resize(framesInFlight);
+		m_renderCompleteSemaphores.resize(framesInFlight);
 
 		VkSemaphoreCreateInfo semaphoreInfo{};
 		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -446,12 +464,11 @@ namespace Lamp
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_presentCompleteSemaphore));
-		LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_renderCompleteSemaphore));
-
 		for (size_t i = 0; i < framesInFlight; i++)
 		{
 			LP_VK_CHECK(vkCreateFence(m_device->GetHandle(), &fenceInfo, nullptr, &m_waitFences[i]));
+			LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_presentCompleteSemaphores[i]));
+			LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_renderCompleteSemaphores[i]));
 		}
 	}
 

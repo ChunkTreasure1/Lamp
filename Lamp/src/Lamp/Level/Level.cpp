@@ -346,6 +346,8 @@ namespace Lamp
 			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
+		Ref<Framebuffer> ssdoFramebuffer;
+
 		//SSDO main
 		{
 			FramebufferSpecification framebufferSpec{};
@@ -358,6 +360,8 @@ namespace Lamp
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			ssdoFramebuffer = pipelineSpec.framebuffer;
+
 			pipelineSpec.shader = ShaderLibrary::GetShader("ssdoMain");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
@@ -378,6 +382,84 @@ namespace Lamp
 				{ m_geometryFramebuffer->GetColorAttachment(0), 1, 8 },
 				{ m_geometryFramebuffer->GetColorAttachment(2), 1, 9 },
 				{ Renderer::Get().GetDefaults().ssdoNoise->GetImage(), 1, 10 }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		Ref<Framebuffer> ssdoBlurFramebuffer;
+
+		//SSDO Blur Horizontal
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA32F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			ssdoBlurFramebuffer = pipelineSpec.framebuffer;
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("ssdoBlurH");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::FullscreenQuad;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.debugName = "SSDO Blur Horizontal";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ m_geometryFramebuffer->GetColorAttachment(2), 1, 8 },
+				{ ssdoFramebuffer->GetColorAttachment(0), 1, 9 }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//SSDO Blur Vertical
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA32F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("ssdoBlurV");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::FullscreenQuad;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.debugName = "SSDO Blur Vertical";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ m_geometryFramebuffer->GetColorAttachment(2), 1, 8 },
+				{ ssdoBlurFramebuffer->GetColorAttachment(0), 1, 9 }
 			};
 
 			auto& pass = m_renderPasses.emplace_back();

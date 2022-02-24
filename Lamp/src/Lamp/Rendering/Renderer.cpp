@@ -613,6 +613,7 @@ namespace Lamp
 
 			m_rendererStorage->lightCullingData.lightCount = 0;
 			m_rendererStorage->directionalLightDataBuffer.lightCount = 0;
+			m_rendererStorage->directionalLightDataBuffer.pointLightCount = 0;
 
 			for (uint32_t i = 0; i < pointLights.size(); i++)
 			{
