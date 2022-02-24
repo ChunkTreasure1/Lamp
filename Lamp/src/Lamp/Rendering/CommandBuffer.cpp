@@ -70,7 +70,7 @@ namespace Lamp
 			for (uint32_t frame = 0; frame < m_count; frame++)
 			{
 				m_commandBuffers[frame] = swapchain->GetDrawCommandBuffer(frame);
-				m_commandPools[frame] = swapchain->GetDrawCommandPool(frame);
+				m_commandPools[frame] = swapchain->GetCommandPool();
 			}
 		}
 	}

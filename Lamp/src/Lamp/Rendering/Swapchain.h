@@ -44,8 +44,9 @@ namespace Lamp
 
 		inline const size_t GetCommandBufferCount() const { return m_commandBuffers.size(); }
 		const uint32_t GetCurrentFrame() const { return m_currentFrame; }
+		
 		inline VkCommandBuffer GetDrawCommandBuffer(uint32_t index) { LP_CORE_ASSERT((index < m_commandBuffers.size()) && (index >= 0), "Index out of bounds!") return m_commandBuffers[index]; }
-		inline VkCommandPool GetDrawCommandPool(uint32_t index) { LP_CORE_ASSERT((index < m_commandPools.size()) && (index >= 0), "Index out of bounds!"); return m_commandPools[index]; }
+		inline VkCommandPool GetCommandPool() const { return m_commandPool; }
 		inline VkFramebuffer GetFramebuffer(uint32_t index) { LP_CORE_ASSERT(index < m_framebuffers.size() && index >= 0, "Index out of bounds!"); return m_framebuffers[index]; }
 
 		inline VkRenderPass GetRenderPass() { return m_renderPass; }
@@ -58,12 +59,15 @@ namespace Lamp
 		static Scope<Swapchain> Create(void* instance, void* device);
 
 	private:
+		VkResult AcquireNextImage(VkSemaphore& waitSemaphore, uint32_t& currentImage);
+		VkResult QueuePresent(VkQueue queue, uint32_t imageIndex, VkSemaphore waitSemaphore);
+
 		void FindCapabilities();
 		void CreateSyncObjects();
 		void CreateRenderPass();
 		void CreateImageViews();
 		void CreateFramebuffer();
-		void CreateCommandPools();
+		void CreateCommandPool();
 		void CreateCommandBuffers();
 		void CreateDepthBuffer();
 
@@ -99,17 +103,16 @@ namespace Lamp
 		uint32_t m_currentFrame = 0;
 		uint32_t m_currentImageIndex = 0;
 
+		VkSemaphore m_presentComplete;
+		VkSemaphore m_renderComplete;
+
+		std::vector<VkFence> m_waitFences;
+
 		std::vector<VkImage> m_images;
 		std::vector<VkImageView> m_imageViews;
 		std::vector<VkFramebuffer> m_framebuffers;
 
-		std::vector<VkSemaphore> m_presentCompleteSemaphores;
-		std::vector<VkSemaphore> m_renderCompleteSemaphores;
-
-		std::vector<VkFence> m_waitFences;
-		std::vector<VkFence> m_imagesWaitFences;
-
-		std::vector<VkCommandPool> m_commandPools;
+		VkCommandPool m_commandPool;
 		std::vector<VkCommandBuffer> m_commandBuffers;
 	};
 }

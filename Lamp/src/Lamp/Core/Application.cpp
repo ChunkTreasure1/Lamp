@@ -43,9 +43,9 @@ namespace Lamp
 
 		//Create the window
 		WindowProps props;
-		props.Height = 720;
 		props.Width = 1280;
-		props.IsVSync = false;
+		props.Height = 720;
+		props.IsVSync = true;
 		props.Title = "Lamp";
 
 		m_window = Window::Create(props);

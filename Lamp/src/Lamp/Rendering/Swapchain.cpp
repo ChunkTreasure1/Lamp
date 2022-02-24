@@ -172,15 +172,8 @@ namespace Lamp
 	{
 		vkDeviceWaitIdle(m_device->GetHandle());
 
-		for (auto& semaphore : m_presentCompleteSemaphores)
-		{
-			vkDestroySemaphore(m_device->GetHandle(), semaphore, nullptr);
-		}
-
-		for (auto& semaphore : m_renderCompleteSemaphores)
-		{
-			vkDestroySemaphore(m_device->GetHandle(), semaphore, nullptr);
-		}
+		vkDestroySemaphore(m_device->GetHandle(), m_presentComplete, nullptr);
+		vkDestroySemaphore(m_device->GetHandle(), m_renderComplete, nullptr);
 
 		for (auto& fence : m_waitFences)
 		{
@@ -208,61 +201,42 @@ namespace Lamp
 	void Swapchain::BeginFrame()
 	{
 		LP_PROFILE_FUNCTION();
-
-		{
-			LP_PROFILE_SCOPE("Swapchain::BeginFrame - Wait for pre fence");
-			LP_VK_CHECK(vkWaitForFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame], VK_TRUE, UINT64_MAX));
-			LP_VK_CHECK(vkResetCommandPool(m_device->GetHandle(), m_commandPools[m_currentFrame], 0));
-		}
-
-		LP_VK_CHECK(vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, m_presentCompleteSemaphores[m_currentFrame], VK_NULL_HANDLE, &m_currentImageIndex));
-	
-		if (m_imagesWaitFences[m_currentImageIndex] != VK_NULL_HANDLE)
-		{
-			LP_PROFILE_SCOPE("Swapchain::BeginFrame - Wait for post fence");
-			LP_VK_CHECK(vkWaitForFences(m_device->GetHandle(), 1, &m_imagesWaitFences[m_currentImageIndex], VK_TRUE, UINT64_MAX));
-		}
-
-		m_imagesWaitFences[m_currentImageIndex] = m_waitFences[m_currentFrame];
+		LP_VK_CHECK(AcquireNextImage(m_presentComplete, m_currentImageIndex));
+		vkResetCommandBuffer(m_commandBuffers[m_currentFrame], 0);
 	}
 
 	void Swapchain::Present()
 	{
 		LP_PROFILE_FUNCTION();
 
-		VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		const uint64_t defaultFenceTimeout = 100000000000;
+
+		VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.pWaitDstStageMask = &waitStageMask;
-		submitInfo.pWaitSemaphores = &m_presentCompleteSemaphores[m_currentFrame];
+		submitInfo.pWaitDstStageMask = &waitStage;
+		submitInfo.pWaitSemaphores = &m_presentComplete;
 		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.commandBufferCount = 1;
+		submitInfo.pSignalSemaphores = &m_renderComplete;
 		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = &m_renderCompleteSemaphores[m_currentFrame];
-		submitInfo.pCommandBuffers = &m_commandBuffers[m_currentFrame];
+		submitInfo.pCommandBuffers = &m_commandBuffers[m_currentImageIndex];
+		submitInfo.commandBufferCount = 1;
 
-		vkResetFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame]);
+		LP_VK_CHECK(vkResetFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame]));
 		LP_VK_CHECK(vkQueueSubmit(m_device->GetGraphicsQueue(), 1, &submitInfo, m_waitFences[m_currentFrame]));
-
-		VkPresentInfoKHR presentInfo{};
-		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		presentInfo.waitSemaphoreCount = 1;
-		presentInfo.pWaitSemaphores = &m_renderCompleteSemaphores[m_currentFrame];
-		presentInfo.swapchainCount = 1;
-		presentInfo.pSwapchains = &m_swapchain;
-		presentInfo.pImageIndices = &m_currentImageIndex;
 
 		VkResult result;
 		{
-			LP_PROFILE_SCOPE("QueuePresent");
-			result = vkQueuePresentKHR(m_device->GetGraphicsQueue(), &presentInfo);
+			LP_PROFILE_SCOPE("Swapchain::Present - QueuePreset");
+			result = QueuePresent(m_device->GetGraphicsQueue(), m_currentImageIndex, m_renderComplete);
 		}
 
 		if (result != VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
 		{
 			if (result == VK_ERROR_OUT_OF_DATE_KHR)
 			{
+				// Swap chain is no longer compatible with the surface and needs to be recreated
 				OnResize(m_width, m_height);
 				return;
 			}
@@ -272,7 +246,11 @@ namespace Lamp
 			}
 		}
 
-		m_currentFrame = (m_currentFrame + 1) % Renderer::Get().GetCapabilities().framesInFlight;
+		{
+			LP_PROFILE_SCOPE("Swapchain::Present - WaitForFences");
+			m_currentFrame = (m_currentFrame + 1) % Renderer::Get().GetCapabilities().framesInFlight;
+			LP_VK_CHECK(vkWaitForFences(m_device->GetHandle(), 1, &m_waitFences[m_currentFrame], VK_TRUE, UINT64_MAX));
+		}
 	}
 
 	void Swapchain::Invalidate(uint32_t& width, uint32_t& height, bool vSync)
@@ -284,7 +262,7 @@ namespace Lamp
 		CreateRenderPass();
 		CreateDepthBuffer();
 		CreateFramebuffer();
-		CreateCommandPools();
+		CreateCommandPool();
 		CreateCommandBuffers();
 		CreateSyncObjects();
 	}
@@ -411,6 +389,31 @@ namespace Lamp
 		}
 	}
 
+	VkResult Swapchain::AcquireNextImage(VkSemaphore& waitSemaphore, uint32_t& currentImage)
+	{
+		return vkAcquireNextImageKHR(m_device->GetHandle(), m_swapchain, UINT64_MAX, waitSemaphore, nullptr, &currentImage);
+	}
+
+	VkResult Swapchain::QueuePresent(VkQueue queue, uint32_t imageIndex, VkSemaphore waitSemaphore)
+	{
+		LP_PROFILE_FUNCTION();
+		
+		VkPresentInfoKHR presentInfo{};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.pNext = nullptr;
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = &m_swapchain;
+		presentInfo.pImageIndices = &imageIndex;
+
+		if (waitSemaphore != VK_NULL_HANDLE)
+		{
+			presentInfo.pWaitSemaphores = &waitSemaphore;
+			presentInfo.waitSemaphoreCount = 1;
+		}
+
+		return vkQueuePresentKHR(queue, &presentInfo);
+	}
+
 	void Swapchain::FindCapabilities()
 	{
 		VkSurfaceCapabilitiesKHR capabilities;
@@ -452,13 +455,14 @@ namespace Lamp
 		uint32_t framesInFlight = Renderer::Get().GetCapabilities().framesInFlight;
 
 		m_waitFences.resize(framesInFlight);
-		m_imagesWaitFences.resize(framesInFlight, VK_NULL_HANDLE);
-
-		m_presentCompleteSemaphores.resize(framesInFlight);
-		m_renderCompleteSemaphores.resize(framesInFlight);
 
 		VkSemaphoreCreateInfo semaphoreInfo{};
 		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_presentComplete));
+		LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_renderComplete));
+
+		VkPipelineStageFlags stageFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
 		VkFenceCreateInfo fenceInfo{};
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -467,8 +471,6 @@ namespace Lamp
 		for (size_t i = 0; i < framesInFlight; i++)
 		{
 			LP_VK_CHECK(vkCreateFence(m_device->GetHandle(), &fenceInfo, nullptr, &m_waitFences[i]));
-			LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_presentCompleteSemaphores[i]));
-			LP_VK_CHECK(vkCreateSemaphore(m_device->GetHandle(), &semaphoreInfo, nullptr, &m_renderCompleteSemaphores[i]));
 		}
 	}
 
@@ -580,37 +582,29 @@ namespace Lamp
 		}
 	}
 
-	void Swapchain::CreateCommandPools()
+	void Swapchain::CreateCommandPool()
 	{
 		VulkanPhysicalDevice::QueueFamilyIndices queueFamilyIndices = Utility::FindQueueFamilies(m_device->GetPhysicalDevice()->GetHandle(), m_surface);
 
-		m_commandPools.resize(m_framebuffers.size());
+		VkCommandPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
 
-		for (uint32_t i = 0; i < m_framebuffers.size(); i++)
-		{
-			VkCommandPoolCreateInfo poolInfo{};
-			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-			poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-			poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-
-			LP_VK_CHECK(vkCreateCommandPool(m_device->GetHandle(), &poolInfo, nullptr, &m_commandPools[i]));
-		}
+		LP_VK_CHECK(vkCreateCommandPool(m_device->GetHandle(), &poolInfo, nullptr, &m_commandPool));
 	}
 
 	void Swapchain::CreateCommandBuffers()
 	{
 		m_commandBuffers.resize(m_framebuffers.size());
 
-		for (uint32_t i = 0; i < m_framebuffers.size(); i++)
-		{
-			VkCommandBufferAllocateInfo allocInfo{};
-			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-			allocInfo.commandPool = m_commandPools[i];
-			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			allocInfo.commandBufferCount = 1;
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = m_commandPool;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandBufferCount = m_framebuffers.size();
 
-			LP_VK_CHECK(vkAllocateCommandBuffers(m_device->GetHandle(), &allocInfo, &m_commandBuffers[i]));
-		}
+		LP_VK_CHECK(vkAllocateCommandBuffers(m_device->GetHandle(), &allocInfo, m_commandBuffers.data()));
 	}
 
 	void Swapchain::CreateDepthBuffer()

@@ -106,7 +106,7 @@ layer:
               type: Bool
               value: false
     - entity: Light
-      position: [-0.531598806, 1.57865143, -0.320309728]
+      position: [-8.62042046, 2.12256551, -0.320309728]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
       layerId: 0
@@ -115,16 +115,13 @@ layer:
           params:
             - param: Intensity
               type: Float
-              value: 0.569999993
+              value: 9.56999969
             - param: Radius
               type: Float
               value: 3.92000008
             - param: Falloff
               type: Float
               value: 0
-            - param: Near plane
-              type: Float
-              value: 0.100000001
             - param: Far plane
               type: Float
               value: 100
