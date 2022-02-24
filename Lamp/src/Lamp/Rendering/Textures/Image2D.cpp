@@ -105,7 +105,7 @@ namespace Lamp
 		samplerCreateInfo.addressModeW = Utility::LampWrapToVulkanWrap(m_specification.wrap);
 		samplerCreateInfo.mipLodBias = 0.f;
 		samplerCreateInfo.minLod = 0.f;
-		samplerCreateInfo.maxLod = 100.f;
+		samplerCreateInfo.maxLod = 3.f; //TODO: maybe set somewhere else?
 		samplerCreateInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 		samplerCreateInfo.compareEnable = m_specification.comparable ? VK_TRUE : VK_FALSE;
 		samplerCreateInfo.compareOp = VK_COMPARE_OP_LESS;

@@ -142,6 +142,12 @@ namespace Lamp
 		deviceCreateInfo.pQueueCreateInfos = m_physicalDevice->m_queueCreateInfos.data();
 		deviceCreateInfo.pEnabledFeatures = &m_enabledFeatures;
 
+		VkPhysicalDeviceDynamicRenderingFeatures dynamicRendering{};
+		dynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+		dynamicRendering.dynamicRendering = VK_TRUE;
+
+		deviceCreateInfo.pNext = &dynamicRendering;
+
 		if (!deviceExtensions.empty())
 		{
 			deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());

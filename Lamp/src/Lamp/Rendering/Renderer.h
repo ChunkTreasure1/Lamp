@@ -48,6 +48,7 @@ namespace Lamp
 		Ref<Framebuffer> brdfFramebuffer;
 		Ref<TextureCube> blackCubeTexture;
 		Ref<Texture2D> whiteTexture;
+		Ref<Texture2D> ssdoNoise;
 	};
 
 	struct VulkanRendererStorage
@@ -68,12 +69,13 @@ namespace Lamp
 		///////////////////
 
 		/////Shader storage//////
-		DirectionalLightDataBuffer directionalLightDataBuffer;
-		CameraDataBuffer cameraData;
-		ScreenDataBuffer screenData;
-		DirectionalLightVPBuffer directionalLightVPData;
-		LightCullingBuffer lightCullingData;
-		TerrainDataBuffer terrainData;
+		DirectionalLightDataData directionalLightDataBuffer;
+		CameraData cameraData;
+		ScreenData screenData;
+		DirectionalLightVPData directionalLightVPData;
+		LightCullingData lightCullingData;
+		TerrainRenderData terrainData;
+		SSDOData ssdoData;
 
 		Ref<UniformBufferSet> uniformBufferSet;
 		Ref<UniformBuffer> lightCullingBuffer;
@@ -145,6 +147,9 @@ namespace Lamp
 		void FrustumCull();
 		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& renderBuffer);
 		void DrawDirectionalShadow();
+
+		void GenerateSSDOKernel();
+		std::vector<glm::vec4> GenerateSSDONoise();
 
 		friend class VulkanPhysicalDevice;
 

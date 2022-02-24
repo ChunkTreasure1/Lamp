@@ -26,6 +26,7 @@
 #include "Platform/Vulkan/VulkanUtility.h"
 
 #include "Lamp/World/Terrain.h"
+#include "Lamp/Utility/Random.h"
 
 #define ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
 
@@ -225,7 +226,7 @@ namespace Lamp
 
 		const auto& matData = material->GetMaterialData();
 
-		MeshDataBuffer meshData;
+		MeshData meshData;
 		meshData.blendingUseBlending.x = matData.blendingMultiplier;
 		meshData.blendingUseBlending.y = matData.useBlending;
 
@@ -282,12 +283,12 @@ namespace Lamp
 		pipeline->Bind(commandBuffer);
 		AllocateDescriptorsForQuadRendering();
 
-		pipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->pipelineDescriptorSets);
+		pipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
 
 		m_rendererStorage->quadMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
 
-		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void Renderer::DispatchRenderCommands(RenderBuffer& buffer)
@@ -350,7 +351,7 @@ namespace Lamp
 				break;
 			}
 
-			case DrawType::ScreenQuad:
+			case DrawType::FullscreenQuad:
 			{
 				DrawQuad();
 
@@ -495,13 +496,14 @@ namespace Lamp
 	{
 		/////Uniform buffers//////
 		m_rendererStorage->uniformBufferSet = UniformBufferSet::Create(s_capabilities.framesInFlight);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraData, sizeof(CameraDataBuffer), 0, 0);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer), 1, 0);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->screenData, sizeof(ScreenDataBuffer), 3, 0);
-		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPBuffer), 4, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->cameraData, sizeof(CameraData), 0, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataData), 1, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->ssdoData, sizeof(SSDOData), 2, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->screenData, sizeof(ScreenData), 3, 0);
+		m_rendererStorage->uniformBufferSet->Add(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPData), 4, 0);
 
-		m_rendererStorage->lightCullingBuffer = UniformBuffer::Create(&m_rendererStorage->lightCullingData, sizeof(LightCullingBuffer));
-		m_rendererStorage->terrainDataBuffer = UniformBuffer::Create(&m_rendererStorage->terrainData, sizeof(TerrainDataBuffer));
+		m_rendererStorage->lightCullingBuffer = UniformBuffer::Create(&m_rendererStorage->lightCullingData, sizeof(LightCullingData));
+		m_rendererStorage->terrainDataBuffer = UniformBuffer::Create(&m_rendererStorage->terrainData, sizeof(TerrainRenderData));
 
 		/////Shader storages/////
 		auto& lightCullingData = m_rendererStorage->lightCullingRendererData;
@@ -536,7 +538,7 @@ namespace Lamp
 			m_rendererStorage->cameraData.projection = m_rendererStorage->camera->GetProjectionMatrix();
 			m_rendererStorage->cameraData.view = m_rendererStorage->camera->GetViewMatrix();
 
-			ub->SetData(&m_rendererStorage->cameraData, sizeof(CameraDataBuffer));
+			ub->SetData(&m_rendererStorage->cameraData, sizeof(CameraData));
 		}
 
 		//Directional lights
@@ -562,7 +564,7 @@ namespace Lamp
 				}
 			}
 
-			ub->SetData(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataBuffer));
+			ub->SetData(&m_rendererStorage->directionalLightDataBuffer, sizeof(DirectionalLightDataData));
 		}
 
 		//Terrain data
@@ -571,7 +573,13 @@ namespace Lamp
 			auto planes = perspectiveCamera->CreateImplicitFrustum();
 
 			memcpy(m_rendererStorage->terrainData.frustumPlanes, planes.data(), sizeof(glm::vec4) * planes.size());
-			m_rendererStorage->terrainDataBuffer->SetData(&m_rendererStorage->terrainData, sizeof(TerrainDataBuffer));
+			m_rendererStorage->terrainDataBuffer->SetData(&m_rendererStorage->terrainData, sizeof(TerrainRenderData));
+		}
+
+		//SSDO
+		{
+			auto ub = m_rendererStorage->uniformBufferSet->Get(2, 0, currentFrame);
+			ub->SetData(&m_rendererStorage->ssdoData, sizeof(SSDOData));
 		}
 
 
@@ -587,7 +595,7 @@ namespace Lamp
 			m_rendererStorage->directionalLightVPData.count = index;
 
 			auto ub = m_rendererStorage->uniformBufferSet->Get(4, 0, currentFrame);
-			ub->SetData(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPBuffer));
+			ub->SetData(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPData));
 		}
 
 		//Point lights
@@ -618,7 +626,7 @@ namespace Lamp
 
 			pointlightStorageBuffer->Unmap();
 
-			m_rendererStorage->lightCullingBuffer->SetData(&m_rendererStorage->lightCullingData, sizeof(LightCullingBuffer));
+			m_rendererStorage->lightCullingBuffer->SetData(&m_rendererStorage->lightCullingData, sizeof(LightCullingData));
 		}
 	}
 
@@ -648,7 +656,7 @@ namespace Lamp
 			m_rendererStorage->screenData.aspectRatio = m_rendererStorage->screenData.size.x / m_rendererStorage->screenData.size.y;
 			m_rendererStorage->screenData.xScreenTiles = m_rendererStorage->lightCullingRendererData.xTileCount;
 
-			ub->SetData(&m_rendererStorage->screenData, sizeof(ScreenDataBuffer));
+			ub->SetData(&m_rendererStorage->screenData, sizeof(ScreenData));
 		}
 	}
 
@@ -739,22 +747,33 @@ namespace Lamp
 		auto shader = m_rendererStorage->currentRenderPipeline->GetSpecification().shader;
 		auto pipeline = m_rendererStorage->currentRenderPipeline;
 
-		auto allDescriptorLayouts = shader->GetAllDescriptorSetLayouts();
 		auto device = VulkanContext::GetCurrentDevice();
-
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-		/////Allocate//////
+		m_rendererStorage->currentMeshDescriptorSets.clear();
+		m_rendererStorage->currentMeshDescriptorSets.emplace_back(m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET]);
+
+		//Make sure that the shader has a descriptor set number 1
+		if (shader->GetDescriptorSetLayoutCount() < PER_MESH_DESCRIPTOR_SET + 1)
+		{
+			return;
+		}
+
+		auto descriptorLayout = shader->GetDescriptorSetLayout(PER_MESH_DESCRIPTOR_SET);
+		auto& shaderDescriptorSet = shader->GetDescriptorSets()[PER_MESH_DESCRIPTOR_SET];
+
+		//Allocate descriptors
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
-		allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
-		allocInfo.pSetLayouts = allDescriptorLayouts.data();
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &descriptorLayout;
 
-		auto& currentDescriptorSet = m_rendererStorage->pipelineDescriptorSets;
-		currentDescriptorSet.resize(allDescriptorLayouts.size());
+		auto& currentDescriptorSet = m_rendererStorage->currentMeshDescriptorSets.emplace_back();
 
-		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, currentDescriptorSet.data()));
+		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &currentDescriptorSet));
+
+		m_rendererStorage->pipelineDescriptorSets.emplace_back(currentDescriptorSet);
 
 		/////Update/////
 		auto& shaderDescriptorSets = shader->GetDescriptorSets();
@@ -762,26 +781,28 @@ namespace Lamp
 		if (!shaderDescriptorSets.empty())
 		{
 			//Uniform buffers
-			for (uint32_t set = 0; set < shaderDescriptorSets.size(); set++)
+			auto& uniformBuffers = shaderDescriptorSets[PER_MESH_DESCRIPTOR_SET].uniformBuffers;
+
+			for (const auto& uniformBuffer : uniformBuffers)
 			{
-				auto& uniformBuffers = shaderDescriptorSets[set].uniformBuffers;
+				auto writeDescriptor = shaderDescriptorSets[PER_MESH_DESCRIPTOR_SET].writeDescriptorSets.at(uniformBuffer.second->name);
+				writeDescriptor.dstSet = currentDescriptorSet;
 
-				for (const auto& uniformBuffer : uniformBuffers)
-				{
-					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffer.second->name);
-					writeDescriptor.dstSet = currentDescriptorSet[set];
+				auto vulkanUniformBuffer = pipeline->GetSpecification().uniformBufferSets->Get(uniformBuffer.second->bindPoint, PER_MESH_DESCRIPTOR_SET, currentFrame);
+				writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
 
-					auto vulkanUniformBuffer = pipeline->GetSpecification().uniformBufferSets->Get(uniformBuffer.second->bindPoint, set, currentFrame);
-					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
-
-					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
-				}
+				vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
 			}
 
 			//Framebuffer textures
 			auto& framebufferInputs = m_rendererStorage->currentRenderPipeline->GetSpecification().framebufferInputs;
 			for (const auto& framebufferInput : framebufferInputs)
 			{
+				if (framebufferInput.set != PER_MESH_DESCRIPTOR_SET)
+				{
+					continue;
+				}
+
 				if (framebufferInput.attachment)
 				{
 					auto vulkanImage = std::reinterpret_pointer_cast<Image2D>(framebufferInput.attachment);
@@ -791,7 +812,7 @@ namespace Lamp
 					if (imageSampler != imageSamplers.end())
 					{
 						auto descriptorWrite = shaderDescriptorSets[framebufferInput.set].writeDescriptorSets.at(imageSampler->second.name);
-						descriptorWrite.dstSet = currentDescriptorSet[framebufferInput.set];
+						descriptorWrite.dstSet = currentDescriptorSet;
 						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
 
 						auto device = VulkanContext::GetCurrentDevice();
@@ -1047,6 +1068,12 @@ namespace Lamp
 		m_rendererDefaults->whiteTexture = Texture2D::Create(ImageFormat::RGBA, 1, 1);
 		m_rendererDefaults->whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+		m_rendererDefaults->ssdoNoise = Texture2D::Create(ImageFormat::RGBA32F, 4, 4);
+
+		auto data = GenerateSSDONoise();
+		m_rendererDefaults->ssdoNoise->SetData(data.data(), sizeof(glm::vec4) * data.size());
+
+		GenerateSSDOKernel();
 		CreateUniformBuffers();
 	}
 
@@ -1079,7 +1106,7 @@ namespace Lamp
 		pipelineSpec.isSwapchain = false;
 		pipelineSpec.cullMode = CullMode::Front;
 		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::ScreenQuad;
+		pipelineSpec.drawType = DrawType::FullscreenQuad;
 		pipelineSpec.uniformBufferSets = m_rendererStorage->uniformBufferSet;
 		pipelineSpec.vertexLayout =
 		{
@@ -1151,6 +1178,40 @@ namespace Lamp
 
 			EndPass();
 		}
+	}
+
+	static float Lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
+
+	void Renderer::GenerateSSDOKernel()
+	{
+		for (uint32_t i = 0; i < m_rendererStorage->ssdoData.sizeBiasRadiusStrength.x; i++)
+		{
+			glm::vec3 sample{ Random::Float(0.f, 1.f) * 2.f - 1.f, Random::Float(0.f, 1.f) * 2.f - 1.f, Random::Float(0.f, 1.f) };
+			sample = glm::normalize(sample);
+			sample *= Random::Float(0.f, 1.f);
+
+			float scale = (float)i / m_rendererStorage->ssdoData.sizeBiasRadiusStrength.x;
+
+			scale = Lerp(0.1f, 1.f, scale * scale);
+			sample *= scale;
+
+			m_rendererStorage->ssdoData.kernelSamples[i] = glm::vec4(sample, 0.f);
+		}
+	}
+
+	std::vector<glm::vec4> Renderer::GenerateSSDONoise()
+	{
+		std::vector<glm::vec4> noise;
+
+		for (uint32_t i = 0; i < 16; i++)
+		{
+			noise.emplace_back(glm::vec4{ Random::Float(0.f, 1.f) * 2.f - 1.f, Random::Float(0.f, 1.f) * 2.f - 1.f, 0.f, 0.f });
+		}
+
+		return noise;
 	}
 
 	void Renderer::FrustumCull()

@@ -26,7 +26,7 @@ namespace Lamp
 		Opaque,
 		Transparent,
 		Translucency,
-		ScreenQuad,
+		FullscreenQuad,
 		Cube,
 		Terrain,
 		Skybox,

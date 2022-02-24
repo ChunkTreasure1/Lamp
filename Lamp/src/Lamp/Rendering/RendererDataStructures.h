@@ -4,7 +4,7 @@
 
 namespace Lamp
 {
-	struct MeshDataBuffer
+	struct MeshData
 	{
 		glm::vec4 albedoColor;
 		glm::vec3 normalColor;
@@ -19,7 +19,7 @@ namespace Lamp
 		uint32_t id;
 	};
 
-	struct CameraDataBuffer
+	struct CameraData
 	{
 		alignas(16) glm::mat4 view;
 		alignas(16) glm::mat4 projection;
@@ -27,7 +27,7 @@ namespace Lamp
 		alignas(16) glm::vec2 ambienceExposure;
 	};
 
-	struct ScreenDataBuffer
+	struct ScreenData
 	{
 		alignas(16) glm::vec2 size;
 		float aspectRatio;
@@ -41,20 +41,20 @@ namespace Lamp
 		alignas(16) bool castShadows;
 	};
 
-	struct DirectionalLightDataBuffer
+	struct DirectionalLightDataData
 	{
 		alignas(16) DirectionalLightData dirLights[1];
 		uint32_t lightCount = 0;
 		uint32_t pointLightCount = 0;
 	};
 
-	struct DirectionalLightVPBuffer
+	struct DirectionalLightVPData
 	{
 		alignas(16) glm::mat4 directionalLightVPs[10];
 		uint32_t count;
 	};
 
-	struct LightCullingBuffer
+	struct LightCullingData
 	{
 		alignas(16) glm::vec2 screenSize;
 		uint32_t lightCount;
@@ -87,7 +87,7 @@ namespace Lamp
 		int index;
 	};
 
-	struct TerrainDataBuffer
+	struct TerrainRenderData
 	{
 		glm::vec4 frustumPlanes[6];
 		float tessellatedEdgeSize = 20.f;
@@ -95,20 +95,9 @@ namespace Lamp
 		float displacementFactor = 32.f;
 	};
 
-	struct HBAODataBuffer
+	struct SSDOData
 	{
-		glm::vec4 perspectiveInfo;
-		glm::vec2 invQuarterResolution;
-
-		float radiusToScreen;
-		float negInvR2;
-		float NdotVBias;
-		float aoMultiplier;
-		float powExponent;
-
-		bool isOrtho;
-
-		glm::vec4 float2Offsets[16];
-		glm::vec4 jitters[16];
+		glm::vec4 kernelSamples[256];
+		glm::vec4 sizeBiasRadiusStrength = { 64.f, 0.f, 0.3f, 0.6 };
 	};
 }
