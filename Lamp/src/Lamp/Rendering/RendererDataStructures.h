@@ -56,7 +56,7 @@ namespace Lamp
 
 	struct LightCullingData
 	{
-		alignas(16) glm::vec2 screenSize;
+		glm::vec2 screenSize;
 		uint32_t lightCount;
 	};
 

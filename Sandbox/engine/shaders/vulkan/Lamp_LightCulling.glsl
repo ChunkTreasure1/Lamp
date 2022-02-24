@@ -56,7 +56,6 @@ layout(set = 0, binding = 4) uniform sampler2D u_DepthMap;
 shared uint minDepthInt;
 shared uint maxDepthInt;
 shared uint visibleLightCount;
-shared vec4 frustumPlanes[6];
 
 //Shared local storage for visible indices
 shared int visibleLightIndices[1024];

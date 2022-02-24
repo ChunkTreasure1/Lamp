@@ -139,7 +139,7 @@ namespace Lamp
 		UpdatePerPassUniformBuffers(pipeline);
 
 		auto swapchain = Application::Get().GetWindow().GetSwapchain();
-		auto framebuffer = std::reinterpret_pointer_cast<Framebuffer>(pipeline->GetSpecification().framebuffer);
+		auto framebuffer = pipeline->GetSpecification().framebuffer;
 		auto commandBuffer = m_rendererStorage->renderCommandBuffer;
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
@@ -158,7 +158,7 @@ namespace Lamp
 		renderPassBegin.clearValueCount = framebuffer->GetClearValues().size();
 		renderPassBegin.pClearValues = framebuffer->GetClearValues().data();
 
-		vkCmdBeginRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(commandBuffer->GetCurrentCommandBuffer(), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
 
 		AllocatePerPassDescriptors();
 		pipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
@@ -169,7 +169,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		vkCmdEndRenderPass(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()));
+		vkCmdEndRenderPass(commandBuffer->GetCurrentCommandBuffer());
 
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
@@ -269,7 +269,7 @@ namespace Lamp
 		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
 		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
 
-		vkCmdDrawIndexed(static_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer()), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void Renderer::DrawQuad()
@@ -439,10 +439,9 @@ namespace Lamp
 			writeDescriptors[3].dstSet = currentDescriptorSet;
 			writeDescriptors[3].pBufferInfo = &vulkanVisibleLightsBuffer->GetDescriptorInfo();
 
-			auto vulkanDepthImage = std::reinterpret_pointer_cast<Image2D>(depthImage);
 			writeDescriptors[4] = *lightCullingShader->GetDescriptorSet("u_DepthMap");
 			writeDescriptors[4].dstSet = currentDescriptorSet;
-			writeDescriptors[4].pImageInfo = &vulkanDepthImage->GetDescriptorInfo();
+			writeDescriptors[4].pImageInfo = &depthImage->GetDescriptorInfo();
 
 			vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 
@@ -454,7 +453,7 @@ namespace Lamp
 			barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
 			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-			vkCmdPipelineBarrier(static_cast<VkCommandBuffer>(m_rendererStorage->renderCommandBuffer->GetCurrentCommandBuffer()), VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 1, &barrier, 0, nullptr, 0, nullptr);
+			vkCmdPipelineBarrier(m_rendererStorage->renderCommandBuffer->GetCurrentCommandBuffer(), VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 1, &barrier, 0, nullptr, 0, nullptr);
 
 			lightCullingPipeline->End();
 		};
@@ -523,6 +522,10 @@ namespace Lamp
 
 		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
+		Ref<PerspectiveCamera> perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_rendererStorage->camera);
+		auto frustumPlanes = perspectiveCamera->CreateImplicitFrustum();
+
+
 		//Camera data
 		{
 			auto ub = m_rendererStorage->uniformBufferSet->Get(0, 0, currentFrame);
@@ -569,10 +572,8 @@ namespace Lamp
 
 		//Terrain data
 		{
-			Ref<PerspectiveCamera> perspectiveCamera = std::reinterpret_pointer_cast<PerspectiveCamera>(m_rendererStorage->camera);
-			auto planes = perspectiveCamera->CreateImplicitFrustum();
 
-			memcpy(m_rendererStorage->terrainData.frustumPlanes, planes.data(), sizeof(glm::vec4) * planes.size());
+			memcpy(m_rendererStorage->terrainData.frustumPlanes, frustumPlanes.data(), sizeof(glm::vec4) * frustumPlanes.size());
 			m_rendererStorage->terrainDataBuffer->SetData(&m_rendererStorage->terrainData, sizeof(TerrainRenderData));
 		}
 
@@ -596,6 +597,10 @@ namespace Lamp
 
 			auto ub = m_rendererStorage->uniformBufferSet->Get(4, 0, currentFrame);
 			ub->SetData(&m_rendererStorage->directionalLightVPData, sizeof(DirectionalLightVPData));
+		}
+
+		{
+			m_rendererStorage->lightCullingBuffer->SetData(&m_rendererStorage->lightCullingData, sizeof(LightCullingData));
 		}
 
 		//Point lights
@@ -625,8 +630,6 @@ namespace Lamp
 			}
 
 			pointlightStorageBuffer->Unmap();
-
-			m_rendererStorage->lightCullingBuffer->SetData(&m_rendererStorage->lightCullingData, sizeof(LightCullingData));
 		}
 	}
 
@@ -805,7 +808,7 @@ namespace Lamp
 
 				if (framebufferInput.attachment)
 				{
-					auto vulkanImage = std::reinterpret_pointer_cast<Image2D>(framebufferInput.attachment);
+					auto image = framebufferInput.attachment;
 					auto& imageSamplers = shaderDescriptorSets[framebufferInput.set].imageSamplers;
 
 					auto imageSampler = imageSamplers.find(framebufferInput.binding);
@@ -813,7 +816,7 @@ namespace Lamp
 					{
 						auto descriptorWrite = shaderDescriptorSets[framebufferInput.set].writeDescriptorSets.at(imageSampler->second.name);
 						descriptorWrite.dstSet = currentDescriptorSet;
-						descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
+						descriptorWrite.pImageInfo = &image->GetDescriptorInfo();
 
 						auto device = VulkanContext::GetCurrentDevice();
 						vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
@@ -914,7 +917,7 @@ namespace Lamp
 						break;
 					}
 
-					descriptorInfos.emplace_back(std::reinterpret_pointer_cast<Image2D>(light->shadowBuffer->GetDepthAttachment())->GetDescriptorInfo());
+					descriptorInfos.emplace_back(light->shadowBuffer->GetDepthAttachment()->GetDescriptorInfo());
 
 					i++;
 				}
