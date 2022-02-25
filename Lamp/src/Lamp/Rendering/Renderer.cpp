@@ -1138,7 +1138,8 @@ namespace Lamp
 		DrawDirectionalShadow();
 
 		FrustumCull();
-		SortRenderBuffer(m_rendererStorage->camera->GetPosition(), m_finalRenderBuffer);
+		//SortRenderBuffer(m_rendererStorage->camera->GetPosition(), m_finalRenderBuffer);
+		SortRenderBufferByMaterial(m_finalRenderBuffer);
 	}
 
 	void Renderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
@@ -1152,6 +1153,14 @@ namespace Lamp
 				const float distOne = glm::pow(sortPoint.x - dPosOne.x, 2.f) + glm::pow(sortPoint.y - dPosOne.y, 2.f) + glm::pow(sortPoint.z - dPosOne.z, 2.f);
 
 				return distOne < distTwo;
+			});
+	}
+
+	void Renderer::SortRenderBufferByMaterial(RenderBuffer& renderBuffer)
+	{
+		std::sort(renderBuffer.drawCalls.begin(), renderBuffer.drawCalls.end(), [](const RenderCommandData& dataOne, const RenderCommandData& dataTwo)
+			{
+				return dataOne.material < dataTwo.material;
 			});
 	}
 
