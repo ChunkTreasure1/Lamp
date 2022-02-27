@@ -27,6 +27,7 @@ namespace Lamp
 	class CameraBase;
 	class Material;
 	class MaterialLibrary;
+	class RenderPipelineLibrary;
 
 	struct RendererStatistics
 	{
@@ -51,7 +52,7 @@ namespace Lamp
 		Ref<Texture2D> ssdoNoise;
 	};
 
-	struct VulkanRendererStorage
+	struct RendererStorage
 	{
 		/////Rendering/////
 		Ref<CommandBuffer> swapchainCommandBuffer;
@@ -104,13 +105,13 @@ namespace Lamp
 		const GPUMemoryStatistics& GetMemoryUsage() const;
 		const RendererStatistics& GetStatistics() const;
 		const RendererCapabilities& GetCapabilities() const;
-		const VulkanRendererStorage& GetStorage() const;
+		const RendererStorage& GetStorage() const;
 		const RendererDefaults& GetDefaults() const;
 
-		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
+		void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id = -1);
 		void SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
 
-		void DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */);
+		void DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id /* = -1 */);
 		void DrawMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
 		void DrawQuad();
 
@@ -126,7 +127,8 @@ namespace Lamp
 		static Ref<Renderer> Create();
 
 	private:
-		void AllocateDescriptorsForMaterialRendering(Ref<Material> material);
+		void DrawMeshWithPipeline(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, Ref<RenderPipeline> pipeline, size_t id /* = -1 */);
+
 		void AllocateDescriptorsForQuadRendering(); // TODO: should be moved into singular function
 		void AllocatePerPassDescriptors();
 
@@ -157,9 +159,10 @@ namespace Lamp
 		static RendererCapabilities s_capabilities;
 
 		/////Storage/////
-		Scope<VulkanRendererStorage> m_rendererStorage;
+		Scope<RendererStorage> m_rendererStorage;
 		Scope<RendererDefaults> m_rendererDefaults;
 		Scope<MaterialLibrary> m_materialLibrary;
+		Scope<RenderPipelineLibrary> m_renderPipelineLibrary;
 		/////////////////
 
 		/////Render buffer/////

@@ -52,7 +52,7 @@ namespace Lamp
 		s_renderer->EndPass();
 	}
 
-	void RenderCommand::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
+	void RenderCommand::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id)
 	{
 		s_renderer->SubmitMesh(transform, mesh, material, id);
 	}

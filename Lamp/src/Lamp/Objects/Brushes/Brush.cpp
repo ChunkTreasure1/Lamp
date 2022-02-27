@@ -6,21 +6,21 @@
 
 #include "Lamp/AssetSystem/ResourceCache.h"
 
+#include "Lamp/Mesh/MeshInstance.h"
+
 namespace Lamp
 {
-	Brush::Brush(Ref<Mesh> model)
-		: m_mesh(model)
+	Brush::Brush(Ref<MeshInstance> mesh)
+		: m_mesh(mesh)
 	{
 		m_name = "Brush";
-
-		m_boundingMesh = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
+		m_boundingMesh = MeshInstance::Create(ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf"));
 	}
 
 	void Brush::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(Brush::OnRender));
-		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(Brush::OnUpdate));
 	}
 
 	void Brush::Destroy()
@@ -47,8 +47,7 @@ namespace Lamp
 			return nullptr;
 		}
 
-		Ref<Mesh> mesh = ResourceCache::GetAsset<Mesh>(path);
-		Brush* brush = new Brush(mesh);
+		Brush* brush = new Brush(MeshInstance::Create(ResourceCache::GetAsset<Mesh>(path)));
 		brush->SetLayerID(0);
 
 		if (addToLevel)
@@ -70,8 +69,7 @@ namespace Lamp
 			return nullptr;
 		}
 
-		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(path);
-		Brush* brush = new Brush(model);
+		Brush* brush = new Brush(MeshInstance::Create(ResourceCache::GetAsset<Mesh>(path)));
 
 		brush->SetPosition(pos);
 		brush->SetRotation(rot); 
@@ -95,8 +93,7 @@ namespace Lamp
 			return nullptr;
 		}
 
-		Ref<Mesh> model = ResourceCache::GetAsset<Mesh>(main->GetModel()->Path);
-		Brush* pBrush = new Brush(model);
+		Brush* pBrush = new Brush(MeshInstance::Create(main->GetMesh()->GetSharedMesh()));
 
 		if (addToLevel)
 		{
@@ -150,35 +147,31 @@ namespace Lamp
 	{	
 		if (m_isActive)
 		{
-			m_mesh->Render(m_id, GetTransform());
+			m_mesh->Render(GetTransform(), m_id);
 		}
 
-		if (g_pEnv->shouldRenderBB)
-		{
-			auto transform = GetTransform();
+		//TODO: readd bound rendering
+		//if (g_pEnv->shouldRenderBB)
+		//{
+		//	auto transform = GetTransform();
 
-			glm::vec3 globalScale = { glm::length(transform[0]), glm::length(transform[1]), glm::length(transform[2]) };
+		//	glm::vec3 globalScale = { glm::length(transform[0]), glm::length(transform[1]), glm::length(transform[2]) };
 
-			for (const auto& subMesh : m_mesh->GetSubMeshes())
-			{
-				auto& bv = subMesh->GetBoundingVolume();
-				const glm::vec3 globalCenter = transform * glm::vec4(bv.GetCenter(), 1.f);
+		//	for (const auto& subMesh : m_mesh->GetSubMeshes())
+		//	{
+		//		auto& bv = subMesh->GetBoundingVolume();
+		//		const glm::vec3 globalCenter = transform * glm::vec4(bv.GetCenter(), 1.f);
 
-				const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
-				const float radius = bv.GetRadius();
-				const float scale = radius * maxScale * 0.5f;
+		//		const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
+		//		const float radius = bv.GetRadius();
+		//		const float scale = radius * maxScale * 0.5f;
 
-				glm::mat4 newTransform = glm::translate(glm::mat4(1.f), globalCenter) * glm::scale(glm::mat4(1.f), { scale, scale, scale });
+		//		glm::mat4 newTransform = glm::translate(glm::mat4(1.f), globalCenter) * glm::scale(glm::mat4(1.f), { scale, scale, scale });
 
-				m_boundingMesh->Render(m_id, newTransform);
-			}
-		}
+		//		m_boundingMesh->Render(m_id, newTransform);
+		//	}
+		//}
 
-		return false;
-	}
-
-	bool Brush::OnUpdate(AppUpdateEvent& e)
-	{
 		return false;
 	}
 }

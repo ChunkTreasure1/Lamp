@@ -20,6 +20,7 @@
 
 #include <Lamp/Math/Math.h>
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
+#include <Lamp/Mesh/MeshInstance.h>
 
 #include <Lamp/GraphKey/GraphKeyGraph.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -360,7 +361,7 @@ namespace Sandbox
 				if (UI::TreeNodeFramed("Materials"))
 				{
 					int i = 0;
-					for (auto& mat : pBrush->GetModel()->GetMaterials())
+					for (auto& mat : pBrush->GetMesh()->GetSharedMesh()->GetMaterials())
 					{
 						std::string input = mat.second->GetName();
 
@@ -593,7 +594,7 @@ namespace Sandbox
 			return;
 		}
 
-		auto sceneData = const_cast<VulkanRendererStorage&>(Renderer::Get().GetStorage());
+		auto sceneData = const_cast<RendererStorage&>(Renderer::Get().GetStorage());
 
 		ImGui::Begin("Rendering Settings", &m_RenderingSettingsOpen);
 

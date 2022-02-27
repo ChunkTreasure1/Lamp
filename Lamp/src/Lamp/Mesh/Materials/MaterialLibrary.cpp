@@ -61,7 +61,7 @@ namespace Lamp
 		{
 			if (mat->GetName() == name)
 			{
-				return Material::Create(mat);
+				return mat;
 			}
 		}
 

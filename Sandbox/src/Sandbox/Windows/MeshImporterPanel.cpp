@@ -159,7 +159,7 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_modelToImport->GetSubMeshes())
 			{
-				RenderCommand::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
+				//RenderCommand::SubmitMesh(m_transform, mesh, m_modelToImport->GetMaterials()[mesh->GetMaterialIndex()]);
 			}
 		}
 	}
@@ -177,7 +177,7 @@ namespace Sandbox
 
 		for (auto& mat : m_modelToImport->GetMaterials())
 		{
-			mat.second->SetShader(m_defaultShader);
+			//mat.second->SetShader(m_defaultShader);
 
 			//TODO: fix
 			//for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
@@ -388,7 +388,7 @@ namespace Sandbox
 						{
 							if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]))
 							{
-								mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]));
+								//mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]));
 							}
 						}
 

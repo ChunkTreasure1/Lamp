@@ -209,59 +209,6 @@ namespace Lamp
 		}
 	}
 
-	void RenderPipeline::CreateDescriptorSets()
-	{
-		auto swapchain = Application::Get().GetWindow().GetSwapchain();
-		auto device = VulkanContext::GetCurrentDevice();
-
-		auto vulkanShader = m_specification.shader;
-
-		auto allDescriptorLayouts = vulkanShader->GetAllDescriptorSetLayouts();
-
-		const uint32_t framesInFlight = m_specification.isSwapchain ? swapchain->GetImageCount() : 1;
-
-		//for (uint32_t i = 0; i < framesInFlight; i++)
-		//{
-		//	VkDescriptorSetAllocateInfo allocInfo{};
-		//	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		//	allocInfo.descriptorPool = static_cast<VkDescriptorPool>(std::reinterpret_pointer_cast<VulkanRenderer>(Renderer::GetRenderer())->GetDescriptorPool());
-		//	allocInfo.descriptorSetCount = static_cast<uint32_t>(allDescriptorLayouts.size());
-		//	allocInfo.pSetLayouts = allDescriptorLayouts.data();
-
-		//	m_descriptorSets[i].resize(allDescriptorLayouts.size());
-
-		//	LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, m_descriptorSets[i].data()));
-		//}
-	}
-
-	void RenderPipeline::SetupUniformBuffers()
-	{
-		auto device = VulkanContext::GetCurrentDevice();
-		auto vulkanShader = m_specification.shader;
-
-		const uint32_t count = m_specification.isSwapchain ? Renderer::Get().GetCapabilities().framesInFlight : 1;
-		auto& shaderDescriptorSets = vulkanShader->GetDescriptorSets();
-
-		for (uint32_t frame = 0; frame < count; frame++)
-		{
-			for (uint32_t set = 0; set < shaderDescriptorSets.size(); set++)
-			{
-				auto& uniformBuffers = shaderDescriptorSets[set].uniformBuffers;
-
-				for (const auto& uniformBuffer : uniformBuffers)
-				{
-					auto writeDescriptor = shaderDescriptorSets[set].writeDescriptorSets.at(uniformBuffer.second->name);
-					writeDescriptor.dstSet = m_descriptorSets[frame][set];
-
-					auto vulkanUniformBuffer = m_specification.uniformBufferSets->Get(uniformBuffer.second->bindPoint, set, frame);
-					writeDescriptor.pBufferInfo = &vulkanUniformBuffer->GetDescriptorInfo();
-
-					vkUpdateDescriptorSets(device->GetHandle(), 1, &writeDescriptor, 0, nullptr);
-				}
-			}
-		}
-	}
-
 	void RenderPipeline::Invalidate()
 	{
 		auto device = VulkanContext::GetCurrentDevice();
@@ -271,7 +218,7 @@ namespace Lamp
 
 		if (m_specification.framebuffer)
 		{
-			framebuffer = std::reinterpret_pointer_cast<Framebuffer>(m_specification.framebuffer);
+			framebuffer = m_specification.framebuffer;
 		}
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
@@ -378,13 +325,29 @@ namespace Lamp
 		pipelineInfo.pMultisampleState = &multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.layout = m_layout;
-		pipelineInfo.renderPass = m_specification.isSwapchain ? swapchain->GetRenderPass() : framebuffer->GetRenderPass();
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineInfo.pDepthStencilState = &depthStencil;
 		pipelineInfo.pDynamicState = &dynamicStateInfo;
 		pipelineInfo.pTessellationState = m_specification.useTessellation ? &tessellation : nullptr;
 
+		VkPipelineRenderingCreateInfo pipelineRenderingInfo{};
+		pipelineRenderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+		pipelineRenderingInfo.colorAttachmentCount = m_specification.framebuffer->GetColorAttachmentInfos().size();
+		pipelineRenderingInfo.pColorAttachmentFormats = m_specification.framebuffer->GetColorFormats().data();
+
+		if (m_specification.framebuffer->GetDepthAttachment())
+		{
+			pipelineRenderingInfo.depthAttachmentFormat = m_specification.framebuffer->GetDepthFormat();
+			pipelineRenderingInfo.stencilAttachmentFormat = m_specification.framebuffer->GetDepthFormat();
+		}
+		else
+		{
+			pipelineRenderingInfo.depthAttachmentFormat = VK_FORMAT_UNDEFINED;
+			pipelineRenderingInfo.stencilAttachmentFormat = VK_FORMAT_UNDEFINED;
+		}
+
+		pipelineInfo.pNext = &pipelineRenderingInfo;
 		LP_VK_CHECK(vkCreateGraphicsPipelines(device->GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline));
 	}
 

@@ -15,6 +15,7 @@ namespace Lamp
 	class Material;
 	class SubMesh;
 	class Texture2D;
+	class MaterialInstance;
 
 	class RenderCommand
 	{
@@ -29,7 +30,7 @@ namespace Lamp
 		static void BeginPass(const Ref<RenderPipeline> pipeline);
 		static void EndPass();
 
-		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id = -1);
+		static void SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id = -1);
 		static void SubmitMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
 		static void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
 		static void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);

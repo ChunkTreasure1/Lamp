@@ -94,19 +94,22 @@ namespace Lamp
 		Framebuffer(const FramebufferSpecification& spec);
 		~Framebuffer();
 
-		void Bind();
-		void Unbind();
+		void Bind(Ref<CommandBuffer> commandBuffer);
+		void Unbind(Ref<CommandBuffer> commandBuffer);
 
 		void Resize(const uint32_t width, const uint32_t height);
 		int ReadPixel(uint32_t attachmentIndex, int x, int y);
 		void Copy(uint32_t rendererId, const glm::vec2& size, bool depth /* = false */);
 		void Invalidate();
 
-		inline VkRenderPass GetRenderPass() const { return m_renderPass; }
-		inline VkFramebuffer GetFramebuffer() const { return m_framebuffer; }
-		inline const std::vector<VkClearValue>& GetClearValues() { return m_clearValues; }
-
 		void ClearAttachment(uint32_t attachmentIndex, int value);
+
+		const VkRenderingAttachmentInfo& GetColorAttachmentInfo(uint32_t index) const;
+		const VkRenderingAttachmentInfo& GetDepthAttachmentInfo() const;
+		const std::vector<VkRenderingAttachmentInfo>& GetColorAttachmentInfos() const;
+
+		const std::vector<VkFormat>& GetColorFormats();
+		const VkFormat& GetDepthFormat();
 
 		Ref<Image2D> GetColorAttachment(uint32_t index) const;
 		Ref<Image2D> GetDepthAttachment() const;
@@ -121,12 +124,13 @@ namespace Lamp
 		uint32_t m_width;
 		uint32_t m_height;
 
-		VkRenderPass m_renderPass;
-		VkFramebuffer m_framebuffer = nullptr;
-
 		Ref<Image2D> m_depthAttachmentImage;
 		std::vector<Ref<Image2D>> m_attachmentImages;
 
-		std::vector<VkClearValue> m_clearValues;
+		std::vector<VkFormat> m_colorFormats;
+		VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
+
+		std::vector<VkRenderingAttachmentInfo> m_colorAttachmentInfos;
+		VkRenderingAttachmentInfo m_depthAttachmentInfo;
 	};
 }

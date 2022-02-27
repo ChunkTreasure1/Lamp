@@ -169,7 +169,7 @@ namespace Sandbox
 
 		if (!m_pSelectedMaterial)
 		{
-			m_pSelectedMaterial = m_materialModel->GetMaterial(0);
+			m_pSelectedMaterial = m_materialModel->GetMaterials()[0];
 		}
 
 		UI::PushId();
@@ -295,20 +295,20 @@ namespace Sandbox
 		{
 			for (const auto& mesh : m_materialModel->GetSubMeshes())
 			{
-				RenderCommand::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
+				//RenderCommand::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
 			}
 		}
 	}
 
 	void MaterialEditor::CreateNewMaterial()
 	{
-		std::filesystem::path matPath = s_assetsPath / "material.mtl";
+		//std::filesystem::path matPath = s_assetsPath / "material.mtl";
 
-		Ref<Material> mat = Material::Create("New Material", 0);
-		mat->Path = matPath;
-		mat->SetShader(ShaderLibrary::GetShader("pbrForward"));
+		//Ref<Material> mat = Material::Create("New Material", 0);
+		//mat->Path = matPath;
+		//mat->SetShader(ShaderLibrary::GetShader("pbrForward"));
 
-		g_pEnv->pAssetManager->SaveAsset(mat);
-		MaterialLibrary::Get().AddMaterial(mat);
+		//g_pEnv->pAssetManager->SaveAsset(mat);
+		//MaterialLibrary::Get().AddMaterial(mat);
 	}
 }

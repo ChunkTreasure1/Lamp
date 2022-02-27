@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Rendering/Buffers/Framebuffer.h"
 #include "Lamp/Rendering/Shader/Shader.h"
 

@@ -109,9 +109,6 @@ namespace Lamp
 		static Ref<RenderPipeline> Create(const RenderPipelineSpecification& specification);
 
 	private:
-		void CreateDescriptorSets();
-		void SetupUniformBuffers();
-
 		void Invalidate();
 
 		std::vector<VkVertexInputAttributeDescription> m_attributeDescriptions;

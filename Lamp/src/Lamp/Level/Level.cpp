@@ -12,6 +12,7 @@
 #include "Lamp/Rendering/Renderer2D.h"
 #include "Lamp/Rendering/Renderer.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
+#include "Lamp/Rendering/RenderPipelineLibrary.h"
 
 #include "Lamp/Physics/Physics.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
@@ -314,36 +315,9 @@ namespace Lamp
 	{
 		//GBuffer
 		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA32F,
-				ImageFormat::RGBA32F,
-				ImageFormat::RGBA32F,
-				ImageFormat::RGBA32F,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			m_geometryFramebuffer = pipelineSpec.framebuffer;
-			pipelineSpec.shader = ShaderLibrary::GetShader("gbuffer");
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-			pipelineSpec.debugName = "GBuffer";
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" },
-			};
-
 			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			pass.graphicsPipeline = RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Deferred);
+			m_geometryFramebuffer = pass.graphicsPipeline->GetSpecification().framebuffer;
 		}
 
 		Ref<Framebuffer> ssdoFramebuffer;

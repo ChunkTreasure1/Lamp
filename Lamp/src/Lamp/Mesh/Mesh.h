@@ -11,20 +11,19 @@
 
 namespace Lamp
 {
+	class MaterialInstance;
 	class Mesh : public Asset
 	{
 	public:
 		Mesh(const std::string& name, std::vector<Ref<SubMesh>> meshes, std::map<uint32_t, Ref<Material>> mats);
 		Mesh() = default;
 
-		void Render(size_t id = -1, const glm::mat4& transform = glm::mat4(1.f));
+		void Render(const glm::mat4& transform = glm::mat4(1.f), size_t id = -1, std::map<uint32_t, Ref<MaterialInstance>>& materials = std::map<uint32_t, Ref<MaterialInstance>>());
 
 		//Setting
 		inline void SetName(const std::string& name) { m_name = name; }
-		void SetMaterial(Ref<Material> mat, uint32_t id);
 
 		//Getting
-		Ref<Material> GetMaterial(uint32_t id);
 		inline std::map<uint32_t, Ref<Material>>& GetMaterials() { return m_materials; }
 		inline const std::string& GetName() { return m_name; }
 		inline std::vector<Ref<SubMesh>>& GetSubMeshes() { return m_subMeshes; }

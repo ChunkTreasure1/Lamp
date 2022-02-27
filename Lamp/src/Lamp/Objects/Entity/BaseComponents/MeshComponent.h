@@ -7,6 +7,7 @@
 
 namespace Lamp
 {
+	class MeshInstance;
 	class MeshComponent final : public EntityComponent
 	{
 	public:
@@ -26,7 +27,7 @@ namespace Lamp
 		bool OnRender(AppRenderEvent& e);
 		bool OnPropertyChanged(ObjectPropertyChangedEvent& e);
 
-		Ref<Mesh> m_mesh;
+		Ref<MeshInstance> m_mesh;
 		std::string m_path;
 	};
 

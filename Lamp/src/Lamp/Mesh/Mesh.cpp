@@ -11,28 +11,12 @@ namespace Lamp
 	{
 	}
 
-	void Mesh::Render(size_t id, const glm::mat4& transform)
+	void Mesh::Render(const glm::mat4& transform, size_t id, std::map<uint32_t, Ref<MaterialInstance>>& materials)
 	{
 		for (const auto& mesh : m_subMeshes)
 		{
 			//TODO: Render error mesh if mesh is invalid
-			RenderCommand::SubmitMesh(transform, mesh, m_materials[mesh->GetMaterialIndex()], id);
+			RenderCommand::SubmitMesh(transform, mesh, materials[mesh->GetMaterialIndex()], id);
 		}
-	}
-
-	void Mesh::SetMaterial(Ref<Material> mat, uint32_t id)
-	{
-		auto it = m_materials.find(id);
-		LP_CORE_ASSERT(it != m_materials.end(), "Mesh does not contain the specified material id!");
-
-		it->second = mat;
-	}
-
-	Ref<Material> Mesh::GetMaterial(uint32_t id)
-	{
-		auto it = m_materials.find(id);
-		LP_CORE_ASSERT(it != m_materials.end(), "Mesh does not contain the specified material id!");
-
-		return it->second;
 	}
 }

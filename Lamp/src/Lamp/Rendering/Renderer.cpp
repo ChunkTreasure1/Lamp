@@ -12,9 +12,11 @@
 #include "Lamp/Rendering/Swapchain.h"
 #include "Lamp/Rendering/Buffers/ShaderStorageBuffer.h"
 #include "Lamp/Rendering/Textures/TextureCube.h"
+#include "Lamp/Rendering/RenderPipelineLibrary.h"
 
 #include "Lamp/Mesh/Mesh.h"
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
+#include "Lamp/Mesh/Materials/MaterialInstance.h"
 
 #include "Lamp/AssetSystem/MeshImporter.h"
 #include "Lamp/Level/Level.h"
@@ -65,9 +67,11 @@ namespace Lamp
 		m_rendererStorage->quadMesh = SubMesh::CreateQuad();
 
 		ShaderLibrary::LoadShaders();
+		m_renderPipelineLibrary = CreateScope<RenderPipelineLibrary>();
 
 		m_materialLibrary = CreateScope<MaterialLibrary>();
 		MaterialLibrary::Get().LoadMaterials();
+
 
 		GenerateBRDF(m_rendererDefaults->brdfFramebuffer);
 	}
@@ -141,24 +145,29 @@ namespace Lamp
 		auto swapchain = Application::Get().GetWindow().GetSwapchain();
 		auto framebuffer = pipeline->GetSpecification().framebuffer;
 		auto commandBuffer = m_rendererStorage->renderCommandBuffer;
-		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
-		VkRenderPassBeginInfo renderPassBegin{};
-		renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBegin.renderPass = framebuffer->GetRenderPass();
-		renderPassBegin.framebuffer = pipeline->GetSpecification().isSwapchain ? swapchain->GetFramebuffer(currentFrame) : framebuffer->GetFramebuffer();
-		renderPassBegin.renderArea.offset = { 0, 0 };
+		framebuffer->Bind(commandBuffer);
 
-		VkExtent2D extent;
-		extent.width = framebuffer->GetSpecification().width;
-		extent.height = framebuffer->GetSpecification().height;
+		VkRenderingInfo renderingInfo{};
+		renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+		renderingInfo.renderArea = { 0, 0, framebuffer->GetSpecification().width, framebuffer->GetSpecification().height, };
+		renderingInfo.layerCount = 1;
+		renderingInfo.colorAttachmentCount = framebuffer->GetColorAttachmentInfos().size();
+		renderingInfo.pColorAttachments = framebuffer->GetColorAttachmentInfos().data();
 
-		renderPassBegin.renderArea.extent = extent;
+		if (framebuffer->GetDepthAttachment())
+		{
+			renderingInfo.pDepthAttachment = &framebuffer->GetDepthAttachmentInfo();
+		}
+		else
+		{
+			renderingInfo.pDepthAttachment = nullptr;
+			renderingInfo.pStencilAttachment = nullptr;
+		}
 
-		renderPassBegin.clearValueCount = framebuffer->GetClearValues().size();
-		renderPassBegin.pClearValues = framebuffer->GetClearValues().data();
+		vkCmdBeginRendering(commandBuffer->GetCurrentCommandBuffer(), &renderingInfo);
 
-		vkCmdBeginRenderPass(commandBuffer->GetCurrentCommandBuffer(), &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
+		pipeline->Bind(commandBuffer);
 
 		AllocatePerPassDescriptors();
 		pipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
@@ -169,8 +178,8 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		vkCmdEndRenderPass(commandBuffer->GetCurrentCommandBuffer());
-
+		vkCmdEndRendering(commandBuffer->GetCurrentCommandBuffer());
+		m_rendererStorage->currentRenderPipeline->GetSpecification().framebuffer->Unbind(commandBuffer);
 		m_rendererStorage->currentRenderPipeline = nullptr;
 	}
 
@@ -189,7 +198,7 @@ namespace Lamp
 		return s_capabilities;
 	}
 
-	const VulkanRendererStorage& Renderer::GetStorage() const
+	const RendererStorage& Renderer::GetStorage() const
 	{
 		return *m_rendererStorage;
 	}
@@ -199,7 +208,7 @@ namespace Lamp
 		return *m_rendererDefaults;
 	}
 
-	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id /* = -1 */)
+	void Renderer::SubmitMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id /* = -1 */)
 	{
 		LP_PROFILE_FUNCTION();
 		m_submitBufferPointer->drawCalls.emplace_back(transform, mesh, material, id);
@@ -211,20 +220,14 @@ namespace Lamp
 		DrawMesh(mesh, material, descriptorSets, pushConstant);
 	}
 
-	void Renderer::DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<Material> material, size_t id)
+	void Renderer::DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
-		auto pipeline = m_rendererStorage->currentRenderPipeline;
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+		material->Bind(commandBuffer, false);
 
-		pipeline->Bind(commandBuffer);
-
-		AllocateDescriptorsForMaterialRendering(material);
-		pipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
-
-		const auto& matData = material->GetMaterialData();
+		const auto& matData = material->GetSharedMaterial()->GetMaterialData();
 
 		MeshData meshData;
 		meshData.blendingUseBlending.x = matData.blendingMultiplier;
@@ -241,13 +244,13 @@ namespace Lamp
 
 		meshData.id = id;
 
-		pipeline->SetPushConstantData(commandBuffer, 0, &transform);
-		pipeline->SetPushConstantData(commandBuffer, 1, &meshData);
+		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 0, &transform);
+		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 1, &meshData);
 
-		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
-		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
+		mesh->GetVertexBuffer()->Bind(commandBuffer);
+		mesh->GetIndexBuffer()->Bind(commandBuffer);
 
-		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void Renderer::DrawMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant)
@@ -266,10 +269,10 @@ namespace Lamp
 			pipeline->SetPushConstantData(commandBuffer, 0, pushConstant);
 		}
 
-		mesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
-		mesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
+		mesh->GetVertexBuffer()->Bind(commandBuffer);
+		mesh->GetIndexBuffer()->Bind(commandBuffer);
 
-		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), mesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void Renderer::DrawQuad()
@@ -285,10 +288,10 @@ namespace Lamp
 
 		pipeline->BindDescriptorSets(commandBuffer, m_rendererStorage->currentMeshDescriptorSets);
 
-		m_rendererStorage->quadMesh->GetVertexArray()->GetVertexBuffers()[0]->Bind(commandBuffer);
-		m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->Bind(commandBuffer);
+		m_rendererStorage->quadMesh->GetVertexBuffer()->Bind(commandBuffer);
+		m_rendererStorage->quadMesh->GetIndexBuffer()->Bind(commandBuffer);
 
-		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), m_rendererStorage->quadMesh->GetVertexArray()->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), m_rendererStorage->quadMesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void Renderer::DispatchRenderCommands(RenderBuffer& buffer)
@@ -300,7 +303,7 @@ namespace Lamp
 			{
 				for (const auto& command : buffer.drawCalls)
 				{
-					if (!command.material->GetMaterialData().useTranslucency && !command.material->GetMaterialData().useBlending)
+					if (!command.material->GetSharedMaterial()->GetMaterialData().useTranslucency && !command.material->GetSharedMaterial()->GetMaterialData().useBlending)
 					{
 						DrawMesh(command.transform, command.data, command.material, command.id);
 					}
@@ -312,7 +315,7 @@ namespace Lamp
 			{
 				for (const auto& command : buffer.drawCalls)
 				{
-					if (command.material->GetMaterialData().useTranslucency)
+					if (command.material->GetSharedMaterial()->GetMaterialData().useTranslucency)
 					{
 						DrawMesh(command.transform, command.data, command.material, command.id);
 					}
@@ -324,7 +327,7 @@ namespace Lamp
 			{
 				for (const auto& command : buffer.drawCalls)
 				{
-					if (command.material->GetMaterialData().useBlending)
+					if (command.material->GetSharedMaterial()->GetMaterialData().useBlending)
 					{
 						DrawMesh(command.transform, command.data, command.material, command.id);
 					}
@@ -664,84 +667,38 @@ namespace Lamp
 		}
 	}
 
-	void Renderer::AllocateDescriptorsForMaterialRendering(Ref<Material> material)
+	void Renderer::DrawMeshWithPipeline(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, Ref<RenderPipeline> pipeline, size_t id)
 	{
 		LP_PROFILE_FUNCTION();
+		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		auto shader = m_rendererStorage->currentRenderPipeline->GetSpecification().shader;
-		auto pipeline = m_rendererStorage->currentRenderPipeline;
+		pipeline->Bind(commandBuffer);
+		material->Bind(commandBuffer, false);
 
-		auto device = VulkanContext::GetCurrentDevice();
-		uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
+		const auto& matData = material->GetSharedMaterial()->GetMaterialData();
 
-		m_rendererStorage->currentMeshDescriptorSets.clear();
-		m_rendererStorage->currentMeshDescriptorSets.emplace_back(m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET]);
+		MeshData meshData;
+		meshData.blendingUseBlending.x = matData.blendingMultiplier;
+		meshData.blendingUseBlending.y = matData.useBlending;
 
-		//Make sure that the shader has a descriptor set number 1
-		if (shader->GetDescriptorSetLayoutCount() < PER_MESH_DESCRIPTOR_SET + 1)
-		{
-			return;
-		}
+		meshData.useAlbedo = matData.useAlbedo;
+		meshData.useNormal = matData.useNormal;
+		meshData.useMRO = matData.useMRO;
+		meshData.useDetailNormal = matData.useDetailNormal;
 
-		auto descriptorLayout = shader->GetDescriptorSetLayout(PER_MESH_DESCRIPTOR_SET);
-		auto& shaderDescriptorSet = shader->GetDescriptorSets()[PER_MESH_DESCRIPTOR_SET];
+		meshData.mroColor = matData.mroColor;
+		meshData.albedoColor = matData.albedoColor;
+		meshData.normalColor = matData.normalColor;
 
-		//Allocate descriptors
-		VkDescriptorSetAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = m_descriptorPools[currentFrame];
-		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &descriptorLayout;
+		meshData.id = id;
 
-		auto& currentDescriptorSet = m_rendererStorage->currentMeshDescriptorSets.emplace_back();
+		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 0, &transform);
+		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 1, &meshData);
 
-		LP_VK_CHECK(vkAllocateDescriptorSets(device->GetHandle(), &allocInfo, &currentDescriptorSet));
+		mesh->GetVertexBuffer()->Bind(commandBuffer);
+		mesh->GetIndexBuffer()->Bind(commandBuffer);
 
-		m_rendererStorage->pipelineDescriptorSets.emplace_back(currentDescriptorSet);
-
-		//Update
-		std::vector<VkWriteDescriptorSet> writeDescriptors;
-
-		auto& textureSpecification = material->GetTextureSpecification();
-		for (const auto& spec : textureSpecification)
-		{
-			if (spec.set != 1) // TODO: should only material texture descriptors be in material?
-			{
-				continue;
-			}
-
-			Ref<Texture2D> vulkanTexture;
-
-			if (spec.texture)
-			{
-				vulkanTexture = spec.texture;
-			}
-			else
-			{
-				vulkanTexture = m_rendererDefaults->whiteTexture;
-			}
-
-			auto& imageSamplers = shaderDescriptorSet.imageSamplers;
-
-			Shader::ImageSampler* sampler = nullptr;
-
-			auto imageNameIt = imageSamplers.find(spec.binding);
-			if (imageNameIt != imageSamplers.end())
-			{
-				sampler = const_cast<Shader::ImageSampler*>(&imageNameIt->second);
-			}
-
-			if (sampler)
-			{
-				auto descriptorWrite = shaderDescriptorSet.writeDescriptorSets.at(sampler->name);
-				descriptorWrite.dstSet = currentDescriptorSet;
-				descriptorWrite.pImageInfo = &vulkanTexture->GetDescriptorInfo();
-
-				writeDescriptors.emplace_back(descriptorWrite);
-			}
-		}
-
-		vkUpdateDescriptorSets(device->GetHandle(), static_cast<uint32_t>(writeDescriptors.size()), writeDescriptors.data(), 0, nullptr);
+		vkCmdDrawIndexed(commandBuffer->GetCurrentCommandBuffer(), mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	void Renderer::AllocateDescriptorsForQuadRendering()
@@ -1061,7 +1018,7 @@ namespace Lamp
 
 	void Renderer::CreateRendererStorage()
 	{
-		m_rendererStorage = CreateScope<VulkanRendererStorage>();
+		m_rendererStorage = CreateScope<RendererStorage>();
 		m_rendererDefaults = CreateScope<RendererDefaults>();
 
 		//Setup default textures
@@ -1178,7 +1135,13 @@ namespace Lamp
 
 			BeginPass(light->shadowPipeline);
 
-			DispatchRenderCommands(*m_renderBufferPointer);
+			for (const auto& command : m_renderBufferPointer->drawCalls)
+			{
+				if (!command.material->GetSharedMaterial()->GetMaterialData().useBlending)
+				{
+					DrawMeshWithPipeline(command.transform, command.data, command.material, light->shadowPipeline, command.id);
+				}
+			}
 
 			EndPass();
 		}
@@ -1238,7 +1201,6 @@ namespace Lamp
 	{
 		m_firstRenderBuffer.drawCalls.clear();
 		m_secondRenderBuffer.drawCalls.clear();
-
 		m_finalRenderBuffer.drawCalls.clear();
 	}
 }

@@ -4,7 +4,6 @@
 #include "Lamp/Core/Application.h"
 
 #include "Lamp/Rendering/Buffers/VertexBuffer.h"
-#include "Lamp/Rendering/Buffers/VertexArray.h"
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/RenderPipeline.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"

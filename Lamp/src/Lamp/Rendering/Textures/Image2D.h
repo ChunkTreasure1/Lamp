@@ -81,6 +81,7 @@ namespace Lamp
 		bool comparable = false;
 	};
 
+	class CommandBuffer;
 	class Image2D
 	{
 	public:
@@ -90,15 +91,20 @@ namespace Lamp
 		void Invalidate(const void* data);
 		void Release();
 
-		uint32_t GetWidth() const { return m_specification.width; }
-		uint32_t GetHeight() const { return m_specification.height; }
-		float GetAspectRatio() const { return (float)m_specification.width / (float)m_specification.height; }
+		void TransitionToLayout(Ref<CommandBuffer> commandBuffer, VkImageLayout layout);
+
+		inline uint32_t GetWidth() const { return m_specification.width; }
+		inline uint32_t GetHeight() const { return m_specification.height; }
+		inline float GetAspectRatio() const { return (float)m_specification.width / (float)m_specification.height; }
 
 		inline const VkDescriptorImageInfo& GetDescriptorInfo() const { return m_descriptorInfo; }
-		inline VkImage GetHandle() const { return m_image; }
-		inline VkImageView GetImageView() const { return m_imageViews.at(0); }
+		inline const VkImage GetHandle() const { return m_image; }
+		inline const VkImageView GetImageView() const { return m_imageViews.at(0); }
+		
+		inline const VkFormat GetFormat() const { return m_format; }
+		inline const VkImageLayout GetLayout() const { return m_imageLayout; }
 
-		const ImageSpecification& GetSpecification() { return m_specification; }
+		inline const ImageSpecification& GetSpecification() { return m_specification; }
 
 		static Ref<Image2D> Create(const ImageSpecification& specification, const void* data = nullptr);
 
@@ -112,6 +118,8 @@ namespace Lamp
 		VkDescriptorImageInfo m_descriptorInfo;
 		VkImage m_image = nullptr;
 		VkSampler m_sampler = nullptr;
+		VkFormat m_format;
+		VkImageLayout m_imageLayout;
 
 		std::map<uint32_t, VkImageView> m_imageViews;
 	};

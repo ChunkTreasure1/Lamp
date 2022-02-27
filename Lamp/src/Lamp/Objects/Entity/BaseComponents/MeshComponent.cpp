@@ -3,9 +3,11 @@
 #include "MeshComponent.h"
 
 #include "Lamp/Event/ApplicationEvent.h"
+
 #include "Lamp/AssetSystem/AssetManager.h"
 #include "Lamp/AssetSystem/ResourceCache.h"
 
+#include "Lamp/Mesh/MeshInstance.h"
 #include "Lamp/Level/Level.h"
 
 namespace Lamp
@@ -45,15 +47,14 @@ namespace Lamp
 			return false;
 		}
 
-		m_mesh->Render(m_pEntity->GetID(), m_pEntity->GetTransform());
+		m_mesh->Render(m_pEntity->GetTransform(), m_pEntity->GetID());
 
 		return true;
 	}
 
 	bool MeshComponent::OnPropertyChanged(ObjectPropertyChangedEvent& e)
 	{
-		m_mesh = ResourceCache::GetAsset<Mesh>(m_path);
-
+		m_mesh = MeshInstance::Create(ResourceCache::GetAsset<Mesh>(m_path));
 		return false;
 	}
 }

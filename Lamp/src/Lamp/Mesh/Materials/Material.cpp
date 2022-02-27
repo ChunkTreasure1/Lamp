@@ -7,9 +7,9 @@
 
 namespace Lamp
 {
-	Ref<Material> Material::Create(Ref<Shader> shader, uint32_t id)
+	Ref<Material> Material::Create(const std::string& name, uint32_t index, Ref<RenderPipeline> pipeline)
 	{
-		return CreateRef<Material>(shader, id);
+		return CreateRef<Material>(name, index, pipeline);
 	}
 
 	Ref<Material> Material::Create()
@@ -22,14 +22,10 @@ namespace Lamp
 		return CreateRef<Material>(material);
 	}
 
-	Ref<Material> Material::Create(const std::string& name, uint32_t index)
+	Material::Material(const std::string& name, uint32_t index, Ref<RenderPipeline> renderPipeline)
+		: m_name(name), m_index(index), m_renderPipeline(renderPipeline), m_shader(renderPipeline->GetSpecification().shader)
 	{
-		return CreateRef<Material>(name, index);
-	}
-
-	Material::Material()
-		: m_index(0)
-	{
+		SetShader(m_shader);
 	}
 
 	Material::Material(const Ref<Material> material)
@@ -37,26 +33,10 @@ namespace Lamp
 		m_index = material->GetIndex();
 		m_name = material->GetName();
 		m_materialData = material->GetMaterialData();
+		m_renderPipeline = material->m_renderPipeline;
 
 		SetShader(material->GetShader());
 		m_textureSpecifications = material->GetTextureSpecification();
-	}
-
-	Material::Material(Ref<Shader> shader, uint32_t id)
-		: m_index(id)
-	{
-		SetShader(shader);
-	}
-
-	Material::Material(const std::string& name, Ref<Shader> shader, uint32_t id)
-		: m_name(name), m_index(id)
-	{
-		SetShader(shader);
-	}
-
-	Material::Material(const std::string& name, uint32_t index)
-		: m_index(index), m_name(name)
-	{
 	}
 
 	void Material::Bind(Ref<RenderPipeline> renderPipeline, uint32_t currentIndex)
@@ -93,6 +73,12 @@ namespace Lamp
 		LP_CORE_ASSERT(texRef.has_value(), "Texture does not exist in material!");
 
 		texRef->get().texture = texture;
+	}
+
+	void Material::SetRenderPipeline(Ref<RenderPipeline> pipeline)
+	{
+		m_renderPipeline = pipeline;
+		SetShader(pipeline->GetSpecification().shader);
 	}
 
 	void Material::SetShader(Ref<Shader> shader)

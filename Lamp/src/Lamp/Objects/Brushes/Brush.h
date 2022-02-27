@@ -8,17 +8,18 @@
 
 namespace Lamp
 {
+	class MeshInstance;
 	class Brush : public Object
 	{
 	public:
-		Brush(Ref<Mesh> model);
+		Brush(Ref<MeshInstance> model);
 		~Brush() override = default;
 
 		void OnEvent(Event& e) override;
 		void Destroy() override;
 
 		//Getting
-		inline const Ref<Mesh>& GetModel() const { return m_mesh; }
+		inline const Ref<MeshInstance>& GetMesh() const { return m_mesh; }
 
 	public:
 		static Brush* Create(const std::filesystem::path& path, bool addToLevel = true);
@@ -28,10 +29,9 @@ namespace Lamp
 
 	private:
 		bool OnRender(AppRenderEvent& e);
-		bool OnUpdate(AppUpdateEvent& e);
 
 	private:
-		Ref<Mesh> m_mesh;
-		Ref<Mesh> m_boundingMesh;
+		Ref<MeshInstance> m_mesh;
+		Ref<MeshInstance> m_boundingMesh;
 	};
 }

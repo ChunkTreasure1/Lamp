@@ -1,7 +1,7 @@
 #include "lppch.h"
 #include "SubMesh.h"
 
-#include "Lamp/Rendering/Vertex.h"
+#include "Lamp/Rendering/Buffers/VertexBuffer.h"
 
 namespace Lamp
 {
@@ -34,10 +34,10 @@ namespace Lamp
 	}
 
 	SubMesh::SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex)
-		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_MaterialIndex(matIndex)
+		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_materialIndex(matIndex)
 	{
-		m_Vertices = vertices;
-		m_Indices = indices;
+		m_vertices = vertices;
+		m_indices = indices;
 
 		SetupMesh();
 	}
@@ -127,15 +127,7 @@ namespace Lamp
 
 	void SubMesh::SetupMesh()
 	{
-		m_pVertexArray = VertexArray::Create();
-
-		Ref<VertexBuffer> pBuffer = VertexBuffer::Create(m_Vertices, sizeof(Vertex) * (uint32_t)m_Vertices.size());
-
-		m_pVertexArray->AddVertexBuffer(pBuffer);
-
-		Ref<IndexBuffer> pIndexBuffer = IndexBuffer::Create(m_Indices, (uint32_t)m_Indices.size());
-		m_pVertexArray->SetIndexBuffer(pIndexBuffer);
-
-		m_pVertexArray->Unbind();
+		m_vertexBuffer = VertexBuffer::Create(m_vertices, sizeof(Vertex) * (uint32_t)m_vertices.size());
+		m_indexBuffer = IndexBuffer::Create(m_indices, (uint32_t)m_indices.size());
 	}
 }

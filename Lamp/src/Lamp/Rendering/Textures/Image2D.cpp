@@ -62,7 +62,7 @@ namespace Lamp
 			aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 		}
 
-		VkFormat format = Utility::LampFormatToVulkanFormat(m_specification.format);
+		m_format = Utility::LampFormatToVulkanFormat(m_specification.format);
 
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -75,14 +75,14 @@ namespace Lamp
 		imageInfo.arrayLayers = m_specification.layers;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageInfo.format = format;
+		imageInfo.format = m_format;
 
 		m_allocation = allocator.AllocateImage(imageInfo, VMA_MEMORY_USAGE_GPU_ONLY, m_image);
 
 		VkImageViewCreateInfo imageViewCreateInfo{};
 		imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		imageViewCreateInfo.viewType = m_specification.layers > 1 ? VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_2D;
-		imageViewCreateInfo.format = format;
+		imageViewCreateInfo.format = m_format;
 		imageViewCreateInfo.flags = 0;
 		imageViewCreateInfo.subresourceRange = {};
 		imageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
@@ -141,6 +141,15 @@ namespace Lamp
 		m_allocation = nullptr;
 	}
 
+	void Image2D::TransitionToLayout(Ref<CommandBuffer> commandBuffer, VkImageLayout layout)
+	{
+		VkImageAspectFlags flag = Utils::IsDepthFormat(m_specification.format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+
+		VkImageSubresourceRange subRange{ flag, 0, 1, 0, 1 };
+		Utility::TransitionImageLayout(commandBuffer->GetCurrentCommandBuffer(), m_image, m_imageLayout, layout, subRange);
+		m_imageLayout = layout;
+	}
+
 	void Image2D::UpdateDescriptor()
 	{
 		if (m_specification.format == ImageFormat::DEPTH24STENCIL8 || m_specification.format == ImageFormat::DEPTH32F)
@@ -158,5 +167,7 @@ namespace Lamp
 
 		m_descriptorInfo.imageView = m_imageViews[0];
 		m_descriptorInfo.sampler = m_sampler;
+
+		m_imageLayout = m_descriptorInfo.imageLayout;
 	}
 }

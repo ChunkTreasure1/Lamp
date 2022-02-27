@@ -13,6 +13,7 @@
 #include "Lamp/Rendering/Shader/ShaderLibrary.h"
 #include "Lamp/Rendering/Textures/Texture2D.h"
 #include "Lamp/Rendering/Renderer.h"	
+#include "Lamp/Rendering/RenderPipelineLibrary.h"	
 
 #include <yaml-cpp/yaml.h>
 
@@ -222,6 +223,7 @@ namespace Lamp
 			out << YAML::EndMap;
 
 			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
+			LP_SERIALIZE_PROPERTY(renderPipeline, (uint32_t)RenderPipelineLibrary::Get().GetTypeFromPipeline(mat->GetPipeline()), out);
 
 			const auto& matData = mat->GetMaterialData();
 			LP_SERIALIZE_PROPERTY(useBlending, matData.useBlending, out);
@@ -273,7 +275,7 @@ namespace Lamp
 
 		mat->SetName(materialNode["name"].as<std::string>());
 		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, materialNode, AssetHandle(0));
-		mat->SetShader(ShaderLibrary::GetShader(materialNode["shader"].as<std::string>()));
+		mat->SetRenderPipeline(RenderPipelineLibrary::Get().GetPipeline(materialNode["renderPipeline"] ? (ERenderPipeline)materialNode["renderPipeline"].as<uint32_t>() : ERenderPipeline::Deferred));
 
 		YAML::Node textureNode = materialNode["textures"];
 

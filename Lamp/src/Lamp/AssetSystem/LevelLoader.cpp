@@ -16,6 +16,8 @@
 #include "Lamp/GraphKey/GraphKeyGraph.h"
 #include "Lamp/GraphKey/NodeRegistry.h"
 
+#include "Lamp/Mesh/MeshInstance.h"
+
 //These components needs to be exclusively registered
 #include "Lamp/Objects/Entity/BaseComponents/DirectionalLightComponent.h"
 #include "Lamp/Objects/Entity/BaseComponents/PointLightComponent.h"
@@ -444,7 +446,7 @@ namespace Lamp
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "brush" << YAML::Value << pBrush->GetName();
-		out << YAML::Key << "meshHandle" << YAML::Value << pBrush->GetModel()->Handle;
+		out << YAML::Key << "meshHandle" << YAML::Value << pBrush->GetMesh()->GetSharedMesh()->Handle;
 		out << YAML::Key << "position" << YAML::Value << pBrush->GetPosition();
 		out << YAML::Key << "rotation" << YAML::Value << pBrush->GetRotation();
 		out << YAML::Key << "scale" << YAML::Value << pBrush->GetScale();
