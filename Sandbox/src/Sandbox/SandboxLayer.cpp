@@ -45,7 +45,7 @@ namespace Sandbox
 		m_pWindows.emplace_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
 		m_pWindows.emplace_back(new EnvironmentEditorPanel("Environment Panel"));
 		m_pWindows.emplace_back(new AssetBrowserPanel());
-		m_pWindows.emplace_back(new CreatePanel(m_pSelectedObject));
+		m_pWindows.emplace_back(new CreatePanel(&m_pSelectedObject));
 		m_pWindows.emplace_back(new TerrainEditorPanel("Terrain Editor"));
 		m_pWindows.emplace_back(new RenderGraphPanel("Render Graph"));
 

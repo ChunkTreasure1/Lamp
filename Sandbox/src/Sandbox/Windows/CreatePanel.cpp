@@ -12,7 +12,7 @@ namespace Sandbox
 	using namespace Lamp;
 	static const std::filesystem::path s_assetsPath = "assets";
 
-	CreatePanel::CreatePanel(Lamp::Object* selectedObject)
+	CreatePanel::CreatePanel(Lamp::Object** selectedObject)
 		: EditorWindow("Create"), m_pSelectedObject(selectedObject)
 	{
 		m_backTexture = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/backIcon.png");
@@ -61,9 +61,19 @@ namespace Sandbox
 
 				if (ImGui::Button("Entity", { ImGui::GetContentRegionAvail().x, buttonHeight }))
 				{
-					m_pSelectedObject = Lamp::Entity::Create();
-					m_pSelectedObject->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-					static_cast<Lamp::Entity*>(m_pSelectedObject)->SetSaveable(true);
+					Object* obj = *(m_pSelectedObject);
+
+					if (obj)
+					{
+						obj->SetIsSelected(false);
+					}
+
+					(*m_pSelectedObject) = Lamp::Entity::Create();
+					obj = *(m_pSelectedObject);
+					obj->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+					obj->SetIsSelected(true);
+
+					static_cast<Lamp::Entity*>(obj)->SetSaveable(true);
 				}
 
 				ImGui::TableNextColumn();
@@ -259,6 +269,13 @@ namespace Sandbox
 			queries.emplace_back(split);
 		}
 
+		//Make queries lower case
+		for (auto& query : queries)
+		{
+			std::transform(query.begin(), query.end(), query.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+		}
+
 		m_searchAssets.clear();
 		for (const auto& query : queries)
 		{
@@ -278,7 +295,7 @@ namespace Sandbox
 						return std::tolower(c);
 					});
 
-				if (asset.path.stem().string().find(query) != std::string::npos)
+				if (assetStem.find(query) != std::string::npos)
 				{
 					m_searchAssets.emplace_back(asset);
 				}

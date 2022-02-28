@@ -534,16 +534,24 @@ namespace Sandbox
 			{
 				switch (prop.propertyType)
 				{
-					case Lamp::PropertyType::Int: propertyChanged = UI::Property(prop.name, *static_cast<int*>(prop.value)); break;
-					case Lamp::PropertyType::Bool: propertyChanged = UI::Property(prop.name, *static_cast<bool*>(prop.value)); break;
-					case Lamp::PropertyType::Float: propertyChanged = UI::Property(prop.name, *static_cast<float*>(prop.value)); break;
-					case Lamp::PropertyType::Float2: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec2*>(prop.value)); break;
-					case Lamp::PropertyType::Float3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
-					case Lamp::PropertyType::Float4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
-					case Lamp::PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
-					case Lamp::PropertyType::Path: propertyChanged = UI::Property(prop.name, std::filesystem::path(*static_cast<std::string*>(prop.value))); break;
-					case Lamp::PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
-					case Lamp::PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case PropertyType::Int: propertyChanged = UI::Property(prop.name, *static_cast<int*>(prop.value)); break;
+					case PropertyType::Bool: propertyChanged = UI::Property(prop.name, *static_cast<bool*>(prop.value)); break;
+					case PropertyType::Float: propertyChanged = UI::Property(prop.name, *static_cast<float*>(prop.value)); break;
+					case PropertyType::Float2: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec2*>(prop.value)); break;
+					case PropertyType::Float3: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
+					case PropertyType::Float4: propertyChanged = UI::Property(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
+					case PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
+					case PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
+					case PropertyType::Path: 
+					{
+						std::filesystem::path path = std::filesystem::path(*static_cast<std::string*>(prop.value));
+
+						propertyChanged = UI::Property(prop.name, path);
+
+						*static_cast<std::string*>(prop.value) = path.string();
+						break;
+					}
 				}
 			}
 
@@ -658,7 +666,7 @@ namespace Sandbox
 
 		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
-		if (ImGui::ImageButton(UI::GetTextureID(playIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (UI::ImageButton("##play", UI::GetTextureID(playIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 			{
@@ -674,9 +682,7 @@ namespace Sandbox
 
 		ImGui::SameLine();
 
-		static Lamp::Texture2D* physicsId = physicsIcon.get();
-
-		if (ImGui::ImageButtonAnimated(UI::GetTextureID(physicsId), UI::GetTextureID(physicsIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (UI::ImageButton("##physicsPlay", UI::GetTextureID(physicsIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 			{
@@ -700,7 +706,6 @@ namespace Sandbox
 		if (UI::TreeNodeFramed("Application"))
 		{
 			ImGui::Text("Application time: %f ms", Application::Get().GetMainFrameTime().GetFrameTime() * 1000);
-
 			ImGui::Text("Frames per second: %f FPS", Application::Get().GetMainFrameTime().GetFramesPerSecond());
 
 			UI::TreeNodePop();

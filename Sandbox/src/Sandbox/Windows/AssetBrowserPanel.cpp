@@ -79,7 +79,7 @@ namespace Sandbox
 		const float controlsBarHeight = 30.f;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.f);
-		RenderControlsBar(controlsBarHeight);
+		DrawControlsBar(controlsBarHeight);
 		ImGui::PopStyleVar();
 
 		if (ImGui::BeginTable("assetBrowserMain", 2, mainFlags))
@@ -118,7 +118,6 @@ namespace Sandbox
 
 			ImGui::BeginChild("##view", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetWindowHeight() - controlsBarHeight));
 			{
-
 				ImGui::BeginChild("Scrolling");
 				{
 					static float padding = 16.f;
@@ -199,7 +198,7 @@ namespace Sandbox
 		return dirData;
 	}
 
-	void AssetBrowserPanel::RenderControlsBar(float height)
+	void AssetBrowserPanel::DrawControlsBar(float height)
 	{
 		UI::ScopedColor childColor(ImGuiCol_ChildBg, { 0.2f, 0.2f, 0.2f, 1.f });
 

@@ -45,7 +45,7 @@ namespace Sandbox
 
 		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
 		
-		void RenderControlsBar(float height);
+		void DrawControlsBar(float height);
 		void RenderDirectory(const Ref<DirectoryData> dirData);
 		void Reload();
 		

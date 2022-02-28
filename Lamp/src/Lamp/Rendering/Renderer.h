@@ -148,7 +148,6 @@ namespace Lamp
 		void PrepareForRender();
 		void FrustumCull();
 		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& renderBuffer);
-		void SortRenderBufferByMaterial(RenderBuffer& renderBuffer);
 		void DrawDirectionalShadow();
 
 		void GenerateSSDOKernel();

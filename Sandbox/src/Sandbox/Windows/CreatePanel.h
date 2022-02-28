@@ -17,7 +17,7 @@ namespace Sandbox
 	class CreatePanel : public EditorWindow
 	{
 	public:
-		CreatePanel(Lamp::Object* selectedObject);
+		CreatePanel(Lamp::Object** selectedObject);
 		~CreatePanel() override = default;
 
 		void OnEvent(Lamp::Event& e) override;
@@ -34,7 +34,7 @@ namespace Sandbox
 		bool m_isOpen = true;
 		bool m_hasSearchQuery = false;
 
-		Lamp::Object* m_pSelectedObject;
+		Lamp::Object** m_pSelectedObject;
 		std::string m_searchQuery;
 
 		Ref<Lamp::Texture2D> m_backTexture;
