@@ -241,14 +241,15 @@ namespace Sandbox
 			{
 				UI::ScopedColor buttonBackground(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 
-				if (ImGui::ImageButton(UI::GetTextureID(m_reloadTexture), { height - buttonSizeOffset, height - buttonSizeOffset }))
+
+				if (UI::ImageButton("##reloadButton", UI::GetTextureID(m_reloadTexture), {height - buttonSizeOffset, height - buttonSizeOffset}))
 				{
 					Reload();
 				}
 
 				ImGui::SameLine();
 
-				if (ImGui::ImageButton(UI::GetTextureID(m_backTexture), { height - buttonSizeOffset, height - buttonSizeOffset }))
+				if (UI::ImageButton("##backButton", UI::GetTextureID(m_backTexture), {height - buttonSizeOffset, height - buttonSizeOffset}))
 				{
 					if (m_pCurrentDirectory->path != std::filesystem::path(s_assetsPath))
 					{

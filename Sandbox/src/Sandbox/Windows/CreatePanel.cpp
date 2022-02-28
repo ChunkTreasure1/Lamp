@@ -79,7 +79,8 @@ namespace Sandbox
 		else
 		{
 			const float buttonSize = 20.f;
-			if (ImGui::ImageButton(UI::GetTextureID(m_backTexture), { buttonSize, buttonSize }))
+
+			if (UI::ImageButton("##backButton", UI::GetTextureID(m_backTexture), {buttonSize, buttonSize}))
 			{
 				brushListOpen = false;
 				m_hasSearchQuery = false;
@@ -87,7 +88,7 @@ namespace Sandbox
 
 			ImGui::SameLine();
 
-			if (ImGui::ImageButton(UI::GetTextureID(m_reloadTexture), { buttonSize, buttonSize }))
+			if (UI::ImageButton("##reloadButton", UI::GetTextureID(m_reloadTexture), {buttonSize, buttonSize}))
 			{
 				m_hasSearchQuery = false;
 				Reload();

@@ -392,21 +392,18 @@ namespace UI
 		return data;
 	}
 
-	static bool ImageButton(uint32_t id, const glm::vec2& size = { 64, 64 })
+	static bool ImageButton(const std::string& id, ImTextureID textureId, const ImVec2& size, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1), int frame_padding = -1, const ImVec4& bg_col = ImVec4(0, 0, 0, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1))
 	{
-		return ImGui::ImageButton((ImTextureID)id, ImVec2{ size.x, size.y }, { 0, 1 }, { 1, 0 });
-	}
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = g.CurrentWindow;
+		if (window->SkipItems)
+			return false;
 
-	static bool ImageButton(uint32_t id, std::filesystem::path& path, const char* filter = "All (*.*)\0*.*\0", const glm::vec2& size = { 64, 64 })
-	{
-		bool changed = false;
-		if (ImGui::ImageButton((ImTextureID)id, ImVec2{ size.x, size.y }, { 0, 1 }, { 1, 0 }))
-		{
-			path = Lamp::FileDialogs::OpenFile(filter);
-			changed = true;
-		}
+		const ImGuiID imId = window->GetID(id.c_str());
 
-		return changed;
+		// Default to using texture ID as ID. User can still push string/integer prefixes.
+		const ImVec2 padding = (frame_padding >= 0) ? ImVec2((float)frame_padding, (float)frame_padding) : g.Style.FramePadding;
+		return ImGui::ImageButtonEx(imId, textureId, size, uv0, uv1, padding, bg_col, tint_col);
 	}
 
 	static bool Property(const std::string& text, int& value, bool useMinMax = false, int min = 0, int max = 0)

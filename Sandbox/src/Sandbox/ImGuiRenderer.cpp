@@ -126,7 +126,7 @@ namespace Sandbox
 				nullptr, snap ? snapValues : nullptr);
 
 			static bool hasDuplicated = false;
-			
+
 			static bool isUsing = false;
 			static bool lastUsed = false;
 
@@ -204,8 +204,11 @@ namespace Sandbox
 		{
 			return;
 		}
+
 		ImGui::Begin("Properties", &m_inspectorOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration);
 		{
+			UI::ScopedColor buttonColor(ImGuiCol_Button, { 0.313f, 0.313f, 0.313f, 1.f });
+			UI::ScopedStyleFloat buttonRounding(ImGuiStyleVar_FrameRounding, 2.f);
 
 			ImGuiIO& io = ImGui::GetIO();
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
@@ -297,6 +300,7 @@ namespace Sandbox
 				}
 
 				std::string graphButtonString = pEnt->GetGraphKeyGraph() ? "Open Graph" : "Create Graph";
+
 				if (ImGui::Button(graphButtonString.c_str()))
 				{
 					if (!pEnt->GetGraphKeyGraph())

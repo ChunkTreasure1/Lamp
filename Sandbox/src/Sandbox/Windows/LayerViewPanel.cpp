@@ -157,14 +157,17 @@ namespace Sandbox
 
 							Ref<Texture2D> visibleIcon = obj->GetIsActive() ? m_visibleIconV : m_visibleIconN;
 
-							if (ImGui::ImageButton(UI::GetTextureID(visibleIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+							std::string visId = "##visible" + std::to_string(obj->GetID());
+							if (UI::ImageButton(visId, UI::GetTextureID(visibleIcon), {imageSize, imageSize}, {0.f, 1.f}, {1.f, 0.f}, 0))
 							{
 								obj->SetIsActive(!obj->GetIsActive());
 							}
 							ImGui::SameLine();
 
 							Ref<Texture2D> lockedIcon = obj->GetIsFrozen() ? m_lockedIcon : m_unlockedIcon;
-							if (ImGui::ImageButton(UI::GetTextureID(lockedIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+
+							std::string lockId = "##locked" + std::to_string(obj->GetID());
+							if (UI::ImageButton(lockId, UI::GetTextureID(lockedIcon), { imageSize, imageSize }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 							{
 								obj->SetIsFrozen(!obj->GetIsFrozen());
 							}
