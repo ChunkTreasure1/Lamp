@@ -31,8 +31,6 @@ namespace Sandbox
 		g_pEnv->isEditor = true;
 		m_iconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_iconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
-		m_iconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/iceland_heightmap.png");
-		ResourceCache::GetAsset<Texture2D>("engine/textures/default/defaultTexture.png");
 		//ResourceCache::GetAsset<Texture2D>("assets/textures/TeddyTextures/teddy_albedo.ktx2");
 
 		LevelManager::Get()->Load("assets/levels/testLevel/data.level");
@@ -77,7 +75,7 @@ namespace Sandbox
 
 			auto level = LevelManager::GetActive();
 
-			switch (m_SceneState)
+			switch (m_sceneState)
 			{
 				case SceneState::Edit:
 				{
@@ -128,7 +126,7 @@ namespace Sandbox
 
 	void SandboxLayer::OnEvent(Event& e)
 	{
-		if (m_SceneState == SceneState::Play && m_pGame)
+		if (m_sceneState == SceneState::Play && m_pGame)
 		{
 			m_pGame->OnEvent(e);
 		}
@@ -162,7 +160,7 @@ namespace Sandbox
 		{
 			auto level = LevelManager::GetActive();
 
-			switch (m_SceneState)
+			switch (m_sceneState)
 			{
 				case SceneState::Edit:
 				{
@@ -268,11 +266,11 @@ namespace Sandbox
 				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
 				if (control)
 				{
-					if (m_SceneState == SceneState::Edit)
+					if (m_sceneState == SceneState::Edit)
 					{
 						OnLevelPlay();
 					}
-					else if (m_SceneState == SceneState::Play)
+					else if (m_sceneState == SceneState::Play)
 					{
 						OnLevelStop();
 					}
@@ -345,7 +343,7 @@ namespace Sandbox
 
 	void SandboxLayer::OnLevelPlay()
 	{
-		m_SceneState = SceneState::Play;
+		m_sceneState = SceneState::Play;
 		m_pSelectedObject = nullptr;
 
 		m_editLevel = LevelManager::GetActive();
@@ -361,7 +359,7 @@ namespace Sandbox
 
 	void SandboxLayer::OnLevelStop()
 	{
-		m_SceneState = SceneState::Edit;
+		m_sceneState = SceneState::Edit;
 		m_pSelectedObject = nullptr;
 
 		m_runtimeLevel->OnRuntimeEnd();
@@ -375,7 +373,7 @@ namespace Sandbox
 
 	void SandboxLayer::OnSimulationStart()
 	{
-		m_SceneState = SceneState::Simulating;
+		m_sceneState = SceneState::Simulating;
 		m_pSelectedObject = nullptr;
 
 		m_editLevel = LevelManager::GetActive();
@@ -388,7 +386,7 @@ namespace Sandbox
 
 	void SandboxLayer::OnSimulationStop()
 	{
-		m_SceneState = SceneState::Edit;
+		m_sceneState = SceneState::Edit;
 		m_pSelectedObject = nullptr;
 
 		m_runtimeLevel->OnSimulationEnd();

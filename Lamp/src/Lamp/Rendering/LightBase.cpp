@@ -34,6 +34,7 @@ namespace Lamp
 		pipelineSpec.cullMode = CullMode::Front;
 		pipelineSpec.topology = Topology::TriangleList;
 		pipelineSpec.drawType = DrawType::Opaque;
+		pipelineSpec.debugName = "Directional Shadow";
 		pipelineSpec.uniformBufferSets = uniformBufferSet;
 		pipelineSpec.vertexLayout =
 		{

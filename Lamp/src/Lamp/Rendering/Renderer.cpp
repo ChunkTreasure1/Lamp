@@ -168,7 +168,7 @@ namespace Lamp
 		vkCmdBeginRendering(commandBuffer->GetCurrentCommandBuffer(), &renderingInfo);
 
 		pipeline->Bind(commandBuffer);
-
+		
 		AllocatePerPassDescriptors();
 		pipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
 	}
@@ -225,7 +225,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		material->Bind(commandBuffer, false);
+		material->Bind(commandBuffer, nullptr);
 
 		const auto& matData = material->GetSharedMaterial()->GetMaterialData();
 
@@ -377,7 +377,9 @@ namespace Lamp
 
 	void Renderer::DispatchRenderCommands()
 	{
-		DispatchRenderCommands(m_finalRenderBuffer);
+		auto currentRenderPipeline = m_rendererStorage->currentRenderPipeline->GetSpecification().pipelineType;
+
+		DispatchRenderCommands(m_renderBufferMap[currentRenderPipeline]);
 	}
 
 	VkDescriptorSet Renderer::AllocateDescriptorSet(VkDescriptorSetAllocateInfo& allocInfo)
@@ -672,8 +674,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 		auto commandBuffer = m_rendererStorage->currentRenderPipeline->GetSpecification().isSwapchain ? m_rendererStorage->swapchainCommandBuffer : m_rendererStorage->renderCommandBuffer;
 
-		pipeline->Bind(commandBuffer);
-		material->Bind(commandBuffer, false);
+		material->Bind(commandBuffer, pipeline);
 
 		const auto& matData = material->GetSharedMaterial()->GetMaterialData();
 
@@ -966,7 +967,6 @@ namespace Lamp
 	{
 		m_firstRenderBuffer.drawCalls.reserve(500);
 		m_secondRenderBuffer.drawCalls.reserve(500);
-
 		m_finalRenderBuffer.drawCalls.reserve(500);
 	}
 
@@ -1095,7 +1095,7 @@ namespace Lamp
 		DrawDirectionalShadow();
 
 		FrustumCull();
-		SortRenderBuffer(m_rendererStorage->camera->GetPosition(), m_finalRenderBuffer);
+		DivideRenderBufferByPipeline(m_finalRenderBuffer);
 	}
 
 	void Renderer::SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& buffer)
@@ -1110,6 +1110,18 @@ namespace Lamp
 
 				return distOne < distTwo;
 			});
+	}
+
+	void Renderer::DivideRenderBufferByPipeline(RenderBuffer& renderBuffer)
+	{
+		LP_PROFILE_FUNCTION();
+
+		m_renderBufferMap.clear();
+
+		for (auto& draw : renderBuffer.drawCalls)
+		{
+			m_renderBufferMap[draw.material->GetSharedMaterial()->GetPipeline()->GetSpecification().pipelineType].drawCalls.emplace_back(draw);
+		}
 	}
 
 	void Renderer::DrawDirectionalShadow()
@@ -1133,6 +1145,7 @@ namespace Lamp
 			auto ub = light->shadowPipeline->GetSpecification().uniformBufferSets->Get(0, 0, currentFrame);
 			ub->SetData(&light->viewProjection, sizeof(glm::mat4));
 
+			light->shadowPipeline->Bind(m_rendererStorage->renderCommandBuffer);
 			BeginPass(light->shadowPipeline);
 
 			for (const auto& command : m_renderBufferPointer->drawCalls)

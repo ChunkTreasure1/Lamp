@@ -164,39 +164,6 @@ namespace Lamp
 		Invalidate();
 	}
 
-	void RenderPipeline::SetTexture(Ref<Texture2D> texture, uint32_t binding, uint32_t set, uint32_t index)
-	{
-		auto shader = m_specification.shader;
-
-		LP_CORE_ASSERT(index < m_descriptorSets.size(), "Index must be less than the descriptor set map size!");
-
-		auto& shaderDescriptorSets = shader->GetDescriptorSets();
-		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
-		auto descriptorWrite = shaderDescriptorSets[set].writeDescriptorSets.at(imageSamplers.at(binding).name);
-		descriptorWrite.dstSet = m_descriptorSets[index][set];
-		descriptorWrite.pImageInfo = &texture->GetDescriptorInfo();
-
-		auto device = VulkanContext::GetCurrentDevice();
-		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
-	}
-
-	void RenderPipeline::SetTexture(Ref<Image2D> image, uint32_t set, uint32_t binding, uint32_t index)
-	{
-		auto shader = m_specification.shader;
-		auto vulkanImage = std::reinterpret_pointer_cast<Image2D>(image);
-
-		//TODO: transition to right layout
-
-		auto& shaderDescriptorSets = shader->GetDescriptorSets();
-		auto& imageSamplers = shaderDescriptorSets[set].imageSamplers;
-		auto descriptorWrite = shaderDescriptorSets[set].writeDescriptorSets.at(imageSamplers.at(binding).name);
-		descriptorWrite.dstSet = m_descriptorSets[index][set];
-		descriptorWrite.pImageInfo = &vulkanImage->GetDescriptorInfo();
-
-		auto device = VulkanContext::GetCurrentDevice();
-		vkUpdateDescriptorSets(device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
-	}
-
 	void RenderPipeline::SetPushConstantData(Ref<CommandBuffer> commandBuffer, uint32_t index, const void* data)
 	{
 		auto shader = m_specification.shader;

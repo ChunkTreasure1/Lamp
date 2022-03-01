@@ -3,6 +3,7 @@
 
 #include "Lamp/Rendering/Vertex.h"
 #include "Lamp/Rendering/RenderPipelineLibrary.h"
+#include "Lamp/Rendering/RenderPipeline.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

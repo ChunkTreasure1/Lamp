@@ -99,7 +99,7 @@ namespace Sandbox
 		static glm::mat4 transform = glm::mat4(1.f);
 		static glm::mat4 startTransform = glm::mat4(1.f);
 
-		if (m_pSelectedObject && m_SceneState != SceneState::Play)
+		if (m_pSelectedObject && m_sceneState != SceneState::Play)
 		{
 			transform = m_pSelectedObject->GetTransform();
 
@@ -659,7 +659,7 @@ namespace Sandbox
 
 		float size = ImGui::GetWindowHeight() - 4.f;
 		Ref<Lamp::Texture2D> playIcon = m_iconPlay;
-		if (m_SceneState == SceneState::Play)
+		if (m_sceneState == SceneState::Play)
 		{
 			playIcon = m_iconStop;
 		}
@@ -668,11 +668,11 @@ namespace Sandbox
 
 		if (UI::ImageButton("##play", UI::GetTextureID(playIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
-			if (m_SceneState == SceneState::Edit)
+			if (m_sceneState == SceneState::Edit)
 			{
 				OnLevelPlay();
 			}
-			else if (m_SceneState == SceneState::Play)
+			else if (m_sceneState == SceneState::Play)
 			{
 				OnLevelStop();
 			}
@@ -684,12 +684,12 @@ namespace Sandbox
 
 		if (UI::ImageButton("##physicsPlay", UI::GetTextureID(physicsIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
-			if (m_SceneState == SceneState::Edit)
+			if (m_sceneState == SceneState::Edit)
 			{
 				OnSimulationStart();
 				m_physicsIcon.Play();
 			}
-			else if (m_SceneState == SceneState::Simulating)
+			else if (m_sceneState == SceneState::Simulating)
 			{
 				OnSimulationStop();
 				m_physicsIcon.Stop();
@@ -891,11 +891,11 @@ namespace Sandbox
 			{
 				if (ImGui::MenuItem("Play", "Ctrl + G"))
 				{
-					if (m_SceneState == SceneState::Edit)
+					if (m_sceneState == SceneState::Edit)
 					{
 						OnLevelPlay();
 					}
-					else if (m_SceneState == SceneState::Play)
+					else if (m_sceneState == SceneState::Play)
 					{
 						OnLevelStop();
 					}

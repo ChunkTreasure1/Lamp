@@ -16,12 +16,9 @@ namespace Lamp
 		: m_sharedMaterial(sharedMaterial)
 	{}
 
-	void MaterialInstance::Bind(Ref<CommandBuffer> commandBuffer, bool bindPipeline)
+	void MaterialInstance::Bind(Ref<CommandBuffer> commandBuffer, Ref<RenderPipeline> pipeline)
 	{
-		if (bindPipeline)
-		{
-			m_sharedMaterial->GetPipeline()->Bind(commandBuffer); //TODO: should only be called on first material. Probably in renderer?
-		}
+		LP_PROFILE_FUNCTION();
 
 		std::vector<VkDescriptorSet> descriptors;
 		AllocateDescriptorSets(descriptors);
@@ -29,7 +26,15 @@ namespace Lamp
 		if (!descriptors.empty())
 		{
 			WriteToDescriptors(descriptors);
-			m_sharedMaterial->GetPipeline()->BindDescriptorSets(commandBuffer, descriptors, 1);
+
+			if (pipeline && pipeline->GetSpecification().shader->GetDescriptorSetLayoutCount() > 1)
+			{
+				pipeline->BindDescriptorSets(commandBuffer, descriptors, 1);
+			}
+			else if (!pipeline)
+			{
+				m_sharedMaterial->GetPipeline()->BindDescriptorSets(commandBuffer, descriptors, 1);
+			}
 		}
 	}
 

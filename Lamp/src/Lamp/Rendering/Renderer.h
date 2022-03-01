@@ -2,15 +2,16 @@
 
 #include "Lamp/Rendering/RendererDataStructures.h"
 #include "Lamp/Rendering/Buffers/RenderBuffer.h"
+#include "Lamp/Rendering/RenderPipeline.h"
 
 #include "Platform/Vulkan/VulkanAllocator.h"
 
 #include <vulkan/vulkan_core.h>
 #include <atomic>
+#include <map>
 
 namespace Lamp
 {
-	class RenderPipeline;
 	class Shader;
 	class CommandBuffer;
 	class UniformBufferSet;
@@ -147,7 +148,10 @@ namespace Lamp
 
 		void PrepareForRender();
 		void FrustumCull();
+
 		void SortRenderBuffer(const glm::vec3& sortPoint, RenderBuffer& renderBuffer);
+		void DivideRenderBufferByPipeline(RenderBuffer& renderBuffer);
+
 		void DrawDirectionalShadow();
 
 		void GenerateSSDOKernel();
@@ -169,6 +173,8 @@ namespace Lamp
 		RenderBuffer m_firstRenderBuffer;
 		RenderBuffer m_secondRenderBuffer;
 		RenderBuffer m_finalRenderBuffer;
+
+		std::map<ERenderPipeline, RenderBuffer> m_renderBufferMap;
 
 		RenderBuffer* m_submitBufferPointer = &m_firstRenderBuffer;
 		RenderBuffer* m_renderBufferPointer = &m_secondRenderBuffer;

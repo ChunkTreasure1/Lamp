@@ -14,7 +14,7 @@ namespace Lamp
 		MaterialInstance(Ref<Material> sharedMaterial);
 		~MaterialInstance() = default;
 
-		void Bind(Ref<CommandBuffer> commandBuffer, bool bindPipeline = true);
+		void Bind(Ref<CommandBuffer> commandBuffer, Ref<RenderPipeline> pipeline);
 
 		inline Ref<Material> GetSharedMaterial() const { return m_sharedMaterial; }
 		static Ref<MaterialInstance> Create(Ref<Material> material);

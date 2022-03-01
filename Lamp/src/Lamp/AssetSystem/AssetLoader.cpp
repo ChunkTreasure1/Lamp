@@ -14,6 +14,7 @@
 #include "Lamp/Rendering/Textures/Texture2D.h"
 #include "Lamp/Rendering/Renderer.h"	
 #include "Lamp/Rendering/RenderPipelineLibrary.h"	
+#include "Lamp/Rendering/RenderPipeline.h"	
 
 #include <yaml-cpp/yaml.h>
 

@@ -39,21 +39,6 @@ namespace Lamp
 		m_textureSpecifications = material->GetTextureSpecification();
 	}
 
-	void Material::Bind(Ref<RenderPipeline> renderPipeline, uint32_t currentIndex)
-	{
-		for (const auto& spec : m_textureSpecifications)
-		{
-			if (spec.texture)
-			{
-				renderPipeline->SetTexture(spec.texture, spec.binding, spec.set, currentIndex);
-			}
-			else
-			{
-				LP_CORE_ERROR("Vulkan Material: No texture bound to {0}!", spec.name);
-			}
-		}
-	}
-
 	void Material::SetTextures(const std::unordered_map<std::string, Ref<Texture2D>>& textures)
 	{
 		for (const auto& [name, texture] : textures)

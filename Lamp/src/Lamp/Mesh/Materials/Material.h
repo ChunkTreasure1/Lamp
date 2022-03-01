@@ -51,8 +51,6 @@ namespace Lamp
 		Material() = default;
 		~Material() = default;
 
-		void Bind(Ref<RenderPipeline> renderPipeline, uint32_t currentIndex);
-
 		void SetTextures(const std::unordered_map<std::string, Ref<Texture2D>>&textures);
 		void SetTexture(const std::string & name, Ref<Texture2D> texture);
 		void SetRenderPipeline(Ref<RenderPipeline> pipeline);

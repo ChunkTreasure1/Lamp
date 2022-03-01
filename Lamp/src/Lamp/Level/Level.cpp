@@ -37,6 +37,12 @@ namespace Lamp
 
 	Level::Level(const Level& level)
 	{
+		m_environment = level.m_environment;
+		m_name = level.m_name;
+
+		m_environment.m_directionalLights.clear();
+		m_environment.m_pointLights.clear();
+
 		for (auto& brush : level.m_brushes)
 		{
 			m_brushes.emplace(std::make_pair(brush.first, Brush::Duplicate(brush.second, false)));
@@ -95,9 +101,6 @@ namespace Lamp
 				}
 			}
 		}
-
-		m_environment = level.m_environment;
-		m_name = level.m_name;
 
 		SetupRenderPasses();
 	}

@@ -57,6 +57,8 @@ namespace Lamp
 		inline const TerrainData& GetTerrain() const { return m_terrainData; }
 
 	private:
+		friend class Level;
+
 		//Editor
 		glm::vec3 m_cameraPosition{ 0.f, 0.f, 0.f };
 		glm::quat m_cameraRotation{ 0.f, 0.f, 0.f, 0.f };

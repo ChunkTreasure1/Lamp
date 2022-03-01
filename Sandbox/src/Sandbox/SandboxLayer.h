@@ -145,7 +145,7 @@ namespace Sandbox
 			Simulating = 2
 		};
 
-		SceneState m_SceneState = SceneState::Edit;
+		SceneState m_sceneState = SceneState::Edit;
 		//--------------------------------------
 	};
 }

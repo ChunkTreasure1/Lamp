@@ -1,18 +1,12 @@
 #pragma once
 
 #include "Lamp/Core/Core.h"
+#include "Lamp/Rendering/RenderPipeline.h"
 
 #include <unordered_map>
 
 namespace Lamp
 {
-	enum class ERenderPipeline : uint32_t
-	{
-		Deferred = 0,
-		None
-	};
-
-	class RenderPipeline;
 	class RenderPipelineLibrary
 	{
 	public:

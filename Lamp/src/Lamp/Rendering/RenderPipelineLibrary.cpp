@@ -66,6 +66,7 @@ namespace Lamp
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.debugName = "GBuffer";
+			pipelineSpec.pipelineType = ERenderPipeline::Deferred;
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
