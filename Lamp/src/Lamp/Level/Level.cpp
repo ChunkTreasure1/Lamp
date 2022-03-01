@@ -248,8 +248,8 @@ namespace Lamp
 
 	void Level::MoveObjectToLayer(uint32_t currLayer, uint32_t newLayer, uint32_t objId)
 	{
-		ObjectLayer* currObjLayer;
-		ObjectLayer* newObjLayer;
+		ObjectLayer* currObjLayer = nullptr;
+		ObjectLayer* newObjLayer = nullptr;
 
 		for (auto& layer : m_layers)
 		{
@@ -264,7 +264,7 @@ namespace Lamp
 			}
 		}
 
-		Object* obj;
+		Object* obj = nullptr;
 		for (auto& objects : currObjLayer->Objects)
 		{
 			if (objects->GetID() == objId)
@@ -320,168 +320,88 @@ namespace Lamp
 			m_geometryFramebuffer = pass.graphicsPipeline->GetSpecification().framebuffer;
 		}
 
-		Ref<Framebuffer> ssdoFramebuffer;
-
-		////SSDO main
-		//{
-		//	FramebufferSpecification framebufferSpec{};
-		//	framebufferSpec.swapchainTarget = false;
-		//	framebufferSpec.attachments =
-		//	{
-		//		ImageFormat::RGBA32F,
-		//		ImageFormat::DEPTH32F
-		//	};
-
-		//	RenderPipelineSpecification pipelineSpec{};
-		//	pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		//	ssdoFramebuffer = pipelineSpec.framebuffer;
-
-		//	pipelineSpec.shader = ShaderLibrary::GetShader("ssdoMain");
-		//	pipelineSpec.isSwapchain = false;
-		//	pipelineSpec.topology = Topology::TriangleList;
-		//	pipelineSpec.drawType = DrawType::FullscreenQuad;
-		//	pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		//	pipelineSpec.debugName = "SSDO Main";
-		//	pipelineSpec.vertexLayout =
-		//	{
-		//		{ ElementType::Float3, "a_Position" },
-		//		{ ElementType::Float3, "a_Normal" },
-		//		{ ElementType::Float3, "a_Tangent" },
-		//		{ ElementType::Float3, "a_Bitangent" },
-		//		{ ElementType::Float2, "a_TexCoords" },
-		//	};
-
-		//	pipelineSpec.framebufferInputs =
-		//	{
-		//		{ m_geometryFramebuffer->GetColorAttachment(0), 1, 8 },
-		//		{ m_geometryFramebuffer->GetColorAttachment(2), 1, 9 },
-		//		{ Renderer::Get().GetDefaults().ssdoNoise->GetImage(), 1, 10 }
-		//	};
-
-		//	auto& pass = m_renderPasses.emplace_back();
-		//	pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		//}
-
-		//Ref<Framebuffer> ssdoBlurFramebuffer;
-
-		////SSDO Blur Horizontal
-		//{
-		//	FramebufferSpecification framebufferSpec{};
-		//	framebufferSpec.swapchainTarget = false;
-		//	framebufferSpec.attachments =
-		//	{
-		//		ImageFormat::RGBA32F,
-		//		ImageFormat::DEPTH32F
-		//	};
-
-		//	RenderPipelineSpecification pipelineSpec{};
-		//	pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		//	ssdoBlurFramebuffer = pipelineSpec.framebuffer;
-
-		//	pipelineSpec.shader = ShaderLibrary::GetShader("ssdoBlurH");
-		//	pipelineSpec.isSwapchain = false;
-		//	pipelineSpec.topology = Topology::TriangleList;
-		//	pipelineSpec.drawType = DrawType::FullscreenQuad;
-		//	pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		//	pipelineSpec.debugName = "SSDO Blur Horizontal";
-		//	pipelineSpec.vertexLayout =
-		//	{
-		//		{ ElementType::Float3, "a_Position" },
-		//		{ ElementType::Float3, "a_Normal" },
-		//		{ ElementType::Float3, "a_Tangent" },
-		//		{ ElementType::Float3, "a_Bitangent" },
-		//		{ ElementType::Float2, "a_TexCoords" },
-		//	};
-
-		//	pipelineSpec.framebufferInputs =
-		//	{
-		//		{ m_geometryFramebuffer->GetColorAttachment(2), 1, 8 },
-		//		{ ssdoFramebuffer->GetColorAttachment(0), 1, 9 }
-		//	};
-
-		//	auto& pass = m_renderPasses.emplace_back();
-		//	pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		//}
-
-		//Ref<Framebuffer> ssdoFinalFramebuffer;
-
-		////SSDO Blur Vertical
-		//{
-		//	FramebufferSpecification framebufferSpec{};
-		//	framebufferSpec.swapchainTarget = false;
-		//	framebufferSpec.attachments =
-		//	{
-		//		ImageFormat::RGBA32F,
-		//		ImageFormat::DEPTH32F
-		//	};
-
-		//	RenderPipelineSpecification pipelineSpec{};
-		//	pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		//	ssdoFinalFramebuffer = pipelineSpec.framebuffer;
-		//	pipelineSpec.shader = ShaderLibrary::GetShader("ssdoBlurV");
-		//	pipelineSpec.isSwapchain = false;
-		//	pipelineSpec.topology = Topology::TriangleList;
-		//	pipelineSpec.drawType = DrawType::FullscreenQuad;
-		//	pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		//	pipelineSpec.debugName = "SSDO Blur Vertical";
-		//	pipelineSpec.vertexLayout =
-		//	{
-		//		{ ElementType::Float3, "a_Position" },
-		//		{ ElementType::Float3, "a_Normal" },
-		//		{ ElementType::Float3, "a_Tangent" },
-		//		{ ElementType::Float3, "a_Bitangent" },
-		//		{ ElementType::Float2, "a_TexCoords" },
-		//	};
-
-		//	pipelineSpec.framebufferInputs =
-		//	{
-		//		{ m_geometryFramebuffer->GetColorAttachment(2), 1, 8 },
-		//		{ ssdoBlurFramebuffer->GetColorAttachment(0), 1, 9 }
-		//	};
-
-		//	auto& pass = m_renderPasses.emplace_back();
-		//	pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		//}
-
 		//Shading
 		{
-		FramebufferSpecification framebufferSpec{};
-		framebufferSpec.swapchainTarget = false;
-		framebufferSpec.attachments =
-		{
-			ImageFormat::RGBA,
-			ImageFormat::DEPTH32F
-		};
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
 
-		RenderPipelineSpecification pipelineSpec{};
-		pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-		pipelineSpec.shader = ShaderLibrary::GetShader("shading");
-		pipelineSpec.isSwapchain = false;
-		pipelineSpec.topology = Topology::TriangleList;
-		pipelineSpec.drawType = DrawType::FullscreenQuad;
-		pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-		pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
-		pipelineSpec.debugName = "Shading";
-		pipelineSpec.vertexLayout =
-		{
-			{ ElementType::Float3, "a_Position" },
-			{ ElementType::Float3, "a_Normal" },
-			{ ElementType::Float3, "a_Tangent" },
-			{ ElementType::Float3, "a_Bitangent" },
-			{ ElementType::Float2, "a_TexCoords" },
-		};
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			m_shadingFramebuffer = pipelineSpec.framebuffer;
 
-		pipelineSpec.framebufferInputs =
-		{
-			{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 },
-			{ m_geometryFramebuffer->GetColorAttachment(0), 1, 8 },
-			{ m_geometryFramebuffer->GetColorAttachment(1), 1, 9 },
-			{ m_geometryFramebuffer->GetColorAttachment(2), 1, 10 },
-			{ m_geometryFramebuffer->GetColorAttachment(3), 1, 11 },
-		};
+			pipelineSpec.shader = ShaderLibrary::GetShader("shading");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::FullscreenQuad;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
+			pipelineSpec.debugName = "Shading";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
 
-		auto& pass = m_renderPasses.emplace_back();
-		pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 },
+				{ m_geometryFramebuffer->GetColorAttachment(0), 1, 8 },
+				{ m_geometryFramebuffer->GetColorAttachment(1), 1, 9 },
+				{ m_geometryFramebuffer->GetColorAttachment(2), 1, 10 },
+				{ m_geometryFramebuffer->GetColorAttachment(3), 1, 11 },
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Skybox
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages =
+			{
+				{0, m_shadingFramebuffer->GetColorAttachment(0) },
+				{1, m_shadingFramebuffer->GetDepthAttachment() }
+			};
+
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.depthWrite = false;
+			pipelineSpec.cullMode = CullMode::Back;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Skybox;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.debugName = "Skybox";
+			m_shadingFramebuffer = pipelineSpec.framebuffer;
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 	}
 

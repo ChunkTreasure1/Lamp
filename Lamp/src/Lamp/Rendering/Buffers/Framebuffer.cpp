@@ -258,7 +258,7 @@ namespace Lamp
 				m_depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
 				m_depthAttachmentInfo.imageView = m_depthAttachmentImage->GetImageView();
 				m_depthAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
-				m_depthAttachmentInfo.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
+				m_depthAttachmentInfo.loadOp = existingImage ? VK_ATTACHMENT_LOAD_OP_LOAD : Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
 				m_depthAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				m_depthAttachmentInfo.clearValue.depthStencil = { 1.f, 0 };
 			}
@@ -304,7 +304,7 @@ namespace Lamp
 				attInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
 				attInfo.imageView = colorAttachment->GetImageView();
 				attInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
-				attInfo.loadOp = Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
+				attInfo.loadOp = existingImage ? VK_ATTACHMENT_LOAD_OP_LOAD : Utility::LampLoadToVulkanLoadOp(attachmentSpec.clearMode);
 				attInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				attInfo.clearValue = { m_specification.clearColor.x, m_specification.clearColor.y, m_specification.clearColor.z, m_specification.clearColor.w };
 			}

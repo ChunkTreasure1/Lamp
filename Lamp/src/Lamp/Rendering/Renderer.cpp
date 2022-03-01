@@ -1092,7 +1092,7 @@ namespace Lamp
 		LP_PROFILE_FUNCTION();
 
 		UpdateUniformBuffers();
-		//DrawDirectionalShadow();
+		DrawDirectionalShadow();
 
 		FrustumCull();
 		SortRenderBuffer(m_rendererStorage->camera->GetPosition(), m_finalRenderBuffer);
