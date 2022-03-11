@@ -25,17 +25,16 @@ namespace Sandbox
 		void UpdateToolbar();
 		void UpdateMeshConstruction();
 
-		void Render();
+		bool OnRender(Lamp::AppRenderEvent& e);
 		void LoadMesh();
 		void SaveMesh();
 
-		bool UpdateImGui(Lamp::ImGuiUpdateEvent& e);
-		bool Update(Lamp::AppUpdateEvent& e);
+		bool OnUpdateImGui(Lamp::ImGuiUpdateEvent& e);
+		bool OnUpdate(Lamp::AppUpdateEvent& e);
 
 		std::string GetDragDropTarget();
 		void MaterialPopup();
 
-	private:
 		bool m_hoveringPerspective = false;
 		bool m_rightMousePressed = false;
 		bool m_renderSkybox = false;
@@ -47,11 +46,14 @@ namespace Sandbox
 
 		std::filesystem::path m_savePath;
 
-		Ref<Lamp::Mesh> m_modelToImport;
+		Ref<Lamp::Mesh> m_meshToImport;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
 		Ref<Lamp::Shader> m_defaultShader;
+
+		Ref<Lamp::RenderPipeline> m_renderPipeline;
 		Ref<Lamp::Framebuffer> m_framebuffer;
 
+		std::vector<Ref<Lamp::MaterialInstance>> m_materialInstances;
 		std::vector<int> m_shaderSelectionIds;
 
 		//Icons

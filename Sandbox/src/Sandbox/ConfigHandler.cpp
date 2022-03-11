@@ -25,7 +25,7 @@ namespace Sandbox
 				LP_SERIALIZE_PROPERTY(perspective, m_perspectiveOpen, out);
 				LP_SERIALIZE_PROPERTY(log, m_logToolOpen, out);
 
-				for (const auto window : m_pWindows)
+				for (const auto window : m_windows)
 				{
 					LP_SERIALIZE_PROPERTY_STRING(window->GetName(), window->GetIsOpen(), out);
 				}
@@ -73,7 +73,7 @@ namespace Sandbox
 			LP_DESERIALIZE_PROPERTY(perspective, m_perspectiveOpen, openNode, true);
 			LP_DESERIALIZE_PROPERTY(log, m_logToolOpen, openNode, false);
 
-			for (auto window : m_pWindows)
+			for (auto window : m_windows)
 			{
 				LP_DESERIALIZE_PROPERTY_STRING(window->GetName(), window->GetIsOpen(), openNode, false);
 			}

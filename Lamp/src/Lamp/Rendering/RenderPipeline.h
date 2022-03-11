@@ -17,6 +17,7 @@ namespace Lamp
 	{
 		Deferred = 0,
 		Transparent,
+		Forward,
 		None
 	};
 

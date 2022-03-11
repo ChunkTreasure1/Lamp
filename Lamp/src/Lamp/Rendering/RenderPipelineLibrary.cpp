@@ -78,5 +78,45 @@ namespace Lamp
 
 			m_renderPipelines[ERenderPipeline::Deferred] = RenderPipeline::Create(pipelineSpec);
 		}
+
+		//Forward
+		{
+			FramebufferSpecification framebufferSpec;
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.clearColor = { 0.1f, 0.1f, 0.1f, 1.f };
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.framebuffer;
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("pbrForward");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Opaque;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
+			pipelineSpec.debugName = "Forward";
+			pipelineSpec.pipelineType = ERenderPipeline::Forward;
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
+			};
+
+			m_renderPipelines[ERenderPipeline::Forward] = RenderPipeline::Create(pipelineSpec);
+		}
 	}
 }

@@ -36,7 +36,6 @@ namespace Lamp
 		if (m_lastRightUp)
 		{
 			m_lastMousePosition = mousePos;
-			
 		}
 
 		if (Input::IsMouseButtonPressed(LP_MOUSE_BUTTON_RIGHT) && !Input::IsMouseButtonPressed(LP_MOUSE_BUTTON_MIDDLE))

@@ -55,7 +55,7 @@ namespace Sandbox
 		}
 		else
 		{
-			for (auto window : m_pWindows)
+			for (auto window : m_windows)
 			{
 				if (window->IsFocused())
 				{

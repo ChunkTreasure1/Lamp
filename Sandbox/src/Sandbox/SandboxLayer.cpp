@@ -37,15 +37,15 @@ namespace Sandbox
 
 		m_sandboxController = CreateRef<SandboxController>();
 
-		m_pWindows.emplace_back(new MeshImporterPanel("Mesh Importer"));
-		m_pWindows.emplace_back(new GraphKey("Visual Scripting"));
-		m_pWindows.emplace_back(new MaterialEditor("Material Editor"));
-		m_pWindows.emplace_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
-		m_pWindows.emplace_back(new EnvironmentEditorPanel("Environment Panel"));
-		m_pWindows.emplace_back(new AssetBrowserPanel());
-		m_pWindows.emplace_back(new CreatePanel(&m_pSelectedObject));
-		m_pWindows.emplace_back(new TerrainEditorPanel("Terrain Editor"));
-		m_pWindows.emplace_back(new RenderGraphPanel("Render Graph"));
+		m_windows.emplace_back(new MeshImporterPanel("Mesh Importer"));
+		m_windows.emplace_back(new GraphKey("Visual Scripting"));
+		m_windows.emplace_back(new MaterialEditor("Material Editor"));
+		m_windows.emplace_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
+		m_windows.emplace_back(new EnvironmentEditorPanel("Environment Panel"));
+		m_windows.emplace_back(new AssetBrowserPanel());
+		m_windows.emplace_back(new CreatePanel(&m_pSelectedObject));
+		m_windows.emplace_back(new TerrainEditorPanel("Terrain Editor"));
+		m_windows.emplace_back(new RenderGraphPanel("Render Graph"));
 
 		Application::Get().GetWindow().Maximize();
 
@@ -54,11 +54,11 @@ namespace Sandbox
 
 	SandboxLayer::~SandboxLayer()
 	{
-		for (auto p : m_pWindows)
+		for (auto p : m_windows)
 		{
 			delete p;
 		}
-		m_pWindows.clear();
+		m_windows.clear();
 	}
 
 	bool SandboxLayer::OnUpdate(AppUpdateEvent& e)
@@ -131,7 +131,7 @@ namespace Sandbox
 			m_pGame->OnEvent(e);
 		}
 
-		for (auto pWindow : m_pWindows)
+		for (auto pWindow : m_windows)
 		{
 			if (pWindow->GetIsOpen())
 			{
@@ -180,6 +180,12 @@ namespace Sandbox
 					break;
 				}
 			}
+		}
+
+		AppRenderEvent e;
+		for (const auto& window : m_windows)
+		{
+			window->OnEvent(e);
 		}
 
 		RenderCommand::End();

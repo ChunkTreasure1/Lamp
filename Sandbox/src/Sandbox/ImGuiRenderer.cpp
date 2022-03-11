@@ -310,7 +310,7 @@ namespace Sandbox
 						spec.path = "Assets/libs/graphkey/" + spec.name + ".graphkey";
 						pEnt->SetGraphKeyGraph(CreateRef<Lamp::GraphKeyGraph>(spec));
 
-						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						if (auto vs = (GraphKey*)(m_windows[1]))
 						{
 							vs->SetIsOpen(true);
 							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph(), pEnt->GetID());
@@ -318,7 +318,7 @@ namespace Sandbox
 					}
 					else
 					{
-						if (auto vs = (GraphKey*)(m_pWindows[1]))
+						if (auto vs = (GraphKey*)(m_windows[1]))
 						{
 							vs->SetIsOpen(true);
 							vs->SetCurrentlyOpenGraph(pEnt->GetGraphKeyGraph(), pEnt->GetID());
@@ -717,7 +717,7 @@ namespace Sandbox
 			ImGui::Text("Asset Manager: %f ms", m_assetManagerTime * 1000.f);
 			ImGui::Text("Create panel: %f ms", m_createPanelTime * 1000.f);
 
-			for (const auto window : m_pWindows)
+			for (const auto window : m_windows)
 			{
 				std::string text = window->GetName() + ": %f ms";
 				ImGui::Text(text.c_str(), window->GetDeltaTime() * 1000.f);
@@ -868,7 +868,7 @@ namespace Sandbox
 				ImGui::MenuItem("Log", nullptr, &m_logToolOpen);
 				ImGui::MenuItem("Level Settings", nullptr, &m_levelSettingsOpen);
 
-				for (auto pWindow : m_pWindows)
+				for (auto pWindow : m_windows)
 				{
 					ImGui::MenuItem(pWindow->GetLabel().c_str(), nullptr, &pWindow->GetIsOpen());
 				}

@@ -127,7 +127,7 @@ namespace Sandbox
 		Lamp::Object* m_pSelectedObject = nullptr;
 
 		//Windows
-		std::vector<EditorWindow*> m_pWindows;
+		std::vector<EditorWindow*> m_windows;
 
 		//Logging
 		bool m_logToolOpen = false;

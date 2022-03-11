@@ -468,6 +468,6 @@ void main()
 
     float blendingVal = bool(u_MeshData.blendingUseBlending.y) ? albedo.a * u_MeshData.blendingUseBlending.x : 1.0;
 
-    o_Color = vec4(color, blendingVal);
+    o_Color = vec4(0.0, 0.0, 0.0, 1.0);
     o_Id = u_MeshData.id;
 }

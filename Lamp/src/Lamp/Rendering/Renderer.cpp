@@ -67,13 +67,12 @@ namespace Lamp
 		m_rendererStorage->quadMesh = SubMesh::CreateQuad();
 
 		ShaderLibrary::LoadShaders();
-		m_renderPipelineLibrary = CreateScope<RenderPipelineLibrary>();
-
-		m_materialLibrary = CreateScope<MaterialLibrary>();
-		MaterialLibrary::Get().LoadMaterials();
-
-
 		GenerateBRDF(m_rendererDefaults->brdfFramebuffer);
+
+		m_renderPipelineLibrary = CreateScope<RenderPipelineLibrary>();
+		m_materialLibrary = CreateScope<MaterialLibrary>();
+
+		MaterialLibrary::Get().LoadMaterials();
 	}
 
 	void Renderer::Shutdown()
