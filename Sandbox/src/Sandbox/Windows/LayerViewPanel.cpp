@@ -154,7 +154,6 @@ namespace Sandbox
 							ImGui::TableNextRow();
 							ImGui::TableNextColumn();
 
-
 							Ref<Texture2D> visibleIcon = obj->GetIsActive() ? m_visibleIconV : m_visibleIconN;
 
 							std::string visId = "##visible" + std::to_string(obj->GetID());

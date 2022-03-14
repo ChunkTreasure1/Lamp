@@ -24,7 +24,7 @@ namespace Sandbox
 			env.SetCameraPosition(m_CameraController->GetCamera()->GetPosition());
 			env.SetCameraRotation(glm::quat(m_CameraController->GetCamera()->GetRotation()));
 
-			Lamp::ListenerAttributes attr(m_CameraController->GetPosition(), glm::vec3(0.f), -std::dynamic_pointer_cast<Lamp::PerspectiveCamera>(m_CameraController->GetCamera())->GetForwardDirection(), std::dynamic_pointer_cast<Lamp::PerspectiveCamera>(m_CameraController->GetCamera())->GetUpDirection());
+			Lamp::ListenerAttributes attr(m_CameraController->GetPosition(), glm::vec3(0.f), - std::dynamic_pointer_cast<Lamp::PerspectiveCamera>(m_CameraController->GetCamera())->GetForwardDirection(), std::dynamic_pointer_cast<Lamp::PerspectiveCamera>(m_CameraController->GetCamera())->GetUpDirection());
 			Lamp::AudioEngine::Get()->SetListenerAttributes(m_Listener, attr);
 		}
 	}

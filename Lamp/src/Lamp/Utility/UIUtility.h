@@ -452,14 +452,14 @@ namespace UI
 		ImGui::PushItemWidth(ImGui::GetColumnWidth());
 		if (ImGui::DragScalar(id.c_str(), ImGuiDataType_U32, &value, 1.f, &min, &max))
 		{
-			if (value > max && useMinMax)
+			if (value > (uint32_t)max && useMinMax)
 			{
-				value = max;
+				value = (uint32_t)max;
 			}
 
-			if (value < min && useMinMax)
+			if (value < (uint32_t)min && useMinMax)
 			{
-				value = min;
+				value = (uint32_t)min;
 			}
 
 			changed = true;

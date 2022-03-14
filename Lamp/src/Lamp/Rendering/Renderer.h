@@ -98,6 +98,7 @@ namespace Lamp
 
 		void Begin(const Ref<CameraBase> camera);
 		void End();
+		void ClearFrame();
 		void SwapRenderBuffers();
 
 		void BeginPass(Ref<RenderPipeline> pipeline);
@@ -142,7 +143,7 @@ namespace Lamp
 		void CreateRendererStorage();
 		void DestroyRendererStorage();
 		void CreateUniformBuffers();
-		void UpdateUniformBuffers();
+		void UpdatePerFrameUniformBuffers();
 		void UpdatePerPassUniformBuffers(const Ref<RenderPipeline> pipeline);
 		void GenerateBRDF(Ref<Framebuffer>& outFramebuffer);
 

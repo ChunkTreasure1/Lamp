@@ -93,16 +93,10 @@ namespace Lamp
 		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
 		{
-			LP_PROFILE_SCOPE("Reset descriptor pool");
-			vkResetDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPools[currentFrame], 0);
-		}
-
-		{
 			LP_PROFILE_SCOPE("Command buffer begin");
 			auto commandBuffer = m_rendererStorage->renderCommandBuffer;
 			commandBuffer->Begin();
 		}
-
 
 		m_rendererStorage->camera = camera;
 		m_statistics.memoryStatistics = GetMemoryUsage();
@@ -126,6 +120,16 @@ namespace Lamp
 
 		m_rendererStorage->camera = nullptr;
 		m_finalRenderBuffer.drawCalls.clear();
+		m_renderBufferPointer->drawCalls.clear();
+	}
+
+	void Renderer::ClearFrame()
+	{
+		LP_PROFILE_FUNCTION();
+
+		auto swapchain = Application::Get().GetWindow().GetSwapchain();
+		const uint32_t currentFrame = swapchain->GetCurrentFrame();
+		vkResetDescriptorPool(VulkanContext::GetCurrentDevice()->GetHandle(), m_descriptorPools[currentFrame], 0);
 	}
 
 	void Renderer::SwapRenderBuffers()
@@ -167,7 +171,7 @@ namespace Lamp
 		vkCmdBeginRendering(commandBuffer->GetCurrentCommandBuffer(), &renderingInfo);
 
 		pipeline->Bind(commandBuffer);
-		
+
 		AllocatePerPassDescriptors();
 		pipeline->BindDescriptorSet(commandBuffer, m_rendererStorage->pipelineDescriptorSets[PER_PASS_DESCRIPTOR_SET], PER_PASS_DESCRIPTOR_SET);
 	}
@@ -377,7 +381,6 @@ namespace Lamp
 	void Renderer::DispatchRenderCommands()
 	{
 		auto currentRenderPipeline = m_rendererStorage->currentRenderPipeline->GetSpecification().pipelineType;
-
 		DispatchRenderCommands(m_renderBufferMap[currentRenderPipeline]);
 	}
 
@@ -520,7 +523,7 @@ namespace Lamp
 		m_rendererStorage->shaderStorageBufferSet->Add(lightCullingData.tileCount * sizeof(LightIndex) * lightCullingData.maxLights, 13, 0);
 	}
 
-	void Renderer::UpdateUniformBuffers()
+	void Renderer::UpdatePerFrameUniformBuffers()
 	{
 		LP_PROFILE_FUNCTION();
 
@@ -1090,7 +1093,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		UpdateUniformBuffers();
+		UpdatePerFrameUniformBuffers();
 		DrawDirectionalShadow();
 
 		FrustumCull();

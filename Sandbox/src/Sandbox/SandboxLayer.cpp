@@ -154,6 +154,7 @@ namespace Sandbox
 	{
 		LP_PROFILE_FUNCTION();
 
+		RenderCommand::ClearFrame();
 		RenderCommand::Begin(m_sandboxController->GetCameraController()->GetCamera());
 
 		if (LevelManager::GetActive())
@@ -182,13 +183,13 @@ namespace Sandbox
 			}
 		}
 
+		RenderCommand::End();
+	
 		AppRenderEvent e;
 		for (const auto& window : m_windows)
 		{
 			window->OnEvent(e);
 		}
-
-		RenderCommand::End();
 	}
 
 	bool SandboxLayer::OnKeyPressed(KeyPressedEvent& e)

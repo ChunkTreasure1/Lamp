@@ -42,6 +42,11 @@ namespace Lamp
 		s_renderer2D->SwapRenderBuffers();
 	}
 
+	void RenderCommand::ClearFrame()
+	{
+		s_renderer->ClearFrame();
+	}
+
 	void RenderCommand::BeginPass(const Ref<RenderPipeline> pipeline)
 	{
 		s_renderer->BeginPass(pipeline);

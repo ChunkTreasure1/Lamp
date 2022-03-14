@@ -26,6 +26,7 @@ namespace Lamp
 		static void Begin(const Ref<CameraBase> camera);
 		static void End();
 		static void SwapRenderBuffers();
+		static void ClearFrame();
 
 		static void BeginPass(const Ref<RenderPipeline> pipeline);
 		static void EndPass();

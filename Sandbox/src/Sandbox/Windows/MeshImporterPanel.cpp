@@ -192,9 +192,11 @@ namespace Sandbox
 			return false;
 		}
 
+		RenderCommand::Begin(m_camera->GetCamera());
 		RenderCommand::BeginPass(m_renderPipeline);
 		RenderCommand::DispatchRenderCommands();
 		RenderCommand::EndPass();
+		RenderCommand::End();
 
 		return false;
 	}
