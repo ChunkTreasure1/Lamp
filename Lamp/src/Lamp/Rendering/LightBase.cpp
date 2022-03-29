@@ -22,6 +22,7 @@ namespace Lamp
 			{ ImageFormat::DEPTH32F, TextureFilter::Linear, TextureWrap::Clamp }
 		};
 
+
 		shadowBuffer = Framebuffer::Create(bufferSpec);
 
 		Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(Renderer::Get().GetCapabilities().framesInFlight);

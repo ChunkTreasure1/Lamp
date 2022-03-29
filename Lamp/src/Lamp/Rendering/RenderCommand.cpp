@@ -77,6 +77,11 @@ namespace Lamp
 		s_renderer2D->SubmitLine(pointOne, pointTwo, color);
 	}
 
+	void RenderCommand::DrawMeshDirect(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id)
+	{
+		s_renderer->DrawMesh(transform, mesh, material, id);
+	}
+
 	void RenderCommand::DispatchRenderCommands()
 	{
 		s_renderer->DispatchRenderCommands();

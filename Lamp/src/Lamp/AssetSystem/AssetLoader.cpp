@@ -134,7 +134,6 @@ namespace Lamp
 			LP_DESERIALIZE_PROPERTY(verticeCount, verticeCountInt, entry, 0);
 			LP_DESERIALIZE_PROPERTY(indiceCount, indiceCountInt, entry, 0);
 
-
 			for (size_t i = 0; i < verticeCountInt; i++)
 			{
 				Vertex vert;
@@ -328,7 +327,7 @@ namespace Lamp
 			LP_SERIALIZE_PROPERTY(handle, mesh->Handle, out);
 			LP_SERIALIZE_PROPERTY(sourcePath, mesh->m_importSettings.path.string(), out);
 			LP_SERIALIZE_PROPERTY(units, (uint32_t)mesh->m_importSettings.units, out);
-			LP_SERIALIZE_PROPERTY(upDir, mesh->m_importSettings.upDirection, out);
+			//LP_SERIALIZE_PROPERTY(upDir, mesh->m_importSettings.upDirection, out); //TODO: readd
 			LP_SERIALIZE_PROPERTY(compileStatic, mesh->m_importSettings.compileStatic, out);
 			LP_SERIALIZE_PROPERTY(meshHandle, mesh->m_mesh, out);
 
@@ -359,8 +358,8 @@ namespace Lamp
 		asset = CreateRef<MeshSource>();
 		Ref<MeshSource> meshSource = std::dynamic_pointer_cast<MeshSource>(asset);
 
-		meshSource->m_importSettings.units = meshNode["units"] ? (Units)meshNode["units"].as<uint32_t>() : Units::Centimeters;
-		LP_DESERIALIZE_PROPERTY(upDir, meshSource->m_importSettings.upDirection, meshNode, glm::vec3(0.f));
+		meshSource->m_importSettings.units = meshNode["units"] ? (MeshUnit)meshNode["units"].as<uint32_t>() : MeshUnit::Centimeters;
+		//LP_DESERIALIZE_PROPERTY(upDir, meshSource->m_importSettings.upDirection, meshNode, glm::vec3(0.f)); // TODO: readd
 		LP_DESERIALIZE_PROPERTY(compileStatic, meshSource->m_importSettings.compileStatic, meshNode, false);
 		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, meshNode, AssetHandle(0));
 		meshSource->m_importSettings.path = std::filesystem::path(meshNode["sourcePath"].as<std::string>());

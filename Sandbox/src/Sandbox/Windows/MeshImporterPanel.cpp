@@ -77,14 +77,6 @@ namespace Sandbox
 			m_defaultShader = Lamp::ShaderLibrary::GetShader("pbrForward");
 		}
 
-		if (m_meshToImport)
-		{
-			for (const auto& mesh : m_meshToImport->GetSubMeshes())
-			{
-				RenderCommand::SubmitMesh(m_transform, mesh, m_materialInstances[mesh->GetMaterialIndex()]);
-			}
-		}
-
 		UpdateCamera(e.GetTimestep());
 
 		if (Input::IsMouseButtonReleased(1))
@@ -131,8 +123,7 @@ namespace Sandbox
 	}
 
 	void MeshImporterPanel::MaterialPopup()
-	{
-	}
+	{}
 
 	void MeshImporterPanel::UpdateCamera(Lamp::Timestep ts)
 	{
@@ -194,6 +185,15 @@ namespace Sandbox
 
 		RenderCommand::Begin(m_camera->GetCamera());
 		RenderCommand::BeginPass(m_renderPipeline);
+		
+		if (m_meshToImport)
+		{
+			for (const auto& mesh : m_meshToImport->GetSubMeshes())
+			{
+				RenderCommand::DrawMeshDirect(m_transform, mesh, m_materialInstances[mesh->GetMaterialIndex()]);
+			}
+		}
+		
 		RenderCommand::DispatchRenderCommands();
 		RenderCommand::EndPass();
 		RenderCommand::End();
@@ -366,7 +366,7 @@ namespace Sandbox
 
 				if (UI::Combo("Units", currentUnit, units))
 				{
-					m_importSettings.units = static_cast<Units>(currentUnit);
+					m_importSettings.units = static_cast<MeshUnit>(currentUnit);
 					LoadMesh();
 				}
 

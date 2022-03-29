@@ -36,6 +36,8 @@ namespace Lamp
 		static void SubmitQuad(const glm::mat4& transform, const glm::vec4& color, Ref<Texture2D> texture, size_t id = -1);
 		static void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
+		static void DrawMeshDirect(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id = -1);
+
 		static void DispatchRenderCommands();
 
 	private:

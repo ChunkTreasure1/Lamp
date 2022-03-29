@@ -18,7 +18,6 @@
 #include "Lamp/Mesh/Materials/MaterialLibrary.h"
 #include "Lamp/Mesh/Materials/MaterialInstance.h"
 
-#include "Lamp/AssetSystem/MeshImporter.h"
 #include "Lamp/Level/Level.h"
 #include "Lamp/Core/Time/ScopedTimer.h"
 
@@ -87,10 +86,6 @@ namespace Lamp
 	void Renderer::Begin(const Ref<CameraBase> camera)
 	{
 		LP_PROFILE_FUNCTION();
-
-		//Reset descriptor pool
-		auto swapchain = Application::Get().GetWindow().GetSwapchain();
-		const uint32_t currentFrame = swapchain->GetCurrentFrame();
 
 		{
 			LP_PROFILE_SCOPE("Command buffer begin");

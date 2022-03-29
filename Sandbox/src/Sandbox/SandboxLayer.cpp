@@ -15,10 +15,13 @@
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
+#include <Lamp/AssetSystem/MeshImporter/MeshImporter.h>
+#include <Lamp/World/Terrain.h>
+
 #include <Lamp/Core/Application.h>
 #include <Lamp/Core/Game.h>
 #include <Lamp/Core/Time/ScopedTimer.h>
-#include <Lamp/World/Terrain.h>
+
 
 
 namespace Sandbox
@@ -28,6 +31,8 @@ namespace Sandbox
 	SandboxLayer::SandboxLayer()
 		: Layer("Sandbox"), m_dockspaceId(0), m_physicsIcon("engine/textures/ui/physicsIcon/LampPhysicsAnim1.png", 30)
 	{
+		MeshImporter::Initialize();
+
 		g_pEnv->isEditor = true;
 		m_iconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_iconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
@@ -59,6 +64,8 @@ namespace Sandbox
 			delete p;
 		}
 		m_windows.clear();
+		
+		MeshImporter::Shutdown();
 	}
 
 	bool SandboxLayer::OnUpdate(AppUpdateEvent& e)

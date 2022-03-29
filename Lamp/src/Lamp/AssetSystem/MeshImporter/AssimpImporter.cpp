@@ -1,5 +1,5 @@
 #include "lppch.h"
-#include "MeshImporter.h"
+#include "AssimpImporter.h"
 
 #include "Lamp/Rendering/Vertex.h"
 #include "Lamp/Rendering/RenderPipelineLibrary.h"
@@ -11,7 +11,9 @@
 
 namespace Lamp
 {
-	static const uint32_t s_MeshImportFlags =
+	//TODO: Handle different axises and units
+
+	static const uint32_t s_meshImportFlags =
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_SortByPType |
@@ -21,7 +23,7 @@ namespace Lamp
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_ValidateDataStructure;
 
-	Ref<Mesh> MeshImporter::ImportMesh(const MeshImportSettings& settings)
+	Ref<Mesh> AssimpImporter::ImportMeshImpl(const MeshImportSettings& settings)
 	{
 		std::map<uint32_t, Ref<Material>> materials;
 		std::vector<Ref<SubMesh>> meshes = LoadMesh(settings, materials);
@@ -38,7 +40,7 @@ namespace Lamp
 		return mesh;
 	}
 
-	std::vector<Ref<SubMesh>> MeshImporter::LoadMesh(const MeshImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials)
+	std::vector<Ref<SubMesh>> AssimpImporter::LoadMesh(const MeshImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials)
 	{
 		Assimp::Importer importer;
 		std::vector<Ref<SubMesh>> meshes;
@@ -49,13 +51,13 @@ namespace Lamp
 			extraFlags |= aiProcess_OptimizeGraph;
 		}
 
-		const aiScene* pScene = importer.ReadFile(settings.path.string(), s_MeshImportFlags | extraFlags);
+		const aiScene* pScene = importer.ReadFile(settings.path.string(), s_meshImportFlags | extraFlags);
 		if (!pScene)
 		{
 			return meshes;
 		}
 
-		if (pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||!pScene->mRootNode)
+		if (pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 		{
 			std::string err = "[Assimp] " + std::string(importer.GetErrorString());
 			LP_CORE_ERROR(err);
@@ -72,7 +74,7 @@ namespace Lamp
 		return meshes;
 	}
 
-	void MeshImporter::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes)
+	void AssimpImporter::ProcessNode(aiNode* pNode, const aiScene* pScene, std::vector<Ref<SubMesh>>& meshes)
 	{
 		for (size_t i = 0; i < pNode->mNumMeshes; i++)
 		{
@@ -86,7 +88,7 @@ namespace Lamp
 		}
 	}
 
-	Ref<SubMesh> MeshImporter::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
+	Ref<SubMesh> AssimpImporter::ProcessMesh(aiMesh* pMesh, const aiScene* pScene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
@@ -148,7 +150,7 @@ namespace Lamp
 		return CreateRef<SubMesh>(vertices, indices, pMesh->mMaterialIndex);
 	}
 
-	std::vector<Ref<SubMesh>> MeshImporter::CompileStatic(const std::vector<Ref<SubMesh>>& meshes, const std::map<uint32_t, Ref<Material>>& materials)
+	std::vector<Ref<SubMesh>> AssimpImporter::CompileStatic(const std::vector<Ref<SubMesh>>& meshes, const std::map<uint32_t, Ref<Material>>& materials)
 	{
 		std::unordered_map<uint32_t, Ref<SubMesh>> newMeshes;
 
@@ -172,7 +174,7 @@ namespace Lamp
 		std::vector<Ref<SubMesh>> returnMeshes;
 		for (auto& mesh : newMeshes)
 		{
-			returnMeshes.push_back(mesh.second); 
+			returnMeshes.push_back(mesh.second);
 		}
 
 		return returnMeshes;
