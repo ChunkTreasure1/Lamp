@@ -88,7 +88,8 @@ project "Lamp"
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.rapidxml}",
 		"%{IncludeDir.ktx2}",
-		"%{IncludeDir.Optick}"
+		"%{IncludeDir.Optick}",
+		"%{IncludeDir.fbxsdk}"
 	}
 	
 	libdirs
@@ -234,7 +235,8 @@ project "Sandbox"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.rapidxml}",
 		"%{IncludeDir.ktx2}",
-		"%{IncludeDir.Optick}"
+		"%{IncludeDir.Optick}",
+		"%{IncludeDir.fbxsdk}"
 	}
 	
 	libdirs
@@ -256,7 +258,10 @@ project "Sandbox"
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
 		"%{Library.fmodstudio}",
-		"%{Library.Vulkan}"
+		"%{Library.Vulkan}",
+		"%{Library.fbxsdk}",
+		"%{Library.libxml2}",
+		"%{Library.zlib}"
 	}
 	
 	linkoptions
@@ -364,7 +369,8 @@ project "Game"
 		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.Optick}"
+		"%{IncludeDir.Optick}",
+		"%{IncludeDir.fbxsdk}"
 	}
 	
 	filter "system:windows"
@@ -434,7 +440,8 @@ project "GameLauncher"
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.PhysX}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.Optick}"
+		"%{IncludeDir.Optick}",
+		"%{IncludeDir.fbxsdk}"
 	}
 
 	libdirs
@@ -454,7 +461,10 @@ project "GameLauncher"
 		"%{Library.Assimp}",
 		"%{Library.fmod}",
 		"%{Library.fmodstudio}",
-		"%{Library.Vulkan}"
+		"%{Library.Vulkan}",
+		"%{Library.fbxsdk}",
+		"%{Library.libxml2}",
+		"%{Library.zlib}"
 	}
 
 	filter "system:windows"

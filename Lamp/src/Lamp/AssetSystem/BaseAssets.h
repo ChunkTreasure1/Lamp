@@ -2,7 +2,7 @@
 
 #include "Asset.h"
 
-#include "Lamp/AssetSystem/MeshImporter.h"
+#include "Lamp/AssetSystem/MeshImporter/MeshImporter.h"
 
 namespace Lamp
 {

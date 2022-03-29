@@ -4,6 +4,19 @@
 
 namespace Lamp
 {
+	static bool AbsEqualVector(const glm::vec3& aFirst, const glm::vec3& aSecond)
+	{
+		return std::abs(aFirst.x - aSecond.x) < std::numeric_limits<float>::epsilon() &&
+			std::abs(aFirst.y - aSecond.y) < std::numeric_limits<float>::epsilon() &&
+			std::abs(aFirst.z - aSecond.z) < std::numeric_limits<float>::epsilon();
+	}
+
+	static bool AbsEqualVector(const glm::vec2& aFirst, const glm::vec2& aSecond)
+	{
+		return std::abs(aFirst.x - aSecond.x) < std::numeric_limits<float>::epsilon() &&
+			std::abs(aFirst.y - aSecond.y) < std::numeric_limits<float>::epsilon();
+	}
+
 	struct Vertex
 	{
 		Vertex(const glm::vec3& position, const glm::vec2& texCoords)
@@ -17,6 +30,15 @@ namespace Lamp
 		}
 
 		Vertex() = default;
+
+		bool operator==(const Vertex& aOther) const
+		{
+			bool pos = AbsEqualVector(position, aOther.position);
+			bool norm = AbsEqualVector(normal, aOther.normal);
+			bool tc = AbsEqualVector(textureCoords, aOther.textureCoords);
+
+			return pos && norm && tc;
+		}
 
 		glm::vec3 position = glm::vec3(0.f);
 		glm::vec3 normal = glm::vec3(0.f);

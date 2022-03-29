@@ -18,6 +18,7 @@ IncludeDir["ImGuizmo"] = "%{wks.location}/Lamp/vendor/ImGuizmo/include"
 IncludeDir["rapidxml"] = "%{wks.location}/Lamp/vendor/rapidxml"
 IncludeDir["ktx2"] = "%{wks.location}/Lamp/vendor/ktx2/include"
 IncludeDir["Optick"] = "%{wks.location}/Lamp/vendor/Optick/src"
+IncludeDir["fbxsdk"] = "%{wks.location}/Lamp/vendor/fbxsdk/include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
@@ -26,6 +27,7 @@ LibraryDir["Assimp"] = "%{wks.location}/Lamp/vendor/assimp"
 LibraryDir["PhysX"] = "%{wks.location}/Lamp/vendor/PhysX/lib/%{cfg.buildcfg}"
 LibraryDir["fmod"] = "%{wks.location}/Lamp/vendor/fmod"
 LibraryDir["ktx2"] = "%{wks.location}/Lamp/vendor/ktx2/lib"
+LibraryDir["fbxsdk"] = "%{wks.location}/Lamp/vendor/fbxsdk/lib/%{cfg.buildcfg}"
 
 Library = {}
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
@@ -55,3 +57,7 @@ Library["PhysXPvdSDK"] = "%{LibraryDir.PhysX}/PhysXPvdSDK_static_64.lib"
 
 Library["fmod"] = "%{LibraryDir.fmod}/fmod_vc.lib"
 Library["fmodstudio"] = "%{LibraryDir.fmod}/fmodstudio_vc.lib"
+
+Library["fbxsdk"] = "%{LibraryDir.fbxsdk}/libfbxsdk-md.lib"
+Library["libxml2"] = "%{LibraryDir.fbxsdk}/libxml2-md.lib"
+Library["zlib"] = "%{LibraryDir.fbxsdk}/zlib-md.lib"
