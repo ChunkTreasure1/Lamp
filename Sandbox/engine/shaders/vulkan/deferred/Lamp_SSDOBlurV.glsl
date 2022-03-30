@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: ssdoBlurV
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: ssdoBlurV
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core

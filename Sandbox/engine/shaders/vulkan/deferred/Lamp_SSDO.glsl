@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: ssdoMain
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: ssdoMain
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core

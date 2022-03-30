@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: directionalShadow
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: directionalShadow
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 440

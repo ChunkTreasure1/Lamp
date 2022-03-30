@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: equirectangularToCubeMap
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: equirectangularToCubeMap
+  internal: true
+#ShaderSpecEnd
 
 #type compute
 #version 450 core

@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: ssaoMain
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: ssaoMain
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core
@@ -14,28 +12,13 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
+#include "Common/Lamp_Common.glsl" 
+
 layout (location = 0) out Out
 {
     vec2 texCoords;
 
 } v_Out;
-
-layout(std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 positionAndTanHalfFOV;
-    vec2 ambienceExposure;
-
-} u_CameraData;
-
-layout(std140, binding = 3) uniform ScreenDataBuffer
-{
-    vec2 screenSize;
-    float aspectRatio;
-    uint xScreenTiles;
-
-} u_ScreenData;
 
 void main()
 {
@@ -47,28 +30,7 @@ void main()
 #version 450 core
 layout (location = 0) out float o_Color;
 
-layout(std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
-
-layout (std140, binding = 2) uniform SSAODataBuffer
-{
-    vec4 kernelSamples[256];
-    vec4 sizeBiasRadiusStrength;
-    
-} u_SSAOData;
-
-layout(std140, binding = 3) uniform ScreenDataBuffer
-{
-    vec2 screenSize;
-    float aspectRatio;
-
-} u_ScreenData;
+#include "Common/Lamp_Common.glsl"
 
 layout (location = 0) in Out
 {

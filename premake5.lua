@@ -66,7 +66,13 @@ project "Lamp"
 		
 		"%{prj.name}/vendor/yaml-cpp/src/**.cpp",
 		"%{prj.name}/vendor/yaml-cpp/src/**.h",
-		"%{prj.name}/vendor/yaml-cpp/include/**.h"		
+		"%{prj.name}/vendor/yaml-cpp/include/**.h",
+		
+		"%{IncludeDir.shaderc_glslc}/**.cc",
+		"%{IncludeDir.shaderc_glslc}/**.h",
+
+		"%{IncludeDir.shaderc_utils}/**.cc",
+		"%{IncludeDir.shaderc_utils}/**.h",
 	}
 
 	includedirs
@@ -89,7 +95,9 @@ project "Lamp"
 		"%{IncludeDir.rapidxml}",
 		"%{IncludeDir.ktx2}",
 		"%{IncludeDir.Optick}",
-		"%{IncludeDir.fbxsdk}"
+		"%{IncludeDir.fbxsdk}",
+		"%{IncludeDir.shaderc_glslc}",
+		"%{IncludeDir.shaderc_utils}"
 	}
 	
 	libdirs

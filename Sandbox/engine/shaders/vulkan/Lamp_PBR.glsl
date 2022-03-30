@@ -1,14 +1,21 @@
-#ShaderSpec
-Name: pbrForward
-TextureCount: 3
-InternalShader: false
-TextureNames
-{
-u_Albedo
-u_Normal
-u_MRO
-u_DetailNormal
-}
+#ShaderSpecBegin
+shader:
+  name: pbrForward
+  internal: true
+  textures:
+  - texture: u_Albedo
+    name: Albedo
+    internal: false
+  - texture: u_Normal
+    name: Normal
+    internal: false
+  - texture: u_MRO
+    name: MRO
+    internal: false
+  - texture: u_DetailNormal
+    name: DetailNormal
+    internal: false
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core
@@ -18,26 +25,13 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
+#include "Common/Lamp_Common.glsl"
+
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
 
 } u_MeshData;
-
-layout (std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
-
-layout(std140, binding = 4) uniform DirectionalLightData
-{
-    mat4 viewProjections[10];
-    uint count;
-} u_DirectionalLightData;
 
 layout (location = 0) out Out
 {
@@ -76,63 +70,7 @@ void main()
 layout (location = 0) out vec4 o_Color;
 layout (location = 1) out uint o_Id;
 
-struct DirectionalLight
-{
-	vec4 direction;
-	vec4 colorIntensity;
-	bool castShadows;
-};
-
-struct PointLight
-{
-    vec4 position;
-    vec4 color;
-
-    float intensity;
-    float radius;
-    float falloff;
-    float farPlane;
-};
-
-struct LightIndex
-{
-    int index;
-};
-
-layout (std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
-
-layout (std140, binding = 1) uniform DirectionalLightBuffer
-{
-    DirectionalLight lights[1];
-    uint count;
-    uint pointLightCount;
-
-} u_DirectionalLights;
-
-layout (std140, binding = 3) uniform ScreenDataBuffer
-{
-    vec2 screenSize;
-    float aspectRatio;
-    uint xScreenTiles;
-} u_ScreenData;
-
-layout (std430, binding = 12) readonly buffer LightBuffer
-{
-    PointLight lights[1024];
-    
-} u_LightBuffer;
-
-layout (std430, binding = 13) readonly buffer VisibleLightsBuffer
-{
-    LightIndex data[];
-} u_VisibleIndices;
+#include "Common/Lamp_Common.glsl"
 
 layout (push_constant) uniform MeshDataBuffer
 {

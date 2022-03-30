@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PreProcess/ShaderPreProcessor.h"
+
 #include "Lamp/AssetSystem/Asset.h"
 
 #include <VulkanMemoryAllocator/VulkanMemoryAllocator.h>
@@ -46,14 +48,6 @@ namespace Lamp
 		std::string name;
 		uint32_t binding;
 		uint32_t set;
-	};
-
-	struct ShaderSpecification
-	{
-		std::string name;
-		std::vector<std::string> inputTextureNames;
-		uint32_t textureCount = 0;
-		bool internalShader = true;
 	};
 
 	class Shader : public Asset
@@ -143,9 +137,10 @@ namespace Lamp
 
 		void Reload(bool forceCompile);
 		void Bind() {}
-		const std::string& GetName() { return m_specification.name; }
-		const ShaderSpecification& GetSpecification() const { return m_specification; }
-
+		
+		const std::string& GetName() { return m_metaData.name; }
+		const ShaderMetaData& GetMetaData() const { return m_metaData; }
+		
 		inline const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStageInfos() { return m_pipelineShaderStageInfos; }
 		inline const std::vector<VkDescriptorSetLayout>& GetDescriptorSetLayouts() { return m_descriptorSetLayouts; }
 		inline const std::unordered_map<uint32_t, std::vector<VkDescriptorPoolSize>>& GetDescriptorTypes() { return m_descriptorTypes; }
@@ -168,7 +163,6 @@ namespace Lamp
 		static Ref<Shader> Create(const std::filesystem::path& path, bool forceCompile = false);
 
 	private:
-		std::unordered_map<VkShaderStageFlagBits, std::string> PreProcess(const std::string& source);
 		void CompileOrGetBinary(std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& outShaderData, bool forceCompile);
 		void LoadAndCreateShaders(const std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& outShaderData);
 		void Reflect(VkShaderStageFlagBits stageFlags, const std::vector<uint32_t>& shaderData);
@@ -185,6 +179,6 @@ namespace Lamp
 		std::unordered_map<VkShaderStageFlagBits, std::string> m_shaderSource;
 		std::unordered_map<uint32_t, std::vector<VkDescriptorPoolSize>> m_descriptorTypes;
 
-		ShaderSpecification m_specification;
+		ShaderMetaData m_metaData;
 	};
 }

@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: environmentIrradiance
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: environmentIrradiance
+  internal: true
+#ShaderSpecEnd
 
 #type compute
 #version 450 core

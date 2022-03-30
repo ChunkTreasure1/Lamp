@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: shading
-TextureCount: 3
-InternalShader: false
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: shading
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core
@@ -30,45 +28,7 @@ void main()
 
 layout (location = 0) out vec4 o_Color;
 
-struct DirectionalLight
-{
-	vec4 direction;
-	vec4 colorIntensity;
-	bool castShadows;
-};
-
-struct PointLight
-{
-    vec4 position;
-    vec4 color;
-
-    float intensity;
-    float radius;
-    float falloff;
-    float farPlane;
-};
-
-layout (std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
-
-layout (std140, binding = 1) uniform DirectionalLightBuffer
-{
-    DirectionalLight lights[1];
-    uint count;
-    uint pointLightCount;
-
-} u_DirectionalLights;
-
-layout (std430, binding = 12) readonly buffer LightBuffer
-{
-    PointLight lights[1024];
-} u_LightBuffer;
+#include "Common/Lamp_Common.glsl"
 
 layout (location = 0) in Out
 {

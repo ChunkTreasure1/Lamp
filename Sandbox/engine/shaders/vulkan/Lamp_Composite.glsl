@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: composite
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: composite
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core

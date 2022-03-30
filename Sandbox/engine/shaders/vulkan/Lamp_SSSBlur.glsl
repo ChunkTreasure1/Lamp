@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: sssBlur
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: sssBlur
+  internal: true
+#ShaderSpecEnd
 
 #type compute
 #version 450 core

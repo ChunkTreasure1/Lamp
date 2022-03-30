@@ -8,6 +8,9 @@
 #include "Platform/Vulkan/VulkanUtility.h"
 
 #include <shaderc/shaderc.hpp>
+#include <shaderc/glslc/file_includer.h>
+#include <shaderc/libshaderc_util/include/libshaderc_util/file_finder.h>
+
 #include <spirv_cross/spirv_glsl.hpp>
 #include <spirv-tools/libspirv.h>
 
@@ -66,32 +69,6 @@ namespace Lamp
 			in.close();
 
 			return result;
-		}
-
-		static VkShaderStageFlagBits ShaderTypeFromString(const std::string& type)
-		{
-			if (type == "vertex")
-			{
-				return VK_SHADER_STAGE_VERTEX_BIT;
-			}
-			else if (type == "fragment" || type == "pixel")
-			{
-				return VK_SHADER_STAGE_FRAGMENT_BIT;
-			}
-			else if (type == "compute")
-			{
-				return VK_SHADER_STAGE_COMPUTE_BIT;
-			}
-			else if (type == "tessellationControl")
-			{
-				return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-			}
-			else if (type == "tessellationEvaluation")
-			{
-				return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-			}
-
-			return (VkShaderStageFlagBits)0;
 		}
 
 		static std::string StringFromShaderStage(VkShaderStageFlagBits stage)
@@ -206,7 +183,8 @@ namespace Lamp
 	{
 		std::string source = Utils::ReadFromFile(Path);
 
-		m_shaderSource = PreProcess(source);
+		ShaderMetaData preProcessData;
+		m_shaderSource = ShaderPreProcessor::PreProcessSource(source, Path, preProcessData);
 
 		std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>> shaderData;
 		CompileOrGetBinary(shaderData, forceCompile);
@@ -354,102 +332,6 @@ namespace Lamp
 		return result;
 	}
 
-	std::unordered_map<VkShaderStageFlagBits, std::string> Shader::PreProcess(const std::string& source)
-	{
-		//Get specs
-		const char* nameToken = "Name:";
-		const char* textureCountToken = "TextureCount:";
-		const char* textureNamesToken = "TextureNames";
-		const char* internalShaderToken = "InternalShader:";
-		size_t nameTokenLength = strlen(nameToken);
-		size_t texCountTokenLength = strlen(textureCountToken);
-		size_t texNamesTokenLength = strlen(textureNamesToken);
-		size_t internalShaderTokenLength = strlen(internalShaderToken);
-
-		size_t tokenPos = source.find(nameToken, 0);
-		{
-			size_t eol = source.find_first_of("\r\n", tokenPos);
-
-			size_t begin = tokenPos + nameTokenLength + 1;
-			std::string name = source.substr(begin, eol - begin);
-			m_specification.name = name;
-			tokenPos = std::string::npos;
-		}
-
-		{
-			tokenPos = source.find(textureCountToken, 0);
-
-			size_t eol = source.find_first_of("\r\n", tokenPos);
-
-			size_t begin = tokenPos + texCountTokenLength + 1;
-			std::string name = source.substr(begin, eol - begin);
-			m_specification.textureCount = stoi(name);
-		}
-
-		{
-			tokenPos = source.find(internalShaderToken, 0);
-			size_t eol = source.find_first_of("\r\n", tokenPos);
-
-			size_t begin = tokenPos + internalShaderTokenLength + 1;
-			std::string text = source.substr(begin, eol - begin);
-			if (text == "true")
-			{
-				m_specification.internalShader = true;
-			}
-			else
-			{
-				m_specification.internalShader = false;
-			}
-		}
-
-		{
-			tokenPos = source.find(textureNamesToken, 0);
-
-			size_t eol = source.find_first_of("\r\n", tokenPos);
-			eol = source.find_first_of("\r\n", eol + 2);
-
-			for (int i = 0; i < m_specification.textureCount; i++)
-			{
-				size_t pos = source.find_first_of("\r\n", eol + 2);
-				std::string name = source.substr(eol + 2, pos - eol - 2);
-				m_specification.inputTextureNames.push_back(name);
-
-				eol = pos;
-			}
-		}
-
-		//Get sources
-		std::unordered_map<VkShaderStageFlagBits, std::string> shaderSources;
-
-		const char* typeToken = "#type";
-		size_t typeTokenLength = strlen(typeToken);
-		size_t pos = source.find(typeToken, 0);
-
-		while (pos != std::string::npos)
-		{
-			size_t eol = source.find_first_of("\r\n", pos);
-			LP_CORE_ASSERT(eol != std::string::npos, "Syntax error in shader!");
-
-			size_t begin = pos + typeTokenLength + 1;
-			std::string type = source.substr(begin, eol - begin);
-
-			LP_CORE_ASSERT(type == "vertex" ||
-				type == "fragment" ||
-				type == "pixel" ||
-				type == "compute" ||
-				type == "tessellationEvaluation" ||
-				type == "tessellationControl", "Invalid shader type!");
-
-			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
-			pos = source.find(typeToken, nextLinePos);
-
-			auto shaderType = Utils::ShaderTypeFromString(type);
-			shaderSources[shaderType] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
-		}
-
-		return shaderSources;
-	}
-
 	void Shader::CompileOrGetBinary(std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>>& outShaderData, bool forceCompile)
 	{
 		auto cacheDirectory = Utils::GetCacheDirectory();
@@ -488,16 +370,28 @@ namespace Lamp
 				shaderc::Compiler compiler;
 				shaderc::CompileOptions options;
 
-				options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
+				shaderc_util::FileFinder fileFinder;
+				fileFinder.search_path().emplace_back("engine/shaders/vulkan/");
+				
+				options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
 				options.SetWarningsAsErrors();
 				options.SetGenerateDebugInfo();
+				options.SetIncluder(std::make_unique<glslc::FileIncluder>(&fileFinder));
 
-				const bool optimize = false;
+				const bool optimize = true;
 				if (optimize)
 				{
 					options.SetOptimizationLevel(shaderc_optimization_level_performance);
 				}
-
+				
+				shaderc::PreprocessedSourceCompilationResult preProcessResult = compiler.PreprocessGlsl(source, Utils::ShaderStageToShaderC(stage), Path.string().c_str(), options);
+				if (preProcessResult.GetCompilationStatus() != shaderc_compilation_status_success)
+				{
+					LP_CORE_ERROR("Failed to preprocess shader!");
+					LP_CORE_ERROR("{0}", preProcessResult.GetErrorMessage());
+					LP_CORE_ASSERT(false, "Failed to preprocess shader!");
+				}
+				
 				//Compile shader
 				auto& source = m_shaderSource[stage];
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderStageToShaderC(stage), Path.string().c_str(), options);
@@ -879,7 +773,7 @@ namespace Lamp
 				m_descriptorSetLayouts.resize((size_t)(set + 1));
 			}
 
-			LP_CORE_INFO("VulkanShader::CreateDescriptors - {0}, {1}", m_specification.name, set);
+			LP_CORE_INFO("VulkanShader::CreateDescriptors - {0}, {1}", m_metaData.name, set);
 
 			auto device = VulkanContext::GetCurrentDevice();
 			LP_VK_CHECK(vkCreateDescriptorSetLayout(device->GetHandle(), &descriptorLayout, nullptr, &m_descriptorSetLayouts[set]));

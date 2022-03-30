@@ -1,14 +1,21 @@
-#ShaderSpec
-Name: pbrSSS
-TextureCount: 3
-InternalShader: false
-TextureNames
-{
-u_Albedo
-u_Normal
-u_MRO
-u_DetailNormal
-}
+#ShaderSpecBegin
+shader:
+  name: pbrSSS
+  internal: true
+  textures:
+  - texture: u_Albedo
+    name: Albedo
+    internal: false
+  - texture: u_Normal
+    name: Normal
+    internal: false
+  - texture: u_MRO
+    name: MRO
+    internal: false
+  - texture: u_DetailNormal
+    name: DetailNormal
+    internal: false
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core

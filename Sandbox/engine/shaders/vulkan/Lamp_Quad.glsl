@@ -1,11 +1,12 @@
-#ShaderSpec
-Name: quad
-TextureCount: 1
-InternalShader: false
-TextureNames
-{
-u_Texture
-}
+#ShaderSpecBegin
+shader:
+  name: quad
+  internal: true
+    textures:
+  - texture: u_Texture
+    name: Sprite
+    internal: false
+#ShaderSpecEnd
 
 #type vertex
 #version 440 core

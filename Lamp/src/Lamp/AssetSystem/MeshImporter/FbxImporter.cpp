@@ -211,7 +211,7 @@ namespace Lamp
 
 		if (!vertices.empty() && !indices.empty())
 		{
-			return CreateRef<SubMesh>(vertices, indices, index);
+			return CreateRef<SubMesh>(vertices, indices, index, mesh->GetName());
 		}
 
 		return nullptr;

@@ -174,6 +174,40 @@ namespace Sandbox
 
 	void MeshImporterPanel::UpdateMeshConstruction()
 	{
+		ImGui::Begin("Mesh Construction");
+
+		UI::ScopedColor childColor(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
+
+		if (m_meshToImport)
+		{
+			if (ImGui::BeginChild("properties", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 5.f, 5.f });
+
+				if (ImGui::TreeNode("Root"))
+				{
+					uint32_t index = 0;
+					for (const auto& subMesh : m_meshToImport->GetSubMeshes())
+					{
+						std::string id = subMesh->GetName().c_str();
+						if (id.empty())
+						{
+							id = "Mesh" + std::to_string(index);
+						}
+
+						ImGui::TreeNodeEx(id.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+						index++;
+					}
+
+					ImGui::TreePop();
+				}
+
+				ImGui::PopStyleVar();
+			}
+			ImGui::EndChild();
+		}
+
+		ImGui::End();
 	}
 
 	bool MeshImporterPanel::OnRender(Lamp::AppRenderEvent& e)
@@ -185,7 +219,7 @@ namespace Sandbox
 
 		RenderCommand::Begin(m_camera->GetCamera());
 		RenderCommand::BeginPass(m_renderPipeline);
-		
+
 		if (m_meshToImport)
 		{
 			for (const auto& mesh : m_meshToImport->GetSubMeshes())
@@ -193,7 +227,7 @@ namespace Sandbox
 				RenderCommand::DrawMeshDirect(m_transform, mesh, m_materialInstances[mesh->GetMaterialIndex()]);
 			}
 		}
-		
+
 		RenderCommand::DispatchRenderCommands();
 		RenderCommand::EndPass();
 		RenderCommand::End();
@@ -327,9 +361,6 @@ namespace Sandbox
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 5.f, 5.f });
 
-			ImGui::Text(("Source path: " + m_importSettings.path.string()).c_str());
-			ImGui::Text(("Destination path: " + m_savePath.string()).c_str());
-
 			UI::PushId();
 			if (UI::BeginProperties("test", false))
 			{
@@ -353,8 +384,8 @@ namespace Sandbox
 			static std::vector<const char*> units = { "Centimeters", "Decimeters", "Meters" };
 			static int currentUnit = 0;
 
-			static std::vector<const char*> meshDirections = { "Y+ up", "Y- up", "Z+ up", "Z- up", "X+ up", "X- up" };
-			static int currentDirection = 0;
+			static std::vector<const char*> meshDirections = { "X+ up", "X- up", "Y+ up", "Y- up", "Z+ up", "Z- up" };
+			static int currentDirection = 2;
 
 			UI::PushId();
 			if (UI::BeginProperties("meshSettings", false))
@@ -372,6 +403,8 @@ namespace Sandbox
 
 				if (UI::Combo("Up direction", currentDirection, meshDirections))
 				{
+					m_importSettings.upAxis = static_cast<MeshAxis>(currentDirection);
+					LoadMesh();
 				}
 
 				UI::EndProperties(false);
@@ -394,7 +427,8 @@ namespace Sandbox
 			ImGui::End();
 			return;
 		}
-		
+
+		UI::ScopedColor childColor(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
 		if (ImGui::BeginChild("properties", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 5.f, 5.f });
@@ -439,16 +473,16 @@ namespace Sandbox
 
 					ImGui::PopID();
 
-
 					matId++;
 				}
 
 				ImGui::EndTable();
 			}
-		
+
+			ImGui::PopStyleVar();
 			ImGui::EndChild();
 		}
-		
+
 		ImGui::End();
 	}
 }

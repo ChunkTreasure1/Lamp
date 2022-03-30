@@ -19,6 +19,9 @@ IncludeDir["rapidxml"] = "%{wks.location}/Lamp/vendor/rapidxml"
 IncludeDir["ktx2"] = "%{wks.location}/Lamp/vendor/ktx2/include"
 IncludeDir["Optick"] = "%{wks.location}/Lamp/vendor/Optick/src"
 IncludeDir["fbxsdk"] = "%{wks.location}/Lamp/vendor/fbxsdk/include"
+IncludeDir["shaderc_utils"] = "%{wks.location}/Lamp/vendor/shaderc/libshaderc_util/include"
+IncludeDir["shaderc_glslc"] = "%{wks.location}/Lamp/vendor/shaderc/glslc"
+
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"

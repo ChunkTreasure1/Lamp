@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: environmentMipFilter
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: environmentMipFilter
+  internal: true
+#ShaderSpecEnd
 
 #type compute
 #version 450 core

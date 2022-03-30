@@ -160,7 +160,7 @@ namespace Lamp
 			}
 		}
 
-		m_mesh = CreateRef<SubMesh>(vertices, indices, 0);
+		m_mesh = CreateRef<SubMesh>(vertices, indices, 0, "");
 		m_transform = glm::scale(glm::mat4(1.f), glm::vec3{ 2.f, 1.f, 2.f });
 	}
 

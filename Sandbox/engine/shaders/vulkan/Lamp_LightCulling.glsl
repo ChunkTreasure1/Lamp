@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: lightCulling
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: lightCulling
+  internal: true
+#ShaderSpecEnd
 
 //Based on https://github.com/bcrusco/Forward-Plus-Renderer
 #type compute

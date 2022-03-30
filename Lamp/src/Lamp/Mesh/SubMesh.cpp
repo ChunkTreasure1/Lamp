@@ -33,8 +33,8 @@ namespace Lamp
 		return BoundingSphere((maxAABB + minAABB) * 0.5f, glm::length(minAABB - maxAABB));
 	}
 
-	SubMesh::SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex)
-		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_materialIndex(matIndex)
+	SubMesh::SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex, const std::string& name)
+		: m_boundingSphere(CalculateBoundingSphere(vertices)), m_materialIndex(matIndex), m_name(name)
 	{
 		m_vertices = vertices;
 		m_indices = indices;
@@ -77,7 +77,7 @@ namespace Lamp
 				0, 5, 1
 			};
 
-			mesh = CreateRef<SubMesh>(positions, indices, 0);
+			mesh = CreateRef<SubMesh>(positions, indices, 0, "Cube");
 			s_baseMeshes[BaseMesh::Cube] = mesh;
 		}
 		else
@@ -109,7 +109,7 @@ namespace Lamp
 				2, 3, 0
 			};
 
-			mesh = CreateRef<SubMesh>(quadVertices, quadIndices, 0);
+			mesh = CreateRef<SubMesh>(quadVertices, quadIndices, 0, "Quad");
 			s_baseMeshes[BaseMesh::Quad] = mesh;
 		}
 		else

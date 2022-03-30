@@ -149,7 +149,7 @@ namespace Lamp
 				indices.push_back(indice);
 			}
 
-			subMeshes.push_back(CreateRef<SubMesh>(vertices, indices, matIdInt));
+			subMeshes.push_back(CreateRef<SubMesh>(vertices, indices, matIdInt, ""));
 		}
 		in.close();
 
@@ -279,18 +279,18 @@ namespace Lamp
 
 		YAML::Node textureNode = materialNode["textures"];
 
-		for (auto& texName : mat->GetShader()->GetSpecification().inputTextureNames)
+		for (auto& texData : mat->GetShader()->GetMetaData().textureData)
 		{
-			if (textureNode[texName])
+			if (textureNode[texData.shaderName])
 			{
-				AssetHandle textureHandle = textureNode[texName].as<AssetHandle>();
+				AssetHandle textureHandle = textureNode[texData.shaderName].as<AssetHandle>();
 				auto path = g_pEnv->pAssetManager->GetPathFromAssetHandle(textureHandle);
 
-				mat->SetTexture(texName, ResourceCache::GetAsset<Texture2D>(path));
+				mat->SetTexture(texData.shaderName, ResourceCache::GetAsset<Texture2D>(path));
 			}
 			else
 			{
-				mat->SetTexture(texName, Renderer::Get().GetDefaults().whiteTexture);
+				mat->SetTexture(texData.shaderName, Renderer::Get().GetDefaults().whiteTexture);
 			}
 		}
 

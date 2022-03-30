@@ -147,7 +147,7 @@ namespace Lamp
 			}
 		}
 
-		return CreateRef<SubMesh>(vertices, indices, pMesh->mMaterialIndex);
+		return CreateRef<SubMesh>(vertices, indices, pMesh->mMaterialIndex, pMesh->mName.C_Str());
 	}
 
 	std::vector<Ref<SubMesh>> AssimpImporter::CompileStatic(const std::vector<Ref<SubMesh>>& meshes, const std::map<uint32_t, Ref<Material>>& materials)
@@ -168,7 +168,7 @@ namespace Lamp
 				}
 			}
 
-			newMeshes[material.first] = CreateRef<SubMesh>(vertices, indices, material.first);
+			newMeshes[material.first] = CreateRef<SubMesh>(vertices, indices, material.first, "");
 		}
 
 		std::vector<Ref<SubMesh>> returnMeshes;

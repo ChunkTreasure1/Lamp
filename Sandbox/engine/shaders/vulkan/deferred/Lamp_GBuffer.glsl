@@ -1,13 +1,18 @@
-#ShaderSpec
-Name: gbuffer
-TextureCount: 3
-InternalShader: true
-TextureNames
-{
-u_Albedo
-u_Normal
-u_MRO
-}
+#ShaderSpecBegin
+shader:
+  name: gbuffer
+  internal: true
+  textures:
+  - texture: u_Albedo
+    name: Albedo
+    internal: false
+  - texture: u_Normal
+    name: Normal
+    internal: false
+  - texture: u_MRO
+    name: MRO
+    internal: false
+#ShaderSpecEnd
 
 #type vertex
 #version 440
@@ -17,26 +22,13 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
+#include "Common/Lamp_Common.glsl"
+
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
 
 } u_MeshData;
-
-layout(std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
-
-layout(std140, binding = 4) uniform DirectionalLightData
-{
-    mat4 viewProjections[10];
-    uint count;
-} u_DirectionalLightData;
 
 layout (location = 0) out Out
 {

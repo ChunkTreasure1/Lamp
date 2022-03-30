@@ -20,6 +20,7 @@ namespace Lamp
 		m_renderPipelinesNameMap["Deferred"] = ERenderPipeline::Deferred;
 		m_renderPipelinesNameMap["Forward"] = ERenderPipeline::Forward;
 		m_renderPipelinesNameMap["Transparent"] = ERenderPipeline::Transparent;
+		m_renderPipelinesNameMap["Grid"] = ERenderPipeline::Grid;
 	}
 
 	RenderPipelineLibrary::~RenderPipelineLibrary()

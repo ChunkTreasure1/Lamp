@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: depthPrePass
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: depthPrePass
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 440
@@ -14,21 +12,14 @@ layout (location = 2) in vec3 a_Tangent;
 layout (location = 3) in vec3 a_Bitangent;
 layout (location = 4) in vec2 a_TexCoords;
 
+#include "Common/Lamp_Common.glsl"
+
 layout (push_constant) uniform MeshDataBuffer
 {
     mat4 model;
     vec2 blendingUseBlending;
 
 } u_MeshData;
-
-layout(std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
 
 void main()
 {

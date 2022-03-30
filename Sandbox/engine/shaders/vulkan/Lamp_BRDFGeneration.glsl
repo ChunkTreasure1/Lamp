@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: BRDFIntegrate
-TextureCount: 0
-InternalShader: true
-TextureNames:
-{
-}
+#ShaderSpecBegin
+shader:
+  name: BRDFIntegrate
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 450 core
@@ -29,14 +27,7 @@ void main()
 layout (location = 0) out vec2 o_Color;
 layout (location = 0) in vec2 v_TexCoords;
 
-layout (std140, binding = 0) uniform CameraDataBuffer
-{
-    mat4 view;
-    mat4 projection;
-    vec4 position;
-    vec2 ambienceExposure;
-
-} u_CameraData;
+#include "Common/Lamp_Common.glsl"
 
 const float PI = 3.1415926535897932384626433832795;
 

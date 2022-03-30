@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: ssaoCompute
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: ssaoCompute
+  internal: true
+#ShaderSpecEnd
 
 #type compute
 #version 450

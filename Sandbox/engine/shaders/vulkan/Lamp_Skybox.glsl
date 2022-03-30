@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: skybox
-TextureCount: 0
-InternalShader: true
-TextureNames:
-{
-}
+#ShaderSpecBegin
+shader:
+  name: skybox
+  internal: true
+#ShaderSpecEnd
 
 #type vertex
 #version 440 core

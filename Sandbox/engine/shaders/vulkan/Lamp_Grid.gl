@@ -1,0 +1,88 @@
+#ShaderSpecBegin
+shader:
+  name: grid
+  internal: true
+#ShaderSpecEnd
+
+#type vertex
+#version 440 core
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec3 a_Normal;
+layout (location = 2) in vec3 a_Tangent;
+layout (location = 3) in vec3 a_Bitangent;
+layout (location = 4) in vec2 a_TexCoords;
+
+#include "Common/Lamp_Common.glsl"
+
+layout (location = 0) out Out
+{
+    vec3 nearPoint;
+    vec3 farPoint;
+} v_Out;
+
+vec3 UnprojectPoint(vec3 position, mat4 view, mat4 projection)
+{
+    mat4 viewInv = inverse(view);
+    mat4 projInv = inverse(projection);
+
+    vec4 unprojectedPoint = viewInv * projInv * vec4(position, 1.0);  
+    return unprojectedPoint.xyz / unprojectedPoint.w;
+}
+
+void main()
+{
+    v_Out.nearPoint = UnprojectPoint(vec3(a_Position.x, a_Position.y, 0.0), u_CameraData.view, u_CameraData.projection);
+    v_Out.farPoint = UnprojectPoint(vec3(a_Position.x, a_Position.y, 1.0), u_CameraData.view, u_CameraData.projection);
+
+	gl_Position = vec4(a_Position, 1.0);
+}
+
+#type fragment
+#version 440 core
+layout(location = 0) out vec4 o_Color;
+
+layout (location = 0) in Out
+{
+    vec3 nearPoint;
+    vec3 farPoint;
+} v_In;
+
+vec4 CalculateGrid(vec3 position, float scale)
+{
+    vec2 coord = position.xz * scale;
+    vec3 derivative = fwidth(coord);
+    vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
+
+    float line = min(grid.x, grid.y);
+    float minimumZ = min(derivative.y, 1);
+    float minimumX = min(derivative.x, 1);
+
+    vec4 color = vec4(0.2, 0.2, 0.2, 1.0 - min(line, 1.0));
+
+    if (position.x > -0.1 * minimumX && position.x < 0.1 * minimumX)
+    {
+        color.z = 1.0;
+    }
+
+    if (position.z > -0.1 * minimumZ && position.z < 0.1 * minimumZ)
+    {
+        color.x = 1.0;
+    }
+
+    return color;
+}
+
+float CalculateDepth(vec3 position)
+{
+    vec4 clipSpacePos = u_CameraData.projection * u_CameraData.view * vec4(position.xyz, 1.0);
+    return clipSpacePos.xyz / clipSpacePos.w;
+}   
+
+void main()
+{
+    float t = -v_In.nearPoint.y / (v_In.farPoint.y - v_In.nearPoint.y);
+    vec3 position = v_In.nearPoint + t * (v_In.farPoint - v_In.nearPoint);
+
+    gl_FragDepth = CalculateDepth(position);
+    o_Color = CalculateGrid(position, 10) * float(t > 0);
+}

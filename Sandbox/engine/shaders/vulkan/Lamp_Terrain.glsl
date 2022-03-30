@@ -1,10 +1,8 @@
-#ShaderSpec
-Name: terrain
-TextureCount: 0
-InternalShader: true
-TextureNames
-{
-}
+#ShaderSpecBegin
+shader:
+  name: terrain
+  internal: true
+#ShaderSpecEnd
 
 //Based on https://github.com/SaschaWillems/Vulkan/blob/master/data/shaders/glsl/terraintessellation
 #type vertex

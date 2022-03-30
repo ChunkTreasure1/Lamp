@@ -15,17 +15,18 @@ namespace Lamp
 	{
 	public:
 		SubMesh() = default;
-		SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex);
+		SubMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, uint32_t matIndex, const std::string& name);
 
 		inline const Ref<VertexBuffer> GetVertexBuffer() const { return m_vertexBuffer; }
 		inline const Ref<IndexBuffer> GetIndexBuffer() const { return m_indexBuffer; }
 
-		inline const uint32_t GetMaterialIndex() { return m_materialIndex; }
-
+		inline const uint32_t GetMaterialIndex() const { return m_materialIndex; }
+		inline const std::string& GetName() const { return m_name; }
+		
 		inline std::vector<uint32_t>& GetIndices() { return m_indices; }
 		inline std::vector<Vertex>& GetVertices() { return m_vertices; }
 
-		inline const BoundingVolume& GetBoundingVolume() { return m_boundingSphere; }
+		inline const BoundingVolume& GetBoundingVolume() const { return m_boundingSphere; }
 
 		static Ref<SubMesh> CreateCube();
 		static Ref<SubMesh> CreateQuad();
@@ -43,6 +44,7 @@ namespace Lamp
 		Ref<IndexBuffer> m_indexBuffer;
 
 		uint32_t m_materialIndex;
+		std::string m_name;
 
 		BoundingSphere m_boundingSphere;
 	};
