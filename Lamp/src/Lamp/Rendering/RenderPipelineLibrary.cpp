@@ -13,9 +13,13 @@ namespace Lamp
 	RenderPipelineLibrary::RenderPipelineLibrary()
 	{
 		LP_CORE_ASSERT(!s_instance, "Instance already exists! Singleton should not be created more than once!")
-		s_instance = this;
-	
+			s_instance = this;
+
 		SetupRenderPipelines();
+
+		m_renderPipelinesNameMap["Deferred"] = ERenderPipeline::Deferred;
+		m_renderPipelinesNameMap["Forward"] = ERenderPipeline::Forward;
+		m_renderPipelinesNameMap["Transparent"] = ERenderPipeline::Transparent;
 	}
 
 	RenderPipelineLibrary::~RenderPipelineLibrary()
@@ -28,6 +32,18 @@ namespace Lamp
 		return m_renderPipelines[pipeline];
 	}
 
+	Ref<RenderPipeline> RenderPipelineLibrary::GetPipeline(const std::string& pipeline)
+	{
+		auto it = m_renderPipelinesNameMap.find(pipeline);
+		if (it != m_renderPipelinesNameMap.end())
+		{
+			return m_renderPipelines[m_renderPipelinesNameMap[pipeline]];
+		}
+		
+		LP_CORE_ERROR("Render pipeline {0} not found! Defaulting to deferred!", pipeline);
+		return m_renderPipelines[ERenderPipeline::Deferred];
+	} 
+
 	ERenderPipeline RenderPipelineLibrary::GetTypeFromPipeline(Ref<RenderPipeline> pipeline)
 	{
 		for (const auto mPipeline : m_renderPipelines)
@@ -37,6 +53,17 @@ namespace Lamp
 				return mPipeline.first;
 			}
 		}
+	}
+
+	std::vector<std::string> RenderPipelineLibrary::GetPipelineNames() const
+	{
+		std::vector<std::string> names;
+
+		for (const auto& it : m_renderPipelinesNameMap)
+		{
+			names.emplace_back(it.first);
+		}
+		return names;
 	}
 
 	RenderPipelineLibrary& RenderPipelineLibrary::Get()

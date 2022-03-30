@@ -54,7 +54,7 @@ namespace Sandbox
 		Ref<Lamp::Framebuffer> m_framebuffer;
 
 		std::vector<Ref<Lamp::MaterialInstance>> m_materialInstances;
-		std::vector<int> m_shaderSelectionIds;
+		std::vector<int> m_currentPipelinesSelected;
 
 		//Icons
 		Ref<Lamp::Texture2D> m_loadIcon;

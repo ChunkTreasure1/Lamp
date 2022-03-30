@@ -114,10 +114,10 @@ namespace Lamp
 
 		VkViewport viewport{};
 		viewport.x = 0.f;
-		viewport.y = extent.height;
+		viewport.y = (float)extent.height;
 
-		viewport.width = extent.width;
-		viewport.height = extent.height;
+		viewport.width = (float)extent.width;
+		viewport.height = (float)extent.height;
 		viewport.height = -viewport.height;
 		viewport.minDepth = 0.f;
 		viewport.maxDepth = 1.f;
@@ -251,7 +251,7 @@ namespace Lamp
 			blendAttachments.emplace_back(colorBlendAttachment);
 		}
 
-		colorBlending.attachmentCount = blendAttachments.size();
+		colorBlending.attachmentCount = (uint32_t)blendAttachments.size();
 		colorBlending.pAttachments = blendAttachments.data();
 
 		VkPipelineDepthStencilStateCreateInfo depthStencil{};
@@ -321,7 +321,7 @@ namespace Lamp
 	void RenderPipeline::BindDescriptorSets(Ref<CommandBuffer> commandBuffer, const std::vector<VkDescriptorSet>& descriptorSets, uint32_t startSet) const
 	{
 		auto vulkanCommanBuffer = reinterpret_cast<VkCommandBuffer>(commandBuffer->GetCurrentCommandBuffer());
-		vkCmdBindDescriptorSets(vulkanCommanBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, startSet, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+		vkCmdBindDescriptorSets(vulkanCommanBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, startSet, (uint32_t)descriptorSets.size(), descriptorSets.data(), 0, nullptr);
 	}
 
 	void RenderPipeline::BindDescriptorSet(Ref<CommandBuffer> commandBuffer, VkDescriptorSet descriptorSet, uint32_t set) const

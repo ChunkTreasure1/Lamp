@@ -14,7 +14,11 @@ namespace Lamp
 		~RenderPipelineLibrary();
 
 		Ref<RenderPipeline> GetPipeline(ERenderPipeline pipeline);
+		Ref<RenderPipeline> GetPipeline(const std::string& pipeline);
+		
 		ERenderPipeline GetTypeFromPipeline(Ref<RenderPipeline> pipeline);
+		std::vector<std::string> GetPipelineNames() const;
+		
 
 		static RenderPipelineLibrary& Get();
 
@@ -24,5 +28,6 @@ namespace Lamp
 		static RenderPipelineLibrary* s_instance;
 		
 		std::unordered_map<ERenderPipeline, Ref<RenderPipeline>> m_renderPipelines;
+		std::unordered_map<std::string, ERenderPipeline> m_renderPipelinesNameMap;
 	};
 }

@@ -117,6 +117,6 @@ namespace Lamp
 		}
 
 		auto device = VulkanContext::GetCurrentDevice();
-		vkUpdateDescriptorSets(device->GetHandle(), writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
+		vkUpdateDescriptorSets(device->GetHandle(), (uint32_t)writeDescriptors.size(), writeDescriptors.data(), 0, nullptr);
 	}
 }

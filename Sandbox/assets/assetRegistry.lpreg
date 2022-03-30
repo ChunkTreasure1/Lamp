@@ -31,6 +31,12 @@ Assets:
     Path: assets\meshes\head\textures\kyle_low_mro.tga
   - Handle: 5165272647848418933
     Path: assets\meshes\head\textures\kyle_low_normal.tga
+  - Handle: 804736909715476099
+    Path: assets\meshes\knight\bardKnight_sk.lgs
+  - Handle: 8649226039663479001
+    Path: assets\meshes\knight\knight.lgf
+  - Handle: 7980172845488344451
+    Path: assets\meshes\knight\knight_assimp.lgf
   - Handle: 15873515662996244200
     Path: assets\meshes\sponza\Sponza.lgf
   - Handle: 5148223941914373274

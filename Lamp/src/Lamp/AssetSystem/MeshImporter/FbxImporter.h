@@ -8,6 +8,7 @@
 namespace Lamp
 {
 	class SubMesh;
+	class Material;
 	class FbxImporter : public MeshImporter
 	{
 	public:
@@ -17,8 +18,9 @@ namespace Lamp
 		Ref<Mesh> ImportMeshImpl(const MeshImportSettings& settings) override;
 
 	private:
-		void FetchGeometryNodes(FbxNode* node, std::vector<FbxNode*>& outNodes);
+		std::vector<Ref<SubMesh>> LoadMesh(const MeshImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials);
 		Ref<SubMesh> ProcessMesh(FbxMesh* mesh);
+		void FetchGeometryNodes(FbxNode* node, std::vector<FbxNode*>& outNodes);
 		
 		void ReadNormal(FbxMesh* mesh, int32_t ctrlPointIndex, int32_t vertCount, glm::vec3& normal);
 		void ReadTangent(FbxMesh* mesh, int32_t ctrlPointIndex, int32_t vertCount, glm::vec3& tangent);

@@ -12,11 +12,13 @@ namespace Lamp
 	{
 		MeshFormat FormatFromExtension(const std::filesystem::path& aPath)
 		{
-			if (aPath.extension().string() == ".fbx" || aPath.extension().string() == ".FBX")
+			auto ext = aPath.extension().string();
+			
+			if (ext == ".fbx" || ext == ".FBX")
 			{
 				return MeshFormat::Fbx;
 			}
-			else if (aPath.extension().string() == ".gltf" || aPath.extension().string() == ".glb")
+			else if (ext == ".gltf" || ext == ".glb")
 			{
 				return MeshFormat::GLTF;
 			}
@@ -40,6 +42,6 @@ namespace Lamp
 
 	Ref<Mesh> MeshImporter::ImportMesh(const MeshImportSettings& settings)
 	{
-		return s_importers[Utility::FormatFromExtension(settings.path)]->ImportMesh(settings);
+		return s_importers[Utility::FormatFromExtension(settings.path)]->ImportMeshImpl(settings);
 	}
 }

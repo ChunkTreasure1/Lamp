@@ -215,7 +215,7 @@ namespace Lamp
 
 		if (m_depthAttachmentImage)
 		{
-			if (m_specification.existingImages.find(m_specification.attachments.Attachments.size() - 1) == m_specification.existingImages.end())
+			if (m_specification.existingImages.find((uint32_t)(m_specification.attachments.Attachments.size() - 1)) == m_specification.existingImages.end())
 			{
 				m_depthAttachmentImage->Release();
 			}

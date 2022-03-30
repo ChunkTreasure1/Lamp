@@ -222,10 +222,10 @@ namespace Sandbox
 			m_materialInstances.emplace_back(MaterialInstance::Create(mat.second));
 		}
 
-		m_shaderSelectionIds.clear();
+		m_currentPipelinesSelected.clear();
 		for (int i = 0; i < m_meshToImport->GetMaterials().size(); i++)
 		{
-			m_shaderSelectionIds.push_back(0);
+			m_currentPipelinesSelected.push_back(0);
 		}
 	}
 
@@ -248,9 +248,9 @@ namespace Sandbox
 			{
 				if (!MaterialLibrary::Get().IsMaterialLoaded(mat.second->GetName()))
 				{
-					std::string sMatPath = m_savePath.parent_path().string() + "/" + mat.second->GetName() + ".mtl";
+					std::filesystem::path materialPath = m_savePath.parent_path() / std::filesystem::path(mat.second->GetName() + ".mtl");
 
-					mat.second->Path = std::filesystem::path(sMatPath);
+					mat.second->Path = materialPath;
 					g_pEnv->pAssetManager->SaveAsset(mat.second);
 
 					MaterialLibrary::Get().AddMaterial(mat.second);
@@ -389,91 +389,66 @@ namespace Sandbox
 	{
 		ImGui::Begin("Materials");
 
-		static std::vector<const char*> shaders;
-
-		shaders.clear();
-		for (auto& shader : ShaderLibrary::GetShaders())
+		if (!m_meshToImport)
 		{
-			shaders.push_back(shader->GetName().c_str());
+			ImGui::End();
+			return;
 		}
-
-		if (m_meshToImport.get())
+		
+		if (ImGui::BeginChild("properties", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
 		{
-			int matId = 0;
-			for (auto& mat : m_meshToImport->GetMaterials())
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 5.f, 5.f });
+
+			if (ImGui::BeginTable("materialTable", 3, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable))
 			{
-				for (int i = 0; i < shaders.size(); i++)
+				ImGui::TableSetupColumn("Name");
+				ImGui::TableSetupColumn("Index");
+				ImGui::TableSetupColumn("Pipeline");
+				ImGui::TableHeadersRow();
+
+				uint32_t matId = 0;
+				for (auto& mat : m_meshToImport->GetMaterials())
 				{
-					if (mat.second->GetShader()->GetName() == shaders[i])
+					ImGui::PushID(matId);
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+
+					std::string nameId = "##name" + std::to_string(matId);
+					ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+					ImGui::InputTextString(nameId.c_str(), &const_cast<std::string&>(mat.second->GetName()));
+
+					ImGui::TableNextColumn();
+
+					std::string indexId = "##index" + std::to_string(matId);
+					ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+					ImGui::InputScalar(indexId.c_str(), ImGuiDataType_U32, &const_cast<uint32_t&>(mat.second->GetIndex()));
+
+					ImGui::TableNextColumn();
+
+					auto pipelineNames = RenderPipelineLibrary::Get().GetPipelineNames();
+
+					std::vector<const char*> pipelineEntries;
+					for (auto& name : pipelineNames)
 					{
-						m_shaderSelectionIds[matId] = i;
+						pipelineEntries.emplace_back(name.c_str());
 					}
-				}
-				matId++;
-			}
 
-			int i = 0;
-			for (auto& mat : m_meshToImport->GetMaterials())
-			{
-				std::string id = mat.second->GetName() + "###mat" + std::to_string(i);
-				if (ImGui::CollapsingHeader(id.c_str()))
-				{
-					std::string propId = "##props" + std::to_string(i);
-					UI::PushId();
-					if (UI::BeginProperties(propId, false))
-					{
-						UI::Property("Name", mat.second->GetName());
+					std::string pipelineId = "##pipeline" + std::to_string(matId);
+					ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+					ImGui::Combo(pipelineId.c_str(), &m_currentPipelinesSelected[matId], pipelineEntries.data(), (int)pipelineEntries.size());
 
-						if (UI::Combo("Shader", m_shaderSelectionIds[i], shaders))
-						{
-							if (mat.second->GetShader() != ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]))
-							{
-								//mat.second->SetShader(ShaderLibrary::GetShader(shaders[m_shaderSelectionIds[i]]));
-							}
-						}
+					ImGui::PopID();
 
-						UI::EndProperties(false);
-					}
-					UI::PopId();
 
-					ImGui::Separator();
-
-					//TODO: fix
-					//for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(mat.second->GetTextures()))
-					//{
-					//	ImGui::Text(tex.first.c_str());
-
-					//	std::filesystem::path path;
-					//	if (UI::ImageButton(tex.second->GetID(), path))
-					//	{
-					//		if (!path.empty())
-					//		{
-					//			Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
-					//			if (newTex->IsValid())
-					//			{
-					//				tex.second = newTex;
-					//			}
-					//		}
-					//	}
-
-					//	if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
-					//	{
-					//		const wchar_t* wPath = (const wchar_t*)ptr;
-					//		std::filesystem::path path(wPath);
-					//		AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-					//		if (type == AssetType::Texture)
-					//		{
-					//			tex.second = ResourceCache::GetAsset<Texture2D>(path);
-					//		}
-					//	}
-					//	ImGui::Separator();
-					//}
+					matId++;
 				}
 
-				i++;
+				ImGui::EndTable();
 			}
+		
+			ImGui::EndChild();
 		}
-
+		
 		ImGui::End();
 	}
 }

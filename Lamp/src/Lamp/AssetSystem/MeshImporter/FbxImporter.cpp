@@ -2,58 +2,47 @@
 #include "FbxImporter.h"
 
 #include "Lamp/Mesh/SubMesh.h"
+#include "Lamp/Mesh/Materials/Material.h"
+#include "Lamp/Mesh/Mesh.h"
+
+#include "Lamp/Rendering/RenderPipelineLibrary.h"
 
 namespace Lamp
 {
-	Ref<Mesh> FbxImporter::ImportMeshImpl(const MeshImportSettings& settings)
+	namespace Utility
 	{
-		FbxManager* sdkManager = FbxManager::Create();
-		FbxIOSettings* ioSettings = FbxIOSettings::Create(sdkManager, IOSROOT);
-		
-		ioSettings->SetBoolProp(IMP_FBX_MATERIAL, true);
-		ioSettings->SetBoolProp(IMP_FBX_TEXTURE, false);
-		ioSettings->SetBoolProp(IMP_FBX_LINK, false);
-		ioSettings->SetBoolProp(IMP_FBX_SHAPE, false);
-		ioSettings->SetBoolProp(IMP_FBX_GOBO, false);
-		ioSettings->SetBoolProp(IMP_FBX_ANIMATION, false);
-		ioSettings->SetBoolProp(IMP_FBX_GLOBAL_SETTINGS, true);
-		
-		sdkManager->SetIOSettings(ioSettings);
-
-		fbxsdk::FbxImporter* importer = fbxsdk::FbxImporter::Create(sdkManager, "");
-
-		bool importStatus = importer->Initialize(settings.path.string().c_str(), -1, sdkManager->GetIOSettings());
-		if (!importStatus)
+		FbxSystemUnit MeshUnitToSystemUnit(MeshUnit unit)
 		{
-			LP_CORE_ERROR("Unable to import file {0}!", settings.path.string());
-			return nullptr;
+			switch (unit)
+			{
+				case MeshUnit::Centimeters: return FbxSystemUnit::cm;
+				case MeshUnit::Decimeters: return FbxSystemUnit::dm;
+				case MeshUnit::Meters: return FbxSystemUnit::m;
+			}
+			
+			return FbxSystemUnit::m;
 		}
-
-		FbxScene* fbxScene = FbxScene::Create(sdkManager, "Scene");
-		
-		FbxGeometryConverter geomConverter(sdkManager);
-		fbxsdk::FbxAxisSystem axisSystem(fbxsdk::FbxAxisSystem::eOpenGL);
-
-		if (!geomConverter.Triangulate(fbxScene, true, true))
-		{
-			geomConverter.Triangulate(fbxScene, true, false);
-		}
-
-		importer->Import(fbxScene);
-		axisSystem.DeepConvertScene(fbxScene);
-		
-		FbxNode* rootNode = fbxScene->GetRootNode();
-
-		std::vector<FbxNode*> geomNodes;
-		FetchGeometryNodes(rootNode, geomNodes);
-		
-		for (const auto& node : geomNodes)
-		{
-		}
-		
-		return nullptr;
 	}
 	
+	Ref<Mesh> FbxImporter::ImportMeshImpl(const MeshImportSettings& settings)
+	{
+		std::map<uint32_t, Ref<Material>> materials;
+		std::vector<Ref<SubMesh>> meshes = LoadMesh(settings, materials);
+
+		if (meshes.empty())
+		{
+			LP_CORE_WARN("Failed to load mesh or no meshes found at: {0}!", settings.path.string());
+
+			Ref<Mesh> asset = CreateRef<Mesh>();
+			asset->SetFlag(AssetFlag::Invalid);
+			
+			return asset;
+		}
+
+		Ref<Mesh> mesh = CreateRef<Mesh>(settings.path.stem().string(), meshes, materials);
+		return mesh;
+	}
+
 	void FbxImporter::FetchGeometryNodes(FbxNode* node, std::vector<FbxNode*>& outNodes)
 	{
 		if (node->GetNodeAttribute())
@@ -62,91 +51,172 @@ namespace Lamp
 			{
 				case FbxNodeAttribute::eMesh:
 				{
-					outNodes.emplace_back(node);
+					if (node->GetMesh())
+					{
+						outNodes.emplace_back(node);
+					}
 				}
 			}
 		}
-		
+
 		for (uint32_t i = 0; i < node->GetChildCount(); i++)
 		{
 			FetchGeometryNodes(node->GetChild(i), outNodes);
 		}
 	}
-	
+
+	std::vector<Ref<SubMesh>> FbxImporter::LoadMesh(const MeshImportSettings& settings, std::map<uint32_t, Ref<Material>>& materials)
+	{
+		std::vector<Ref<SubMesh>> subMeshes;
+
+		FbxManager* sdkManager = FbxManager::Create();
+		FbxIOSettings* ioSettings = FbxIOSettings::Create(sdkManager, IOSROOT);
+
+		ioSettings->SetBoolProp(IMP_FBX_MATERIAL, true);
+		ioSettings->SetBoolProp(IMP_FBX_TEXTURE, false);
+		ioSettings->SetBoolProp(IMP_FBX_LINK, false);
+		ioSettings->SetBoolProp(IMP_FBX_SHAPE, false);
+		ioSettings->SetBoolProp(IMP_FBX_GOBO, false);
+		ioSettings->SetBoolProp(IMP_FBX_ANIMATION, false);
+		ioSettings->SetBoolProp(IMP_FBX_GLOBAL_SETTINGS, true);
+
+		sdkManager->SetIOSettings(ioSettings);
+
+		fbxsdk::FbxImporter* importer = fbxsdk::FbxImporter::Create(sdkManager, "");
+
+		bool importStatus = importer->Initialize(settings.path.string().c_str(), -1, sdkManager->GetIOSettings());
+		if (!importStatus)
+		{
+			LP_CORE_ERROR("Unable to import file {0}!", settings.path.string());
+			return subMeshes;
+		}
+
+		FbxScene* fbxScene = FbxScene::Create(sdkManager, "Scene");
+
+		fbxsdk::FbxAxisSystem axisSystem(fbxsdk::FbxAxisSystem::eOpenGL);
+		fbxsdk::FbxSystemUnit units = Utility::MeshUnitToSystemUnit(settings.units);
+		
+		importer->Import(fbxScene);
+		axisSystem.DeepConvertScene(fbxScene);
+		units.ConvertScene(fbxScene);
+
+		FbxNode* rootNode = fbxScene->GetRootNode();
+
+		std::vector<FbxNode*> geomNodes;
+		FetchGeometryNodes(rootNode, geomNodes);
+
+		for (auto node : geomNodes)
+		{
+			FbxGeometryConverter geomConverter(sdkManager);
+			if (!geomConverter.Triangulate(node->GetNodeAttribute(), true, true))
+			{
+				geomConverter.Triangulate(node->GetNodeAttribute(), true, false);
+			}
+
+			Ref<SubMesh> subMesh = ProcessMesh(node->GetMesh());
+			if (subMesh)
+			{
+				subMeshes.emplace_back(subMesh);
+			}
+		}
+
+		for (auto subMesh : subMeshes)
+		{
+			if (materials.find(subMesh->GetMaterialIndex()) == materials.end())
+			{
+				std::string name = "Default";
+				if (auto material = fbxScene->GetMaterial(subMesh->GetMaterialIndex()))
+				{
+					name = material->GetName();
+				}
+				materials.emplace(subMesh->GetMaterialIndex(), Material::Create(name, subMesh->GetMaterialIndex(), RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Deferred)));
+			}
+		}
+
+		importer->Destroy();
+
+		return subMeshes;
+	}
+
 	Ref<SubMesh> FbxImporter::ProcessMesh(FbxMesh* mesh)
 	{
 		if (!mesh)
 		{
 			return nullptr;
 		}
-		
+
 		if (mesh->GetElementBinormalCount() == 0 || mesh->GetElementTangentCount() == 0)
 		{
-			LP_CORE_ASSERT(mesh->GenerateTangentsData(0, true, false), "Unable to generate tangent data!");
+			bool result = mesh->GenerateTangentsData(0, true, false);
+			LP_CORE_ASSERT(result, "Unable to generate tangent data!");
 		}
-		
+
 		const FbxVector4* ctrlPoints = mesh->GetControlPoints();
 		const uint32_t triangleCount = mesh->GetPolygonCount();
 		uint32_t vertexCount = 0;
-		
+
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
-		
+
 		vertices.reserve(triangleCount * 3);
 		indices.reserve(triangleCount);
-	
+
 		for (uint32_t i = 0; i < triangleCount; i++)
 		{
 			const int32_t polySize = mesh->GetPolygonSize(i);
 			LP_CORE_ASSERT(polySize == 3, "Mesh must be fully triangulated!");
-			break;
-		
+
 			for (int32_t j = 0; j < polySize; j++)
 			{
 				Vertex vertex;
 				const int32_t ctrlPointIndex = mesh->GetPolygonVertex(i, j);
-				
+
 				vertex.position.x = (float)ctrlPoints[ctrlPointIndex][0];
 				vertex.position.y = (float)ctrlPoints[ctrlPointIndex][1];
 				vertex.position.z = (float)ctrlPoints[ctrlPointIndex][2];
-				
+
 				const int32_t numUVs = mesh->GetElementUVCount();
 				const int32_t texUvIndex = mesh->GetTextureUVIndex(i, j);
-				
+
 				// TODO: Add ability to have multiple UV sets
 				for (int32_t uv = 0; uv < numUVs && uv < 4; uv++)
 				{
 					FbxGeometryElementUV* uvElement = mesh->GetElementUV(uv);
 					const auto coord = uvElement->GetDirectArray().GetAt(texUvIndex);
-					
+
 					vertex.textureCoords.x = (float)coord.mData[0];
 					vertex.textureCoords.y = (float)coord.mData[1];
-					
+
 					break;
 				}
-				
+
 				ReadNormal(mesh, ctrlPointIndex, vertexCount, vertex.normal);
 				ReadTangent(mesh, ctrlPointIndex, vertexCount, vertex.tangent);
 				ReadBitangent(mesh, ctrlPointIndex, vertexCount, vertex.bitangent);
-				
+
 				vertices.emplace_back(vertex);
 				indices.emplace_back(vertices.size() - 1);
 				vertexCount++;
 			}
 		}
-		
+
 		Optimize(vertices, indices);
-		
+
 		int32_t index = 0;
 		auto mat = mesh->GetElementMaterial();
 		if (mat)
 		{
 			index = mat->GetIndexArray()[0];
 		}
-		
-		return CreateRef<SubMesh>(vertices, indices, index);
+
+		if (!vertices.empty() && !indices.empty())
+		{
+			return CreateRef<SubMesh>(vertices, indices, index);
+		}
+
+		return nullptr;
 	}
-	
+
 	void FbxImporter::ReadNormal(FbxMesh* mesh, int32_t ctrlPointIndex, int32_t vertCount, glm::vec3& normal)
 	{
 		if (mesh->GetElementNormalCount() < 1)
@@ -220,7 +290,7 @@ namespace Lamp
 			break;
 		}
 	}
-	
+
 	void FbxImporter::ReadTangent(FbxMesh* mesh, int32_t ctrlPointIndex, int32_t vertCount, glm::vec3& tangent)
 	{
 		if (mesh->GetElementTangentCount() < 1)
@@ -294,7 +364,7 @@ namespace Lamp
 			break;
 		}
 	}
-	
+
 	void FbxImporter::ReadBitangent(FbxMesh* mesh, int32_t ctrlPointIndex, int32_t vertCount, glm::vec3& bitangent)
 	{
 		if (mesh->GetElementBinormalCount() < 1)
@@ -368,7 +438,7 @@ namespace Lamp
 			break;
 		}
 	}
-	
+
 	void FbxImporter::Optimize(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 	{
 		std::vector<Vertex> uniqueVerts;
@@ -390,7 +460,7 @@ namespace Lamp
 		vertices = uniqueVerts;
 		indices = uniqueIndices;
 	}
-	
+
 	int32_t FbxImporter::FindVertex(const Vertex& aVert, const std::vector<Vertex>& aUniques)
 	{
 		for (uint32_t i = 0; i < aUniques.size(); i++)

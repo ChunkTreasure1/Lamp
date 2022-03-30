@@ -25,7 +25,7 @@ namespace Lamp
 		float blendingMultiplier = 0.f;
 
 		glm::vec2 mroColor{ 0.f, 1.f };
-		glm::vec3 normalColor{ 0.f, 1.f, 0.f };
+		glm::vec4 normalColor{ 0.f, 1.f, 0.f, 0.f };
 		glm::vec4 albedoColor{ 1.f, 1.f, 1.f, 1.f };
 	};
 	
@@ -58,7 +58,7 @@ namespace Lamp
 		inline void SetName(const std::string & name) { m_name = name; }
 
 		const std::vector<Ref<Texture2D>> GetTextures();
-		inline const uint32_t GetIndex() { return m_index; }
+		inline const uint32_t& GetIndex() { return m_index; }
 		inline Ref<Shader> GetShader() { return m_shader; }
 		inline Ref<RenderPipeline> GetPipeline() const { return m_renderPipeline; }
 
@@ -70,6 +70,9 @@ namespace Lamp
 		static Ref<Material> Create(const std::string& name, uint32_t index, Ref<RenderPipeline> pipeline);
 		static Ref<Material> Create();
 		static Ref<Material> Create(const Ref<Material> material);
+
+		static AssetType GetStaticType() { return AssetType::Material; }
+		AssetType GetType() override { return GetStaticType(); }		
 
 	private:
 		void SetShader(Ref<Shader> shader);
