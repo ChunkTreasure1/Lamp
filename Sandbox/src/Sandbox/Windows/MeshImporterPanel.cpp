@@ -429,7 +429,8 @@ namespace Sandbox
 		}
 
 		UI::ScopedColor childColor(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
-		if (ImGui::BeginChild("properties", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
+		UI::ScopedColor headerColor(ImGuiCol_TableHeaderBg, { 0.f, 0.f, 0.f, 0.f });
+		if (ImGui::BeginChild("properties", { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y / 2.f }, false, ImGuiWindowFlags_AlwaysUseWindowPadding))
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 5.f, 5.f });
 
@@ -447,8 +448,15 @@ namespace Sandbox
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
 
-					std::string nameId = "##name" + std::to_string(matId);
+					std::string buttonId = "*##button" + std::to_string(matId);
+					if (ImGui::Button(buttonId.c_str()))
+					{
+						m_selectedMaterial = mat.second;
+					}
+
+					ImGui::SameLine();
 					ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+					std::string nameId = "##name" + std::to_string(matId);
 					ImGui::InputTextString(nameId.c_str(), &const_cast<std::string&>(mat.second->GetName()));
 
 					ImGui::TableNextColumn();
@@ -483,6 +491,59 @@ namespace Sandbox
 			ImGui::EndChild();
 		}
 
+		ImGui::Separator();
+
+		ImGui::TextUnformatted("Material Properties");
+		if (ImGui::BeginChild("matProperties", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
+		{
+			if (m_selectedMaterial)
+			{
+				auto& materialData = const_cast<MaterialData&>(m_selectedMaterial->GetMaterialData());
+
+				UI::PushId();
+				if (UI::BeginProperties("materialProperties", false))
+				{
+					UI::Property("Use albedo texture", materialData.useAlbedo);
+					UI::Property("Use normal texture", materialData.useNormal);
+					UI::Property("Use MRO texture", materialData.useMRO);
+					UI::Property("Use detail normal texture", materialData.useDetailNormal);
+
+					UI::Property("Use blending", materialData.useBlending);
+					UI::Property("Use translucency", materialData.useTranslucency);
+
+					UI::PropertyColor("Albedo color", materialData.albedoColor);
+					UI::PropertyColor("Normal color", materialData.normalColor);
+					UI::Property("MRO", materialData.mroColor);
+					UI::Property("Blending multiplier", materialData.blendingMultiplier);
+
+					for (auto& textureSpec : const_cast<std::vector<Material::MaterialTextureSpecification>&>(m_selectedMaterial->GetTextureSpecification()))
+					{
+						std::filesystem::path currentPath;
+						if (textureSpec.texture)
+						{
+							currentPath = textureSpec.texture->Path;
+						}
+
+						if (UI::Property(textureSpec.name, currentPath))
+						{
+							if (std::filesystem::exists(currentPath))
+							{
+								auto newTex = ResourceCache::GetAsset<Texture2D>(currentPath);
+								if (newTex)
+								{
+									textureSpec.texture = newTex;
+								}
+							}
+						}
+					}
+
+					UI::EndProperties(false);
+				}
+				UI::PopId();
+			}
+
+		}
+		ImGui::EndChild();
 		ImGui::End();
 	}
 }

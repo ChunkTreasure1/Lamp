@@ -624,7 +624,7 @@ namespace UI
 
 	static bool PropertyColor(const std::string& text, glm::vec4& value)
 	{
-		ImGui::NextColumn();
+		ImGui::TableNextColumn();
 		ImGui::TextUnformatted(text.c_str());
 
 		ImGui::TableNextColumn();

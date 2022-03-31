@@ -56,6 +56,8 @@ namespace Sandbox
 		std::vector<Ref<Lamp::MaterialInstance>> m_materialInstances;
 		std::vector<int> m_currentPipelinesSelected;
 
+		Ref<Lamp::Material> m_selectedMaterial;
+		
 		//Icons
 		Ref<Lamp::Texture2D> m_loadIcon;
 		Ref<Lamp::Texture2D> m_saveIcon;

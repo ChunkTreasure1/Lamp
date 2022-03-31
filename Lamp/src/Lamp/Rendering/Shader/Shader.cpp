@@ -183,8 +183,7 @@ namespace Lamp
 	{
 		std::string source = Utils::ReadFromFile(Path);
 
-		ShaderMetaData preProcessData;
-		m_shaderSource = ShaderPreProcessor::PreProcessSource(source, Path, preProcessData);
+		m_shaderSource = ShaderPreProcessor::PreProcessSource(source, Path, m_metaData);
 
 		std::unordered_map<VkShaderStageFlagBits, std::vector<uint32_t>> shaderData;
 		CompileOrGetBinary(shaderData, forceCompile);

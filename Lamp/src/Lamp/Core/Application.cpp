@@ -45,7 +45,7 @@ namespace Lamp
 		WindowProps props;
 		props.Width = 1280;
 		props.Height = 720;
-		props.IsVSync = false;
+		props.IsVSync = true;
 		props.Title = "Lamp";
 
 		m_window = Window::Create(props);
@@ -105,7 +105,6 @@ namespace Lamp
 			}
 
 			RenderCommand::SwapRenderBuffers();
-
 			AudioEngine::Update();
 
 			m_window->GetSwapchain()->BeginFrame();
@@ -129,7 +128,6 @@ namespace Lamp
 			}
 
 			m_window->Update(m_currentTimeStep);
-
 			m_mainFrameTime.End();
 		}
 	}

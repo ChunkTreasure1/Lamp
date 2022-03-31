@@ -53,7 +53,7 @@ namespace Lamp
 				size_t eol = source.find_first_of("\r\n", beginPos);
 				size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 
-				specificationSource = source.substr(beginPos + (eol - beginPos), endPos - nextLinePos + 1);
+				specificationSource = source.substr(beginPos + (eol - beginPos) + 2, endPos - nextLinePos);
 			}
 			else
 			{
@@ -61,6 +61,8 @@ namespace Lamp
 				LP_CORE_ASSERT(false, "Shader specification corrupt!");
 			}
 		}
+
+		LP_CORE_INFO(specificationSource);
 
 		if (!specificationSource.empty())
 		{
@@ -117,7 +119,6 @@ namespace Lamp
 				texture.shaderName = entry["texture"] ? entry["texture"].as<std::string>() : "Null";
 				texture.editorName = entry["name"] ? entry["name"].as<std::string>() : "Null";
 				texture.isInternal = entry["internal"] ? entry["internal"].as<bool>() : true;
-
 			}
 		}
 	}

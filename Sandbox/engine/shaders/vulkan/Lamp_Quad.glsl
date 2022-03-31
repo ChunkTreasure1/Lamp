@@ -2,7 +2,7 @@
 shader:
   name: quad
   internal: true
-    textures:
+  textures:
   - texture: u_Texture
     name: Sprite
     internal: false

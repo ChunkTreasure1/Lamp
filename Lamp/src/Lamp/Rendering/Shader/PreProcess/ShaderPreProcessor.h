@@ -15,8 +15,8 @@ namespace Lamp
 	
 	struct ShaderMetaData
 	{
-		std::string name;
-		bool isInternal;
+		std::string name = "Null";
+		bool isInternal = true;
 	
 		std::vector<ShaderTextureMetaData> textureData;
 	};
