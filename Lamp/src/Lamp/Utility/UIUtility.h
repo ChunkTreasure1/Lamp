@@ -114,8 +114,10 @@ namespace UI
 		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
 
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
+		
 		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
+	
 		return ImGui::TreeNodeEx(text.c_str(), flags);
 	}
 

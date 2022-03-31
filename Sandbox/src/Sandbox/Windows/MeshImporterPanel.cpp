@@ -412,8 +412,8 @@ namespace Sandbox
 			UI::PopId();
 
 			ImGui::PopStyleVar();
-			ImGui::EndChild();
 		}
+		ImGui::EndChild();
 
 		ImGui::End();
 	}

@@ -1,6 +1,8 @@
-#include "MaterialEditor.h"
+#include "MaterialEditorPanel.h"
 
 #include <Lamp/Mesh/Materials/MaterialLibrary.h>
+#include <Lamp/Mesh/Mesh.h>
+#include <Lamp/Mesh/Materials/MaterialInstance.h>
 
 #include <Lamp/AssetSystem/AssetManager.h>
 #include <Lamp/AssetSystem/ResourceCache.h>
@@ -8,7 +10,8 @@
 #include <Lamp/Rendering/RenderCommand.h>
 #include <Lamp/Rendering/Shader/ShaderLibrary.h>
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
-#include <Lamp/Mesh/Mesh.h>
+#include <Lamp/Rendering/RenderPipelineLibrary.h>
+#include <Lamp/Rendering/Buffers/Framebuffer.h>
 
 #include <Lamp/Core/Time/ScopedTimer.h>
 
@@ -26,32 +29,55 @@ namespace Sandbox
 
 	static const std::filesystem::path s_assetsPath = "assets";
 
-	MaterialEditor::MaterialEditor(std::string_view name)
+	MaterialEditorPanel::MaterialEditorPanel(std::string_view name)
 		: EditorWindow(name)
 	{
+		m_renderPipeline = RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Forward);
+		m_framebuffer = m_renderPipeline->GetSpecification().framebuffer;
+			
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
+		m_searchIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/searchIcon.png");
+		m_reloadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/reloadIcon.png");
 
 		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
-		m_pSelectedMaterial = MaterialLibrary::GetMaterial("base");
+		m_selectedMaterial = MaterialLibrary::GetMaterial("base");
+		m_materialInstance = MaterialInstance::Create(m_selectedMaterial);
 	}
 
-	void MaterialEditor::OnEvent(Lamp::Event& e)
+	void MaterialEditorPanel::OnEvent(Lamp::Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(MaterialEditor::OnUpdate));
-		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(MaterialEditor::OnUpdateImGui));
-		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(MaterialEditor::OnKeyPressed));
+		dispatcher.Dispatch<AppUpdateEvent>(LP_BIND_EVENT_FN(MaterialEditorPanel::OnUpdate));
+		dispatcher.Dispatch<ImGuiUpdateEvent>(LP_BIND_EVENT_FN(MaterialEditorPanel::OnUpdateImGui));
+		dispatcher.Dispatch<KeyPressedEvent>(LP_BIND_EVENT_FN(MaterialEditorPanel::OnKeyPressed));
+		dispatcher.Dispatch<AppRenderEvent>(LP_BIND_EVENT_FN(MaterialEditorPanel::OnRender));
 	}
 
-	bool MaterialEditor::OnUpdate(Lamp::AppUpdateEvent& e)
+	bool MaterialEditorPanel::OnRender(Lamp::AppRenderEvent& e)
+	{
+		if (!m_isOpen)
+		{
+			return false;
+		}
+		
+		RenderCommand::Begin(m_camera->GetCamera());
+		RenderCommand::BeginPass(m_renderPipeline);
+		RenderCommand::DrawMeshDirect(glm::mat4(1.f), m_materialModel->GetSubMeshes()[0], m_materialInstance);
+		RenderCommand::EndPass();
+		RenderCommand::End();
+		
+		return false;
+	}
+
+	bool MaterialEditorPanel::OnUpdate(Lamp::AppUpdateEvent& e)
 	{
 		return false;
 	}
 
-	void MaterialEditor::UpdateToolbar()
+	void MaterialEditorPanel::UpdateToolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
@@ -65,7 +91,7 @@ namespace Sandbox
 
 		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
-			g_pEnv->pAssetManager->SaveAsset(m_pSelectedMaterial);
+			g_pEnv->pAssetManager->SaveAsset(m_selectedMaterial);
 		}
 
 		ImGui::PopStyleVar(2);
@@ -73,7 +99,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	bool MaterialEditor::OnUpdateImGui(Lamp::ImGuiUpdateEvent& e)
+	bool MaterialEditorPanel::OnUpdateImGui(Lamp::ImGuiUpdateEvent& e)
 	{
 		ScopedTimer timer{};
 
@@ -105,17 +131,17 @@ namespace Sandbox
 		return false;
 	}
 
-	bool MaterialEditor::OnKeyPressed(Lamp::KeyPressedEvent& e)
+	bool MaterialEditorPanel::OnKeyPressed(Lamp::KeyPressedEvent& e)
 	{
 		switch (e.GetKeyCode())
 		{
 			case LP_KEY_S:
 			{
 				bool control = Input::IsKeyPressed(LP_KEY_LEFT_CONTROL) || Input::IsKeyPressed(LP_KEY_RIGHT_CONTROL);
-				if (control && m_pSelectedMaterial)
+				if (control && m_selectedMaterial)
 				{
-					g_pEnv->pAssetManager->SaveAsset(m_pSelectedMaterial);
-					LP_CORE_INFO("Saved material {0}", m_pSelectedMaterial->GetName());
+					g_pEnv->pAssetManager->SaveAsset(m_selectedMaterial);
+					LP_CORE_INFO("Saved material {0}", m_selectedMaterial->GetName());
 				}
 			}
 		}
@@ -123,7 +149,7 @@ namespace Sandbox
 		return false;
 	}
 
-	void MaterialEditor::UpdateMaterialView()
+	void MaterialEditorPanel::UpdateMaterialView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Material View");
@@ -132,9 +158,12 @@ namespace Sandbox
 			if (m_perspectiveSize != *((glm::vec2*)&panelSize))
 			{
 				m_perspectiveSize = { panelSize.x, panelSize.y };
-
+				m_framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
+				
 				m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
+			
+			ImGui::Image(UI::GetTextureID(m_framebuffer->GetColorAttachment(0)), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -158,7 +187,7 @@ namespace Sandbox
 		ImGui::PopStyleVar();
 	}
 
-	void MaterialEditor::UpdateProperties()
+	void MaterialEditorPanel::UpdateProperties()
 	{
 		ImGui::Begin("Properties##Material");
 
@@ -167,17 +196,17 @@ namespace Sandbox
 			return;
 		}
 
-		if (!m_pSelectedMaterial)
+		if (!m_selectedMaterial)
 		{
-			m_pSelectedMaterial = m_materialModel->GetMaterials()[0];
+			m_selectedMaterial = m_materialModel->GetMaterials()[0];
 		}
 
 		UI::PushId();
 		if (UI::BeginProperties("matProps", false))
 		{
-			UI::Property("Name", m_pSelectedMaterial->GetName());
+			UI::Property("Name", m_selectedMaterial->GetName());
 		
-			auto& matData = const_cast<MaterialData&>(m_pSelectedMaterial->GetMaterialData());
+			auto& matData = const_cast<MaterialData&>(m_selectedMaterial->GetMaterialData());
 			
 			UI::Property("Use blending", matData.useBlending);
 			if (matData.useBlending)
@@ -245,62 +274,60 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void MaterialEditor::UpdateMaterialList()
+	void MaterialEditorPanel::UpdateMaterialList()
 	{
 		ImGui::Begin("Materials##matEd");
 
-		auto& materials = MaterialLibrary::Get().GetMaterials();
-		int i = 0;
-		for (auto& mat : materials)
+		const float buttonSize = 20.f;
+
+		if (UI::ImageButton("##reloadButton", UI::GetTextureID(m_reloadIcon), { buttonSize, buttonSize }))
 		{
-			std::string id = mat->GetName() + "###mat" + std::to_string(i);
-			if (ImGui::Selectable(id.c_str()))
+			MaterialLibrary::Get().LoadMaterials();
+		}
+
+		ImGui::SameLine();
+		UI::ShiftCursor(0.f, 2.f);
+		ImGui::Image(UI::GetTextureID(m_searchIcon), { buttonSize, buttonSize }, { 1.f, 1.f }, { 0.f, 0.f });
+		ImGui::SameLine();
+		
+		UI::ShiftCursor(0.f, -2.f);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+		
+		if (UI::InputText("##searchBar", m_searchQuery, ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			
+		}
+		ImGui::PopItemWidth();
+		
+		UI::ScopedColor childColor(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
+		UI::PushId();
+		
+		if (ImGui::BeginChild("materials", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
+		{
+			auto& materials = MaterialLibrary::Get().GetMaterials();
+			uint32_t index = 0;
+			for (auto& mat : materials)
 			{
-				m_pSelectedMaterial = mat;
-			}
-			std::string popId = mat->GetName() + "##matPop" + std::to_string(i);
-			if (ImGui::BeginPopupContextItem(popId.c_str(), ImGuiPopupFlags_MouseButtonRight))
-			{
-				if (ImGui::MenuItem("Remove"))
+				std::string matId = mat->GetName() + "##" + std::to_string(index);
+				
+				static bool selected = false;
+				if (ImGui::Selectable(matId.c_str(), &selected, ImGuiSelectableFlags_AllowDoubleClick))
 				{
+					m_selectedMaterial = mat;
 				}
-
-				ImGui::EndPopup();
+				
+				index++;
 			}
-
-			i++;
 		}
+		ImGui::EndChild();
+			
 
-		if (ImGui::BeginPopupContextWindow(nullptr, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_NoOpenOverExistingPopup))
-		{
-			if (ImGui::MenuItem("New"))
-			{
-				CreateNewMaterial();
-			}
-
-			ImGui::EndPopup();
-		}
-
+		UI::PopId();
+		
 		ImGui::End();
 	}
 
-	void MaterialEditor::Render()
-	{
-		if (!m_isOpen)
-		{
-			return;
-		}
-
-		if (m_materialModel)
-		{
-			for (const auto& mesh : m_materialModel->GetSubMeshes())
-			{
-				//RenderCommand::SubmitMesh(glm::mat4(1.f), mesh, m_pSelectedMaterial);
-			}
-		}
-	}
-
-	void MaterialEditor::CreateNewMaterial()
+	void MaterialEditorPanel::CreateNewMaterial()
 	{
 		//std::filesystem::path matPath = s_assetsPath / "material.mtl";
 

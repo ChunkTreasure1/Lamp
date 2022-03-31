@@ -50,10 +50,8 @@ namespace Lamp
 			size_t endPos = source.find(endToken, 0);
 			if (endPos != std::string::npos)
 			{
-				size_t eol = source.find_first_of("\r\n", beginPos);
-				size_t nextLinePos = source.find_first_not_of("\r\n", eol);
-
-				specificationSource = source.substr(beginPos + (eol - beginPos) + 2, endPos - nextLinePos);
+				size_t begin = beginPos + beginTokenLength + 1;
+				specificationSource = source.substr(begin, endPos);
 			}
 			else
 			{
@@ -62,7 +60,7 @@ namespace Lamp
 			}
 		}
 
-		LP_CORE_INFO(specificationSource);
+  		LP_CORE_INFO(specificationSource);
 
 		if (!specificationSource.empty())
 		{

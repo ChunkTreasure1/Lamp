@@ -3,7 +3,7 @@
 
 #include "Windows/MeshImporterPanel.h"
 #include "Windows/GraphKey.h"
-#include "Windows/MaterialEditor.h"
+#include "Windows/MaterialEditorPanel.h"
 #include "Windows/LayerViewPanel.h"
 #include "Windows/EnvironmentEditorPanel.h"
 #include "Windows/TerrainEditorPanel.h"
@@ -44,7 +44,7 @@ namespace Sandbox
 
 		m_windows.emplace_back(new MeshImporterPanel("Mesh Importer"));
 		m_windows.emplace_back(new GraphKey("Visual Scripting"));
-		m_windows.emplace_back(new MaterialEditor("Material Editor"));
+		m_windows.emplace_back(new MaterialEditorPanel("Material Editor"));
 		m_windows.emplace_back(new LayerViewPanel("Layer View", &m_pSelectedObject));
 		m_windows.emplace_back(new EnvironmentEditorPanel("Environment Panel"));
 		m_windows.emplace_back(new AssetBrowserPanel());

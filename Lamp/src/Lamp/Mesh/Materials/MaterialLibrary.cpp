@@ -39,6 +39,8 @@ namespace Lamp
 
 	void MaterialLibrary::LoadMaterials()
 	{
+		m_materials.clear();
+
 		std::vector<std::string> paths;
 		FileSystem::GetAllFilesOfType(".mtl", "assets", paths);
 

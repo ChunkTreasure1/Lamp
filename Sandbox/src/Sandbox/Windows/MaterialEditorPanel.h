@@ -16,14 +16,15 @@ namespace Lamp
 
 namespace Sandbox
 {
-	class MaterialEditor : public EditorWindow
+	class MaterialEditorPanel : public EditorWindow
 	{
 	public:
-		MaterialEditor(std::string_view name);
+		MaterialEditorPanel(std::string_view name);
 
 		void OnEvent(Lamp::Event& e) override;
 	
 	private:
+		bool OnRender(Lamp::AppRenderEvent& e);
 		bool OnUpdate(Lamp::AppUpdateEvent& e);
 		bool OnUpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
@@ -33,17 +34,24 @@ namespace Sandbox
 		void UpdateMaterialList();
 		void UpdateToolbar();
 
-		void Render();
 		void CreateNewMaterial();
 
 	private:
-		Ref<Lamp::Material> m_pSelectedMaterial = nullptr;
-		Ref<Lamp::Framebuffer> m_framebuffer;
+		Ref<Lamp::Material> m_selectedMaterial = nullptr;
+		Ref<Lamp::MaterialInstance> m_materialInstance = nullptr;
+		
 		Ref<Lamp::Mesh> m_materialModel;
+		
+		Ref<Lamp::Framebuffer> m_framebuffer;
+		Ref<Lamp::RenderPipeline> m_renderPipeline;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
-		std::filesystem::path m_pathOnRightClick;
-
+		
 		glm::vec2 m_perspectiveSize = { 0.f, 0.f };
+		
+		std::string m_searchQuery;
+		
 		Ref<Lamp::Texture2D> m_saveIcon;
+		Ref<Lamp::Texture2D> m_reloadIcon;
+		Ref<Lamp::Texture2D> m_searchIcon;
 	};
 }

@@ -439,8 +439,7 @@ namespace Sandbox
 		{
 			ImGui::PushID(dir->path.filename().string().c_str());
 
-			ImGui::ImageButton(UI::GetTextureID(m_directoryTexture), { m_thumbnailSize, m_thumbnailSize }, { 0, 1 }, { 1, 0 });
-
+			UI::ImageButton(dir->path.filename().string(), UI::GetTextureID(m_directoryTexture), { m_thumbnailSize, m_thumbnailSize }, { 0, 1 }, { 1, 0 });
 			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 			{
 				dir->selected = true;
@@ -463,7 +462,7 @@ namespace Sandbox
 				icon = m_fileTexture;
 			}
 
-			ImGui::ImageButton(UI::GetTextureID(icon), { m_thumbnailSize, m_thumbnailSize }, { 0, 1 }, { 1, 0 });
+			UI::ImageButton(asset.path.filename().string(), UI::GetTextureID(icon), { m_thumbnailSize, m_thumbnailSize }, { 0, 1 }, { 1, 0 });
 			if (ImGui::BeginDragDropSource())
 			{
 				//Data being copied
