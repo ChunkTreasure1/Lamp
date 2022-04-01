@@ -33,7 +33,7 @@ namespace Lamp
 			return;
 		}
 
-		for (const auto& comp : m_pComponents)
+		for (const auto& comp : m_components)
 		{
 			comp->OnEvent(e);
 		}
@@ -64,7 +64,7 @@ namespace Lamp
 
 	bool Entity::HasComponent(const std::string& name)
 	{
-		if (auto it = m_pComponentMap.find(name); it != m_pComponentMap.end())
+		if (auto it = m_componentMap.find(name); it != m_componentMap.end())
 		{
 			return true;
 		}
@@ -77,14 +77,14 @@ namespace Lamp
 		std::string str = comp->GetName();
 		str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
 
-		if (auto it = m_pComponentMap.find(str); it == m_pComponentMap.end())
+		if (auto it = m_componentMap.find(str); it == m_componentMap.end())
 		{
 			comp->m_pEntity = this;
 			comp->SetComponentProperties();
 			comp->Initialize();
 
-			m_pComponents.push_back(comp);
-			m_pComponentMap[str] = comp;
+			m_components.push_back(comp);
+			m_componentMap[str] = comp;
 			return true;
 		}
 
@@ -93,14 +93,14 @@ namespace Lamp
 
 	bool Entity::RemoveComponent(Ref<EntityComponent> comp)
 	{
-		auto it = std::find(m_pComponents.begin(), m_pComponents.end(), comp);
-		if (it != m_pComponents.end())
+		auto it = std::find(m_components.begin(), m_components.end(), comp);
+		if (it != m_components.end())
 		{
-			m_pComponents.erase(it);
+			m_components.erase(it);
 
-			if (auto t = m_pComponentMap.find(comp->GetName()); t != m_pComponentMap.end())
+			if (auto t = m_componentMap.find(comp->GetName()); t != m_componentMap.end())
 			{
-				m_pComponentMap.erase(t);
+				m_componentMap.erase(t);
 				return true;
 			}
 		}

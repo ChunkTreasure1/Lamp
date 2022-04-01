@@ -82,6 +82,11 @@ namespace Lamp
 		s_renderer->DrawMesh(transform, mesh, material, id);
 	}
 
+	void RenderCommand::DrawMeshDirectWithPipeline(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, const Ref<RenderPipeline> pipeline, size_t id)
+	{
+		s_renderer->DrawMeshWithPipeline(transform, mesh, material, pipeline, id);
+	}
+
 	void RenderCommand::DispatchRenderCommands()
 	{
 		s_renderer->DispatchRenderCommands();

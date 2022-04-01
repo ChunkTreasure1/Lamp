@@ -5,16 +5,12 @@
 
 namespace Lamp
 {
-	static uint32_t s_ObjectId = 0;
+	static uint32_t s_objectId = 0;
 
 	Object::Object()
 		: m_position(0.f), m_rotation(0.f), m_scale(1.f), m_transform(1.f), m_name(""), m_layer(0)
 	{
-		m_id = s_ObjectId++;
-	}
-
-	Object::~Object()
-	{
+		m_id = s_objectId++;
 	}
 
 	void Object::SetPosition(const glm::vec3 &pos)

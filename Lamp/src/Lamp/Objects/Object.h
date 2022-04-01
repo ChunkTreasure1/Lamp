@@ -13,7 +13,7 @@ namespace Lamp
 	{
 	public:
 		Object();
-		virtual ~Object() = 0;
+		virtual ~Object() = default;
 
 		//Setting
 		void SetPosition(const glm::vec3& pos);

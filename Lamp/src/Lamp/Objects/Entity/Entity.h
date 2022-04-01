@@ -37,7 +37,7 @@ namespace Lamp
 		inline const bool GetSaveable() const { return m_shouldBeSaved; }
 		inline const Ref<GraphKeyGraph> GetGraphKeyGraph() const { return m_graphKeyGraph; }
 		inline const Ref<Material> GetGizmoMaterial() { return m_gizmoMaterial; }
-		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_pComponents; }
+		inline const std::vector<Ref<EntityComponent>>& GetComponents() const { return m_components; }
 
 		template<typename T> Ref<T> GetComponent();
 		template<typename T, typename... TArgs> Ref<T> GetOrCreateComponent(TArgs&&... mArgs);
@@ -79,31 +79,31 @@ namespace Lamp
 		Ref<SubMesh> m_quadMesh;
 		Ref<Material> m_gizmoMaterial;
 
-		std::vector<Ref<EntityComponent>> m_pComponents;
-		std::unordered_map<std::string, Ref<EntityComponent>> m_pComponentMap;
+		std::vector<Ref<EntityComponent>> m_components;
+		std::unordered_map<std::string, Ref<EntityComponent>> m_componentMap;
 	};
 	
 	template<typename T>
 	inline Ref<T> Entity::GetComponent()
 	{
-		if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
+		if (auto it = m_componentMap.find(T::GetFactoryName()); it != m_componentMap.end())
 		{
-			return std::dynamic_pointer_cast<T>(it->second);
+			return std::reinterpret_pointer_cast<T>(it->second);
 		}
 
-		return Ref<T>(nullptr);
+		return nullptr;
 	}
 
 	template<typename T, typename ...TArgs>
 	inline Ref<T> Entity::GetOrCreateComponent(TArgs && ...mArgs)
 	{
-		if (auto it = m_pComponentMap.find(T::GetFactoryName()); it == m_pComponentMap.end())
+		if (auto it = m_componentMap.find(T::GetFactoryName()); it == m_componentMap.end())
 		{
 			Ref<T> c = CreateRef<T>(std::forward<TArgs>(mArgs)...);
 			c->m_pEntity = this;
 
-			m_pComponents.push_back(c);
-			m_pComponentMap[T::GetFactoryName()] = c;
+			m_components.push_back(c);
+			m_componentMap[T::GetFactoryName()] = c;
 
 			c->SetComponentProperties();
 			c->Initialize();
@@ -112,14 +112,14 @@ namespace Lamp
 		}
 		else
 		{
-			return std::dynamic_pointer_cast<T>(it->second);
+			return std::reinterpret_pointer_cast<T>(it->second);
 		}
 	}
 
 	template<typename T>
 	inline bool Entity::HasComponent()
 	{
-		if (auto it = m_pComponentMap.find(T::GetFactoryName()); it != m_pComponentMap.end())
+		if (auto it = m_componentMap.find(T::GetFactoryName()); it != m_componentMap.end())
 		{
 			return true;
 		}
@@ -130,15 +130,15 @@ namespace Lamp
 	template<typename T>
 	inline bool Entity::RemoveComponent()
 	{
-		for (auto it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+		for (auto it = m_components.begin(); it != m_components.end(); it++)
 		{
 			if (it->get()->GetName() == T::GetFactoryName())
 			{
-				m_pComponents.erase(it);
+				m_components.erase(it);
 
-				if (auto t = m_pComponentMap.find(T::GetFactoryName()); t != m_pComponentMap.end())
+				if (auto t = m_componentMap.find(T::GetFactoryName()); t != m_componentMap.end())
 				{
-					m_pComponentMap.erase(t);
+					m_componentMap.erase(t);
 					return true;
 				}
 

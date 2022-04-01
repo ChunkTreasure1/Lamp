@@ -117,12 +117,11 @@ namespace Sandbox
 
 		CreateDockspace();
 
-		UpdateProperties();
 		UpdatePerspective();
+		UpdateProperties();
 		UpdateLogTool();
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
-		UpdateToolbar();
 		UpdateStatistics();
 
 		ImGuiUpdateEvent e;

@@ -115,6 +115,7 @@ namespace Lamp
 
 		void DrawMesh(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id /* = -1 */);
 		void DrawMesh(const Ref<SubMesh> mesh, const Ref<Material> material, const std::vector<VkDescriptorSet>& descriptorSets, void* pushConstant = nullptr);
+		void DrawMeshWithPipeline(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, Ref<RenderPipeline> pipeline, size_t id /* = -1 */);
 		void DrawQuad();
 
 		void DispatchRenderCommands(RenderBuffer& buffer);
@@ -129,8 +130,6 @@ namespace Lamp
 		static Ref<Renderer> Create();
 
 	private:
-		void DrawMeshWithPipeline(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, Ref<RenderPipeline> pipeline, size_t id /* = -1 */);
-
 		void AllocateDescriptorsForQuadRendering(); // TODO: should be moved into singular function
 		void AllocatePerPassDescriptors();
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EditorWindow.h"
+#include "Sandbox/Windows/AssetBrowserPanel.h"
 
 #include <Lamp/Event/ApplicationEvent.h>
 #include <Lamp/Event/KeyEvent.h>
@@ -29,6 +30,12 @@ namespace Sandbox
 		bool OnUpdateImGui(Lamp::ImGuiUpdateEvent& e);
 		bool OnKeyPressed(Lamp::KeyPressedEvent& e);
 
+		Ref<DirectoryData> ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent);
+		void Reload();
+		void Search(const std::string& query);
+		void FindAssetsWithQuery(const std::vector<Ref<DirectoryData>>& dirList, const std::string& query);
+		void RenderDirectory(Ref<DirectoryData> dirData);
+
 		void UpdateMaterialView();
 		void UpdateProperties();
 		void UpdateMaterialList();
@@ -46,12 +53,15 @@ namespace Sandbox
 		Ref<Lamp::RenderPipeline> m_renderPipeline;
 		Ref<Lamp::PerspectiveCameraController> m_camera;
 		
-		glm::vec2 m_perspectiveSize = { 0.f, 0.f };
-		
-		std::string m_searchQuery;
-		
 		Ref<Lamp::Texture2D> m_saveIcon;
 		Ref<Lamp::Texture2D> m_reloadIcon;
 		Ref<Lamp::Texture2D> m_searchIcon;
+		Ref<Lamp::Texture2D> m_directoryIcon;
+		
+		glm::vec2 m_perspectiveSize = { 0.f, 0.f };
+		std::string m_searchQuery;
+	
+		std::vector<AssetData> m_searchAssets;
+		std::unordered_map<std::string, Ref<DirectoryData>> m_directories;
 	};
 }

@@ -472,6 +472,13 @@ namespace UI
 		return changed;
 	}
 
+	static void PropertyText(const std::string& text)
+	{
+		ImGui::TableNextColumn();
+		ImGui::TextUnformatted(text.c_str());
+		ImGui::TableNextColumn();
+	}
+
 	static bool Property(const std::string& text, bool& value)
 	{
 		bool changed = false;

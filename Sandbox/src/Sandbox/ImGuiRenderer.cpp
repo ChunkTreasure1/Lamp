@@ -41,8 +41,11 @@ namespace Sandbox
 			return;
 		}
 
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0.f, 0.f });
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::Begin("Perspective");
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.18f, 0.18f, 0.18f, 1.f });
+
+		ImGui::Begin("Perspective", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		{
 			m_perspectiveHover = ImGui::IsWindowHovered();
 			m_sandboxController->GetCameraController()->SetControlsEnabled(m_perspectiveHover);
@@ -50,15 +53,23 @@ namespace Sandbox
 
 			m_sandboxController->GetCameraController()->SetActive(m_perspectiveHover);
 
+			const float toolBarSize = 22.f;
+
 			//Viewport bounds
 			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
 			auto viewportOffset = ImGui::GetWindowPos();
 
-			m_perspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-			m_perspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+			m_perspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y - toolBarSize };
+			m_perspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y - toolBarSize };
 
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
+			perspectivePanelSize.y -= toolBarSize;
+			
+			/////Perspective toolbar/////
+			UpdateToolbar(toolBarSize);
+			/////////////////////////////
+
 			if (m_perspectiveSize != *((glm::vec2*)&perspectivePanelSize))
 			{
 				m_perspectiveSize = { perspectivePanelSize.x, perspectivePanelSize.y };
@@ -90,7 +101,7 @@ namespace Sandbox
 
 				if (type == Lamp::AssetType::Mesh)
 				{
-					m_pSelectedObject = Lamp::Brush::Create(path.string());
+					m_pSelectedObject = Lamp::Brush::Create(path);
 				}
 			}
 		}
@@ -193,7 +204,8 @@ namespace Sandbox
 		}
 
 		ImGui::End();
-		ImGui::PopStyleVar(1);
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
 	}
 
 	void SandboxLayer::UpdateProperties()
@@ -647,26 +659,19 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void SandboxLayer::UpdateToolbar()
+	void SandboxLayer::UpdateToolbar(float toolBarHeight)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
 		UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 		UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
 		UI::ScopedColor active(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
 
-		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-		float size = ImGui::GetWindowHeight() - 4.f;
 		Ref<Lamp::Texture2D> playIcon = m_iconPlay;
 		if (m_sceneState == SceneState::Play)
 		{
 			playIcon = m_iconStop;
 		}
 
-		ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-
-		if (UI::ImageButton("##play", UI::GetTextureID(playIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (UI::ImageButton("##play", UI::GetTextureID(playIcon), { toolBarHeight, toolBarHeight }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_sceneState == SceneState::Edit)
 			{
@@ -682,7 +687,7 @@ namespace Sandbox
 
 		ImGui::SameLine();
 
-		if (UI::ImageButton("##physicsPlay", UI::GetTextureID(physicsIcon), { size, size }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
+		if (UI::ImageButton("##physicsPlay", UI::GetTextureID(physicsIcon), { toolBarHeight, toolBarHeight }, { 0.f, 0.f }, { 1.f, 1.f }, 0))
 		{
 			if (m_sceneState == SceneState::Edit)
 			{
@@ -695,8 +700,6 @@ namespace Sandbox
 				m_physicsIcon.Stop();
 			}
 		}
-		ImGui::PopStyleVar(2);
-		ImGui::End();
 	}
 
 	void SandboxLayer::UpdateStatistics()

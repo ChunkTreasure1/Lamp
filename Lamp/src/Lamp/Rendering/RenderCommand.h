@@ -37,6 +37,7 @@ namespace Lamp
 		static void SubmitLine(const glm::vec3& pointOne, const glm::vec3& pointTwo, const glm::vec4& color);
 
 		static void DrawMeshDirect(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, size_t id = -1);
+		static void DrawMeshDirectWithPipeline(const glm::mat4& transform, const Ref<SubMesh> mesh, const Ref<MaterialInstance> material, const Ref<RenderPipeline> pipeline, size_t id = -1);
 
 		static void DispatchRenderCommands();
 

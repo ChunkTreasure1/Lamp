@@ -12,6 +12,7 @@
 #include <Lamp/Rendering/Cameras/PerspectiveCameraController.h>
 #include <Lamp/Rendering/RenderPipelineLibrary.h>
 #include <Lamp/Rendering/Buffers/Framebuffer.h>
+#include <Lamp/Rendering/Renderer.h>
 
 #include <Lamp/Core/Time/ScopedTimer.h>
 
@@ -26,7 +27,6 @@
 namespace Sandbox
 {
 	using namespace Lamp;
-
 	static const std::filesystem::path s_assetsPath = "assets";
 
 	MaterialEditorPanel::MaterialEditorPanel(std::string_view name)
@@ -34,17 +34,20 @@ namespace Sandbox
 	{
 		m_renderPipeline = RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Forward);
 		m_framebuffer = m_renderPipeline->GetSpecification().framebuffer;
-			
+
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);
 		m_camera->SetPosition({ 0.f, 0.f, 3.f });
 
 		m_saveIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
 		m_searchIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/searchIcon.png");
 		m_reloadIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/reloadIcon.png");
+		m_directoryIcon = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/directoryIcon.png");
 
 		m_materialModel = ResourceCache::GetAsset<Mesh>("assets/meshes/base/sphere.lgf");
 		m_selectedMaterial = MaterialLibrary::GetMaterial("base");
 		m_materialInstance = MaterialInstance::Create(m_selectedMaterial);
+
+		m_directories[s_assetsPath.string()] = ProcessDirectory(s_assetsPath, nullptr);
 	}
 
 	void MaterialEditorPanel::OnEvent(Lamp::Event& e)
@@ -62,13 +65,13 @@ namespace Sandbox
 		{
 			return false;
 		}
-		
+
 		RenderCommand::Begin(m_camera->GetCamera());
 		RenderCommand::BeginPass(m_renderPipeline);
-		RenderCommand::DrawMeshDirect(glm::mat4(1.f), m_materialModel->GetSubMeshes()[0], m_materialInstance);
+		RenderCommand::DrawMeshDirectWithPipeline(glm::mat4(1.f), m_materialModel->GetSubMeshes()[0], m_materialInstance, m_renderPipeline);
 		RenderCommand::EndPass();
 		RenderCommand::End();
-		
+
 		return false;
 	}
 
@@ -89,7 +92,7 @@ namespace Sandbox
 
 		float size = ImGui::GetWindowHeight() - 4.f;
 
-		if (ImGui::ImageButton((ImTextureID)m_saveIcon->GetID(), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
+		if (ImGui::ImageButton(UI::GetTextureID(m_saveIcon), { size, size }, { 0.f, 1.f }, { 1.f, 0.f }, 0))
 		{
 			g_pEnv->pAssetManager->SaveAsset(m_selectedMaterial);
 		}
@@ -111,7 +114,9 @@ namespace Sandbox
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		
 		ImGui::Begin(m_name.c_str(), &m_isOpen);
+
 		ImGui::PopStyleVar();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -149,6 +154,96 @@ namespace Sandbox
 		return false;
 	}
 
+	Ref<DirectoryData> MaterialEditorPanel::ProcessDirectory(const std::filesystem::path& path, Ref<DirectoryData> parent)
+	{
+		Ref<DirectoryData> dirData = CreateRef<DirectoryData>();
+		dirData->path = path;
+		dirData->parent = parent.get();
+
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			if (!entry.is_directory())
+			{
+				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(entry);
+				if (type == AssetType::Material)
+				{
+					AssetData data;
+					data.path = entry;
+					data.handle = g_pEnv->pAssetManager->GetAssetHandleFromPath(entry);
+					data.type = type;
+
+					dirData->assets.emplace_back(data);
+				}
+			}
+			else
+			{
+				dirData->subDirectories.emplace_back(ProcessDirectory(entry, dirData));
+			}
+		}
+
+		for (int32_t i = (int32_t)dirData->subDirectories.size() - 1; i >= 0; --i)
+		{
+			if (dirData->subDirectories[i]->assets.empty() && dirData->subDirectories[i]->subDirectories.empty())
+			{
+				dirData->subDirectories.erase(dirData->subDirectories.begin() + i);
+			}
+		}
+
+		std::sort(dirData->subDirectories.begin(), dirData->subDirectories.end(), [](const Ref<DirectoryData> dataOne, const Ref<DirectoryData> dataTwo)
+			{
+				return dataOne->path.stem().string() < dataTwo->path.stem().string();
+			});
+
+		std::sort(dirData->assets.begin(), dirData->assets.end(), [](const AssetData& dataOne, const AssetData& dataTwo)
+			{
+				return dataOne.path.stem().string() < dataTwo.path.stem().string();
+			});
+
+		return dirData;
+	}
+
+	void MaterialEditorPanel::Reload()
+	{
+	}
+
+	void MaterialEditorPanel::Search(const std::string& query)
+	{
+	}
+
+	void MaterialEditorPanel::FindAssetsWithQuery(const std::vector<Ref<DirectoryData>>& dirList, const std::string& query)
+	{
+	}
+
+	void MaterialEditorPanel::RenderDirectory(Ref<DirectoryData> dirData)
+	{
+		std::string id = dirData->path.stem().string() + "##" + std::to_string(dirData->handle);
+		auto flags = (dirData->selected ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None);
+
+		if (UI::TreeNodeImage(m_directoryIcon, id.c_str(), flags))
+		{
+			for (const auto& subDir : dirData->subDirectories)
+			{
+				RenderDirectory(subDir);
+			}
+
+			for (const auto& asset : dirData->assets)
+			{
+				std::string assetId = asset.path.stem().string() + "##" + std::to_string(asset.handle);
+				ImGui::Selectable(assetId.c_str());
+				if (ImGui::BeginDragDropSource())
+				{
+					const wchar_t* itemPath = asset.path.c_str();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+					ImGui::EndDragDropSource();
+				}
+			}
+
+			UI::TreeNodePop();
+		}
+
+		glm::rotate(glm::mat4(1.f), 0.f, { 0.f, 1.f, 0.f });
+	}
+
 	void MaterialEditorPanel::UpdateMaterialView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
@@ -159,10 +254,10 @@ namespace Sandbox
 			{
 				m_perspectiveSize = { panelSize.x, panelSize.y };
 				m_framebuffer->Resize((uint32_t)panelSize.x, (uint32_t)panelSize.y);
-				
+
 				m_camera->UpdateProjection((uint32_t)panelSize.x, (uint32_t)panelSize.y);
 			}
-			
+
 			ImGui::Image(UI::GetTextureID(m_framebuffer->GetColorAttachment(0)), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
 			if (ImGui::BeginDragDropTarget())
@@ -175,7 +270,8 @@ namespace Sandbox
 					AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
 					if (type == Lamp::AssetType::Material)
 					{
-						//Todo: set material
+						m_selectedMaterial = ResourceCache::GetAsset<Material>(path);
+						m_materialInstance = MaterialInstance::Create(m_selectedMaterial);
 					}
 				}
 
@@ -201,75 +297,115 @@ namespace Sandbox
 			m_selectedMaterial = m_materialModel->GetMaterials()[0];
 		}
 
-		UI::PushId();
-		if (UI::BeginProperties("matProps", false))
+		ImGui::BeginChild("matProperties", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
 		{
-			UI::Property("Name", m_selectedMaterial->GetName());
-		
-			auto& matData = const_cast<MaterialData&>(m_selectedMaterial->GetMaterialData());
-			
-			UI::Property("Use blending", matData.useBlending);
-			if (matData.useBlending)
+			if (m_selectedMaterial)
 			{
-				UI::Property("Blending multiplier", matData.blendingMultiplier, true, 0.f, 1.f);
-			}
+				auto& materialData = const_cast<MaterialData&>(m_selectedMaterial->GetMaterialData());
 
-			UI::Property("Use albedo map", matData.useAlbedo);
-			if (!matData.useAlbedo)
-			{
-				UI::Property("Albedo color", matData.albedoColor);
-			}
-
-			UI::Property("Use normal map", matData.useNormal);
-			if (!matData.useNormal)
-			{
-				UI::Property("Normal color", matData.normalColor);
-			}
-
-			UI::Property("Use MRO map", matData.useMRO);
-			if (!matData.useMRO)
-			{
-				UI::Property("Metal roughness", matData.mroColor, 0.f, 1.f);
-			}
-
-			UI::EndProperties(false);
-		}
-		UI::PopId();
-
-		UI::Separator();
-
-		ImGui::TextUnformatted("Textures");
-
-		//TODO: fix
-		/*for (auto& tex : const_cast<std::unordered_map<std::string, Ref<Texture2D>>&>(m_pSelectedMaterial->GetTextures()))
-		{
-			ImGui::TextUnformatted(tex.first.c_str());
-
-			std::filesystem::path path;
-			if (UI::ImageButton(tex.second->GetID(), path))
-			{
-				if (!path.empty())
+				if (ImGui::CollapsingHeader("Properties", ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					Ref<Texture2D> newTex = ResourceCache::GetAsset<Texture2D>(path);
-					if (newTex->IsValid())
+					if (UI::TreeNode("Colors", ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						tex.second = newTex;
+						UI::PushId();
+						if (UI::BeginProperties("colorProperties", false))
+						{
+							UI::Property("Use albedo", materialData.useAlbedo);
+							if (!materialData.useAlbedo)
+							{
+								UI::PropertyColor("Albedo color", materialData.albedoColor);
+							}
+
+							UI::Property("Use normal", materialData.useNormal);
+							if (!materialData.useNormal)
+							{
+								UI::PropertyColor("Normal color", materialData.normalColor);
+							}
+
+							UI::Property("Use MRO", materialData.useMRO);
+							if (!materialData.useMRO)
+							{
+								UI::Property("MRO", materialData.mroColor);
+							}
+
+							UI::EndProperties(false);
+						}
+						UI::PopId();
+						UI::TreeNodePop();
+					}
+
+					if (UI::TreeNode("Blending", ImGuiTreeNodeFlags_DefaultOpen))
+					{
+						UI::PushId();
+						if (UI::BeginProperties("blendingProperties", false))
+						{
+							UI::Property("Use blending", materialData.useBlending);
+							UI::Property("Blending multiplier", materialData.blendingMultiplier);
+							UI::EndProperties(false);
+						}
+						UI::PopId();
+						UI::TreeNodePop();
+					}
+
+					if (UI::TreeNode("Other"))
+					{
+						UI::PushId();
+						if (UI::BeginProperties("otherProperties", false))
+						{
+							UI::Property("Use translucency", materialData.useTranslucency);
+							UI::Property("Use detail normals", materialData.useDetailNormal);
+
+							UI::EndProperties(false);
+						}
+						UI::PopId();
+						UI::TreeNodePop();
+					}
+				}
+
+				if (ImGui::CollapsingHeader("Textures"))
+				{
+					for (auto& textureSpec : const_cast<std::vector<Material::MaterialTextureSpecification>&>(m_selectedMaterial->GetTextureSpecification()))
+					{
+						std::string buttonId = "##" + textureSpec.name;
+						Ref<Texture2D> texture = textureSpec.texture;
+						if (!texture)
+						{
+							texture = Renderer::Get().GetDefaults().whiteTexture;
+						}
+
+						ImGui::TextUnformatted(textureSpec.name.c_str());
+						bool pressed = UI::ImageButton(buttonId.c_str(), UI::GetTextureID(textureSpec.texture), { 128.f, 128.f });
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+							{
+								const wchar_t* wPath = (const wchar_t*)pPayload->Data;
+								std::filesystem::path path(wPath);
+
+								AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
+								if (type == Lamp::AssetType::Texture)
+								{
+									textureSpec.texture = ResourceCache::GetAsset<Texture2D>(path);
+								}
+							}
+
+							ImGui::EndDragDropTarget();
+						}
+
+						if (pressed)
+						{
+							std::filesystem::path newPath = FileDialogs::OpenFile("All (*.*)\0*.*)");
+							if (std::filesystem::exists(newPath))
+							{
+								textureSpec.texture = ResourceCache::GetAsset<Texture2D>(newPath);
+							}
+						}
+
 					}
 				}
 			}
-
-			if (auto ptr = UI::DragDropTarget("CONTENT_BROWSER_ITEM"))
-			{
-				const wchar_t* wPath = (const wchar_t*)(ptr);
-				std::filesystem::path path(wPath);
-
-				AssetType type = g_pEnv->pAssetManager->GetAssetTypeFromPath(path);
-				if (type == AssetType::Texture)
-				{
-					tex.second = ResourceCache::GetAsset<Texture2D>(path);
-				}
-			}
-		}*/
+		}
+		ImGui::EndChild();
 
 		ImGui::End();
 	}
@@ -289,41 +425,37 @@ namespace Sandbox
 		UI::ShiftCursor(0.f, 2.f);
 		ImGui::Image(UI::GetTextureID(m_searchIcon), { buttonSize, buttonSize }, { 1.f, 1.f }, { 0.f, 0.f });
 		ImGui::SameLine();
-		
+
 		UI::ShiftCursor(0.f, -2.f);
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
-		
+
 		if (UI::InputText("##searchBar", m_searchQuery, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			
+
 		}
 		ImGui::PopItemWidth();
-		
+
 		UI::ScopedColor childColor(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
 		UI::PushId();
-		
+
 		if (ImGui::BeginChild("materials", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding))
 		{
-			auto& materials = MaterialLibrary::Get().GetMaterials();
-			uint32_t index = 0;
-			for (auto& mat : materials)
+			if (UI::TreeNodeImage(m_directoryIcon, "Assets", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				std::string matId = mat->GetName() + "##" + std::to_string(index);
-				
-				static bool selected = false;
-				if (ImGui::Selectable(matId.c_str(), &selected, ImGuiSelectableFlags_AllowDoubleClick))
+				UI::ScopedStyleFloat2 spacing(ImGuiStyleVar_ItemSpacing, { 0.f, 0.f });
+				for (const auto& subDir : m_directories[s_assetsPath.string()]->subDirectories)
 				{
-					m_selectedMaterial = mat;
+					RenderDirectory(subDir);
 				}
-				
-				index++;
+
+				UI::TreeNodePop();
 			}
 		}
 		ImGui::EndChild();
-			
+
 
 		UI::PopId();
-		
+
 		ImGui::End();
 	}
 

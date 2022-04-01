@@ -20,7 +20,7 @@ namespace Lamp::Math
 		if (epsilonNotEqual(localMatrix[0][3], static_cast<T>(0), epsilon<T>()) ||
 			epsilonNotEqual(localMatrix[1][3], static_cast<T>(0), epsilon<T>()) || 
 			epsilonNotEqual(localMatrix[2][3], static_cast<T>(0), epsilon<T>()))
-		{
+		{ 
 			localMatrix[0][3] = localMatrix[1][3] = localMatrix[2][3] = static_cast<T>(0);
 			localMatrix[3][3] = static_cast<T>(1);
 		}

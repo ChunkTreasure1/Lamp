@@ -76,7 +76,7 @@ namespace Sandbox
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
-		void UpdateToolbar();
+		void UpdateToolbar(float toolBarHeight);
 		void UpdateStatistics();
 
 		//Shortcuts
