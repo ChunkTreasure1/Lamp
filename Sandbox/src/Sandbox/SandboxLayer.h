@@ -76,7 +76,7 @@ namespace Sandbox
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
-		void UpdateToolbar(float toolBarHeight);
+		void UpdateToolbar(float toolBarHeight, float toolBarXPadding);
 		void UpdateStatistics();
 
 		//Shortcuts
@@ -87,7 +87,6 @@ namespace Sandbox
 		void Undo();
 		void Redo();
 
-	private:
 		Scope<Game> m_pGame;
 		Ref<SandboxController> m_sandboxController;
 		Ref<Lamp::Framebuffer> m_SelectionBuffer;
@@ -108,14 +107,32 @@ namespace Sandbox
 
 		Ref<Lamp::Texture2D> m_iconPlay;
 		Ref<Lamp::Texture2D> m_iconStop;
-
+		Ref<Lamp::Texture2D> m_iconShowGizmos;
+		Ref<Lamp::Texture2D> m_iconSnapToGrid;
+		Ref<Lamp::Texture2D> m_iconSnapRotation;
+		Ref<Lamp::Texture2D> m_iconSnapScale;
+		
 		//Perspective
 		bool m_perspectiveOpen = true;
 		bool m_perspectiveFocused = false;
 		bool m_RightMousePressed = false;
+		
 		CommandStack m_perspectiveCommands;
 
 		ImGuizmo::OPERATION m_imGuizmoOperation = ImGuizmo::TRANSLATE;
+		
+		bool m_snapToGrid = false;
+		bool m_snapRotation = false;
+		bool m_snapScale = false;
+		bool m_showGizmos = true;
+		
+		const std::vector<float> m_snapToGridValues = { 0.01f, 0.1f, 0.25f, 0.5f, 1.f, 2.f, 5.f, 10.f };
+		const std::vector<float> m_snapRotationValues = { 10.f, 30.f, 45.f, 90.f };
+		const std::vector<float> m_snapScaleValues = { 0.01f, 0.1f, 0.25f, 0.5f, 1.f };
+
+		float m_gridSnapValue = 0.5f;
+		float m_rotateSnapValue = 45.f;
+		float m_scaleSnapValue = 0.1f;
 
 		//Play
 		AnimatedIcon m_physicsIcon;

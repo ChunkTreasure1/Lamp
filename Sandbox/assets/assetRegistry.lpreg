@@ -277,6 +277,14 @@ Assets:
     Path: engine/textures/ui/directoryIcon.png
   - Handle: 11535979565681188853
     Path: engine/textures/ui/files.png
+  - Handle: 7933268430465318567
+    Path: engine/textures/ui/iconShowGizmo.png
+  - Handle: 12103123052193147273
+    Path: engine/textures/ui/iconSnapRotation.png
+  - Handle: 5989418024579416063
+    Path: engine/textures/ui/iconSnapScale.png
+  - Handle: 3960422752960501142
+    Path: engine/textures/ui/iconSnapToGrid.png
   - Handle: 9875380136337216300
     Path: engine/textures/ui/layerView/locked.png
   - Handle: 6083366095981541132

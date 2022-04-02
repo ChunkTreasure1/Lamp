@@ -36,6 +36,10 @@ namespace Sandbox
 		g_pEnv->isEditor = true;
 		m_iconPlay = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/PlayIcon.png");
 		m_iconStop = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/StopIcon.png");
+		m_iconSnapToGrid = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconSnapToGrid.png");
+		m_iconSnapRotation = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconSnapRotation.png");
+		m_iconSnapScale = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconSnapScale.png");
+		m_iconShowGizmos = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconShowGizmo.png");
 		//ResourceCache::GetAsset<Texture2D>("assets/textures/TeddyTextures/teddy_albedo.ktx2");
 
 		LevelManager::Get()->Load("assets/levels/testLevel/data.level");

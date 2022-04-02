@@ -114,10 +114,10 @@ namespace UI
 		ScopedStyleFloat2 spacing{ ImGuiStyleVar_ItemSpacing, { 0.f, 0.f } };
 
 		ImVec2 size = ImGui::CalcTextSize(text.c_str());
-		
+
 		ImGui::Image(GetTextureID(texture), { size.y, size.y }, { 0, 1 }, { 1, 0 });
 		ImGui::SameLine();
-	
+
 		return ImGui::TreeNodeEx(text.c_str(), flags);
 	}
 
@@ -394,7 +394,7 @@ namespace UI
 		return data;
 	}
 
-	static bool ImageButton(const std::string& id, ImTextureID textureId, const ImVec2& size, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1), int frame_padding = -1, const ImVec4& bg_col = ImVec4(0, 0, 0, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1))
+	static bool ImageButton(const std::string& id, ImTextureID textureId, const ImVec2& size, const ImVec2& uv0 = ImVec2(0, 1), const ImVec2& uv1 = ImVec2(1, 0), int frame_padding = -1, const ImVec4& bg_col = ImVec4(0, 0, 0, 0), const ImVec4& tint_col = ImVec4(1, 1, 1, 1))
 	{
 		ImGuiContext& g = *GImGui;
 		ImGuiWindow* window = g.CurrentWindow;
@@ -406,6 +406,18 @@ namespace UI
 		// Default to using texture ID as ID. User can still push string/integer prefixes.
 		const ImVec2 padding = (frame_padding >= 0) ? ImVec2((float)frame_padding, (float)frame_padding) : g.Style.FramePadding;
 		return ImGui::ImageButtonEx(imId, textureId, size, uv0, uv1, padding, bg_col, tint_col);
+	}
+
+	static bool ImageButtonState(const std::string& id, bool state, ImTextureID textureId, const ImVec2& size, const ImVec2& uv0 = ImVec2(0, 1), const ImVec2& uv1 = ImVec2(1, 0))
+	{
+		if (state)
+		{
+			return ImageButton(id, textureId, size, uv0, uv1, -1, { 0.3f, 0.3f, 0.3f, 1.f });
+		}
+		else
+		{
+			return ImageButton(id, textureId, size, uv0, uv1);
+		}
 	}
 
 	static bool Property(const std::string& text, int& value, bool useMinMax = false, int min = 0, int max = 0)

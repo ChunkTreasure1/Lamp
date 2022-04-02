@@ -43,7 +43,7 @@ namespace Sandbox
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0.f, 0.f });
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.18f, 0.18f, 0.18f, 1.f });
+
 
 		ImGui::Begin("Perspective", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		{
@@ -54,20 +54,32 @@ namespace Sandbox
 			m_sandboxController->GetCameraController()->SetActive(m_perspectiveHover);
 
 			const float toolBarSize = 22.f;
+			const float toolBarYPadding = 5.f;
+			const float toolBarXPadding = 5.f;
 
 			//Viewport bounds
 			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
 			auto viewportOffset = ImGui::GetWindowPos();
 
-			m_perspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y - toolBarSize };
-			m_perspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y - toolBarSize };
+			m_perspectiveBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y - (toolBarSize + toolBarYPadding) };
+			m_perspectiveBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y - (toolBarSize + toolBarYPadding) };
 
 			ImVec2 perspectivePanelSize = ImGui::GetContentRegionAvail();
-			perspectivePanelSize.y -= toolBarSize;
-			
+			perspectivePanelSize.y -= (toolBarSize + toolBarYPadding);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0.f, 0.f });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0.f, 0.f });
+
 			/////Perspective toolbar/////
-			UpdateToolbar(toolBarSize);
+			{
+				UI::ScopedColor childBg(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
+				ImGui::BeginChild("toolbarChild", { ImGui::GetContentRegionAvail().x, toolBarSize + toolBarYPadding }, false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+				UI::ShiftCursor(toolBarXPadding, toolBarYPadding / 2.f);
+
+				UpdateToolbar(toolBarSize, toolBarXPadding);
+				ImGui::EndChild();
+			}
 			/////////////////////////////
 
 			if (m_perspectiveSize != *((glm::vec2*)&perspectivePanelSize))
@@ -87,6 +99,8 @@ namespace Sandbox
 			{
 				ImGui::Image(UI::GetTextureID(LevelManager::GetActive()->GetFinalRenderedImage()), ImVec2{ m_perspectiveSize.x, m_perspectiveSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 			}
+
+			ImGui::PopStyleVar(2);
 
 			if (auto ptr = UI::DragDropTarget({ "CONTENT_BROWSER_ITEM", "BRUSH_ITEM" }))
 			{
@@ -125,7 +139,18 @@ namespace Sandbox
 			float snapValue = 0.5f;
 			if (m_imGuizmoOperation == ImGuizmo::ROTATE)
 			{
-				snapValue = 45.f;
+				snap = m_snapRotation && snap ? false : m_snapRotation && !snap ? true : snap;
+				snapValue = m_rotateSnapValue;
+			}
+			else if (m_imGuizmoOperation == ImGuizmo::SCALE)
+			{
+				snap = m_snapScale && snap ? false : m_snapScale && !snap ? true : snap;
+				snapValue = m_scaleSnapValue;
+			}
+			else if (m_imGuizmoOperation == ImGuizmo::TRANSLATE)
+			{
+				snap = m_snapToGrid && snap ? false : m_snapToGrid && !snap ? true : snap;
+				snapValue = m_gridSnapValue;
 			}
 
 			float snapValues[3] = { snapValue, snapValue, snapValue };
@@ -205,7 +230,6 @@ namespace Sandbox
 
 		ImGui::End();
 		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor();
 	}
 
 	void SandboxLayer::UpdateProperties()
@@ -226,13 +250,6 @@ namespace Sandbox
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
 			glm::vec2 windowPos;
 			bool perspHover = false;
-
-			ImGui::Begin("Perspective");
-			{
-				windowPos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-				perspHover = ImGui::IsWindowHovered();
-			}
-			ImGui::End();
 
 			//if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)
 			//{
@@ -555,7 +572,7 @@ namespace Sandbox
 					case PropertyType::Color3: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec3*>(prop.value)); break;
 					case PropertyType::Color4: propertyChanged = UI::PropertyColor(prop.name, *static_cast<glm::vec4*>(prop.value)); break;
 					case PropertyType::String: propertyChanged = UI::Property(prop.name, *static_cast<std::string*>(prop.value)); break;
-					case PropertyType::Path: 
+					case PropertyType::Path:
 					{
 						std::filesystem::path path = std::filesystem::path(*static_cast<std::string*>(prop.value));
 
@@ -659,7 +676,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void SandboxLayer::UpdateToolbar(float toolBarHeight)
+	void SandboxLayer::UpdateToolbar(float toolBarHeight, float toolBarXPadding)
 	{
 		UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 		UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
@@ -699,6 +716,76 @@ namespace Sandbox
 				OnSimulationStop();
 				m_physicsIcon.Stop();
 			}
+		}
+		const uint32_t rightButtonCount = 4;
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - toolBarXPadding - (rightButtonCount * toolBarHeight));
+		
+		if (UI::ImageButtonState("##snapToGrid", m_snapToGrid, UI::GetTextureID(m_iconSnapToGrid), { toolBarHeight, toolBarHeight }))
+		{
+			m_snapToGrid = !m_snapToGrid;
+		}
+		if (ImGui::BeginPopupContextItem("##gridSnapValues", ImGuiPopupFlags_MouseButtonRight))
+		{
+			for (uint32_t i = 0; i < m_snapToGridValues.size(); i++)
+			{
+				std::string	id = std::to_string(m_snapToGridValues[i]) + "##gridSnapValue" + std::to_string(i);
+
+				if (ImGui::Selectable(id.c_str()))
+				{
+					m_gridSnapValue = m_snapToGridValues[i];
+				}
+			}
+
+			ImGui::EndPopup();
+		}
+		
+		ImGui::SameLine();
+
+		if (UI::ImageButtonState("##snapRotation", m_snapRotation, UI::GetTextureID(m_iconSnapRotation), { toolBarHeight, toolBarHeight }))
+		{
+			m_snapRotation = !m_snapRotation;
+		}
+		if (ImGui::BeginPopupContextItem("##rotateSnapValues", ImGuiPopupFlags_MouseButtonRight))
+		{
+			for (uint32_t i = 0; i < m_snapRotationValues.size(); i++)
+			{
+				std::string	id = std::to_string(m_snapRotationValues[i]) + "##rotationSnapValue" + std::to_string(i);
+
+				if (ImGui::Selectable(id.c_str()))
+				{
+					m_rotateSnapValue = m_snapRotationValues[i];
+				}
+			}
+
+			ImGui::EndPopup();
+		}
+		
+		ImGui::SameLine();
+
+		if (UI::ImageButtonState("##snapScale", m_snapScale, UI::GetTextureID(m_iconSnapScale), { toolBarHeight, toolBarHeight }))
+		{
+			m_snapScale = !m_snapScale;
+		}
+		if (ImGui::BeginPopupContextItem("##scaleSnapValues", ImGuiPopupFlags_MouseButtonRight))
+		{
+			for (uint32_t i = 0; i < m_snapScaleValues.size(); i++)
+			{
+				std::string	id = std::to_string(m_snapScaleValues[i]) + "##scaleSnapValue" + std::to_string(i);
+
+				if (ImGui::Selectable(id.c_str()))
+				{
+					m_scaleSnapValue = m_snapScaleValues[i];
+				}
+			}
+
+			ImGui::EndPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (UI::ImageButtonState("##showGizmos", m_showGizmos, UI::GetTextureID(m_iconShowGizmos), { toolBarHeight, toolBarHeight }))
+		{
+			m_showGizmos = !m_showGizmos;
 		}
 	}
 
