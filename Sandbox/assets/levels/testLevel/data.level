@@ -14,6 +14,6 @@ level:
       environmentMultiplier: 1
       hdrExposure: 1
       ambianceMultiplier: 0.5
-      skybox: C:\Programming\Lamp\Sandbox\assets\textures\brightForest.hdr
+      skybox: assets\textures\brightForest.hdr
     Terrain:
       {}

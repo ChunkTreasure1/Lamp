@@ -292,9 +292,9 @@ namespace Lamp
 			level->AddToLayer(brush.second);
 		}
 
-		level->Path = path;
+		level->Path = FileSystem::GetPathRelativeToBase(path);
 
-		LevelLoadFinishedEvent endEvent(path);
+		LevelLoadFinishedEvent endEvent(FileSystem::GetPathRelativeToBase(path));
 		Application::Get().OnEvent(endEvent);
 
 		return true;

@@ -196,7 +196,7 @@ namespace Sandbox
 			}
 		}
 
-		for (size_t i = dirData->subDirectories.size() - 1; i >= 0; --i)
+		for (int32_t i = (int32_t)dirData->subDirectories.size() - 1; i >= 0; --i)
 		{
 			if (dirData->subDirectories[i]->assets.empty() && dirData->subDirectories[i]->subDirectories.empty())
 			{

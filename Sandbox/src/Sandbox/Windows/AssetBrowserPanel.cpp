@@ -304,7 +304,7 @@ namespace Sandbox
 
 			if (shouldRemove)
 			{
-				for (size_t i = m_directoryButtons.size() - 1; i >= offsetToRemove; i--)
+				for (int32_t i = (int32_t)m_directoryButtons.size() - 1; i >= offsetToRemove; i--)
 				{
 					m_directoryButtons.erase(m_directoryButtons.begin() + i);
 				}

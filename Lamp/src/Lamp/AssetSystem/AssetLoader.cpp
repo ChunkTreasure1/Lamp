@@ -176,7 +176,7 @@ namespace Lamp
 		}
 
 		asset = CreateRef<Mesh>(meshName, subMeshes, materials);
-		asset->Path = path;
+		asset->Path = FileSystem::GetPathRelativeToBase(path);
 
 		return true;
 	}
@@ -184,7 +184,7 @@ namespace Lamp
 	bool TextureLoader::Load(const std::filesystem::path& path, Ref<Asset>& asset) const
 	{
 		asset = Texture2D::Create(path);
-		asset->Path = path;
+		asset->Path = FileSystem::GetPathRelativeToBase(path);
 
 		return true;
 	}
@@ -309,7 +309,7 @@ namespace Lamp
 		LP_DESERIALIZE_PROPERTY(albedoColor, matData.albedoColor, materialNode, glm::vec4(1.f, 1.f, 1.f, 1.f));
 		LP_DESERIALIZE_PROPERTY(normalColor, matData.normalColor, materialNode, glm::vec4(0.f, 1.f, 0.f, 0.f));
 
-		asset->Path = path;
+		asset->Path = FileSystem::GetPathRelativeToBase(path);
 
 		return true;
 	}
@@ -372,7 +372,7 @@ namespace Lamp
 		}
 
 		LP_DESERIALIZE_PROPERTY(meshHandle, meshSource->m_mesh, meshNode, AssetHandle(0));
-		meshSource->Path = path;
+		meshSource->Path = FileSystem::GetPathRelativeToBase(path);
 
 		return true;
 	}

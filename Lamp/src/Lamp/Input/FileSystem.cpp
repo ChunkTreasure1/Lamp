@@ -11,6 +11,8 @@
 
 namespace Lamp
 {
+	static std::filesystem::path s_assetsPath = "assets";
+
 	//Gets the files in a specified folder
 	std::vector<std::string> FileSystem::GetFiles(const std::string& path)
 	{
@@ -25,6 +27,16 @@ namespace Lamp
 		}
 
 		return files;
+	}
+
+	std::filesystem::path FileSystem::GetPathRelativeToBase(const std::filesystem::path& aPath)
+	{
+		return std::filesystem::relative(aPath, GetAssetsPath());
+	}
+
+	const std::filesystem::path& FileSystem::GetAssetsPath()
+	{
+		return s_assetsPath;
 	}
 
 	//Returns the paths to the files within the assets folder

@@ -7,6 +7,9 @@ namespace Lamp
 	class FileSystem
 	{
 	public:
+		static std::filesystem::path GetPathRelativeToBase(const std::filesystem::path& aPath);
+		static const std::filesystem::path& GetAssetsPath();
+
 		static std::vector<std::string> GetAssetFolders();
 		static std::vector<std::string> GetEngineFolders();
 		static std::vector<std::string> GetFiles(const std::string& path);
