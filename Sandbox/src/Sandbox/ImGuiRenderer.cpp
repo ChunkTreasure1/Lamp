@@ -248,7 +248,7 @@ namespace Sandbox
 
 			ImGuiIO& io = ImGui::GetIO();
 			glm::vec2 mousePos = glm::vec2(io.MouseClickedPos->x, io.MouseClickedPos->y);
-			glm::vec2 windowPos;
+			//glm::vec2 windowPos;
 			bool perspHover = false;
 
 			//if (m_MousePressed && perspHover && !ImGuizmo::IsOver() && m_SceneState != SceneState::Play)

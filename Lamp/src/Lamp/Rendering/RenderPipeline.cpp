@@ -154,7 +154,7 @@ namespace Lamp
 			desc.binding = 0;
 			desc.location = m_numAttributes;
 			desc.format = Utils::FormatFromShaderIputType(attr.ElementType);
-			desc.offset = attr.Offset;
+			desc.offset = (uint32_t)attr.Offset;
 
 			m_attributeDescriptions.push_back(desc);
 
@@ -300,7 +300,7 @@ namespace Lamp
 
 		VkPipelineRenderingCreateInfo pipelineRenderingInfo{};
 		pipelineRenderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
-		pipelineRenderingInfo.colorAttachmentCount = m_specification.framebuffer->GetColorAttachmentInfos().size();
+		pipelineRenderingInfo.colorAttachmentCount = (uint32_t)m_specification.framebuffer->GetColorAttachmentInfos().size();
 		pipelineRenderingInfo.pColorAttachmentFormats = m_specification.framebuffer->GetColorFormats().data();
 
 		if (m_specification.framebuffer->GetDepthAttachment())

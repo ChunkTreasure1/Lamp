@@ -150,7 +150,7 @@ namespace Lamp
 		renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
 		renderingInfo.renderArea = { 0, 0, framebuffer->GetSpecification().width, framebuffer->GetSpecification().height, };
 		renderingInfo.layerCount = 1;
-		renderingInfo.colorAttachmentCount = framebuffer->GetColorAttachmentInfos().size();
+		renderingInfo.colorAttachmentCount = (uint32_t)framebuffer->GetColorAttachmentInfos().size();
 		renderingInfo.pColorAttachments = framebuffer->GetColorAttachmentInfos().data();
 
 		if (framebuffer->GetDepthAttachment())
@@ -240,7 +240,7 @@ namespace Lamp
 		meshData.albedoColor = matData.albedoColor;
 		meshData.normalColor = matData.normalColor;
 
-		meshData.id = id;
+		meshData.id = (uint32_t)id;
 
 		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 0, &transform);
 		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 1, &meshData);
@@ -477,7 +477,7 @@ namespace Lamp
 
 			uint32_t currentFrame = Application::Get().GetWindow().GetSwapchain()->GetCurrentFrame();
 
-			std::array<VkWriteDescriptorSet, 5> writeDescriptors;
+			//std::array<VkWriteDescriptorSet, 5> writeDescriptors;
 		};
 
 		return std::pair<Ref<RenderComputePipeline>, std::function<void()>>();
@@ -688,7 +688,7 @@ namespace Lamp
 		meshData.albedoColor = matData.albedoColor;
 		meshData.normalColor = matData.normalColor;
 
-		meshData.id = id;
+		meshData.id = (uint32_t)id;
 
 		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 0, &transform);
 		material->GetSharedMaterial()->GetPipeline()->SetPushConstantData(commandBuffer, 1, &meshData);
@@ -878,7 +878,7 @@ namespace Lamp
 					i++;
 				}
 
-				writeDescriptor.descriptorCount = descriptorInfos.size();
+				writeDescriptor.descriptorCount = (uint32_t)descriptorInfos.size();
 				writeDescriptor.pImageInfo = descriptorInfos.data();
 
 				if (writeDescriptor.descriptorCount > 0)
@@ -1029,7 +1029,7 @@ namespace Lamp
 		m_rendererDefaults->ssdoNoise = Texture2D::Create(ImageFormat::RGBA32F, 4, 4);
 
 		auto data = GenerateSSDONoise();
-		m_rendererDefaults->ssdoNoise->SetData(data.data(), sizeof(glm::vec4) * data.size());
+		m_rendererDefaults->ssdoNoise->SetData(data.data(), (uint32_t)(sizeof(glm::vec4) * data.size()));
 
 		GenerateSSDOKernel();
 		CreateUniformBuffers();
@@ -1203,8 +1203,8 @@ namespace Lamp
 			}
 		}
 
-		m_statistics.totalDrawCalls = m_finalRenderBuffer.drawCalls.size();
-		m_statistics.culledDrawCalls = m_renderBufferPointer->drawCalls.size() - m_finalRenderBuffer.drawCalls.size();
+		m_statistics.totalDrawCalls = (uint32_t)m_finalRenderBuffer.drawCalls.size();
+		m_statistics.culledDrawCalls = (uint32_t)(m_renderBufferPointer->drawCalls.size() - m_finalRenderBuffer.drawCalls.size());
 	}
 
 	void Renderer::ClearRenderBuffers()

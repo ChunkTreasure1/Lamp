@@ -44,7 +44,7 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 	
-		uint32_t dataSize = (uint8_t*)m_storage->quadVertexBufferPtr - (uint8_t*)m_storage->quadVertexBufferBase;
+		uint32_t dataSize = (uint32_t)((uint8_t*)m_storage->quadVertexBufferPtr - (uint8_t*)m_storage->quadVertexBufferBase);
 		m_storage->quadVertexBuffer->SetData(m_storage->quadVertexBufferBase, dataSize);
 
 		Flush();
@@ -313,7 +313,7 @@ namespace Lamp
 						textureInfos.emplace_back(tex->GetDescriptorInfo());
 					}
 
-					writeDescriptor.descriptorCount = textureInfos.size();
+					writeDescriptor.descriptorCount = (uint32_t)textureInfos.size();
 					writeDescriptor.pImageInfo = textureInfos.data();
 
 					writeDescriptors.emplace_back(writeDescriptor);

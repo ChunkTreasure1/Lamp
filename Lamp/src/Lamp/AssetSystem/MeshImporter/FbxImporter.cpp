@@ -59,7 +59,7 @@ namespace Lamp
 			}
 		}
 
-		for (uint32_t i = 0; i < node->GetChildCount(); i++)
+		for (uint32_t i = 0; i < (uint32_t)node->GetChildCount(); i++)
 		{
 			FetchGeometryNodes(node->GetChild(i), outNodes);
 		}

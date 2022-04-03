@@ -54,6 +54,8 @@ namespace Lamp
 				return mPipeline.first;
 			}
 		}
+
+		return ERenderPipeline::None;
 	}
 
 	std::vector<std::string> RenderPipelineLibrary::GetPipelineNames() const

@@ -28,7 +28,7 @@ namespace Lamp
 		{
 			if (id == node->id)
 			{
-				for (int i = node->links.size() - 1; i >= 0; i--)
+				for (size_t i = node->links.size() - 1; i >= 0; i--)
 				{
 					RemoveLink(node->links[i]->id);
 				}

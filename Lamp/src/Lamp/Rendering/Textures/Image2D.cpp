@@ -96,7 +96,7 @@ namespace Lamp
 		VkSamplerCreateInfo samplerCreateInfo{};
 		samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		samplerCreateInfo.anisotropyEnable = m_specification.useAniostopy && Renderer::Get().GetCapabilities().supportAniostopy ? VK_TRUE : VK_FALSE;
-		samplerCreateInfo.maxAnisotropy = (uint32_t)m_specification.useAniostopy > Renderer::Get().GetCapabilities().maxAniostropy ? Renderer::Get().GetCapabilities().maxAniostropy : (uint32_t)m_specification.useAniostopy;
+		samplerCreateInfo.maxAnisotropy = (uint32_t)m_specification.useAniostopy > Renderer::Get().GetCapabilities().maxAniostropy ? (float)Renderer::Get().GetCapabilities().maxAniostropy : (float)m_specification.useAniostopy;
 		samplerCreateInfo.magFilter = Utility::LampFilterToVulkanFilter(m_specification.filter);
 		samplerCreateInfo.minFilter = Utility::LampFilterToVulkanFilter(m_specification.filter);
 		samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;

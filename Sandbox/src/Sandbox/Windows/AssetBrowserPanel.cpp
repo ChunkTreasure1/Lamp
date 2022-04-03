@@ -257,7 +257,7 @@ namespace Sandbox
 						m_hasSearchQuery = false;
 						m_pNextDirectory->selected = true;
 
-						offsetToRemove = m_directoryButtons.size() - 1;
+						offsetToRemove = (uint32_t)(m_directoryButtons.size() - 1);
 						shouldRemove = true;
 					}
 				}
@@ -304,7 +304,7 @@ namespace Sandbox
 
 			if (shouldRemove)
 			{
-				for (int i = m_directoryButtons.size() - 1; i >= offsetToRemove; i--)
+				for (size_t i = m_directoryButtons.size() - 1; i >= offsetToRemove; i--)
 				{
 					m_directoryButtons.erase(m_directoryButtons.begin() + i);
 				}

@@ -20,7 +20,7 @@ namespace Lamp
 		void Join(const std::string& name);
 		void JoinAll();
 
-		const Thread& Get(const std::string& name) const;
+		const Thread* Get(const std::string& name) const;
 
 	private:
 		std::unordered_map<std::string, Thread> m_threadPool;

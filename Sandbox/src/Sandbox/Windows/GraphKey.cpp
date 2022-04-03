@@ -294,7 +294,7 @@ namespace Sandbox
 					{
 						ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-						ImGui::TreeNodeEx((void*)i, nodeFlags, p.first.c_str());
+						ImGui::TreeNodeEx(&i, nodeFlags, p.first.c_str());
 						if (ImGui::BeginDragDropSource())
 						{
 							const char* node = p.first.c_str();

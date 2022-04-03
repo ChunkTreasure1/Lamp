@@ -140,7 +140,7 @@ namespace Sandbox
 					Ref<Texture2D> terrainTex = Texture2D::Create(ImageFormat::RGBA, heightMapRes, heightMapRes, true);
 
 					auto data = GenerateEmptyTextureData(heightMapRes);
-					terrainTex->SetData(data.data(), data.size() * sizeof(uint32_t));
+					terrainTex->SetData(data.data(), (uint32_t)(data.size() * sizeof(uint32_t)));
 
 					auto& terrain = const_cast<TerrainData&>(LevelManager::GetActive()->GetEnvironment().GetTerrain());
 					terrain.terrain = Terrain::Create(terrainTex);

@@ -25,7 +25,7 @@ namespace Lamp
 	uint32_t PhysicsLayerManager::AddLayer(const std::string& name, bool setCollisions)
 	{
 		uint32_t layerId = GetNextLayerId();
-		PhysicsLayer layer = { layerId, name, BIT(layerId), BIT(layerId) };
+		PhysicsLayer layer = { layerId, name, BIT(layerId), BIT((int32_t)layerId) };
 		s_Layers.insert(s_Layers.begin() + layerId, layer);
 		s_LayerNames.insert(s_LayerNames.begin() + layerId, name);
 

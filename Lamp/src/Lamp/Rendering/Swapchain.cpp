@@ -602,7 +602,7 @@ namespace Lamp
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.commandPool = m_commandPool;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = m_framebuffers.size();
+		allocInfo.commandBufferCount = (uint32_t)m_framebuffers.size();
 
 		LP_VK_CHECK(vkAllocateCommandBuffers(m_device->GetHandle(), &allocInfo, m_commandBuffers.data()));
 	}

@@ -63,16 +63,16 @@ namespace Lamp
 		}
 	}
 
-	const Thread& ThreadPool::Get(const std::string& name) const
+	const Thread* ThreadPool::Get(const std::string& name) const
 	{
 		auto it = m_threadPool.find(name);
 		if (it != m_threadPool.end())
 		{
-			return it->second;
+			return &it->second;
 		}
 
 		LP_CORE_ASSERT(false, "Thread name not in pool!");
 
-		return Thread();
+		return nullptr;
 	}
 }

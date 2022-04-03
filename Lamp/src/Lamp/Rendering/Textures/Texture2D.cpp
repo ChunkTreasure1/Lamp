@@ -193,7 +193,7 @@ namespace Lamp
 			size = width * height * 4;
 		}
 
-		Setup(imageData, size, width, height, generateMips, stbi_is_hdr(path.string().c_str()));
+		Setup(imageData, (uint32_t)size, width, height, generateMips, stbi_is_hdr(path.string().c_str()));
 
 		stbi_image_free(imageData);
 	}
