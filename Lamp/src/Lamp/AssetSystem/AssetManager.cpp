@@ -99,12 +99,12 @@ namespace Lamp
 	AssetType AssetManager::GetAssetTypeFromExtension(const std::string& ext)
 	{
 		std::string extension = Utils::ToLower(ext);
-		if (s_AssetExtensionMap.find(extension) == s_AssetExtensionMap.end())
+		if (s_assetExtensionMap.find(extension) == s_assetExtensionMap.end())
 		{
 			return AssetType::None;
 		}
 
-		return s_AssetExtensionMap.at(extension);
+		return s_assetExtensionMap.at(extension);
 	}
 
 	AssetHandle AssetManager::GetAssetHandleFromPath(const std::filesystem::path& path)

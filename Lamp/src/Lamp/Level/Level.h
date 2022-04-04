@@ -40,8 +40,8 @@ namespace Lamp
 		void OnEvent(Event& e);
 
 		void UpdateEditor(Timestep ts, const Ref<CameraBase> renderCamera);
-		void UpdateSimulation(Timestep ts);
-		void UpdateRuntime(Timestep ts, const Ref<CameraBase> renderCamera);
+		void UpdateSimulation(Timestep ts, const Ref<CameraBase> renderCamera);
+		void UpdateRuntime(Timestep ts);
 
 		void RenderEditor();
 		void RenderSimulation();
@@ -106,6 +106,7 @@ namespace Lamp
 		//Move from here
 		bool m_lastShowedGizmos = false;
 
+		Ref<CameraBase> myRuntimeCamera;
 		Ref<Framebuffer> m_geometryFramebuffer;
 		Ref<Framebuffer> m_shadingFramebuffer;
 	};

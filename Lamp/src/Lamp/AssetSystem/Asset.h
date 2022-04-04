@@ -30,7 +30,7 @@ namespace Lamp
 		Terrain = 10
 	};
 
-	inline static std::unordered_map<std::string, AssetType> s_AssetExtensionMap =
+	inline static std::unordered_map<std::string, AssetType> s_assetExtensionMap =
 	{
 		{ ".level", AssetType::Level },
 		{ ".lgf", AssetType::Mesh },

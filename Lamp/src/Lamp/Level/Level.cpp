@@ -130,22 +130,26 @@ namespace Lamp
 	{
 		AppRenderEvent e(renderCamera);
 		OnEvent(e);
+
+		myRuntimeCamera = renderCamera;
 	}
 
-	void Level::UpdateSimulation(Timestep ts)
+	void Level::UpdateSimulation(Timestep ts, const Ref<CameraBase> renderCamera)
 	{
 		Physics::GetScene()->Simulate(ts);
 
-		AppRenderEvent e(nullptr);
+		AppRenderEvent e(myRuntimeCamera);
 		OnEvent(e);
+
+		myRuntimeCamera = renderCamera;
 	}
 
-	void Level::UpdateRuntime(Timestep ts, const Ref<CameraBase> renderCamera)
+	void Level::UpdateRuntime(Timestep ts)
 	{
 		AppUpdateEvent e(ts);
 		OnEvent(e);
 
-		AppRenderEvent renderE(renderCamera);
+		AppRenderEvent renderE(myRuntimeCamera);
 		OnEvent(renderE);
 
 		Physics::GetScene()->Simulate(ts);
@@ -163,20 +167,7 @@ namespace Lamp
 
 	void Level::RenderRuntime()
 	{
-		Ref<CameraBase> camera = nullptr;
-		for (const auto& it : m_entities)
-		{
-			if (const auto comp = it.second->GetComponent<CameraComponent>())
-			{
-				camera = comp->GetCamera();
-				break;
-			}
-		}
-
-		if (camera.get())
-		{
-			RenderLevel();
-		}
+		RenderLevel();
 	}
 
 	void Level::Shutdown()
@@ -202,6 +193,15 @@ namespace Lamp
 		for (const auto& node : NodeRegistry::s_StartNodes())
 		{
 			node->ActivateOutput(0);
+		}
+
+		for (const auto& entity : m_entities)
+		{
+			if (entity.second->HasComponent<CameraComponent>())
+			{
+				myRuntimeCamera = entity.second->GetComponent<CameraComponent>()->GetCamera();
+				break;
+			}
 		}
 
 		m_lastShowedGizmos = g_pEnv->shouldRenderGizmos;
@@ -412,7 +412,13 @@ namespace Lamp
 	{
 		LP_PROFILE_FUNCTION();
 
-		//3D passes
+		if (!myRuntimeCamera)
+		{
+			return;
+		}
+
+		RenderCommand::Begin(myRuntimeCamera);
+
 		for (const auto& pass : m_renderPasses)
 		{
 			if (pass.graphicsPipeline)
@@ -426,6 +432,8 @@ namespace Lamp
 				pass.computeExcuteCommand();
 			}
 		}
+
+		RenderCommand::End();
 	}
 
 	bool Level::OnViewportResize(EditorViewportSizeChangedEvent& e)

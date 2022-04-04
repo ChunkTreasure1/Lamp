@@ -28,11 +28,6 @@ namespace Lamp
 	void LevelManager::SetActive(Ref<Level> level)
 	{
 		std::lock_guard lock{ m_mutex };
-
-		if (m_activeLevel)
-		{
-			m_activeLevel->Shutdown();
-		}
 		m_activeLevel = level;
 	}
 

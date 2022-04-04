@@ -40,8 +40,8 @@ namespace Lamp
 		uint32_t SolverVelocityIterations = 2;
 
 #ifdef LP_DEBUG
-		bool DebugOnPlay = false;
-		DebugType DebugType = DebugType::LiveDebug;
+		bool DebugOnPlay = true;
+		DebugType DebugType = DebugType::DebugToFile;
 #endif
 	};
 }

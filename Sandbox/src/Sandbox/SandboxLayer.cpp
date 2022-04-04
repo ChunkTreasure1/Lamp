@@ -95,12 +95,12 @@ namespace Sandbox
 				}
 				case SceneState::Play:
 				{
-					level->UpdateRuntime(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
+					level->UpdateRuntime(e.GetTimestep());
 					break;
 				}
 				case SceneState::Simulating:
 				{
-					level->UpdateSimulation(e.GetTimestep());
+					level->UpdateSimulation(e.GetTimestep(), m_sandboxController->GetCameraController()->GetCamera());
 					break;
 				}
 			}
@@ -165,7 +165,6 @@ namespace Sandbox
 		LP_PROFILE_FUNCTION();
 
 		RenderCommand::ClearFrame();
-		RenderCommand::Begin(m_sandboxController->GetCameraController()->GetCamera());
 
 		if (LevelManager::GetActive())
 		{
@@ -193,8 +192,6 @@ namespace Sandbox
 			}
 		}
 
-		RenderCommand::End();
-	
 		AppRenderEvent e;
 		for (const auto& window : m_windows)
 		{
