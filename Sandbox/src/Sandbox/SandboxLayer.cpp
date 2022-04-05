@@ -40,6 +40,11 @@ namespace Sandbox
 		m_iconSnapRotation = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconSnapRotation.png");
 		m_iconSnapScale = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconSnapScale.png");
 		m_iconShowGizmos = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconShowGizmo.png");
+		m_iconWorldSpace = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconWorldSpace.png");
+		m_iconLocalSpace = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/iconLocalSpace.png");
+		m_iconSave = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/saveIcon.png");
+		m_iconLoad = ResourceCache::GetAsset<Texture2D>("engine/textures/ui/MeshImporter/loadIcon.png");
+
 		//ResourceCache::GetAsset<Texture2D>("assets/textures/TeddyTextures/teddy_albedo.ktx2");
 
 		LevelManager::Get()->Load("assets/levels/testLevel/data.level");
@@ -127,6 +132,7 @@ namespace Sandbox
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
 		UpdateStatistics();
+		UpdateMainToolbar();
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);

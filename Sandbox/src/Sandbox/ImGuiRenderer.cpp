@@ -77,7 +77,7 @@ namespace Sandbox
 				ImGui::BeginChild("toolbarChild", { ImGui::GetContentRegionAvail().x, toolBarSize + toolBarYPadding }, false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 				UI::ShiftCursor(toolBarXPadding, toolBarYPadding / 2.f);
 
-				UpdateToolbar(toolBarSize, toolBarXPadding);
+				UpdatePerspectiveToolbar(toolBarSize, toolBarXPadding);
 				ImGui::EndChild();
 			}
 			/////////////////////////////
@@ -154,11 +154,13 @@ namespace Sandbox
 			}
 
 			float snapValues[3] = { snapValue, snapValue, snapValue };
+			
+			ImGuizmo::MODE gizmoMode = m_worldSpace ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
 
 			ImGuizmo::Manipulate(
 				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetViewMatrix()),
 				glm::value_ptr(m_sandboxController->GetCameraController()->GetCamera()->GetProjectionMatrix()),
-				m_imGuizmoOperation, ImGuizmo::WORLD, glm::value_ptr(transform),
+				m_imGuizmoOperation, gizmoMode, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
 			static bool hasDuplicated = false;
@@ -456,6 +458,34 @@ namespace Sandbox
 		}
 	}
 
+	void SandboxLayer::UpdateMainToolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 2.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
+		UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
+		UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
+		UI::ScopedColor active(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
+		
+		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoTabBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		
+		float size = ImGui::GetWindowHeight() - 4.f;
+		
+		if (UI::ImageButton("##save", UI::GetTextureID(m_iconSave), { size, size }))
+		{
+
+		}
+		
+		ImGui::SameLine();
+
+		if (UI::ImageButton("##load", UI::GetTextureID(m_iconLoad), { size, size }))
+		{
+
+		}
+
+		ImGui::End();
+		ImGui::PopStyleVar(2);
+	}
+
 	void SandboxLayer::UpdateLogTool()
 	{
 		LP_PROFILE_FUNCTION();
@@ -676,7 +706,7 @@ namespace Sandbox
 		ImGui::End();
 	}
 
-	void SandboxLayer::UpdateToolbar(float toolBarHeight, float toolBarXPadding)
+	void SandboxLayer::UpdatePerspectiveToolbar(float toolBarHeight, float toolBarXPadding)
 	{
 		UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 		UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
@@ -717,9 +747,26 @@ namespace Sandbox
 				m_physicsIcon.Stop();
 			}
 		}
-		const uint32_t rightButtonCount = 4;
+		const uint32_t rightButtonCount = 5;
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - toolBarXPadding - (rightButtonCount * toolBarHeight));
 		
+		Ref<Texture2D> localWorldIcon;
+		if (m_worldSpace)
+		{
+			localWorldIcon = m_iconWorldSpace;
+		}
+		else
+		{
+			localWorldIcon = m_iconLocalSpace;
+		}
+
+		if (UI::ImageButton("##localWorld", UI::GetTextureID(localWorldIcon), { toolBarHeight, toolBarHeight }, { 0.f, 1.f }, { 1.f, 0.f }))
+		{
+			m_worldSpace = !m_worldSpace;
+		}
+
+		ImGui::SameLine();
+
 		if (UI::ImageButtonState("##snapToGrid", m_snapToGrid, UI::GetTextureID(m_iconSnapToGrid), { toolBarHeight, toolBarHeight }))
 		{
 			m_snapToGrid = !m_snapToGrid;

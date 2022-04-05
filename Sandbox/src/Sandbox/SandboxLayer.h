@@ -72,11 +72,12 @@ namespace Sandbox
 		void UpdatePerspective();
 		void UpdateProperties();
 		void UpdateAddComponent();
+		void UpdateMainToolbar();
 		void UpdateLogTool();
 		bool DrawComponent(Lamp::EntityComponent* ptr);
 		void UpdateLevelSettings();
 		void UpdateRenderingSettings();
-		void UpdateToolbar(float toolBarHeight, float toolBarXPadding);
+		void UpdatePerspectiveToolbar(float toolBarHeight, float toolBarXPadding);
 		void UpdateStatistics();
 
 		//Shortcuts
@@ -111,6 +112,11 @@ namespace Sandbox
 		Ref<Lamp::Texture2D> m_iconSnapToGrid;
 		Ref<Lamp::Texture2D> m_iconSnapRotation;
 		Ref<Lamp::Texture2D> m_iconSnapScale;
+		Ref<Lamp::Texture2D> m_iconWorldSpace;
+		Ref<Lamp::Texture2D> m_iconLocalSpace;
+		Ref<Lamp::Texture2D> m_iconSave;
+		Ref<Lamp::Texture2D> m_iconLoad;
+			
 		
 		//Perspective
 		bool m_perspectiveOpen = true;
@@ -120,11 +126,12 @@ namespace Sandbox
 		CommandStack m_perspectiveCommands;
 
 		ImGuizmo::OPERATION m_imGuizmoOperation = ImGuizmo::TRANSLATE;
-		
+
 		bool m_snapToGrid = false;
 		bool m_snapRotation = false;
 		bool m_snapScale = false;
 		bool m_showGizmos = true;
+		bool m_worldSpace = true;
 		
 		const std::vector<float> m_snapToGridValues = { 0.01f, 0.1f, 0.25f, 0.5f, 1.f, 2.f, 5.f, 10.f };
 		const std::vector<float> m_snapRotationValues = { 10.f, 30.f, 45.f, 90.f };
