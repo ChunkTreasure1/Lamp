@@ -57,14 +57,57 @@ namespace Lamp
 
 	void RenderPipelineLibrary::SetupRenderPipelines()
 	{
-		//GBuffer
+		Ref<Framebuffer> mainFramebuffer;
+
+		//Skybox
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
 			framebufferSpec.attachments =
 			{
 				ImageFormat::RGBA32F,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.depthWrite = false;
+			pipelineSpec.cullMode = CullMode::Back;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Skybox;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			mainFramebuffer = pipelineSpec.framebuffer;
+
+			pipelineSpec.debugName = "Skybox";
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" }
+			};
+
+			s_renderPipelines["Skybox"] = RenderPipeline::Create(pipelineSpec);
+		}
+
+		Ref<Framebuffer> gbufferFramebuffer;
+		//GBuffer
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages =
+			{
+				{ 1, mainFramebuffer->GetColorAttachment(0) }
+			};
+
+			framebufferSpec.attachments =
+			{
 				ImageFormat::RGBA32F,
+				{ ImageFormat::RGBA32F, ClearMode::Load },
 				ImageFormat::RGBA32F,
 				ImageFormat::RGBA32F,
 				ImageFormat::DEPTH32F
@@ -72,6 +115,8 @@ namespace Lamp
 
 			RenderPipelineSpecification pipelineSpec{};
 			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			gbufferFramebuffer = pipelineSpec.framebuffer;
+
 			pipelineSpec.shader = ShaderLibrary::GetShader("gbuffer");
 			pipelineSpec.isSwapchain = false;
 			pipelineSpec.topology = Topology::TriangleList;
@@ -87,6 +132,46 @@ namespace Lamp
 			};
 
 			s_renderPipelines["Deferred"] = RenderPipeline::Create(pipelineSpec);
+		}
+
+		//Shading
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.shader = ShaderLibrary::GetShader("shading");
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::FullscreenQuad;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
+			pipelineSpec.debugName = "Shading";
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" },
+			};
+
+			pipelineSpec.framebufferInputs =
+			{
+				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 },
+				{ gbufferFramebuffer->GetColorAttachment(0), 1, 8 },
+				{ gbufferFramebuffer->GetColorAttachment(1), 1, 9 },
+				{ gbufferFramebuffer->GetColorAttachment(2), 1, 10 },
+				{ gbufferFramebuffer->GetColorAttachment(3), 1, 11 },
+			};
+
+			s_renderPipelines["Shading"] = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Forward

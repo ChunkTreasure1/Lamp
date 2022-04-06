@@ -37,6 +37,7 @@ namespace Lamp
 		inline Window& GetWindow() { return *m_window; }
 
 		inline const FrameTime& GetMainFrameTime() { return m_mainFrameTime; }
+		inline bool IsMinimized() const { return m_minimized; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);

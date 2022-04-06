@@ -132,7 +132,7 @@ namespace Sandbox
 		UpdateLevelSettings();
 		UpdateRenderingSettings();
 		UpdateStatistics();
-		UpdateMainToolbar();
+		//UpdateMainToolbar();
 
 		ImGuiUpdateEvent e;
 		OnEvent(e);

@@ -105,7 +105,7 @@ namespace Sandbox
 				Lamp::EditorViewportSizeChangedEvent e((uint32_t)perspectivePanelSize.x, (uint32_t)perspectivePanelSize.y);
 				OnEvent(e);
 
-				if (LevelManager::IsLevelLoaded())
+				if (LevelManager::IsLevelLoaded() && perspectivePanelSize.x > 0.f && perspectivePanelSize.y > 0.f)
 				{
 					LevelManager::GetActive()->OnEvent(e);
 				}

@@ -236,9 +236,11 @@ namespace Lamp
 		{
 			if (result == VK_ERROR_OUT_OF_DATE_KHR)
 			{
-				// Swap chain is no longer compatible with the surface and needs to be recreated
-				OnResize(m_width, m_height);
-				return;
+				if (!Application::Get().IsMinimized())
+				{
+					OnResize(m_width, m_height);
+					return;
+				}
 			}
 			else
 			{
@@ -397,7 +399,7 @@ namespace Lamp
 	VkResult Swapchain::QueuePresent(VkQueue queue, uint32_t imageIndex, VkSemaphore waitSemaphore)
 	{
 		LP_PROFILE_FUNCTION();
-		
+
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.pNext = nullptr;

@@ -264,7 +264,8 @@ void main()
     vec3 color = ambient + lightAccumulation;
     color *= u_CameraData.ambienceExposure.y;
 
+    color = pow(color, vec3(1.0 / 2.2));
     color = ACESTonemap(color);
-
+    
     o_Color = vec4(color, 1.0);
 }
