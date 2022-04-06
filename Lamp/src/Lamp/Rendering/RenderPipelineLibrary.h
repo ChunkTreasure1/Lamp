@@ -10,24 +10,17 @@ namespace Lamp
 	class RenderPipelineLibrary
 	{
 	public:
-		RenderPipelineLibrary();
-		~RenderPipelineLibrary();
+		static void Initialize();
+		static void Shutdown();
 
-		Ref<RenderPipeline> GetPipeline(ERenderPipeline pipeline);
-		Ref<RenderPipeline> GetPipeline(const std::string& pipeline);
+		static Ref<RenderPipeline> GetPipeline(const std::string& pipeline);
 		
-		ERenderPipeline GetTypeFromPipeline(Ref<RenderPipeline> pipeline);
-		std::vector<std::string> GetPipelineNames() const;
+		static std::string GetTypeFromPipeline(Ref<RenderPipeline> pipeline);
+		static std::vector<std::string> GetPipelineNames();
 		
-
-		static RenderPipelineLibrary& Get();
-
 	private:
-		void SetupRenderPipelines();
-
-		static RenderPipelineLibrary* s_instance;
+		static void SetupRenderPipelines();
 		
-		std::unordered_map<ERenderPipeline, Ref<RenderPipeline>> m_renderPipelines;
-		std::unordered_map<std::string, ERenderPipeline> m_renderPipelinesNameMap;
+		static std::unordered_map<std::string, Ref<RenderPipeline>> s_renderPipelines;
 	};
 }

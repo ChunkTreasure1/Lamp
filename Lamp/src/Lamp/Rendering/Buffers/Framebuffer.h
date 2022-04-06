@@ -24,6 +24,11 @@ namespace Lamp
 		FramebufferTextureSpecification() 
 			: textureFiltering(TextureFilter::Linear), textureWrap(TextureWrap::Repeat), textureFormat(ImageFormat::RGBA)
 		{}
+		
+		FramebufferTextureSpecification(ImageFormat aFormat, ClearMode aClearMode)
+			: textureFiltering(TextureFilter::Linear), textureWrap(TextureWrap::Repeat), textureFormat(aFormat), clearMode(aClearMode)
+		{}
+
 		FramebufferTextureSpecification(
 			ImageFormat format,
 			TextureFilter filtering = TextureFilter::Linear,

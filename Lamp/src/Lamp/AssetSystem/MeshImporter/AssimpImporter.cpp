@@ -68,7 +68,7 @@ namespace Lamp
 
 		for (uint32_t i = 0; i < pScene->mNumMaterials; i++)
 		{
-			materials.emplace(i, Material::Create(pScene->mMaterials[i]->GetName().C_Str(), i, RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Deferred)));
+			materials.emplace(i, Material::Create(pScene->mMaterials[i]->GetName().C_Str(), i, RenderPipelineLibrary::GetPipeline("Deferred")));
 		}
 
 		return meshes;

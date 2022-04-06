@@ -13,15 +13,6 @@ namespace Lamp
 	class Texture2D;
 	class TextureCube;
 
-	enum class ERenderPipeline : uint32_t
-	{
-		Deferred = 0,
-		Transparent,
-		Forward,
-		Grid,
-		None
-	};
-
 	enum class Topology
 	{
 		TriangleList,
@@ -82,7 +73,6 @@ namespace Lamp
 		Topology topology;
 		DrawType drawType = DrawType::Opaque;
 		CullMode cullMode = CullMode::Back;
-		ERenderPipeline pipelineType = ERenderPipeline::Deferred;
 
 		bool depthTest = true;
 		bool depthWrite = true;

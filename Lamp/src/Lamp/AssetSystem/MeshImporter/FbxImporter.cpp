@@ -129,7 +129,7 @@ namespace Lamp
 				{
 					name = material->GetName();
 				}
-				materials.emplace(subMesh->GetMaterialIndex(), Material::Create(name, subMesh->GetMaterialIndex(), RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Deferred)));
+				materials.emplace(subMesh->GetMaterialIndex(), Material::Create(name, subMesh->GetMaterialIndex(), RenderPipelineLibrary::GetPipeline("Deferred")));
 			}
 		}
 

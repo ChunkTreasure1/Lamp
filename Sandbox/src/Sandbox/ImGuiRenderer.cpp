@@ -32,6 +32,22 @@ namespace Sandbox
 {
 	using namespace Lamp;
 
+	namespace Utility
+	{
+		static std::string RemoveTrailingZeroes(const std::string& string)
+		{
+			std::string newStr = string;
+			newStr.erase(newStr.find_last_not_of('0') + 1, std::string::npos);
+			
+			if (!newStr.empty() && newStr.back() == '.')
+			{
+				newStr.pop_back();
+			}
+
+			return newStr;
+		}
+	}
+
 	void SandboxLayer::UpdatePerspective()
 	{
 		LP_PROFILE_FUNCTION();
@@ -73,7 +89,7 @@ namespace Sandbox
 
 			/////Perspective toolbar/////
 			{
-				UI::ScopedColor childBg(ImGuiCol_ChildBg, { 0.18f, 0.18f, 0.18f, 1.f });
+				UI::ScopedColor childBg(ImGuiCol_ChildBg, { 0.258f, 0.258f, 0.258f, 1.000f });
 				ImGui::BeginChild("toolbarChild", { ImGui::GetContentRegionAvail().x, toolBarSize + toolBarYPadding }, false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 				UI::ShiftCursor(toolBarXPadding, toolBarYPadding / 2.f);
 
@@ -711,6 +727,8 @@ namespace Sandbox
 		UI::ScopedColor button(ImGuiCol_Button, { 0.f, 0.f, 0.f, 0.f });
 		UI::ScopedColor hovered(ImGuiCol_ButtonHovered, { 0.3f, 0.305f, 0.31f, 0.5f });
 		UI::ScopedColor active(ImGuiCol_ButtonActive, { 0.5f, 0.505f, 0.51f, 0.5f });
+		
+		UI::ScopedStyleFloat2 itemSpacing(ImGuiStyleVar_ItemSpacing, { 2.f, 0.f });
 
 		Ref<Lamp::Texture2D> playIcon = m_iconPlay;
 		if (m_sceneState == SceneState::Play)
@@ -760,6 +778,7 @@ namespace Sandbox
 			localWorldIcon = m_iconLocalSpace;
 		}
 
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2.f);
 		if (UI::ImageButton("##localWorld", UI::GetTextureID(localWorldIcon), { toolBarHeight, toolBarHeight }, { 0.f, 1.f }, { 1.f, 0.f }))
 		{
 			m_worldSpace = !m_worldSpace;
@@ -771,11 +790,14 @@ namespace Sandbox
 		{
 			m_snapToGrid = !m_snapToGrid;
 		}
+
+		ImGui::SetNextWindowSize({ 100.f, m_snapToGridValues.size() * 20.f });
 		if (ImGui::BeginPopupContextItem("##gridSnapValues", ImGuiPopupFlags_MouseButtonRight))
 		{
 			for (uint32_t i = 0; i < m_snapToGridValues.size(); i++)
 			{
-				std::string	id = std::to_string(m_snapToGridValues[i]) + "##gridSnapValue" + std::to_string(i);
+				std::string valueStr = Utility::RemoveTrailingZeroes(std::to_string(m_snapToGridValues[i]));
+				std::string	id = valueStr + "##gridSnapValue" + std::to_string(i);
 
 				if (ImGui::Selectable(id.c_str()))
 				{
@@ -785,7 +807,6 @@ namespace Sandbox
 
 			ImGui::EndPopup();
 		}
-		
 		ImGui::SameLine();
 
 		if (UI::ImageButtonState("##snapRotation", m_snapRotation, UI::GetTextureID(m_iconSnapRotation), { toolBarHeight, toolBarHeight }))
@@ -796,7 +817,8 @@ namespace Sandbox
 		{
 			for (uint32_t i = 0; i < m_snapRotationValues.size(); i++)
 			{
-				std::string	id = std::to_string(m_snapRotationValues[i]) + "##rotationSnapValue" + std::to_string(i);
+				std::string valueStr = Utility::RemoveTrailingZeroes(std::to_string(m_snapRotationValues[i]));
+				std::string	id = valueStr + "##rotationSnapValue" + std::to_string(i);
 
 				if (ImGui::Selectable(id.c_str()))
 				{
@@ -817,7 +839,8 @@ namespace Sandbox
 		{
 			for (uint32_t i = 0; i < m_snapScaleValues.size(); i++)
 			{
-				std::string	id = std::to_string(m_snapScaleValues[i]) + "##scaleSnapValue" + std::to_string(i);
+				std::string valueStr = Utility::RemoveTrailingZeroes(std::to_string(m_snapScaleValues[i]));
+				std::string	id = valueStr + "##scaleSnapValue" + std::to_string(i);
 
 				if (ImGui::Selectable(id.c_str()))
 				{
@@ -834,7 +857,10 @@ namespace Sandbox
 		{
 			m_showGizmos = !m_showGizmos;
 		}
+
+		ImGui::PopStyleVar();
 	}
+	
 
 	void SandboxLayer::UpdateStatistics()
 	{
@@ -868,7 +894,7 @@ namespace Sandbox
 			const auto& stats = Renderer::Get().GetStatistics();
 
 			ImGui::Text("Total draw calls: %d", stats.totalDrawCalls.load());
-			ImGui::Text("Culled draw calls: %d", stats.totalDrawCalls.load());
+			ImGui::Text("Culled draw calls: %d", stats.culledDrawCalls.load());
 
 			ImGui::Text("Total memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.totalGPUMemory));
 			ImGui::Text("Allocated memory: %d MBs", UI::BytesToMBs(stats.memoryStatistics.allocatedMemory));

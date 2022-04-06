@@ -177,7 +177,7 @@ namespace Lamp
 		style.TabRounding = 0.0f;
 		style.WindowRounding = 0.0f;
 		style.WindowBorderSize = 10.f;
-
+		
 		/////Vulkan Init/////
 		auto context = VulkanContext::Get();
 		auto swapchain = Application::Get().GetWindow().GetSwapchain();

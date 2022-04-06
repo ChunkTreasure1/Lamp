@@ -166,7 +166,6 @@ namespace Lamp
 		Scope<RendererStorage> m_rendererStorage;
 		Scope<RendererDefaults> m_rendererDefaults;
 		Scope<MaterialLibrary> m_materialLibrary;
-		Scope<RenderPipelineLibrary> m_renderPipelineLibrary;
 		/////////////////
 
 		/////Render buffer/////
@@ -174,7 +173,7 @@ namespace Lamp
 		RenderBuffer m_secondRenderBuffer;
 		RenderBuffer m_finalRenderBuffer;
 
-		std::map<ERenderPipeline, RenderBuffer> m_renderBufferMap;
+		std::map<std::string, RenderBuffer> m_renderBufferMap;
 
 		RenderBuffer* m_submitBufferPointer = &m_firstRenderBuffer;
 		RenderBuffer* m_renderBufferPointer = &m_secondRenderBuffer;

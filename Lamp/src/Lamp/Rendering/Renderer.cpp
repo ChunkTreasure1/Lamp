@@ -68,7 +68,7 @@ namespace Lamp
 		ShaderLibrary::LoadShaders();
 		GenerateBRDF(m_rendererDefaults->brdfFramebuffer);
 
-		m_renderPipelineLibrary = CreateScope<RenderPipelineLibrary>();
+		RenderPipelineLibrary::Initialize();
 		m_materialLibrary = CreateScope<MaterialLibrary>();
 
 		MaterialLibrary::Get().LoadMaterials();
@@ -77,6 +77,7 @@ namespace Lamp
 	void Renderer::Shutdown()
 	{
 		MaterialLibrary::Get().Shutdown();
+		RenderPipelineLibrary::Shutdown();
 
 		DestroyRendererStorage();
 		DestroyDescriptorPools();
@@ -375,7 +376,7 @@ namespace Lamp
 
 	void Renderer::DispatchRenderCommands()
 	{
-		auto currentRenderPipeline = m_rendererStorage->currentRenderPipeline->GetSpecification().pipelineType;
+		auto currentRenderPipeline = RenderPipelineLibrary::GetTypeFromPipeline(m_rendererStorage->currentRenderPipeline);
 		DispatchRenderCommands(m_renderBufferMap[currentRenderPipeline]);
 	}
 
@@ -1117,7 +1118,7 @@ namespace Lamp
 
 		for (auto& draw : renderBuffer.drawCalls)
 		{
-			m_renderBufferMap[draw.material->GetSharedMaterial()->GetPipeline()->GetSpecification().pipelineType].drawCalls.emplace_back(draw);
+			m_renderBufferMap[RenderPipelineLibrary::GetTypeFromPipeline(draw.material->GetSharedMaterial()->GetPipeline())].drawCalls.emplace_back(draw);
 		}
 	}
 

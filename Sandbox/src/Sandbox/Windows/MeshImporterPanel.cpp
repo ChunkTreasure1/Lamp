@@ -23,7 +23,7 @@ namespace Sandbox
 	MeshImporterPanel::MeshImporterPanel(std::string_view name)
 		: EditorWindow(name)
 	{
-		m_renderPipeline = RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Forward);
+		m_renderPipeline = RenderPipelineLibrary::GetPipeline("Forward");
 		m_framebuffer = m_renderPipeline->GetSpecification().framebuffer;
 
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.01f, 100.f);
@@ -240,7 +240,7 @@ namespace Sandbox
 		m_meshToImport = MeshImporter::ImportMesh(m_importSettings);
 		for (auto& material : m_meshToImport->GetMaterials())
 		{
-			material.second->SetRenderPipeline(RenderPipelineLibrary::Get().GetPipeline(Lamp::ERenderPipeline::Forward));
+			material.second->SetRenderPipeline(RenderPipelineLibrary::GetPipeline("Forward"));
 		}
 
 		m_transform = glm::mat4(1.f);
@@ -467,7 +467,7 @@ namespace Sandbox
 
 					ImGui::TableNextColumn();
 
-					auto pipelineNames = RenderPipelineLibrary::Get().GetPipelineNames();
+					auto pipelineNames = RenderPipelineLibrary::GetPipelineNames();
 
 					std::vector<const char*> pipelineEntries;
 					for (auto& name : pipelineNames)

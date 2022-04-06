@@ -319,14 +319,54 @@ namespace Lamp
 		//GBuffer
 		{
 			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Deferred);
+			pass.graphicsPipeline = RenderPipelineLibrary::GetPipeline("Deferred");
 			m_geometryFramebuffer = pass.graphicsPipeline->GetSpecification().framebuffer;
+		}
+
+		//Skybox
+		{
+			FramebufferSpecification framebufferSpec{};
+			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.attachments =
+			{
+				ImageFormat::RGBA,
+				ImageFormat::DEPTH32F
+			};
+
+			RenderPipelineSpecification pipelineSpec{};
+			pipelineSpec.isSwapchain = false;
+			pipelineSpec.depthWrite = false;
+			pipelineSpec.cullMode = CullMode::Back;
+			pipelineSpec.topology = Topology::TriangleList;
+			pipelineSpec.drawType = DrawType::Skybox;
+			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
+			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
+			pipelineSpec.debugName = "Skybox";
+			m_shadingFramebuffer = pipelineSpec.framebuffer;
+
+			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
+			pipelineSpec.vertexLayout =
+			{
+				{ ElementType::Float3, "a_Position" },
+				{ ElementType::Float3, "a_Normal" },
+				{ ElementType::Float3, "a_Tangent" },
+				{ ElementType::Float3, "a_Bitangent" },
+				{ ElementType::Float2, "a_TexCoords" }
+			};
+
+			auto& pass = m_renderPasses.emplace_back();
+			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Shading
 		{
 			FramebufferSpecification framebufferSpec{};
 			framebufferSpec.swapchainTarget = false;
+			framebufferSpec.existingImages =
+			{
+				{0, m_shadingFramebuffer->GetColorAttachment(0) },
+				{1, m_shadingFramebuffer->GetDepthAttachment() }
+			};
 			framebufferSpec.attachments =
 			{
 				ImageFormat::RGBA,
@@ -360,47 +400,6 @@ namespace Lamp
 				{ m_geometryFramebuffer->GetColorAttachment(1), 1, 9 },
 				{ m_geometryFramebuffer->GetColorAttachment(2), 1, 10 },
 				{ m_geometryFramebuffer->GetColorAttachment(3), 1, 11 },
-			};
-
-			auto& pass = m_renderPasses.emplace_back();
-			pass.graphicsPipeline = RenderPipeline::Create(pipelineSpec);
-		}
-
-		//Skybox
-		{
-			FramebufferSpecification framebufferSpec{};
-			framebufferSpec.swapchainTarget = false;
-			framebufferSpec.existingImages =
-			{
-				{0, m_shadingFramebuffer->GetColorAttachment(0) },
-				{1, m_shadingFramebuffer->GetDepthAttachment() }
-			};
-
-			framebufferSpec.attachments =
-			{
-				ImageFormat::RGBA,
-				ImageFormat::DEPTH32F
-			};
-
-			RenderPipelineSpecification pipelineSpec{};
-			pipelineSpec.isSwapchain = false;
-			pipelineSpec.depthWrite = false;
-			pipelineSpec.cullMode = CullMode::Back;
-			pipelineSpec.topology = Topology::TriangleList;
-			pipelineSpec.drawType = DrawType::Skybox;
-			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
-			pipelineSpec.framebuffer = Framebuffer::Create(framebufferSpec);
-			pipelineSpec.debugName = "Skybox";
-			m_shadingFramebuffer = pipelineSpec.framebuffer;
-
-			pipelineSpec.shader = ShaderLibrary::GetShader("skybox");
-			pipelineSpec.vertexLayout =
-			{
-				{ ElementType::Float3, "a_Position" },
-				{ ElementType::Float3, "a_Normal" },
-				{ ElementType::Float3, "a_Tangent" },
-				{ ElementType::Float3, "a_Bitangent" },
-				{ ElementType::Float2, "a_TexCoords" }
 			};
 
 			auto& pass = m_renderPasses.emplace_back();

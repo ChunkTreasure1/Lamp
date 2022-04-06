@@ -32,7 +32,7 @@ namespace Sandbox
 	MaterialEditorPanel::MaterialEditorPanel(std::string_view name)
 		: EditorWindow(name)
 	{
-		m_renderPipeline = RenderPipelineLibrary::Get().GetPipeline(ERenderPipeline::Forward);
+		m_renderPipeline = RenderPipelineLibrary::GetPipeline("Forward");
 		m_framebuffer = m_renderPipeline->GetSpecification().framebuffer;
 
 		m_camera = CreateRef<PerspectiveCameraController>(60.f, 0.1f, 100.f);

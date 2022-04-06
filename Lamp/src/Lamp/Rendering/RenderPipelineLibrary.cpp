@@ -8,46 +8,32 @@
 
 namespace Lamp
 {
-	RenderPipelineLibrary* RenderPipelineLibrary::s_instance = nullptr;
+	std::unordered_map<std::string, Ref<RenderPipeline>> RenderPipelineLibrary::s_renderPipelines;
 
-	RenderPipelineLibrary::RenderPipelineLibrary()
+	void RenderPipelineLibrary::Initialize()
 	{
-		LP_CORE_ASSERT(!s_instance, "Instance already exists! Singleton should not be created more than once!")
-			s_instance = this;
-
 		SetupRenderPipelines();
-
-		m_renderPipelinesNameMap["Deferred"] = ERenderPipeline::Deferred;
-		m_renderPipelinesNameMap["Forward"] = ERenderPipeline::Forward;
-		m_renderPipelinesNameMap["Transparent"] = ERenderPipeline::Transparent;
-		m_renderPipelinesNameMap["Grid"] = ERenderPipeline::Grid;
 	}
 
-	RenderPipelineLibrary::~RenderPipelineLibrary()
+	void RenderPipelineLibrary::Shutdown()
 	{
-		s_instance = nullptr;
-	}
-
-	Ref<RenderPipeline> RenderPipelineLibrary::GetPipeline(ERenderPipeline pipeline)
-	{
-		return m_renderPipelines[pipeline];
+		s_renderPipelines.clear();
 	}
 
 	Ref<RenderPipeline> RenderPipelineLibrary::GetPipeline(const std::string& pipeline)
 	{
-		auto it = m_renderPipelinesNameMap.find(pipeline);
-		if (it != m_renderPipelinesNameMap.end())
+		if (auto it = s_renderPipelines.find(pipeline); it == s_renderPipelines.end())
 		{
-			return m_renderPipelines[m_renderPipelinesNameMap[pipeline]];
+			LP_CORE_CRITICAL("Unable to find pipeline {0}!", pipeline);
+			return nullptr;
 		}
-		
-		LP_CORE_ERROR("Render pipeline {0} not found! Defaulting to deferred!", pipeline);
-		return m_renderPipelines[ERenderPipeline::Deferred];
+
+		return s_renderPipelines[pipeline];
 	} 
 
-	ERenderPipeline RenderPipelineLibrary::GetTypeFromPipeline(Ref<RenderPipeline> pipeline)
+	std::string RenderPipelineLibrary::GetTypeFromPipeline(Ref<RenderPipeline> pipeline)
 	{
-		for (const auto mPipeline : m_renderPipelines)
+		for (const auto mPipeline : s_renderPipelines)
 		{
 			if (mPipeline.second == pipeline)
 			{
@@ -55,23 +41,18 @@ namespace Lamp
 			}
 		}
 
-		return ERenderPipeline::None;
+		return "Null";
 	}
 
-	std::vector<std::string> RenderPipelineLibrary::GetPipelineNames() const
+	std::vector<std::string> RenderPipelineLibrary::GetPipelineNames()
 	{
 		std::vector<std::string> names;
 
-		for (const auto& it : m_renderPipelinesNameMap)
+		for (const auto& it : s_renderPipelines)
 		{
 			names.emplace_back(it.first);
 		}
 		return names;
-	}
-
-	RenderPipelineLibrary& RenderPipelineLibrary::Get()
-	{
-		return *s_instance;
 	}
 
 	void RenderPipelineLibrary::SetupRenderPipelines()
@@ -96,7 +77,6 @@ namespace Lamp
 			pipelineSpec.topology = Topology::TriangleList;
 			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.debugName = "GBuffer";
-			pipelineSpec.pipelineType = ERenderPipeline::Deferred;
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -106,7 +86,7 @@ namespace Lamp
 				{ ElementType::Float2, "a_TexCoords" },
 			};
 
-			m_renderPipelines[ERenderPipeline::Deferred] = RenderPipeline::Create(pipelineSpec);
+			s_renderPipelines["Deferred"] = RenderPipeline::Create(pipelineSpec);
 		}
 
 		//Forward
@@ -131,7 +111,6 @@ namespace Lamp
 			pipelineSpec.uniformBufferSets = Renderer::Get().GetStorage().uniformBufferSet;
 			pipelineSpec.shaderStorageBufferSets = Renderer::Get().GetStorage().shaderStorageBufferSet;
 			pipelineSpec.debugName = "Forward";
-			pipelineSpec.pipelineType = ERenderPipeline::Forward;
 			pipelineSpec.vertexLayout =
 			{
 				{ ElementType::Float3, "a_Position" },
@@ -146,7 +125,7 @@ namespace Lamp
 				{ Renderer::Get().GetDefaults().brdfFramebuffer->GetColorAttachment(0), 0, 7 }
 			};
 
-			m_renderPipelines[ERenderPipeline::Forward] = RenderPipeline::Create(pipelineSpec);
+			s_renderPipelines["Forward"] = RenderPipeline::Create(pipelineSpec);
 		}
 	}
 }

@@ -223,7 +223,7 @@ namespace Lamp
 			out << YAML::EndMap;
 
 			LP_SERIALIZE_PROPERTY(shader, mat->GetShader()->GetName(), out);
-			LP_SERIALIZE_PROPERTY(renderPipeline, (uint32_t)RenderPipelineLibrary::Get().GetTypeFromPipeline(mat->GetPipeline()), out);
+			LP_SERIALIZE_PROPERTY(renderPipeline, RenderPipelineLibrary::GetTypeFromPipeline(mat->GetPipeline()), out);
 
 			const auto& matData = mat->GetMaterialData();
 			LP_SERIALIZE_PROPERTY(useBlending, matData.useBlending, out);
@@ -275,7 +275,7 @@ namespace Lamp
 
 		mat->SetName(materialNode["name"].as<std::string>());
 		LP_DESERIALIZE_PROPERTY(handle, asset->Handle, materialNode, AssetHandle(0));
-		mat->SetRenderPipeline(RenderPipelineLibrary::Get().GetPipeline(materialNode["renderPipeline"] ? (ERenderPipeline)materialNode["renderPipeline"].as<uint32_t>() : ERenderPipeline::Deferred));
+		mat->SetRenderPipeline(RenderPipelineLibrary::GetPipeline(materialNode["renderPipeline"] ? materialNode["renderPipeline"].as<std::string>() : "Deferred"));
 
 		YAML::Node textureNode = materialNode["textures"];
 
