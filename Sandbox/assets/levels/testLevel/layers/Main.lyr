@@ -135,3 +135,333 @@ layer:
       rotation: [0, 0, 0]
       scale: [0.00999999978, 0.00999999978, 0.00999999978]
       layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [0, 0, 24.3073883]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [0, 0, 49.0564079]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [0, 0, 74.6958923]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [0, 0, 98.8328094]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [0, 0, 123.145973]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [0, 0, 148.510956]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, 148.510956]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, 125.543922]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, 100.527908]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, 75.2315216]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, 47.6533585]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, 22.9670258]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, -2.90096474]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, -29.2336922]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, -53.5829506]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-40.2532578, 0, -78.6358337]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-0.755633354, 0, -78.6358337]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-0.755633354, 0, -54.1733246]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-0.755633354, 0, -28.0450401]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 144.269714]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 144.269714]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 119.954453]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 94.0890427]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 68.0686722]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 43.1563416]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, 17.1341248]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, -7.01270008]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, -31.8334961]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, -56.9861298]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-78.8615036, 0, -81.3010483]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, -81.3010483]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, -57.1426659]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, -31.5368576]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, -7.01296806]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, 19.8581886]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, 44.6115494]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, 68.560379]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, 94.036377]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, 118.356033]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-118.585274, 0, 145.179565]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, 145.179565]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, 120.054276]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, 95.5151978]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, 71.3493652]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, 45.657856]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, 20.1458378]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, -6.92309952]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, -35.0774841]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, -61.7186203]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-160.312164, 0, -90.5153427]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-199.691223, 0, -90.5153427]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-199.691223, 0, -62.2264671]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-199.691223, 0, -36.555687]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-199.691223, 0, -5.98025322]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0
+    - brush: Sponza
+      meshHandle: 15873515662996244200
+      position: [-199.691223, 0, 24.335453]
+      rotation: [0, 0, 0]
+      scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      layerId: 0

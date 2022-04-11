@@ -6,8 +6,8 @@ level:
       id: 0
       active: true
   Environment:
-    cameraPosition: [-2.33918476, 1.10109127, 0.307670474]
-    cameraRotation: [0.728920937, 0.270688385, -0.430440694, 0.458391666]
+    cameraPosition: [-136.241287, 277.763824, 60.9317856]
+    cameraRotation: [-0.262908876, 0.696087897, -0.308945447, -0.592362523]
     cameraFOV: 60
     Skybox:
       environmentLod: 1
